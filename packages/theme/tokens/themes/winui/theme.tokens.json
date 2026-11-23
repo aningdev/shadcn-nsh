@@ -79,50 +79,6 @@
   "typography": {
     "$type": "typography",
     "$description": "WinUI 3 typography scale mapped from TextBlock_themeresources.xaml (400 and 600 weights only).",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "fontFamily": "{font.family.sans}"
-      }
-    },
-    "caption": {
-      "$value": {
-        "fontFamily": "{font.family.sans}",
-        "fontSize": "{font.size.caption}",
-        "fontWeight": 400,
-        "lineHeight": "{font.line-height.caption}",
-        "letterSpacing": {
-          "value": 0,
-          "unit": "px"
-        }
-      },
-      "$description": "Small captions and segmented counter labels."
-    },
-    "detail": {
-      "$value": {
-        "fontFamily": "{font.family.sans}",
-        "fontSize": "{font.size.detail}",
-        "fontWeight": 400,
-        "lineHeight": "{font.line-height.detail}",
-        "letterSpacing": {
-          "value": 0,
-          "unit": "px"
-        }
-      },
-      "$description": "Sidebar section labels, counts, and supporting metadata."
-    },
-    "body": {
-      "$value": {
-        "fontFamily": "{font.family.sans}",
-        "fontSize": "{font.size.body}",
-        "fontWeight": 400,
-        "lineHeight": "{font.line-height.body}",
-        "letterSpacing": {
-          "value": 0,
-          "unit": "px"
-        }
-      },
-      "$description": "Standard body copy, list rows, and dialog content."
-    },
     "label": {
       "$value": {
         "fontFamily": "{font.family.sans}",
@@ -135,45 +91,6 @@
         }
       },
       "$description": "Control labels, form labels, and interactive triggers."
-    },
-    "title": {
-      "$value": {
-        "fontFamily": "{font.family.sans}",
-        "fontSize": "{font.size.title}",
-        "fontWeight": 600,
-        "lineHeight": "{font.line-height.title}",
-        "letterSpacing": {
-          "value": 0,
-          "unit": "px"
-        }
-      },
-      "$description": "Card and section headings."
-    },
-    "headline": {
-      "$value": {
-        "fontFamily": "{font.family.sans}",
-        "fontSize": "{font.size.headline}",
-        "fontWeight": 600,
-        "lineHeight": "{font.line-height.headline}",
-        "letterSpacing": {
-          "value": 0,
-          "unit": "px"
-        }
-      },
-      "$description": "Page-level headings."
-    },
-    "display": {
-      "$value": {
-        "fontFamily": "{font.family.sans}",
-        "fontSize": "{font.size.display}",
-        "fontWeight": 600,
-        "lineHeight": "{font.line-height.display}",
-        "letterSpacing": {
-          "value": 0,
-          "unit": "px"
-        }
-      },
-      "$description": "Large display numerals and hero headings."
     }
   },
   "shape": {
@@ -270,9 +187,9 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles.",
-    "press": {
-      "$description": "WinUI 3 ToggleSwitch press timing (83ms decelerate, ToggleSwitch_themeresources.xaml:321).",
+    "$description": "Interactive spring and timing physics roles: fast, default, slow.",
+    "fast": {
+      "$description": "WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).",
       "timing": {
         "$type": "transition",
         "$value": {
@@ -286,11 +203,29 @@
           },
           "timingFunction": "{cubicBezier.decelerate}"
         },
-        "$description": "Timing curve and duration for press."
+        "$description": "Timing curve and duration for fast."
       }
     },
-    "settle": {
-      "$description": "WinUI 3 250ms settle timing with Direct Entrance decelerate curve.",
+    "default": {
+      "$description": "WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 167,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.decelerate}"
+        },
+        "$description": "Timing curve and duration for default."
+      }
+    },
+    "slow": {
+      "$description": "WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).",
       "timing": {
         "$type": "transition",
         "$value": {
@@ -304,43 +239,7 @@
           },
           "timingFunction": "{cubicBezier.decelerate}"
         },
-        "$description": "Timing curve and duration for settle."
-      }
-    },
-    "control": {
-      "$description": "WinUI 3 167ms control timing with Point-to-Point curve.",
-      "timing": {
-        "$type": "transition",
-        "$value": {
-          "duration": {
-            "value": 167,
-            "unit": "ms"
-          },
-          "delay": {
-            "value": 0,
-            "unit": "ms"
-          },
-          "timingFunction": "{cubicBezier.point-to-point}"
-        },
-        "$description": "Timing curve and duration for control."
-      }
-    },
-    "move": {
-      "$description": "WinUI 3 333ms move timing with Point-to-Point curve.",
-      "timing": {
-        "$type": "transition",
-        "$value": {
-          "duration": {
-            "value": 333,
-            "unit": "ms"
-          },
-          "delay": {
-            "value": 0,
-            "unit": "ms"
-          },
-          "timingFunction": "{cubicBezier.point-to-point}"
-        },
-        "$description": "Timing curve and duration for move."
+        "$description": "Timing curve and duration for slow."
       }
     }
   },

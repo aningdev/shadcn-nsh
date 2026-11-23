@@ -1,7 +1,7 @@
 import { selectTheme } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import appleTheme from "../../../packages/theme/themes/apple/index";
+import materialTheme from "../../../packages/theme/themes/material/index";
 import {
   Button,
   DatePicker,
@@ -17,7 +17,7 @@ import {
 
 const PALETTES = [
   { value: "default", label: "Default" },
-  { value: "apple", label: "Apple" },
+  { value: "material", label: "Material" },
 ];
 
 function App() {
@@ -29,8 +29,8 @@ function App() {
 
   const choose = (val: string | null) => {
     palette.set(val);
-    if (val === "apple") {
-      void Promise.resolve().then(() => selectTheme(appleTheme));
+    if (val === "material") {
+      void Promise.resolve().then(() => selectTheme(materialTheme));
     } else {
       selectTheme(null);
     }
@@ -38,8 +38,8 @@ function App() {
 
   return (
     <View style={{ gap: 8, padding: 12 }}>
-      <Text>{`line=${selectHeight()}`}</Text>
-      <Button onPress={() => selectTheme(appleTheme)}>Apply Apple</Button>
+      <Text>{`height=${selectHeight()}`}</Text>
+      <Button onPress={() => selectTheme(materialTheme)}>Apply Material</Button>
       <Button onPress={() => selectTheme(null)}>Apply Default</Button>
 
       <Select value={palette()} onChange={({ value }) => choose(value)}>
@@ -57,7 +57,7 @@ function App() {
         value={pickedDate()}
         onChange={({ value }) => {
           pickedDate.set(typeof value === "string" ? value : null);
-          void Promise.resolve().then(() => selectTheme(appleTheme));
+          void Promise.resolve().then(() => selectTheme(materialTheme));
         }}
       >
         <DatePickerTrigger accessibilityLabel="Switch via date" style={{ width: 200 }} />

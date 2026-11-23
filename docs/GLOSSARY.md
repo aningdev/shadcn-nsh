@@ -92,7 +92,7 @@ _Avoid_: 用别的词指它；在 B 层另起一个与 A 层槽同义的名字
 _Avoid_: 把 finish 当 token；用别的词指它；删字段表示“没有渐变”
 
 **Alias（`{token}` 引用）**:
-语义层引用 `theme.json` 基础 token 的花括号写法（对齐 DTCG 2025.10）：`dimension.shape.*` 写 `{radius-…}`、`typography.fontFamily` 写 `{font-…}`、finish 颜色与 `material.apple.tint` 写 `{token}` 或 `oklch(from {token} l c h / a)`。`theme.ts` 在**读的时候**经 `token()` 响应式解析，所以切外观、`selectTheme` 切主题与宿主 `setThemeOverrides` 都自动生效。finish 允许的字面量只有墨色（黑或白带 alpha）、`transparent`，以及规范里待定表列出的那些；`shadow` 整条豁免。
+语义层引用 `theme.json` 基础 token 的花括号写法（对齐 DTCG 2025.10）：`dimension.shape.*` 写 `{radius-…}`、7 个 typography 复合 token 的 `fontFamily` 写 `{font.family.sans}`、finish 颜色与 `material.apple.tint` 写 `{token}` 或 `oklch(from {token} l c h / a)`。`theme.ts` 在**读的时候**经 `token()` 响应式解析，所以切外观、`selectTheme` 切主题与宿主 `setThemeOverrides` 都自动生效。finish 允许的字面量只有墨色（黑或白带 alpha）、`transparent`，以及规范里待定表列出的那些；`shadow` 整条豁免。
 _Avoid_: 在语义层写 `var(--token)` 或重复的色值/圆角数字；用别的词指它
 
 **Build-time Theme / AppTheme**:

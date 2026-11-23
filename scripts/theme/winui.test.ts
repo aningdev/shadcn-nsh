@@ -335,15 +335,13 @@ describe("compiled winui theme files", () => {
     const files = shipped;
     expect(files.theme.name).toBe("WinUI 3");
     expect(files.theme.cssVars.theme["font-mono"]).toBe("Consolas, monospace");
-    expect(Object.keys(files.theme.cssVars.theme)).toEqual([
-      ...Object.keys(defaultTheme.cssVars.theme),
-      "font-sans",
-    ]);
+    expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(defaultTheme.cssVars.theme));
+    expect(files.theme.cssVars.theme["font-sans"]).toBe("Segoe UI Variable, Segoe UI, sans-serif");
     expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));
     expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(defaultTheme.cssVars.dark));
 
-    expect(files.semantics.motion.press).toEqual({ duration: 83, timingFunction: "decelerate" });
-    expect(files.semantics.dimension.size.density.pointer.row).toBe(40);
+    expect(files.semantics.motion.fast).toEqual({ duration: 83, timingFunction: "decelerate" });
+    expect(files.semantics.dimension.size.height.pointer).toEqual({ sm: 24, md: 32, lg: 40 });
     expect(files.semantics.finishes.shared.tooltip).toMatchObject({
       background: "{popover}",
       "border-color": "{glass-edge}",

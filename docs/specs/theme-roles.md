@@ -2,12 +2,12 @@
 
 本库的颜色、圆角、字体只有一个来源，一个面的样子只有一张表，二者之间用 `{token}` alias 相连。设计语义标准与分层判定规则见 [`design-semantics.md`](design-semantics.md)：
 
-| 文件                            | 管什么                                                                                                                                                  | 不管什么               |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `packages/theme/theme.json`     | 基础 token：颜色（light / dark 与共用）、圆角（3 个层圆角 `radius-{control,container,modal}` 与 A 层 `radius`）、字体（`font-mono` 及可选 `font-sans`） | 面、边、影、渐变、模糊 |
-| `packages/theme/semantics.json` | 语义层：与外观无关的字体字阶、形状、尺寸、动效、状态、枚举，加上 `finishes`（`shared` + 稀疏 `light`/`dark`）                                           | 颜色/圆角/字体字面量   |
-| `packages/theme/theme.ts`       | 读时把 `{token}` 换成当前主题、外观与宿主覆写的值（`themed()`、`shape.*`、`font.family()`）                                                             | 具体颜色或圆角值       |
-| `packages/ui/*.tsx`             | 只经 `finish.*`、`colors.*`、`shape.*` 取外观                                                                                                           | 内联颜色               |
+| 文件                            | 管什么                                                                                                                                              | 不管什么               |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `packages/theme/theme.json`     | 基础 token：颜色（light / dark 与共用）、圆角（3 个层圆角 `radius-{control,container,modal}` 与 A 层 `radius`）、字体（`font-sans` 与 `font-mono`） | 面、边、影、渐变、模糊 |
+| `packages/theme/semantics.json` | 语义层：与外观无关的字体字阶、形状、尺寸、动效、状态、枚举，加上 `finishes`（`shared` + 稀疏 `light`/`dark`）                                       | 颜色/圆角/字体字面量   |
+| `packages/theme/theme.ts`       | 读时把 `{token}` 换成当前主题、外观与宿主覆写的值（`themed()`、`shape.*`、`mono()`）                                                                | 具体颜色或圆角值       |
+| `packages/ui/*.tsx`             | 只经 `finish.*`、`colors.*`、`shape.*` 取外观                                                                                                       | 内联颜色               |
 
 这样定，是为了两件事：
 
@@ -79,7 +79,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 3 个层圆角（`radius-control`、`radius-container`、`radius-modal`）及编译出的 A 层 `radius` 槽（等于 `radius-control`）均为非负 `px` 长度，读主题圆角的角一律用 `rounded()`，`shape.curve` 只在 `packages/theme/theme.ts` 给；嵌套元素用 `rounded(outer, inset)` 按同心推出（`Math.max(outer - inset, 0)`）。
 
-`font-mono` 是字体不是颜色：NSH 取列表里第一个不是通用名的家族（`theme.rs` 的 `font_family`），写 `monospace` 就是系统的等宽字；设定自定义正文字体的主题可在 `cssVars.theme` 中声明可选的 `font-sans`，并在 `semantics.json` 的 `typography.fontFamily` 写 `"{font-sans}"`（不设时 `typography.fontFamily` 为 `null`，留给系统默认字体）。
+两个字体族都是 token，不是颜色：`font-sans` 是正文家族（系统字体写通用族 `system-ui`，WinUI 写 `Segoe UI Variable, Segoe UI, sans-serif`），`font-mono` 是等宽家族（`monospace`，WinUI `Consolas, monospace`）。NSH 取列表里第一个不是通用名的家族（`theme.rs` 的 `font_family`），所以写通用族的主题在构建产物里**没有**这个 token —— 那正是“用系统字体”的意思：`font-sans` 由 NSH 自己画在每一段没写字体的文字上，本库不读它；等宽文字经 `mono()` 读 `font-mono`（通用族 `monospace` 不在 NSH 的通用名列表里，所以它总是有 token）。
 
 ## 2 semantics.json 的两条线
 
@@ -103,23 +103,33 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 2b 风格数据
 
-`semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（`fontFamily` 与 7 个字体角色，含 `fontSize`、`lineHeight` 倍率、数值 `fontWeight` 与 `letterSpacing`）、`dimension`（`shape`、`size`、`stroke`、`focus`、`icon`）、`shape`（`curve`、`corners.button`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"rest-opacity"`、叠色、水波开关与禁用透明度）、`duration`（`shake`）、`transition`（`enter`）、`motion`（`press`、`settle`、`control`、`move`，其中 timing 用 `timingFunction`）与 `controls`（控件几何预设家族枚举 `"base" | "material" | "winui"`）。它们与 finish 无关，也与外观无关：一个主题写一份，light 和 dark 共用；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
+`semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（7 个字体角色，含 `fontSize`、整数点数 `lineHeight`、数值 `fontWeight` 与 `letterSpacing`）、`dimension`（`shape`、`size`、`stroke`、`focus`、`icon`）、`shape`（`curve`、`corners.button`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"rest-opacity"`、叠色、水波开关与禁用透明度）、`transition`（`enter`）、`motion`（三档弹簧 `fast`、`default`、`slow`，timing 用 `timingFunction`）与 `controls`（控件几何预设家族枚举 `"base" | "material" | "winui"`）。它们与 finish 无关，也与外观无关：一个主题写一份，light 和 dark 共用；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
 
 - **键集合相同。** 所有主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
 - **枚举取白名单。** 字重（数值 `400`–`700`）、曲线、`corners.button`（`"full" | "radius"`）、焦点样式、`timingFunction`、`controls` 的值都在 `scripts/theme/style.ts` 的列表里。
-- **`{token}` 引用按 DTCG `$type` 校验。** `dimension.shape` 的 3 个层圆角（`control`、`container`、`modal`）必须是 `"{radius-…}"`（`dimension` 类型），不允许写数字字面量；`typography.fontFamily` 必须是 `null` 或 `fontFamily` 类型的 `{token}`。
+- **`{token}` 引用按 DTCG `$type` 校验。** `dimension.shape` 的 3 个层圆角（`control`、`container`、`modal`）必须是 `"{radius-…}"`（`dimension` 类型），不允许写数字字面量；字体家族只来自 `theme.json` 的 `font-sans` / `font-mono`：7 个字阶复合 token 的 `fontFamily` 一律是 `{font.family.sans}`（DTCG 复合类型的必填字段，设计工具导入要用），`typography` 自己不另设家族。
+- **尺寸落在三把尺子上**（`checkScales`）：高度与图标各三个台阶，逐档递增、都是 4 的整数倍；间距（`density.pad` / `density.gap` / `control.padding` / `control.gap`）取自 `4, 8, 12, 16, 24, 32`，每档最多三个值；字号按 `caption → display` 不递减，行高是不小于字号的整数点数。平台自己规定的例外值在下表里点名，附出处；表外的一个都不许。
+
+<!-- theme-lint: scales -->
+
+| 主题    | 键                                       | 值  | 出处                                                   |
+| ------- | ---------------------------------------- | --- | ------------------------------------------------------ |
+| `winui` | `dimension.size.control.pointer.padding` | `6` | WinUI 3 按钮内边距 6px（`Button_themeresources.xaml`） |
+| `winui` | `dimension.size.control.touch.padding`   | `6` | 同上                                                   |
+
+<!-- /theme-lint: scales -->
 
 **`theme.json` 与 `dimension.shape` 的分工。** 全部 3 个层圆角值（`radius-control`、`radius-container`、`radius-modal`）由 DTCG 源码编译进 `theme.json` 的 `cssVars.theme` 中（同时编译出等于 `radius-control` 的 A 层 `radius` 槽）；`semantics.json` 的 `dimension.shape.{control,container,modal}` 通过 `{radius-…}` 引用它们，外加非 token 的 `shape.curve` 与 `shape.corners.button`。`theme.ts` 的 `shape.*` 经 `token()` 响应式解析这些引用，因此换主题或宿主覆写圆角 token 都会立即到达组件。
 
 组件经 `style()`（响应式）和保持原形状的 `density`、`controlSize`、`motion`、`cornerCurve`、`focusRing`、`controls()` 读风格数据，换主题后下一帧重画。terminal 档的尺寸由字符格决定，留在代码里，不进主题。
 
-**组件怎么读 `typography`。** 组件取字号、字重、行高、字距用 `font.size(role)`、`font.weight(role)`、`font.lineHeight(role)`、`font.letterSpacing(role)`（`theme.ts`，响应式，`size` 与 `lineHeight` 按 `tier` 取 pointer / touch 档，`lineHeight()` 返回四舍五入后的点数 `Math.round(fontSize * lineHeight)`）：只取组件原来写了的那几项，所以没写字重的文字仍继承周围的字重。对应关系：控件上的字（按钮、标签、表单、菜单、标签页）取 `label` 的字重（500）、卡片与区块标题取 `title` 的字重（600）、正文类取 `body`；`body` 的字号（13 / 15）给面包屑、导航菜单、树、命令面板的行与对话框正文，`detail`（12 / 13）给侧栏的分组与计数，`caption`（11 / 12）给分段控件的数量，`label`（14 / 15）给输入框（`fieldSize.font`）。`lineHeight` 倍率按组件今天画的像素行高对齐：`body` 的 19/13、21/15 算出 19 / 21 给对话框正文。**没有角色对得上的字号留在代码里**，各处有一行注释：按钮、徽标、侧栏档位的 12 / 13 / 14，对话框与卡片标题的 17 / 20、`body + 2`，日历格的 12.8 / 14 / 16，图表轴的 10 / 10.5，命令面板分组名的 11 加 0.6 字距，气泡与空状态说明的 1.5 倍行高（取整后 20 / 23，与 `body.lineHeight` 算出的 19 / 21 不同），以及写在 Tailwind 类里的 `text-sm` / `text-base` / `text-xs`、`font-semibold`（类名读不了 getter）。
+**组件怎么读 `typography`。** 组件取字号、字重、行高、字距用 `font.size(role)`、`font.weight(role)`、`font.lineHeight(role)`、`font.letterSpacing(role)`（`theme.ts`，响应式，`size` 与 `lineHeight` 按 `tier` 取 pointer / touch 档；`lineHeight()` 返回整数点数，源码里的 DTCG 倍率已在 `tokens:build` 时乘回点数）：只取组件原来写了的那几项，所以没写字重的文字仍继承周围的字重。对应关系：控件上的字（按钮、标签、表单、菜单、标签页）取 `label` 的字重（500）、卡片与区块标题取 `title` 的字重（600）、正文类取 `body`；`body` 的字号（13 / 15）给面包屑、导航菜单、树、命令面板的行与对话框正文，`detail`（12 / 13）给侧栏的分组与计数，`caption`（11 / 12）给分段控件的数量，`label`（14 / 15）给输入框（`fieldSize.font`）。`body` 的行高（20 / 20）给对话框正文。**没有角色对得上的字号留在代码里**，各处有一行注释：按钮、徽标、侧栏档位的 12 / 13 / 14，对话框与卡片标题的 17 / 20、`body + 2`，日历格的 12.8 / 14 / 16，图表轴的 10 / 10.5，命令面板分组名的 11 加 0.6 字距，气泡与空状态说明的 1.5 倍行高（取整后 20 / 20，与 `body` 的 20 同值），以及写在 Tailwind 类里的 `text-sm` / `text-base` / `text-xs`、`font-semibold`（类名读不了 getter）。
 
-**组件怎么读 `shape`、`stroke`、`state`、`size`、`controls`。** 圆角按层读 `shape.{control,container,modal,button}`（`theme.ts`，响应式）：页内元素（输入框、行、徽标、标签、井、色区、kbd）读 `shape.control`，按钮类控件（`Button`、`IconButton`、`SplitButton`、`Toggle`、`ButtonGroup`、分页按钮、日历头部按钮）读 `shape.button`（`shape.corners.button` 为 `"full"` 时取 `999` 胶囊，否则取 `shape.control`），容器与浮层（卡片、菜单、弹出层、富提示、列表面板、toast）读 `shape.container`，模态面（对话框、抽屉、底部面板）读 `shape.modal`；嵌套表面不再单设 `inset` 圆角角色，改用 `rounded(outer, inset)` 按同心推出（内 = 外 − inset，不小于 0）：复选框的钩、分段控件的滑块与轨道、组合框的箭头钮、附件缩略图与颜色选择器的色块；复选框小角在组件预设 `checkboxPresets.corner`。线宽读 `stroke`（`dimension.stroke`）：控件的描边 `stroke.control`（按钮、输入框、选择器、复选框、分段、标签页、徽标…），分隔线与描边变体的发丝线 `stroke.hairline`，卡片、面板、浮层与弹窗等表面的描边 `stroke.surface`（Material 下为 `0`）；焦点环宽只有 `dimension.focus.width`，由 `focusRing()` 读。按下的透明度 `dimmed.pressed`（`state["pressed-opacity"]`），静止的指示器（滚动条滑块）读 `dimmed.rest`（`state["rest-opacity"]`，默认 `0.5`），强调色按下时整块换成 `finish.accentPressed`（底色自带按下态的 alpha，前景色取 `finish.accentPressed.foreground`）；禁用时若 `state.disabled.fill` 为 `false` 则沿用统一视图 `opacity: dimmed.disabled`，为 `true`（Material / WinUI）则由 `finish.disabled`（无边/关态另按变体设边）绘容器、由 `finish.disabled.foreground` 绘字与图标；`state.overlay` 经 `stateLayer(kind)` 变成一层前景色的渐变，`hovered()` 已带上悬停的那一层（default 的叠色是 0，不画）。尺寸：按钮高 `controlHeight.sm / md / lg`（`dimension.size.height`），按钮的图标 `iconSize`（`dimension.icon`），触控目标 `hitTarget()`（`dimension.size.hit`；`touchSlop`、`switchHitSlop` 按它补点按范围；0 不补）。各控件家族随平台切换的几何、指示条样式与粗细（`checkbox`、`switch`、`slider`、`radio-group`、`progress`、`spinner`、`tabs`、`calendar`、`sheet` 抓取条、`sidebar` 选中条与字段指示器）归属各自组件及共享 `lib/indicator` 的 `Record<Controls, …>` 预设表，经 `controls()` 选用。
+**组件怎么读 `shape`、`stroke`、`state`、`size`、`controls`。** 圆角按层读 `shape.{control,container,modal,button}`（`theme.ts`，响应式）：页内元素（输入框、行、徽标、标签、井、色区、kbd）读 `shape.control`，按钮类控件（`Button`、`IconButton`、`SplitButton`、`Toggle`、`ButtonGroup`、分页按钮、日历头部按钮）读 `shape.button`（`shape.corners.button` 为 `"full"` 时取 `999` 胶囊，否则取 `shape.control`），容器与浮层（卡片、菜单、弹出层、富提示、列表面板、toast）读 `shape.container`，模态面（对话框、抽屉、底部面板）读 `shape.modal`；嵌套表面不再单设 `inset` 圆角角色，改用 `rounded(outer, inset)` 按同心推出（内 = 外 − inset，不小于 0）：复选框的钩、分段控件的滑块与轨道、组合框的箭头钮、附件缩略图与颜色选择器的色块；复选框小角在组件预设 `checkboxPresets.corner`。线宽读 `stroke`（`dimension.stroke`），只有两条：控件的描边 `stroke.control`（按钮、输入框、选择器、复选框、分段、标签页、徽标…）与发丝线 `stroke.hairline`（分隔线、描边变体，以及卡片、面板、浮层与弹窗等表面的边 —— Material 不要这道边，由它的 finish 把 `border-color` 写成 `transparent`，而不是把线宽设成 0）；焦点环宽只有 `dimension.focus.width`，由 `focusRing()` 读。按下的透明度 `dimmed.pressed`（`state["pressed-opacity"]`），静止的指示器（滚动条滑块）读 `dimmed.rest`（`state["rest-opacity"]`，默认 `0.5`），强调色按下时整块换成 `finish.accentPressed`（底色自带按下态的 alpha，前景色取 `finish.accentPressed.foreground`）；禁用时若 `state.disabled.fill` 为 `false` 则沿用统一视图 `opacity: dimmed.disabled`，为 `true`（Material / WinUI）则由 `finish.disabled`（无边/关态另按变体设边）绘容器、由 `finish.disabled.foreground` 绘字与图标；`state.overlay` 经 `stateLayer(kind)` 变成一层前景色的渐变，`hovered()` 已带上悬停的那一层（default 的叠色是 0，不画）。尺寸：高度只有一把尺子 `dimension.size.height`（`controlHeight.sm / md / lg` 与 `controlSize.row`、`controlSize.line`、`controlSize.tabs` 都取它，`row`/`line`/`tabs` 取 `lg`），图标一把 `dimension.icon`（`iconSize` 与 `controlSize.control`、`controlSize.clear` 取 `md`，`controlSize.check` 取 `sm`），触控目标 `hitTarget()`（`dimension.size.hit`；`touchSlop`、`switchHitSlop` 按它补点按范围；0 不补）。各控件家族随平台切换的几何、指示条样式与粗细（`checkbox`、`switch`、`slider`、`radio-group`、`progress`、`spinner`、`tabs`、`calendar`、`sheet` 抓取条、`sidebar` 选中条与字段指示器）归属各自组件及共享 `lib/indicator` 的 `Record<Controls, …>` 预设表，经 `controls()` 选用。
 
 **留在代码里的值**，各处有注释：Tailwind 类里的 `rounded-(--radius-control)` / `rounded-(--radius-container)` / `rounded-(--radius-modal)` / `rounded-[4px]`、`active:opacity-70`、`disabled:opacity-50`、`border`（类名读不了 getter，前三者读 `theme.json` 的 token，与 `shape` 同值）；半高或半径推出的圆（`height / 2`、`side / 2`：胶囊、圆点、开关、进度条）；选择器的 2 点焦点边（`select.tsx` 的 `outlineWidth: 2`，它是边的渐显，不是焦点环）；实心按钮悬停与选中的 0.94 / 0.88 不透明度，附件失败时的 0.6，子菜单禁用的 0.35（没有对应的 state 角色）；toast 的 2 点色条、进度的 2 点限位、头像 2 点的环（装饰，不是 stroke 角色）；圆角 1 / 2 / 3 / 4 / 5 的小件（拇指、插入符、进度条端点、日历格的 17 等）。
 
-`typography.fontFamily` 在 `semantics.json` 中写 `null`（系统默认）或 `"{font-…}"`（引用 `theme.json` 中 `fontFamily` 类型的 token，如 `"{font-sans}"`）：`font.family()` 通过 `token()` 响应式读取它，构建时与运行时主题行为一致，宿主覆写 `font-sans` 也同样生效。
+正文家族不经本库读取：每个字阶复合 token 的 `fontFamily` 是 `{font.family.sans}`，NSH 用它画所有没写字体的文字，所以 `typography` 组上没有字体家族的扩展，语义层里没有顶层的字体家族键，`theme.ts` 里也没有解析正文家族的 getter；宿主覆写 `font-sans` 由 NSH 生效。
 
 ## 3 固定形状
 

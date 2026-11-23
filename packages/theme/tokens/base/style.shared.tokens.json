@@ -76,14 +76,9 @@
   "typography": {
     "$type": "typography",
     "$description": "Semantic typography roles referencing tier-specific font.size and font.line-height.",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "fontFamily": null
-      }
-    },
     "caption": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.caption}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.caption}",
@@ -96,7 +91,7 @@
     },
     "detail": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.detail}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.detail}",
@@ -109,7 +104,7 @@
     },
     "body": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.body}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.body}",
@@ -122,7 +117,7 @@
     },
     "label": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.label}",
         "fontWeight": 500,
         "lineHeight": "{font.line-height.label}",
@@ -135,7 +130,7 @@
     },
     "title": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.title}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.title}",
@@ -148,7 +143,7 @@
     },
     "headline": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.headline}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.headline}",
@@ -161,7 +156,7 @@
     },
     "display": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.display}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.display}",
@@ -199,14 +194,7 @@
           "value": 1,
           "unit": "px"
         },
-        "$description": "Hairline divider and outlined-variant stroke width."
-      },
-      "surface": {
-        "$value": {
-          "value": 1,
-          "unit": "px"
-        },
-        "$description": "Container surface border width (cards, drawers, overlays)."
+        "$description": "Hairline width for dividers, container edges (cards, drawers, overlays) and outlined variants."
       },
       "control": {
         "$value": {
@@ -297,17 +285,6 @@
       }
     }
   },
-  "duration": {
-    "$type": "duration",
-    "$description": "Named animation durations.",
-    "shake": {
-      "$value": {
-        "value": 500,
-        "unit": "ms"
-      },
-      "$description": "Duration of validation-error shake animation."
-    }
-  },
   "transition": {
     "$type": "transition",
     "$description": "Named CSS/NSH transition presets.",
@@ -327,30 +304,8 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles.",
-    "press": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "spring": {
-            "stiffness": 520,
-            "damping": 34
-          }
-        }
-      },
-      "$description": "Spring or timing physics for press-down feedback."
-    },
-    "settle": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "spring": {
-            "stiffness": 320,
-            "damping": 30
-          }
-        }
-      },
-      "$description": "Spring or timing physics for release settling."
-    },
-    "control": {
+    "$description": "Interactive spring and timing physics roles: fast, default, slow.",
+    "fast": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "spring": {
@@ -359,20 +314,32 @@
           }
         }
       },
-      "$description": "Spring or timing physics for small control toggles and thumbs."
+      "$description": "Quickest response: small control toggles and thumbs."
     },
-    "move": {
+    "default": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "spring": {
-            "stiffness": 504,
-            "damping": 38
+            "stiffness": 520,
+            "damping": 34
           }
         }
       },
-      "$description": "Spring or timing physics for layout and indicator movement."
+      "$description": "Everyday feedback: presses, releases and modest movement."
+    },
+    "slow": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 320,
+            "damping": 30
+          }
+        }
+      },
+      "$description": "Slowest: large surfaces and long-travel layout movement."
     }
   },
+
   "controls": {
     "$description": "Named per-theme control geometry preset family (base | material | winui).",
     "$extensions": {

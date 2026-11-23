@@ -1,13 +1,13 @@
-import { currentTheme, font, selectTheme, shape, type AppTheme } from "@shadcn-nsh/theme";
-import { mount, Text, token, View, type Tokens } from "nsh";
+import { currentTheme, selectTheme, shape, type AppTheme } from "@shadcn-nsh/theme";
+import { mount, Text, View } from "nsh";
 
 import defaultTheme from "../../../packages/theme/themes/default/index";
 import { Button, dialogCard } from "../../../packages/ui";
 
 /**
- * Simulates a host override of `radius-modal` and `font-sans` through `selectTheme` (which
- * calls `setTheme`): the semantic layer references `{radius-modal}` and `{font-sans}`, so both
- * reach components on the next frame without editing `semantics.json` values directly.
+ * Simulates a host override of `radius-modal` through `selectTheme` (which calls `setTheme`):
+ * the semantic layer references `{radius-modal}`, so the shape roles reach components on the
+ * next frame without editing `semantics.json` values directly.
  */
 const hostOverridden: AppTheme = {
   ...defaultTheme,
@@ -20,15 +20,7 @@ const hostOverridden: AppTheme = {
       theme: {
         ...defaultTheme.theme.cssVars?.theme,
         "radius-modal": "32px",
-        "font-sans": "ui-rounded",
       },
-    },
-  },
-  semantics: {
-    ...defaultTheme.semantics,
-    typography: {
-      ...defaultTheme.semantics.typography,
-      fontFamily: "{font-sans}",
     },
   },
 };
@@ -38,8 +30,6 @@ function App() {
     <View>
       <Text testID="dialog-radius">{`dialog-radius:${dialogCard().borderRadius}`}</Text>
       <Text testID="shape-modal">{`shape-modal:${shape.modal}`}</Text>
-      <Text testID="font-family">{`font-family:${font.family() ?? "system"}`}</Text>
-      <Text testID="font-token">{`font-token:${String(token("font-sans" as keyof Tokens) ?? "system")}`}</Text>
       <Text testID="sample">Sample</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>
       <Button onPress={() => selectTheme(hostOverridden)}>Override</Button>

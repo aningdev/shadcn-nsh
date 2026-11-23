@@ -16,14 +16,14 @@
         ],
         "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
         "overview": "Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and Expressive spatial/effects springs.",
-        "elevation": "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with `stroke.surface: 0px` and no backdrop blur.",
+        "elevation": "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.",
         "dos": [
           "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.",
           "Use `shape.curve: \"circular\"` and `controls: \"material\"` for top-rounded underlined fields and underlined tabs.",
-          "Keep `stroke.surface: 0px` on tonal/elevated containers so depth comes from tonal steps and elevation."
+          "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation."
         ],
         "donts": [
-          "Do not add backdrop blur (`backdropFilter`) or surface borders (`stroke.surface > 0`) to M3 tonal surfaces.",
+          "Do not add backdrop blur (`backdropFilter`) or a surface edge (`border-color`) to M3 tonal surfaces.",
           "Do not replace `outline` focus rings (`3px` width, `2px` offset) with halo rings."
         ]
       }
@@ -132,17 +132,9 @@
   "typography": {
     "$type": "typography",
     "$description": "Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "fontFamily": null
-      }
-    },
     "caption": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.caption}",
         "fontWeight": 500,
         "lineHeight": "{font.line-height.caption}",
@@ -155,10 +147,7 @@
     },
     "detail": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.detail}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.detail}",
@@ -171,10 +160,7 @@
     },
     "body": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.body}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.body}",
@@ -187,10 +173,7 @@
     },
     "label": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.label}",
         "fontWeight": 500,
         "lineHeight": "{font.line-height.label}",
@@ -203,10 +186,7 @@
     },
     "title": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.title}",
         "fontWeight": 500,
         "lineHeight": "{font.line-height.title}",
@@ -219,10 +199,7 @@
     },
     "headline": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.headline}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.headline}",
@@ -235,10 +212,7 @@
     },
     "display": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.display}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.display}",
@@ -276,14 +250,7 @@
           "value": 1,
           "unit": "px"
         },
-        "$description": "Hairline divider and outlined-variant stroke width."
-      },
-      "surface": {
-        "$value": {
-          "value": 0,
-          "unit": "px"
-        },
-        "$description": "0px surface outline (M3 elevated/filled surfaces rely on elevation rather than outlines)."
+        "$description": "Hairline width for dividers, container edges (cards, drawers, overlays) and outlined variants."
       },
       "control": {
         "$value": {
@@ -350,13 +317,7 @@
         "$description": "Minimum hit target size (0 disables padding expansion)."
       },
       "density": {
-        "$description": "Page-level row, padding, gap, and surface spacing metrics.",
-        "row": {
-          "$value": {
-            "value": 48,
-            "unit": "px"
-          }
-        },
+        "$description": "Page-level padding, gap, and surface spacing metrics.",
         "pad": {
           "$value": {
             "value": 16,
@@ -382,13 +343,7 @@
             "switch": "regular"
           }
         },
-        "$description": "Control internal geometry and switch size tier.",
-        "row": {
-          "$value": {
-            "value": 48,
-            "unit": "px"
-          }
-        },
+        "$description": "Control internal spacing and switch size tier.",
         "padding": {
           "$value": {
             "value": 8,
@@ -397,43 +352,13 @@
         },
         "gap": {
           "$value": {
-            "value": 12,
-            "unit": "px"
-          }
-        },
-        "control": {
-          "$value": {
-            "value": 18,
-            "unit": "px"
-          }
-        },
-        "check": {
-          "$value": {
-            "value": 18,
+            "value": 8,
             "unit": "px"
           }
         },
         "dot": {
           "$value": {
             "value": 10,
-            "unit": "px"
-          }
-        },
-        "tabs": {
-          "$value": {
-            "value": 48,
-            "unit": "px"
-          }
-        },
-        "line": {
-          "$value": {
-            "value": 48,
-            "unit": "px"
-          }
-        },
-        "clear": {
-          "$value": {
-            "value": 20,
             "unit": "px"
           }
         }
@@ -464,7 +389,7 @@
       "$description": "Standard icon dimensions (sm, md, lg).",
       "sm": {
         "$value": {
-          "value": 18,
+          "value": 16,
           "unit": "px"
         }
       },
@@ -525,7 +450,7 @@
       "$description": "Content stays full opacity when pressed (1; ripple/state layer shows press)."
     },
     "rest-opacity": {
-      "$value": 0.5,
+      "$value": 0.38,
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
     },
     "disabled": {
@@ -538,17 +463,6 @@
       "content": {
         "$value": 0.38
       }
-    }
-  },
-  "duration": {
-    "$type": "duration",
-    "$description": "Named animation durations.",
-    "shake": {
-      "$value": {
-        "value": 500,
-        "unit": "ms"
-      },
-      "$description": "Duration of validation-error shake animation."
     }
   },
   "transition": {
@@ -570,8 +484,8 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles.",
-    "press": {
+    "$description": "Interactive spring and timing physics roles: fast, default, slow.",
+    "fast": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "spring": {
@@ -580,9 +494,9 @@
           }
         }
       },
-      "$description": "M3 Expressive FastSpatial spring (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt)."
+      "$description": "M3 Expressive FastSpatial spring for control state (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt)."
     },
-    "settle": {
+    "default": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "spring": {
@@ -591,29 +505,18 @@
           }
         }
       },
-      "$description": "M3 Expressive DefaultSpatial spring (stiffness 380, damping ratio 0.8)."
+      "$description": "M3 Expressive DefaultSpatial spring for presses and movement (stiffness 380, damping ratio 0.8)."
     },
-    "control": {
+    "slow": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "spring": {
-            "stiffness": 1600,
-            "damping": 80
+            "stiffness": 200,
+            "damping": 22.63
           }
         }
       },
-      "$description": "M3 Expressive DefaultEffects spring (stiffness 1600, damping ratio 1.0)."
-    },
-    "move": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "spring": {
-            "stiffness": 380,
-            "damping": 31.19
-          }
-        }
-      },
-      "$description": "M3 Expressive DefaultSpatial spring for layout and indicator movement."
+      "$description": "M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8)."
     }
   },
   "controls": {
@@ -629,6 +532,10 @@
     "family": {
       "$type": "fontFamily",
       "$description": "Font family stacks.",
+      "sans": {
+        "$value": "system-ui",
+        "$description": "Primary sans-serif font family stack."
+      },
       "mono": {
         "$value": "monospace",
         "$description": "Monospace font family for code blocks and numeric readouts."
@@ -682,27 +589,27 @@
     },
     "line-height": {
       "$type": "number",
-      "$description": "Unitless line-height ratios per type role for pointer input.",
+      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
       "caption": {
-        "$value": 1.4545454545454546
+        "$value": 1.454545
       },
       "detail": {
-        "$value": 1.3333333333333333
+        "$value": 1.333333
       },
       "body": {
-        "$value": 1.4285714285714286
+        "$value": 1.428571
       },
       "label": {
-        "$value": 1.4285714285714286
+        "$value": 1.428571
       },
       "title": {
         "$value": 1.5
       },
       "headline": {
-        "$value": 1.3333333333333333
+        "$value": 1.333333
       },
       "display": {
-        "$value": 1.2222222222222223
+        "$value": 1.222222
       }
     }
   },

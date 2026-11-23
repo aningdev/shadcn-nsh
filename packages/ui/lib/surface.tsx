@@ -12,7 +12,7 @@ import {
   TERMINAL_GAP,
   TERMINAL_ROW,
   rounded,
-  type ControlSizes,
+  type ControlMetrics,
   font,
   shape,
   stroke,
@@ -31,8 +31,9 @@ const pointer = platform.desktop;
  * The page's density: compact with a pointer (desktops), roomier on a touch
  * screen. Section titles, surfaces, rows and their padding take these, so a
  * demo's sections read the same on every page. The sizes of the text are the
- * theme's typography roles (`title`, `detail`, `body`), the rest its `dimension.size.density`; read
- * from the theme in use, so a theme switch redraws what reads them.
+ * theme's typography roles (`title`, `detail`, `body`), `row` the tallest of
+ * its three heights, the rest its `dimension.size.density`; read from the
+ * theme in use, so a theme switch redraws what reads them.
  */
 export const density = reactive<{
   title: number;
@@ -48,14 +49,21 @@ export const density = reactive<{
     title: typography.title.fontSize[tier],
     note: typography.detail.fontSize[tier],
     body: typography.body.fontSize[tier],
+    row: dimension.size.height[tier].lg,
     ...dimension.size.density[tier],
   };
 });
 
 /** One tier's sizes of a list of controls (see `controlSize` for what each is). */
-interface ControlSizeSet extends ControlSizes {
+interface ControlSizeSet extends ControlMetrics {
+  row: number;
   label: number;
   detail: number;
+  control: number;
+  check: number;
+  tabs: number;
+  line: number;
+  clear: number;
 }
 
 /** The terminal's sizes, which stay in code: they are the character grid's, not a theme's. */
@@ -76,14 +84,14 @@ const terminalSizes: ControlSizeSet = {
 
 /**
  * The sizes of a list of controls (a settings list, a filter, a plan
- * picker): a pointer's compact tier (40-point rows, 14-point labels,
- * 16-point boxes), a touch screen's (rows of at least 44 points, a finger's
- * target, 15-point labels, 22-point boxes). The terminal's rows are one Cell
+ * picker). Rows, value lines and tab strips are the tallest of the theme's
+ * three heights; a checkbox's or radio's side and a clear button are the
+ * middle icon, a check mark the smallest. The terminal's rows are one Cell
  * row each, an indicator's box three Cells wide for its glyph (`[x]`).
  * `row` is a pressable row's least height, `line` a row of values', `tabs`
- * a tab strip's, `control` a checkbox's or radio's side, `check` its mark's
- * and an icon's size, `dot` a radio's dot, `clear` a clear button's side,
- * `switch` the switch size beside a row's label.
+ * a tab strip's, `control` a checkbox's or radio's side, `check` its mark's,
+ * `dot` a radio's dot, `clear` a clear button's side, `switch` the switch size
+ * beside a row's label; `padding` and `gap` are the theme's control spacing.
  * `label` and `detail` are the theme's type roles of those names. Read from the
  * theme in use (the terminal's are the grid's), so a theme switch redraws
  * what reads them.
@@ -106,7 +114,15 @@ export const controlSize = reactive<ControlSizeSet>(
   () => {
     if (terminal) return terminalSizes;
     const { typography, dimension } = style();
+    const { height } = dimension.size;
+    const icons = dimension.icon;
     return {
+      row: height[tier].lg,
+      line: height[tier].lg,
+      tabs: height[tier].lg,
+      control: icons[tier].md,
+      clear: icons[tier].md,
+      check: icons[tier].sm,
       ...dimension.size.control[tier],
       label: typography.label.fontSize[tier],
       detail: typography.detail.fontSize[tier],
@@ -142,7 +158,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
   return {
     backgroundColor: finish.section.backgroundColor,
     ...rounded(density.surface),
-    borderWidth: stroke.surface,
+    borderWidth: stroke.hairline,
     borderColor: finish.section.borderColor,
     boxShadow: finish.section.boxShadow,
     ...(o?.padded ? { padding: density.pad } : {}),
@@ -157,7 +173,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
 export function insetSurface(): ViewStyle {
   return {
     backgroundColor: colors.inset,
-    borderWidth: terminal ? stroke.hairline : stroke.surface,
+    borderWidth: stroke.hairline,
     borderColor: colors.line,
     ...rounded(shape.control),
     ...finish.inset,

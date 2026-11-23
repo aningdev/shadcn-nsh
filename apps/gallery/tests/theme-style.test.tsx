@@ -20,10 +20,10 @@ test("a rendered page follows the style of the theme selected, and of the build-
 
   const before = look(app.texts());
   expect(before).toEqual({
-    density: String(pointer.density.pointer.row),
-    control: String(pointer.control.pointer.row),
-    plain: String(pointer.control.pointer.row),
-    press: `${defaults.motion.press.stiffness}|${defaults.motion.press.damping}`,
+    density: String(pointer.height.pointer.lg),
+    control: String(pointer.control.pointer.padding),
+    plain: String(pointer.height.pointer.lg),
+    press: `${defaults.motion.fast.stiffness}|${defaults.motion.fast.damping}`,
     focus: String(defaults.dimension.focus.width),
     curve: "continuous",
   });
@@ -32,8 +32,8 @@ test("a rendered page follows the style of the theme selected, and of the build-
 
   expect(look(app.texts())).toEqual({
     density: "60",
-    control: "52",
-    plain: "52",
+    control: "13",
+    plain: "60",
     press: "111|22",
     focus: "5",
     curve: "circular",

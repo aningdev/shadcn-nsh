@@ -35,6 +35,10 @@
     "family": {
       "$type": "fontFamily",
       "$description": "Font family stacks.",
+      "sans": {
+        "$value": "system-ui",
+        "$description": "The UI's font: the platform's own sans-serif."
+      },
       "mono": {
         "$value": "monospace",
         "$description": "Monospace font family for code blocks and numeric readouts."
@@ -93,7 +97,7 @@
         "dos": [
           "Preserve the citrus accent (`primary` / `primary-foreground`) for primary actions, active runs, and focus highlights.",
           "Use `inset` wells inside cards and `raised` surfaces for controls sitting on cards, paired with continuous squircle corners (`shape.curve: \"continuous\"`).",
-          "Apply tactile spring press feedback (`state.press-scale: 0.97`, `motion.press` / `motion.settle`)."
+          "Apply tactile spring press feedback (`state.press-scale: 0.97`, `motion.default` / `motion.slow`)."
         ],
         "donts": [
           "Do not flatten shadows or remove inner highlights on `card`, `raised`, `inset`, or `pill` finishes.",

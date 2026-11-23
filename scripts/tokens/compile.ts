@@ -331,15 +331,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     input: "touch",
   });
 
-  const typoGroup = lp.typography as Record<string, unknown>;
-  const rawFontFamily = (getExt(typoGroup)?.fontFamily as string | null | undefined) ?? null;
-  const fontMatch =
-    typeof rawFontFamily === "string"
-      ? /^\{font\.family\.([a-z0-9-]+)\}$/.exec(rawFontFamily)
-      : null;
-  const fontFamily = fontMatch ? `{font-${fontMatch[1]}}` : rawFontFamily;
-
-  const typographyOut: Record<string, unknown> = { fontFamily };
+  const typographyOut: Record<string, unknown> = {};
   for (const role of TYPE_ROLES) {
     const pTypo = (lpResolved.typography as Record<string, Record<string, unknown>>)[role]!
       .$value as DtcgTypography;
@@ -347,11 +339,13 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       .$value as DtcgTypography;
     const pSize = (pTypo.fontSize as { value: number }).value;
     const tSize = (tTypo.fontSize as { value: number }).value;
+    // DTCG's `lineHeight` is a multiple of the font size; the contract states the whole points it works out to.
+    const points = (size: number, lineHeight: number) => Math.round(size * lineHeight);
     typographyOut[role] = {
       fontSize: { pointer: pSize, touch: tSize },
       lineHeight: {
-        pointer: pTypo.lineHeight as number,
-        touch: tTypo.lineHeight as number,
+        pointer: points(pSize, pTypo.lineHeight as number),
+        touch: points(tSize, tTypo.lineHeight as number),
       },
       fontWeight: pTypo.fontWeight,
       letterSpacing: pTypo.letterSpacing.value,
@@ -396,7 +390,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   const motionResolved = lpResolved.motion as Record<string, Record<string, unknown>>;
   const motionMerged = lp.motion as Record<string, Record<string, unknown>>;
   const motionOut: Record<string, unknown> = {};
-  for (const role of ["press", "settle", "control", "move"] as const) {
+  for (const role of ["fast", "default", "slow"] as const) {
     const m = motionResolved[role]!;
     const ext = getExt(m);
     if (ext?.spring) {
@@ -435,13 +429,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       ),
     },
   };
-
-  const shakeDur = (
-    (lpResolved.duration as Record<string, Record<string, unknown>>).shake!.$value as {
-      value: number;
-    }
-  ).value;
-  const durationOut = { shake: shakeDur };
 
   const sharedFinishesTree = (doc.sets?.theme?.sources ?? []).reduce<Record<string, unknown>>(
     (acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)),
@@ -540,7 +527,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         fill: getExt(stateGroup.disabled)?.fill as boolean,
       },
     },
-    duration: durationOut,
     transition: transitionOut,
     motion: motionOut,
     controls: getExt(lp.controls)!.preset as string,

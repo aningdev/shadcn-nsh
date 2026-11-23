@@ -23,7 +23,7 @@
           "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views."
         ],
         "donts": [
-          "Do not replace Retina `0.5px` `stroke.hairline`/`stroke.surface` with thick borders or `circular` corners.",
+          "Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners.",
           "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+."
         ]
       }
@@ -132,17 +132,9 @@
   "typography": {
     "$type": "typography",
     "$description": "Semantic typography roles referencing tier-specific font.size and font.line-height.",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "fontFamily": null
-      }
-    },
     "caption": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.caption}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.caption}",
@@ -155,10 +147,7 @@
     },
     "detail": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.detail}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.detail}",
@@ -171,10 +160,7 @@
     },
     "body": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.body}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.body}",
@@ -187,10 +173,7 @@
     },
     "label": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.label}",
         "fontWeight": 500,
         "lineHeight": "{font.line-height.label}",
@@ -203,10 +186,7 @@
     },
     "title": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.title}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.title}",
@@ -219,10 +199,7 @@
     },
     "headline": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.headline}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.headline}",
@@ -235,10 +212,7 @@
     },
     "display": {
       "$value": {
-        "fontFamily": [
-          "system-ui",
-          "sans-serif"
-        ],
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.display}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.display}",
@@ -277,13 +251,6 @@
           "unit": "px"
         },
         "$description": "Retina 0.5px hairline divider width per Apple HIG."
-      },
-      "surface": {
-        "$value": {
-          "value": 0.5,
-          "unit": "px"
-        },
-        "$description": "Retina 0.5px container surface hairline width per Apple HIG."
       },
       "control": {
         "$value": {
@@ -350,16 +317,10 @@
         "$description": "Minimum hit target size (0 disables padding expansion)."
       },
       "density": {
-        "$description": "Page-level row, padding, gap, and surface spacing metrics.",
-        "row": {
-          "$value": {
-            "value": 32,
-            "unit": "px"
-          }
-        },
+        "$description": "Page-level padding, gap, and surface spacing metrics.",
         "pad": {
           "$value": {
-            "value": 14,
+            "value": 16,
             "unit": "px"
           }
         },
@@ -382,58 +343,22 @@
             "switch": "regular"
           }
         },
-        "$description": "Control internal geometry and switch size tier.",
-        "row": {
-          "$value": {
-            "value": 36,
-            "unit": "px"
-          }
-        },
+        "$description": "Control internal spacing and switch size tier.",
         "padding": {
           "$value": {
-            "value": 6,
+            "value": 8,
             "unit": "px"
           }
         },
         "gap": {
           "$value": {
-            "value": 10,
-            "unit": "px"
-          }
-        },
-        "control": {
-          "$value": {
-            "value": 16,
-            "unit": "px"
-          }
-        },
-        "check": {
-          "$value": {
-            "value": 12,
+            "value": 8,
             "unit": "px"
           }
         },
         "dot": {
           "$value": {
             "value": 6,
-            "unit": "px"
-          }
-        },
-        "tabs": {
-          "$value": {
-            "value": 28,
-            "unit": "px"
-          }
-        },
-        "line": {
-          "$value": {
-            "value": 28,
-            "unit": "px"
-          }
-        },
-        "clear": {
-          "$value": {
-            "value": 16,
             "unit": "px"
           }
         }
@@ -470,13 +395,13 @@
       },
       "md": {
         "$value": {
-          "value": 14,
+          "value": 16,
           "unit": "px"
         }
       },
       "lg": {
         "$value": {
-          "value": 16,
+          "value": 20,
           "unit": "px"
         }
       }
@@ -540,17 +465,6 @@
       }
     }
   },
-  "duration": {
-    "$type": "duration",
-    "$description": "Named animation durations.",
-    "shake": {
-      "$value": {
-        "value": 500,
-        "unit": "ms"
-      },
-      "$description": "Duration of validation-error shake animation."
-    }
-  },
   "transition": {
     "$type": "transition",
     "$description": "Named CSS/NSH transition presets.",
@@ -570,30 +484,8 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles.",
-    "press": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "spring": {
-            "stiffness": 520,
-            "damping": 34
-          }
-        }
-      },
-      "$description": "Spring or timing physics for press-down feedback."
-    },
-    "settle": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "spring": {
-            "stiffness": 320,
-            "damping": 30
-          }
-        }
-      },
-      "$description": "Spring or timing physics for release settling."
-    },
-    "control": {
+    "$description": "Interactive spring and timing physics roles: fast, default, slow.",
+    "fast": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "spring": {
@@ -602,18 +494,29 @@
           }
         }
       },
-      "$description": "Spring or timing physics for small control toggles and thumbs."
+      "$description": "Quickest response: small control toggles and thumbs."
     },
-    "move": {
+    "default": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "spring": {
-            "stiffness": 504,
-            "damping": 38
+            "stiffness": 520,
+            "damping": 34
           }
         }
       },
-      "$description": "Spring or timing physics for layout and indicator movement."
+      "$description": "Everyday feedback: presses, releases and modest movement."
+    },
+    "slow": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 320,
+            "damping": 30
+          }
+        }
+      },
+      "$description": "Slowest: large surfaces and long-travel layout movement."
     }
   },
   "controls": {
@@ -629,6 +532,10 @@
     "family": {
       "$type": "fontFamily",
       "$description": "Font family stacks.",
+      "sans": {
+        "$value": "system-ui",
+        "$description": "Primary sans-serif font family stack."
+      },
       "mono": {
         "$value": "monospace",
         "$description": "Monospace font family for code blocks and numeric readouts."
@@ -682,27 +589,27 @@
     },
     "line-height": {
       "$type": "number",
-      "$description": "Unitless line-height ratios per type role for pointer input.",
+      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
       "caption": {
         "$value": 1.3
       },
       "detail": {
-        "$value": 1.2727272727272727
+        "$value": 1.272727
       },
       "body": {
-        "$value": 1.2307692307692308
+        "$value": 1.230769
       },
       "label": {
-        "$value": 1.2307692307692308
+        "$value": 1.230769
       },
       "title": {
-        "$value": 1.2307692307692308
+        "$value": 1.230769
       },
       "headline": {
-        "$value": 1.1818181818181819
+        "$value": 1.181818
       },
       "display": {
-        "$value": 1.2307692307692308
+        "$value": 1.230769
       }
     }
   },

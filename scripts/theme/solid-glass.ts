@@ -390,8 +390,9 @@ function themeLevel(): Record<string, string> {
   return {
     // Solid Glass stepped corner radii: 11 px controls, 14 px containers, 20 px modals.
     ...scaledRadii({ control: 11, container: 14, modal: 20 }),
-    // The monospaced family: NSH's generic `monospace`, the system's own — neither theme ships a
-    // font face. A theme that names one states its family here (the app imports the file).
+    // The families: NSH's generic `system-ui` and `monospace`, the system's own — neither theme
+    // ships a font face. A theme that names one states its family here (the app imports the file).
+    "font-sans": "system-ui",
     "font-mono": "monospace",
     // The stylesheet has no scrim of its own; shadcn's modal overlay is `bg-black/50`.
     scrim: "oklch(0 0 0 / 0.5)",

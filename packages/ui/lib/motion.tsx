@@ -10,6 +10,9 @@ import { createMotion, effect, reduceMotion, signal, Text } from "nsh";
  * becomes valid stays still. `play("shake")` already does nothing when the user asks for less
  * motion.
  *
+ * The shake is `nsh`'s own preset: how hard and how long a rejected field shakes is the platform's
+ * feedback, not a theme's.
+ *
  * It returns the style to call where the field draws it (`style={shake.style()}`): a component's
  * body runs once, so only the style an expression builds is read again when the shake starts and
  * ends. At rest it is `null`, so a quiet field has no transform at all. `playing()` says whether
@@ -37,9 +40,7 @@ export function createRejectShake(tick: () => number | undefined): {
     seen = next;
     if (reduceMotion()) return;
     shaking.set(true);
-    void Promise.resolve(motion.play("shake", { duration: themeMotion.shake.duration })).then(() =>
-      shaking.set(false),
-    );
+    void Promise.resolve(motion.play("shake")).then(() => shaking.set(false));
   });
   return {
     style: () => (shaking() ? { transform: motion.transform } : null),
@@ -49,7 +50,7 @@ export function createRejectShake(tick: () => number | undefined): {
 
 /**
  * A figure that rolls to its next value: up when `value` grows, down when it shrinks, on the
- * theme's `motion.control` spring. The native number field keeps its own glyphs and caret, so the
+ * theme's `motion.fast` spring. The native number field keeps its own glyphs and caret, so the
  * roll is the text beside it (upstream's ticker), not the field. The first value is already there.
  * With reduced motion the next value replaces this one in place.
  */
@@ -71,12 +72,12 @@ export function Roll(props: { value: number; style?: StyleProp<TextStyle>; child
     motion.opacity.set(0);
     void motion.play({
       keyframes: { translateY: [away, 0], opacity: [0, 1] },
-      ...(isTiming(themeMotion.control)
-        ? { duration: themeMotion.control.duration, easing: themeMotion.control.timingFunction }
+      ...(isTiming(themeMotion.fast)
+        ? { duration: themeMotion.fast.duration, easing: themeMotion.fast.timingFunction }
         : {
             spring: {
-              stiffness: themeMotion.control.stiffness,
-              damping: themeMotion.control.damping,
+              stiffness: themeMotion.fast.stiffness,
+              damping: themeMotion.fast.damping,
             },
           }),
     });

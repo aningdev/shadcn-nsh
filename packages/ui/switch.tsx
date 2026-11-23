@@ -179,7 +179,7 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
  * the app owns: the knob follows it, from a press or from elsewhere.
  */
 export function switchLook(on: () => boolean, size: SwitchSize = "default"): SwitchLook {
-  const t = follow(() => (on() ? 1 : 0), motion.move);
+  const t = follow(() => (on() ? 1 : 0), motion.default);
   let cachedTravel = geometry(size).width - geometry(size).height;
   let cachedX = t.interpolate({ inputRange: [0, 1], outputRange: [0, cachedTravel] });
   const travelX = () => {

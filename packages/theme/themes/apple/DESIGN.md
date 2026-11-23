@@ -122,46 +122,46 @@ colors:
     violet: "#bf5af2"
 typography:
   caption:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 10px
     fontWeight: 400
-    lineHeight: 1.3
+    lineHeight: 13px
     letterSpacing: 0px
   detail:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 11px
     fontWeight: 400
-    lineHeight: 1.2727272727272727
+    lineHeight: 14px
     letterSpacing: 0px
   body:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 13px
     fontWeight: 400
-    lineHeight: 1.2307692307692308
+    lineHeight: 16px
     letterSpacing: 0px
   label:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 13px
     fontWeight: 500
-    lineHeight: 1.2307692307692308
+    lineHeight: 16px
     letterSpacing: 0px
   title:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 13px
     fontWeight: 600
-    lineHeight: 1.2307692307692308
+    lineHeight: 16px
     letterSpacing: 0px
   headline:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 22px
     fontWeight: 600
-    lineHeight: 1.1818181818181819
+    lineHeight: 26px
     letterSpacing: 0px
   display:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 26px
     fontWeight: 600
-    lineHeight: 1.2307692307692308
+    lineHeight: 32px
     letterSpacing: 0px
 rounded:
   control: 8px
@@ -170,42 +170,32 @@ rounded:
 spacing:
   hit: 0px
   density:
-    row: 32px
-    pad: 14px
+    pad: 16px
     gap: 12px
     surface: 12px
   control:
-    row: 36px
-    padding: 6px
-    gap: 10px
-    control: 16px
-    check: 12px
+    padding: 8px
+    gap: 8px
     dot: 6px
-    tabs: 28px
-    line: 28px
-    clear: 16px
   height:
     sm: 24px
     md: 28px
     lg: 32px
   stroke:
     hairline: 0.5px
-    surface: 0.5px
     control: 1px
   focus:
     width: 3px
     offset: 0px
   icon:
     sm: 12px
-    md: 14px
-    lg: 16px
+    md: 16px
+    lg: 20px
 motion:
   enter:
     duration: 420ms
     delay: 0ms
     timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
-  shake:
-    duration: 500ms
 components:
   button-primary:
     backgroundColor: "{colors.light.primary}"
@@ -389,24 +379,25 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 Semantic typography roles referencing tier-specific font.size and font.line-height.
 
 - **Font stacks:** Font family stacks.
+  - `sans` (`system-ui`): Primary sans-serif font family stack.
   - `mono` (`monospace`): Monospace font family for code blocks and numeric readouts.
-  - Semantic body `fontFamily`: `null` (system UI default).
+  - Every role's `fontFamily` is `{font.family.sans}`.
 
-- **`caption`** (10px (touch: 12px), weight 400, line-height 1.30, letter-spacing 0px): Small captions and segmented counter labels.
-- **`detail`** (11px (touch: 13px), weight 400, line-height 1.27, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
-- **`body`** (13px (touch: 17px), weight 400, line-height 1.23, letter-spacing 0px): Standard body copy, list rows, and dialog content.
-- **`label`** (13px (touch: 17px), weight 500, line-height 1.23, letter-spacing 0px): Control labels, form labels, and interactive triggers.
-- **`title`** (13px (touch: 17px), weight 600, line-height 1.23, letter-spacing 0px): Card and section headings.
-- **`headline`** (22px, weight 600, line-height 1.18, letter-spacing 0px): Page-level headings.
-- **`display`** (26px (touch: 34px), weight 600, line-height 1.23, letter-spacing 0px): Large display numerals and hero headings.
+- **`caption`** (10px (touch: 12px), weight 400, line-height 13px, line-height 16px on touch, letter-spacing 0px): Small captions and segmented counter labels.
+- **`detail`** (11px (touch: 13px), weight 400, line-height 14px, line-height 18px on touch, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
+- **`body`** (13px (touch: 17px), weight 400, line-height 16px, line-height 22px on touch, letter-spacing 0px): Standard body copy, list rows, and dialog content.
+- **`label`** (13px (touch: 17px), weight 500, line-height 16px, line-height 22px on touch, letter-spacing 0px): Control labels, form labels, and interactive triggers.
+- **`title`** (13px (touch: 17px), weight 600, line-height 16px, line-height 22px on touch, letter-spacing 0px): Card and section headings.
+- **`headline`** (22px, weight 600, line-height 26px, line-height 28px on touch, letter-spacing 0px): Page-level headings.
+- **`display`** (26px (touch: 34px), weight 600, line-height 32px, line-height 41px on touch, letter-spacing 0px): Large display numerals and hero headings.
 
 ## Layout
 
 Ergonomic sizing scales for pointer input.
 
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
-- **Density:** Page-level row, padding, gap, and surface spacing metrics.
-- **Control geometry:** Control internal geometry and switch size tier.
+- **Density:** Page-level padding, gap, and surface spacing metrics.
+- **Control geometry:** Control internal spacing and switch size tier.
 - **Control heights:** Standard control heights (sm, md, lg).
 - **Switch size tier (pointer):** `regular`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
@@ -420,7 +411,6 @@ Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` fini
 
 - **Strokes:** Border stroke widths.
   - `stroke.hairline` (0.5px): Retina 0.5px hairline divider width per Apple HIG.
-  - `stroke.surface` (0.5px): Retina 0.5px container surface hairline width per Apple HIG.
   - `stroke.control` (1px): Interactive control border width.
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
@@ -441,14 +431,12 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles.
+Interactive spring and timing physics roles: fast, default, slow.
 
 - **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
-- **`shake`** (500ms): Duration of validation-error shake animation.
-- **`press`** (spring: stiffness=520, damping=34 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for press-down feedback.
-- **`settle`** (spring: stiffness=320, damping=30 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for release settling.
-- **`control`** (spring: stiffness=1218, damping=70 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for small control toggles and thumbs.
-- **`move`** (spring: stiffness=504, damping=38 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for layout and indicator movement.
+- **`fast`** (spring: stiffness=1218, damping=70 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Quickest response: small control toggles and thumbs.
+- **`default`** (spring: stiffness=520, damping=34 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Everyday feedback: presses, releases and modest movement.
+- **`slow`** (spring: stiffness=320, damping=30 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Slowest: large surfaces and long-travel layout movement.
 - **Press & ripple** (`press-scale: 1`, `pressed-opacity: 0.7`, `ripple: false`): Interaction state opacities, press scale, and ripple switch.
 - **Timing curves:** Named timing curves shared across themes.
 
@@ -500,5 +488,5 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never delete finish fields or alter the merged finish key set across appearances or themes.
-- **Don't:** Do not replace Retina `0.5px` `stroke.hairline`/`stroke.surface` with thick borders or `circular` corners.
+- **Don't:** Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners.
 - **Don't:** Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+.

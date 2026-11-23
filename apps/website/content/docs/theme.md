@@ -12,7 +12,7 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 | `theme.json`                            | Base tokens: colors (light / dark and shared), the three `radius-*` layer lengths (plus `radius`), and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                          |
 | `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance at the `pointer` tier (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio, and Style Dictionary v4; static snapshots as shipped |
 | `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from DTCG sources and the pointer-tier `light`/`dark` resolutions; static snapshot as shipped                                                             |
-| `semantics.json`                        | Semantic layer in DTCG names: 8 style groups (`typography`, `dimension`, `shape`, `state`, `duration`, `transition`, `motion`, `controls`) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}`             |
+| `semantics.json`                        | Semantic layer in DTCG names: 7 style groups (`typography`, `dimension`, `shape`, `state`, `transition`, `motion`, `controls`) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}`                         |
 | `lib/ui/theme.ts`                       | `colors`, `finish`, `shape`, `font`, `style`, `mono`, `focusRing` and `alpha`, read reactively from `theme.json` and `semantics.json`                                                                                                         |
 
 ## Installation
@@ -194,7 +194,7 @@ Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius:
 
 ## Fonts
 
-Two base tokens are fonts: `font-sans` is the app's body font — every text that names no family of its own — and `font-mono` is the monospaced family: the `font-mono` class, code in a `Text`, and this library's `mono()`. Both live in `cssVars.theme`. In `semantics.json`, `typography.fontFamily` is `"{font-sans}"` (or `"{font-mono}"`), or `null` for the system default; `font.family()` resolves it reactively via `token()`. The shipped themes set `font-mono` and leave `font-sans` out (`typography.fontFamily: null`), so both use the system's own:
+Two base tokens are fonts: `font-sans` is the app's body font — every text that names no family of its own — and `font-mono` is the monospaced family: the `font-mono` class, code in a `Text`, and this library's `mono()`. Both live in `cssVars.theme`, and every shipped theme declares each of them. Nothing in `semantics.json` names a family: each of the 7 typography composites carries `fontFamily: "{font.family.sans}"` because DTCG requires the field, but the library never reads it — NSH draws every text that names no family in `font-sans` itself, which is why a theme whose body font is the platform's writes a generic family:
 
 ```json
 {

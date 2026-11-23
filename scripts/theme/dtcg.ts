@@ -44,7 +44,6 @@ export type ThemeMotionRoleStyle =
 
 export interface ThemeStyleInput {
   typography: {
-    fontFamily: string | null;
     caption: ThemeTypeRoleStyle;
     detail: ThemeTypeRoleStyle;
     body: ThemeTypeRoleStyle;
@@ -62,8 +61,8 @@ export interface ThemeStyleInput {
     size: {
       hit: { pointer: number; touch: number };
       density: {
-        pointer: { row: number; pad: number; gap: number; surface: number };
-        touch: { row: number; pad: number; gap: number; surface: number };
+        pointer: { pad: number; gap: number; surface: number };
+        touch: { pad: number; gap: number; surface: number };
       };
       control: {
         pointer: Record<string, number | string>;
@@ -74,7 +73,7 @@ export interface ThemeStyleInput {
         touch: { sm: number; md: number; lg: number };
       };
     };
-    stroke: { hairline: number; surface: number; control: number };
+    stroke: { hairline: number; control: number };
     focus: { style: string; width: number; offset: number };
     icon: {
       pointer: { sm: number; md: number; lg: number };
@@ -95,13 +94,11 @@ export interface ThemeStyleInput {
     "rest-opacity": number;
     disabled: { content: number; fill: boolean };
   };
-  duration: { shake: number };
   transition: { enter: { duration: number; timingFunction: string } };
   motion: {
-    press: ThemeMotionRoleStyle;
-    settle: ThemeMotionRoleStyle;
-    control: ThemeMotionRoleStyle;
-    move: ThemeMotionRoleStyle;
+    fast: ThemeMotionRoleStyle;
+    default: ThemeMotionRoleStyle;
+    slow: ThemeMotionRoleStyle;
   };
   controls?: "base" | "material" | "winui";
 }
@@ -626,12 +623,6 @@ function getExtNs(node: Record<string, unknown>): Record<string, unknown> {
   return exts[EXT_NS];
 }
 
-function toDtcgFontFamilyRef(raw: string | null): string | null {
-  if (raw === null) return null;
-  const m = /^\{font-([a-z0-9-]+)\}$/.exec(raw);
-  return m ? `{font.family.${m[1]!}}` : raw;
-}
-
 function encodeSharedStyleOverrides(
   style: ThemeStyleInput,
   baseShared: Record<string, unknown>,
@@ -641,7 +632,6 @@ function encodeSharedStyleOverrides(
   typography?: Record<string, unknown>;
   shape?: Record<string, unknown>;
   state: Record<string, unknown>;
-  duration?: Record<string, unknown>;
   transition?: Record<string, unknown>;
   motion?: Record<string, unknown>;
   controls?: Record<string, unknown>;
@@ -651,9 +641,6 @@ function encodeSharedStyleOverrides(
 
   // 1. typography
   const baseTypoGroup = getAt(baseShared, "typography");
-  const baseFontFamilyExt = (getExtNs(baseTypoGroup).fontFamily as string | null) ?? null;
-  const themeFontFamilyExt = toDtcgFontFamilyRef(style.typography.fontFamily);
-  const roleFontFamily: string | string[] = themeFontFamilyExt ?? ["system-ui", "sans-serif"];
   const typoOverrides: Record<string, unknown> = {};
   for (const role of TYPE_ROLES) {
     const spec = style.typography[role];
@@ -661,14 +648,10 @@ function encodeSharedStyleOverrides(
     const baseVal = baseTok.$value as Record<string, unknown>;
     const nextWeight = spec.fontWeight;
     const nextTracking = { value: spec.letterSpacing, unit: "px" };
-    if (
-      !deepEqual(roleFontFamily, baseVal.fontFamily) ||
-      nextWeight !== baseVal.fontWeight ||
-      !deepEqual(nextTracking, baseVal.letterSpacing)
-    ) {
+    if (nextWeight !== baseVal.fontWeight || !deepEqual(nextTracking, baseVal.letterSpacing)) {
       typoOverrides[role] = {
         $value: {
-          fontFamily: roleFontFamily,
+          fontFamily: "{font.family.sans}",
           fontSize: `{font.size.${role}}`,
           fontWeight: nextWeight,
           lineHeight: `{font.line-height.${role}}`,
@@ -679,13 +662,10 @@ function encodeSharedStyleOverrides(
     }
   }
   const typography =
-    themeFontFamilyExt !== baseFontFamilyExt || Object.keys(typoOverrides).length > 0
+    Object.keys(typoOverrides).length > 0
       ? {
           $type: "typography",
           $description: desc("typography", baseTypoGroup.$description),
-          ...(themeFontFamilyExt !== baseFontFamilyExt
-            ? { $extensions: { [EXT_NS]: { fontFamily: themeFontFamilyExt } } }
-            : {}),
           ...typoOverrides,
         }
       : undefined;
@@ -694,7 +674,7 @@ function encodeSharedStyleOverrides(
   const dimensionExtras: Record<string, unknown> = {};
   const baseStroke = getAt(baseShared, "dimension", "stroke");
   const strokeOverrides: Record<string, unknown> = {};
-  for (const key of ["hairline", "surface", "control"] as const) {
+  for (const key of ["hairline", "control"] as const) {
     const baseTok = getAt(baseStroke, key);
     const baseVal = (baseTok.$value as { value: number }).value;
     if (style.dimension.stroke[key] !== baseVal) {
@@ -824,23 +804,7 @@ function encodeSharedStyleOverrides(
     };
   }
 
-  // 5. duration.shake
-  const baseDuration = getAt(baseShared, "duration");
-  const baseShake = getAt(baseDuration, "shake");
-  const baseShakeVal = (baseShake.$value as { value: number }).value;
-  const duration =
-    style.duration.shake !== baseShakeVal
-      ? {
-          $type: "duration",
-          $description: desc("duration", baseDuration.$description),
-          shake: {
-            $value: { value: style.duration.shake, unit: "ms" },
-            $description: desc("duration.shake", baseShake.$description),
-          },
-        }
-      : undefined;
-
-  // 6. transition.enter
+  // 5. transition.enter
   const baseTransition = getAt(baseShared, "transition");
   const baseEnter = getAt(baseTransition, "enter");
   const baseEnterVal = baseEnter.$value as {
@@ -865,10 +829,10 @@ function encodeSharedStyleOverrides(
         }
       : undefined;
 
-  // 7. motion.{press,settle,control,move}
+  // 6. motion.{fast,default,slow}
   const baseMotion = getAt(baseShared, "motion");
   const motionOverrides: Record<string, unknown> = {};
-  for (const role of ["press", "settle", "control", "move"] as const) {
+  for (const role of ["fast", "default", "slow"] as const) {
     const spec = style.motion[role];
     const baseRole = getAt(baseMotion, role);
     if ("duration" in spec) {
@@ -906,7 +870,7 @@ function encodeSharedStyleOverrides(
         }
       : undefined;
 
-  // 8. controls
+  // 7. controls
   const baseControls = getAt(baseShared, "controls");
   const baseControlsPreset = getExtNs(baseControls).preset as string;
   const preset = style.controls ?? baseControlsPreset;
@@ -923,7 +887,6 @@ function encodeSharedStyleOverrides(
     ...(typography ? { typography } : {}),
     ...(shape ? { shape } : {}),
     state: stateOut,
-    ...(duration ? { duration } : {}),
     ...(transition ? { transition } : {}),
     ...(motion ? { motion } : {}),
     ...(controls ? { controls } : {}),
@@ -951,14 +914,17 @@ function encodeInputTierOverrides(
 
   for (const role of TYPE_ROLES) {
     const sizeVal = style.typography[role].fontSize[tier];
-    const ratio = style.typography[role].lineHeight[tier];
+    const points = style.typography[role].lineHeight[tier];
     const baseSize = (getAt(baseFontSize, role).$value as { value: number }).value;
-    const baseRatio = getAt(baseLineHeight, role).$value as number;
+    const baseLineHeightVal = getAt(baseLineHeight, role).$value as number;
+    // DTCG's `lineHeight` is a multiple of the font size: the theme authors whole points, the
+    // source keeps the ratio, and `tokens:build` works the points back out.
+    const lineHeight = Number((points / sizeVal).toFixed(6));
     if (sizeVal !== baseSize) {
       fontSizeDiff[role] = { $value: { value: sizeVal, unit: "px" } };
     }
-    if (ratio !== baseRatio) {
-      lineHeightDiff[role] = { $value: ratio };
+    if (lineHeight !== baseLineHeightVal) {
+      lineHeightDiff[role] = { $value: lineHeight };
     }
   }
 
@@ -1276,7 +1242,6 @@ export function emitDtcgTheme(
               "Scale factor applied while a pressable control is pressed.",
           },
         },
-    ...(sharedStyle?.duration ? { duration: sharedStyle.duration } : {}),
     ...(sharedStyle?.transition ? { transition: sharedStyle.transition } : {}),
     ...(sharedStyle?.motion ? { motion: sharedStyle.motion } : {}),
     ...(sharedStyle?.controls ? { controls: sharedStyle.controls } : {}),

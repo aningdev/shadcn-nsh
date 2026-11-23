@@ -122,46 +122,46 @@ colors:
     violet: "#b9a2ff"
 typography:
   caption:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 11px
     fontWeight: 400
-    lineHeight: 1.3636363636363635
+    lineHeight: 16px
     letterSpacing: 0px
   detail:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 12px
     fontWeight: 400
-    lineHeight: 1.4166666666666667
+    lineHeight: 16px
     letterSpacing: 0px
   body:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 13px
     fontWeight: 400
-    lineHeight: 1.4615384615384615
+    lineHeight: 20px
     letterSpacing: 0px
   label:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 14px
     fontWeight: 500
-    lineHeight: 1.4285714285714286
+    lineHeight: 20px
     letterSpacing: 0px
   title:
-    fontFamily: "system-ui, sans-serif"
-    fontSize: 13px
+    fontFamily: system-ui
+    fontSize: 16px
     fontWeight: 600
-    lineHeight: 1.4615384615384615
+    lineHeight: 24px
     letterSpacing: 0px
   headline:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 20px
     fontWeight: 600
-    lineHeight: 1.3
+    lineHeight: 28px
     letterSpacing: 0px
   display:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 26px
     fontWeight: 600
-    lineHeight: 1.2307692307692308
+    lineHeight: 32px
     letterSpacing: 0px
 rounded:
   control: 8px
@@ -170,42 +170,32 @@ rounded:
 spacing:
   hit: 0px
   density:
-    row: 36px
-    pad: 14px
+    pad: 12px
     gap: 12px
     surface: 10px
   control:
-    row: 40px
-    padding: 6px
-    gap: 10px
-    control: 16px
-    check: 12px
+    padding: 8px
+    gap: 8px
     dot: 6px
-    tabs: 30px
-    line: 32px
-    clear: 16px
   height:
     sm: 24px
     md: 28px
-    lg: 34px
+    lg: 32px
   stroke:
     hairline: 1px
-    surface: 1px
     control: 1px
   focus:
     width: 3px
     offset: 0px
   icon:
     sm: 12px
-    md: 14px
-    lg: 15px
+    md: 16px
+    lg: 20px
 motion:
   enter:
     duration: 420ms
     delay: 0ms
     timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
-  shake:
-    duration: 500ms
 components:
   button-primary:
     backgroundColor: "{colors.light.primary}"
@@ -389,24 +379,25 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 Semantic typography roles referencing tier-specific font.size and font.line-height.
 
 - **Font stacks:** Font family stacks.
+  - `sans` (`system-ui`): The UI's font: the platform's own sans-serif.
   - `mono` (`monospace`): Monospace font family for code blocks and numeric readouts.
-  - Semantic body `fontFamily`: `null` (system UI default).
+  - Every role's `fontFamily` is `{font.family.sans}`.
 
-- **`caption`** (11px (touch: 12px), weight 400, line-height 1.36, letter-spacing 0px): Small captions and segmented counter labels.
-- **`detail`** (12px (touch: 13px), weight 400, line-height 1.42, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
-- **`body`** (13px (touch: 15px), weight 400, line-height 1.46, letter-spacing 0px): Standard body copy, list rows, and dialog content.
-- **`label`** (14px (touch: 15px), weight 500, line-height 1.43, letter-spacing 0px): Control labels, form labels, and interactive triggers.
-- **`title`** (13px, weight 600, line-height 1.46, letter-spacing 0px): Card and section headings.
-- **`headline`** (20px (touch: 22px), weight 600, line-height 1.30, letter-spacing 0px): Page-level headings.
-- **`display`** (26px (touch: 28px), weight 600, line-height 1.23, letter-spacing 0px): Large display numerals and hero headings.
+- **`caption`** (11px (touch: 12px), weight 400, line-height 16px, letter-spacing 0px): Small captions and segmented counter labels.
+- **`detail`** (12px (touch: 13px), weight 400, line-height 16px, line-height 20px on touch, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
+- **`body`** (13px (touch: 15px), weight 400, line-height 20px, letter-spacing 0px): Standard body copy, list rows, and dialog content.
+- **`label`** (14px (touch: 15px), weight 500, line-height 20px, letter-spacing 0px): Control labels, form labels, and interactive triggers.
+- **`title`** (16px, weight 600, line-height 24px, letter-spacing 0px): Card and section headings.
+- **`headline`** (20px (touch: 22px), weight 600, line-height 28px, letter-spacing 0px): Page-level headings.
+- **`display`** (26px (touch: 28px), weight 600, line-height 32px, line-height 36px on touch, letter-spacing 0px): Large display numerals and hero headings.
 
 ## Layout
 
 Ergonomic sizing scales for pointer input.
 
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
-- **Density:** Page-level row, padding, gap, and surface spacing metrics.
-- **Control geometry:** Control internal geometry and switch size tier.
+- **Density:** Page-level padding, gap, and surface spacing metrics.
+- **Control geometry:** Control internal spacing and switch size tier.
 - **Control heights:** Standard control heights (sm, md, lg).
 - **Switch size tier (pointer):** `small`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
@@ -419,8 +410,7 @@ Ergonomic sizing scales for pointer input.
 Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline borders, contact + cast drop shadows (`card`, `menu`, `modal`, `inverse`), and translucent frosted glass (`glass` with 80% popover alpha).
 
 - **Strokes:** Border stroke widths.
-  - `stroke.hairline` (1px): Hairline divider and outlined-variant stroke width.
-  - `stroke.surface` (1px): Container surface border width (cards, drawers, overlays).
+  - `stroke.hairline` (1px): Hairline width for dividers, container edges (cards, drawers, overlays) and outlined variants.
   - `stroke.control` (1px): Interactive control border width.
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
@@ -441,14 +431,12 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles.
+Interactive spring and timing physics roles: fast, default, slow.
 
 - **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
-- **`shake`** (500ms): Duration of validation-error shake animation.
-- **`press`** (spring: stiffness=520, damping=34 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for press-down feedback.
-- **`settle`** (spring: stiffness=320, damping=30 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for release settling.
-- **`control`** (spring: stiffness=1218, damping=70 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for small control toggles and thumbs.
-- **`move`** (spring: stiffness=504, damping=38 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for layout and indicator movement.
+- **`fast`** (spring: stiffness=1218, damping=70 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Quickest response: small control toggles and thumbs.
+- **`default`** (spring: stiffness=520, damping=34 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Everyday feedback: presses, releases and modest movement.
+- **`slow`** (spring: stiffness=320, damping=30 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Slowest: large surfaces and long-travel layout movement.
 - **Press & ripple** (`press-scale: 0.97`, `pressed-opacity: 0.7`, `ripple: false`): Interaction state opacities, press scale, and ripple switch.
 - **Timing curves:** Named timing curves shared across themes.
 
@@ -496,7 +484,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
 - **Do:** Preserve the citrus accent (`primary` / `primary-foreground`) for primary actions, active runs, and focus highlights.
 - **Do:** Use `inset` wells inside cards and `raised` surfaces for controls sitting on cards, paired with continuous squircle corners (`shape.curve: "continuous"`).
-- **Do:** Apply tactile spring press feedback (`state.press-scale: 0.97`, `motion.press` / `motion.settle`).
+- **Do:** Apply tactile spring press feedback (`state.press-scale: 0.97`, `motion.default` / `motion.slow`).
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never delete finish fields or alter the merged finish key set across appearances or themes.

@@ -172,7 +172,7 @@ export interface Tiered<T> {
   touch: T;
 }
 
-/** One typography role: fontSize and unitless lineHeight multiplier per tier, numeric fontWeight (400..700), letterSpacing in points. */
+/** One typography role: fontSize in points and lineHeight in whole points per tier, numeric fontWeight (400..700), letterSpacing in points. */
 export interface TypographyRole {
   fontSize: Tiered<number>;
   lineHeight: Tiered<number>;
@@ -180,23 +180,16 @@ export interface TypographyRole {
   letterSpacing: number;
 }
 
-/** The sizes of a list of controls in one tier: see `controlSize`. */
-export interface ControlSizes {
-  row: number;
+/** What a control's own spacing reads in one tier: the padding inside its box, the gap beside it, a radio's dot, and which switch size sits beside a label. Rows and glyphs come from the height and icon scales, not from here. */
+export interface ControlMetrics {
   padding: number;
   gap: number;
-  control: number;
-  check: number;
   dot: number;
-  tabs: number;
-  line: number;
-  clear: number;
   switch: string;
 }
 
-/** A page's density in one tier: see `density`. */
-export interface DensitySizes {
-  row: number;
+/** A page's density in one tier: its padding, its gaps, and the corner radius of its section surfaces. Rows come from the height scale, not from here. */
+export interface DensitySpacing {
   pad: number;
   gap: number;
   surface: number;
@@ -238,8 +231,6 @@ export type Controls = "base" | "material" | "winui";
  */
 export interface Style {
   typography: {
-    /** `null` is the system font. */
-    fontFamily: string | null;
     caption: TypographyRole;
     detail: TypographyRole;
     body: TypographyRole;
@@ -256,11 +247,11 @@ export interface Style {
     };
     size: {
       hit: Tiered<number>;
-      density: Tiered<DensitySizes>;
-      control: Tiered<ControlSizes>;
+      density: Tiered<DensitySpacing>;
+      control: Tiered<ControlMetrics>;
       height: Tiered<Steps>;
     };
-    stroke: { hairline: number; surface: number; control: number };
+    stroke: { hairline: number; control: number };
     focus: { style: string; width: number; offset: number };
     icon: Tiered<Steps>;
   };
@@ -279,18 +270,13 @@ export interface Style {
     "pressed-opacity": number;
     disabled: { content: number; fill: boolean };
   };
-  duration: {
-    /** A rejected value's shake, the length of `nsh`'s `play("shake")` preset. */
-    shake: number;
-  };
   transition: {
     enter: TimingSpec;
   };
   motion: {
-    press: Spring | TimingSpec;
-    settle: Spring | TimingSpec;
-    control: Spring | TimingSpec;
-    move: Spring | TimingSpec;
+    fast: Spring | TimingSpec;
+    default: Spring | TimingSpec;
+    slow: Spring | TimingSpec;
   };
   controls: Controls;
 }
@@ -345,7 +331,7 @@ export function reactive<T extends object>(keys: readonly (keyof T)[], read: () 
 /** The tier a pointer's screen (a desktop) or a touch screen reads: `platform.desktop`, fixed for the run. */
 export const tier: "pointer" | "touch" = platform.desktop ? "pointer" : "touch";
 
-/** A bare `{token}` reference (used by `dimension.shape.*` and `typography.fontFamily`). */
+/** A bare `{token}` reference (used by `dimension.shape.*`). */
 const tokenRef = /^\{([a-z0-9-]+)\}$/;
 
 /** The one relative color a finish writes: a token's color at another alpha. */
@@ -365,17 +351,6 @@ const resolveDimension = (value: string): number => {
     if (typeof resolved === "number") return resolved;
   }
   return Number(value);
-};
-
-/** Resolve a `{token}` font family reference through `token()` reactively, or `null` for system default. */
-const resolveFont = (value: string | null): string | null => {
-  if (value === null) return null;
-  const match = tokenRef.exec(value);
-  if (match) {
-    const resolved = token(match[1] as keyof Tokens);
-    return typeof resolved === "string" ? resolved : null;
-  }
-  return value;
 };
 
 /**
@@ -820,24 +795,20 @@ export const toneTint = (tone: Tone) =>
  * use the system font with tabular numbers instead. */
 export const mono = () => token("font-mono");
 
-/** A typography role of `semantics.json`'s `typography`: every one but `fontFamily`. */
-export type TypeName = Exclude<keyof Style["typography"], "fontFamily">;
+/** A typography role of `semantics.json`'s `typography`: the seven text roles. */
+export type TypeName = keyof Style["typography"];
 
 /**
  * One facet of a typography role, read from the style in use (reactive: reading it in JSX, a `draw` or
  * an effect follows `selectTheme`). A component reads only the facets it set before, so text that
  * leaves its weight or line height to the text around it still does:
  * `style={{ fontSize: font.size("label"), fontWeight: font.weight("label") }}`.
- * `size` and `lineHeight` take the tier of the screen (`tier`); `lineHeight` resolves the unitless
- * DTCG ratio to rounded points for NSH.
+ * `size` and `lineHeight` take the tier of the screen (`tier`); `lineHeight` is the theme's
+ * line height in points (a whole number of pixels).
  */
 export const font = {
-  family: () => resolveFont(style().typography.fontFamily),
   size: (role: TypeName) => style().typography[role].fontSize[tier],
-  lineHeight: (role: TypeName) => {
-    const t = style().typography[role];
-    return Math.round(t.fontSize[tier] * t.lineHeight[tier]);
-  },
+  lineHeight: (role: TypeName) => style().typography[role].lineHeight[tier],
   weight: (role: TypeName) =>
     style().typography[role].fontWeight as NonNullable<TextStyle["fontWeight"]>,
   letterSpacing: (role: TypeName) => style().typography[role].letterSpacing,
@@ -868,13 +839,10 @@ export const shape = {
   },
 };
 
-/** Line widths in points (`semantics.json`'s `dimension.stroke`): `hairline` a divider or outlined element's edge, `surface` a surface's outline (0 where surfaces stand by tone or shadow alone), `control` a control's edge. The focus ring's width is `dimension.focus.width`. */
+/** Line widths in points (`semantics.json`'s `dimension.stroke`): `hairline` a divider's or a surface's edge (0 where surfaces stand by tone or shadow alone), `control` a control's edge. The focus ring's width is `dimension.focus.width`. */
 export const stroke = {
   get hairline() {
     return style().dimension.stroke.hairline;
-  },
-  get surface() {
-    return style().dimension.stroke.surface;
   },
   get control() {
     return style().dimension.stroke.control;
@@ -1032,35 +1000,30 @@ const motionRole = (read: () => Spring | TimingSpec): Spring | Timing => {
 };
 
 /**
- * The motion every control shares: quick, slightly springy (or timed when a theme supplies
- * `{ duration, timingFunction }`). `control` and `move` are gpui-kit's `spring_control` (a 180 ms
- * response, no overshoot: a mark or a fill coming and going) and `spring_move` (280 ms, a
- * damping ratio of 0.85: a thumb or an indicator traveling) as a unit mass's stiffness
- * (2π / response)² and damping 2 · ratio · 2π / response.
+ * The three springs a theme offers: `fast` (a small control's state coming and going), `default`
+ * (the one most feedback uses: a press, a release, a modest move) and `slow` (a large surface or a
+ * long-travel movement). A spring, unless a theme times them with `{ duration, timingFunction }`.
+ * `enter` is a surface's entrance, which is always timed.
  */
 export const motion = {
-  press: motionRole(() => style().motion.press),
-  settle: motionRole(() => style().motion.settle),
-  control: motionRole(() => style().motion.control),
-  move: motionRole(() => style().motion.move),
+  fast: motionRole(() => style().motion.fast),
+  default: motionRole(() => style().motion.default),
+  slow: motionRole(() => style().motion.slow),
   get enter(): Timing {
     const { duration, timingFunction } = style().transition.enter;
     return { duration, timingFunction: easings[timingFunction] };
   },
-  get shake() {
-    return { duration: style().duration.shake };
-  },
 };
 
 /**
- * Drive `value` to `to` using `config` (a theme `Spring` or `Timing`, `motion.control` by
+ * Drive `value` to `to` using `config` (a theme `Spring` or `Timing`, `motion.default` by
  * default). Lands immediately when `reduceMotion()` is active. Optional `springExtra` (such as an
  * initial `velocity`) applies only when `config` is a spring.
  */
 export function animate(
   value: AnimatedValue,
   to: number,
-  config: Spring | Timing = motion.control,
+  config: Spring | Timing = motion.default,
   springExtra?: { velocity?: number; mass?: number },
 ): Promise<{ finished: boolean }> {
   if (reduceMotion()) {
@@ -1085,10 +1048,7 @@ export function animate(
  * the pointer drives (a dragged thumb, a hover's place) is set in the same
  * frame, never animated toward the pointer.
  */
-export function follow(
-  target: () => number,
-  config: Spring | Timing = motion.control,
-): AnimatedValue {
+export function follow(target: () => number, config: Spring | Timing = motion.fast): AnimatedValue {
   const v = createAnimatedValue(target());
   let shown = target();
   effect(() => {

@@ -237,7 +237,7 @@ export const TAB_ICON_ROOM = TAB_ICON + 6;
 
 /**
  * A tab's label (and icon, and a count in a capsule): the text color while
- * selected, fading in as the indicator arrives (`motion.move`), the icon's
+ * selected, fading in as the indicator arrives (`motion.default`), the icon's
  * two tints crossing over. It keeps its natural width (never truncated) and
  * reports it without the icon (`onWidth`): the same whether the icon shows
  * or not, so a row deciding on its icons by it never flips back.
@@ -253,7 +253,7 @@ export function TabTitle(props: {
   underline?: boolean;
   onWidth?: (bare: number) => void;
 }) {
-  const on = follow(() => (props.selected ? 1 : 0), motion.move);
+  const on = follow(() => (props.selected ? 1 : 0), motion.default);
   const listVariant = ListVariantContext();
   // A preset that marks the chosen tab with an underline also sets its label in the accent.
   const chosenInk = () =>

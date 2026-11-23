@@ -22,8 +22,8 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   const initialFocus = readJson<Record<string, unknown>>("focus");
   expect(initialFocus.borderColor).toBeDefined();
   expect(initialFocus.boxShadow).toBeUndefined();
-  expect(read("motionPress")).toMatch(/^spring:\d+:\d+$/);
-  expect(read("motionControl")).toMatch(/^spring:\d+:\d+$/);
+  expect(read("motionFast")).toMatch(/^spring:\d+:\d+$/);
+  expect(read("motionDefault")).toMatch(/^spring:\d+:\d+$/);
   expect(readJson<Record<string, unknown>>("btnHover")).toEqual({ opacity: 0.94 });
   expect(readJson<unknown>("toggleOnHover")).toBeNull();
   expect(readJson<Record<string, unknown>>("bareHover").backgroundColor).toBeDefined();
@@ -48,9 +48,9 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   expect(expressiveFocus.boxShadow).toBe(`0 0 0 1px ${ringHalo}`);
 
   // Timing roles & new platform-neutral curves are resolved reactively.
-  expect(read("motionPress")).toBe("timing:150:[0.05,0.7,0.1,1]");
-  expect(read("motionControl")).toBe("timing:167:[1,0,1,1]");
-  expect(read("motionMove")).toMatch(/^spring:\d+:\d+$/);
+  expect(read("motionFast")).toBe("timing:150:[0.05,0.7,0.1,1]");
+  expect(read("motionDefault")).toBe("timing:250:[0,0,0,1]");
+  expect(read("motionSlow")).toBe("timing:167:[1,0,1,1]");
   expect(read("motionEnter")).toBe("200:[0.55,0.55,0,1]");
 
   // Drive follow/Roll/animate under timing config cleanly.
@@ -113,7 +113,7 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   // Switch back to build-time default cleanly.
   await app.press("text:Reset");
   expect(readJson("focus")).toEqual(initialFocus);
-  expect(read("motionPress")).toMatch(/^spring:\d+:\d+$/);
+  expect(read("motionFast")).toMatch(/^spring:\d+:\d+$/);
   expect(readJson("btnAndroid")).toBeNull();
   expect(readJson("menuMaterial")).toEqual({});
 });

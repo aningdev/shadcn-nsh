@@ -437,7 +437,7 @@ export function MessageScrollerButton(props: MessageScrollerButtonProps) {
   const direction = (): MessageScrollerDirection => props.direction ?? "end";
   const away = () =>
     direction() === "end" ? !(scroller?.atEnd() ?? true) : !(scroller?.atStart() ?? true);
-  const slide = follow(() => (away() ? 1 : 0), motion.move);
+  const slide = follow(() => (away() ? 1 : 0), motion.default);
   const [, rest] = split(props, [
     "direction",
     "children",

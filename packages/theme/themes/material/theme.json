@@ -9,7 +9,8 @@
       "font-mono": "monospace",
       "scrim": "oklch(0 0 0 / 0.32)",
       "media": "oklch(0.1869 0.0151 266.766)",
-      "on-media": "oklch(1 0 0)"
+      "on-media": "oklch(1 0 0)",
+      "font-sans": "system-ui"
     },
     "light": {
       "background": "oklch(0.98379 0.01284 321.894)",

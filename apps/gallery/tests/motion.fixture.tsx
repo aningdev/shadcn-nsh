@@ -29,7 +29,7 @@ function moved(style: { transform?: unknown } | undefined) {
   return style?.transform ? "sink" : "still";
 }
 
-const describeMotion = (m: typeof motion.control) =>
+const describeMotion = (m: typeof motion.fast) =>
   isTiming(m) ? `${m.duration}|${JSON.stringify(m.timingFunction)}` : `${m.stiffness}|${m.damping}`;
 
 function App() {
@@ -56,7 +56,7 @@ function App() {
   ].join(" || ");
   return (
     <View>
-      <Text>{`motion=${reduceMotion()}|${describeMotion(motion.control)}|${describeMotion(motion.move)}`}</Text>
+      <Text>{`motion=${reduceMotion()}|${describeMotion(motion.fast)}|${describeMotion(motion.default)}|${describeMotion(motion.slow)}`}</Text>
       <Text>{`press=${line(press.transition)}|${moved(press.activeStyle)}`}</Text>
       <Text>{`button=${line(button.style)}|${moved(button.activeStyle)}|${moved(button.hoverStyle)}`}</Text>
       <Text>{`toggle=${line(toggle.style)}|${moved(toggle.activeStyle)}|${moved(toggle.hoverStyle)}`}</Text>
@@ -67,7 +67,6 @@ function App() {
       <Text>{`tooltip=${line(popup.style)}`}</Text>
       <Text>{`toast=${line(close.style)}`}</Text>
       <Text>{`classes=${classes}`}</Text>
-      <Text>{`shake=${motion.shake.duration}`}</Text>
       <Text>{`sweep=800|infinite|alternate|true`}</Text>
     </View>
   );

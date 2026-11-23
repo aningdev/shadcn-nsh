@@ -131,11 +131,6 @@
   "typography": {
     "$type": "typography",
     "$description": "WinUI 3 typography scale mapped from TextBlock_themeresources.xaml (400 and 600 weights only).",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "fontFamily": "{font.family.sans}"
-      }
-    },
     "caption": {
       "$value": {
         "fontFamily": "{font.family.sans}",
@@ -254,14 +249,7 @@
           "value": 1,
           "unit": "px"
         },
-        "$description": "Hairline divider and outlined-variant stroke width."
-      },
-      "surface": {
-        "$value": {
-          "value": 1,
-          "unit": "px"
-        },
-        "$description": "Container surface border width (cards, drawers, overlays)."
+        "$description": "Hairline width for dividers, container edges (cards, drawers, overlays) and outlined variants."
       },
       "control": {
         "$value": {
@@ -328,16 +316,10 @@
         "$description": "Minimum hit target size (0 disables padding expansion)."
       },
       "density": {
-        "$description": "Page-level row, padding, gap, and surface spacing metrics.",
-        "row": {
-          "$value": {
-            "value": 40,
-            "unit": "px"
-          }
-        },
+        "$description": "Page-level padding, gap, and surface spacing metrics.",
         "pad": {
           "$value": {
-            "value": 16,
+            "value": 12,
             "unit": "px"
           }
         },
@@ -360,13 +342,7 @@
             "switch": "regular"
           }
         },
-        "$description": "Control internal geometry and switch size tier.",
-        "row": {
-          "$value": {
-            "value": 32,
-            "unit": "px"
-          }
-        },
+        "$description": "Control internal spacing and switch size tier.",
         "padding": {
           "$value": {
             "value": 6,
@@ -379,39 +355,9 @@
             "unit": "px"
           }
         },
-        "control": {
-          "$value": {
-            "value": 20,
-            "unit": "px"
-          }
-        },
-        "check": {
-          "$value": {
-            "value": 12,
-            "unit": "px"
-          }
-        },
         "dot": {
           "$value": {
             "value": 12,
-            "unit": "px"
-          }
-        },
-        "tabs": {
-          "$value": {
-            "value": 32,
-            "unit": "px"
-          }
-        },
-        "line": {
-          "$value": {
-            "value": 32,
-            "unit": "px"
-          }
-        },
-        "clear": {
-          "$value": {
-            "value": 16,
             "unit": "px"
           }
         }
@@ -518,17 +464,6 @@
       }
     }
   },
-  "duration": {
-    "$type": "duration",
-    "$description": "Named animation durations.",
-    "shake": {
-      "$value": {
-        "value": 500,
-        "unit": "ms"
-      },
-      "$description": "Duration of validation-error shake animation."
-    }
-  },
   "transition": {
     "$type": "transition",
     "$description": "Named CSS/NSH transition presets.",
@@ -548,9 +483,9 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles.",
-    "press": {
-      "$description": "WinUI 3 ToggleSwitch press timing (83ms decelerate, ToggleSwitch_themeresources.xaml:321).",
+    "$description": "Interactive spring and timing physics roles: fast, default, slow.",
+    "fast": {
+      "$description": "WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).",
       "timing": {
         "$type": "transition",
         "$value": {
@@ -564,11 +499,29 @@
           },
           "timingFunction": "{cubicBezier.decelerate}"
         },
-        "$description": "Timing curve and duration for press."
+        "$description": "Timing curve and duration for fast."
       }
     },
-    "settle": {
-      "$description": "WinUI 3 250ms settle timing with Direct Entrance decelerate curve.",
+    "default": {
+      "$description": "WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 167,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.decelerate}"
+        },
+        "$description": "Timing curve and duration for default."
+      }
+    },
+    "slow": {
+      "$description": "WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).",
       "timing": {
         "$type": "transition",
         "$value": {
@@ -582,43 +535,7 @@
           },
           "timingFunction": "{cubicBezier.decelerate}"
         },
-        "$description": "Timing curve and duration for settle."
-      }
-    },
-    "control": {
-      "$description": "WinUI 3 167ms control timing with Point-to-Point curve.",
-      "timing": {
-        "$type": "transition",
-        "$value": {
-          "duration": {
-            "value": 167,
-            "unit": "ms"
-          },
-          "delay": {
-            "value": 0,
-            "unit": "ms"
-          },
-          "timingFunction": "{cubicBezier.point-to-point}"
-        },
-        "$description": "Timing curve and duration for control."
-      }
-    },
-    "move": {
-      "$description": "WinUI 3 333ms move timing with Point-to-Point curve.",
-      "timing": {
-        "$type": "transition",
-        "$value": {
-          "duration": {
-            "value": 333,
-            "unit": "ms"
-          },
-          "delay": {
-            "value": 0,
-            "unit": "ms"
-          },
-          "timingFunction": "{cubicBezier.point-to-point}"
-        },
-        "$description": "Timing curve and duration for move."
+        "$description": "Timing curve and duration for slow."
       }
     }
   },
@@ -699,27 +616,27 @@
     },
     "line-height": {
       "$type": "number",
-      "$description": "Unitless line-height ratios per type role for pointer input.",
+      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
       "caption": {
-        "$value": 1.3333333333333333
+        "$value": 1.333333
       },
       "detail": {
-        "$value": 1.3333333333333333
+        "$value": 1.333333
       },
       "body": {
-        "$value": 1.4285714285714286
+        "$value": 1.428571
       },
       "label": {
-        "$value": 1.4285714285714286
+        "$value": 1.428571
       },
       "title": {
-        "$value": 1.4285714285714286
+        "$value": 1.428571
       },
       "headline": {
         "$value": 1.4
       },
       "display": {
-        "$value": 1.2857142857142858
+        "$value": 1.285714
       }
     }
   },

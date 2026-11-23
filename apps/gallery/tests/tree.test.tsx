@@ -36,9 +36,9 @@ test("Right expands a Tree folder, and a disabled Tree takes no press", async ()
   expect(has(app.texts(), "selected=src")).toBe(true);
 });
 
-test("treeRowHeight is the row a tree draws: 28 with a pointer, 44 on a touch screen", async () => {
+test("treeRowHeight is the row a tree draws: one step under the tallest height on either tier", async () => {
   const desktop = await open("./tree.fixture.tsx", { platform: "macos" });
   expect(desktop.texts()).toContain("height 28");
   const phone = await open("./tree.fixture.tsx", { platform: "ios" });
-  expect(phone.texts()).toContain("height 44");
+  expect(phone.texts()).toContain("height 48");
 });

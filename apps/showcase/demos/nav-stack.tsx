@@ -1293,7 +1293,7 @@ export function NavStackDemo() {
   effect(() => {
     if (sheet() !== "dialog") return;
     popIn.set(0);
-    void animate(popIn, 1, motion.settle);
+    void animate(popIn, 1, motion.slow);
   });
   const current = () => modals.find((m) => m.key === sheet());
   const shown = () =>

@@ -24,6 +24,12 @@
           "unit": "px"
         }
       },
+      "title": {
+        "$value": {
+          "value": 13,
+          "unit": "px"
+        }
+      },
       "headline": {
         "$value": {
           "value": 22,
@@ -33,24 +39,24 @@
     },
     "line-height": {
       "$type": "number",
-      "$description": "Unitless line-height ratios per type role for pointer input.",
+      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
       "caption": {
         "$value": 1.3
       },
       "detail": {
-        "$value": 1.2727272727272727
+        "$value": 1.272727
       },
       "body": {
-        "$value": 1.2307692307692308
+        "$value": 1.230769
       },
       "label": {
-        "$value": 1.2307692307692308
+        "$value": 1.230769
       },
       "title": {
-        "$value": 1.2307692307692308
+        "$value": 1.230769
       },
       "headline": {
-        "$value": 1.1818181818181819
+        "$value": 1.181818
       }
     }
   },
@@ -60,10 +66,10 @@
     "size": {
       "$description": "Ergonomic sizing scales for pointer input.",
       "density": {
-        "$description": "Page-level row, padding, gap, and surface spacing metrics.",
-        "row": {
+        "$description": "Page-level padding, gap, and surface spacing metrics.",
+        "pad": {
           "$value": {
-            "value": 32,
+            "value": 16,
             "unit": "px"
           }
         },
@@ -80,43 +86,7 @@
             "switch": "regular"
           }
         },
-        "$description": "Control internal geometry and switch size tier.",
-        "row": {
-          "$value": {
-            "value": 36,
-            "unit": "px"
-          }
-        },
-        "tabs": {
-          "$value": {
-            "value": 28,
-            "unit": "px"
-          }
-        },
-        "line": {
-          "$value": {
-            "value": 28,
-            "unit": "px"
-          }
-        }
-      },
-      "height": {
-        "$description": "Standard control heights (sm, md, lg).",
-        "lg": {
-          "$value": {
-            "value": 32,
-            "unit": "px"
-          }
-        }
-      }
-    },
-    "icon": {
-      "$description": "Standard icon dimensions (sm, md, lg).",
-      "lg": {
-        "$value": {
-          "value": 16,
-          "unit": "px"
-        }
+        "$description": "Control internal spacing and switch size tier."
       }
     }
   }

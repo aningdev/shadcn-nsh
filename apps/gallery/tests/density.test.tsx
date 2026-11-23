@@ -29,8 +29,8 @@ test("a standalone switch gets a 44 point target on a touch screen", async () =>
 test("a popover's padding and a dialog's type grow on a touch screen", async () => {
   const desktop = await open("./density.fixture.tsx", { platform: "macos" });
   const touch = await open("./density.fixture.tsx", { platform: "ios" });
-  expect(find(desktop.texts(), "overlay=")).toBe("14|17|13|19");
-  expect(find(touch.texts(), "overlay=")).toBe("16|20|15|21");
+  expect(find(desktop.texts(), "overlay=")).toBe("14|17|13|20");
+  expect(find(touch.texts(), "overlay=")).toBe("16|20|15|20");
 });
 
 test("a menu row is a 26-point line with a pointer and a 46-point finger row on a touch screen", async () => {

@@ -22,6 +22,18 @@ export interface FinishRow {
   reads: string;
 }
 
+/** A value a platform states off the 4 px grid, cited: the theme it is a theme's, the key, the value, and where the platform says so. */
+export interface ScaleCitation {
+  /** The theme's id: `winui`. */
+  theme: string;
+  /** The style key: `dimension.size.control.pointer.padding`. */
+  key: string;
+  /** The value it takes. */
+  value: number;
+  /** Where the platform states it: a spec or a resource file. */
+  source: string;
+}
+
 /** What the spec says about the theme's shape. */
 export interface SpecParts {
   /** The A layer: shadcn's slots, the names NSH resolves (`theme.rs`). */
@@ -87,4 +99,16 @@ export function specParts(markdown: string): SpecParts {
     shared,
     finishes,
   };
+}
+
+/** The values the spec cites off the grid (`<!-- theme-lint: scales -->`): a theme, a key, a value, and the source. */
+export function scaleCitations(markdown: string): ScaleCitation[] {
+  return specRowsRaw(specBlock(markdown, "scales")).map(([theme, key, value, source]) => {
+    if (theme === undefined || key === undefined || value === undefined || source === undefined)
+      throw new Error(`the spec's scale table writes a row with ${theme ?? "no theme"}`);
+    const number = Number(value.replace(/`/g, ""));
+    if (!Number.isFinite(number))
+      throw new Error(`the spec's scale table cites \`${key}\` at ${value}, not a number`);
+    return { theme: theme.replace(/`/g, ""), key: key.replace(/`/g, ""), value: number, source };
+  });
 }

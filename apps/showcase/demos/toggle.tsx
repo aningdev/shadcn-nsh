@@ -333,7 +333,7 @@ function Views() {
   const x = createAnimatedValue(0);
   effect(() => {
     const to = view() === "grid" ? 0 : seg;
-    void animate(x, to, motion.settle);
+    void animate(x, to, motion.slow);
   });
   const choose = (next: "grid" | "list", on: boolean) => {
     if (!on || next === view()) return;
@@ -500,7 +500,7 @@ function StarToggle(props: {
           void ring.timing(1, { duration: 460, easing: Easing.out(Easing.cubic) });
         } else {
           pop.set(0.8);
-          void animate(pop, 1, motion.press);
+          void animate(pop, 1, motion.default);
         }
       }}
       style={{

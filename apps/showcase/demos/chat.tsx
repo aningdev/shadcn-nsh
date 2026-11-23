@@ -530,8 +530,8 @@ export function ChatDemo() {
     };
 
     // Motion, sprung natively when the state changes.
-    const menuValue = follow(() => (menu() ? 1 : 0), motion.settle);
-    const bannerValue = follow(() => (banner() ? 1 : 0), motion.settle);
+    const menuValue = follow(() => (menu() ? 1 : 0), motion.default);
+    const bannerValue = follow(() => (banner() ? 1 : 0), motion.default);
 
     const streaming = () => liveId() !== null;
     const canSend = () => !!draft().trim() || !!attachment();

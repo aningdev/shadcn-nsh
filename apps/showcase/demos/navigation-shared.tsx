@@ -16,7 +16,7 @@ import { Switch } from "@/packages/ui/switch";
 /** The device's input: `touch` on phones and tablets, `pointer` on desktops. */
 export const hint = (touch: string, pointer: string) => (platform.desktop ? pointer : touch);
 
-/** Springs to 1 each time `key` changes (`motion.control`), so a block that re-appears settles
+/** Springs to 1 each time `key` changes (`motion.fast`), so a block that re-appears settles
  * in; lands at once with reduced motion. */
 export function settleOn(key: () => unknown): AnimatedValue {
   const t = createAnimatedValue(1);
@@ -27,7 +27,7 @@ export function settleOn(key: () => unknown): AnimatedValue {
     shown = next;
     if (reduceMotion()) return;
     t.set(0);
-    void animate(t, 1, motion.control);
+    void animate(t, 1, motion.fast);
   });
   return t;
 }

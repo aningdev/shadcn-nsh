@@ -238,7 +238,7 @@ const MARK_WEIGHT = 3.84;
 /**
  * What a checkbox's box shows (its `indicator`): citrus with a check or a
  * dash, drawn with the same bold pen. Each part follows the value on a
- * spring of its own (`motion.control`) and grows in from 75%, so a check
+ * spring of its own (`motion.fast`) and grows in from 75%, so a check
  * turning into a dash crosses over on a fill that stays; at once with
  * reduced motion.
  */

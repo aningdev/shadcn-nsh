@@ -54,9 +54,9 @@ const expressive: AppTheme = {
     },
     motion: {
       ...defaultTheme.semantics.motion,
-      press: { duration: 150, timingFunction: "emphasized-decelerate" },
-      settle: { duration: 250, timingFunction: "decelerate" },
-      control: { duration: 167, timingFunction: "accelerate" },
+      fast: { duration: 150, timingFunction: "emphasized-decelerate" },
+      default: { duration: 250, timingFunction: "decelerate" },
+      slow: { duration: 167, timingFunction: "accelerate" },
     },
     finishes: {
       ...finishes,
@@ -92,14 +92,14 @@ const expressive: AppTheme = {
   },
 };
 
-const showMotion = (m: typeof motion.press) =>
+const showMotion = (m: typeof motion.fast) =>
   isTiming(m)
     ? `timing:${m.duration}:${JSON.stringify(m.timingFunction)}`
     : `spring:${m.stiffness}:${m.damping}`;
 
 function App() {
   const step = signal(0);
-  const followed = follow(() => step(), motion.press);
+  const followed = follow(() => step(), motion.fast);
   const direct = createAnimatedValue(0);
 
   const defaultBtn = buttonLook("default");
@@ -113,9 +113,9 @@ function App() {
     <View>
       <Text>{`focus=${JSON.stringify(focusRing())}`}</Text>
       <Text>{`ringTokens=${String(token("ring"))}|${String(token("ring-halo"))}`}</Text>
-      <Text>{`motionPress=${showMotion(motion.press)}`}</Text>
-      <Text>{`motionControl=${showMotion(motion.control)}`}</Text>
-      <Text>{`motionMove=${showMotion(motion.move)}`}</Text>
+      <Text>{`motionFast=${showMotion(motion.fast)}`}</Text>
+      <Text>{`motionDefault=${showMotion(motion.default)}`}</Text>
+      <Text>{`motionSlow=${showMotion(motion.slow)}`}</Text>
       <Text>{`motionEnter=${motion.enter.duration}:${JSON.stringify(motion.enter.timingFunction)}`}</Text>
       <Text>{`btnHover=${JSON.stringify(defaultBtn.hoverStyle ?? null)}`}</Text>
       <Text>{`roundHover=${JSON.stringify(roundBtn.hoverStyle ?? null)}`}</Text>
@@ -147,7 +147,7 @@ function App() {
         onPress={() => {
           const next = step() + 1;
           step.set(next);
-          void animate(direct, next % 2, motion.control);
+          void animate(direct, next % 2, motion.slow);
         }}
       >
         Step

@@ -16,7 +16,7 @@ const full = (ms: string) => ({
 
 test("press, hover, chevrons, springs and the progress loop use the documented motion", async () => {
   const app = await open("./motion.fixture.tsx");
-  expect(find(app.texts(), "motion=")).toBe("false|1218|70|504|38");
+  expect(find(app.texts(), "motion=")).toBe("false|1218|70|520|34|320|30");
   const live = full("150");
   expect(find(app.texts(), "press=")).toBe(live.press);
   expect(find(app.texts(), "button=")).toBe(live.button);
@@ -34,13 +34,12 @@ test("press, hover, chevrons, springs and the progress loop use the documented m
   expect(classes).toContain("duration-200");
   expect(classes).toContain("duration-150");
   expect(classes).toContain("duration-100");
-  expect(find(app.texts(), "shake=")).toBe("500");
   expect(find(app.texts(), "sweep=")).toBe("800|infinite|alternate|true");
 });
 
 test("reduced motion zeroes durations and keeps motion-reduce classes", async () => {
   const app = await open("./motion.fixture.tsx", { reducedMotion: true });
-  expect(find(app.texts(), "motion=")).toBe("true|1218|70|504|38");
+  expect(find(app.texts(), "motion=")).toBe("true|1218|70|520|34|320|30");
   const live = full("150");
   expect(find(app.texts(), "press=")).toBe(`${live.press.split("|")[0]}|150|still`);
   expect(find(app.texts(), "button=")).toBe(`${live.button.split("|")[0]}|150|still|still`);
@@ -56,6 +55,5 @@ test("reduced motion zeroes durations and keeps motion-reduce classes", async ()
   expect(
     classes.split(" || ").every((part) => part.includes("motion-reduce:transition-none")),
   ).toBe(true);
-  expect(find(app.texts(), "shake=")).toBe("500");
   expect(find(app.texts(), "sweep=")).toBe("800|infinite|alternate|true");
 });

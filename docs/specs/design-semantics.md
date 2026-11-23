@@ -20,14 +20,14 @@
 
 凡是不满足上述任一条的设计值，一律进入 **`semantics.json`（语义层）**，并且在消费基础层已存在的颜色、圆角或字体时，**必须引用基础 token**，禁止重复写字面量。
 
-| 类别                                                                                                                | 归属                            | 说明                                                                              |
-| ------------------------------------------------------------------------------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------- |
-| 全部颜色角色（A/B/C 层）                                                                                            | `theme.json`                    | 明暗外观放 `light`/`dark`，不随明暗变的放 `theme`                                 |
-| 3 个层圆角（`radius-control`、`radius-container`、`radius-modal`，以及由 `radius-control` 派生的 A 层 `radius` 槽） | `theme.json` (`cssVars.theme`)  | `semantics.json` 的 `dimension.shape.*` 通过 `{radius-…}` 引用                    |
-| 字体家族（`font-mono`，以及设定字体时可选的 `font-sans`）                                                           | `theme.json` (`cssVars.theme`)  | `semantics.json` 的 `typography.fontFamily` 写 `"{font-…}"` 或 `null`（系统默认） |
-| 字体字阶、页面密度、控件尺寸、按钮高、图标尺寸                                                                      | `theme.json` / `semantics.json` | 不；该类别属语义层，依 `pointer`/`touch` 两档分别定义                             |
-| 线宽、焦点环样式与几何、交互状态叠色与透明度、动效、外观枚举（含 `shape.corners.button`）                           | `semantics.json`                | 枚举或非 token 标量                                                               |
-| 表面配方（`finishes`：底色、渐变、边、阴影、模糊、平台 `material`）                                                 | `semantics.json`                | 复合配方；其中颜色与 `material.apple.tint` 一律以 `{token}` 引用                  |
+| 类别                                                                                                                | 归属                            | 说明                                                                       |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------- | -------------------------------------------------------------------------- |
+| 全部颜色角色（A/B/C 层）                                                                                            | `theme.json`                    | 明暗外观放 `light`/`dark`，不随明暗变的放 `theme`                          |
+| 3 个层圆角（`radius-control`、`radius-container`、`radius-modal`，以及由 `radius-control` 派生的 A 层 `radius` 槽） | `theme.json` (`cssVars.theme`)  | `semantics.json` 的 `dimension.shape.*` 通过 `{radius-…}` 引用             |
+| 字体家族（`font-sans` 与 `font-mono`，每套主题各一条）                                                              | `theme.json` (`cssVars.theme`)  | `semantics.json` 的 7 个 typography 复合 token 一律写 `{font.family.sans}` |
+| 字体字阶、页面密度、控件尺寸、按钮高、图标尺寸                                                                      | `theme.json` / `semantics.json` | 不；该类别属语义层，依 `pointer`/`touch` 两档分别定义                      |
+| 线宽、焦点环样式与几何、交互状态叠色与透明度、动效、外观枚举（含 `shape.corners.button`）                           | `semantics.json`                | 枚举或非 token 标量                                                        |
+| 表面配方（`finishes`：底色、渐变、边、阴影、模糊、平台 `material`）                                                 | `semantics.json`                | 复合配方；其中颜色与 `material.apple.tint` 一律以 `{token}` 引用           |
 
 ## 2 `{token}` 引用语法与类型检查
 
@@ -39,11 +39,11 @@
 
 `bun run check:theme`（`scripts/theme-lint.ts`）对每一处 `{token}` 执行严格的类型与防重复检查，token 种类按 DTCG `$type` 命名：
 
-| 语义层位置                                                                                                                                                                             | 要求的 `$type` | 不允许的写法                                                     |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
-| `finishes` 颜色字段（`background`、`gradient`、`border-color`、`border-top-color`、`border-bottom-color`、`shadow` 中的引用）与 `material.apple.tint`、`material.android.ripple.color` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token     |
-| `dimension.shape.{control,container,modal}`                                                                                                                                            | `dimension`    | 裸数字字面量、引用非 `dimension` token                           |
-| `typography.fontFamily`（非 `null` 时）                                                                                                                                                | `fontFamily`   | 裸字符串（如 `"sans"` / `"rounded"`）、引用非 `fontFamily` token |
+| 语义层位置                                                                                                                                                                             | 要求的 `$type` | 不允许的写法                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------- |
+| `finishes` 颜色字段（`background`、`gradient`、`border-color`、`border-top-color`、`border-bottom-color`、`shadow` 中的引用）与 `material.apple.tint`、`material.android.ripple.color` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token                  |
+| `dimension.shape.{control,container,modal}`                                                                                                                                            | `dimension`    | 裸数字字面量、引用非 `dimension` token                                        |
+| 每个 typography 复合 token 的 `fontFamily`                                                                                                                                             | `fontFamily`   | 不是 `{font.family.sans}`、裸字符串（如 `"sans"`）、引用非 `fontFamily` token |
 
 ## 3 两档与明暗稀疏覆盖
 
@@ -69,12 +69,12 @@
 
 原生宿主可通过 `setThemeOverrides(cssVarsJson)` 覆写 `theme.json` 中的任意 token。由于语义层通过 `token()` 响应式解析 `{token}`：
 
-| 宿主覆写的内容                                                                                                                                                           | 能否自动到达语义层与组件 | 原因                                                                                 |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ | ------------------------------------------------------------------------------------ |
-| 颜色 token（`primary`、`background`、`card`、`ring`、`inverse` 等）                                                                                                      | **能**                   | Tailwind 类、`colors.*`、`tints.*` 与 `finish.*` 均经 `token()` 响应式读取           |
-| 圆角 token（`radius`、`radius-control`、`radius-container`、`radius-modal`）                                                                                             | **能**                   | `shape.*` 解析 `{radius-…}` 后调用 `token()`；`rounded-(--radius-*)` 由 NSH 直接读取 |
-| 字体 token（`font-sans`、`font-mono`）                                                                                                                                   | **能**                   | NSH 原生以 `font-sans` 绘制默认文本，`font.family()` 与 `mono()` 经 `token()` 读取   |
-| 语义层自有结构（`shape.curve`、`shape.corners.button`、`controls`、`dimension.focus.style`、`shadow`、`material.*`、`motion.*`、`transition.*`、`pointer`/`touch` 尺寸） | **不能**                 | 无法表示为 NSH `Tokens`，属于应用选定的设计语言而非宿主品牌覆写                      |
+| 宿主覆写的内容                                                                                                                                                           | 能否自动到达语义层与组件 | 原因                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ | --------------------------------------------------------------------------------------- |
+| 颜色 token（`primary`、`background`、`card`、`ring`、`inverse` 等）                                                                                                      | **能**                   | Tailwind 类、`colors.*`、`tints.*` 与 `finish.*` 均经 `token()` 响应式读取              |
+| 圆角 token（`radius`、`radius-control`、`radius-container`、`radius-modal`）                                                                                             | **能**                   | `shape.*` 解析 `{radius-…}` 后调用 `token()`；`rounded-(--radius-*)` 由 NSH 直接读取    |
+| 字体 token（`font-sans`、`font-mono`）                                                                                                                                   | **能**                   | NSH 原生以 `font-sans` 绘制默认文本（本库不读它），`mono()` 经 `token()` 读 `font-mono` |
+| 语义层自有结构（`shape.curve`、`shape.corners.button`、`controls`、`dimension.focus.style`、`shadow`、`material.*`、`motion.*`、`transition.*`、`pointer`/`touch` 尺寸） | **不能**                 | 无法表示为 NSH `Tokens`，属于应用选定的设计语言而非宿主品牌覆写                         |
 
 ## 5 与 W3C DTCG 2025.10 的映射
 

@@ -30,12 +30,6 @@
           "unit": "px"
         }
       },
-      "title": {
-        "$value": {
-          "value": 16,
-          "unit": "px"
-        }
-      },
       "headline": {
         "$value": {
           "value": 24,
@@ -51,27 +45,24 @@
     },
     "line-height": {
       "$type": "number",
-      "$description": "Unitless line-height ratios per type role for touch input.",
+      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
       "caption": {
-        "$value": 1.4545454545454546
+        "$value": 1.454545
       },
       "detail": {
-        "$value": 1.3333333333333333
+        "$value": 1.333333
       },
       "body": {
-        "$value": 1.4285714285714286
+        "$value": 1.428571
       },
       "label": {
-        "$value": 1.4285714285714286
-      },
-      "title": {
-        "$value": 1.5
+        "$value": 1.428571
       },
       "headline": {
-        "$value": 1.3333333333333333
+        "$value": 1.333333
       },
       "display": {
-        "$value": 1.2222222222222223
+        "$value": 1.222222
       }
     }
   },
@@ -88,99 +79,30 @@
         "$description": "Minimum hit target size (0 disables padding expansion)."
       },
       "density": {
-        "$description": "Page-level row, padding, gap, and surface spacing metrics.",
-        "row": {
+        "$description": "Page-level padding, gap, and surface spacing metrics.",
+        "pad": {
           "$value": {
-            "value": 56,
+            "value": 16,
             "unit": "px"
           }
         }
       },
       "control": {
-        "$description": "Control internal geometry and switch size tier.",
-        "row": {
-          "$value": {
-            "value": 56,
-            "unit": "px"
-          }
-        },
-        "padding": {
-          "$value": {
-            "value": 10,
-            "unit": "px"
-          }
-        },
-        "control": {
-          "$value": {
-            "value": 18,
-            "unit": "px"
-          }
-        },
-        "check": {
-          "$value": {
-            "value": 18,
-            "unit": "px"
-          }
-        },
+        "$description": "Control internal spacing and switch size tier.",
         "dot": {
           "$value": {
             "value": 10,
-            "unit": "px"
-          }
-        },
-        "tabs": {
-          "$value": {
-            "value": 48,
-            "unit": "px"
-          }
-        },
-        "line": {
-          "$value": {
-            "value": 56,
-            "unit": "px"
-          }
-        },
-        "clear": {
-          "$value": {
-            "value": 24,
             "unit": "px"
           }
         }
       },
       "height": {
         "$description": "Standard control heights (sm, md, lg).",
-        "sm": {
-          "$value": {
-            "value": 32,
-            "unit": "px"
-          }
-        },
         "lg": {
           "$value": {
             "value": 56,
             "unit": "px"
           }
-        }
-      }
-    },
-    "icon": {
-      "$description": "Standard icon dimensions (sm, md, lg).",
-      "sm": {
-        "$value": {
-          "value": 18,
-          "unit": "px"
-        }
-      },
-      "md": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        }
-      },
-      "lg": {
-        "$value": {
-          "value": 24,
-          "unit": "px"
         }
       }
     }

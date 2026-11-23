@@ -1,17 +1,17 @@
 import { expect, open, test } from "nsh/test";
 
-test("Select and DatePicker triggers keep hearing presses, label lookup and keyboard after selectTheme changes control.line", async () => {
-  const app = await open("./theme-control-line.fixture.tsx", {
+test("Select and DatePicker triggers keep hearing presses, label lookup and keyboard after selectTheme changes the row height", async () => {
+  const app = await open("./theme-row-height.fixture.tsx", {
     platform: "macos",
     reducedMotion: true,
   });
 
-  expect(app.texts()).toContain("line=32");
-  await app.press("text:Apply Apple");
-  await app.waitFor("text:line=28");
+  expect(app.texts()).toContain("height=32");
+  await app.press("text:Apply Material");
+  await app.waitFor("text:height=56");
 
   // Keyboard activation before pressing triggers directly:
-  // Start from top: Apply Apple (1) -> Apply Default (2) -> Theme picker (3) -> Switch via date (4) -> Fruit (5)
+  // Start from top: Apply Material (1) -> Apply Default (2) -> Theme picker (3) -> Switch via date (4) -> Fruit (5)
   for (let i = 0; i < 5; i++) await app.keyboard.press("tab");
   await app.keyboard.press("down");
   await app.waitFor("text:Newest");
@@ -41,28 +41,28 @@ test("Select and DatePicker triggers keep hearing presses, label lookup and keyb
 
   // Switch back to build-time theme (line 28 -> 32)
   await app.press("text:Apply Default");
-  await app.waitFor("text:line=32");
+  await app.waitFor("text:height=32");
   await app.press("label:Fruit");
   await app.waitFor("text:Newest");
 });
 
-test("a Select that switches control.line inside onChange opens again on the next press", async () => {
-  const app = await open("./theme-control-line.fixture.tsx", {
+test("a Select that switches the row height inside onChange opens again on the next press", async () => {
+  const app = await open("./theme-row-height.fixture.tsx", {
     platform: "macos",
     reducedMotion: true,
   });
 
   await app.press("label:Theme picker");
-  await app.waitFor("text:Apple");
-  await app.press("text:Apple");
-  await app.waitFor("text:line=28");
+  await app.waitFor("text:Material");
+  await app.press("text:Material");
+  await app.waitFor("text:height=56");
 
   await app.press("label:Theme picker");
   await app.waitFor("text:Default");
 });
 
-test("a DatePicker that switches control.line inside onChange opens again on the next press", async () => {
-  const app = await open("./theme-control-line.fixture.tsx", {
+test("a DatePicker that switches the row height inside onChange opens again on the next press", async () => {
+  const app = await open("./theme-row-height.fixture.tsx", {
     platform: "macos",
     reducedMotion: true,
   });
@@ -70,7 +70,7 @@ test("a DatePicker that switches control.line inside onChange opens again on the
   await app.press("label:Switch via date");
   await app.waitFor("text:15");
   await app.press("text:15");
-  await app.waitFor("text:line=28");
+  await app.waitFor("text:height=56");
 
   await app.press("label:Switch via date");
   await app.waitFor("text:20");

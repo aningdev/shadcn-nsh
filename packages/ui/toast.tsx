@@ -48,7 +48,7 @@ export function toastLook(): ViewStyle {
     paddingVertical: 12,
     paddingHorizontal: 14,
     ...rounded(shape.container),
-    borderWidth: terminal ? stroke.hairline : stroke.surface,
+    borderWidth: stroke.hairline,
     ...finish.inverse,
   };
 }

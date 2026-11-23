@@ -20,7 +20,7 @@ test("corners, strokes, heights and fades follow the theme's roles when the them
   expect(find(app.texts(), "button=")).toBe("28|8|1");
   expect(find(app.texts(), "fade=")).toBe("0.5|0.7|false");
   expect(find(app.texts(), "disabledMode=")).toBe("fade|false");
-  expect(find(app.texts(), "sizes=")).toBe("24|34|14|0|1|1");
+  expect(find(app.texts(), "sizes=")).toBe("24|32|16|0|1|1");
 
   await app.press("text:Reshaped");
   expect(app.texts()).toContain("theme:reshaped");
@@ -43,5 +43,5 @@ test("corners, strokes, heights and fades follow the theme's roles when the them
   await app.press("text:Build-time");
   expect(find(app.texts(), "roles=")).toBe("8|12|14|8");
   expect(find(app.texts(), "button=")).toBe("28|8|1");
-  expect(find(app.texts(), "sizes=")).toBe("24|34|14|0|1|1");
+  expect(find(app.texts(), "sizes=")).toBe("24|32|16|0|1|1");
 });

@@ -1,9 +1,10 @@
 /**
  * The style data of a theme, checked: the groups `semantics.json` states beside its finishes
- * (typography, dimension, shape, state, duration, transition, motion, controls), which every
- * theme states with the same keys, whose enums come from a list, and whose token references
- * (`dimension.shape.*` radii, `typography.fontFamily`) name tokens of the right DTCG `$type`
- * (`dimension`, `fontFamily`) in `theme.json`.
+ * (typography, dimension, shape, state, transition, motion, controls), which every theme states
+ * with the same keys, whose enums come from a list, whose token references (`dimension.shape.*`
+ * radii) name `dimension` tokens in `theme.json`, and whose sizes land on the three scales
+ * (`checkScales`): three heights, three icons, spacing on the 4 grid, and a type ramp that never
+ * steps down.
  *
  * Pure: no `node:fs`, so `theme-lint.ts`, the theme generators and the unit tests all read it.
  */
@@ -15,7 +16,6 @@ export const styleGroups = [
   "dimension",
   "shape",
   "state",
-  "duration",
   "transition",
   "motion",
   "controls",
@@ -49,7 +49,8 @@ export const whitelists: Record<string, readonly (string | number | null)[]> = {
   controls: ["base", "material", "winui"],
 };
 
-const motionRoleNames = ["press", "settle", "control", "move"] as const;
+/** The three springs, named by speed. */
+export const motionRoleNames = ["fast", "default", "slow"] as const;
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === "object" && !Array.isArray(value);
@@ -150,6 +151,151 @@ function checkMotionRole(path: string, role: string, value: unknown): string[] {
   return problems;
 }
 
+/** The steps a spacing value may take: the 4 px grid, up to a section's inset. */
+export const spacingSteps = [4, 8, 12, 16, 24, 32] as const;
+
+/** A value a platform states off the grid, with the source that states it. */
+export interface ScaleCitation {
+  /** The style key it sits at: `dimension.size.control.pointer.padding`. */
+  key: string;
+  /** The value it takes. */
+  value: number;
+  /** Where the platform says so: the spec or source file, in `docs/specs/theme-roles.md`'s list. */
+  source: string;
+}
+
+/** A citation's id: the key and the value it excuses. */
+export const citationId = (key: string, value: number) => `${key} ${value}`;
+
+const scaleKey = (key: string, theme: string) => `${theme}:${key}`;
+
+/** Cited values by theme: `theme:key` → the values its citations excuse. */
+export function citedValues(citations: readonly (ScaleCitation & { theme: string })[]) {
+  const out = new Map<string, Set<number>>();
+  for (const { theme, key, value } of citations) {
+    const id = scaleKey(key, theme);
+    const values = out.get(id) ?? new Set<number>();
+    values.add(value);
+    out.set(id, values);
+  }
+  return out;
+}
+
+/** The keys a theme's spacing takes: the page's and a control's insets and gaps. */
+const spacingKeys = [
+  "dimension.size.density.pad",
+  "dimension.size.density.gap",
+  "dimension.size.control.padding",
+  "dimension.size.control.gap",
+] as const;
+
+/** The typography roles, in the order the ramp climbs. */
+export const typeRamp = [
+  "caption",
+  "detail",
+  "body",
+  "label",
+  "title",
+  "headline",
+  "display",
+] as const;
+
+/**
+ * What is wrong with a theme's scales, each as a line naming the key:
+ * - a height or an icon that is not three steps, climbing, on the 4 px grid;
+ * - a spacing value off the grid (`spacingSteps`), and more than three of them in a tier;
+ * - a type ramp that steps down, or a line height that is not a whole number of points or is
+ *   shorter than its text.
+ * A value the platform states itself is excused by a citation (`citedValues`): the spec's list
+ * names the theme, the key, the value and the source.
+ */
+export function checkScales(
+  path: string,
+  file: Record<string, unknown>,
+  themeId: string,
+  cited: Map<string, Set<number>> = new Map(),
+): string[] {
+  const problems: string[] = [];
+  const excused = (key: string, value: number) => cited.get(scaleKey(key, themeId))?.has(value);
+  const dimension = isObject(file.dimension) ? file.dimension : {};
+  const size = isObject(dimension.size) ? dimension.size : {};
+  const icon = isObject(dimension.icon) ? dimension.icon : {};
+
+  const checkSteps = (group: string, steps: Record<string, unknown>, key: string) => {
+    const full = `${group}.${key}`;
+    for (const tier of ["pointer", "touch"] as const) {
+      const tierSteps = isObject(steps) ? steps[tier] : undefined;
+      if (!isObject(tierSteps)) continue;
+      let previous = -1;
+      for (const step of ["sm", "md", "lg"] as const) {
+        const value = tierSteps[step];
+        if (typeof value !== "number") continue;
+        if (!Number.isInteger(value) || value % 4 !== 0) {
+          if (excused(`${full}.${tier}.${step}`, value)) continue;
+          problems.push(
+            `${path}: \`${full}.${tier}.${step}\` is ${value}, not a whole number of 4 px steps`,
+          );
+        }
+        if (value <= previous)
+          problems.push(
+            `${path}: \`${full}.${tier}.${step}\` is ${value}, not above the step before it (${previous})`,
+          );
+        previous = value;
+      }
+    }
+  };
+  checkSteps("dimension.size", isObject(size.height) ? size.height : {}, "height");
+  checkSteps("dimension", isObject(icon) ? icon : {}, "icon");
+
+  for (const tier of ["pointer", "touch"] as const) {
+    const values = new Set<number>();
+    for (const key of spacingKeys) {
+      const parts = key.split(".");
+      let cursor: unknown = file;
+      for (const part of parts) cursor = isObject(cursor) ? cursor[part] : undefined;
+      const value = isObject(cursor) ? cursor[tier] : undefined;
+      if (typeof value !== "number") continue;
+      values.add(value);
+      if (!(spacingSteps as readonly number[]).includes(value) && !excused(`${key}.${tier}`, value))
+        problems.push(
+          `${path}: \`${key}.${tier}\` is ${value}, not one of the spacing steps (${spacingSteps.join(", ")})`,
+        );
+    }
+    if (values.size > 3)
+      problems.push(
+        `${path}: the ${tier} tier spaces with ${values.size} values (${[...values].join(", ")}), not 3 or fewer`,
+      );
+  }
+
+  const typography = isObject(file.typography) ? file.typography : {};
+  for (const tier of ["pointer", "touch"] as const) {
+    let previousSize = -1;
+    for (const role of typeRamp) {
+      const entry = typography[role];
+      if (!isObject(entry)) continue;
+      const fontSize = isObject(entry.fontSize) ? entry.fontSize[tier] : undefined;
+      const lineHeight = isObject(entry.lineHeight) ? entry.lineHeight[tier] : undefined;
+      if (typeof fontSize === "number") {
+        if (fontSize < previousSize)
+          problems.push(
+            `${path}: \`typography.${role}.fontSize.${tier}\` is ${fontSize}, below the role before it (${previousSize})`,
+          );
+        previousSize = fontSize;
+      }
+      if (typeof lineHeight !== "number") continue;
+      if (!Number.isInteger(lineHeight))
+        problems.push(
+          `${path}: \`typography.${role}.lineHeight.${tier}\` is ${lineHeight}, not a whole number of points`,
+        );
+      else if (typeof fontSize === "number" && lineHeight < fontSize)
+        problems.push(
+          `${path}: \`typography.${role}.lineHeight.${tier}\` is ${lineHeight}, shorter than its ${fontSize} pt text`,
+        );
+    }
+  }
+  return problems;
+}
+
 /** The three corner roles in `dimension.shape` that must reference a `dimension` token in `theme.json`. */
 export const shapeRadiusRoles = ["control", "container", "modal"] as const;
 
@@ -216,7 +362,6 @@ export function semanticsWithStyle(
  * - a leaf of another type, or a negative number;
  * - an enum outside its whitelist;
  * - a `dimension.shape.<role>` corner that is not a `{token}` reference to a `dimension` token in `theme.json`;
- * - a `typography.fontFamily` that is neither `null` nor a `{token}` reference to a `fontFamily` token in `theme.json`;
  * - a `state.press-scale` outside `(0, 1]`.
  */
 export function checkStyle(
@@ -270,33 +415,6 @@ export function checkStyle(
       else if (kind !== "dimension")
         problems.push(
           `${path}: \`${key}\` names token \`${ref}\`, which is a ${kind}, not a dimension`,
-        );
-      continue;
-    }
-
-    if (key === "typography.fontFamily") {
-      if (value === null) continue;
-      if (typeof value !== "string") {
-        problems.push(
-          `${path}: \`typography.fontFamily\` is ${JSON.stringify(value)}, not null or a \`{token}\` reference to a fontFamily token`,
-        );
-        continue;
-      }
-      const ref = parseTokenRef(value);
-      if (ref === null) {
-        problems.push(
-          `${path}: \`typography.fontFamily\` is ${JSON.stringify(value)}, not null or a \`{token}\` reference to a fontFamily token`,
-        );
-        continue;
-      }
-      const kind = kinds.get(ref);
-      if (kind === undefined)
-        problems.push(
-          `${path}: \`typography.fontFamily\` names token \`${ref}\`, which theme.json does not have`,
-        );
-      else if (kind !== "fontFamily")
-        problems.push(
-          `${path}: \`typography.fontFamily\` names token \`${ref}\`, which is a ${kind}, not a fontFamily`,
         );
       continue;
     }

@@ -701,46 +701,45 @@ function finishes(
 /** WinUI 3 style groups (`semantics.json`); verified values in `docs/specs/native-themes.md` §3.2. */
 export const winuiStyle = {
   typography: {
-    fontFamily: "{font-sans}",
     caption: {
       fontSize: { pointer: 12, touch: 12 },
-      lineHeight: { pointer: 16 / 12, touch: 16 / 12 },
+      lineHeight: { pointer: 16, touch: 16 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     detail: {
       fontSize: { pointer: 12, touch: 12 },
-      lineHeight: { pointer: 16 / 12, touch: 16 / 12 },
+      lineHeight: { pointer: 16, touch: 16 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     body: {
       fontSize: { pointer: 14, touch: 14 },
-      lineHeight: { pointer: 20 / 14, touch: 20 / 14 },
+      lineHeight: { pointer: 20, touch: 20 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     label: {
       fontSize: { pointer: 14, touch: 14 },
-      lineHeight: { pointer: 20 / 14, touch: 20 / 14 },
+      lineHeight: { pointer: 20, touch: 20 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     title: {
       fontSize: { pointer: 14, touch: 14 },
-      lineHeight: { pointer: 20 / 14, touch: 20 / 14 },
+      lineHeight: { pointer: 20, touch: 20 },
       fontWeight: 600,
       letterSpacing: 0,
     },
     headline: {
       fontSize: { pointer: 20, touch: 20 },
-      lineHeight: { pointer: 28 / 20, touch: 28 / 20 },
+      lineHeight: { pointer: 28, touch: 28 },
       fontWeight: 600,
       letterSpacing: 0,
     },
     display: {
       fontSize: { pointer: 28, touch: 28 },
-      lineHeight: { pointer: 36 / 28, touch: 36 / 28 },
+      lineHeight: { pointer: 36, touch: 36 },
       fontWeight: 600,
       letterSpacing: 0,
     },
@@ -754,39 +753,17 @@ export const winuiStyle = {
     size: {
       hit: { pointer: 0, touch: 40 },
       density: {
-        // Standard WinUI `ListViewItemMinHeight` = 40 (`ListViewItem_themeresources.xaml:14`).
-        pointer: { row: 40, pad: 16, gap: 8, surface: 4 },
-        touch: { row: 40, pad: 16, gap: 8, surface: 8 },
+        pointer: { pad: 12, gap: 8, surface: 4 },
+        touch: { pad: 12, gap: 8, surface: 8 },
       },
       control: {
-        pointer: {
-          row: 32,
-          padding: 6,
-          gap: 8,
-          control: 20,
-          check: 12,
-          dot: 12,
-          tabs: 32,
-          line: 32,
-          clear: 16,
-          switch: "regular",
-        },
-        touch: {
-          row: 40,
-          padding: 8,
-          gap: 8,
-          control: 20,
-          check: 12,
-          dot: 12,
-          tabs: 40,
-          line: 40,
-          clear: 20,
-          switch: "regular",
-        },
+        // WinUI's own 6px inset inside a control (`Button_themeresources.xaml`); 8 beside it.
+        pointer: { padding: 6, gap: 8, dot: 12, switch: "regular" },
+        touch: { padding: 6, gap: 8, dot: 12, switch: "regular" },
       },
       height: { pointer: { sm: 24, md: 32, lg: 40 }, touch: { sm: 32, md: 40, lg: 48 } },
     },
-    stroke: { hairline: 1, surface: 1, control: 1 },
+    stroke: { hairline: 1, control: 1 },
     focus: { style: "double", width: 2, offset: 0 },
     icon: {
       pointer: { sm: 12, md: 16, lg: 20 },
@@ -809,17 +786,18 @@ export const winuiStyle = {
     // `TextFillColorDisabled`) when `fill: true`; `content: 0.36` matches `TextFillColorDisabled`.
     disabled: { content: 0.36, fill: true },
   },
-  duration: { shake: 500 },
   transition: {
     enter: { duration: 250, timingFunction: "decelerate" },
   },
   motion: {
-    // WinUI 3 timing durations and curves (`motion.md`, `Common_themeresources_any.xaml:602-606`,
-    // `ToggleSwitch_themeresources.xaml:321`).
-    press: { duration: 83, timingFunction: "decelerate" },
-    settle: { duration: 250, timingFunction: "decelerate" },
-    control: { duration: 167, timingFunction: "point-to-point" },
-    move: { duration: 333, timingFunction: "point-to-point" },
+    // Three of WinUI 3's four control durations, named by speed (`motion.md`,
+    // `Common_themeresources_any.xaml:602-606`): Faster (83, ToggleSwitch's press,
+    // `ToggleSwitch_themeresources.xaml:321`), Fast (167, the standard control response) and
+    // Normal (250, a panel's entrance). Slow (333) is the fourth and the least used, so `move`
+    // takes Normal.
+    fast: { duration: 83, timingFunction: "decelerate" },
+    default: { duration: 167, timingFunction: "decelerate" },
+    slow: { duration: 250, timingFunction: "decelerate" },
   },
   controls: "winui" as const,
 };
@@ -995,11 +973,11 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
           "WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.",
         "transition.enter":
           "WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).",
-        "motion.press":
-          "WinUI 3 ToggleSwitch press timing (83ms decelerate, ToggleSwitch_themeresources.xaml:321).",
-        "motion.settle": "WinUI 3 250ms settle timing with Direct Entrance decelerate curve.",
-        "motion.control": "WinUI 3 167ms control timing with Point-to-Point curve.",
-        "motion.move": "WinUI 3 333ms move timing with Point-to-Point curve.",
+        "motion.fast":
+          "WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).",
+        "motion.default":
+          "WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).",
+        "motion.slow": "WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).",
         controls: "WinUI 3 (winui3/release/2.7.0) control geometry presets.",
       },
     },

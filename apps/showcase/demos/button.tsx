@@ -121,7 +121,7 @@ function popOn(key: () => unknown): AnimatedValue {
     const next = key();
     if (next === shown) return;
     shown = next;
-    if (!reduceMotion()) void animate(s, 1, motion.move, { velocity: 4 });
+    if (!reduceMotion()) void animate(s, 1, motion.default, { velocity: 4 });
   });
   return s;
 }
@@ -131,7 +131,7 @@ function fadeOn(on: () => boolean): AnimatedValue {
   const v = createAnimatedValue(on() ? 1 : 0);
   effect(() => {
     const to = on() ? 1 : 0;
-    void animate(v, to, motion.control);
+    void animate(v, to, motion.fast);
   });
   return v;
 }
@@ -670,7 +670,7 @@ function Hold(props: Ctx) {
             onPressUp={() => {
               if (state() === "done") return;
               state.set("idle");
-              void animate(fill, 0, motion.control);
+              void animate(fill, 0, motion.fast);
             }}
             onLongPress={() => {
               resize();

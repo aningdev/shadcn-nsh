@@ -703,7 +703,7 @@ export type ButtonProps = Omit<BaseButtonProps, "children"> & {
 };
 
 /**
- * A scale for a leading glyph that grows in (from half, out of nothing) on `motion.control` each
+ * A scale for a leading glyph that grows in (from half, out of nothing) on `motion.fast` each
  * time `key` changes: a new icon, or the spinner taking its place. At once with reduced motion.
  */
 function growOn(key: () => unknown) {
@@ -715,7 +715,7 @@ function growOn(key: () => unknown) {
     shown = next;
     if (reduceMotion()) return;
     grow.set(0);
-    void animate(grow, 1, motion.control);
+    void animate(grow, 1, motion.fast);
   });
   return {
     opacity: grow,

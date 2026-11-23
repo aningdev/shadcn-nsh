@@ -468,8 +468,8 @@ describe("DTCG source lint", () => {
       appearance: "light",
       input: "touch",
     }).resolved as Record<string, any>;
-    expect(applePointer.dimension.size.density.row.$value.value).toBe(32);
-    expect(appleTouch.dimension.size.density.row.$value.value).toBe(44);
+    expect(applePointer.dimension.size.height.md.$value.value).toBe(28);
+    expect(appleTouch.dimension.size.height.md.$value.value).toBe(44);
     expect(applePointer.typography.body.$value.fontSize.value).toBe(13);
     expect(appleTouch.typography.body.$value.fontSize.value).toBe(17);
 
@@ -479,18 +479,18 @@ describe("DTCG source lint", () => {
       appearance: "light",
       input: "pointer",
     }).merged as Record<string, any>;
-    expect(winuiMerged.motion.press.timing.$value.duration.value).toBe(83);
-    expect(winuiMerged.motion.press.$extensions).toBeUndefined();
+    expect(winuiMerged.motion.fast.timing.$value.duration.value).toBe(83);
+    expect(winuiMerged.motion.fast.$extensions).toBeUndefined();
 
     const backToSpring = mergeTokenTrees(structuredClone(winuiMerged), {
       motion: {
-        press: {
+        fast: {
           $extensions: { "dev.aning.shadcn-nsh": { spring: { stiffness: 500, damping: 30 } } },
         },
       },
     }) as Record<string, any>;
-    expect(backToSpring.motion.press.timing).toBeUndefined();
-    expect(backToSpring.motion.press.$extensions["dev.aning.shadcn-nsh"].spring).toEqual({
+    expect(backToSpring.motion.fast.timing).toBeUndefined();
+    expect(backToSpring.motion.fast.$extensions["dev.aning.shadcn-nsh"].spring).toEqual({
       stiffness: 500,
       damping: 30,
     });
@@ -511,18 +511,16 @@ describe("DTCG source lint", () => {
     );
   });
 
-  test("rejects out-of-range state opacities and negative stroke/shake values", () => {
+  test("rejects out-of-range state opacities and negative stroke widths", () => {
     const problems = withMutatedDefault((tmp) => {
       const p = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
       const doc = JSON.parse(fs.readFileSync(p, "utf8"));
       doc.state.overlay.hover.$value = 1.5;
       doc.dimension.stroke.hairline.$value.value = -0.5;
-      doc.duration.shake.$value.value = -10;
       fs.writeFileSync(p, JSON.stringify(doc, null, 2));
     }).join("\n");
     expect(problems).toContain("state.overlay.hover is 1.5, not in [0, 1]");
     expect(problems).toContain("dimension.stroke.hairline value -0.5 must be >= 0");
-    expect(problems).toContain("duration.shake value -10 must be >= 0");
   });
 });
 
@@ -631,21 +629,18 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           expect(cssColor, `color.${key}`).toBe(expectedColors[key]);
         }
 
-        // Typography at pointer tier
-        const rawFontFamily = doc.typography.$extensions?.[EXT_NS]?.fontFamily ?? null;
-        const fontMatch =
-          typeof rawFontFamily === "string"
-            ? /^\{font\.family\.([a-z0-9-]+)\}$/.exec(rawFontFamily)
-            : null;
-        expect(fontMatch ? `{font-${fontMatch[1]}}` : rawFontFamily).toBe(
-          semanticsJson.typography.fontFamily,
-        );
+        // Typography at pointer tier: one family for every role, and line heights stated as points
         for (const role of TYPE_ROLES) {
           const val = resolved.typography[role].$value as DtcgTypography;
+          expect(doc.typography[role].$value.fontFamily).toBe("{font.family.sans}");
           expect((val.fontSize as { value: number }).value).toBe(
             semanticsJson.typography[role].fontSize.pointer,
           );
-          expect(val.lineHeight).toBe(semanticsJson.typography[role].lineHeight.pointer);
+          const size = (val.fontSize as { value: number }).value;
+          const multiple = val.lineHeight as number;
+          expect(Math.round(size * multiple)).toBe(
+            semanticsJson.typography[role].lineHeight.pointer,
+          );
           expect(val.fontWeight).toBe(semanticsJson.typography[role].fontWeight);
           expect(val.letterSpacing.value).toBe(semanticsJson.typography[role].letterSpacing);
         }
@@ -709,7 +704,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           expect(tok.$value).toBe(semanticsJson.state.disabled[k]);
         }
         expect(doc.state.disabled.$extensions[EXT_NS].fill).toBe(semanticsJson.state.disabled.fill);
-        expect(doc.duration.shake.$value.value).toBe(semanticsJson.duration.shake);
+        expect(doc.duration, "no duration group").toBeUndefined();
 
         const bezierNameOf = (tf: [number, number, number, number], ref: string) => {
           const name = /^\{cubicBezier\.([a-z0-9-]+)\}$/.exec(ref)?.[1];
@@ -729,7 +724,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           ),
         }).toEqual(semanticsJson.transition.enter);
 
-        for (const role of ["press", "settle", "control", "move"] as const) {
+        for (const role of ["fast", "default", "slow"] as const) {
           const spring = doc.motion[role].$extensions?.[EXT_NS]?.spring;
           if (spring) {
             expect(spring).toEqual(semanticsJson.motion[role]);
@@ -905,7 +900,8 @@ describe("generated DESIGN.md validation and compiled equality", () => {
           fontFamily: expectedFamily,
           fontSize: `${expectedSize.value}${expectedSize.unit}`,
           fontWeight: expected.fontWeight,
-          lineHeight: expected.lineHeight,
+          // DESIGN.md states the line box in points; the DTCG source keeps the multiple
+          lineHeight: `${Math.round(expectedSize.value * (expected.lineHeight as number))}${expectedSize.unit}`,
           letterSpacing: `${expected.letterSpacing.value}${expected.letterSpacing.unit}`,
         });
       }
@@ -945,10 +941,7 @@ describe("generated DESIGN.md validation and compiled equality", () => {
         delay: `${enter.delay.value}${enter.delay.unit}`,
         timingFunction: `cubic-bezier(${(enter.timingFunction as number[]).join(", ")})`,
       });
-      expect(yaml.motion.shake).toEqual({
-        duration: `${lightDoc.duration.shake.$value.value}${lightDoc.duration.shake.$value.unit}`,
-      });
-      for (const role of ["press", "settle", "control", "move"] as const) {
+      for (const role of ["fast", "default", "slow"] as const) {
         const timingTok = lightDoc.motion[role]?.timing;
         if (timingTok) {
           const val = timingTok.$value as DtcgTransition;

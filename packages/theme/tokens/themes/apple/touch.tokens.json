@@ -33,18 +33,21 @@
     },
     "line-height": {
       "$type": "number",
-      "$description": "Unitless line-height ratios per type role for touch input.",
+      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
+      "detail": {
+        "$value": 1.384615
+      },
       "body": {
-        "$value": 1.2941176470588236
+        "$value": 1.294118
       },
       "label": {
-        "$value": 1.2941176470588236
+        "$value": 1.294118
       },
       "title": {
-        "$value": 1.2941176470588236
+        "$value": 1.294118
       },
       "display": {
-        "$value": 1.2058823529411764
+        "$value": 1.205882
       }
     }
   },
@@ -54,10 +57,10 @@
     "size": {
       "$description": "Ergonomic sizing scales for touch input.",
       "density": {
-        "$description": "Page-level row, padding, gap, and surface spacing metrics.",
-        "row": {
+        "$description": "Page-level padding, gap, and surface spacing metrics.",
+        "pad": {
           "$value": {
-            "value": 44,
+            "value": 16,
             "unit": "px"
           }
         },
@@ -68,23 +71,8 @@
           }
         }
       },
-      "control": {
-        "$description": "Control internal geometry and switch size tier.",
-        "tabs": {
-          "$value": {
-            "value": 36,
-            "unit": "px"
-          }
-        }
-      },
       "height": {
         "$description": "Standard control heights (sm, md, lg).",
-        "sm": {
-          "$value": {
-            "value": 32,
-            "unit": "px"
-          }
-        },
         "md": {
           "$value": {
             "value": 44,
@@ -93,30 +81,9 @@
         },
         "lg": {
           "$value": {
-            "value": 50,
+            "value": 56,
             "unit": "px"
           }
-        }
-      }
-    },
-    "icon": {
-      "$description": "Standard icon dimensions (sm, md, lg).",
-      "sm": {
-        "$value": {
-          "value": 15,
-          "unit": "px"
-        }
-      },
-      "md": {
-        "$value": {
-          "value": 17,
-          "unit": "px"
-        }
-      },
-      "lg": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
         }
       }
     }

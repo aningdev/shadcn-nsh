@@ -56,7 +56,7 @@ export function refreshIndicatorLook(): RefreshIndicatorLook {
       width: chip,
       height: chip,
       borderRadius: chip / 2,
-      borderWidth: stroke.surface,
+      borderWidth: stroke.hairline,
       borderColor: colors.border,
       backgroundColor: colors.raised,
       ...finish.raised,

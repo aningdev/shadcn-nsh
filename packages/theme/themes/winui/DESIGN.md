@@ -125,43 +125,43 @@ typography:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 12px
     fontWeight: 400
-    lineHeight: 1.3333333333333333
+    lineHeight: 16px
     letterSpacing: 0px
   detail:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 12px
     fontWeight: 400
-    lineHeight: 1.3333333333333333
+    lineHeight: 16px
     letterSpacing: 0px
   body:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 14px
     fontWeight: 400
-    lineHeight: 1.4285714285714286
+    lineHeight: 20px
     letterSpacing: 0px
   label:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 14px
     fontWeight: 400
-    lineHeight: 1.4285714285714286
+    lineHeight: 20px
     letterSpacing: 0px
   title:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 14px
     fontWeight: 600
-    lineHeight: 1.4285714285714286
+    lineHeight: 20px
     letterSpacing: 0px
   headline:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 20px
     fontWeight: 600
-    lineHeight: 1.4
+    lineHeight: 28px
     letterSpacing: 0px
   display:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 28px
     fontWeight: 600
-    lineHeight: 1.2857142857142858
+    lineHeight: 36px
     letterSpacing: 0px
 rounded:
   control: 4px
@@ -170,27 +170,19 @@ rounded:
 spacing:
   hit: 0px
   density:
-    row: 40px
-    pad: 16px
+    pad: 12px
     gap: 8px
     surface: 4px
   control:
-    row: 32px
     padding: 6px
     gap: 8px
-    control: 20px
-    check: 12px
     dot: 12px
-    tabs: 32px
-    line: 32px
-    clear: 16px
   height:
     sm: 24px
     md: 32px
     lg: 40px
   stroke:
     hairline: 1px
-    surface: 1px
     control: 1px
   focus:
     width: 2px
@@ -204,24 +196,18 @@ motion:
     duration: 250ms
     delay: 0ms
     timingFunction: "cubic-bezier(0, 0, 0, 1)"
-  shake:
-    duration: 500ms
-  press:
+  fast:
     duration: 83ms
     delay: 0ms
     timingFunction: "cubic-bezier(0, 0, 0, 1)"
-  settle:
+  default:
+    duration: 167ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0, 0, 0, 1)"
+  slow:
     duration: 250ms
     delay: 0ms
     timingFunction: "cubic-bezier(0, 0, 0, 1)"
-  control:
-    duration: 167ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0.55, 0.55, 0, 1)"
-  move:
-    duration: 333ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0.55, 0.55, 0, 1)"
 components:
   button-primary:
     backgroundColor: "{colors.light.primary}"
@@ -407,23 +393,23 @@ WinUI 3 typography scale mapped from TextBlock_themeresources.xaml (400 and 600 
 - **Font stacks:** Font family stacks.
   - `mono` (`Consolas, monospace`): WinUI 3 monospace font stack (Consolas, monospace).
   - `sans` (`Segoe UI Variable, Segoe UI, sans-serif`): WinUI 3 primary UI font stack (Segoe UI Variable, Segoe UI, sans-serif; typography.md).
-  - Semantic body `fontFamily`: `{font.family.sans}`.
+  - Every role's `fontFamily` is `{font.family.sans}`.
 
-- **`caption`** (12px, weight 400, line-height 1.33, letter-spacing 0px): Small captions and segmented counter labels.
-- **`detail`** (12px, weight 400, line-height 1.33, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
-- **`body`** (14px, weight 400, line-height 1.43, letter-spacing 0px): Standard body copy, list rows, and dialog content.
-- **`label`** (14px, weight 400, line-height 1.43, letter-spacing 0px): Control labels, form labels, and interactive triggers.
-- **`title`** (14px, weight 600, line-height 1.43, letter-spacing 0px): Card and section headings.
-- **`headline`** (20px, weight 600, line-height 1.40, letter-spacing 0px): Page-level headings.
-- **`display`** (28px, weight 600, line-height 1.29, letter-spacing 0px): Large display numerals and hero headings.
+- **`caption`** (12px, weight 400, line-height 16px, letter-spacing 0px): Small captions and segmented counter labels.
+- **`detail`** (12px, weight 400, line-height 16px, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
+- **`body`** (14px, weight 400, line-height 20px, letter-spacing 0px): Standard body copy, list rows, and dialog content.
+- **`label`** (14px, weight 400, line-height 20px, letter-spacing 0px): Control labels, form labels, and interactive triggers.
+- **`title`** (14px, weight 600, line-height 20px, letter-spacing 0px): Card and section headings.
+- **`headline`** (20px, weight 600, line-height 28px, letter-spacing 0px): Page-level headings.
+- **`display`** (28px, weight 600, line-height 36px, letter-spacing 0px): Large display numerals and hero headings.
 
 ## Layout
 
 Ergonomic sizing scales for pointer input.
 
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
-- **Density:** Page-level row, padding, gap, and surface spacing metrics.
-- **Control geometry:** Control internal geometry and switch size tier.
+- **Density:** Page-level padding, gap, and surface spacing metrics.
+- **Control geometry:** Control internal spacing and switch size tier.
 - **Control heights:** Standard control heights (sm, md, lg).
 - **Switch size tier (pointer):** `regular`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
@@ -436,8 +422,7 @@ Ergonomic sizing scales for pointer input.
 WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStrokeColorDefault` / `SurfaceStrokeColorDefault` borders and `material.windows` blur on `glass`, `menu`, and `tooltip` (`AcrylicInAppFillColorDefault` 0.85 light / 0.96 dark).
 
 - **Strokes:** Border stroke widths.
-  - `stroke.hairline` (1px): Hairline divider and outlined-variant stroke width.
-  - `stroke.surface` (1px): Container surface border width (cards, drawers, overlays).
+  - `stroke.hairline` (1px): Hairline width for dividers, container edges (cards, drawers, overlays) and outlined variants.
   - `stroke.control` (1px): Interactive control border width.
 - **Focus indicator (`style: "double"`):** WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).
   - `focus.width` (2px): 2px outer focus stroke width per WinUI 3.
@@ -458,14 +443,12 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles.
+Interactive spring and timing physics roles: fast, default, slow.
 
 - **`enter`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).
-- **`shake`** (500ms): Duration of validation-error shake animation.
-- **`press`** (83ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ToggleSwitch press timing (83ms decelerate, ToggleSwitch_themeresources.xaml:321).
-- **`settle`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 250ms settle timing with Direct Entrance decelerate curve.
-- **`control`** (167ms, `cubic-bezier(0.55, 0.55, 0, 1)`): WinUI 3 167ms control timing with Point-to-Point curve.
-- **`move`** (333ms, `cubic-bezier(0.55, 0.55, 0, 1)`): WinUI 3 333ms move timing with Point-to-Point curve.
+- **`fast`** (83ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).
+- **`default`** (167ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).
+- **`slow`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).
 - **Press & ripple** (`press-scale: 1`, `pressed-opacity: 1`, `ripple: false`): Interaction state opacities, press scale, and ripple switch.
 - **Timing curves:** Named timing curves shared across themes.
 

@@ -183,7 +183,7 @@ export function compileDesignMd(resolverPath: string): string {
       fontFamily: string;
       fontSize: string;
       fontWeight: number;
-      lineHeight: number;
+      lineHeight: string;
       letterSpacing: string;
     }
   > = {};
@@ -193,11 +193,13 @@ export function compileDesignMd(resolverPath: string): string {
       ? val.fontFamily.join(", ")
       : String(val.fontFamily);
     const fontSize = val.fontSize as DtcgDimension;
+    // DTCG's `lineHeight` is a multiple of the font size; a design language states the line box in points.
+    const lineHeight = Math.round(fontSize.value * (val.lineHeight as number));
     typographyYaml[role] = {
       fontFamily,
       fontSize: fmtDim(fontSize),
       fontWeight: val.fontWeight,
-      lineHeight: val.lineHeight as number,
+      lineHeight: `${lineHeight}${fontSize.unit}`,
       letterSpacing: fmtDim(val.letterSpacing),
     };
   }
@@ -230,7 +232,7 @@ export function compileDesignMd(resolverPath: string): string {
     icon: readDimLeaves(dimResolved.icon as Record<string, unknown>),
   };
 
-  // Motion (timing transitions and shake duration; springs have no DESIGN.md field and are documented in prose)
+  // Motion (the entrance transition's timing; springs have no DESIGN.md field and are documented in prose)
   const motionYaml: Record<string, Record<string, string>> = {};
   const enterVal = (lightResolved.transition as Record<string, Record<string, unknown>>).enter!
     .$value as DtcgTransition;
@@ -239,13 +241,8 @@ export function compileDesignMd(resolverPath: string): string {
     delay: `${enterVal.delay.value}${enterVal.delay.unit}`,
     timingFunction: `cubic-bezier(${(enterVal.timingFunction as number[]).join(", ")})`,
   };
-  const shakeDur = (lightResolved.duration as Record<string, Record<string, unknown>>).shake!
-    .$value as { value: number; unit: string };
-  motionYaml.shake = {
-    duration: `${shakeDur.value}${shakeDur.unit}`,
-  };
   const motionRes = (lightResolved.motion ?? {}) as Record<string, Record<string, unknown>>;
-  for (const role of ["press", "settle", "control", "move"] as const) {
+  for (const role of ["fast", "default", "slow"] as const) {
     const timingNode = motionRes[role]?.timing;
     if (isTokenNode(timingNode)) {
       const val = timingNode.$value as DtcgTransition;
@@ -494,7 +491,6 @@ export function compileDesignMd(resolverPath: string): string {
   const stateGroup = (lightMerged.state ?? {}) as Record<string, Record<string, unknown>>;
   const motionGroup = (lightMerged.motion ?? {}) as Record<string, Record<string, unknown>>;
   const transitionGroup = (lightMerged.transition ?? {}) as Record<string, Record<string, unknown>>;
-  const durationGroup = (lightMerged.duration ?? {}) as Record<string, Record<string, unknown>>;
   const cubicBezierGroup = (lightMerged.cubicBezier ?? {}) as Record<
     string,
     Record<string, unknown>
@@ -581,12 +577,7 @@ export function compileDesignMd(resolverPath: string): string {
       const val = Array.isArray(tok.$value) ? tok.$value.join(", ") : String(tok.$value);
       lines.push(`  - \`${k}\` (\`${val}\`): ${getDesc(tok) ?? ""}`);
     }
-    const semanticFam = getExt(typoGroup)?.fontFamily;
-    const semanticFamLabel =
-      semanticFam === null || semanticFam === undefined
-        ? "`null` (system UI default)"
-        : `\`${typeof semanticFam === "string" ? semanticFam : JSON.stringify(semanticFam)}\``;
-    lines.push(`  - Semantic body \`fontFamily\`: ${semanticFamLabel}.`);
+    lines.push("  - Every role's `fontFamily` is `{font.family.sans}`.");
   }
   lines.push("");
   for (const role of TYPE_ROLES) {
@@ -595,10 +586,15 @@ export function compileDesignMd(resolverPath: string): string {
     const touchFontSize = isRecord(touchTypo.fontSize)
       ? fmtDim(touchTypo.fontSize as unknown as DtcgDimension)
       : t.fontSize;
+    const touchLineHeight = isRecord(touchTypo.fontSize)
+      ? `${Math.round((touchTypo.fontSize as unknown as DtcgDimension).value * (touchTypo.lineHeight as number))}${(touchTypo.fontSize as unknown as DtcgDimension).unit}`
+      : t.lineHeight;
     const touchNote = touchFontSize !== t.fontSize ? ` (touch: ${touchFontSize})` : "";
+    const touchLine =
+      touchLineHeight !== t.lineHeight ? `, line-height ${touchLineHeight} on touch` : "";
     const roleDesc = getDesc(typoGroup[role]) ?? "";
     lines.push(
-      `- **\`${role}\`** (${t.fontSize}${touchNote}, weight ${t.fontWeight}, line-height ${t.lineHeight.toFixed(2)}, letter-spacing ${t.letterSpacing}): ${roleDesc}`,
+      `- **\`${role}\`** (${t.fontSize}${touchNote}, weight ${t.fontWeight}, line-height ${t.lineHeight}${touchLine}, letter-spacing ${t.letterSpacing}): ${roleDesc}`,
     );
   }
   lines.push("");
@@ -715,11 +711,7 @@ export function compileDesignMd(resolverPath: string): string {
       `- **\`enter\`** (${motionYaml.enter!.duration}, \`${motionYaml.enter!.timingFunction}\`): ${getDesc(enterNode) ?? ""}`,
     );
   }
-  const shakeNode = durationGroup.shake;
-  if (shakeNode) {
-    lines.push(`- **\`shake\`** (${motionYaml.shake!.duration}): ${getDesc(shakeNode) ?? ""}`);
-  }
-  for (const role of ["press", "settle", "control", "move"] as const) {
+  for (const role of ["fast", "default", "slow"] as const) {
     const roleNode = motionGroup[role];
     const roleExt = getExt(roleNode);
     const desc = getDesc(roleNode) ?? "";

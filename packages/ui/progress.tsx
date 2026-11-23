@@ -378,7 +378,7 @@ export function ProgressStepMark(props: { state: Live<ProgressStepState> }) {
     const next = state();
     if (next === shown) return;
     shown = next;
-    if (!reduceMotion()) void animate(pop, 1, motion.move, { velocity: 4 });
+    if (!reduceMotion()) void animate(pop, 1, motion.default, { velocity: 4 });
   });
   const look = progressStepsLook();
   return (

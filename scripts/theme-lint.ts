@@ -17,8 +17,8 @@ import { join } from "node:path";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkGlassFallback, checkMaterial } from "./theme/material";
 import { parseColor } from "./theme/oklch";
-import { specBlock, specParts, specRows } from "./theme/spec";
-import { checkStyle } from "./theme/style";
+import { scaleCitations, specBlock, specParts, specRows } from "./theme/spec";
+import { checkScales, checkStyle, citedValues } from "./theme/style";
 import {
   findTokenRefs,
   mergeFinishes,
@@ -83,6 +83,9 @@ const themes = readdirSync(join(root, "packages/theme/themes"))
 const spec = read("docs/specs/theme-roles.md");
 /** What the spec names: the A and C layers, and every finish's row. */
 const specPartsOf = specParts(spec);
+
+/** The values the spec cites off the 4 px grid, by theme and key. */
+const cited = citedValues(scaleCitations(spec));
 
 const failures: string[] = [];
 const fail = (message: string) => failures.push(message);
@@ -337,25 +340,37 @@ for (const theme of themes) {
   }
 }
 
-// 4b. Every theme states the same style (typography, dimension, shape, state, duration, transition,
-// motion, controls), with `{token}` references typed by DTCG `$type`.
+// 4b. Every theme states the same style (typography, dimension, shape, state, transition, motion,
+// controls), with `{token}` references typed by DTCG `$type` and sizes on the scales.
 for (const theme of themes) {
   const path = `packages/theme/themes/${theme}/semantics.json`;
+  const file = readJson<Record<string, unknown>>(path);
   const kinds = tokenKinds(tokensOf.get(theme)!.cssVars);
   for (const problem of checkStyle(
     path,
-    readJson<Record<string, unknown>>(path),
+    file,
     defaultSemantics as unknown as Record<string, unknown>,
     kinds,
   ))
     fail(problem);
+  for (const problem of checkScales(path, file, theme, cited)) fail(problem);
 }
 
 // 5. Nothing in the files is written and never read.
+// Two tokens need no reader of this library's: `font-sans` is every text's default family, which
+// NSH applies itself (`Theme::font_sans` reads the token), and `radius` is the A layer's base slot
+// an app's own Tailwind utilities take (`rounded-lg`, `rounded-(--radius)`).
+const platformTokens = new Set(["radius", "font-sans"]);
 const shared = new Set(Object.keys(tokensOf.get(first)?.cssVars.theme ?? {}));
 const shadcn = new Set(slots);
 for (const name of names)
-  if (!shadcn.has(name) && !shared.has(name) && !readsToken(name) && !unread.has(name))
+  if (
+    !shadcn.has(name) &&
+    !shared.has(name) &&
+    !platformTokens.has(name) &&
+    !readsToken(name) &&
+    !unread.has(name)
+  )
     fail(`packages/theme/theme.json: token \`${name}\` is read nowhere and not left to the app`);
 for (const role of defaultRoles)
   if (!readsRole(role) && !unread.has(role))
@@ -373,8 +388,7 @@ const isColour = (value: string) => {
   }
 };
 for (const [name, value] of Object.entries(themeBlock)) {
-  // `radius` is the shadcn A-layer base slot reserved for application Tailwind utilities (`rounded-lg`, `rounded-(--radius)`).
-  if (name !== "radius" && !readsToken(name) && !unread.has(name))
+  if (!platformTokens.has(name) && !readsToken(name) && !unread.has(name))
     fail(`packages/theme/theme.json: token \`${name}\` is read nowhere and not left to the app`);
   if (name.startsWith("font-") && isColour(value))
     fail(

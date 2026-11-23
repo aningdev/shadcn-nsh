@@ -845,7 +845,7 @@ function Player() {
     playing();
     if (reduceMotion()) return;
     pop.set(0.7);
-    void animate(pop, 1, motion.press);
+    void animate(pop, 1, motion.default);
   });
   const time = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
   const cycle = () => {
@@ -1064,7 +1064,7 @@ function Palette() {
   const y = createAnimatedValue(0);
   effect(() => {
     const to = at() * step;
-    void animate(y, to, motion.settle);
+    void animate(y, to, motion.default);
   });
   const current = () => TOOLS[at()];
   return (

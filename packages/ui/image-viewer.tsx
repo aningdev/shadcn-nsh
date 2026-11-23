@@ -156,7 +156,7 @@ export function ImageViewer(props: ImageViewerProps) {
     x.set(0);
     y.set(0);
     enter.set(0);
-    void animate(enter, 1, motion.settle);
+    void animate(enter, 1, motion.slow);
   });
 
   /** The image's box at 1×: its aspect ratio fitted into the viewport. */
@@ -178,9 +178,9 @@ export function ImageViewer(props: ImageViewerProps) {
     atScale.set(s);
     atX.set(nextX);
     atY.set(nextY);
-    void animate(scale, s, motion.settle);
-    void animate(x, nextX, motion.settle);
-    void animate(y, nextY, motion.settle);
+    void animate(scale, s, motion.slow);
+    void animate(x, nextX, motion.slow);
+    void animate(y, nextY, motion.slow);
   };
 
   /** A press on the image: the second of two zooms in at the point, or back out. */

@@ -254,7 +254,7 @@ function FileRow(props: {
   value: number;
   first: boolean;
 }) {
-  const done = follow(() => (props.value >= 100 ? 1 : 0), motion.control);
+  const done = follow(() => (props.value >= 100 ? 1 : 0), motion.fast);
   return (
     <Progress
       value={props.value}

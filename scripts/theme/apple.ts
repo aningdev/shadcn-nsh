@@ -110,6 +110,8 @@ const themeLevel = (): Record<string, string> => ({
   "radius-control": "8px",
   "radius-container": "12px",
   "radius-modal": "26px",
+  // The families: the platform's own, neither shade ships a font face.
+  "font-sans": "system-ui",
   "font-mono": "monospace",
   scrim: oklchColor(0, 0, 0, 0.4),
   media: oklchColor(0.1869, 0.0151, 266.766),
@@ -315,46 +317,45 @@ function finishes(appearance: Appearance) {
 /** The style groups: the HIG's metrics; `docs/specs/native-themes.md` §3.2 lists each with its source. */
 export const style = {
   typography: {
-    fontFamily: null,
     caption: {
       fontSize: { pointer: 10, touch: 12 },
-      lineHeight: { pointer: 13 / 10, touch: 16 / 12 },
+      lineHeight: { pointer: 13, touch: 16 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     detail: {
       fontSize: { pointer: 11, touch: 13 },
-      lineHeight: { pointer: 14 / 11, touch: 18 / 13 },
+      lineHeight: { pointer: 14, touch: 18 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     body: {
       fontSize: { pointer: 13, touch: 17 },
-      lineHeight: { pointer: 16 / 13, touch: 22 / 17 },
+      lineHeight: { pointer: 16, touch: 22 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     label: {
       fontSize: { pointer: 13, touch: 17 },
-      lineHeight: { pointer: 16 / 13, touch: 22 / 17 },
+      lineHeight: { pointer: 16, touch: 22 },
       fontWeight: 500,
       letterSpacing: 0,
     },
     title: {
       fontSize: { pointer: 13, touch: 17 },
-      lineHeight: { pointer: 16 / 13, touch: 22 / 17 },
+      lineHeight: { pointer: 16, touch: 22 },
       fontWeight: 600,
       letterSpacing: 0,
     },
     headline: {
       fontSize: { pointer: 22, touch: 22 },
-      lineHeight: { pointer: 26 / 22, touch: 28 / 22 },
+      lineHeight: { pointer: 26, touch: 28 },
       fontWeight: 600,
       letterSpacing: 0,
     },
     display: {
       fontSize: { pointer: 26, touch: 34 },
-      lineHeight: { pointer: 32 / 26, touch: 41 / 34 },
+      lineHeight: { pointer: 32, touch: 41 },
       fontWeight: 600,
       letterSpacing: 0,
     },
@@ -368,42 +369,20 @@ export const style = {
     size: {
       hit: { pointer: 0, touch: 44 },
       density: {
-        pointer: { row: 32, pad: 14, gap: 12, surface: 12 },
-        touch: { row: 44, pad: 16, gap: 12, surface: 20 },
+        pointer: { pad: 16, gap: 12, surface: 12 },
+        touch: { pad: 16, gap: 12, surface: 20 },
       },
       control: {
-        pointer: {
-          row: 36,
-          padding: 6,
-          gap: 10,
-          control: 16,
-          check: 12,
-          dot: 6,
-          tabs: 28,
-          line: 28,
-          clear: 16,
-          switch: "regular",
-        },
-        touch: {
-          row: 44,
-          padding: 8,
-          gap: 12,
-          control: 22,
-          check: 16,
-          dot: 8,
-          tabs: 36,
-          line: 44,
-          clear: 20,
-          switch: "regular",
-        },
+        pointer: { padding: 8, gap: 8, dot: 6, switch: "regular" },
+        touch: { padding: 8, gap: 8, dot: 8, switch: "regular" },
       },
-      height: { pointer: { sm: 24, md: 28, lg: 32 }, touch: { sm: 32, md: 44, lg: 50 } },
+      height: { pointer: { sm: 24, md: 28, lg: 32 }, touch: { sm: 32, md: 44, lg: 56 } },
     },
-    stroke: { hairline: 0.5, surface: 0.5, control: 1 },
+    stroke: { hairline: 0.5, control: 1 },
     focus: { style: "halo", width: 3, offset: 0 },
     icon: {
-      pointer: { sm: 12, md: 14, lg: 16 },
-      touch: { sm: 15, md: 17, lg: 20 },
+      pointer: { sm: 12, md: 16, lg: 20 },
+      touch: { sm: 16, md: 20, lg: 24 },
     },
   },
   shape: {
@@ -421,15 +400,15 @@ export const style = {
     "rest-opacity": 0.5,
     disabled: { content: 0.3, fill: false },
   },
-  duration: { shake: 500 },
   transition: {
     enter: { duration: 420, timingFunction: "out-cubic" },
   },
   motion: {
-    press: { stiffness: 520, damping: 34 },
-    settle: { stiffness: 320, damping: 30 },
-    control: { stiffness: 1218, damping: 70 },
-    move: { stiffness: 504, damping: 38 },
+    // The springs the system's own controls settle with: a toggle's snap, a
+    // press, and a release.
+    fast: { stiffness: 1218, damping: 70 },
+    default: { stiffness: 520, damping: 34 },
+    slow: { stiffness: 320, damping: 30 },
   },
   controls: "base" as const,
 };
@@ -515,7 +494,7 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
         "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.",
       ],
       donts: [
-        "Do not replace Retina `0.5px` `stroke.hairline`/`stroke.surface` with thick borders or `circular` corners.",
+        "Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners.",
         "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+.",
       ],
     },
@@ -543,7 +522,6 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
       },
       style: {
         "dimension.stroke.hairline": "Retina 0.5px hairline divider width per Apple HIG.",
-        "dimension.stroke.surface": "Retina 0.5px container surface hairline width per Apple HIG.",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; Apple dims via pressed-opacity).",
         "state.disabled":

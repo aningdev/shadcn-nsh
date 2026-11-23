@@ -23,6 +23,7 @@ import {
   checkTimingSpec,
   easingNames,
   isValidPressScale,
+  motionRoleNames,
   shapeRadiusRoles,
   whitelists,
 } from "../theme/style";
@@ -298,14 +299,6 @@ function validateExtAtPath(
       if (mode === "merged") problems.push(`${where}.preset is missing`);
     } else if (!whitelists.controls!.includes(ext.preset as string)) {
       problems.push(`${where}.preset: ${JSON.stringify(ext.preset)} is not in whitelist`);
-    }
-    return;
-  }
-
-  if (p === "typography") {
-    checkUnknownKeys(where, ext, ["fontFamily"], problems);
-    if (ext.fontFamily !== null && typeof ext.fontFamily !== "string") {
-      problems.push(`${where}.fontFamily must be null or a "{font.family.*}" reference`);
     }
     return;
   }
@@ -614,20 +607,16 @@ function checkMergedSemantics(
   requireDescriptions: boolean,
   problems: string[],
 ): void {
-  // Typography extension & weights
+  // Typography: one family for every role, from `font.family.sans`; and whitelisted weights
   const typoGroup = merged.typography;
   if (isRecord(typoGroup)) {
     const ext =
       isRecord(typoGroup.$extensions) && isRecord(typoGroup.$extensions[EXT_NS])
         ? typoGroup.$extensions[EXT_NS]
         : undefined;
-    if (ext && typeof ext.fontFamily === "string") {
-      checkTypedRef(
-        `${label}: typography.$extensions.fontFamily`,
-        ext.fontFamily,
-        "fontFamily",
-        tokenTypes,
-        problems,
+    if (ext && "fontFamily" in ext) {
+      problems.push(
+        `${label}: typography.$extensions.fontFamily is gone — every role's fontFamily is \`{font.family.sans}\``,
       );
     }
     for (const role of TYPE_ROLES) {
@@ -638,9 +627,9 @@ function checkMergedSemantics(
           `${label}: typography.${role}.fontWeight is ${JSON.stringify(tok.$value.fontWeight)}, not in whitelist`,
         );
       }
-      if (ext && typeof ext.fontFamily === "string" && tok.$value.fontFamily !== ext.fontFamily) {
+      if (tok.$value.fontFamily !== "{font.family.sans}") {
         problems.push(
-          `${label}: typography.${role}.fontFamily must match typography.$extensions.fontFamily (${ext.fontFamily})`,
+          `${label}: typography.${role}.fontFamily is ${JSON.stringify(tok.$value.fontFamily)}, not \`{font.family.sans}\``,
         );
       }
     }
@@ -756,18 +745,10 @@ function checkMergedSemantics(
     };
     walkDim(group, dimGroupPath);
   }
-  const shakeTok = getAtPath(resolved, "duration.shake");
-  if (isTokenNode(shakeTok) && isRecord(shakeTok.$value)) {
-    const val = shakeTok.$value.value;
-    if (typeof val !== "number" || !Number.isFinite(val) || val < 0) {
-      problems.push(`${label}: duration.shake value ${JSON.stringify(val)} must be >= 0`);
-    }
-  }
-
   // Motion roles: spring OR timing (never mixed, never missing)
   const motionGroup = merged.motion;
   if (isRecord(motionGroup)) {
-    for (const role of ["press", "settle", "control", "move"] as const) {
+    for (const role of motionRoleNames) {
       const roleNode = motionGroup[role];
       if (!isRecord(roleNode)) {
         problems.push(`${label}: motion.${role} is missing`);

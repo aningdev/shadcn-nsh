@@ -335,7 +335,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
             ? { borderRightWidth: stroke.hairline }
             : { borderLeftWidth: stroke.hairline }
           : {
-              borderWidth: stroke.surface,
+              borderWidth: stroke.hairline,
               ...rounded(shape.container),
               boxShadow: finish.card.boxShadow,
             }),
@@ -353,7 +353,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
               margin: sidebarSize.frame,
               // physical: the frame's air goes on the page-facing side, whichever window edge the column stands on.
               ...(side() === "left" ? { marginLeft: 0 } : { marginRight: 0 }),
-              borderWidth: stroke.surface,
+              borderWidth: stroke.hairline,
               borderColor: colors.line,
               ...rounded(shape.container),
               boxShadow: finish.card.boxShadow,

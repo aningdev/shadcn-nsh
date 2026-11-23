@@ -406,6 +406,7 @@ function themeLevel(roles: M3Roles): Record<string, string> {
     "radius-control": "4px",
     "radius-container": "12px",
     "radius-modal": "28px",
+    "font-sans": "system-ui",
     "font-mono": "monospace",
     ...roles.theme,
   };
@@ -549,46 +550,45 @@ function finishes(modalFill: string): Record<string, Record<string, unknown>> {
 /** Material 3 Expressive style groups (`semantics.json`); verified values in `docs/specs/native-themes.md` §3.2. */
 export const m3Style = {
   typography: {
-    fontFamily: null,
     caption: {
       fontSize: { pointer: 11, touch: 11 },
-      lineHeight: { pointer: 16 / 11, touch: 16 / 11 },
+      lineHeight: { pointer: 16, touch: 16 },
       fontWeight: 500,
       letterSpacing: 0.5,
     },
     detail: {
       fontSize: { pointer: 12, touch: 12 },
-      lineHeight: { pointer: 16 / 12, touch: 16 / 12 },
+      lineHeight: { pointer: 16, touch: 16 },
       fontWeight: 400,
       letterSpacing: 0.4,
     },
     body: {
       fontSize: { pointer: 14, touch: 14 },
-      lineHeight: { pointer: 20 / 14, touch: 20 / 14 },
+      lineHeight: { pointer: 20, touch: 20 },
       fontWeight: 400,
       letterSpacing: 0.25,
     },
     label: {
       fontSize: { pointer: 14, touch: 14 },
-      lineHeight: { pointer: 20 / 14, touch: 20 / 14 },
+      lineHeight: { pointer: 20, touch: 20 },
       fontWeight: 500,
       letterSpacing: 0.1,
     },
     title: {
       fontSize: { pointer: 16, touch: 16 },
-      lineHeight: { pointer: 24 / 16, touch: 24 / 16 },
+      lineHeight: { pointer: 24, touch: 24 },
       fontWeight: 500,
       letterSpacing: 0.15,
     },
     headline: {
       fontSize: { pointer: 24, touch: 24 },
-      lineHeight: { pointer: 32 / 24, touch: 32 / 24 },
+      lineHeight: { pointer: 32, touch: 32 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     display: {
       fontSize: { pointer: 36, touch: 36 },
-      lineHeight: { pointer: 44 / 36, touch: 44 / 36 },
+      lineHeight: { pointer: 44, touch: 44 },
       fontWeight: 400,
       letterSpacing: 0,
     },
@@ -602,44 +602,21 @@ export const m3Style = {
     size: {
       hit: { pointer: 44, touch: 48 },
       density: {
-        pointer: { row: 48, pad: 16, gap: 12, surface: 12 },
-        touch: { row: 56, pad: 16, gap: 12, surface: 16 },
+        pointer: { pad: 16, gap: 12, surface: 12 },
+        touch: { pad: 16, gap: 12, surface: 16 },
       },
       control: {
-        pointer: {
-          row: 48,
-          padding: 8,
-          gap: 12,
-          control: 18,
-          check: 18,
-          dot: 10,
-          tabs: 48,
-          line: 48,
-          clear: 20,
-          switch: "regular",
-        },
-        touch: {
-          row: 56,
-          padding: 10,
-          gap: 12,
-          control: 18,
-          check: 18,
-          dot: 10,
-          tabs: 48,
-          line: 56,
-          clear: 24,
-          switch: "regular",
-        },
+        // M3 spacing steps: 8 inside a control, 12 beside it; a radio's dot is 10dp.
+        pointer: { padding: 8, gap: 8, dot: 10, switch: "regular" },
+        touch: { padding: 8, gap: 8, dot: 10, switch: "regular" },
       },
       height: { pointer: { sm: 32, md: 40, lg: 56 }, touch: { sm: 32, md: 40, lg: 56 } },
     },
-    // M3 elevated/filled surfaces (ElevatedCard, Sheet, NavigationDrawer, Dialog, Menu, Snackbar)
-    // have no outline (`surface: 0`); `hairline: 1` stays for dividers and outlined variants.
-    stroke: { hairline: 1, surface: 0, control: 1 },
+    stroke: { hairline: 1, control: 1 },
     focus: { style: "outline", width: 3, offset: 2 },
     icon: {
-      pointer: { sm: 18, md: 20, lg: 24 },
-      touch: { sm: 18, md: 20, lg: 24 },
+      pointer: { sm: 16, md: 20, lg: 24 },
+      touch: { sm: 16, md: 20, lg: 24 },
     },
   },
   shape: {
@@ -649,25 +626,24 @@ export const m3Style = {
     },
   },
   state: {
-    // M3 presses via state layer overlay and Android ripple rather than geometric scale.
+    // M3 presses with a state layer and an Android ripple, not by sinking.
     "press-scale": 1,
     overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
     ripple: true,
     "pressed-opacity": 1,
-    "rest-opacity": 0.5,
+    "rest-opacity": 0.38,
     disabled: { content: 0.38, fill: true },
   },
-  duration: { shake: 500 },
   transition: {
     enter: { duration: 500, timingFunction: "emphasized-decelerate" },
   },
   motion: {
-    // ExpressiveMotionTokens: FastSpatial (k=800, z=0.6), DefaultSpatial (k=380, z=0.8),
-    // DefaultEffects (k=1600, z=1.0), and DurationLong2 (500ms) with emphasized-decelerate.
-    press: { stiffness: 800, damping: 33.94 },
-    settle: { stiffness: 380, damping: 31.19 },
-    control: { stiffness: 1600, damping: 80 },
-    move: { stiffness: 380, damping: 31.19 },
+    // M3 Expressive spatial springs, named by speed (`ExpressiveMotionTokens.kt`): FastSpatial for
+    // small components reacting, DefaultSpatial for a press or a thumb that moves, SlowSpatial for
+    // a panel that settles (damping 2·ζ·√k: 0.6/800 → 33.94, 0.8/380 → 31.19, 0.8/200 → 22.63).
+    fast: { stiffness: 800, damping: 33.94 },
+    default: { stiffness: 380, damping: 31.19 },
+    slow: { stiffness: 200, damping: 22.63 },
   },
   controls: "material" as const,
 };
@@ -750,14 +726,14 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       overview:
         "Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and Expressive spatial/effects springs.",
       elevation:
-        "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with `stroke.surface: 0px` and no backdrop blur.",
+        "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.",
       dos: [
         "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.",
         'Use `shape.curve: "circular"` and `controls: "material"` for top-rounded underlined fields and underlined tabs.',
-        "Keep `stroke.surface: 0px` on tonal/elevated containers so depth comes from tonal steps and elevation.",
+        "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation.",
       ],
       donts: [
-        "Do not add backdrop blur (`backdropFilter`) or surface borders (`stroke.surface > 0`) to M3 tonal surfaces.",
+        "Do not add backdrop blur (`backdropFilter`) or a surface edge (`border-color`) to M3 tonal surfaces.",
         "Do not replace `outline` focus rings (`3px` width, `2px` offset) with halo rings.",
       ],
     },
@@ -797,8 +773,6 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       style: {
         typography:
           "Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).",
-        "dimension.stroke.surface":
-          "0px surface outline (M3 elevated/filled surfaces rely on elevation rather than outlines).",
         "dimension.focus":
           "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
         "dimension.focus.offset": "2px outward focus indicator offset per M3.",
@@ -813,12 +787,12 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).",
         "transition.enter":
           "M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).",
-        "motion.press":
-          "M3 Expressive FastSpatial spring (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt).",
-        "motion.settle": "M3 Expressive DefaultSpatial spring (stiffness 380, damping ratio 0.8).",
-        "motion.control":
-          "M3 Expressive DefaultEffects spring (stiffness 1600, damping ratio 1.0).",
-        "motion.move": "M3 Expressive DefaultSpatial spring for layout and indicator movement.",
+        "motion.fast":
+          "M3 Expressive FastSpatial spring for control state (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt).",
+        "motion.default":
+          "M3 Expressive DefaultSpatial spring for presses and movement (stiffness 380, damping ratio 0.8).",
+        "motion.slow":
+          "M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8).",
         controls: "Material 3 Expressive control geometry presets.",
       },
     },

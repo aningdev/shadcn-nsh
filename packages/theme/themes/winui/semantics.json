@@ -1,14 +1,13 @@
 {
   "typography": {
-    "fontFamily": "{font-sans}",
     "caption": {
       "fontSize": {
         "pointer": 12,
         "touch": 12
       },
       "lineHeight": {
-        "pointer": 1.3333333333333333,
-        "touch": 1.3333333333333333
+        "pointer": 16,
+        "touch": 16
       },
       "fontWeight": 400,
       "letterSpacing": 0
@@ -19,8 +18,8 @@
         "touch": 12
       },
       "lineHeight": {
-        "pointer": 1.3333333333333333,
-        "touch": 1.3333333333333333
+        "pointer": 16,
+        "touch": 16
       },
       "fontWeight": 400,
       "letterSpacing": 0
@@ -31,8 +30,8 @@
         "touch": 14
       },
       "lineHeight": {
-        "pointer": 1.4285714285714286,
-        "touch": 1.4285714285714286
+        "pointer": 20,
+        "touch": 20
       },
       "fontWeight": 400,
       "letterSpacing": 0
@@ -43,8 +42,8 @@
         "touch": 14
       },
       "lineHeight": {
-        "pointer": 1.4285714285714286,
-        "touch": 1.4285714285714286
+        "pointer": 20,
+        "touch": 20
       },
       "fontWeight": 400,
       "letterSpacing": 0
@@ -55,8 +54,8 @@
         "touch": 14
       },
       "lineHeight": {
-        "pointer": 1.4285714285714286,
-        "touch": 1.4285714285714286
+        "pointer": 20,
+        "touch": 20
       },
       "fontWeight": 600,
       "letterSpacing": 0
@@ -67,8 +66,8 @@
         "touch": 20
       },
       "lineHeight": {
-        "pointer": 1.4,
-        "touch": 1.4
+        "pointer": 28,
+        "touch": 28
       },
       "fontWeight": 600,
       "letterSpacing": 0
@@ -79,8 +78,8 @@
         "touch": 28
       },
       "lineHeight": {
-        "pointer": 1.2857142857142858,
-        "touch": 1.2857142857142858
+        "pointer": 36,
+        "touch": 36
       },
       "fontWeight": 600,
       "letterSpacing": 0
@@ -99,41 +98,27 @@
       },
       "density": {
         "pointer": {
-          "row": 40,
-          "pad": 16,
+          "pad": 12,
           "gap": 8,
           "surface": 4
         },
         "touch": {
-          "row": 40,
-          "pad": 16,
+          "pad": 12,
           "gap": 8,
           "surface": 8
         }
       },
       "control": {
         "pointer": {
-          "row": 32,
           "padding": 6,
           "gap": 8,
-          "control": 20,
-          "check": 12,
           "dot": 12,
-          "tabs": 32,
-          "line": 32,
-          "clear": 16,
           "switch": "regular"
         },
         "touch": {
-          "row": 40,
-          "padding": 8,
+          "padding": 6,
           "gap": 8,
-          "control": 20,
-          "check": 12,
           "dot": 12,
-          "tabs": 40,
-          "line": 40,
-          "clear": 20,
           "switch": "regular"
         }
       },
@@ -152,7 +137,6 @@
     },
     "stroke": {
       "hairline": 1,
-      "surface": 1,
       "control": 1
     },
     "focus": {
@@ -195,9 +179,6 @@
       "fill": true
     }
   },
-  "duration": {
-    "shake": 500
-  },
   "transition": {
     "enter": {
       "duration": 250,
@@ -205,21 +186,17 @@
     }
   },
   "motion": {
-    "press": {
+    "fast": {
       "duration": 83,
       "timingFunction": "decelerate"
     },
-    "settle": {
-      "duration": 250,
+    "default": {
+      "duration": 167,
       "timingFunction": "decelerate"
     },
-    "control": {
-      "duration": 167,
-      "timingFunction": "point-to-point"
-    },
-    "move": {
-      "duration": 333,
-      "timingFunction": "point-to-point"
+    "slow": {
+      "duration": 250,
+      "timingFunction": "decelerate"
     }
   },
   "controls": "winui",

@@ -12,7 +12,7 @@
           "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views."
         ],
         "donts": [
-          "Do not replace Retina `0.5px` `stroke.hairline`/`stroke.surface` with thick borders or `circular` corners.",
+          "Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners.",
           "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+."
         ]
       }
@@ -54,13 +54,6 @@
           "unit": "px"
         },
         "$description": "Retina 0.5px hairline divider width per Apple HIG."
-      },
-      "surface": {
-        "$value": {
-          "value": 0.5,
-          "unit": "px"
-        },
-        "$description": "Retina 0.5px container surface hairline width per Apple HIG."
       }
     }
   },
@@ -69,6 +62,10 @@
     "family": {
       "$type": "fontFamily",
       "$description": "Font family stacks.",
+      "sans": {
+        "$value": "system-ui",
+        "$description": "Primary sans-serif font family stack."
+      },
       "mono": {
         "$value": "monospace",
         "$description": "Monospace font family for code blocks and numeric readouts."

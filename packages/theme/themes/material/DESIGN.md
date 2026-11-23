@@ -122,46 +122,46 @@ colors:
     violet: "#efb8c8"
 typography:
   caption:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 11px
     fontWeight: 500
-    lineHeight: 1.4545454545454546
+    lineHeight: 16px
     letterSpacing: 0.5px
   detail:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 12px
     fontWeight: 400
-    lineHeight: 1.3333333333333333
+    lineHeight: 16px
     letterSpacing: 0.4px
   body:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 14px
     fontWeight: 400
-    lineHeight: 1.4285714285714286
+    lineHeight: 20px
     letterSpacing: 0.25px
   label:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 14px
     fontWeight: 500
-    lineHeight: 1.4285714285714286
+    lineHeight: 20px
     letterSpacing: 0.1px
   title:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 16px
     fontWeight: 500
-    lineHeight: 1.5
+    lineHeight: 24px
     letterSpacing: 0.15px
   headline:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 24px
     fontWeight: 400
-    lineHeight: 1.3333333333333333
+    lineHeight: 32px
     letterSpacing: 0px
   display:
-    fontFamily: "system-ui, sans-serif"
+    fontFamily: system-ui
     fontSize: 36px
     fontWeight: 400
-    lineHeight: 1.2222222222222223
+    lineHeight: 44px
     letterSpacing: 0px
 rounded:
   control: 4px
@@ -170,33 +170,25 @@ rounded:
 spacing:
   hit: 44px
   density:
-    row: 48px
     pad: 16px
     gap: 12px
     surface: 12px
   control:
-    row: 48px
     padding: 8px
-    gap: 12px
-    control: 18px
-    check: 18px
+    gap: 8px
     dot: 10px
-    tabs: 48px
-    line: 48px
-    clear: 20px
   height:
     sm: 32px
     md: 40px
     lg: 56px
   stroke:
     hairline: 1px
-    surface: 0px
     control: 1px
   focus:
     width: 3px
     offset: 2px
   icon:
-    sm: 18px
+    sm: 16px
     md: 20px
     lg: 24px
 motion:
@@ -204,8 +196,6 @@ motion:
     duration: 500ms
     delay: 0ms
     timingFunction: "cubic-bezier(0.05, 0.7, 0.1, 1)"
-  shake:
-    duration: 500ms
 components:
   button-primary:
     backgroundColor: "{colors.light.primary}"
@@ -389,24 +379,25 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).
 
 - **Font stacks:** Font family stacks.
+  - `sans` (`system-ui`): Primary sans-serif font family stack.
   - `mono` (`monospace`): Monospace font family for code blocks and numeric readouts.
-  - Semantic body `fontFamily`: `null` (system UI default).
+  - Every role's `fontFamily` is `{font.family.sans}`.
 
-- **`caption`** (11px, weight 500, line-height 1.45, letter-spacing 0.5px): Small captions and segmented counter labels.
-- **`detail`** (12px, weight 400, line-height 1.33, letter-spacing 0.4px): Sidebar section labels, counts, and supporting metadata.
-- **`body`** (14px, weight 400, line-height 1.43, letter-spacing 0.25px): Standard body copy, list rows, and dialog content.
-- **`label`** (14px, weight 500, line-height 1.43, letter-spacing 0.1px): Control labels, form labels, and interactive triggers.
-- **`title`** (16px, weight 500, line-height 1.50, letter-spacing 0.15px): Card and section headings.
-- **`headline`** (24px, weight 400, line-height 1.33, letter-spacing 0px): Page-level headings.
-- **`display`** (36px, weight 400, line-height 1.22, letter-spacing 0px): Large display numerals and hero headings.
+- **`caption`** (11px, weight 500, line-height 16px, letter-spacing 0.5px): Small captions and segmented counter labels.
+- **`detail`** (12px, weight 400, line-height 16px, letter-spacing 0.4px): Sidebar section labels, counts, and supporting metadata.
+- **`body`** (14px, weight 400, line-height 20px, letter-spacing 0.25px): Standard body copy, list rows, and dialog content.
+- **`label`** (14px, weight 500, line-height 20px, letter-spacing 0.1px): Control labels, form labels, and interactive triggers.
+- **`title`** (16px, weight 500, line-height 24px, letter-spacing 0.15px): Card and section headings.
+- **`headline`** (24px, weight 400, line-height 32px, letter-spacing 0px): Page-level headings.
+- **`display`** (36px, weight 400, line-height 44px, letter-spacing 0px): Large display numerals and hero headings.
 
 ## Layout
 
 Ergonomic sizing scales for pointer input.
 
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
-- **Density:** Page-level row, padding, gap, and surface spacing metrics.
-- **Control geometry:** Control internal geometry and switch size tier.
+- **Density:** Page-level padding, gap, and surface spacing metrics.
+- **Control geometry:** Control internal spacing and switch size tier.
 - **Control heights:** Standard control heights (sm, md, lg).
 - **Switch size tier (pointer):** `regular`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
@@ -416,11 +407,10 @@ Ergonomic sizing scales for pointer input.
 
 ## Elevation & Depth
 
-Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with `stroke.surface: 0px` and no backdrop blur.
+Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.
 
 - **Strokes:** Border stroke widths.
-  - `stroke.hairline` (1px): Hairline divider and outlined-variant stroke width.
-  - `stroke.surface` (0px): 0px surface outline (M3 elevated/filled surfaces rely on elevation rather than outlines).
+  - `stroke.hairline` (1px): Hairline width for dividers, container edges (cards, drawers, overlays) and outlined variants.
   - `stroke.control` (1px): Interactive control border width.
 - **Focus indicator (`style: "outline"`):** M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).
   - `focus.width` (3px): Focus ring stroke width.
@@ -441,14 +431,12 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles.
+Interactive spring and timing physics roles: fast, default, slow.
 
 - **`enter`** (500ms, `cubic-bezier(0.05, 0.7, 0.1, 1)`): M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).
-- **`shake`** (500ms): Duration of validation-error shake animation.
-- **`press`** (spring: stiffness=800, damping=33.94 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive FastSpatial spring (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt).
-- **`settle`** (spring: stiffness=380, damping=31.19 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive DefaultSpatial spring (stiffness 380, damping ratio 0.8).
-- **`control`** (spring: stiffness=1600, damping=80 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive DefaultEffects spring (stiffness 1600, damping ratio 1.0).
-- **`move`** (spring: stiffness=380, damping=31.19 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive DefaultSpatial spring for layout and indicator movement.
+- **`fast`** (spring: stiffness=800, damping=33.94 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive FastSpatial spring for control state (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt).
+- **`default`** (spring: stiffness=380, damping=31.19 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive DefaultSpatial spring for presses and movement (stiffness 380, damping ratio 0.8).
+- **`slow`** (spring: stiffness=200, damping=22.63 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8).
 - **Press & ripple** (`press-scale: 1`, `pressed-opacity: 1`, `ripple: true`): Interaction state opacities, press scale, and ripple switch.
 - **Timing curves:** Named timing curves shared across themes.
 
@@ -496,9 +484,9 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
 - **Do:** Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.
 - **Do:** Use `shape.curve: "circular"` and `controls: "material"` for top-rounded underlined fields and underlined tabs.
-- **Do:** Keep `stroke.surface: 0px` on tonal/elevated containers so depth comes from tonal steps and elevation.
+- **Do:** Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never delete finish fields or alter the merged finish key set across appearances or themes.
-- **Don't:** Do not add backdrop blur (`backdropFilter`) or surface borders (`stroke.surface > 0`) to M3 tonal surfaces.
+- **Don't:** Do not add backdrop blur (`backdropFilter`) or a surface edge (`border-color`) to M3 tonal surfaces.
 - **Don't:** Do not replace `outline` focus rings (`3px` width, `2px` offset) with halo rings.
