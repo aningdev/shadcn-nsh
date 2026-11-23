@@ -63,9 +63,10 @@ test("the indicator presets and the inverse, dialog and tooltip roles follow the
   expect(app.count("id:nav-bar")).toBe(1);
   expect(after.field).toBe(before.field);
   expect(after.corners?.startsWith("0|")).toBe(false);
-  // The box keeps its color with the keys and its bottom edge takes the accent, `focus.width` (2)
-  // wide, in place of the ring.
-  expect(read(app.texts(), "frame")).toContain("border-b-muted-foreground");
+  // A hairline box over an input-colored bottom edge (WinUI's TextBox), unchanged under the pointer;
+  // with the keys the bottom edge alone takes the accent, `focus.width` (2) wide, in place of the ring.
+  expect(read(app.texts(), "frame")).toContain("border-border border-b-input");
+  expect(read(app.texts(), "frame")).not.toContain("hover:border-faint");
   expect(read(app.texts(), "frame")).toContain("focus-within:border-b-brand");
   expect(read(app.texts(), "frame")).toContain("focus-within:border-b-[2px]");
   expect(read(app.texts(), "frame")).not.toContain("outline-2");

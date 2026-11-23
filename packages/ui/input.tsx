@@ -103,8 +103,9 @@ export function edgeClass(o: EdgeOptions): string {
   const hover = o.hoverVariant ?? "hover";
   const indicator = fieldIndicator();
   // A field's own edge is the input one, and the preset redraws it: a line in the muted foreground,
-  // or a box whose bottom edge is that line. Another color (the danger tone, a flat or a ghost
-  // field) is the field's own, and the box and its bottom edge both keep it.
+  // or a hairline box whose bottom edge stays the input color (and keeps it under the pointer, as
+  // WinUI's does). Another color (the danger tone, a flat or a ghost field) is the field's own, and
+  // the box and its bottom edge both keep it.
   const own = o.rest === "border-input";
   const line = indicator !== "box";
   const rest =
@@ -112,15 +113,14 @@ export function edgeClass(o: EdgeOptions): string {
       ? o.rest
       : indicator === "underline"
         ? "border-muted-foreground"
-        : "border-input border-b-muted-foreground";
+        : "border-border border-b-input";
   // The line's color, and the accent under the pointer and with the keys: a line preset lights its
   // bottom edge alone.
   const edge = `${line ? "border-b" : "border"}-${tone}`;
+  const hoverEdge = own && indicator === "box-underline" ? undefined : o.hover;
   return [
     rest,
-    o.hover
-      ? `${hover}:${o.hover}${own && indicator === "box-underline" ? ` ${hover}:border-b-muted-foreground` : ""} ${hover}:${focus}:${edge}`
-      : "",
+    hoverEdge ? `${hover}:${hoverEdge} ${hover}:${focus}:${edge}` : "",
     `${focus}:${edge}`,
     line ? fieldFocusClass(focus) : "",
     terminal || line

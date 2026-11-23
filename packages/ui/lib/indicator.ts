@@ -15,7 +15,7 @@ import type { ViewStyle } from "nsh";
 
 /**
  * How a preset draws a field's frame: `box` all round in the input color, `underline` a line under
- * the text, or `box-underline` a box whose bottom edge is that line.
+ * the text, or `box-underline` a box in the hairline `border` color whose bottom edge is the input color.
  */
 export type FieldIndicator = "box" | "underline" | "box-underline";
 
@@ -82,15 +82,15 @@ export function fieldEdgeClass(): string {
 
 /**
  * A field's edge at rest, in `style`: a box in the input color, a line in the muted foreground, or
- * a box whose bottom edge is that line. Any other color the field draws (the danger tone, a flat or
- * a ghost field) is the box's, and takes the line with it.
+ * a box in `border` whose bottom edge is the input color (WinUI's `TextBox`: `ControlStrokeColorDefault`
+ * on three sides, `ControlStrongStrokeColorDefault` below).
  */
 export function fieldRestEdge(input: string): ViewStyle {
   switch (fieldIndicator()) {
     case "underline":
       return { borderColor: colors.mutedForeground };
     case "box-underline":
-      return { borderColor: input, borderBottomColor: colors.mutedForeground };
+      return { borderColor: colors.border, borderBottomColor: input };
     default:
       return { borderColor: input };
   }
