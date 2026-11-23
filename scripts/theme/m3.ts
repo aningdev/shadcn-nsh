@@ -430,7 +430,7 @@ export const m3Style = {
       modal: "{radius-modal}",
     },
     size: {
-      hit: { pointer: 44, touch: 48 },
+      hit: { pointer: 0, touch: 48 },
       density: {
         pointer: { pad: 16, gap: 12, surface: 12 },
         touch: { pad: 16, gap: 12, surface: 16 },
@@ -440,7 +440,7 @@ export const m3Style = {
         pointer: { padding: 8, gap: 8, dot: 10, switch: "regular" },
         touch: { padding: 8, gap: 8, dot: 10, switch: "regular" },
       },
-      height: { pointer: { sm: 32, md: 40, lg: 56 }, touch: { sm: 32, md: 40, lg: 56 } },
+      height: { pointer: { sm: 24, md: 32, lg: 48 }, touch: { sm: 32, md: 40, lg: 56 } },
     },
     stroke: { hairline: 1, control: 1 },
     focus: { style: "outline", width: 3, offset: 2 },
@@ -547,7 +547,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       "Light appearance colors for Material 3 Expressive (#6750A4 baseline with Expressive Tone 30 on*Container).",
     darkDescription: "Dark appearance colors for Material 3 Expressive (#6750A4 baseline).",
     pointerDescription:
-      "Material 3 Expressive desktop pointer input-tier overrides (M3 Desktop 44dp hit target, 48dp row).",
+      "Material 3 Expressive desktop pointer input-tier overrides at M3 density -2 (each step reduces a control's height by 4dp; no hit padding).",
     touchDescription:
       "Material 3 Expressive touch input-tier overrides (Compose InteractiveComponentSize 48dp hit target, ListTokens 56dp row).",
     radiusGroupDescription:
@@ -605,6 +605,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "motion.slow":
           "M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8).",
         controls: "Material 3 Expressive control geometry presets.",
+        "pointer.dimension.size.height":
+          "Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).",
       },
     },
   };

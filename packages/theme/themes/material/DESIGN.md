@@ -168,7 +168,7 @@ rounded:
   container: 12px
   modal: 28px
 spacing:
-  hit: 44px
+  hit: 0px
   density:
     pad: 16px
     gap: 12px
@@ -178,9 +178,9 @@ spacing:
     gap: 8px
     dot: 10px
   height:
-    sm: 32px
-    md: 40px
-    lg: 56px
+    sm: 24px
+    md: 32px
+    lg: 48px
   stroke:
     hairline: 1px
     control: 1px
@@ -398,11 +398,11 @@ Ergonomic sizing scales for pointer input.
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding, gap, and surface spacing metrics.
 - **Control geometry:** Control internal spacing and switch size tier.
-- **Control heights:** Standard control heights (sm, md, lg).
+- **Control heights:** Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).
 - **Switch size tier (pointer):** `regular`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
 
-- **Pointer tier:** Material 3 Expressive desktop pointer input-tier overrides (M3 Desktop 44dp hit target, 48dp row).
+- **Pointer tier:** Material 3 Expressive desktop pointer input-tier overrides at M3 density -2 (each step reduces a control's height by 4dp; no hit padding).
 - **Touch tier:** Material 3 Expressive touch input-tier overrides (Compose InteractiveComponentSize 48dp hit target, ListTokens 56dp row).
 
 ## Elevation & Depth

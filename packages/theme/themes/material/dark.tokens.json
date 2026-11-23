@@ -311,7 +311,7 @@
       "$description": "Ergonomic sizing scales for pointer input.",
       "hit": {
         "$value": {
-          "value": 44,
+          "value": 0,
           "unit": "px"
         },
         "$description": "Minimum hit target size (0 disables padding expansion)."
@@ -364,22 +364,22 @@
         }
       },
       "height": {
-        "$description": "Standard control heights (sm, md, lg).",
+        "$description": "Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).",
         "sm": {
           "$value": {
-            "value": 32,
+            "value": 24,
             "unit": "px"
           }
         },
         "md": {
           "$value": {
-            "value": 40,
+            "value": 32,
             "unit": "px"
           }
         },
         "lg": {
           "$value": {
-            "value": 56,
+            "value": 48,
             "unit": "px"
           }
         }

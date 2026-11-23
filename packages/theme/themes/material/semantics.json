@@ -93,7 +93,7 @@
     },
     "size": {
       "hit": {
-        "pointer": 44,
+        "pointer": 0,
         "touch": 48
       },
       "density": {
@@ -124,9 +124,9 @@
       },
       "height": {
         "pointer": {
-          "sm": 32,
-          "md": 40,
-          "lg": 56
+          "sm": 24,
+          "md": 32,
+          "lg": 48
         },
         "touch": {
           "sm": 32,

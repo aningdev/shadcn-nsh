@@ -16,6 +16,10 @@ Material Design 3 (**M3 Expressive**, Android baseline palette) for `shadcn-nsh`
 | Motion                    | `enter`: `500ms` (`emphasized-decelerate`); Expressive fast/default/slow spatial & effects springs (`damping`/`stiffness`)                                                                                                                                                                   | Slow `650ms` M3 exit scale mapped to `exit: 200ms` gallery budget while keeping `emphasized-decelerate` enter curve                                                                                                                                                            |
 | Interaction states        | State layers (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`), `state.ripple`, `state["press-scale"]: 1`, `controls: "material"` (underline tabs/fields), `dimension.focus.style: "outline"` (`3dp` width, `2dp` offset), `disabled` (`content: 0.38`, `fill: true`)         | Replaces iOS press shrink (`0.96`) with M3 tonal ripple + state-layer washes                                                                                                                                                                                                   |
 
+### Input tiers
+
+The pointer tier follows M3 density `-2`: control heights are `24 / 32 / 48dp`, two steps down from the `ButtonXSmall` / `ButtonSmall` / `ButtonMedium` defaults (`32 / 40 / 56dp`) at 4dp per step ([M3 density](https://m3.material.io/foundations/layout/grids-spacing/density); Material Components Web `mdc-density` uses `$interval: 4px`). The pointer tier adds no hit padding (`dimension.size.hit.pointer: 0`, as in every other theme), while the touch tier keeps the default heights and Compose's `48dp` hit target. Icons, type, and density padding (`16dp` pointer) are the same on both tiers.
+
 ## Component Comparison (`m3.material.io`)
 
 Every `registry:ui` component in `registry.json` (83 total) audited against official Material 3 / M3 Expressive guidelines:

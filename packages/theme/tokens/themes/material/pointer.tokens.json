@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "Material 3 Expressive desktop pointer input-tier overrides (M3 Desktop 44dp hit target, 48dp row).",
+  "$description": "Material 3 Expressive desktop pointer input-tier overrides at M3 density -2 (each step reduces a control's height by 4dp; no hit padding).",
   "font": {
     "$description": "Desktop pointer typography metrics.",
     "size": {
@@ -44,13 +44,6 @@
     "$description": "Desktop pointer layout density, control geometry, and icon sizes.",
     "size": {
       "$description": "Ergonomic sizing scales for pointer input.",
-      "hit": {
-        "$value": {
-          "value": 44,
-          "unit": "px"
-        },
-        "$description": "Minimum hit target size (0 disables padding expansion)."
-      },
       "density": {
         "$description": "Page-level padding, gap, and surface spacing metrics.",
         "pad": {
@@ -81,22 +74,16 @@
         }
       },
       "height": {
-        "$description": "Standard control heights (sm, md, lg).",
-        "sm": {
+        "$description": "Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).",
+        "md": {
           "$value": {
             "value": 32,
             "unit": "px"
           }
         },
-        "md": {
-          "$value": {
-            "value": 40,
-            "unit": "px"
-          }
-        },
         "lg": {
           "$value": {
-            "value": 56,
+            "value": 48,
             "unit": "px"
           }
         }
