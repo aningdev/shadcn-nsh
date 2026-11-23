@@ -225,43 +225,86 @@
         "background": "{card}",
         "foreground": "{foreground}",
         "border-color": "{border}",
-        "material": null
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "material": null,
+        "elevation": null
       },
       "inset": {
         "foreground": "{foreground}",
-        "material": null
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "material": null,
+        "elevation": null
       },
       "raised": {
         "background": "{raised}",
         "foreground": "{foreground}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
         "backdropFilter": "none",
-        "material": null
+        "material": null,
+        "elevation": null
       },
       "overlay": {
         "background": "{popover}",
         "foreground": "{foreground}",
         "border-color": "{border}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "backdropFilter": "none",
-        "material": null
+        "material": null,
+        "elevation": null
       },
       "modal": {
         "background": "{card}",
         "foreground": "{foreground}",
         "border-color": "{border}",
-        "material": null
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "material": null,
+        "elevation": null
       },
       "inverse": {
         "background": "{inverse}",
         "foreground": "{inverse-foreground}",
         "border-color": "{border}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "backdropFilter": "none",
-        "material": null
+        "material": null,
+        "elevation": null
       },
       "glass": {
         "foreground": "{foreground}",
         "border-color": "{border}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "backdropFilter": "blur(20px)",
-        "material": null
+        "material": null,
+        "elevation": null
       },
       "accent": {
         "background": "{primary}",
@@ -270,25 +313,53 @@
         "border-top-color": "{brand-edge}",
         "border-bottom-color": "{brand-edge}",
         "pressed-opacity": 0.88,
-        "material": null
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "backdropFilter": "none",
+        "material": null,
+        "elevation": null
       },
       "knob": {
         "foreground": "{foreground}",
-        "material": null
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "material": null,
+        "elevation": null
       },
       "hover": {
         "foreground": "{foreground}",
-        "material": null
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "backdropFilter": "none",
+        "material": null,
+        "elevation": null
       },
       "pressed": {
         "foreground": "{foreground}",
-        "material": null
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "backdropFilter": "none",
+        "material": null,
+        "elevation": null
       },
       "disabled": {
         "background": "{raised}",
         "foreground": "{foreground}",
         "border-color": "{border}",
-        "material": null
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "material": null,
+        "elevation": null
       }
     },
     "light": {

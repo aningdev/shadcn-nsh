@@ -31,6 +31,7 @@ import {
   type DesignMdExtension,
   type DtcgColor,
 } from "../tokens/types";
+import type { ContrastWaiver } from "./extensions";
 import { toOklchText } from "./oklch";
 import type { SplitFinishes } from "./tokens";
 
@@ -147,6 +148,10 @@ export interface ThemeGeneratorOutput {
   radiusGroupDescription?: string;
   style?: ThemeStyleInput;
   designMd?: Pick<DesignMdExtension, "overview" | "elevation" | "dos" | "donts">;
+  /** The pairs this theme keeps below AA, each with its platform source (`theme:contrast`). */
+  contrast?: { waivers: ContrastWaiver[] };
+  /** The values this theme states off the scales, by token path and source (`check:theme`). */
+  scales?: { citations: Record<string, string> };
   cssVars: {
     theme: Record<string, string>;
     light: Record<string, string>;
@@ -1326,15 +1331,22 @@ export function themeSourceDocs(
     );
   }
 
+  // What the theme states about itself beside its tokens: its DESIGN.md prose, the pairs its
+  // platform keeps below AA, and the sizes its platform states off the scale. Statements about a
+  // theme belong in the theme's own file, so no script lists theme ids to apply them.
+  const themeExtensions = {
+    ...(output.designMd ? { designMd: output.designMd } : {}),
+    ...(output.contrast ? { contrast: output.contrast } : {}),
+    ...(output.scales ? { scales: output.scales } : {}),
+  };
+
   const themeTokensDoc: Record<string, unknown> = {
     $schema: FORMAT_SCHEMA_URL,
     $description: output.themeDescription,
-    ...(output.designMd
+    ...(Object.keys(themeExtensions).length > 0
       ? {
           $extensions: {
-            [EXT_NS]: {
-              designMd: output.designMd,
-            },
+            [EXT_NS]: themeExtensions,
           },
         }
       : {}),

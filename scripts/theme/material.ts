@@ -5,7 +5,8 @@
  * state beside it is checked here too: Android draws its own shadow at that height.
  *
  * The enum is the theme source's vocabulary; the compiled `semantics.json` writes `null` for
- * `"none"`, as it omits a `gradient` or a `backdropFilter` a finish does not state.
+ * `"none"`, and `null` for `elevation` where the layer has no height of its own (the neutral the
+ * base set writes), as it writes `null` for a `gradient` a finish does not state.
  *
  * Pure: no `node:fs`, so `theme-lint.ts`, the theme generators and the unit tests all read it.
  */
@@ -42,8 +43,9 @@ export function checkMaterial(
       `${label}.material is ${JSON.stringify(material)}, not one of ${finishMaterials.map((value) => JSON.stringify(value)).join(", ")}`,
     );
   }
+  // `null` is the base set's neutral: the layer has no height of its own.
   const elevation = finish.elevation;
-  if (elevation !== undefined) {
+  if (elevation !== undefined && elevation !== null) {
     if (typeof elevation !== "number" || !Number.isFinite(elevation) || elevation < 0) {
       problems.push(
         `${label}.elevation is ${JSON.stringify(elevation)}, not a non-negative number of points`,

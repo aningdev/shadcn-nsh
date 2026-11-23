@@ -99,7 +99,20 @@ flowchart LR
 | `knob`                           | 开关圆点、滑杆把手（不带字）                       |
 | `hover` / `pressed` / `disabled` | 三种状态（2.10）                                   |
 
-每个 finish 的字段相同：`background`、`foreground`（面上的墨，组件不再带 `?? colors.x` 兜底）、`shadow`（引用阴影刻度，2.4）、可选的 `gradient`、`backdropFilter`、三条边色（`border-color` / `border-top-color` / `border-bottom-color`）、`material`（2.5），以及 Android 用的 `elevation`。写法是 `shared` 加稀疏的 `light` / `dark` 覆盖。
+每个 finish 的字段集合固定（最多 13 个，`pressed-opacity` 只写在要压暗的角色上）：`background`、`foreground`（面上的墨，组件不再带 `?? colors.x` 兜底）、`shadow`（引用阴影刻度，2.4）、`gradient`、`backdropFilter`、三条边色（`border-color` / `border-top-color` / `border-bottom-color`）、`material`（2.5）、Android 用的 `elevation`，以及按压时的 `pressed-background` / `pressed-foreground` / `pressed-opacity`。写法是 `shared` 加稀疏的 `light` / `dark` 覆盖。
+
+**没写的字段取什么值。** 中性值写一次，在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里，每个 finish 都继承；主题只在真正不同时写那个字段（源码写 token，`shared` 或某一外观都行）。编译产物里每个 finish 都带齐这套主题该有的字段，主题少写一个不会漏键，只会取到这里的中性值：
+
+| 字段                                        | 中性值 | 读作                                         |
+| ------------------------------------------- | ------ | -------------------------------------------- |
+| `material`                                  | `none` | 不透明面（编译成 `null`，2.5）               |
+| `backdropFilter`                            | `none` | 不模糊；有材质的面上它退回配方的模糊         |
+| `elevation`                                 | `null` | 不交给平台画高度                             |
+| `gradient`                                  | `none` | 平涂，不是同色渐变                           |
+| `border-top-color` / `border-bottom-color`  | `none` | 这条边不带自己的颜色，跟 `border-color` 一样 |
+| `pressed-background` / `pressed-foreground` | `none` | 按下只压暗，不换色                           |
+
+源码里这些中性用字符串 `"none"` 连同 `elevation: null` 写在 finish 组的 `$extensions` 里（DTCG 的 token 不接受 `null` 值），编译时换成 `null`：**写 token 就压过 `$extensions`**。加一个字段、或给某个主题单独定一个值，改的是这些源码；没有任何脚本会因为主题 id 而不同（`scripts/theme/no-theme-ids.test.ts` 守住）。
 
 **约束**
 
@@ -192,16 +205,17 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 - 高度和图标各三档，递增，在 4 的网格上。
 - 间距只从 `4, 8, 12, 16, 24, 32` 里取，每档最多三个值。按关系选值：同组的元素间距小，不同组的间距大。
 - `touch` 档的 `hit` 不小于 44。
-- 不在规则内的值必须是平台官方值，写进 [`theme-roles.md`](specs/theme-roles.md) 的 `theme-lint: scales` 表，附出处。
+- 两档都在：一个值要么两档都给，要么不给（继承 base 的两档），且两档的键相同（`check:theme` 的 `checkTiers`）。
+- 不在规则内的值必须是平台官方值，写在这套主题自己 `theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].scales.citations` 里，按 token 路径记出处；出处不再需要时 `check:theme` 会拦下这条引用。
 
 **参照**
 
-| 主题       | 高度 pointer / touch                | hit（touch） | 例外                                                |
-| ---------- | ----------------------------------- | ------------ | --------------------------------------------------- |
-| `default`  | 24/28/32、32/40/48                  | 44           | —                                                   |
-| `apple`    | 24/28/32、32/44/56                  | 44           | —                                                   |
-| `material` | 24/32/48（M3 density −2）、32/40/56 | 48           | —                                                   |
-| `winui`    | 24/32/40、32/40/48                  | 40           | 控件内边距 6、触控 40（WinUI 官方，已在出处表点名） |
+| 主题       | 高度 pointer / touch                | hit（touch） | 例外                                                                 |
+| ---------- | ----------------------------------- | ------------ | -------------------------------------------------------------------- |
+| `default`  | 24/28/32、32/40/48                  | 44           | —                                                                    |
+| `apple`    | 24/28/32、32/44/56                  | 44           | —                                                                    |
+| `material` | 24/32/48（M3 density −2）、32/40/56 | 48           | —                                                                    |
+| `winui`    | 24/32/40、32/40/48                  | 40           | 控件内边距 6、触控 40（WinUI 官方值，出处写在它的 `$extensions` 里） |
 
 ### 2.8 排版
 
@@ -323,7 +337,9 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | `tokens/themes/<id>/finishes.shared.tokens.json`       | 12 个 finish                               |
 | `tokens/themes/<id>/theme.resolver.json`               | 把上面几个文件按外观与档位组合起来         |
 
-除 `default` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 12 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。
+除 `default` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 12 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。`default` 是唯一手写的主题：它同时是构建时的根主题，编译产物除了 `themes/default/` 还有 `packages/theme/` 顶层那对 `theme.json` / `semantics.json`（`BUILD_ROOT_THEME`，`scripts/theme/tokens.ts`），这是它唯一特殊的地方——没有一条规则因为它是 `default` 而不同。
+
+**加一套分档值**（`pointer` / `touch`）：加文件，不改代码。主题目录下写 `pointer.tokens.json` 与 `touch.tokens.json`（结构同 `tokens/base/style.{pointer,touch}.tokens.json`，只写这套主题与 base 不同的键），`theme.resolver.json` 的 `modifiers.input` 在 base 的档位文件之后按同名读它，后写者赢。只写其中一个档＝一个错（`check:theme` 的 `checkTiers`）：两档的键必须相同，缺的那档继续用 base 的值。主题不写这两个文件就完全继承 base 的两档。
 
 ### 4.2 编译与产物
 
@@ -337,12 +353,12 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 ### 4.3 检查分别拦什么
 
-| 检查                                        | 拦什么                                                                                                                                         |
-| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bun run check:theme`                       | 键齐全、12 个 finish 字段一致、材质枚举与不透明度下限、刻度（三档、4 网格、间距值、字阶不降、行高取整、touch 的 hit ≥ 44），以及例外有没有出处 |
-| `bun run theme:contrast`                    | 每套主题亮暗的角色对与每个 finish 的墨达到 WCAG AA；平台例外要点名                                                                             |
-| `bun run tokens:build --check`              | 产物与源码一致                                                                                                                                 |
-| `bun run test:unit`（`generators.test.ts`） | 生成器逐字节重现提交的源码                                                                                                                     |
+| 检查                                        | 拦什么                                                                                                                                                                                              |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run check:theme`                       | 键齐全、12 个 finish 的 13 个字段齐全、材质枚举与不透明度下限、两档都在且键相同、刻度（三档、4 网格、间距值、字阶不降、行高取整、touch 的 hit ≥ 44），以及 `$extensions` 里的豁免与出处有没有被用到 |
+| `bun run theme:contrast`                    | 每套主题亮暗的角色对与每个 finish 的墨达到 WCAG AA；平台例外要点名                                                                                                                                  |
+| `bun run tokens:build --check`              | 产物与源码一致                                                                                                                                                                                      |
+| `bun run test:unit`（`generators.test.ts`） | 生成器逐字节重现提交的源码                                                                                                                                                                          |
 
 ### 4.4 改完怎么验收
 

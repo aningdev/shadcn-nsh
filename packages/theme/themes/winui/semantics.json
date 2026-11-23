@@ -224,12 +224,26 @@
       "card": {
         "background": "{card}",
         "foreground": "{foreground}",
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "inset": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "raised": {
         "background": "{raised}",
@@ -237,32 +251,61 @@
         "foreground": "{foreground}",
         "backdropFilter": "none",
         "material": null,
-        "border-color": "{border}"
+        "border-color": "{border}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "elevation": null
       },
       "overlay": {
         "foreground": "{foreground}",
         "border-color": "{glass-edge}",
         "backdropFilter": "none",
-        "material": "acrylic"
+        "material": "acrylic",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "elevation": null
       },
       "modal": {
         "background": "{background}",
         "foreground": "{foreground}",
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "inverse": {
         "background": "{inverse}",
         "foreground": "{inverse-foreground}",
         "border-color": "{glass-edge}",
         "backdropFilter": "none",
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "elevation": null
       },
       "glass": {
         "shadow": "none",
         "foreground": "{foreground}",
         "border-color": "{glass-edge}",
         "backdropFilter": "blur(30px)",
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "elevation": null
       },
       "accent": {
         "background": "{primary}",
@@ -270,21 +313,36 @@
         "foreground": "{primary-foreground}",
         "border-bottom-color": "{brand-edge}",
         "pressed-opacity": 1,
-        "material": null
+        "material": null,
+        "gradient": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "knob": {
         "shadow": "none",
         "foreground": "{foreground}",
         "material": null,
         "background": "{knob}",
-        "border-color": "transparent"
+        "gradient": null,
+        "border-color": "transparent",
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "hover": {
         "shadow": "none",
         "foreground": "{foreground}",
         "material": null,
         "background": "{hover}",
-        "border-color": "{border}"
+        "border-color": "{border}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "pressed": {
         "shadow": "none",
@@ -293,12 +351,24 @@
         "background": "{muted}",
         "border-color": "{border}",
         "border-top-color": "{border}",
-        "border-bottom-color": "{border}"
+        "border-bottom-color": "{border}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "disabled": {
         "shadow": "none",
         "border-color": "{border}",
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
       }
     },
     "light": {

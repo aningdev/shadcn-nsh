@@ -55,18 +55,23 @@ export const isDark = () => colorScheme() !== "light";
 /** A surface's finish as `semantics.json` writes it: DTCG finish fields (`background`, `gradient`, `shadow`, `border-color`) plus `backdropFilter`, the `material` it asks of the platform (`null`: none) and the elevation that material's platform draws it at. */
 export interface Finish {
   background?: string;
-  gradient?: string;
+  /** The gradient over the fill, or `null` where the layer paints flat. */
+  gradient?: string | null;
   shadow: string;
   "border-color"?: string;
-  "border-top-color"?: string;
-  "border-bottom-color"?: string;
+  /**
+   * A colour of its own for one edge, or `null`: that edge has none and takes `border-color`, as CSS's
+   * `currentColor` does. A theme states this only for a layer whose corner is drawn (`winui`).
+   */
+  "border-top-color"?: string | null;
+  "border-bottom-color"?: string | null;
   backdropFilter?: string;
   /**
-   * The fill and ink a theme paints instead of the accent while a filled control is pressed. Stated
-   * only by a theme whose press swaps the accent out.
+   * The fill and ink a theme paints instead of the accent while a filled control is pressed, or
+   * `null` where the press only dims it.
    */
-  "pressed-background"?: string;
-  "pressed-foreground"?: string;
+  "pressed-background"?: string | null;
+  "pressed-foreground"?: string | null;
   /**
    * How far the accent dims while a filled control is pressed, fill and ink together: every theme
    * states it on `accent`, 1 where its press swaps the accent out or lays a state layer over it.
@@ -75,11 +80,11 @@ export interface Finish {
   /** The ink on this finish's surface (a color, not a spread style key): every finish states one. */
   foreground: string;
   /** The platform's own material the layer asks for: `null` asks nothing of it (see `materials`).
-   * A theme's sources spell that `"none"`; compiled, a finish that asks for nothing states no
-   * material at all, as a flat one states no gradient. */
+   * A theme's sources spell that `"none"`, and every finish states the field. */
   material: FinishMaterial | null;
-  /** The elevation the layer's material draws it at, in points (`android={{ elevation }}`): Android's own shadow. */
-  elevation?: number;
+  /** The elevation the layer's material draws it at, in points (`android={{ elevation }}`): Android's own
+   * shadow; `null` where the layer asks for none. */
+  elevation?: number | null;
 }
 
 /** The `finishes` block of `semantics.json`: fields shared by both appearances plus sparse light/dark overrides. */
@@ -553,7 +558,7 @@ export interface MaterialProps {
  *     <View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />
  *
  * Its keys are getters, so they follow `selectTheme` and the appearance as `finish` does, and a
- * finish whose `material` is `null` and which states no `elevation` (every layer of the themes that
+ * finish whose `material` is `null` and whose `elevation` is `null` (every layer of the themes that
  * imitate no platform) gives `undefined` for all three: the view is drawn as it was. The Liquid
  * Glass of a glass material needs no prop: `glassEffect` and `glassTintColor` are in the style.
  */
@@ -567,7 +572,7 @@ export function platformMaterial(role: FinishRole): MaterialProps {
     },
     get android() {
       const { elevation } = finishOf(role);
-      return elevation === undefined ? undefined : { elevation };
+      return typeof elevation === "number" ? { elevation } : undefined;
     },
   };
 }

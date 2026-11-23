@@ -720,6 +720,32 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         "Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves.",
       ],
     },
+    // WinUI states these sizes itself, off the library's scales; each says where.
+    scales: {
+      citations: {
+        "dimension.size.control.pointer.padding":
+          "WinUI 3 button padding 6px (`Button_themeresources.xaml`)",
+        "dimension.size.control.touch.padding":
+          "WinUI 3 button padding 6px (`Button_themeresources.xaml`)",
+        "dimension.size.item.pointer.pad":
+          "WinUI 3 menu row text padding 11px (`MenuFlyoutItemThemePadding` 11,8,11,9, `MenuFlyout_themeresources.xaml`)",
+        "dimension.size.item.touch.pad":
+          "WinUI 3 menu row text padding 11px (the same padding on touch)",
+        "dimension.size.hit.touch":
+          'Windows touch target 40x40 epx (Touch interactions, "Target size")',
+      },
+    },
+    // WinUI turns its accent a third colour under the finger, and TextOnAccentFillColorSecondary
+    // on AccentFillColorTertiary is 3.9:1 while pressed, as shipped.
+    contrast: {
+      waivers: [
+        {
+          fg: "finish.accent.pressed-foreground",
+          bg: "finish.accent.pressed-background",
+          source: "WinUI TextOnAccentFillColorSecondary on AccentFillColorTertiary, while pressed",
+        },
+      ],
+    },
     cssVars: {
       theme: themeLevel(roles),
       light: roles.light,

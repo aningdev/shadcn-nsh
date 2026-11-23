@@ -14,12 +14,12 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
+import { scaleCitationsOf } from "./theme/extensions";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkMaterial, checkMaterialFill } from "./theme/material";
 import { parseColor } from "./theme/oklch";
 import { checkRecipeNumbers, lookNumbers } from "./theme/recipe-numbers";
 import {
-  scaleCitations,
   specBlock,
   specControlDimensions,
   specEnums,
@@ -30,8 +30,11 @@ import {
 import {
   checkScales,
   checkStyle,
-  citedValues,
+  checkTiers,
   controlDimensionValues,
+  keyMatches,
+  leaves,
+  styleOf,
   whitelists,
 } from "./theme/style";
 import {
@@ -80,9 +83,11 @@ const appearances = ["light", "dark"] as const;
 /** Optional C-layer tokens that a theme may omit when it defers to the system default. */
 const optionalThemeTokens = new Set(["font-sans"]);
 
-/** A clear value: unset, `transparent`, or a gradient that is transparent at every stop. */
-const clear = (value: string | undefined) =>
+/** A clear value: unset (`null` included: the base set's neutrals), `transparent`, or a gradient
+ * that is transparent at every stop. */
+const clear = (value: string | null | undefined) =>
   value === undefined ||
+  value === null ||
   value === "transparent" ||
   (value.startsWith("linear-gradient(") &&
     value
@@ -102,9 +107,6 @@ const themes = readdirSync(join(root, "packages/theme/themes"))
 const spec = read("docs/specs/theme-roles.md");
 /** What the spec names: the A and C layers, and every finish's row. */
 const specPartsOf = specParts(spec);
-
-/** The values the spec cites off the 4 px grid, by theme and key. */
-const cited = citedValues(scaleCitations(spec));
 
 const failures: string[] = [];
 const fail = (message: string) => failures.push(message);
@@ -282,17 +284,10 @@ for (const theme of themes) {
   }
 }
 
-/** Fields a finish may leave out: a flat look states no gradient, an opaque one no backdrop, only
- * the platform's own layers state an elevation, and only a theme whose press swaps the accent out
- * states the pressed fill and ink. */
-const optionalFields = new Set([
-  "elevation",
-  "material",
-  "gradient",
-  "backdropFilter",
-  "pressed-background",
-  "pressed-foreground",
-]);
+/** Every finish states every field: a flat look says `gradient: null`, an opaque one says
+ * `backdropFilter: "none"`, a layer without an elevation says `elevation: null`, and a theme whose
+ * press does not swap the accent out repeats the resting fill and ink. The neutral values are
+ * written once in `tokens/base/style.shared.tokens.json`. */
 const shapeOf = new Map<string, string[]>();
 for (const appearance of appearances)
   for (const [role, finish] of Object.entries(defaultMerged[appearance]))
@@ -320,10 +315,12 @@ for (const theme of themes) {
       const want = shapeOf.get(`${role}.${appearance}`);
       if (want === undefined) continue;
       for (const field of want)
-        if (!optionalFields.has(field) && !have.includes(field))
-          fail(`${path}: ${role}.${field} is missing, and every finish states a ${field}`);
+        if (!have.includes(field))
+          fail(
+            `${path}: ${role}.${field} is missing, and every finish states a ${field} (write the neutral value in tokens/base/style.shared.tokens.json)`,
+          );
       for (const field of have)
-        if (!want.includes(field) && !optionalFields.has(field))
+        if (!want.includes(field))
           fail(`${path}: ${role}.${field} is not a field the default theme's \`${role}\` states`);
 
       // A press dims the accent to a visible opacity, or not at all (1).
@@ -339,10 +336,11 @@ for (const theme of themes) {
             : `${path}: ${role} paints a fill, and the default theme's is clear`,
         );
 
-      // 4. A finish's colours are `{token}` references of DTCG `$type` `"color"`, ink, or pending.
+      // 4. A finish's colours are `{token}` references of DTCG `$type` `"color"`, ink, or pending;
+      // `null` is the neutral state the base set writes (no pressed fill, no pressed ink).
       for (const field of colourFields) {
         const value = finish[field];
-        if (value === undefined) continue;
+        if (value === undefined || value === null) continue;
         const verdict = readColour(value, kinds, pending, `${theme} ${appearance}`);
         for (const row of verdict.pending) written.add(row);
         for (const problem of verdict.problems)
@@ -375,7 +373,8 @@ for (const theme of themes) {
 }
 
 // 4b. Every theme states the same style (typography, dimension, shape, state, transition, motion,
-// controls), with `{token}` references typed by DTCG `$type` and sizes on the scales.
+// controls), with `{token}` references typed by DTCG `$type` and sizes on the scales — the values a
+// theme's platform states itself being excused by the citations in its own `$extensions`.
 for (const theme of themes) {
   const path = `packages/theme/themes/${theme}/semantics.json`;
   const file = readJson<Record<string, unknown>>(path);
@@ -387,30 +386,27 @@ for (const theme of themes) {
     kinds,
   ))
     fail(problem);
-  for (const problem of checkScales(path, file, theme, cited)) fail(problem);
+  for (const problem of checkScales(path, file, scaleCitationsOf(theme))) fail(problem);
+  // Both tiers are compiled, and they state the same keys: a theme writes tiers only where its
+  // platform is input-specific, and one it leaves out comes from the base set.
+  for (const problem of checkTiers(path, file)) fail(problem);
 }
 
-// 4c. The spec's enum table is the one list of enumerated values: `style.ts` whitelists exactly
-// its keys with exactly its values, and each of the six control dimensions reads from every theme's
-// `semantics.json` as the spec's second table says.
-for (const row of specEnums(spec)) {
-  const allowed = whitelists[row.key];
-  if (allowed === undefined) {
+// 4c. The spec's tables are the one list of enumerated values: `style.ts` reads its whitelists from
+// the enum table, so every listed key must appear in every theme; and each of the six control
+// dimensions reads from every theme's `semantics.json` as the spec's control table says, the
+// theme-to-column mapping coming from the table's own header.
+const enumKeys = specEnums(spec).map((row) => row.key);
+const styleKeys = [
+  ...leaves(styleOf(defaultSemantics as unknown as Record<string, unknown>)).keys(),
+];
+for (const key of enumKeys)
+  if (!styleKeys.some((styleKey) => keyMatches(key, styleKey)))
     fail(
-      `docs/specs/theme-roles.md: the enum table names \`${row.key}\`, which scripts/theme/style.ts does not whitelist`,
+      `docs/specs/theme-roles.md: the enum table lists \`${key}\`, which no theme's style states`,
     );
-    continue;
-  }
-  const stated = [...row.values].sort().join(" ");
-  const held = allowed.map(String).sort().join(" ");
-  if (stated !== held)
-    fail(
-      `docs/specs/theme-roles.md: \`${row.key}\` allows ${row.values.join(", ")}, scripts/theme/style.ts allows ${allowed.map(String).join(", ")}`,
-    );
-}
-const enumKeys = new Set(specEnums(spec).map((row) => row.key));
 for (const key of Object.keys(whitelists))
-  if (!enumKeys.has(key))
+  if (!enumKeys.includes(key))
     fail(`scripts/theme/style.ts: whitelist \`${key}\` is not in the spec's enum table`);
 
 const controlRows = specControlDimensions(spec);
@@ -425,20 +421,26 @@ for (const row of controlRows) {
     );
     continue;
   }
+  for (const column of row.columns)
+    if (!values.includes(column.value))
+      fail(
+        `docs/specs/theme-roles.md: \`${row.dimension}\` takes \`${column.value}\`, not in the enum table`,
+      );
   for (const theme of themes) {
-    const expected =
-      theme === "material" ? row.material : theme === "winui" ? row.winui : row.basic;
+    const column = row.columns.find((entry) => entry.themes.includes(theme));
+    if (column === undefined) {
+      fail(
+        `docs/specs/theme-roles.md: the control table's header names no column for \`${theme}\``,
+      );
+      continue;
+    }
     const path = `packages/theme/themes/${theme}/semantics.json`;
     const dimension = readJson<Record<string, unknown>>(path).dimension;
     const control = isRecord(dimension) && isRecord(dimension.control) ? dimension.control : {};
     const actual = control[row.dimension];
-    if (actual !== expected)
+    if (actual !== column.value)
       fail(
-        `${path}: dimension.control.${row.dimension} is ${JSON.stringify(actual)}, the spec states \`${expected}\``,
-      );
-    if (!values.includes(expected))
-      fail(
-        `docs/specs/theme-roles.md: \`${row.dimension}\` takes \`${expected}\`, not in the enum table`,
+        `${path}: dimension.control.${row.dimension} is ${JSON.stringify(actual)}, the spec states \`${column.value}\``,
       );
   }
 }

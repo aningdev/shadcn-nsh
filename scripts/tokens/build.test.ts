@@ -8,6 +8,7 @@ import { lint } from "@google/design.md/linter";
 import { mergeFinishes } from "../theme/tokens";
 import { buildAllTokens, checkAllTokens, discoverDtcgThemes } from "./build";
 import { formatColorOpToCss, formatDtcgColor } from "./color";
+import { compileFinishGroup, compileShadowGroup } from "./compile";
 import { compileSemanticsJson, compileThemeJson } from "./compile";
 import { dtcgColorToHex } from "./design-md";
 import { lintDtcgSources, lintDtcgTheme } from "./lint";
@@ -21,8 +22,6 @@ import {
   TYPE_ROLES,
   type ColorOpExtension,
   type DtcgColor,
-  type DtcgGradientStop,
-  type DtcgShadowItem,
   type DtcgTransition,
   type DtcgTypography,
 } from "./types";
@@ -732,113 +731,11 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           }
         }
 
-        // Merged finishes for this appearance
-        const toFlatRef = (s: string) => {
-          const m = /^\{color\.([a-z0-9-]+)\}$/.exec(s);
-          return m ? `{${m[1]}}` : s;
-        };
-        const toFinishColor = (tok: Record<string, any>) => {
-          const ext = tok.$extensions?.[EXT_NS] as Record<string, unknown> | undefined;
-          if (ext?.transparentKeyword) return "transparent";
-          if (ext?.colorOp) return formatColorOpToCss(ext.colorOp as ColorOpExtension);
-          return typeof tok.$value === "string"
-            ? toFlatRef(tok.$value)
-            : formatDtcgColor(tok.$value as DtcgColor);
-        };
-        // The appearance's shadow scale, decoded the way the compiler joins a finish's refs to it.
-        const fmtLen = (d: { value: number; unit: string }) =>
-          d.value === 0 ? "0" : `${d.value}${d.unit}`;
-        const formatShadowLayers = (raw: DtcgShadowItem | DtcgShadowItem[]): string =>
-          (Array.isArray(raw) ? raw : [raw])
-            .map((s) => {
-              const parts: string[] = [];
-              if (s.inset) parts.push("inset");
-              parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
-              if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
-              parts.push(
-                typeof s.color === "string" ? toFlatRef(s.color) : formatDtcgColor(s.color),
-              );
-              return parts.join(" ");
-            })
-            .join(", ");
-        const shadowParts = new Map<string, string | null>();
-        const walkShadow = (node: Record<string, any>, prefix: string) => {
-          for (const [key, value] of Object.entries(node)) {
-            if (key.startsWith("$") || value === null || typeof value !== "object") continue;
-            const name = prefix ? `${prefix}.${key}` : key;
-            if ("$value" in value) {
-              shadowParts.set(
-                name,
-                value.$extensions?.[EXT_NS]?.none
-                  ? null
-                  : formatShadowLayers(value.$value as DtcgShadowItem),
-              );
-            } else {
-              walkShadow(value as Record<string, any>, name);
-            }
-          }
-        };
-        walkShadow(doc.shadow as Record<string, any>, "");
-        expect([...shadowParts.keys()].length, "a shadow scale").toBeGreaterThan(0);
-
         const mergedFinishes = mergeFinishes(semanticsJson.finishes, appearance);
-        const docFinishRoles = Object.keys(doc.finish).filter((k) => !k.startsWith("$"));
-        expect(docFinishRoles.sort()).toEqual(Object.keys(mergedFinishes).sort());
-        for (const role of docFinishRoles) {
-          const g = doc.finish[role] as Record<string, any>;
-          const compiled: Record<string, unknown> = {};
-          if (g.background) compiled.background = toFinishColor(g.background);
-          if (g.gradient) {
-            const gExt = g.gradient.$extensions?.[EXT_NS];
-            const angle = (gExt?.angle as number | undefined) ?? 180;
-            const tStops = new Set<number>((gExt?.transparentStops as number[] | undefined) ?? []);
-            const stops = (g.gradient.$value as DtcgGradientStop[]).map((s, idx) => {
-              const col = tStops.has(idx)
-                ? "transparent"
-                : typeof s.color === "string"
-                  ? toFlatRef(s.color)
-                  : formatDtcgColor(s.color);
-              return `${col} ${Math.round(s.position * 10000) / 100}%`;
-            });
-            compiled.gradient = `linear-gradient(${angle}deg, ${stops.join(", ")})`;
-          }
-          if (g.shadow) {
-            const raw = g.shadow.$value;
-            const items = (Array.isArray(raw) ? raw : [raw]) as (DtcgShadowItem | string)[];
-            compiled.shadow =
-              items
-                .map((s) => {
-                  if (typeof s === "string") {
-                    const name = /^\{shadow\.([a-z0-9.-]+)\}$/.exec(s)?.[1];
-                    expect(name, `finish.${role} names a shadow part`).toBeTruthy();
-                    return shadowParts.get(name!) ?? null;
-                  }
-                  return formatShadowLayers(s);
-                })
-                .filter((layer): layer is string => layer !== null && layer !== undefined)
-                .join(", ") || "none";
-          }
-          if (g["border-color"]) compiled["border-color"] = toFinishColor(g["border-color"]);
-          if (g["border-top-color"])
-            compiled["border-top-color"] = toFinishColor(g["border-top-color"]);
-          if (g["border-bottom-color"])
-            compiled["border-bottom-color"] = toFinishColor(g["border-bottom-color"]);
-          if (g.foreground) compiled.foreground = toFinishColor(g.foreground);
-          // Only a theme that paints its own pressed accent states these.
-          if (g["pressed-background"])
-            compiled["pressed-background"] = toFinishColor(g["pressed-background"]);
-          if (g["pressed-foreground"])
-            compiled["pressed-foreground"] = toFinishColor(g["pressed-foreground"]);
-          if (g["pressed-opacity"]) compiled["pressed-opacity"] = g["pressed-opacity"].$value;
-          const gExt = g.$extensions?.[EXT_NS];
-          if (gExt && "backdropFilter" in gExt) compiled.backdropFilter = gExt.backdropFilter;
-          // A material is the recipe's name; `"none"` compiles to `null`, as an absent gradient does.
-          if (gExt && "material" in gExt) {
-            compiled.material = gExt.material === "none" ? null : gExt.material;
-          }
-          if (gExt && "elevation" in gExt) compiled.elevation = gExt.elevation;
-          expect(compiled, `finish.${role}`).toEqual(mergedFinishes[role]);
-        }
+        // The compiler is the only implementation of these rules: the standalone file feeds it the
+        // same source the built artifacts came from, so the two cannot drift apart.
+        const compiledFinishes = compileFinishGroup(doc.finish, compileShadowGroup(doc.shadow));
+        expect(compiledFinishes).toEqual(mergedFinishes);
       });
     }
   }

@@ -22,18 +22,6 @@ export interface FinishRow {
   reads: string;
 }
 
-/** A value a platform states off the 4 px grid, cited: the theme it is a theme's, the key, the value, and where the platform says so. */
-export interface ScaleCitation {
-  /** The theme's id: `winui`. */
-  theme: string;
-  /** The style key: `dimension.size.control.pointer.padding`. */
-  key: string;
-  /** The value it takes. */
-  value: number;
-  /** Where the platform states it: a spec or a resource file. */
-  source: string;
-}
-
 /** What the spec says about the theme's shape. */
 export interface SpecParts {
   /** The A layer: shadcn's slots, the names NSH resolves (`theme.rs`). */
@@ -59,8 +47,8 @@ export function specRows(text: string): string[][] {
   return specRowsRaw(text).map((cells) => cells.map((cell) => cell.replace(/`/g, "")));
 }
 
-/** A markdown table's body rows as written, backticks kept: a cell names things in code spans. */
-export function specRowsRaw(text: string): string[][] {
+/** A markdown table as written, backticks kept: the header row names what each column states. */
+export function specTable(text: string): { header: string[]; rows: string[][] } {
   const table = text
     .split("\n")
     .filter((line) => line.trim().startsWith("|"))
@@ -73,7 +61,14 @@ export function specRowsRaw(text: string): string[][] {
         .map((cell) => cell.trim()),
     )
     .filter((cells) => !cells.every((cell) => /^:?-+:?$/.test(cell)));
-  return table.slice(1);
+  const [header, ...rows] = table;
+  if (header === undefined) throw new Error("a theme-lint block states no table");
+  return { header, rows };
+}
+
+/** A markdown table's body rows as written, backticks kept: a cell names things in code spans. */
+export function specRowsRaw(text: string): string[][] {
+  return specTable(text).rows;
 }
 
 /** The names a cell writes in backticks, in order: `` `radius` / `radius-control` `` names two. */
@@ -118,29 +113,37 @@ export function specEnums(markdown: string): EnumRow[] {
   });
 }
 
-/** One row of the spec's control-dimensions table: the dimension and what each theme family takes. */
+/** One column of the spec's control-dimensions table: the themes it names, and the value they take. */
+export interface ControlColumn {
+  /** The themes the column's header names: `default`, `shadcn`, `solid-glass`, `apple`. */
+  themes: string[];
+  /** The value those themes take for the row's dimension. */
+  value: string;
+}
+
+/** One row of the spec's control-dimensions table: the dimension and what each column's themes take. */
 export interface ControlRow {
   /** The dimension: `selection`, `field`, `choice`, `track`, `handle`, `group`. */
   dimension: string;
-  /** What `default`, `shadcn`, `solid-glass` and `apple` take (they share one column). */
-  basic: string;
-  /** What `material` takes. */
-  material: string;
-  /** What `winui` takes. */
-  winui: string;
+  /** One column per theme family, named by the table's header rather than by this file. */
+  columns: ControlColumn[];
 }
 
-/** The control dimensions (`<!-- theme-lint: controls -->`): one row per dimension. */
+/**
+ * The control dimensions (`<!-- theme-lint: controls -->`): one row per dimension. Which column a
+ * theme's value comes from is the table's header's call, so no script holds a theme→column table.
+ */
 export function specControlDimensions(markdown: string): ControlRow[] {
-  return specRows(specBlock(markdown, "controls")).map(([dimension, basic, material, winui]) => {
-    if (
-      dimension === undefined ||
-      basic === undefined ||
-      material === undefined ||
-      winui === undefined
-    )
+  const { header, rows } = specTable(specBlock(markdown, "controls"));
+  const columns = header.slice(1).map((cell) => ({ themes: names(cell), value: "" }));
+  return rows.map((cells) => {
+    const [dimension, ...values] = cells.map((cell) => cell.replace(/`/g, ""));
+    if (dimension === undefined || values.length !== columns.length)
       throw new Error(`the spec's control table writes a row with ${dimension ?? "no dimension"}`);
-    return { dimension, basic, material, winui };
+    return {
+      dimension,
+      columns: columns.map((column, index) => ({ ...column, value: values[index] ?? "" })),
+    };
   });
 }
 
@@ -167,17 +170,5 @@ export function specRecipes(markdown: string): RecipeRow[] {
     )
       throw new Error(`the spec's recipe table writes a row with ${dimension ?? "no dimension"}`);
     return { dimension, value, numbers, source };
-  });
-}
-
-/** The values the spec cites off the grid (`<!-- theme-lint: scales -->`): a theme, a key, a value, and the source. */
-export function scaleCitations(markdown: string): ScaleCitation[] {
-  return specRowsRaw(specBlock(markdown, "scales")).map(([theme, key, value, source]) => {
-    if (theme === undefined || key === undefined || value === undefined || source === undefined)
-      throw new Error(`the spec's scale table writes a row with ${theme ?? "no theme"}`);
-    const number = Number(value.replace(/`/g, ""));
-    if (!Number.isFinite(number))
-      throw new Error(`the spec's scale table cites \`${key}\` at ${value}, not a number`);
-    return { theme: theme.replace(/`/g, ""), key: key.replace(/`/g, ""), value: number, source };
   });
 }

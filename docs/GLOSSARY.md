@@ -88,8 +88,24 @@ _Avoid_: `finishes.json`（旧文件名）、在语义层重复写颜色/圆角/
 _Avoid_: 用别的词指它；在 B 层另起一个与 A 层槽同义的名字
 
 **Finish（Finish Role）**:
-`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目：组件可能画在上面的一个**图层**（`card`、`inset`、`raised`、`overlay`、`modal`、`inverse`、`glass`、`accent`、`knob`、`hover`、`pressed`、`disabled`，共 12 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）。它写一个面的底、面上的墨 `foreground`、可省的渐变与模糊、三个边色，外加它向平台要的原生材质 `material`（`null` 表示不要）；`shadow` 只写影子刻度（[`影子刻度`](#影子刻度)）的引用，不写自己的影子。finish 只管一个面的画法，颜色写 `{token}`；合并后每个 finish 在每套主题、每种外观里的字段集合相同（`gradient`、`backdropFilter`、`material` 可以省，平涂就不写渐变）。
+`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目：组件可能画在上面的一个**图层**（`card`、`inset`、`raised`、`overlay`、`modal`、`inverse`、`glass`、`accent`、`knob`、`hover`、`pressed`、`disabled`，共 12 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）。它写一个面的底、面上的墨 `foreground`、渐变、模糊、三个边色、按下的颜色，外加它向平台要的原生材质 `material`（`null` 表示不要）；`shadow` 只写影子刻度（[`影子刻度`](#影子刻度)）的引用，不写自己的影子。finish 只管一个面的画法，颜色写 `{token}`。合并后每个 finish 在每套主题、每种外观里的字段集合相同，一个字段都不省：不写就取中性值（`material: null`、`backdropFilter: "none"`、`elevation: null`、`gradient: null`、两条边色 `null`、按下字段 `null`），中性值写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里（[`中性值`](#中性值neutral-value)）。
 _Avoid_: 把 finish 当 token；用别的词指它；删字段表示“没有渐变”
+
+**Neutral Value（中性值）**:
+一个 finish 字段“什么都没设”时的取值：`material: null`（不要平台材质）、`backdropFilter: "none"`（不模糊）、`elevation: null`（不交给平台画高度）、`gradient: null`（平涂）、`border-top-color` / `border-bottom-color` 为 `null`（这条边没有自己的颜色，取 `border-color`；写 `transparent` 会把它抹掉）、按下字段 `null`（按下只压暗，不换色）。写一次，在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里，每套主题继承；主题只在真正不同时写那个字段。源码里以字符串 `"none"`（`elevation` 为 `null`）写在 `$extensions["dev.aning.shadcn-nsh"]` 上，因为 DTCG 的 token 不接受 `$value: null`，编译时换成 `null`；主题写了 token 就压过它。`check:theme` 要求每个 finish 的字段与默认主题一样齐。
+_Avoid_: 在某套主题里删字段表示“没有”；把 `transparent` 当“没有颜色”
+
+**Waiver（对比度豁免）**:
+一套主题按平台官方画法保留在 WCAG AA 之下的颜色对，写在它自己 `theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].contrast.waivers[]`（`{ fg, bg, source }`）。`bun run theme:contrast` 读它：先算，再按豁免放行；一条豁免不再失败，或者某套主题引用了不存在的角色，都是错误——所以清单跟着主题走，脚本里没有按主题 id 的列表。
+_Avoid_: 在脚本里写 `if (theme === "apple")`
+
+**Citation（刻度出处）**:
+一套主题按平台官方尺寸留下的、不在尺子上的值，写在它自己 `theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].scales.citations`（键是 token 路径，值是出处：页面链接或资源文件名）。`check:theme` 拿它对照编译后的 `semantics.json`：键必须存在且确实还是那个不上格的值，值回了格子就报“出处不再需要”。
+_Avoid_: 在 lint 脚本里给某个主题开白名单
+
+**Tier（分档）**:
+随输入设备变的一对值：`pointer`（鼠标）与 `touch`（手指），同一个结构只换数值，例如 `dimension.size.hit` 的 `0` / `44`。DTCG 的 resolver 用 `modifiers.input` 表达：先读 `tokens/base/style.{pointer,touch}.tokens.json`，再读主题目录下的同名文件（后写者赢，没有就整套继承）。一个值要么两档都给、要么都不给，两档的键必须相同（`check:theme` 的 `checkTiers`）。
+_Avoid_: 只写一档、按主题在代码里补另一档
 
 **Shadow Scale（影子刻度）**:
 

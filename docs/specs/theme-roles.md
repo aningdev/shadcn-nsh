@@ -13,7 +13,7 @@
 
 - **改一个值只改一处。** 组件里没有颜色字面量，`semantics.json` 里通过 `{token}` 引用 `theme.json`，改 token（含宿主 `setThemeOverrides`）同时改到所有用到它的面与组件。
 - **影子只有一份刻度。** 一个 finish 不写影子，只点名刻度里的几部分（`"shadow": ["{shadow.edge.surface}", "{shadow.sm}"]`）；刻度的值在 light / dark 的 `shadow` 组里各写一次，编译进 `semantics.json` 的 `elevation`。同一步影子的面因此长得一样，改一步也只改一处。
-- **平涂的主题不写渐变。** 一个没有渐变的外观把 `gradient` 留空（不写这个字段），组件读到的就是没有背景图；`gradient`、`backdropFilter`、`material` 是 finish 里可以缺的字段，其余固定。
+- **平涂的主题不写渐变。** 一个没有渐变的外观不写 `gradient` token，组件读到的就是没有背景图（编译产物里是 `null`）。一个 finish 的字段集合固定，可缺的字段各有中性值，写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里，主题只在真正不同时写（见 §3）。
 
 规则的执行者是 `bun scripts/theme-lint.ts`（在 `bun run check` 里）：下文每一条都在那里有一条检查，写错了会点名文件、finish 和字段。
 
@@ -86,43 +86,34 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 一个 finish 是一个面的样子，由这几样拼出来：
 
-| 字段                  | 写什么                                                       |
-| --------------------- | ------------------------------------------------------------ |
-| `background`          | 底：`{token}`、墨色，或 `transparent`                        |
-| `gradient`            | 叠在底上的渐变：`linear-gradient(180deg, …)`；平涂的主题不写 |
-| `shadow`              | 影子刻度的几部分：`["{shadow.edge.surface}", "{shadow.sm}"]` |
-| `foreground`          | 面上的字与图标：`{token}`                                    |
-| `border-color`        | 边：`{token}` 或 `transparent`                               |
-| `border-top-color`    | 上边覆写（WinUI 控件斜角）：`{token}` 或 `transparent`       |
-| `border-bottom-color` | 下边覆写（WinUI 控件斜角）：`{token}` 或 `transparent`       |
-| `backdropFilter`      | 只有模糊，不放颜色                                           |
-| `material`            | `"none"` 之外，`"glass"` 或 `"acrylic"`（见下）              |
-| `elevation`           | 平台自己的阴影高度（dp），只有要它的层写（见下）             |
+| 字段                  | 写什么                                                                          |
+| --------------------- | ------------------------------------------------------------------------------- |
+| `background`          | 底：`{token}`、墨色，或 `transparent`                                           |
+| `gradient`            | 叠在底上的渐变：`linear-gradient(180deg, …)`；平涂的主题不写（取中性值 `null`） |
+| `shadow`              | 影子刻度的几部分：`["{shadow.edge.surface}", "{shadow.sm}"]`                    |
+| `foreground`          | 面上的字与图标：`{token}`                                                       |
+| `border-color`        | 边：`{token}` 或 `transparent`                                                  |
+| `border-top-color`    | 上边覆写（WinUI 控件斜角）：`{token}` 或 `transparent`                          |
+| `border-bottom-color` | 下边覆写（WinUI 控件斜角）：`{token}` 或 `transparent`                          |
+| `backdropFilter`      | 只有模糊，不放颜色                                                              |
+| `material`            | `"none"` 之外，`"glass"` 或 `"acrylic"`（见下）                                 |
+| `elevation`           | 平台自己的阴影高度（dp），只有要它的层写（见下）                                |
 
 颜色字段包括 `background`、`gradient`、`foreground`、`border-color` 与 `border-top-color` / `border-bottom-color`（读取后经 `themed()` 映射为 NSH 样式键 `backgroundColor`、`backgroundImage`、`color`、`borderColor`、`borderTopColor`、`borderBottomColor`）。`foreground` 以不可枚举的 getter 给出，把它展开进 `ViewStyle` 不会多写一个未知键；文字用 `finish.<role>.foreground` 取色。`shadow` 不是颜色字段：它引用刻度，刻度的值也是墨色 + alpha，`themed()` 把引用接成一条 `boxShadow`。按下时换色的主题另写 `pressed-background` / `pressed-foreground`（WinUI 的 `AccentFillColorTertiary` 与 `TextOnAccentFillColorSecondary`），同样以不可枚举的 getter 给出。
 
-`finishes` 块分为 `shared`（明暗共用字段）与稀疏覆写 `light` / `dark`（只写与 `shared` 不同的字段）；合并后每个 finish 的角色集合固定，字段集合也固定，除了可以缺的 `gradient`、`backdropFilter`、`material`。
+`finishes` 块分为 `shared`（明暗共用字段）与稀疏覆写 `light` / `dark`（只写与 `shared` 不同的字段）；合并后每个 finish 的角色集合固定，字段集合也固定。主题没写的字段取中性值，中性值写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里：`material: "none"`（编译成 `null`）、`backdropFilter: "none"`、`elevation: null`、`gradient: null`、两条边色不带自己的颜色（跟 `border-color`）、按下的两个颜色字段 `null`（按下只压暗，不换色）。源码里除 `elevation` 外的中性值以字符串 `"none"` 写在 finish 组的 `$extensions["dev.aning.shadcn-nsh"]` 上——DTCG 的 token 不接受 `null` 值——编译时换成 `null`；**写 token 就压过 `$extensions`**。
 
 ## 2b 风格数据
 
 `semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（7 个字体角色，含 `fontSize`、整数点数 `lineHeight`、数值 `fontWeight` 与 `letterSpacing`）、`dimension`（`shape`、`size`、`stroke`、`focus`、`icon`、`control`）、`shape`（`curve`、`corners.button`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"rest-opacity"`、叠色、水波开关与禁用透明度）、`elevation`（每个外观的影子刻度：`sm`、`md`、`lg`、`xl`、`inset`，可选的两条边）、`transition`（`enter`）、`motion`（四档：`fast`、`default`、`slow` 三档弹簧与 `state` 状态淡变，timing 用 `timingFunction`）。它们与 finish 无关：一个主题写一份，light 和 dark 共用（`elevation` 例外，每个外观一份）；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
 
 - **键集合相同。** 所有主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
-- **枚举取白名单。** 字重（数值 `400`–`700`）、曲线、`corners.button`（`"full" | "radius"`）、焦点样式、`dimension.control` 的六个维度、`timingFunction` 的值都在 `scripts/theme/style.ts` 的列表里，清单在下面的枚举表里，`check:theme` 两边对账。
+- **枚举取白名单。** 字重（数值 `400`–`700`）、曲线、`corners.button`（`"full" | "radius"`）、焦点样式、`dimension.control` 的六个维度、`timingFunction` 的值都取下表的枚举清单：`scripts/theme/enums.ts` 在模块加载时读这张表，`check:theme` 再核对表里的键在主题里真的存在。
 - **`{token}` 引用按 DTCG `$type` 校验。** `dimension.shape` 的 3 个层圆角（`control`、`container`、`modal`）必须是 `"{radius-…}"`（`dimension` 类型），不允许写数字字面量；字体家族只来自 `theme.json` 的 `font-sans` / `font-mono`：7 个字阶复合 token 的 `fontFamily` 一律是 `{font.family.sans}`（DTCG 复合类型的必填字段，设计工具导入要用），`typography` 自己不另设家族。
-- **尺寸落在三把尺子上**（`checkScales`）：高度与图标各三个台阶，逐档递增、都是 4 的整数倍；间距（`density.pad` / `density.gap` / `control.padding` / `control.gap`）取自 `4, 8, 12, 16, 24, 32`，每档最多三个值；列表行的 `item.inset` / `item.pad` 也取这些台阶（`inset` 可为 0，即填充铺满容器），`pad` 不小于 `inset`，不计入每档三个值；字号按 `caption → display` 不递减，行高是不小于字号的整数点数；touch 档的点按区 `dimension.size.hit` 不小于 44（Apple HIG 的最小点按区，WCAG 2.2 SC 2.5.5）。平台自己规定的例外值在下表里点名，附出处；表外的一个都不许。
+- **两档齐全**（`checkTiers`）：随设备变的值分 `pointer` / `touch` 两档，一个值要么两档都给、要么两档都不给（继承 `tokens/base/style.{pointer,touch}.tokens.json`），且两档的键相同。分档的键是这些：`dimension.size.height`（`sm`/`md`/`lg`）、`dimension.icon`（`sm`/`md`/`lg`）、`dimension.size.density`（`pad`/`gap`）、`dimension.size.item`（`inset`/`pad`）、`dimension.size.control`（`padding`/`gap`/`dot`/`switch`）、`dimension.size.hit`，以及 `typography.<role>` 的 `fontSize` / `lineHeight`（7 个角色）。主题在 `tokens/themes/<id>/` 下写 `pointer.tokens.json` / `touch.tokens.json` 就多一套自己的档位值，只写一个档是错的；不写这两个文件就完全继承 base。
+- **尺寸落在三把尺子上**（`checkScales`）：高度与图标各三个台阶，逐档递增、都是 4 的整数倍；间距（`density.pad` / `density.gap` / `control.padding` / `control.gap`）取自 `4, 8, 12, 16, 24, 32`，每档最多三个值；列表行的 `item.inset` / `item.pad` 也取这些台阶（`inset` 可为 0，即填充铺满容器），`pad` 不小于 `inset`，不计入每档三个值；字号按 `caption → display` 不递减，行高是不小于字号的整数点数；touch 档的点按区 `dimension.size.hit` 不小于 44（Apple HIG 的最小点按区，WCAG 2.2 SC 2.5.5）。平台自己规定的例外值写在各自主题的 `$extensions` 里点名，附出处；没出处的值一个都不许。
 
-<!-- theme-lint: scales -->
-
-| 主题    | 键                                       | 值   | 出处                                                                                                                                              |
-| ------- | ---------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `winui` | `dimension.size.control.pointer.padding` | `6`  | WinUI 3 按钮内边距 6px（`Button_themeresources.xaml`）                                                                                            |
-| `winui` | `dimension.size.control.touch.padding`   | `6`  | 同上                                                                                                                                              |
-| `winui` | `dimension.size.item.pointer.pad`        | `11` | WinUI 3 菜单行文字内边距 11px（`MenuFlyoutItemThemePadding` 11,8,11,9，`MenuFlyout_themeresources.xaml`）                                         |
-| `winui` | `dimension.size.item.touch.pad`          | `11` | 同上（触控沿用同一内边距）                                                                                                                        |
-| `winui` | `dimension.size.hit.touch`               | `40` | Windows 触控目标 40×40 epx（[Touch interactions](https://learn.microsoft.com/en-us/windows/apps/design/input/touch-interactions)，“Target size”） |
-
-<!-- /theme-lint: scales -->
+**不在格子上的值写在哪。** 只有平台自己规定、且不在上面的尺子上的值需要出处，出处随主题走：`packages/theme/tokens/themes/<id>/theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].scales.citations` 是一张表，键是 token 路径（如 `dimension.size.hit.touch`），值是平台的出处（页面链接或资源文件名）。`check:theme` 拿它与每套主题编译后的 `semantics.json` 逐条对账：键必须在（写错路径就点名），值确实还不在格子上（值改了、落回尺子就报“出处不再需要”）。今天只有 winui 写这张表：按钮内边距 6 px（`Button_themeresources.xaml`）、菜单行内边距 11 px（`MenuFlyoutItemThemePadding` 11,8,11,9，`MenuFlyout_themeresources.xaml`）、触控目标 40×40 epx（Windows [Touch interactions](https://learn.microsoft.com/en-us/windows/apps/design/input/touch-interactions) 的 “Target size”）。
 
 **`theme.json` 与 `dimension.shape` 的分工。** 全部 3 个层圆角值（`radius-control`、`radius-container`、`radius-modal`）由 DTCG 源码编译进 `theme.json` 的 `cssVars.theme` 中（同时编译出等于 `radius-control` 的 A 层 `radius` 槽）；`semantics.json` 的 `dimension.shape.{control,container,modal}` 通过 `{radius-…}` 引用它们，外加非 token 的 `shape.curve` 与 `shape.corners.button`。`theme.ts` 的 `shape.*` 经 `token()` 响应式解析这些引用，因此换主题或宿主覆写圆角 token 都会立即到达组件。
 
@@ -138,7 +129,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ### 枚举与取值
 
-每一组枚举只有这一份清单：`scripts/theme/style.ts` 的 `whitelists` 必须与下表一致，`check:theme` 两边对账（少一行、多一个值都点名）。取值名是行为词，同一个名字可以在另一个维度里有另一个意思（`track` 既是轨道的形状，也是 `group` 的一个取值）；平台自己的名字原样保留（`standard`、`box-underline`），其余不用组件名、不用主题名。
+每一组枚举只有这一份清单：`scripts/theme/style.ts` 的 `whitelists` 就是下表（`scripts/theme/enums.ts` 在模块加载时读它），所以改取值只改这里；表里的键在 `semantics.json` 里都得出现，源码阶段与编译后两侧的校验都按这张表取值。取值名是行为词，同一个名字可以在另一个维度里有另一个意思（`track` 既是轨道的形状，也是 `group` 的一个取值）；平台自己的名字原样保留（`standard`、`box-underline`），其余不用组件名、不用主题名。
 
 <!-- theme-lint: enums -->
 
@@ -242,13 +233,13 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `glass`   | style 里的 `glassEffect: "regular"` 与 `glassTintColor`（该面自己的 `background`），`ios={{ backdropMaterial: "regular" }}` | `apple` 的 `overlay`、`inverse`、`raised`、`glass` |
 | `acrylic` | `windows={{ backdrop: { material: "blur" } }}`（宿主窗口的模糊）                                                            | `winui` 的 `overlay`                               |
 
-**玻璃要有回落。** 系统玻璃只在 iOS / macOS 26 及以上画出来，Acrylic 的模糊只在 Windows 11 的透明窗口里画出来，别处画的是 `backdropFilter`。所以每个配方都带回落：模糊半径（30px）与面色的最低不透明度（`glass` 0.72、`acrylic` 0.85）。`themed()` 在缺 `backdropFilter` 时补上配方的模糊；`check:theme` 核对面色 alpha 不低于最低值（`checkMaterialFill`），否则面板后面的字会原样透出来（#251）。
+**玻璃要有回落。** 系统玻璃只在 iOS / macOS 26 及以上画出来，Acrylic 的模糊只在 Windows 11 的透明窗口里画出来，别处画的是 `backdropFilter`。所以每个配方都带回落：模糊半径（30px）与面色的最低不透明度（`glass` 0.72、`acrylic` 0.85）。`themed()` 在 `backdropFilter` 是 `none` 时补上配方的模糊；`check:theme` 核对面色 alpha 不低于最低值（`checkMaterialFill`），否则面板后面的字会原样透出来（#251）。
 
 **`elevation`** 是 Android 自己的阴影高度（dp），只有要平台阴影的层写（`material` 主题的 `card`、`raised`、`hover`、`pressed` 是 1，`overlay`、`glass` 是 3，`modal`、`inverse` 是 6）。它和 `shadow` 无关：`shadow` 是画出来的影子，`elevation` 是平台按高度生成的影子。
 
-`themed()` 从不把 `material` 放进 style；style 里只多配方的玻璃键，`material` 为 `null` 时键与以前完全一样。`ios`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 按配方返回，`elevation` 在同一处作为 `android.elevation`，组件在同一个 View 上铺开：`<View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />`。`check:theme` 检查 `material` 存在于每个 finish、取值是三个之一，`elevation` 是非负数值（`scripts/theme/material.ts`）。
+`themed()` 从不把 `material` 放进 style；style 里只多配方的玻璃键，`material` 为 `null` 时键与以前完全一样。`ios`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 按配方返回，`elevation` 在同一处作为 `android.elevation`，组件在同一个 View 上铺开：`<View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />`。`check:theme` 检查 `material` 存在于每个 finish、取值是三个之一，`elevation` 是非负数值或 `null`（`scripts/theme/material.ts`）。
 
-字段顺序固定：`background`、`gradient`、`shadow`、`foreground`、`border-color`、`border-top-color`、`border-bottom-color`、`backdropFilter`、`material`、`elevation`（后两者按需缺）。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拦下比默认主题多一个或少一个字段的 finish。
+字段顺序固定：`background`、`gradient`、`shadow`、`foreground`、`border-color`、`border-top-color`、`border-bottom-color`、`pressed-background`、`pressed-foreground`、`pressed-opacity`、`backdropFilter`、`material`、`elevation`（`pressed-opacity` 只写在要压暗的角色上，其余字段每个角色都写，没写的取中性值）。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拦下比默认主题多一个或少一个字段的 finish。
 
 ## 4 每个 finish
 

@@ -65,7 +65,7 @@ Read a role where it is drawn (in JSX, a `draw`, or an effect): the getters read
 
 ## Finishes
 
-A finish is light and depth: what a surface is filled with, and how it sits above what is behind it. There are twelve — one per layer a component can be drawn on — and a finish states the same fields in every theme: `background`, `foreground`, `material`, and optionally `gradient`, `backdropFilter` and the three border colours. `semantics.json` keeps `finishes.shared` (fields identical in both appearances, referencing `{token}` so NSH's `token()` handles light/dark switching) plus sparse `finishes.light` and `finishes.dark` overrides, and `finish.<role>` merges them and resolves every `{token}` (including `oklch(from {card} l c h / 0.78)`) for the active appearance.
+A finish is light and depth: what a surface is filled with, and how it sits above what is behind it. There are twelve — one per layer a component can be drawn on — and a finish states the same fields in every theme: `background`, `foreground`, `shadow`, `material`, `gradient`, `backdropFilter`, the three border colours, the pressed pair and `elevation`. A field a theme leaves out is not missing — it takes a neutral value, written once in the base token set (`tokens/base/style.shared.tokens.json`) and compiled into every theme's `semantics.json`: `material: null` (no platform material), `backdropFilter: "none"`, `elevation: null`, `gradient: null` (flat), no colour of its own on the top or bottom edge, and the pressed pair `null` (pressing only dims). In the DTCG sources those neutrals are written `"none"` in the finish group's `$extensions`, since a token's `$value` cannot be `null`; a token a theme writes wins over it. `semantics.json` keeps `finishes.shared` (fields identical in both appearances, referencing `{token}` so NSH's `token()` handles light/dark switching) plus sparse `finishes.light` and `finishes.dark` overrides, and `finish.<role>` merges them and resolves every `{token}` (including `oklch(from {card} l c h / 0.78)`) for the active appearance.
 
 | Role       | Use                                                                |
 | ---------- | ------------------------------------------------------------------ |
@@ -82,9 +82,9 @@ A finish is light and depth: what a surface is filled with, and how it sits abov
 | `pressed`  | The press's treatment of the surface under it                      |
 | `disabled` | A control that cannot act                                          |
 
-Every finish states a `foreground` — the ink that sits on it — so a component needs no fallback, and `shadow` names the parts of the theme's scale (`["{shadow.edge.surface}", "{shadow.sm}"]`) instead of writing one: `elevation("md")` gives the same values on its own. `gradient` is optional; a theme that paints flat leaves it out.
+Every finish states a `foreground` — the ink that sits on it — so a component needs no fallback, and `shadow` names the parts of the theme's scale (`["{shadow.edge.surface}", "{shadow.sm}"]`) instead of writing one: `elevation("md")` gives the same values on its own. A theme that paints flat leaves `gradient` out and gets `null`, so the component draws no background image.
 
-The `material` says what the platform's own glass should be: `null` (the four flat themes), or `apple` — `{ glass: "regular" | "clear", tint }` — which rides inside `finish.<role>` as `glassEffect` and `glassTintColor`, so a spread of the finish carries it. `ios`, `macos` and `windows` are props, not style keys, which `platformMaterial(role)` returns for the view that draws the finish:
+The `material` says what the platform's own glass should be: `null` (every theme but the glassed ones, which state `"none"` and compile to `null`), or `apple` — `{ glass: "regular" | "clear", tint }` — which rides inside `finish.<role>` as `glassEffect` and `glassTintColor`, so a spread of the finish carries it. `ios`, `macos` and `windows` are props, not style keys, which `platformMaterial(role)` returns for the view that draws the finish:
 
 ```tsx
 <View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />
@@ -222,7 +222,7 @@ This library distributes no font files: `add theme` writes JSON and TypeScript, 
 
 ## Restyling
 
-Edit the sources; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius or font in `cssVars.theme`, a shadow part in the DTCG `shadow` group, a gradient, style group or material in the theme's `tokens/` files. Keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape.
+Edit the sources; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius or font in `cssVars.theme`, a shadow part in the DTCG `shadow` group, a gradient, style group or material in the theme's `tokens/` files. Keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape — a finish you add states every field of its neighbours, and a value that follows the device is stated twice, `pointer` and `touch`, with the same keys — a theme that has its own device sizes writes them in `tokens/themes/<id>/pointer.tokens.json` and `touch.tokens.json`, and one that does not inherits the base set's.
 
 - Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it); subsequent `add` runs key-merge missing entries into `theme.json` and `semantics.json` while keeping your values.
 - Replacing both files together rebrands the whole library; a key added upstream should be added here too.

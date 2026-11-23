@@ -15,6 +15,50 @@
           "Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners.",
           "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+."
         ]
+      },
+      "contrast": {
+        "waivers": [
+          {
+            "fg": "muted-foreground",
+            "bg": "background",
+            "source": "Apple secondaryLabel (#3C3C43 at 60%)"
+          },
+          {
+            "fg": "muted-foreground",
+            "bg": "muted",
+            "source": "Apple secondaryLabel (#3C3C43 at 60%)"
+          },
+          {
+            "fg": "muted-foreground",
+            "bg": "card",
+            "source": "Apple secondaryLabel (#3C3C43 at 60%)"
+          },
+          {
+            "fg": "muted-foreground",
+            "bg": "raised",
+            "source": "Apple secondaryLabel (#3C3C43 at 60%)"
+          },
+          {
+            "fg": "primary-foreground",
+            "bg": "primary",
+            "source": "white on Apple systemBlue"
+          },
+          {
+            "fg": "sidebar-primary-foreground",
+            "bg": "sidebar-primary",
+            "source": "white on Apple systemBlue"
+          },
+          {
+            "fg": "primary-foreground",
+            "bg": "finish.accent",
+            "source": "white on Apple systemBlue"
+          },
+          {
+            "fg": "brand",
+            "bg": "background",
+            "source": "Apple systemBlue links"
+          }
+        ]
       }
     }
   },

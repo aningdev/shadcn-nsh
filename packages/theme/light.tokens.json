@@ -559,6 +559,490 @@
       }
     }
   },
+  "finish": {
+    "$description": "The neutral fields of every finish role, written once: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, so a compiled finish carries every field in every theme.",
+    "card": {
+      "$description": "A surface that holds content: a card, a section.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.card}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.md}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
+    },
+    "inset": {
+      "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.inset}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
+    },
+    "raised": {
+      "$description": "A control on a surface: a button, a chip, a pill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.raised}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.edge.surface}",
+          "{shadow.sm}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      }
+    },
+    "overlay": {
+      "$description": "A panel floating over the page: a menu, a toast.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.popover}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.lg}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
+    },
+    "modal": {
+      "$description": "A surface the page waits for: a dialog, a sheet.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.card}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.xl}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
+    },
+    "inverse": {
+      "$description": "The page's inverse: an inverse surface, a tooltip.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.inverse}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.lg}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.inverse-foreground}"
+      }
+    },
+    "glass": {
+      "$description": "A translucent surface: what is behind it shows through.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "blur(20px)",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.edge.surface}",
+          "{shadow.sm}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.97997,
+            0.00397,
+            286.326
+          ],
+          "alpha": 0.8,
+          "hex": "#f8f8fb"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.popover}",
+              "alpha": 0.8
+            }
+          }
+        }
+      }
+    },
+    "accent": {
+      "$description": "The accent's own surface, with its ink.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "pressed-opacity": {
+        "$type": "number",
+        "$value": 0.88,
+        "$description": "How far the accent dims while a filled control is held, fill and ink together."
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.primary}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.brand-edge}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.brand-edge}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.brand-edge}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.edge.accent}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
+      }
+    },
+    "knob": {
+      "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.sm}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            1,
+            0,
+            0
+          ],
+          "hex": "#ffffff"
+        }
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                1,
+                0,
+                0
+              ],
+              "hex": "#ffffff"
+            },
+            "position": 0
+          },
+          {
+            "color": "{color.raised}",
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.input}"
+      }
+    },
+    "hover": {
+      "$description": "A control under the pointer.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.edge.surface}",
+          "{shadow.sm}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.popover}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      }
+    },
+    "pressed": {
+      "$description": "A control held down.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.inset}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.muted}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.input}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.input}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.input}"
+      }
+    },
+    "disabled": {
+      "$description": "A control that cannot be used.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.raised}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.edge.surface}",
+          "{shadow.sm}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
+    }
+  },
   "font": {
     "$description": "Desktop pointer typography metrics.",
     "family": {
@@ -1601,409 +2085,6 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status"
-        }
-      }
-    }
-  },
-  "finish": {
-    "card": {
-      "$description": "A surface that holds content: a card, a section.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.card}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.md}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
-      }
-    },
-    "inset": {
-      "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.inset}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
-      }
-    },
-    "raised": {
-      "$description": "A control on a surface: a button, a chip, a pill.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.raised}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      }
-    },
-    "overlay": {
-      "$description": "A panel floating over the page: a menu, a toast.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.popover}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.lg}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
-      }
-    },
-    "modal": {
-      "$description": "A surface the page waits for: a dialog, a sheet.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.card}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.xl}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
-      }
-    },
-    "inverse": {
-      "$description": "The page's inverse: an inverse surface, a tooltip.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.inverse}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.lg}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.inverse-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
-      }
-    },
-    "glass": {
-      "$description": "A translucent surface: what is behind it shows through.",
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "blur(20px)",
-          "material": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.97997,
-            0.00397,
-            286.326
-          ],
-          "alpha": 0.8,
-          "hex": "#f8f8fb"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "colorOp": {
-              "op": "alpha",
-              "color": "{color.popover}",
-              "alpha": 0.8
-            }
-          }
-        }
-      }
-    },
-    "accent": {
-      "$description": "The accent's own surface, with its ink.",
-      "pressed-opacity": {
-        "$type": "number",
-        "$value": 0.88,
-        "$description": "How far the accent dims while a filled control is held, fill and ink together."
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.primary}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.brand-edge}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.brand-edge}"
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": "{color.brand-edge}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.accent}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.primary-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
-      }
-    },
-    "knob": {
-      "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            1,
-            0,
-            0
-          ],
-          "hex": "#ffffff"
-        }
-      },
-      "gradient": {
-        "$type": "gradient",
-        "$value": [
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                1,
-                0,
-                0
-              ],
-              "hex": "#ffffff"
-            },
-            "position": 0
-          },
-          {
-            "color": "{color.raised}",
-            "position": 1
-          }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "angle": 180
-          }
-        }
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.input}"
-      }
-    },
-    "hover": {
-      "$description": "A control under the pointer.",
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.popover}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      }
-    },
-    "pressed": {
-      "$description": "A control held down.",
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.inset}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.muted}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.input}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.input}"
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": "{color.input}"
-      }
-    },
-    "disabled": {
-      "$description": "A control that cannot be used.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.raised}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
         }
       }
     }

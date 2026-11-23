@@ -5,8 +5,9 @@
  *   bun scripts/theme/contrast.ts [--themes <id,...>]
  *
  * Text needs 4.5:1 and large text (3:1), per WCAG 2.2 SC 1.4.3, which exempts text in an inactive
- * control, so `disabled-foreground` is not checked; `platform` lists the pairs a native theme keeps
- * below AA because its platform does, each with its source. The pairs are
+ * control, so `disabled-foreground` is not checked. A theme waives the pairs its platform keeps below
+ * AA in its own `$extensions`, each with its source (`./extensions`); a waiver its theme no longer
+ * needs is an error. The pairs are
  * semantic (`foreground` on `background`, `primary-foreground` on `primary`, each finish's
  * own `foreground` on its fill, and the accent's pressed pair where a theme states one), not literal: a component that paints a role pair is what this checks, and a value
  * that fails is a theme decision (`docs/specs/theme-roles.md`), not a component's.
@@ -18,6 +19,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { themeExtensions, waiverSource, type ContrastWaiver } from "./extensions";
 import { css, over, parseColor, type Rgb } from "./oklch";
 import { tokenKind, type ThemeCssVars } from "./tokens";
 
@@ -60,43 +62,22 @@ const skipped: Record<string, string> = {
 };
 
 /**
- * Pairs a theme keeps below AA because its platform ships them that way. Each is a known value
- * with its source; an exception that no longer fails is an error, so the list stays true.
+ * Pairs a theme keeps below AA because its platform ships them that way. Each theme states its own
+ * in its `theme.tokens.json` `$extensions…contrast.waivers` with the platform source; an exception
+ * that no longer fails is an error, so the list stays true.
  */
-const platform: { theme: string; fg: string; bg: string; source: string }[] = [
-  ...["background", "muted", "card", "raised"].map((bg) => ({
-    theme: "apple",
-    fg: "muted-foreground",
-    bg,
-    source: "Apple secondaryLabel (#3C3C43 at 60%)",
-  })),
-  ...(
-    [
-      ["primary-foreground", "primary"],
-      ["sidebar-primary-foreground", "sidebar-primary"],
-      ["primary-foreground", "finish.accent"],
-    ] as const
-  ).map(([fg, bg]) => ({ theme: "apple", fg, bg, source: "white on Apple systemBlue" })),
-  { theme: "apple", fg: "brand", bg: "background", source: "Apple systemBlue links" },
-  ...["muted", "raised"].map((bg) => ({
-    theme: "shadcn",
-    fg: "muted-foreground",
-    bg,
-    source: "shadcn neutral muted-foreground on muted",
-  })),
-  {
-    theme: "winui",
-    fg: "finish.accent.pressed-foreground",
-    bg: "finish.accent.pressed-background",
-    source: "WinUI TextOnAccentFillColorSecondary on AccentFillColorTertiary, while pressed",
-  },
-];
-
-/** The platform source that excuses a failing pair, if any. */
 export function exception(result: Pick<Result, "theme" | "fg" | "bg">): string | undefined {
-  return platform.find(
-    ({ theme, fg, bg }) => theme === result.theme && fg === result.fg && bg === result.bg,
-  )?.source;
+  return waiverSource(result.theme, result.fg, result.bg);
+}
+
+/**
+ * Every waiver the themes state, so a run can report one that its theme no longer needs: a pair
+ * that passes now is a stale exception, not a pass.
+ */
+function waivers(themes: readonly string[]): ({ theme: string } & ContrastWaiver)[] {
+  return themes.flatMap((theme) =>
+    (themeExtensions(theme).contrast?.waivers ?? []).map((waiver) => ({ theme, ...waiver })),
+  );
 }
 
 /** Resolve a theme value to the text it draws, following aliases and relative colours. */
@@ -301,9 +282,8 @@ if (import.meta.main) {
   for (const [id, { pass, total }] of byTheme) {
     console.log(`theme:contrast: ${id}: ${pass} of ${total} pairs pass`);
   }
-  const stale = platform.filter(
+  const stale = waivers(themes ?? fs.readdirSync(path.join(process.cwd(), themesDir))).filter(
     (entry) =>
-      (!themes || themes.includes(entry.theme)) &&
       !results.some(
         (result) =>
           !result.pass &&

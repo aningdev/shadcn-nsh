@@ -26,7 +26,7 @@ import path from "node:path";
 
 import { repo } from "../port/lib";
 import { colourFields } from "./finish-colour";
-import { tokenKind } from "./tokens";
+import { BUILD_ROOT_THEME, tokenKind } from "./tokens";
 
 type Json = Record<string, unknown>;
 export type Mode = "light" | "dark";
@@ -214,11 +214,11 @@ export function classifyChanges(before: Flat, after: Flat, theme: Json | undefin
   return changes;
 }
 
-/** A theme's compiled files: always its own, and for `default` also the build-time pair it copies. */
+/** A theme's compiled files: always its own, and for the build root also the pair it copies. */
 function pairsFor(id: string): { themeFile: string; semanticsFile: string }[] {
   const dir = `${themesDir}/${id}`;
   const pairs = [{ themeFile: `${dir}/theme.json`, semanticsFile: `${dir}/semantics.json` }];
-  if (id === "default") {
+  if (id === BUILD_ROOT_THEME) {
     pairs.push({
       themeFile: "packages/theme/theme.json",
       semanticsFile: "packages/theme/semantics.json",

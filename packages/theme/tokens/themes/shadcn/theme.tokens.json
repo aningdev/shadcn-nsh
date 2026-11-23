@@ -13,6 +13,20 @@
         "donts": [
           "Do not add backdrop blur, specular rim highlights, or spring press shrink to flat shadcn finishes."
         ]
+      },
+      "contrast": {
+        "waivers": [
+          {
+            "fg": "muted-foreground",
+            "bg": "muted",
+            "source": "shadcn neutral muted-foreground on muted"
+          },
+          {
+            "fg": "muted-foreground",
+            "bg": "raised",
+            "source": "shadcn neutral muted-foreground on muted"
+          }
+        ]
       }
     }
   },

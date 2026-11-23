@@ -333,15 +333,44 @@ function validateExtAtPath(
   }
 
   if (/^finish\.[A-Za-z0-9-]+$/.test(p)) {
-    checkUnknownKeys(where, ext, ["backdropFilter", "material", "elevation"], problems);
+    checkUnknownKeys(
+      where,
+      ext,
+      [
+        "backdropFilter",
+        "material",
+        "elevation",
+        "gradient",
+        "pressed-background",
+        "pressed-foreground",
+        "border-top-color",
+        "border-bottom-color",
+      ],
+      problems,
+    );
+    // The neutral states a finish writes once and every theme inherits: no gradient, no pressed
+    // swap, no edge colour of its own. A theme that states one writes the token, which wins.
+    for (const field of [
+      "gradient",
+      "pressed-background",
+      "pressed-foreground",
+      "border-top-color",
+      "border-bottom-color",
+    ] as const) {
+      if (!(field in ext)) continue;
+      if (ext[field] !== "none") {
+        problems.push(`${where}.${field} must be "none", or write the ${field} token instead`);
+      }
+    }
     if ("backdropFilter" in ext && !isNonEmptyString(ext.backdropFilter)) {
       problems.push(`${where}.backdropFilter must be a non-empty string`);
     }
     if (
       "elevation" in ext &&
+      ext.elevation !== null &&
       (typeof ext.elevation !== "number" || !Number.isFinite(ext.elevation) || ext.elevation < 0)
     ) {
-      problems.push(`${where}.elevation must be a non-negative number`);
+      problems.push(`${where}.elevation must be a non-negative number, or null for none`);
     }
     return;
   }
@@ -399,12 +428,59 @@ function validateExtAtPath(
   }
 
   if (p === "") {
-    checkUnknownKeys(where, ext, ["designMd"], problems);
+    checkUnknownKeys(where, ext, ["designMd", "contrast", "scales"], problems);
     if ("designMd" in ext) validateDesignMdExt(`${where}.designMd`, ext.designMd, problems);
+    if ("contrast" in ext) validateContrastExt(`${where}.contrast`, ext.contrast, problems);
+    if ("scales" in ext) validateScalesExt(`${where}.scales`, ext.scales, problems);
     return;
   }
 
   problems.push(`${label}: unexpected $extensions at "${p || "#"}"`);
+}
+
+/** `$extensions…contrast`: the pairs a theme keeps below AA, each naming its platform source. */
+function validateContrastExt(where: string, val: unknown, problems: string[]): void {
+  if (!isRecord(val)) {
+    problems.push(`${where} must be an object`);
+    return;
+  }
+  checkUnknownKeys(where, val, ["waivers"], problems);
+  if (!("waivers" in val)) {
+    problems.push(`${where}.waivers must be an array of { fg, bg, source }`);
+    return;
+  }
+  const waivers = val.waivers;
+  if (!Array.isArray(waivers) || waivers.length === 0) {
+    problems.push(`${where}.waivers must be a non-empty array of { fg, bg, source }`);
+    return;
+  }
+  waivers.forEach((entry, index) => {
+    const at = `${where}.waivers[${index}]`;
+    if (!isRecord(entry)) {
+      problems.push(`${at} must be an object`);
+      return;
+    }
+    checkUnknownKeys(at, entry, ["fg", "bg", "source"], problems);
+    for (const key of ["fg", "bg", "source"] as const)
+      if (!isNonEmptyString(entry[key])) problems.push(`${at}.${key} must be a non-empty string`);
+  });
+}
+
+/** `$extensions…scales`: the values a theme states off the scales, by token path → source. */
+function validateScalesExt(where: string, val: unknown, problems: string[]): void {
+  if (!isRecord(val)) {
+    problems.push(`${where} must be an object`);
+    return;
+  }
+  checkUnknownKeys(where, val, ["citations"], problems);
+  if (!isRecord(val.citations) || Object.keys(val.citations).length === 0) {
+    problems.push(`${where}.citations must be an object of token path → source`);
+    return;
+  }
+  for (const [key, source] of Object.entries(val.citations)) {
+    if (!isNonEmptyString(source))
+      problems.push(`${where}.citations["${key}"] must be a non-empty string`);
+  }
 }
 
 function validateDesignMdExt(where: string, val: unknown, problems: string[]): void {

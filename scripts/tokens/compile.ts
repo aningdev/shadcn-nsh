@@ -244,7 +244,7 @@ export function compileShadowGroup(group: Record<string, unknown>): CompiledShad
   return out;
 }
 
-function compileFinishSection(
+export function compileFinishGroup(
   finishGroup: Record<string, Record<string, unknown>>,
   shadows: CompiledShadows = {},
 ): Record<string, Record<string, unknown>> {
@@ -307,7 +307,19 @@ function compileFinishSection(
     if (isRecord(group["pressed-opacity"])) {
       item["pressed-opacity"] = group["pressed-opacity"].$value;
     }
+    // A field the source states as `"none"` in the finish's extensions, and writes no token for,
+    // compiles to `null`: no gradient, no pressed swap, no edge colour of its own. The base set
+    // states them once for every role, so a compiled finish always carries every field.
     const groupExt = getExt(group);
+    for (const field of [
+      "gradient",
+      "pressed-background",
+      "pressed-foreground",
+      "border-top-color",
+      "border-bottom-color",
+    ] as const) {
+      if (groupExt?.[field] === "none" && !(field in item)) item[field] = null;
+    }
     if (groupExt && "backdropFilter" in groupExt) {
       item.backdropFilter = groupExt.backdropFilter;
     }
@@ -337,14 +349,14 @@ function readDefaultFinishFieldOrder(defaultResolverPath: string): Map<string, s
   const lightTree = (doc.modifiers?.appearance?.contexts.light ?? []).reduce<
     Record<string, unknown>
   >((acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)), {});
-  const shared = compileFinishSection(
+  const shared = compileFinishGroup(
     (sharedTree.finish ?? {}) as Record<string, Record<string, unknown>>,
     compileShadowGroup({
       ...((sharedTree.shadow ?? {}) as Record<string, unknown>),
       ...((lightTree.shadow ?? {}) as Record<string, unknown>),
     }),
   );
-  const light = compileFinishSection(
+  const light = compileFinishGroup(
     (lightTree.finish ?? {}) as Record<string, Record<string, unknown>>,
     compileShadowGroup({
       ...((sharedTree.shadow ?? {}) as Record<string, unknown>),
@@ -521,7 +533,12 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     },
   };
 
-  const sharedFinishesTree = (doc.sets?.theme?.sources ?? []).reduce<Record<string, unknown>>(
+  // The base set's finish group comes first: it states the neutral fields every finish has, and a
+  // theme's own `finishes.shared` (then each appearance's) overrides the fields it really differs on.
+  const sharedFinishesTree = [
+    ...(doc.sets?.base?.sources ?? []),
+    ...(doc.sets?.theme?.sources ?? []),
+  ].reduce<Record<string, unknown>>(
     (acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)),
     {},
   );
@@ -553,7 +570,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     for (const role of new Set([...Object.keys(shared), ...Object.keys(own)])) {
       merged[role] = mergeFinishGroup(shared[role] ?? {}, own[role] ?? {});
     }
-    return compileFinishSection(merged, shadows);
+    return compileFinishGroup(merged, shadows);
   };
 
   const mergedLight = finishesFor(lightFinishesTree, shadowsLight);

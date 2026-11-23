@@ -462,18 +462,20 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 ## Components
 
-- **`finish.card`**: A surface that holds content: a card, a section.
-- **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
+The neutral fields of every finish role, written once: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, so a compiled finish carries every field in every theme.
+
+- **`finish.card`** (backdropFilter: `none`): A surface that holds content: a card, a section.
+- **`finish.inset`** (backdropFilter: `none`): A well cut into a surface: an inset, a field, a track, a groove.
 - **`finish.raised`** (backdropFilter: `none`): A control on a surface: a button, a chip, a pill.
 - **`finish.overlay`** (backdropFilter: `none`): A panel floating over the page: a menu, a toast.
-- **`finish.modal`**: A surface the page waits for: a dialog, a sheet.
+- **`finish.modal`** (backdropFilter: `none`): A surface the page waits for: a dialog, a sheet.
 - **`finish.inverse`** (backdropFilter: `none`): The page's inverse: an inverse surface, a tooltip.
 - **`finish.glass`** (backdropFilter: `blur(20px)`): A translucent surface: what is behind it shows through.
-- **`finish.accent`**: The accent's own surface, with its ink.
-- **`finish.knob`**: A knob: a switch's thumb, a slider's handle, a segmented thumb.
-- **`finish.hover`**: A control under the pointer.
-- **`finish.pressed`**: A control held down.
-- **`finish.disabled`**: A control that cannot be used.
+- **`finish.accent`** (backdropFilter: `none`): The accent's own surface, with its ink.
+- **`finish.knob`** (backdropFilter: `none`): A knob: a switch's thumb, a slider's handle, a segmented thumb.
+- **`finish.hover`** (backdropFilter: `none`): A control under the pointer.
+- **`finish.pressed`** (backdropFilter: `none`): A control held down.
+- **`finish.disabled`** (backdropFilter: `none`): A control that cannot be used.
 - **Disabled handling** (content=0.5, fill=false): Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.
 
 ## Do's and Don'ts

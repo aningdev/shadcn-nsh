@@ -462,18 +462,20 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 ## Components
 
-- **`finish.card`** (elevation: 1): A surface that holds content: a card, a section.
-- **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
+The neutral fields of every finish role, written once: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, so a compiled finish carries every field in every theme.
+
+- **`finish.card`** (backdropFilter: `none`; elevation: 1): A surface that holds content: a card, a section.
+- **`finish.inset`** (backdropFilter: `none`): A well cut into a surface: an inset, a field, a track, a groove.
 - **`finish.raised`** (backdropFilter: `none`; elevation: 1): A control on a surface: a button, a chip, a pill.
 - **`finish.overlay`** (backdropFilter: `none`; elevation: 3): A panel floating over the page: a menu, a toast.
-- **`finish.modal`** (elevation: 6): A surface the page waits for: a dialog, a sheet.
+- **`finish.modal`** (backdropFilter: `none`; elevation: 6): A surface the page waits for: a dialog, a sheet.
 - **`finish.inverse`** (backdropFilter: `none`; elevation: 6): The page's inverse: an inverse surface, a tooltip.
 - **`finish.glass`** (backdropFilter: `none`; elevation: 3): A translucent surface: what is behind it shows through.
-- **`finish.accent`**: The accent's own surface, with its ink.
-- **`finish.knob`**: A knob: a switch's thumb, a slider's handle, a segmented thumb.
-- **`finish.hover`** (elevation: 1): A control under the pointer.
-- **`finish.pressed`** (elevation: 1): A control held down.
-- **`finish.disabled`**: A control that cannot be used.
+- **`finish.accent`** (backdropFilter: `none`): The accent's own surface, with its ink.
+- **`finish.knob`** (backdropFilter: `none`): A knob: a switch's thumb, a slider's handle, a segmented thumb.
+- **`finish.hover`** (backdropFilter: `none`; elevation: 1): A control under the pointer.
+- **`finish.pressed`** (backdropFilter: `none`; elevation: 1): A control held down.
+- **`finish.disabled`** (backdropFilter: `none`): A control that cannot be used.
 - **Disabled handling** (content=0.38, fill=true): M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).
 
 ## Do's and Don'ts

@@ -25,18 +25,29 @@ describe("the spec's control dimensions", () => {
       Object.keys(controlDimensionValues).sort(),
     );
     for (const row of rows)
-      expect(
-        controlDimensionValues[row.dimension as keyof typeof controlDimensionValues],
-      ).toContain(row.basic as never);
+      for (const column of row.columns) {
+        expect(column.themes.length, `${row.dimension}: a column names no theme`).toBeGreaterThan(
+          0,
+        );
+        expect(
+          controlDimensionValues[row.dimension as keyof typeof controlDimensionValues],
+          `${row.dimension}: ${column.value}`,
+        ).toContain(column.value as never);
+      }
   });
 
-  test("matches what every theme compiles to", () => {
-    for (const row of specControlDimensions(spec)) {
+  test("names every theme in a column, and matches what it compiles to", () => {
+    const rows = specControlDimensions(spec);
+    for (const name of themes) {
+      const named = rows.some((row) => row.columns.some((c) => c.themes.includes(name)));
+      expect(named, `${name} is in no column of the control table`).toBe(true);
+    }
+    for (const row of rows) {
       for (const name of themes) {
-        const expected =
-          name === "material" ? row.material : name === "winui" ? row.winui : row.basic;
+        const column = row.columns.find((c) => c.themes.includes(name));
+        expect(column, `${name} is in no column for ${row.dimension}`).toBeDefined();
         expect(semantics(name).dimension.control[row.dimension], `${name}.${row.dimension}`).toBe(
-          expected,
+          column!.value,
         );
       }
     }
@@ -67,11 +78,22 @@ describe("the spec's control dimensions", () => {
 });
 
 describe("the spec's enum table", () => {
-  test("is the same list as the whitelists", () => {
+  test("is where the whitelists come from", () => {
     const enums = specEnums(spec);
     expect(enums.map((row) => row.key).sort()).toEqual(Object.keys(whitelists).sort());
-    for (const row of enums)
-      expect([...row.values].sort(), row.key).toEqual(whitelists[row.key]!.map(String).sort());
+    // A whole-number row reads back as numbers, since that is what a token path holds.
+    expect(whitelists["typography.*.fontWeight"]).toEqual([400, 500, 600, 700]);
+    expect(whitelists["transition.enter.timingFunction"]).toEqual([
+      "out-cubic",
+      "in-cubic",
+      "in-out-cubic",
+      "standard",
+      "emphasized-decelerate",
+      "emphasized-accelerate",
+      "decelerate",
+      "accelerate",
+      "point-to-point",
+    ]);
   });
 });
 

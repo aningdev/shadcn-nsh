@@ -269,6 +269,14 @@ export function themeFiles(): ThemeGeneratorOutput {
         "Do not add backdrop blur, specular rim highlights, or spring press shrink to flat shadcn finishes.",
       ],
     },
+    // shadcn's neutral muted text is 4.4:1 on its muted surfaces, as shipped upstream.
+    contrast: {
+      waivers: ["muted", "raised"].map((bg) => ({
+        fg: "muted-foreground",
+        bg,
+        source: "shadcn neutral muted-foreground on muted",
+      })),
+    },
     cssVars: {
       theme: themeLevel(),
       light: section(light, ownLight),

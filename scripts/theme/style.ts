@@ -6,9 +6,11 @@
  * (`checkScales`): three heights, three icons, spacing on the 4 grid, and a type ramp that never
  * steps down.
  *
- * Pure: no `node:fs`, so `theme-lint.ts`, the theme generators and the unit tests all read it.
+ * Its enumerated values are the spec's table (`./enums`), read once when this module loads, so a
+ * value name is stated in `docs/specs/theme-roles.md` and nowhere else.
  */
-import { CONTROL_DIMENSIONS, MOTION_ROLES, type ControlDimension } from "../tokens/types";
+import { MOTION_ROLES } from "../tokens/types";
+import { controlDimensionValues, easingNames, whitelists } from "./enums";
 import { parseTokenRef, type SplitFinishes, type TokenKind } from "./tokens";
 
 /** The groups of `semantics.json` that are style, in the order the file writes them. */
@@ -25,44 +27,8 @@ export const styleGroups = [
 export const styleOf = (file: Record<string, unknown>): Record<string, unknown> =>
   Object.fromEntries(styleGroups.filter((group) => group in file).map((g) => [g, file[g]]));
 
-/** Every easing name a theme may name in `transition.enter.timingFunction` or a timing `motion.<role>`. */
-export const easingNames = [
-  "out-cubic",
-  "in-cubic",
-  "in-out-cubic",
-  "standard",
-  "emphasized-decelerate",
-  "emphasized-accelerate",
-  "decelerate",
-  "accelerate",
-  "point-to-point",
-] as const;
-
-/**
- * The values each control dimension may take (`docs/specs/theme-contract-v2.md` §14): the axes are
- * behaviour-named, so a name may recur in another dimension with another meaning (`track`).
- */
-export const controlDimensionValues: Record<ControlDimension, readonly string[]> = {
-  selection: ["pill", "underline", "bar"],
-  field: ["box", "underline", "box-underline"],
-  choice: ["well", "outline", "inset"],
-  track: ["sunk", "tint", "hairline"],
-  handle: ["circle", "bar", "ring"],
-  group: ["track", "cells"],
-};
-
-/** One theme's values that must come from a list: the path of the key, and the values it may take. */
-export const whitelists: Record<string, readonly (string | number | null)[]> = {
-  "typography.*.fontWeight": [400, 500, 600, 700],
-  "shape.curve": ["continuous", "circular"],
-  "shape.corners.button": ["radius", "full"],
-  "dimension.size.control.*.switch": ["small", "regular"],
-  "dimension.focus.style": ["halo", "outline", "double"],
-  ...Object.fromEntries(
-    CONTROL_DIMENSIONS.map((key) => [`dimension.control.${key}`, controlDimensionValues[key]]),
-  ),
-  "transition.enter.timingFunction": easingNames,
-};
+/** The enums a theme's style values come from: read from the spec (`./enums`), re-exported here. */
+export { controlDimensionValues, easingNames, whitelists };
 
 /** The motion roles, named by speed and the state fade (`docs/specs/theme-contract-v2.md` §17). */
 export const motionRoleNames = MOTION_ROLES;
@@ -169,31 +135,18 @@ function checkMotionRole(path: string, role: string, value: unknown): string[] {
 /** The steps a spacing value may take: the 4 px grid, up to a section's inset. */
 export const spacingSteps = [4, 8, 12, 16, 24, 32] as const;
 
-/** A value a platform states off the grid, with the source that states it. */
-export interface ScaleCitation {
-  /** The style key it sits at: `dimension.size.control.pointer.padding`. */
-  key: string;
-  /** The value it takes. */
-  value: number;
-  /** Where the platform says so: the spec or source file, in `docs/specs/theme-roles.md`'s list. */
-  source: string;
-}
+/**
+ * The values a platform states off these scales, each with the source that states it: a token path
+ * (`dimension.size.hit.touch`) → where the platform says so. A theme writes them in its own
+ * `theme.tokens.json` `$extensions…scales.citations`, so no list here names a theme.
+ */
+export type ScaleCitations = Readonly<Record<string, string>>;
 
-/** A citation's id: the key and the value it excuses. */
-export const citationId = (key: string, value: number) => `${key} ${value}`;
-
-const scaleKey = (key: string, theme: string) => `${theme}:${key}`;
-
-/** Cited values by theme: `theme:key` → the values its citations excuse. */
-export function citedValues(citations: readonly (ScaleCitation & { theme: string })[]) {
-  const out = new Map<string, Set<number>>();
-  for (const { theme, key, value } of citations) {
-    const id = scaleKey(key, theme);
-    const values = out.get(id) ?? new Set<number>();
-    values.add(value);
-    out.set(id, values);
-  }
-  return out;
+/** The number a dotted path resolves to, or nothing when it is absent or not a number. */
+function numberOf(file: Record<string, unknown>, key: string): number | undefined {
+  let cursor: unknown = file;
+  for (const part of key.split(".")) cursor = isObject(cursor) ? cursor[part] : undefined;
+  return typeof cursor === "number" ? cursor : undefined;
 }
 
 /** The keys a theme's spacing takes: the page's and a control's insets and gaps. */
@@ -222,17 +175,66 @@ export const typeRamp = [
  * - a list row's inset or pad off the grid (0 allowed for an inset), or a pad inside its inset;
  * - a type ramp that steps down, or a line height that is not a whole number of points or is
  *   shorter than its text.
- * A value the platform states itself is excused by a citation (`citedValues`): the spec's list
- * names the theme, the key, the value and the source.
+ * A value the platform states itself is excused by a citation (`ScaleCitations`): the key and the
+ * platform's source, written in the theme's own `$extensions`. A citation nothing needed, or one
+ * whose key is not a number, is a problem too: the list stays true to what the theme compiles to.
  */
+/**
+ * What is wrong with a theme's input tiers, each as a line naming the key: a size stated at one tier
+ * and not the other, a tier whose keys the other does not have, or a tier pair that is a group on
+ * one side and a value on the other. Every theme states both `pointer` and `touch` for everything it
+ * states per input: a theme that writes no tier file of its own inherits the base set's.
+ */
+export function checkTiers(path: string, file: Record<string, unknown>): string[] {
+  const problems: string[] = [];
+  const walk = (node: unknown, where: string) => {
+    if (node === null || typeof node !== "object") return;
+    const record = node as Record<string, unknown>;
+    const tiers = ["pointer", "touch"] as const;
+    const stated = tiers.filter((tier) => tier in record);
+    if (stated.length === 0) {
+      for (const [key, value] of Object.entries(record))
+        walk(value, where ? `${where}.${key}` : key);
+      return;
+    }
+    if (stated.length === 1) {
+      const missing = tiers.find((tier) => !(tier in record))!;
+      problems.push(`${path}: \`${where}\` states a ${stated[0]} size and no ${missing} one`);
+      return;
+    }
+    const [pointer, touch] = [record.pointer, record.touch];
+    const pointerGroup = pointer !== null && typeof pointer === "object";
+    const touchGroup = touch !== null && typeof touch === "object";
+    if (pointerGroup !== touchGroup) {
+      problems.push(`${path}: \`${where}\` states a group at one tier and a value at the other`);
+      return;
+    }
+    if (!pointerGroup) return;
+    const keysOf = (group: unknown) => new Set(Object.keys(group as Record<string, unknown>));
+    const [inPointer, inTouch] = [keysOf(pointer), keysOf(touch)];
+    for (const key of inPointer)
+      if (!inTouch.has(key))
+        problems.push(`${path}: \`${where}.pointer.${key}\` has no touch size`);
+    for (const key of inTouch)
+      if (!inPointer.has(key))
+        problems.push(`${path}: \`${where}.touch.${key}\` has no pointer size`);
+  };
+  walk(file, "");
+  return problems;
+}
+
 export function checkScales(
   path: string,
   file: Record<string, unknown>,
-  themeId: string,
-  cited: Map<string, Set<number>> = new Map(),
+  citations: ScaleCitations = {},
 ): string[] {
   const problems: string[] = [];
-  const excused = (key: string, value: number) => cited.get(scaleKey(key, themeId))?.has(value);
+  const used = new Set<string>();
+  const excused = (key: string): boolean => {
+    if (!(key in citations)) return false;
+    used.add(key);
+    return true;
+  };
   const dimension = isObject(file.dimension) ? file.dimension : {};
   const size = isObject(dimension.size) ? dimension.size : {};
   const icon = isObject(dimension.icon) ? dimension.icon : {};
@@ -247,7 +249,7 @@ export function checkScales(
         const value = tierSteps[step];
         if (typeof value !== "number") continue;
         if (!Number.isInteger(value) || value % 4 !== 0) {
-          if (excused(`${full}.${tier}.${step}`, value)) continue;
+          if (excused(`${full}.${tier}.${step}`)) continue;
           problems.push(
             `${path}: \`${full}.${tier}.${step}\` is ${value}, not a whole number of 4 px steps`,
           );
@@ -266,23 +268,27 @@ export function checkScales(
   // A finger needs 44 points: Apple HIG's minimum hit region, WCAG 2.2 SC 2.5.5 (AAA) and Material's
   // 48dp both sit at or above it, so a touch tier that pads a control's hit region pads it that far.
   const hit = isObject(size.hit) ? size.hit.touch : undefined;
-  if (typeof hit === "number" && hit < 44 && !excused("dimension.size.hit.touch", hit))
+  if (typeof hit === "number" && hit < 44 && !excused("dimension.size.hit.touch"))
     problems.push(
       `${path}: \`dimension.size.hit.touch\` is ${hit}, below the 44-point touch target`,
     );
 
+  // The tiers sit under the group, above the leaf: `dimension.size.control.pointer.padding`.
   for (const tier of ["pointer", "touch"] as const) {
     const values = new Set<number>();
     for (const key of spacingKeys) {
       const parts = key.split(".");
+      const leaf = parts.pop()!;
       let cursor: unknown = file;
       for (const part of parts) cursor = isObject(cursor) ? cursor[part] : undefined;
-      const value = isObject(cursor) ? cursor[tier] : undefined;
+      const tiered = isObject(cursor) ? cursor[tier] : undefined;
+      const value = isObject(tiered) ? tiered[leaf] : undefined;
       if (typeof value !== "number") continue;
+      const path_ = `${parts.join(".")}.${tier}.${leaf}`;
       values.add(value);
-      if (!(spacingSteps as readonly number[]).includes(value) && !excused(`${key}.${tier}`, value))
+      if (!(spacingSteps as readonly number[]).includes(value) && !excused(path_))
         problems.push(
-          `${path}: \`${key}.${tier}\` is ${value}, not one of the spacing steps (${spacingSteps.join(", ")})`,
+          `${path}: \`${path_}\` is ${value}, not one of the spacing steps (${spacingSteps.join(", ")})`,
         );
     }
     if (values.size > 3)
@@ -301,10 +307,7 @@ export function checkScales(
       const value = spacing[part];
       if (typeof value !== "number") continue;
       const key = `dimension.size.item.${tier}.${part}`;
-      if (
-        !(value === 0 || (spacingSteps as readonly number[]).includes(value)) &&
-        !excused(key, value)
-      )
+      if (!(value === 0 || (spacingSteps as readonly number[]).includes(value)) && !excused(key))
         problems.push(
           `${path}: \`${key}\` is ${value}, not 0 or one of the spacing steps (${spacingSteps.join(", ")})`,
         );
@@ -313,6 +316,19 @@ export function checkScales(
     if (typeof inset === "number" && typeof pad === "number" && pad < inset)
       problems.push(
         `${path}: \`dimension.size.item.${tier}.pad\` is ${pad}, inside its ${inset} inset: the text would sit closer to the fill's edge than the fill to its container's`,
+      );
+  }
+
+  for (const [key, source] of Object.entries(citations)) {
+    if (numberOf(file, key) === undefined) {
+      problems.push(
+        `${path}: the citation for \`${key}\` (${source}) names no number in this theme`,
+      );
+      continue;
+    }
+    if (!used.has(key))
+      problems.push(
+        `${path}: \`${key}\` cites ${source}, but nothing there needs excusing: the value is on the scale now`,
       );
   }
 
@@ -360,7 +376,7 @@ export function leaves(value: unknown, prefix = ""): Map<string, unknown> {
 }
 
 /** Whether a dotted path matches a whitelist's pattern, `*` standing for one segment. */
-const matches = (pattern: string, path: string) => {
+export const keyMatches = (pattern: string, path: string) => {
   const want = pattern.split(".");
   const have = path.split(".");
   return want.length === have.length && want.every((part, i) => part === "*" || part === have[i]);
@@ -479,7 +495,11 @@ export function checkStyle(
       problems.push(`${path}: \`state.press-scale\` is ${value}, not in (0, 1]`);
 
     for (const [pattern, allowed] of Object.entries(whitelists))
-      if (matches(pattern, key) && !allowed.includes(value as string | number | null))
+      if (
+        keyMatches(pattern, key) &&
+        (typeof value === "string" || typeof value === "number") &&
+        !allowed.includes(value)
+      )
         problems.push(
           `${path}: \`${key}\` is ${JSON.stringify(value)}, not one of ${allowed.map((v) => JSON.stringify(v)).join(", ")}`,
         );

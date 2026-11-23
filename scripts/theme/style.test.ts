@@ -5,6 +5,7 @@ import { join } from "node:path";
 import {
   checkScales,
   checkStyle,
+  checkTiers,
   easingNames,
   leaves,
   scaledRadii,
@@ -83,8 +84,11 @@ describe("checkStyle", () => {
         new RegExp(`^${pattern.replace(/\./g, "\\.").replace(/\*/g, "[^.]+")}$`).test(key),
       );
       expect(keys.length, pattern).toBeGreaterThan(0);
-      for (const key of keys)
-        expect(allowed, key).toContain(have.get(key) as string | number | null);
+      for (const key of keys) {
+        const value = have.get(key);
+        if (typeof value === "string" || typeof value === "number")
+          expect(allowed, key).toContain(value);
+      }
     }
   });
 
@@ -169,14 +173,36 @@ describe("scaledRadii", () => {
   });
 });
 
+describe("checkTiers", () => {
+  test("the default theme states both tiers everywhere", () => {
+    expect(checkTiers("semantics.json", copy())).toEqual([]);
+  });
+
+  test("names a size stated at one tier and not the other", () => {
+    const file = copy();
+    delete file.dimension.size.hit.pointer;
+    expect(checkTiers("semantics.json", file)).toEqual([
+      "semantics.json: `dimension.size.hit` states a touch size and no pointer one",
+    ]);
+  });
+
+  test("names a key one tier has and the other does not", () => {
+    const file = copy();
+    delete file.dimension.size.control.touch.padding;
+    expect(checkTiers("semantics.json", file)).toContain(
+      "semantics.json: `dimension.size.control.pointer.padding` has no touch size",
+    );
+  });
+});
+
 describe("checkScales", () => {
   test("a touch target under 44 points fails unless the theme cites it", () => {
     const file = copy();
     file.dimension.size.hit = { pointer: 0, touch: 40 };
-    expect(checkScales("semantics.json", file, "default")).toContain(
+    expect(checkScales("semantics.json", file)).toContain(
       "semantics.json: `dimension.size.hit.touch` is 40, below the 44-point touch target",
     );
-    const cited = new Map([["default:dimension.size.hit.touch", new Set([40])]]);
-    expect(checkScales("semantics.json", file, "default", cited)).toEqual([]);
+    const cited = { "dimension.size.hit.touch": "Windows touch target 40x40 epx" };
+    expect(checkScales("semantics.json", file, cited)).toEqual([]);
   });
 });

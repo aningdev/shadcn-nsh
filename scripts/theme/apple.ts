@@ -359,6 +359,24 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
         "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+.",
       ],
     },
+    // UIKit ships these pairs as they are; the library keeps them and says where they come from.
+    contrast: {
+      waivers: [
+        ...["background", "muted", "card", "raised"].map((bg) => ({
+          fg: "muted-foreground",
+          bg,
+          source: "Apple secondaryLabel (#3C3C43 at 60%)",
+        })),
+        ...(
+          [
+            ["primary-foreground", "primary"],
+            ["sidebar-primary-foreground", "sidebar-primary"],
+            ["primary-foreground", "finish.accent"],
+          ] as const
+        ).map(([fg, bg]) => ({ fg, bg, source: "white on Apple systemBlue" })),
+        { fg: "brand", bg: "background", source: "Apple systemBlue links" },
+      ],
+    },
     cssVars: {
       theme: themeLevel(),
       light: section(palette("light")),

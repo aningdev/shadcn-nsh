@@ -9,6 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { BUILD_ROOT_THEME } from "../theme/tokens";
 import { compileAppearanceTokensJson, compileSemanticsJson, compileThemeJson } from "./compile";
 import { compileDesignMd } from "./design-md";
 
@@ -55,8 +56,8 @@ export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): 
     { relPath: `packages/theme/themes/${themeId}/DESIGN.md`, content: designMdText },
   ];
 
-  // The `default` theme is both the build-time root theme and the `theme-default` copy.
-  if (themeId === "default") {
+  // The build root's pair lands at `packages/theme/` too: the artifacts an app installs.
+  if (themeId === BUILD_ROOT_THEME) {
     targets.unshift(
       { relPath: "packages/theme/theme.json", content: themeText },
       { relPath: "packages/theme/semantics.json", content: semanticsText },

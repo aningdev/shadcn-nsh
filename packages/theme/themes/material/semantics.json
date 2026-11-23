@@ -227,12 +227,25 @@
         "foreground": "{foreground}",
         "border-color": "transparent",
         "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
         "elevation": 1
       },
       "inset": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "raised": {
         "background": "{raised}",
@@ -243,6 +256,9 @@
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
         "elevation": 1
       },
       "overlay": {
@@ -252,6 +268,11 @@
         "border-color": "transparent",
         "backdropFilter": "none",
         "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "elevation": 3
       },
       "modal": {
@@ -259,6 +280,12 @@
         "foreground": "{foreground}",
         "border-color": "transparent",
         "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
         "elevation": 6
       },
       "inverse": {
@@ -268,6 +295,11 @@
         "border-color": "transparent",
         "backdropFilter": "none",
         "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "elevation": 6
       },
       "glass": {
@@ -277,6 +309,11 @@
         "backdropFilter": "none",
         "material": null,
         "background": "{popover}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "elevation": 3
       },
       "accent": {
@@ -287,14 +324,26 @@
         "border-top-color": "transparent",
         "border-bottom-color": "transparent",
         "pressed-opacity": 1,
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "knob": {
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "foreground": "{foreground}",
         "material": null,
         "background": "{knob}",
-        "border-color": "transparent"
+        "gradient": null,
+        "border-color": "transparent",
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
       },
       "hover": {
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
@@ -304,6 +353,10 @@
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "backdropFilter": "none",
         "elevation": 1
       },
       "pressed": {
@@ -314,6 +367,10 @@
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "backdropFilter": "none",
         "elevation": 1
       },
       "disabled": {
@@ -321,7 +378,14 @@
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "foreground": "oklch(from {foreground} l c h / 0.38)",
         "border-color": "transparent",
-        "material": null
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
       }
     },
     "light": {

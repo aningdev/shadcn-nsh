@@ -25,6 +25,8 @@ lib/ui/theme.ts          # colors, finish, shape, font, control, focusRing, alph
 
 Edit the values and keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape. This is the change that reaches every component at once. [Theme](./theme) lists the roles.
 
+A copied `semantics.json` writes every field of every finish, so nothing here is guessed: a field the theme does not care about carries its neutral value — `material: null`, `backdropFilter: "none"`, `elevation: null`, `gradient: null` (a flat fill), the pressed pair `null` (pressing only dims), and no colour of its own on the top or bottom edge, which then takes the finish's `border-color`. In the library's own sources those neutrals are written once in `packages/theme/tokens/base/style.shared.tokens.json`; in a copied app they are simply there. If you add a finish role, copy every field of a neighbouring role and change the ones that differ, and state device-dependent sizes twice, under `pointer` and `touch`, with the same keys.
+
 ```json
 {
   "cssVars": {
