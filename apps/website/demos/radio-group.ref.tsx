@@ -55,7 +55,7 @@ function App() {
         <View style={{ gap: 14 }}>
           {/* A segmented choice: each radio is a segment, `checkedStyle` raises the checked one. */}
           <RadioGroup style={segments.style}>
-            {cycles.map((c) => (
+            {cycles.map((c, index) => (
               <Radio
                 checked={cycle() === c}
                 onChange={({ checked }) => {
@@ -63,7 +63,7 @@ function App() {
                   log(`${c} → ${checked}`);
                 }}
                 class="group"
-                {...segments.segment({ selected: () => cycle() === c })}
+                {...segments.segment({ selected: () => cycle() === c }, index === 0)}
                 checkedStyle={segments.thumbStyle}
               >
                 <Text style={segments.label(cycle() === c)}>{c}</Text>

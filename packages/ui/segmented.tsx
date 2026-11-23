@@ -16,7 +16,7 @@ import {
 } from "@shadcn-nsh/theme";
 import { Check } from "lucide";
 import type { AndroidProps, JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { computed, context, platform, signal, split, Text, View } from "nsh";
+import { cleanup, computed, context, platform, signal, split, Text, View } from "nsh";
 import {
   Tab as BaseTab,
   Tabs as BaseTabs,
@@ -85,9 +85,11 @@ export interface SegmentedLookOptions {
  * label's ink; `knob` is the switch's white disc), as `Tabs`' traveling `indicatorStyle` or as a
  * `Radio`'s `checkedStyle` (`thumbStyle`). A theme whose `controls` are `material` draws Material
  * 3's connected cells instead: 40 points high, one outline around the row, a divider between the
- * cells, and the chosen cell on `selectedStyle` behind a leading `check` (its label's
- * `label(selected)`, `count`). Either way, each segment's props (`segment(state)`: hover, the focus
- * ring, dimmed while disabled) and `gap` are the look's.
+ * cells (none before the first), and the chosen cell on `selectedStyle` behind a leading `check`
+ * (its label's `label(selected)`, `count`). Either way, each segment's props (`segment(state)`:
+ * hover, the focus ring, dimmed while disabled) and `gap` are the look's. Where the theme draws
+ * cells, pass `segment(state, first)` with `first` true for the row's leading cell, which draws no
+ * divider of its own.
  */
 export function segmentedLook(o?: SegmentedLookOptions) {
   const small = o?.size === "sm";
@@ -115,8 +117,8 @@ export function segmentedLook(o?: SegmentedLookOptions) {
           ...rounded(shape.button),
           borderWidth: stroke.control,
           borderColor: colors.border,
-          // The first cell's divider sits under the list's edge and the chosen cell's tint under
-          // the outline: clipped, both keep the ends the theme's shape.
+          // The chosen cell's tint is clipped to the list's rounded ends, so the ends keep the
+          // theme's shape.
           overflow: "hidden",
         };
       }
@@ -153,21 +155,30 @@ export function segmentedLook(o?: SegmentedLookOptions) {
     get selectedStyle(): ViewStyle | undefined {
       return cells ? { backgroundColor: tints.brand } : undefined;
     },
-    segment(state: TabState): TabLook {
+    segment(state: TabState, first?: Live<boolean>): TabLook {
       if (cells) {
         return {
-          style: {
-            ...(spread ? { flex: 1 } : {}),
-            paddingHorizontal: CELL_PADDING,
-            // One divider per cell, shared with the cell before it: the first sits under the
-            // list's own edge, and the last cell ends on the list's trailing edge.
-            borderStartWidth: stroke.control,
-            borderColor: colors.border,
-            marginStart: -stroke.control,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: CELL_GAP,
+          get style(): ViewStyle {
+            // Only the cells after the first carry a divider: the list's own outline closes the
+            // leading end, so a divider there would show past its rounded edge.
+            const leading = first !== undefined && read(first);
+            return {
+              ...(spread ? { flex: 1 } : {}),
+              paddingHorizontal: CELL_PADDING,
+              ...(leading
+                ? {}
+                : {
+                    borderStartWidth: stroke.control,
+                    // The logical start border takes its own colour; `borderColor` does not reach
+                    // it, and a divider with no colour of its own draws black.
+                    borderStartColor: colors.border,
+                    marginStart: -stroke.control,
+                  }),
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: CELL_GAP,
+            };
           },
           get hoverStyle() {
             // M3 washes the chosen cell too: its state layer sits over the container, not instead
@@ -283,10 +294,17 @@ type SegmentedContextValue = {
 
 const SegmentedContext = context<SegmentedContextValue | null>(null);
 
-/** What a segment reads from its list: the axes the list was given. */
-type SegmentedListAxes = Pick<SegmentedLookOptions, "size" | "fill">;
+/**
+ * What a segment reads from its list: the axes the list was given, and the segments it holds.
+ * Registration order is render order, so the first registered segment is the first cell.
+ */
+type SegmentedListValue = Pick<SegmentedLookOptions, "size" | "fill"> & {
+  segments: () => readonly string[];
+  register: (value: string) => void;
+  unregister: (value: string) => void;
+};
 
-const SegmentedListContext = context<SegmentedListAxes | null>(null);
+const SegmentedListContext = context<SegmentedListValue | null>(null);
 
 function useSegmented() {
   const ctx = SegmentedContext();
@@ -328,9 +346,18 @@ export function Segmented(props: SegmentedProps) {
 export function SegmentedList(props: SegmentedListProps) {
   const [, rest] = split(props, ["size", "fill", "style", "indicatorStyle", "children"]);
   const look = computed(() => segmentedLook({ size: props.size, fill: props.fill }));
+  const segments = signal<string[]>([]);
+  const value: SegmentedListValue = {
+    size: props.size,
+    fill: props.fill,
+    segments,
+    register: (segment) =>
+      segments.update((list) => (list.includes(segment) ? list : [...list, segment])),
+    unregister: (segment) => segments.update((list) => list.filter((item) => item !== segment)),
+  };
 
   return (
-    <SegmentedListContext.Provider value={{ size: props.size, fill: props.fill }}>
+    <SegmentedListContext.Provider value={value}>
       <BaseTabs
         {...rest}
         indicatorStyle={[look().indicatorStyle, props.indicatorStyle ?? null]}
@@ -346,6 +373,9 @@ export function SegmentedList(props: SegmentedListProps) {
 export function SegmentedItem(props: SegmentedItemProps) {
   const ctx = useSegmented();
   const list = SegmentedListContext();
+  cleanup(() => list?.unregister(props.value));
+  list?.register(props.value);
+  const first = () => list?.segments()[0] === props.value;
   const [, rest] = split(props, [
     "value",
     "count",
@@ -362,10 +392,13 @@ export function SegmentedItem(props: SegmentedItemProps) {
   const look = computed(() => segmentedLook({ size: list?.size, fill: list?.fill }));
   const selected = () => ctx.value() === props.value;
   const segment = computed(() =>
-    look().segment({
-      selected: () => selected(),
-      disabled: () => !!props.disabled,
-    }),
+    look().segment(
+      {
+        selected: () => selected(),
+        disabled: () => !!props.disabled,
+      },
+      first,
+    ),
   );
 
   return (
