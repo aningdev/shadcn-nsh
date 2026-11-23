@@ -1,0 +1,476 @@
+// A control dimension's value, drawn out: which parts the value has, the geometry it reads from the
+// scales, and the numbers the form itself states. The recipe is `docs/specs/theme-contract-v2.md`
+// §11.3; its numbers are the spec's table (`docs/specs/theme-roles.md` "维度配方的数字"), which
+// `bun run check:theme` holds this module to.
+//
+// Pure: the caller reads `control()` itself — so its read stays reactive — and passes the value in.
+// What comes back names the roles and scale keys a part reads, never a resolved colour or a copy of
+// a scale's number: only a form's own official numbers are written out, each with its source.
+
+import type {
+  Choice,
+  Field,
+  FinishRole,
+  Group,
+  Handle,
+  Palette,
+  Selection,
+  Track,
+  Tiered,
+} from "@shadcn-nsh/theme";
+
+/** A palette role a part reads: `colors[role]`. */
+export type ColourRole = keyof Palette;
+
+/** A tint a part reads: `tints[role]`. */
+export type TintRole = "brand";
+
+/** What fills a part: a finish's whole layer, a palette role, or a translucent tint. */
+export type Fill =
+  | { readonly kind: "finish"; readonly role: FinishRole }
+  | { readonly kind: "colour"; readonly role: ColourRole }
+  | { readonly kind: "tint"; readonly role: TintRole };
+
+/**
+ * A scale key a part reads instead of a copied number: a path into `style()`'s dimension, or `icon`
+ * alone, whose step the control picks (a radio reads its `md`, a checkbox its `sm`).
+ *
+ * `size.target` is the hit target §12 M11 adds to the theme; until then no control reads it.
+ */
+export type Scale =
+  | "height.md"
+  | "icon"
+  | "icon.md"
+  | "shape.control"
+  | "size.control.dot"
+  | "size.control.gap"
+  | "size.control.padding"
+  | "size.target"
+  | "stroke.control"
+  | "stroke.hairline";
+
+/** Which sides of a part its form draws. */
+export type Edges = "all" | "bottom";
+
+/** Which corners of a part its form rounds. */
+export type Corners = "all" | "top";
+
+/** A corner radius a form states: a scale, a capsule, half the part's own thickness, or a number. */
+export type Radius = "shape.control" | "pill" | "half-thickness" | number;
+
+/** An edge a part draws: its width and what paints it. */
+export interface Edge {
+  readonly width: Scale | number;
+  readonly fill: Fill;
+}
+
+/** A dimension value a switch has not been taught: an enum added without a look fails the typecheck. */
+function unreachable(value: never): never {
+  throw new Error(`no look for the dimension value ${String(value)}`);
+}
+
+/** The parts a selection value draws: a tab's or a sidebar row's indicator. */
+export interface SelectionLook {
+  readonly form: Selection;
+  /** Whether the indicator spans the whole item or just its label. */
+  readonly span: "item" | "label";
+  readonly edges: Edges;
+  readonly corners: Corners;
+  /** The line's thickness, or `null` where the form is a fill and has no thickness. */
+  readonly thickness: number | null;
+  readonly radius: Radius;
+  readonly fill: Fill;
+}
+
+/**
+ * The selection a `control()` value draws. `pill` fills the item; `underline` and `bar` are lines
+ * with 3 points of their own (M3 PrimaryTabs' indicator, WinUI's SelectorBar), which differ in span
+ * and corners, not in thickness.
+ */
+export function selectionLook(value: Selection): SelectionLook {
+  switch (value) {
+    case "pill":
+      return {
+        form: value,
+        span: "item",
+        edges: "all",
+        corners: "all",
+        thickness: null,
+        radius: "pill",
+        fill: { kind: "finish", role: "raised" },
+      };
+    case "underline":
+      return {
+        form: value,
+        span: "label",
+        edges: "bottom",
+        corners: "top",
+        // 3 points: M3 PrimaryTabs' 3 dp indicator (`_md-comp-primary-navigation-tab.scss`).
+        thickness: 3,
+        radius: "half-thickness",
+        fill: { kind: "colour", role: "brand" },
+      };
+    case "bar":
+      return {
+        form: value,
+        span: "item",
+        edges: "bottom",
+        corners: "all",
+        // 3 points: WinUI's SelectorBar / NavigationView indicator.
+        thickness: 3,
+        radius: "half-thickness",
+        fill: { kind: "colour", role: "brand" },
+      };
+  }
+  return unreachable(value);
+}
+
+/** The parts a field value draws: an input's frame. */
+export interface FieldLook {
+  readonly form: Field;
+  readonly edges: Edges;
+  readonly corners: Corners;
+  /** Every edge's width: one control stroke, laid in two colours where the box carries an underline. */
+  readonly width: Scale;
+  readonly radius: Radius;
+  /** What the sides read, where the form draws them (`null` when only the bottom edge does). */
+  readonly side: Fill | null;
+  /** What the bottom edge reads. */
+  readonly bottom: Fill;
+}
+
+/**
+ * The frame a `control()` value draws. `underline` is an input's frame in a dense form (a line under
+ * the text); `box-underline` is WinUI's TextBox — a box, with the bottom edge taking the input's own
+ * colour so focus and the editable line read in one place.
+ */
+export function fieldLook(value: Field): FieldLook {
+  switch (value) {
+    case "box":
+      return {
+        form: value,
+        edges: "all",
+        corners: "all",
+        width: "stroke.control",
+        radius: "shape.control",
+        side: { kind: "colour", role: "input" },
+        bottom: { kind: "colour", role: "input" },
+      };
+    case "underline":
+      return {
+        form: value,
+        edges: "bottom",
+        corners: "top",
+        width: "stroke.control",
+        radius: "shape.control",
+        side: null,
+        bottom: { kind: "colour", role: "mutedForeground" },
+      };
+    case "box-underline":
+      return {
+        form: value,
+        edges: "all",
+        corners: "all",
+        width: "stroke.control",
+        radius: "shape.control",
+        side: { kind: "colour", role: "border" },
+        bottom: { kind: "colour", role: "input" },
+      };
+  }
+  return unreachable(value);
+}
+
+/** The parts a choice value draws: a radio's well or a checkbox's box. */
+export interface ChoiceLook {
+  readonly form: Choice;
+  /** The face at rest, where the form paints one. */
+  readonly face: Fill | null;
+  /** The face once chosen, where the form turns it over instead of drawing a mark. */
+  readonly checked: Fill | null;
+  /** The edge, where the form draws one. */
+  readonly edge: Edge | null;
+  /** The form's corner: a number per tier, or a scale where the theme's shape decides it. */
+  readonly corner: Scale | Tiered<number>;
+  /** The chosen mark's inner disc, where the form has one: a radio's dot. */
+  readonly dot: Scale | null;
+  /** The box's size: the icon scale, the step the control picks. */
+  readonly size: Scale;
+  /** How far the hit area grows past the box, where the form asks for a state layer. */
+  readonly target: Scale | null;
+}
+
+/**
+ * The shape a `control()` value gives a choice. `well` is a sunk well (the library's own 5 / 7-point
+ * corner); `outline` is M3's — a 2 dp stroke, an empty well, a mark the control draws, and a 40 dp
+ * state layer; `inset` is WinUI's — a flat `ControlFillColorDefault` face with a 1 px edge and a
+ * 4 px corner.
+ */
+export function choiceLook(value: Choice): ChoiceLook {
+  switch (value) {
+    case "well":
+      return {
+        form: value,
+        face: { kind: "finish", role: "inset" },
+        checked: { kind: "colour", role: "primary" },
+        edge: { width: "stroke.control", fill: { kind: "colour", role: "input" } },
+        // 5 points with a pointer, 7 on a touch screen: the well's own corner, off the shape scale.
+        corner: { pointer: 5, touch: 7 },
+        dot: "size.control.dot",
+        size: "icon",
+        target: null,
+      };
+    case "outline":
+      return {
+        form: value,
+        face: null,
+        // M3 leaves the well empty and each control draws its own mark (a radio's ring, a tick).
+        checked: null,
+        // 2 px: M3's outline (`outlineWidth`).
+        edge: { width: 2, fill: { kind: "colour", role: "mutedForeground" } },
+        // 2 dp: M3's checkbox corner.
+        corner: { pointer: 2, touch: 2 },
+        dot: "size.control.dot",
+        size: "icon",
+        target: "size.target",
+      };
+    case "inset":
+      return {
+        form: value,
+        // WinUI's `ControlFillColorDefault`, the face an off switch's track takes.
+        face: { kind: "colour", role: "track" },
+        checked: { kind: "finish", role: "accent" },
+        // 1 px: WinUI's `ControlStrokeColorDefault`.
+        edge: { width: 1, fill: { kind: "colour", role: "input" } },
+        // 4 px: WinUI's control corner.
+        corner: { pointer: 4, touch: 4 },
+        dot: "size.control.dot",
+        size: "icon",
+        target: null,
+      };
+  }
+  return unreachable(value);
+}
+
+/** A groove or band a track's controls sit in: its face and the shade it wears, where it wears one. */
+export interface Groove {
+  readonly fill: Fill;
+  /** The finish whose shade sinks or lifts the part, where two readers make its face. */
+  readonly shade: FinishRole | null;
+}
+
+/** What a progress bar reads: its run's height, and the line's height where the form draws one inside it. */
+export interface ProgressNumbers {
+  readonly height: number;
+  readonly line: number | null;
+}
+
+/** What a slider reads: its band or rail. */
+export interface SliderNumbers {
+  readonly height: number;
+}
+
+/** What a spinner reads: whether it sits in the groove, and how far its bottom fades. */
+export interface SpinnerNumbers {
+  readonly groove: boolean;
+  readonly opacity: number | null;
+}
+
+/** The parts a track value draws: a progress bar's, a slider's and a spinner's shared track. */
+export interface TrackLook {
+  readonly form: Track;
+  readonly groove: Groove | null;
+  readonly edge: Edge | null;
+  readonly progress: ProgressNumbers;
+  readonly slider: SliderNumbers;
+  readonly spinner: SpinnerNumbers;
+}
+
+/**
+ * The track a `control()` value draws. `sunk` is a groove in the surface; `tint` is a band of the
+ * accent's tint with no edge; `hairline` is one thin input-coloured line, progress drawing its run
+ * 3 points high over a 1-point rail.
+ */
+export function trackLook(value: Track): TrackLook {
+  switch (value) {
+    case "sunk":
+      return {
+        form: value,
+        // A sunk well: the inset colour under the inset finish's shade.
+        groove: { fill: { kind: "colour", role: "inset" }, shade: "inset" },
+        edge: null,
+        // 6 points: the groove the library's progress and slider draw.
+        progress: { height: 6, line: null },
+        slider: { height: 6 },
+        spinner: { groove: true, opacity: 0.25 },
+      };
+    case "tint":
+      return {
+        form: value,
+        groove: { fill: { kind: "tint", role: "brand" }, shade: null },
+        edge: null,
+        // 4 points: the band under progress; 16 for a slider is M3's track.
+        progress: { height: 4, line: null },
+        slider: { height: 16 },
+        spinner: { groove: false, opacity: null },
+      };
+    case "hairline":
+      return {
+        form: value,
+        // The line itself is the track.
+        groove: { fill: { kind: "colour", role: "input" }, shade: null },
+        edge: null,
+        // 3 points of run over WinUI's 1 px rail; a slider's is 4.
+        progress: { height: 3, line: 1 },
+        slider: { height: 4 },
+        spinner: { groove: false, opacity: null },
+      };
+  }
+  return unreachable(value);
+}
+
+/** A circle handle's numbers: a 6 / 8-point rail and a knob that grows under a touch screen's press. */
+export interface CircleHandleLook {
+  readonly form: "circle";
+  readonly rail: Tiered<number>;
+  readonly knob: Tiered<number>;
+  readonly knobPressed: Tiered<number>;
+  /** The knob and track a switch made from this handle draws: the icon and height scales at `md`. */
+  readonly switch: { readonly knob: Scale; readonly track: Scale };
+  readonly brightensOnHover: true;
+}
+
+/** A bar handle's numbers: M3's 4 × 44 knob on a 16-point rail. */
+export interface BarHandleLook {
+  readonly form: "bar";
+  readonly knob: { readonly width: number; readonly height: number };
+  readonly knobPressedWidth: number;
+  readonly rail: number;
+  readonly endRadius: number;
+  /** A switch keeps its circle on a theme whose slider handle is a bar. */
+  readonly switch: null;
+  readonly brightensOnHover: false;
+}
+
+/** A ring handle's numbers: WinUI's 18 px knob with a 12 px dot on a 4-point rail. */
+export interface RingHandleLook {
+  readonly form: "ring";
+  readonly knob: number;
+  readonly dot: number;
+  readonly knobHover: number;
+  readonly knobPressed: number;
+  readonly rail: number;
+  readonly switch: null;
+  readonly brightensOnHover: false;
+}
+
+/** The parts a handle value draws: a slider's knob, and a switch's where the form makes one. */
+export type HandleLook = CircleHandleLook | BarHandleLook | RingHandleLook;
+
+/**
+ * The knob a `control()` value draws. `circle` is the library's disc, the one a switch also uses;
+ * `bar` is M3's vertical bar; `ring` is WinUI's ring around a dot. Only `circle` gives a switch its
+ * knob: `docs/specs/theme-contract-v2.md` §11.4 has a switch fall back to it on every theme.
+ */
+export function handleLook(value: Handle): HandleLook {
+  switch (value) {
+    case "circle":
+      return {
+        form: value,
+        // 6 points of rail with a pointer, 8 on a touch screen.
+        rail: { pointer: 6, touch: 8 },
+        // 14 points of knob with a pointer, 20 on a touch screen.
+        knob: { pointer: 14, touch: 20 },
+        // A press swells the knob to 32 on a touch screen, and not with a pointer.
+        knobPressed: { pointer: 14, touch: 32 },
+        switch: { knob: "icon.md", track: "height.md" },
+        brightensOnHover: true,
+      };
+    case "bar":
+      return {
+        form: value,
+        // M3's 4 × 44 knob, 2 wide while pressed.
+        knob: { width: 4, height: 44 },
+        knobPressedWidth: 2,
+        rail: 16,
+        // 2 points: the bar's rounded end.
+        endRadius: 2,
+        switch: null,
+        brightensOnHover: false,
+      };
+    case "ring":
+      return {
+        form: value,
+        // WinUI's 18 px knob with a 12 px dot: 14 hovered, 10 pressed.
+        knob: 18,
+        dot: 12,
+        knobHover: 14,
+        knobPressed: 10,
+        rail: 4,
+        switch: null,
+        brightensOnHover: false,
+      };
+  }
+  return unreachable(value);
+}
+
+/** A group drawn as a track: a capsule over the chosen item, inside the track's groove. */
+export interface GroupTrackLook {
+  readonly form: "track";
+  readonly span: "item";
+  readonly radius: Radius;
+  readonly fill: Fill;
+  /** The track's height: the `md` height scale. */
+  readonly height: Scale;
+}
+
+/** A group drawn as cells: adjacent outlined cells, the chosen one on its own face. */
+export interface GroupCellsLook {
+  readonly form: "cells";
+  /** 40 points: M3's segmented button (`SegmentedButtonTokens.kt`). */
+  readonly height: number;
+  /** 12 points: M3's cell padding. */
+  readonly padding: number;
+  /** 8 points: M3's gap between a cell's check and its label. */
+  readonly gap: number;
+  /** 18 points: M3's leading check. */
+  readonly check: number;
+  /** The corner: the theme's button shape, whose ends the chosen cell is clipped to. */
+  readonly corner: Radius;
+  /** The edge round the row and between its cells. */
+  readonly edge: Edge;
+  /** The chosen cell's face. */
+  readonly selected: Fill;
+}
+
+/** The parts a group value draws: a segmented control's track or its cells. */
+export type GroupLook = GroupTrackLook | GroupCellsLook;
+
+/**
+ * The shape a `control()` value gives a group. `track` is a capsule inside the track's groove;
+ * `cells` is M3's segmented button — 40-point cells, a 12-point padding, the check's 8-point gap,
+ * and dividers between the cells.
+ */
+export function groupLook(value: Group): GroupLook {
+  switch (value) {
+    case "track":
+      return {
+        form: value,
+        span: "item",
+        radius: "shape.control",
+        fill: { kind: "finish", role: "raised" },
+        height: "height.md",
+      };
+    case "cells":
+      return {
+        form: value,
+        height: 40,
+        padding: 12,
+        gap: 8,
+        check: 18,
+        corner: "shape.control",
+        edge: { width: "stroke.hairline", fill: { kind: "colour", role: "border" } },
+        selected: { kind: "finish", role: "raised" },
+      };
+  }
+  return unreachable(value);
+}

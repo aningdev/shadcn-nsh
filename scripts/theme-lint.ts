@@ -17,6 +17,7 @@ import { join } from "node:path";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkMaterial, checkMaterialFill } from "./theme/material";
 import { parseColor } from "./theme/oklch";
+import { checkRecipeNumbers, lookNumbers } from "./theme/recipe-numbers";
 import {
   scaleCitations,
   specBlock,
@@ -452,6 +453,7 @@ for (const row of specRecipes(spec)) {
       `docs/specs/theme-roles.md: the recipe table measures \`${row.value}\`, which \`${row.dimension}\` does not take`,
     );
 }
+for (const problem of checkRecipeNumbers(specRecipes(spec), lookNumbers())) fail(problem);
 
 // 5. Nothing in the files is written and never read.
 // Two tokens need no reader of this library's: `font-sans` is every text's default family, which
