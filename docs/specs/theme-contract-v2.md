@@ -4,6 +4,8 @@
 - 状态：已实施（2026-11-23），第 9 节的 7 步都已落地
 - 修订：2026-11-22 补入字体与分发产物（#259）；同日补入 D4–D7（指示器与描边进控件预设、描边两档、交互状态、阴影刻度）与其余风格组的去向
 - 修订：2026-11-23 实施审计：`density.surface` 删掉，区块面的圆角读 `shape.container`；填充色按下变淡写成 `accent` 的 `pressed-opacity`，不进 `state`（D6）；`inverse` 的字色是 `{inverse-foreground}`；分段与胶囊标签页选中的那块读 `raised` 而不是 `knob`（`knob` 在暗色下是白色圆点，上面写不了字，第 5 节）；touch 档 `size.hit` 不小于 44，平台例外点名（第 3 节）
+- 修订：2026-11-23（#293）控件形态改为按行为命名的维度，撤销 D4，第 4 节重写；新增第 11–19 节：取值的逐像素表、不在刻度上的数字、可选 finish 字段、官方枚举、按主题 id 的例外去向、分档继承、动效角色与 43 处硬编码时长
+- 修订：2026-11-23（#293 评审）按原则 6 降级 winui / material 里辨识度低、却要单占一个维度的还原（第 11.7 节）：维度定为六个，删 `mark`、`trigger`、`arrow`，`cells` 移进新维度 `group`；第 19 节的 5 个问题已确认
 - 取代：[`theme-roles.md`](theme-roles.md) 中与本文冲突的部分；每一步落地时，`theme-roles.md`、[`native-themes.md`](native-themes.md)、[`design-tokens.md`](design-tokens.md)、[`design-semantics.md`](design-semantics.md)、`docs/GLOSSARY.md`、`docs/ARCHITECTURE.md` 在同一个 PR 里改成新的事实
 - 决定记录：[`docs/decisions/0001-theme-contract-v2.md`](../decisions/0001-theme-contract-v2.md)
 
@@ -39,7 +41,7 @@
 2. **同类少值。** 同一类值在一个主题里是一条短刻度：界面的规律、韵律与统一，不会让同类东西出现很多值。新加一个值之前，先看这一类是否已有可用的档。
 3. **按主题不同的选择，放在离它最近的地方。**
    - 面的差异放进该主题的 finish。
-   - 控件形态的差异放进组件的控件预设（见第 4 节）。
+   - 控件形态的差异由按行为命名的维度回答（见第 4 节、第 11 节）。
    - 平台固定、不随主题变的身份色（macOS 红绿灯）属于组件。
 4. **纯 alias 删除。** 一个角色在每套主题里都等于某个已有角色时，就删掉它，读它的组件改读那个角色。
 5. **对外格式不动。** NSH 的 `Theme` 就是 shadcn 的 token（`references/nsh/crates/nsh-base/src/theme.rs`），这一层的槽名照旧全写，因为应用会经 `Theme::of` 或 `bg-sidebar` 这类类名读取它们。
@@ -115,7 +117,7 @@
 
 - `shape.corners.button: "full" | "radius"` 决定按钮类控件是否画成胶囊；除按钮外的元素都不读它。
 - 嵌套元素的圆角按同心推出（内 = 外 − 内边距），不再单独写 `inset` 圆角，也不再写 `size.control.corner`（5 / 7）。
-- `shape.corners.field`（M3 填充式输入框只圆上角）移进控件预设（第 4 节）：它以组件命名，取值只随控件形态变。
+- `shape.corners.field`（M3 填充式输入框只圆上角）由维度 `field` 的取值回答（第 11 节）：`box` 四角全圆、`underline` 只圆上角、`box-underline` 四角全圆，主题不再单写一个圆角。
 - A 层的 `radius`（shadcn 的基准圆角，应用里的 `rounded-lg` 等由它推导）写成 `{radius-control}`。
 
 ## 3 尺度
@@ -127,45 +129,49 @@
 | 图标 | 3 档 `sm` / `md` / `lg`，分指针、触屏两档。勾、清除钮、控件内字形都从这 3 档里取                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | 字阶 | 保留 7 级。字号**不降序**：`caption` ≤ `detail` ≤ `body` ≤ `label` ≤ `title` < `headline` < `display`（修掉 default 的 `title` 13 < `label` 14）。行高用整数 px：原生主题照官方字阶（Apple、M3、WinUI 3 各有出处），自有主题取 4 的倍数                                                                                                                                                                                                                                                                                                                                                                        |
 | 字体 | 每套主题只定义两个字体族 `font.family.sans` 与 `font.family.mono`，输出为 A 层的 `font-sans` / `font-mono`；用系统字体的主题写通用族（`system-ui`、`monospace`），NSH 把通用族当作系统字体。NSH 用 `font-sans` 画所有没写字体的文字，所以 `typography` 组上的 `fontFamily` 扩展、`semantics.json` 的 `typography.fontFamily` 和 `font.family()` 一并删除。7 个字阶复合 token 的 `fontFamily` 是 DTCG typography 类型的必填字段，设计工具导入时要用，一律写成 `{font.family.sans}`，不再写死 `["system-ui", "sans-serif"]`（现在 winui 导出的字阶丢了 Segoe UI Variable）。等宽文字只经 `mono()` 读 `font-mono` |
-| 动效 | 3 个弹簧 `fast` / `default` / `slow`，按速度命名，不按组件命名。用途固定：控件状态（开关、勾选）用 `fast`，按压与移动用 `default`，落定与面板进出用 `slow`。winui 从官方时长里取 3 个。material 取三条空间弹簧：`FastSpatial` 800/ζ0.6 作 `fast`、`DefaultSpatial` 380/ζ0.8 作 `default`（也就是 `move` 原来的值）、`SlowSpatial` 200/ζ0.8 作 `slow`（`ExpressiveMotionTokens.kt`）                                                                                                                                                                                                                            |
+| 动效 | 3 个弹簧 `fast` / `default` / `slow`，按速度命名，不按组件命名。用途固定：控件状态（开关、勾选）用 `fast`，按压与移动用 `default`，落定与面板进出用 `slow`。winui 从官方时长里取 3 个。material 取三条空间弹簧：`FastSpatial` 800/ζ0.6 作 `fast`、`DefaultSpatial` 380/ζ0.8 作 `default`（也就是 `move` 原来的值）、`SlowSpatial` 200/ζ0.8 作 `slow`（`ExpressiveMotionTokens.kt`）。另加一条**状态过渡** `state`（`{ duration, timingFunction }`），给 CSS 过渡用（换色、透明度、边框、阴影）：三档弹簧只能驱动 `animate()`，而换色今天是 43 处硬编码时长，它们全部归 `state`（第 17 节）                     |
 | 时长 | `duration.shake`（6 套主题都是 500）移进组件                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| 描边 | 两档：`hairline`（分隔线、面的边）与 `control`（控件描边）。`surface` 在 5 套主题里等于 `hairline`，并入；material 的面"不画边"改由 finish 表达（`border-color: transparent` 或不写边），布局可能差 1px，要审截图。`indicator`（标签页、侧栏指示条的粗细）移进控件预设                                                                                                                                                                                                                                                                                                                                         |
-| 保留 | `shape.curve`（continuous / circular）、`size.hit`（平台最小点击区）、`dimension.focus`（焦点样式、宽度、偏移，属状态层）、`transition.enter`（一条进场过渡，归动效）照旧，各是一个值或一个枚举                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 描边 | 两档：`hairline`（分隔线、面的边）与 `control`（控件描边）。`surface` 在 5 套主题里等于 `hairline`，并入；material 的面"不画边"改由 finish 表达（`border-color: transparent` 或不写边），布局可能差 1px，要审截图。`indicator`（标签页、侧栏指示条的粗细）不再存在：折线型 `selection` 取值自带 3 点粗细（第 11 节）                                                                                                                                                                                                                                                                                           |
+| 保留 | `shape.curve`（continuous / circular）、`size.hit`（平台最小点击区）、`dimension.focus`（焦点样式、宽度、偏移，属状态层）、`transition.enter`（一条进场过渡，归动效）照旧，各是一个值或一个枚举；新增 `size.target`（可点范围的外扩，今天只有 material 的指针档 40，出处 M3 的 40 dp state layer，第 12 节 M11）                                                                                                                                                                                                                                                                                               |
 
 验收：
 
 - 每套主题的高度、间距、图标各自不超过 3 个值，例外都有出处。
+- 反例：tabs 的水平内边距固定 8，不读 `size.control.padding`（读刻度会让 winui 从 8 变 6，标签挤在一起；#293 Q3）。
 - `check:theme` 会拦下：不在刻度上的值、字号降序、行高不是整数。
 
-## 4 控件预设
+## 4 控件形态：六个维度（#293 取代 `controls`）
 
-- 主题里只写一个枚举：`controls: "base" | "material" | "winui"`。
-- 每个控件的几何与形态写在组件里，是这三档的预设表，分指针、触屏两档；预设里引用颜色时，只引用第 1 节的角色。
-- 覆盖的控件：checkbox、switch、slider、radio、progress、spinner、tabs、calendar，以及 sheet 的 grabber。
-- 一并移入的形态选择（D4）：`indicator.tabs` / `nav` / `field`（pill、underline、fill、bar、box，`field` 另有 box-underline）、`shape.corners.field`（all / top）、`stroke.indicator`（2 / 3）。它们以组件命名，6 套主题的取值正好随 base / material / winui 三档变化。
-- 主题作者从"填 100 多个数"变成"选一档"。想要第四种控件形态，要么改组件的预设，要么在应用里覆写组件的样式：控件形态是组件的事，不是主题的事。
+- 主题里不再有 `controls: "base" | "material" | "winui"` 这种以主题命名的枚举。控件形态由六个**按行为命名**的维度回答，每套主题各给一个值：`selection`、`field`、`choice`、`track`、`handle`、`group`。名字不说组件、更不说主题（第 11.2 节）。
+- 读取只有一个入口：`@shadcn-nsh/theme` 的 `control()`，六个键、每个键一个 getter（与 `style()`、`motion` 同一套响应式代理），主题切换下一帧重画。`controls()` 与 `Controls` 类型删掉，不留 alias。
+- 维度只回答“形态”；颜色仍来自第 1 节的角色，共同几何（高度、图标、圆点、内边距、间隙、描边、圆角）从第 3 节的刻度取。**取值的配方可以带该形态自己的官方数字**（M3 滑块 16 dp 轨道与 4×44 dp 手柄、WinUI 的 18 px 拇指、M3 分段按钮 40 dp 连格）：那是那个形态的定义，不是一个跟随主题的新 token。
+- 原来塞进“控件预设”的 D4 形态选择改由取值表达：`indicator.*` 归 `selection` 与 `field`（同时定跨度与圆角），`shape.corners.field` 归 `field`，`stroke.indicator` 不再存在（折线型取值自带 3 点）。
+- 每个控件实现这套值的一个**子集**，主题的值落在子集外时，那个控件取自己的兑底值（第 11.4 节），不留空、不留分支树。
+- 主题作者从“选一档”变成“给六个维度各选一个值”：任何主题都能选任何值，只有一套主题自己的数字不再存在。
+- 一套主题的还原，辨识度低、却要单占一个维度或带来额外 API 的，按原则 6 降级到默认形态（第 11.7 节）：日历、日期选择器、轮播不读维度。
 
 验收：
 
-- 这一步是纯重构，6 套主题的渲染要与 #256 之后的基线**逐像素相同**。
-- `semantics.json` 里不再出现上面这些组。
+- `packages/ui` 里没有 `Record<Controls>`、`controls()`、对主题名的比较（`terminal` 的字符网格分支不算，它不是主题值）。
+- `semantics.json` 里既不出现 `controls`，也不出现 `indicator` / `shape.corners.field` / `stroke.indicator`；新出现一个 `dimension.control` 组。
+- 形态层面：六个维度全部 **0 差**逐像素相同；可见变化只来自第 11.7 节的降级与第 12 节的数字收口（第 11.6 节）。
 
 ## 5 finish：按层，加阴影刻度
 
-| finish（层） | 并入的旧 finish                                                                  |
-| ------------ | -------------------------------------------------------------------------------- |
-| `card`       | `card`、`section`                                                                |
-| `inset`      | `inset`、`field`、`track`、`groove`                                              |
-| `raised`     | `raised`、`light`、`chip`、`pill`                                                |
-| `overlay`    | `menu`（菜单、选择框、弹出面板）                                                 |
-| `modal`      | `dialog`                                                                         |
-| `inverse`    | `inverse`、`tooltip`                                                             |
-| `glass`      | `glass`                                                                          |
-| `accent`     | `accent`、`fill`、`on`                                                           |
-| `knob`       | `knob`；`knobOn`、`handle` 的差异进控件预设；`thumb` 改归 `raised`（2026-11-23） |
-| 状态         | `hover`、`pressed`（含 `accentPressed`）、`disabled`                             |
+| finish（层） | 并入的旧 finish                                                                                    |
+| ------------ | -------------------------------------------------------------------------------------------------- |
+| `card`       | `card`、`section`                                                                                  |
+| `inset`      | `inset`、`field`、`track`、`groove`                                                                |
+| `raised`     | `raised`、`light`、`chip`、`pill`                                                                  |
+| `overlay`    | `menu`（菜单、选择框、弹出面板）                                                                   |
+| `modal`      | `dialog`                                                                                           |
+| `inverse`    | `inverse`、`tooltip`                                                                               |
+| `glass`      | `glass`                                                                                            |
+| `accent`     | `accent`、`fill`、`on`                                                                             |
+| `knob`       | `knob`；`knobOn`、`handle` 的差异进 `handle` 维度（第 11 节）；`thumb` 改归 `raised`（2026-11-23） |
+| 状态         | `hover`、`pressed`（含 `accentPressed`）、`disabled`                                               |
 
-`grabber` 不再是 finish，归 sheet 的控件预设。
+`grabber` 不再是 finish；sheet 的 grabber 数字见第 12 节 M12。
 
 - **阴影刻度（D7）。** 现在一串 `shadow` 里混着投影、内阴影与边光三样东西（default 有 29 种不同的串）。拆成三条刻度，finish 只引用、不手写：
 
@@ -186,6 +192,7 @@
   - 导出的 `light.tokens.json` / `dark.tokens.json` 带上 `shadow` 组，设计工具可以导入为效果样式。
 
 - **平涂。** `gradient` 可以写 `null`，删掉所有 `linear-gradient(x 0%, x 100%)`。finish 的字段集合仍然固定，平涂主题写 `null`，不写空渐变。
+- **可选字段变必填（#293）。** 今天只有部分主题写的 finish 字段——`material`、`backdropFilter`、`elevation`、`gradient`、`border-top-color` / `border-bottom-color`、`pressed-background` / `pressed-foreground`——改成**每个 finish、每套主题都写**，不写的取中性值：`material: null`（即 `none`）、`backdropFilter: "none"`、`elevation: null`、`gradient: null`、两条边色 `transparent`、按下字段等于未按下的值。中性值写在 `tokens/base/style.shared.tokens.json`，主题只在真正不同时写；`scripts/theme-lint.ts` 的 `optionalFields` 集合删掉。每套主题今天写不了什么见第 13 节。
 
 验收：
 
@@ -226,7 +233,7 @@
 - 不为删掉的角色、finish、圆角、刻度名留 alias 或兼容层（AGENTS.md：不为旧 id 提供别名）。
 - 不改 A 层槽名。
 - 应用里的 Tailwind `shadow-*` 类不跟主题：NSH 不读主题文件里的阴影，这些类用 Tailwind 的默认值。应用要跟随主题的阴影，用 `elevation()`。
-- `state` 组（`press-scale`、M3 的 state layer `overlay` 与 `ripple`、`pressed-opacity`、`disabled`）保留在主题里（D6）：它作用于所有可按的东西，不只是控件，所以不进控件预设。
+- `state` 组（`press-scale`、M3 的 state layer `overlay` 与 `ripple`、`pressed-opacity`、`disabled`）保留在主题里（D6）：它作用于所有可按的东西，不只是控件，所以不进第 11 节的维度。
 - 自定义主题的作者要按 `CHANGELOG.md` 里每一步的 breaking 条目迁移。
 
 ## 8 跨步骤的验收
@@ -242,12 +249,13 @@
 每步一个 issue、一个 PR，串行：
 
 1. ✅ B2 合并（#256），作为基线
-2. ✅ 控件预设（#268）（第 4 节，含 D4 的指示器、输入框圆角与指示条粗细），逐像素相同；输入框 #249 排在这一步之后，直接写进预设
+2. ✅ 控件预设（#268）（含 D4 的指示器、输入框圆角与指示条粗细），逐像素相同；输入框 #249 排在这一步之后。这一步后来被 #293 换成六个维度（第 4 节、第 11 节）
 3. ✅ 圆角（第 2 节，#253，#269）
 4. 颜色：第 1 批（逐像素相同，✅ #262）→ 第 2 批（✅ #263）→ 第 3 批（✅ #264）
 5. ✅ 尺度（第 3 节），含字体（#265）
 6. ✅ finish 按层与阴影刻度（第 5 节，#266）
 7. ✅ 材质（第 6 节， #267）
+8. #293 控件形态改为维度：八步见第 18 节，排在上面 7 步之后；D4 撤销（第 10 节）
 
 ## 10 已确认的问题
 
@@ -256,7 +264,251 @@
 | D1  | `sidebar-*`：删掉，还是作为对外格式保留？                                              | ✅ 已确认（2026-11-22）：**保留为 A 层 alias，组件不读。** NSH 的 `Theme` 就是 shadcn 的 31 个槽，缺一个就退回 neutral 灰，应用里写的 `bg-sidebar` 会变色。这改了之前"第 2 批删掉其余 `sidebar-*`"的计划                                                                                                                                                                                                                                                                                                                                                                            |
 | D2  | 材质是写在 finish 的字段里，还是按层固定？                                             | ✅ 已确认（2026-11-22）：**写在 finish 的 `material` 字段里，用枚举（方案 A）。** apple 现在在 `raised` 上也用玻璃（#252），按层固定会丢掉这个选择                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | D3  | finish 数量                                                                            | ✅ 已确认（2026-11-22）：**9 层 + 3 种状态 = 12 个**，M3 中过于个性化的差异按原则 6 裁剪。（比之前说的"约 8 个"多了 `modal` 和 `inverse`）。M3 的对话框（`SurfaceContainerHigh`）与菜单（`SurfaceContainer`）颜色不同，提示与 toast 的反色面也是一层，和第 2 节圆角的 `modal` 对得上                                                                                                                                                                                                                                                                                                |
-| D4  | 以组件命名的形态选择（`indicator.*`、`shape.corners.field`、`stroke.indicator`）放哪？ | ✅ 已确认（2026-11-22）：**并入控件预设**（第 4 节）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| D5  | 描边 4 个值                                                                            | ✅ 已确认（2026-11-22）：**收成 `hairline`、`control` 两档**，`surface` 并入 `hairline`，`indicator` 进控件预设（第 3 节）                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| D4  | 以组件命名的形态选择（`indicator.*`、`shape.corners.field`、`stroke.indicator`）放哪？ | ~~✅ 已确认（2026-11-22）：并入控件预设（第 4 节）~~ **已推翻（2026-11-23，#293）**：控件预设仍然是组件在回答“这个控件长什么样”，只是把三档换成十四张表（与 #293 的 Problem 同罪）。改为六个按行为命名的维度：`indicator.*` 归 `selection`，`shape.corners.field` 归 `field`，`stroke.indicator` 随取值消失（第 4 节、第 11 节）                                                                                                                                                                                                                                                    |
+| D5  | 描边 4 个值                                                                            | ✅ 已确认（2026-11-22）：**收成 `hairline`、`control` 两档**，`surface` 并入 `hairline`；`indicator` 这档随 #293 的 `selection`/`field` 取值消失（第 3、11 节）                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | D6  | `state` 组                                                                             | ✅ 已确认（2026-11-22）：**保留在主题**，只把 `accent-pressed-opacity` 并入第 3 批的 `state.pressed`（第 7 节）。**第 3 批实际（#264）：** `state` 只读亮色指针档、不随外观翻转，而 winui 的禁用与按下颜色明暗不同，所以这些颜色落进 `finish.disabled` / `finish.accentPressed` 的 `background`、`foreground`；`accent-pressed-opacity` 合进 `accentPressed` 的底色。**第 6 步之后（2026-11-23）：** `accentPressed` 并进 `accent`，按下变淡成了 `accent` 的 `pressed-opacity`（数，Material / WinUI 写 1），换面的颜色是 `accent` 的 `pressed-background` / `pressed-foreground`。 |
 | D7  | 阴影                                                                                   | ✅ 已确认（2026-11-22）：**拆成投影 4 档、内阴影 1 个、边光 2 个**；源码在亮暗 DTCG 文件，编译进 `semantics.json`，不进 `theme.json`（第 5 节）                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+
+## 11 控件维度（#293，取代第 4 节的控件预设）
+
+### 11.1 读取与命名
+
+- 主题源码：`packages/theme/tokens/themes/<id>/theme.tokens.json` 的 `dimension.control` 组，六个键，每键一个字符串；`base/style.shared.tokens.json` 写默认值（`selection: pill`、`field: box`、`choice: well`、`track: sunk`、`handle: circle`、`group: track`），6 套主题只写与默认不同的键。
+- 编译产物：`semantics.json` 的 `dimension.control`；`theme.json` 不带（与阴影同理，那是纯 CSS 侧不用的形态）。
+- 读取：`theme.ts` 新增 `control()`，六个 getter，走响应式代理；终端（字符网格）覆盖由组件自己的 `terminal` 分支负责，与今天一致。
+- 校验：`scripts/theme/style.ts` 的 `whitelists` 里加六条（每键允许的值），值名进第 14 节的枚举表；`check:theme` 拦下不在枚举里的值。
+
+### 11.2 六个维度
+
+四套基础主题今天都取 `base` 档，取值完全相同，所以合成一列。
+
+| 维度        | 值                                | 回答什么                                           | 实现它的控件（子集）                 | default、shadcn、solid-glass、apple | material    | winui           |
+| ----------- | --------------------------------- | -------------------------------------------------- | ------------------------------------ | ----------------------------------- | ----------- | --------------- |
+| `selection` | `pill` `underline` `bar`          | 当前项的那块记号画成什么、覆盖多宽、什么圆角       | tabs、sidebar                        | `pill`                              | `underline` | `bar`           |
+| `field`     | `box` `underline` `box-underline` | 输入井的框：四条边、只下边、还是框加下边、圆几角   | `lib/indicator`（所有输入控件）      | `box`                               | `underline` | `box-underline` |
+| `choice`    | `well` `outline` `inset`          | 选择框静止时的面，以及勾选记号（由值推出）         | radio-group、checkbox                | `well`                              | `outline`   | `inset`         |
+| `track`     | `sunk` `tint` `hairline`          | 轨道/条：凹槽、色带、还是一条细线；带不带边        | progress、spinner、slider、segmented | `sunk`                              | `tint`      | `hairline`      |
+| `handle`    | `circle` `bar` `ring`             | 手柄：圆钮、竖条、环                               | slider、switch（钮）                 | `circle`                            | `bar`       | `ring`          |
+| `group`     | `track` `cells`                   | 一组互斥按钮：轨道里滑动的胶囊，还是相邻格连成一行 | segmented                            | `track`                             | `cells`     | `track`         |
+
+`span`（跨度）与 `indicatorCorners` 不单独成维度：每个取值自带——`pill` 覆盖整项、胶囊角；`underline` 只覆盖标签、上圆角；`bar` 覆盖整项、胶囊端；`group` 的 `cells` 覆盖整格、整格自己的面。
+
+### 11.3 取值的配方（它画成什么）与数字来源
+
+规则：**共同几何从刻度取，形态自己的官方数字写进取值的配方。** “共同几何”是高度、图标、圆点、内边距、间隙、描边、圆角；配方里只允许该形态的定义数字（M3 的 16 dp 轨道、WinUI 的 2 px 描边、M3 分段按钮的 40 dp 连格）。
+
+| 维度        | 取值            | 配方                                                                                                                                            |
+| ----------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `selection` | `pill`          | 轨道里的一块胶囊，覆盖整项，读 `finish.raised`；粗细不适用                                                                                      |
+|             | `underline`     | 标签下 3 点线，只覆盖标签，上两角（角半径 = 粗细 / 2）；`stroke.control` 之上，3 点是该形态的数字（M3 PrimaryTabs 3 dp）                        |
+|             | `bar`           | 整项下 3 点线，胶囊端（WinUI SelectorBar/ NavigationView 的指示条）                                                                             |
+| `field`     | `box`           | 四条边 `stroke.control`，四角圆（`shape.control`）                                                                                              |
+|             | `underline`     | 只下边 `stroke.control`，只圆上两角                                                                                                             |
+|             | `box-underline` | 四边都在，四角圆；WinUI TextBox 的形状（色仍由第 1 节的角色定）                                                                                 |
+| `choice`    | `well`          | 井：`finish.inset` 的面，勾选后填 `primary`；尺寸按控件取 `icon` 刻度，点 `size.control.dot`，边 `stroke.control`                               |
+|             | `outline`       | 只描边 2 px（M3 的 outline 2 dp），井里留空；勾选后的记号由控件定（单选是环、复选是勾）；可点范围外扩 `size.target`（M3 40 dp state layer）     |
+|             | `inset`         | 按下色的面（WinUI `ControlFillColorDefault`），勾选后填 `accent`；边框 1 px                                                                     |
+| `track`     | `sunk`          | 凹槽：`colors.inset` + `finish.inset`，progress 6 / slider 6 有沟，spinner 带 0.25 透明度的底                                                   |
+|             | `tint`          | 色带：`brand-tint`，无边无沟，progress 4 / slider 16（M3 16 dp 轨道），spinner 无底                                                             |
+|             | `hairline`      | 一条 `input` 色的细线：progress 3 的条 + 1 的线（WinUI），slider 4，无边                                                                        |
+| `handle`    | `circle`        | 圆钮：slider 6 轨道 / 14 钮 / 按压 14、触屏 8 / 20 / 32；switch 的钮也用它；`hoverBrightness`                                                   |
+|             | `bar`           | 竖条：M3 4×44 钮、按压 2 宽、16 轨道、端点圆 2                                                                                                  |
+|             | `ring`          | 环：WinUI 18 px 钮带 12 的点（悬停 14、按下 10）、4 px 轨道                                                                                     |
+| `group`     | `track`         | 轨道（沟由 `track` 维度定）里一块胶囊覆盖选中项，读 `finish.raised`；轨道高读 `height.md`                                                       |
+|             | `cells`         | 相邻格连成的行，选中的格自己的面（`finish.raised`）并带勾，格间 `stroke.hairline` 分隔；格高 40、内边距 12、间隙 8、勾 18（M3 SegmentedButton） |
+
+数字到刻度的对照只保留一处可查：`docs/theme-roles.md` 的 `theme-lint: scales` 表加一节“维度配方的数字”，每行写值名、数字、出处（M3 / WinUI / 本库自有），`check:theme` 校验配方实现与表里一致（防止代码里改了数字文档没改）。
+
+### 11.4 子集与兜底
+
+主题给的是**主题级的一个值**；控件只实现它关心的取值，落在子集外时取自己的兜底。兜底是“这套值里最接近它自己的那个”，写在控件里，不新增主题键：
+
+| 控件            | 实现                                          | 兜底     | 今天的值进来会得到                                    |
+| --------------- | --------------------------------------------- | -------- | ----------------------------------------------------- |
+| tabs            | `selection` 的 `pill` `underline` `bar`       | —        | 全部 ✓                                                |
+| sidebar         | `selection` 的 `pill`（整行填色）`bar`        | `pill`   | 4 套 pill ✓、material underline → pill ✓、winui bar ✓ |
+| segmented       | `group` 两值全实现                            | —        | 5 套 track ✓、material cells ✓                        |
+| segmented 轨道  | `group: track` 时读 `track`，只有 `sunk` 画沟 | `sunk`   | 4 套与 winui 有沟 ✓                                   |
+| `field`         | 三值全实现                                    | —        | 全部 ✓                                                |
+| radio/checkbox  | `choice` 三值全实现（`handle` 不参与）        | —        | 全部 ✓                                                |
+| progress/slider | `track` 三值全实现                            | —        | 全部 ✓                                                |
+| spinner         | 只有 `sunk` 画沟                              | 无沟     | 4 套有沟 ✓、material/winui 无沟 ✓                     |
+| slider          | `handle` 三值全实现                           | —        | 全部 ✓                                                |
+| switch          | `handle` 只有 `circle`                        | `circle` | 全部 ✓                                                |
+
+日历、日期选择器、轮播不读维度：它们的主题差异按第 11.7 节降级掉了。
+
+### 11.5 十四张预设表的去向
+
+| 预设表（文件）                         | 字段                                                                                   | 去向                                                                                     |
+| -------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `lib/indicator.ts` `fieldPresets`      | `indicator`、`corners`                                                                 | `field`（三值一一对应，角由值定）                                                        |
+| `tabs.tsx` `tabsPresets`               | `indicator`、`indicatorSpan`、`indicatorCorners`、`indicatorThickness`                 | `selection`（跨度、角、粗细都在配方里）；`padX` 见第 12 节 M7                            |
+| `segmented.tsx` `segmentedPresets`     | `structure`                                                                            | `group`（`track` → `track`，`cells` → `cells`）；`CELL_*` 见第 12 节 M3                  |
+| `sidebar.tsx` `sidebarPresets`         | `navIndicator`、`indicatorThickness`                                                   | `selection`（`fill` → `pill`，`bar` → `bar`）                                            |
+| `radio-group.tsx` `RadioPreset`        | `well`、`checkedStyle`                                                                 | `choice`（`well`/`inset` → `fill`，`outline` → 环）；`size`/`dot`/`border` 见第 12 节 M8 |
+| `checkbox.tsx` `CheckboxPreset`        | `well`、`target`（`hasTarget`）                                                        | `choice`、`size.target`（第 12 节 M11）；`corner`/`border` 见第 12 节 M6                 |
+| `calendar.tsx` `CalendarPreset`        | `selected`、`today`、`cellShape`                                                       | 删掉：一律 base 的样子（第 11.7 节）；格高见第 12 节 M5                                  |
+| `progress.tsx` `ProgressPreset`        | `trackShape`、`trackRole`、`outlined`                                                  | `track`（三值全实现）                                                                    |
+| `slider.tsx` `sliderPresets`           | `handleShape`、`trackRole`、`outlined`、`hoverBrightness`                              | `handle`、`track`（配方带数字，第 12 节 M2）                                             |
+| `switch.tsx` `switchPresets`           | `width`/`height`/`knob`/`onKnob`/`hover`/`pressed*`/`knobFeedback`/`border`/`onBorder` | `handle`（钮的形）＋刻度（第 12 节 M1）；`knobFeedback` 归动效（`fast`）                 |
+| `spinner.tsx` `SpinnerPreset`          | `hasTrack`、`trackAlpha`、`minStroke`、`strokeShare`                                   | `track`（只有 `sunk` 画沟）；两个数字成组件常量 1.5 / 8（第 12 节 M9）                   |
+| `sheet.tsx` `sheetGrabberPreset`       | `width`、`height`                                                                      | 第 12 节 M12                                                                             |
+| `carousel.tsx` `carouselArrowPresets`  | `shape`、`width`、`height`、`glyph`                                                    | 删掉：一律胶囊（第 11.7 节）                                                             |
+| `date-picker.tsx` `dateTriggerPresets` | `cell`                                                                                 | 删掉：一律整块（第 11.7 节）                                                             |
+
+放不进这六个维度的两处都已定下：tabs 的 `padX` 固定 8（第 3 节的反例），开关的轨道长度按刻度（第 12 节 M1）。
+
+### 11.6 逐像素结论
+
+| 层面               | 结果                                                                                                                                                           |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 六个维度的形态     | 全部 0 差                                                                                                                                                      |
+| 降级（第 11.7 节） | 可见：winui 的日历选中日、日期选择器触发器、轮播箭头；material 与 winui 的日历 `today` 与日格；material 的 spinner 弧                                          |
+| 数字（第 12 节）   | 0 差：M2 滑块、M3 分段的 `cells` 配方、M4 进度、M6 复选框、M7 tabs 内边距、M8 单选、M11 外扩；可见：M1 开关、M3 分段轨道、M5 日历格高、M9 spinner 弧、M10 抓杆 |
+
+### 11.7 还原度降级（原则 6）
+
+标准：一套主题的某处还原，**辨识度低、却要单占一个维度或带来额外 API**，就降级到默认形态，记为差异写进 `native-themes.md`。一眼能认出是哪家的（输入框、标签页、复选/单选、滑块与进度条、开关的轨道、M3 分段按钮）保留。
+
+| 内容                    | 主题            | 今天                                                     | 降级后                               | 省掉                                                  |
+| ----------------------- | --------------- | -------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------- |
+| 日期选择器触发器        | winui           | 32 点日历格 + 右侧下拉箭头（`CalendarDatePicker`，#286） | 整块按钮，文字加图标                 | `trigger` 维度；`Picker` 的 `iconCell`                |
+| 轮播翻页箭头            | winui           | 贴边方钮 16×38、字形 `icon.sm`（`FlipView`，#287）       | 胶囊按钮，图标 `icon.md`             | `arrow` 维度；`placement: "over"`（应用不再需要配合） |
+| 日历选中日              | winui           | 只描 2 px 边（`CalendarView`）                           | 填 `primary`                         | `mark` 维度                                           |
+| 日历 `today` 与日格形状 | material、winui | material outline + 圆格，winui fill + 圆格               | base 的 quiet + `shape.control` 圆角 | 第 9 个维度 `hint` 与 `cellShape`（原 Q2）            |
+| spinner 弧宽比例        | material        | 10                                                       | 8                                    | 一处刻度外的数字                                      |
+
+降级的这些控件因此不读 `control()`；它们与原生的差别在 `native-themes.md` 的差异表里逐条写明。
+
+## 12 数字：今天不在刻度上的地方
+
+14 张预设表里的数字大部分已经落在刻度上（高度、图标、圆点、内边距、间隙、描边、圆角）；12 组不在：开关的轨道，滑块的轨道与手柄，分段的格高，日历的格高与 `today`/`cellShape`，复选框的圆角，tabs 的内边距，spinner 的弧，sheet 的抓杆，进度条的高度，控件的可点范围外扩。第 3 节的决定（#293 第 3 条）是“复用已有刻度，不加新的按组件 token”，逐条：
+
+| #   | 字段                                                                   | 今天（四套基础主题 / material / winui）                                               | 应读                                                                                   | 差                                                                                                  | 处理                                                   |
+| --- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| M1  | switch `width`/`height`/`knob`                                         | 4 套 28×16/12、触屏 42×24/20；material 52×32/16；winui 40×20/12（悬停 14、按下宽 17） | 高度 = `height.md`、钮 = `icon.md`、轨道长 = 高度 + 钮                                 | 触屏 42 → 44（+2）、material 52 → 48（−4）、winui 40 → 32（−8）；钮：触屏 20 ✓、winui 12 → 16（+4） | 可见：按刻度改（Q1 已确认）                            |
+| M2  | slider `band`/`rail`/`thumb`/`verticalLength`                          | 20/6/14、32/8/20、128；44/16/4×44；32/4/18                                            | `handle` 的配方（各带官方数字）                                                        | 0                                                                                                   | 逐像素                                                 |
+| M3  | segmented `CELL_HEIGHT`/`CELL_PADDING`/`CELL_GAP`/`CHECK_SIZE`、轨道高 | 轨道高 30（指针）/ 36（触屏）；含 `cells` 时 40/12/8/18                               | `group: cells` 配方带 M3 的 40/12/8/18；轨道高读 `height.md`                           | cells 0；轨道 30 → 28（−2）、36 → 40（+4）                                                          | 轨道高可见，cells 逐像素                               |
+| M4  | progress `height`/`trackHeight`                                        | 6/6、4/4、3/1                                                                         | `track` 配方（6/6、4/4、3/1）                                                          | 0                                                                                                   | 逐像素                                                 |
+| M5  | calendar `cell`/`outlineWidth`/`today`/`cellShape`                     | 32/42/1/control/quiet；40/1/pill/outline；40/2/pill/fill                              | 格高读高度；其余一律 base（第 11.7 节）                                                | 触屏 42 → 40（−2）；winui 描边与两套的 `today`/日格见 11.7                                          | 可见                                                   |
+| M6  | checkbox `corner`/`border`                                             | 5/7/1、2、2/1                                                                         | `choice` 配方（井 5/7、outline 2、inset 4）                                            | 0                                                                                                   | 逐像素                                                 |
+| M7  | tabs `padX`                                                            | 8 / 8 / 8（winui 的内边距刻度是 6）                                                   | `size.control.padding` 或固定 8                                                        | 读刻度则 winui −2；固定 8 则 0                                                                      | 固定 8（逐像素，Q3 已确认），第 3 节记为反例           |
+| M8  | radio `size`/`dot`/`border`                                            | 16/22/6/8/1；20/10/2；20/12/1                                                         | `choice` 配方（well 16/22、outline 20、inset 20）                                      | 0                                                                                                   | 逐像素；`dotFeedback` 的放大归 `fast`                  |
+| M9  | spinner `minStroke`/`strokeShare`                                      | 1.5/8、1.5/10、1.5/8                                                                  | 无刻度（不是 4 网格）                                                                  | material 10 → 8                                                                                     | 组件常量 1.5/8（material 可见，第 11.7 节）            |
+| M10 | sheet grabber `width`/`height`                                         | 36×5、32×4、36×5                                                                      | 高读 `spacing`（4）                                                                    | 4 套与 winui 的 5 → 4（−1）；material 0                                                             | 读 `spacing`（可见 1 px），或留 5（不落格）            |
+| M11 | radio/checkbox 外扩                                                    | 0 / 40 / 0                                                                            | 刻度 `dimension.size.target[tier]`（material 指针档 40，出处 M3 的 40 dp state layer） | 0（其余主题两档都是 0）                                                                             | 逐像素；新刻度项写进第 3 节与 `$extensions` 的刻度出处 |
+| M12 | carousel `edge` 16×38、date-picker `split` 32                          | 16×38/字形 12、32                                                                     | —                                                                                      | 随取值删掉                                                                                          | 见第 11.7 节                                           |
+
+结论：7 组 0 差（M2、M3 的 `cells`、M4、M6、M7、M8、M11，各自落回刻度或取值的配方），5 处可见（M1、M3 的轨道、M5 的格高、M9、M10），M12 随第 11.7 节的降级消失。可见的这几处都只差 1–8 点，方向是收向刻度；它们集中在**数字收口**那一步，单独一张截图审（第 18 节 P5）。
+
+## 13 finish 的可选字段：每套主题补写的中性值
+
+第 5 节把可选字段改成必填之后，各主题今天缺什么、补什么（中性值写在 base，主题只在真不同时写）：
+
+| 主题                         | 今天缺的字段                                                                                     | 补写                                                                                                                          |
+| ---------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| default、shadcn、solid-glass | `material`（全 null）、`elevation`、`backdropFilter`（只有 `glass` 有 20 px）、`gradient`        | `material: null`、`elevation: null`、`backdropFilter: "none"`、`gradient: null`                                               |
+| apple                        | `elevation`、`gradient`、`backdropFilter`（`raised`/`overlay`/`inverse` 已有 30 px）、多层的边色 | `elevation: null`、`gradient: null`、`backdropFilter: "none"`、`border-color: "transparent"`、`border-*-color: "transparent"` |
+| material                     | `material`、`backdropFilter`、`gradient`、`border-color`（面不画边）                             | `material: null`、`backdropFilter: "none"`、`gradient: null`、`border-color: "transparent"`                                   |
+| winui                        | `elevation`、`gradient`、`backdropFilter`（`overlay` 是 acrylic，没有模糊串）                    | `elevation: null`、`gradient: null`、`backdropFilter: "none"`                                                                 |
+
+编译产物因此变大（每个 finish 12 个字段全在），`theme:diff --same` 把“新增键”判为通过、“两侧都有的键变了值”才失败，所以这一步只会多出键，不出值。
+
+## 14 官方枚举
+
+平台自己的名字原样保留，注册成任何主题都能选的通用枚举；其余取行为词，不用组件名、不用主题名（#293 第 5 条）。
+
+| 枚举                                  | 值                                                                                                                                                                   | 今天谁用                                     | 注册在哪                                               |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------ |
+| `dimension.focus.style`               | `halo` `outline` `double`                                                                                                                                            | halo：4 套；outline：material；double：winui | `theme-roles.md` 的 `theme-lint: enums`，`style.ts` 读 |
+| finish `material`                     | `none` `glass` `acrylic`                                                                                                                                             | glass：apple；acrylic：winui                 | 同上                                                   |
+| `shape.curve`                         | `continuous` `circular`                                                                                                                                              | continuous：apple                            | 同上                                                   |
+| `dimension.size.control.*.switch`     | `small` `regular`                                                                                                                                                    | small：4 套；regular：material、winui        | 同上                                                   |
+| 缓动名（9 项）                        | `out-cubic` `in-cubic` `in-out-cubic`（通用）、`standard` `emphasized-decelerate` `emphasized-accelerate`（M3）、`decelerate` `accelerate` `point-to-point`（WinUI） | 见第 17 节                                   | 同上                                                   |
+| `dimension.control.selection`/`group` | `pill` `underline` `bar`；`track` `cells`（`cells` 是 M3 SegmentedButton 的名）                                                                                      | 见 11.2                                      | 同上                                                   |
+| `dimension.control.field`             | `box` `underline` `box-underline`（WinUI TextBox `ControlStrongStrokeColorDefault`）                                                                                 | 见 11.2                                      | 同上                                                   |
+| `dimension.control.choice`            | `well` `outline` `inset`                                                                                                                                             | 见 11.2                                      | 同上                                                   |
+| `dimension.control.track`/`handle`    | `sunk` `tint` `hairline`；`circle` `bar` `ring`                                                                                                                      | 见 11.2                                      | 同上                                                   |
+
+## 15 例外：按主题 id 的脚本，以及各自搬去哪
+
+“没有一项只为某个主题配置”这条规则今天被四处绕过。逐条给出主题与去处：
+
+| 例外                       | 今天在哪                                                                                           | 谁                                                                                                                                                                                                                                                                                                                                                                                                                      | 搬去哪                                                                                                                                                                           |
+| -------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 对比度豁免                 | `scripts/theme/contrast.ts` 的 `platform`（11 条）                                                 | apple 8 条（`muted-foreground` 在 background / muted / card / raised，Apple `secondaryLabel` 的 60%；`primary-foreground` 在 primary 与 `finish.accent`、`sidebar-primary-foreground` 在 sidebar-primary，systemBlue 上的白字；`brand` 在 background，链接）、shadcn 2 条（neutral `muted-foreground` 在 muted、raised）、winui 1 条（按下时 `finish.accent.pressed-foreground` 在 `finish.accent.pressed-background`） | 各主题 `theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].contrast.waivers[]`（`{ fg, bg, source }`）；`contrast.ts` 读它，不再有按 id 的 TS 列表；某条不再失败就是错误 |
+| 刻度出处（不在格子上的值） | `docs/specs/theme-roles.md` 的 `theme-lint: scales` 表（winui 的 `padding` 6、`pad` 11、`hit` 40） | winui                                                                                                                                                                                                                                                                                                                                                                                                                   | winui 的 `$extensions…scales.citations`（键为 token 路径、值为出处），`scripts/theme/spec.ts` 读它                                                                               |
+| 枚举白名单                 | `scripts/theme/style.ts` 的 `whitelists`（按路径列允许值）                                         | 不分主题                                                                                                                                                                                                                                                                                                                                                                                                                | 仍在 `style.ts`，但改为读 `theme-roles.md` 的 `theme-lint: enums` 表（与 `spec.ts` 读表的做法一致），值名按第 14 节                                                              |
+| finish 可省字段            | `scripts/theme-lint.ts` 的 `optionalFields`                                                        | 不分主题                                                                                                                                                                                                                                                                                                                                                                                                                | 第 5、13 节改成必填，这份集合删掉                                                                                                                                                |
+| 动效角色名单               | `scripts/theme/style.ts` 的 `motionRoleNames`                                                      | 不分主题                                                                                                                                                                                                                                                                                                                                                                                                                | 加 `state`（第 17 节）                                                                                                                                                           |
+| `default` 的两份产物       | `scripts/tokens/build.ts:59`、`scripts/theme/diff.ts:221`                                          | default                                                                                                                                                                                                                                                                                                                                                                                                                 | **不是风格例外**：`default` 是构建根主题（`packages/theme/theme.json` 与 `themes/default/` 同一份），保留并在 `docs/theme-design.md` 写明                                        |
+| 终端字符网格               | 每个组件的 `terminal` 分支                                                                         | 不分主题                                                                                                                                                                                                                                                                                                                                                                                                                | 保留（不是主题值）                                                                                                                                                               |
+| 不检查的对比度对           | `contrast.ts` 的 `skipped`（`disabled-foreground`、`chart-foreground`）                            | 不分主题                                                                                                                                                                                                                                                                                                                                                                                                                | 保留（WCAG 的豁免，与主题无关）                                                                                                                                                  |
+
+## 16 分档（tier）继承
+
+分档今天已经是 DTCG 的 resolver 机制：`theme.resolver.json` 的 `modifiers.input` 列出 `pointer` / `touch` 两个 context，先引 `../../base/style.{pointer,touch}.tokens.json`，再引主题自己的同名文件（后写的赢）。`scripts/theme/dtcg.ts:1189-1192` 只在文件存在时才加引用，所以：
+
+- **每个主题都可以有分档**，不是三套原生主题的特权；今天的 default、shadcn、solid-glass 只用 base 的值（没有 `pointer.tokens.json` / `touch.tokens.json`）。
+- **没有分档文件的主题继承 base**：resolver 的 context 仍然有两条来源中的第一条，编译出两档完整的值。
+- 只写一档也合法：例如只写 `touch.tokens.json`，指针档全取 base。
+- 校验：`check:theme` 断言每套主题编译后的 `semantics.json` 两档都在、`dimension.size.hit.touch ≥ 44`（winui 的 40 走第 15 节的出处）、`pointer` 的每个键在 `touch` 里也有；`tokens:build --check` 保证 `themes/<id>/` 两档产物与源码一致。
+- 文档：`docs/theme-design.md` 补一段“加一套分档值”的做法（加文件、不用改代码），`docs/theme-roles.md` 记两档的键。
+
+## 17 动效角色与硬编码时长
+
+第 3 节的三档弹簧只驱动 `animate()`；换色、透明度、边框、阴影今天是 43 处硬编码时长（CSS 类与内联 `transitionDuration`），它们需要一条**时序**角色。新增 `motion.state`：
+
+| 主题                         | `motion.state`      | 出处                                                                                                                                       |
+| ---------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| default、shadcn、solid-glass | 120 ms，`out-cubic` | 上游 `nsh-gallery-ui` 的悬停洗色 120 ms ease-out（`references/nsh` 的设计指南把“悬停洗色/换色”定为 120 ms）；`out-cubic` 就是它的 ease-out |
+| apple                        | 120 ms，`out-cubic` | Apple HIG 的 Motion 一节只讲“短、不抢注意力”，不给状态过渡的秒数；按 `native-themes.md` 的既有约定（apple 与 default 同值）取上游的 120 ms |
+| material                     | 100 ms，`standard`  | `MotionTokens.DurationShort2`（100 ms）+ `Easing.StandardCubicBezier(0.2, 0, 0, 1)`（Compose M3，`ExpressiveMotionTokens.kt` 同仓）        |
+| winui                        | 83 ms，`decelerate` | `ControlFasterAnimationDuration` + `ControlFastOutSlowInKeySpline`（与 `fast` 同源，`Common_themeresources_any.xaml`）                     |
+
+43 处的去向：其中 41 处归 `state`；`combobox.tsx:532` 的 `popIn`（320 ms）是出现，归 `transition.enter`；`progress.tsx:159` 的 800 ms 是**循环周期**，不是过渡，留组件常量并在注释里写明（`spinner.tsx` 的 `TURN_MS` 同理，它本就不在这 43 处里）。
+
+| 今天的值       | 处数 | 位置（`packages/ui/`）                                                                                                                                                                                                                                                                                                       | 归      |
+| -------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| 100 ms         | 10   | `calendar.tsx:165,199,286,494`、`command.tsx:53`、`emoji-picker.tsx:75`、`lib/listbox.tsx:81`、`number-input.tsx:23`、`radio-group.tsx:128`、`switch.tsx:244`                                                                                                                                                                | `state` |
+| 120 ms（内联） | 3    | `title-bar.tsx:147,154,162`                                                                                                                                                                                                                                                                                                  | `state` |
+| 150 ms         | 18   | `accordion.tsx:88`、`breadcrumb.tsx:33`、`checkbox.tsx:143,173`、`color-picker.tsx:422`、`input.tsx:129`、`lib/listbox.tsx:116`、`lib/popup.tsx:203`、`progress.tsx:386`、`resizable.tsx:20`、`rich-editor.tsx:27`、`sidebar.tsx:384`、`slider.tsx:133`、`switch.tsx:230,238`、`table.tsx:28`、`trace.tsx:24`、`tree.tsx:29` | `state` |
+| 160 ms         | 1    | `badge.tsx:73`                                                                                                                                                                                                                                                                                                               | `state` |
+| 180 ms         | 1    | `progress.tsx:46`（数值变化的滑行）                                                                                                                                                                                                                                                                                          | `state` |
+| 200 ms         | 5    | `accordion.tsx:81`、`link.tsx:18`、`pagination.tsx:38`、`toast.tsx:425`、`tree.tsx:65`                                                                                                                                                                                                                                       | `state` |
+| 300 ms         | 3    | `link.tsx:21`（图标滑入）、`scrollbar.tsx:54,60`（变粗）                                                                                                                                                                                                                                                                     | `state` |
+| 320 ms         | 1    | `combobox.tsx:532`（`popIn`）                                                                                                                                                                                                                                                                                                | `enter` |
+| 800 ms         | 1    | `progress.tsx:159`（不确定态循环）                                                                                                                                                                                                                                                                                           | 常量    |
+
+三档弹簧的调用点不动（已经走 `animate()` / `follow()`）；`state` 只回答“换形、换色要多久”，不回答“移动多快”。
+
+## 18 实施顺序
+
+一步一个 issue、一个 PR，标题是约定式提交。P1 之后 P2 与 P3a–P3f 可以并行（文件互不相交）；P4、P5、P6 串行在 P3 之后（它们要改同一批组件文件）；P7 与 P8 只需避开 P1 与 P4 的 `tokens/` 与 `scripts/` 写点。
+
+| 步  | 内容                                                                                                                                                                                                                                                                                | 文件                                                                                                                     | 逐像素                           |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------- |
+| P1  | 主题侧：base 与 6 套主题加 `dimension.control` 六键与 `motion.state`，编译产物加 `dimension.control`；`control()` 读取；枚举白名单；`theme-roles.md` 的枚举与配方数字表                                                                                                             | `packages/theme/tokens/**`、`scripts/theme/{style,spec,dtcg}.ts`、`packages/theme/theme.ts`、`docs/specs/theme-roles.md` | 相同（没人读）                   |
+| P2  | `packages/ui/lib/look.ts`：一个取值 → 一个控件的各部分（形态与刻度），纯函数 + 单测，组件还不调用                                                                                                                                                                                   | `packages/ui/lib/look.ts`                                                                                                | 相同                             |
+| P3a | `selection` + `group`：tabs、segmented、sidebar                                                                                                                                                                                                                                     | `packages/ui/{tabs,segmented,sidebar}.tsx`、对应演示                                                                     | 相同                             |
+| P3b | `field`：`lib/indicator` 及其读者                                                                                                                                                                                                                                                   | `packages/ui/lib/indicator.ts`                                                                                           | 相同                             |
+| P3c | `choice`：radio-group、checkbox；calendar 按第 11.7 节降级（删 `CalendarPreset`）                                                                                                                                                                                                   | `packages/ui/{radio-group,checkbox,calendar}.tsx`                                                                        | **可见**：material、winui 的日历 |
+| P3d | `track`：progress、spinner（与分段轨道共用配方）                                                                                                                                                                                                                                    | `packages/ui/{progress,spinner}.tsx`                                                                                     | 相同                             |
+| P3e | 降级（第 11.7 节）：date-picker 回到整块触发器、carousel 回到胶囊箭头；删 `iconCell` 与 `placement: "over"` 及其演示与文档                                                                                                                                                          | `packages/ui/{date-picker,carousel}.tsx`、对应演示与文档页                                                               | **可见**：winui                  |
+| P3f | `handle`：slider、switch                                                                                                                                                                                                                                                            | `packages/ui/slider.tsx`、`packages/ui/switch.tsx`、`lib/switch-geometry.ts`                                             | 相同                             |
+| P4  | 删 `controls`：14 张表删 `Record<Controls>`、`Controls` 类型、`controls()`、`semantics.json` 的 `controls` 键、`style.ts` 白名单项、`dtcg.ts` 的写入器；在 `scripts/` 加一条 grep 门禁（`Record<Controls>`、`controls(`、`"material" \| "winui"` 的主题比较）并挂进 `bun run check` | `packages/theme/**`、`packages/ui/**`、`scripts/`                                                                        | 相同                             |
+| P5  | 数字收口：第 12 节的 M1、M3 轨道、M5 的格高、M9、M10 按刻度/配方落地                                                                                                                                                                                                                | 同 P3 的组件                                                                                                             | **可见**，6 套截图审             |
+| P6  | 动效：43 处换成 `motion.state`，`combobox` 用 `enter`，两处循环留常量并注释                                                                                                                                                                                                         | 全部组件                                                                                                                 | 相同（时间轴变，静止帧不变）     |
+| P7  | 例外搬进 `$extensions`（第 15 节），可选 finish 字段变必填（第 13 节）                                                                                                                                                                                                              | `packages/theme/tokens/**`、`scripts/theme/{contrast,spec,style}.ts`、`scripts/theme-lint.ts`                            | 相同（出现中性值）               |
+| P8  | 分档继承的校验与文档（第 16 节）                                                                                                                                                                                                                                                    | `scripts/theme/spec.ts`、`docs/theme-design.md`、`docs/theme-roles.md`                                                   | 相同                             |
+
+每步的收口：`bun run check`、`port:render`、`port:render:theme`、`test:unit`、`test:gallery`、`test:install`；`registry.json` 与 `public/r` 跟着重建；`CHANGELOG.md` 的 `Unreleased` 写一条（P1、P4、P7 是 breaking：主题作者要加六键、删 `controls`、补 finish 字段；P3e 删掉 `Picker` 的 `iconCell` 与 carousel 的 `placement: "over"`，也是 breaking）。
+
+## 19 已确认的问题（2026-11-23）
+
+1. **第 12 节可见的那 5 组数字**：按刻度改，集中在 P5 一步，6 套截图审。
+2. **日历的 `today` 与 `cellShape`**：不加维度，按原则 6 降级为 base 的样子（第 11.7 节），`mark` 一并删掉。
+3. **tabs 的 `padX`**：固定 8，第 3 节记为反例。
+4. **`state` 的数字**：照第 17 节的表（winui 83 ms、apple 120 ms）。
+5. **`cells`**：移出 `selection`，成为新维度 `group` 的值；material 的分段按钮取 `cells`，标签页仍是下划线。
