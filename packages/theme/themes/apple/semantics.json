@@ -219,12 +219,7 @@
         "background": "oklch(from {raised} l c h / 0.72)",
         "foreground": "{foreground}",
         "backdropFilter": "blur(30px)",
-        "material": {
-          "apple": {
-            "glass": "regular",
-            "tint": null
-          }
-        },
+        "material": "glass",
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent"
@@ -234,15 +229,7 @@
         "foreground": "{foreground}",
         "border-color": "transparent",
         "backdropFilter": "blur(30px)",
-        "material": {
-          "apple": {
-            "glass": "regular",
-            "tint": null
-          },
-          "ios": {
-            "backdrop": "regular"
-          }
-        }
+        "material": "glass"
       },
       "modal": {
         "background": "{card}",
@@ -255,30 +242,14 @@
         "foreground": "{muted-foreground}",
         "border-color": "transparent",
         "backdropFilter": "blur(30px)",
-        "material": {
-          "apple": {
-            "glass": "regular",
-            "tint": null
-          },
-          "ios": {
-            "backdrop": "regular"
-          }
-        }
+        "material": "glass"
       },
       "glass": {
         "foreground": "{foreground}",
         "border-color": "{border}",
         "backdropFilter": "blur(30px)",
-        "material": {
-          "apple": {
-            "glass": "regular",
-            "tint": null
-          },
-          "ios": {
-            "backdrop": "thin"
-          }
-        },
-        "background": "oklch(from {popover} l c h / 0.4)"
+        "material": "glass",
+        "background": "oklch(from {popover} l c h / 0.72)"
       },
       "accent": {
         "background": "{primary}",

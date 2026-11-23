@@ -1607,7 +1607,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       },
       "border-color": {
@@ -1637,7 +1637,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1665,7 +1665,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       },
       "border-top-color": {
@@ -1689,7 +1689,25 @@
       "$description": "A panel floating over the page: a menu, a toast.",
       "background": {
         "$type": "color",
-        "$value": "{color.popover}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.29313,
+            0,
+            0
+          ],
+          "alpha": 0.96,
+          "hex": "#2c2c2c"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.popover}",
+              "alpha": 0.96
+            }
+          }
+        }
       },
       "border-color": {
         "$type": "color",
@@ -1708,11 +1726,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": {
-            "windows": {
-              "backdrop": "blur"
-            }
-          }
+          "material": "acrylic"
         }
       }
     },
@@ -1734,7 +1748,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       },
       "border-color": {
@@ -1773,7 +1787,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1797,11 +1811,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "windows": {
-              "backdrop": "blur"
-            }
-          }
+          "material": "none"
         }
       },
       "background": {
@@ -1849,7 +1859,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       },
       "border-color": {
@@ -1937,7 +1947,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1964,7 +1974,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       },
       "border-top-color": {
@@ -2014,7 +2024,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -2045,7 +2055,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       },
       "background": {

@@ -22,7 +22,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -38,7 +38,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -71,7 +71,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -92,7 +92,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -116,7 +116,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -137,7 +137,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -161,7 +161,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -189,7 +189,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -223,7 +223,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -255,7 +255,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -283,7 +283,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -307,7 +307,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     }

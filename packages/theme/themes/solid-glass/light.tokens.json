@@ -1595,7 +1595,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1613,7 +1613,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1649,7 +1649,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1672,7 +1672,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       },
       "border-color": {
@@ -1711,7 +1711,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1734,7 +1734,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       },
       "border-color": {
@@ -1774,7 +1774,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null,
+          "material": "none",
           "backdropFilter": "blur(14px) saturate(180%)"
         }
       }
@@ -1805,7 +1805,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       },
       "background": {
@@ -1867,7 +1867,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1902,7 +1902,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1932,7 +1932,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       },
       "background": {
@@ -1981,7 +1981,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     }

@@ -328,11 +328,16 @@ describe("compiled winui theme files", () => {
 
     expect(files.semantics.motion.fast).toEqual({ duration: 83, timingFunction: "decelerate" });
     expect(files.semantics.dimension.size.height.pointer).toEqual({ sm: 24, md: 32, lg: 40 });
-    // A flyout is the overlay layer: the popover pane, Acrylic's blur, the flyout's stroke.
+    // A flyout is the overlay layer: Acrylic, its tint over the blur, the flyout's stroke.
     expect(files.semantics.finishes.shared.overlay).toMatchObject({
-      background: "{popover}",
       "border-color": "{glass-edge}",
-      material: { windows: { backdrop: "blur" } },
+      material: "acrylic",
+    });
+    expect(files.semantics.finishes.light.overlay).toMatchObject({
+      background: "oklch(from {popover} l c h / 0.85)",
+    });
+    expect(files.semantics.finishes.dark.overlay).toMatchObject({
+      background: "oklch(from {popover} l c h / 0.96)",
     });
     expect(files.semantics.finishes.shared.inverse).toMatchObject({
       background: "{inverse}",

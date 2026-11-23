@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "The design tokens (theme.json), standalone DTCG 2025.10 files (light.tokens.json, dark.tokens.json), the agent-readable design specification (DESIGN.md), the finishes (semantics.json) and the roles that read them (lib/ui/theme.ts).",
+      "description": "The design tokens (theme.json), standalone DTCG 2025.10 files (light.tokens.json, dark.tokens.json), the agent-readable design specification (DESIGN.md), the finishes (semantics.json), the platform materials (lib/ui/materials.ts) and the roles that read them (lib/ui/theme.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -32,6 +32,11 @@
           "path": "packages/theme/semantics.json",
           "type": "registry:lib",
           "target": "lib/ui/semantics.json"
+        },
+        {
+          "path": "packages/theme/materials.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/materials.ts"
         },
         {
           "path": "packages/theme/theme.ts",

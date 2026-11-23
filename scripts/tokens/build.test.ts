@@ -301,15 +301,14 @@ describe("DTCG source lint", () => {
         "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
       );
       const fin = JSON.parse(fs.readFileSync(finPath, "utf8"));
-      fin.finish.card.$extensions["dev.aning.shadcn-nsh"].material = {
-        apple: { glass: "frosted", tint: "{color.missing}" },
-      };
+      fin.finish.card.$extensions["dev.aning.shadcn-nsh"].material = "frosted";
+      fin.finish.raised.$extensions["dev.aning.shadcn-nsh"].elevation = -2;
       fs.writeFileSync(finPath, JSON.stringify(fin, null, 2));
     });
     const text = problems.join("\n");
     expect(text).toContain("shape.$extensions");
-    expect(text).toContain("apple.glass");
-    expect(text).toContain("missing");
+    expect(text).toContain('"frosted"');
+    expect(text).toContain("elevation must be a non-negative number");
   });
 
   test("rejects invalid controls preset enum value and shape.corners.button in $extensions", () => {
@@ -837,16 +836,11 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             compiled["pressed-foreground"] = toFinishColor(g["pressed-foreground"]);
           const gExt = g.$extensions?.[EXT_NS];
           if (gExt && "backdropFilter" in gExt) compiled.backdropFilter = gExt.backdropFilter;
+          // A material is the recipe's name; `"none"` compiles to `null`, as an absent gradient does.
           if (gExt && "material" in gExt) {
-            const mat = structuredClone(gExt.material);
-            if (mat?.apple && typeof mat.apple.tint === "string") {
-              mat.apple.tint = toFlatRef(mat.apple.tint);
-            }
-            if (mat?.android?.ripple && typeof mat.android.ripple.color === "string") {
-              mat.android.ripple.color = toFlatRef(mat.android.ripple.color);
-            }
-            compiled.material = mat;
+            compiled.material = gExt.material === "none" ? null : gExt.material;
           }
+          if (gExt && "elevation" in gExt) compiled.elevation = gExt.elevation;
           expect(compiled, `finish.${role}`).toEqual(mergedFinishes[role]);
         }
       });

@@ -3,8 +3,9 @@
  *
  * Field values use the generator vocabulary: `{role}` names a colour role of this theme's palette,
  * `oklch(from {role} l c h / a)` the role at an alpha, `{shadow.part}` a part of the scale below,
- * `"none"` and `"transparent"` their CSS keywords. `material` is the finish's platform material
- * (see the theme's README).
+ * `"none"` and `"transparent"` their CSS keywords. `material` names the platform material the
+ * layer asks for (`"none"`, `"glass"`, `"acrylic"`: the recipes of `packages/theme/materials.ts`),
+ * and `elevation` the height Android draws its own shadow at.
  */
 import type { ThemeFinishes, ThemeShadowScale } from "../dtcg";
 
@@ -15,9 +16,10 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       shadow: "{shadow.md}",
       foreground: "{foreground}",
-      material: { android: { elevation: 1 } },
+      material: "none",
+      elevation: 1,
     },
-    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: null },
+    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
     raised: {
       background: "{raised}",
       "border-color": "transparent",
@@ -26,7 +28,8 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       backdropFilter: "none",
-      material: { android: { elevation: 1 } },
+      material: "none",
+      elevation: 1,
     },
     overlay: {
       background: "{popover}",
@@ -34,13 +37,15 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.lg}",
       foreground: "{foreground}",
       backdropFilter: "none",
-      material: { android: { elevation: 3 } },
+      material: "none",
+      elevation: 3,
     },
     modal: {
       "border-color": "transparent",
       shadow: "{shadow.xl}",
       foreground: "{foreground}",
-      material: { android: { elevation: 6 } },
+      material: "none",
+      elevation: 6,
     },
     inverse: {
       background: "{inverse}",
@@ -48,7 +53,8 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.lg}",
       foreground: "{inverse-foreground}",
       backdropFilter: "none",
-      material: { android: { elevation: 6 } },
+      material: "none",
+      elevation: 6,
     },
     glass: {
       background: "{popover}",
@@ -56,7 +62,8 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       backdropFilter: "none",
-      material: { android: { elevation: 3 } },
+      material: "none",
+      elevation: 3,
     },
     accent: {
       background: "{primary}",
@@ -65,14 +72,14 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
-      material: null,
+      material: "none",
     },
     knob: {
       background: "{knob}",
       "border-color": "transparent",
       shadow: "{shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     hover: {
       background: "{raised}",
@@ -81,7 +88,8 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: { android: { elevation: 1 } },
+      material: "none",
+      elevation: 1,
     },
     pressed: {
       background: "{raised}",
@@ -90,13 +98,14 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.inset}",
       foreground: "{foreground}",
-      material: { android: { elevation: 1 } },
+      material: "none",
+      elevation: 1,
     },
     disabled: {
       "border-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
   },
   light: {

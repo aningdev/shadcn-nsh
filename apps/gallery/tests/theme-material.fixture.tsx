@@ -6,7 +6,7 @@ import { Button } from "../../../packages/ui";
 
 const { finishes } = defaultTheme.semantics;
 
-/** A temporary theme whose `glass` and `overlay` finishes ask for the platform's own material. */
+/** A temporary theme whose finishes ask for the platform's own materials, and for an elevation. */
 const glassy: AppTheme = {
   ...defaultTheme,
   id: "glassy",
@@ -17,26 +17,15 @@ const glassy: AppTheme = {
       ...finishes,
       light: {
         ...finishes.light,
-        glass: {
-          ...finishes.light.glass,
-          material: {
-            apple: { glass: "regular", tint: "{primary}" },
-            ios: { backdrop: "thin" },
-            windows: { backdrop: "blur" },
-          },
-        },
-        overlay: {
-          ...finishes.light.overlay,
-          material: {
-            apple: { glass: "clear", tint: null },
-            macos: { backdrop: "menu", blending: "behindWindow", state: "active" },
-          },
-        },
+        glass: { ...finishes.light.glass, material: "glass" },
+        overlay: { ...finishes.light.overlay, material: "glass" },
+        raised: { ...finishes.light.raised, material: "acrylic", elevation: 6 },
       },
       dark: {
         ...finishes.dark,
-        glass: { ...finishes.dark.glass, material: { apple: { glass: "clear", tint: null } } },
+        glass: { ...finishes.dark.glass, material: "acrylic" },
         overlay: { ...finishes.dark.overlay, material: null },
+        raised: { ...finishes.dark.raised, material: null },
       },
     },
   },
@@ -57,6 +46,7 @@ function App() {
       <Text>{`menuEffect=${finish.overlay.glassEffect ?? "none"}`}</Text>
       <Text>{`glassProps=${JSON.stringify(platformMaterial("glass"))}`}</Text>
       <Text>{`menuProps=${JSON.stringify(platformMaterial("overlay"))}`}</Text>
+      <Text>{`raisedProps=${JSON.stringify(platformMaterial("raised"))}`}</Text>
       <Text>{`card=${keys(finish.card)}|${JSON.stringify(platformMaterial("card"))}`}</Text>
       {/* The view a component draws: the props on the view, the glass keys in its style. */}
       <View {...platformMaterial("overlay")} style={{ ...finish.overlay }}>

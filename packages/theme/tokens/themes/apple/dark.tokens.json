@@ -1073,7 +1073,7 @@
         "$value": {
           "colorSpace": "oklch",
           "components": [0.2939, 0.00358, 286.177],
-          "alpha": 0.4,
+          "alpha": 0.72,
           "hex": "#2c2c2e"
         },
         "$extensions": {
@@ -1081,7 +1081,7 @@
             "colorOp": {
               "op": "alpha",
               "color": "{color.popover}",
-              "alpha": 0.4
+              "alpha": 0.72
             }
           }
         }

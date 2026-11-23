@@ -18,7 +18,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -34,7 +34,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -59,7 +59,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -84,11 +84,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": {
-            "windows": {
-              "backdrop": "blur"
-            }
-          }
+          "material": "acrylic"
         }
       }
     },
@@ -108,7 +104,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -133,7 +129,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -154,11 +150,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "windows": {
-              "backdrop": "blur"
-            }
-          }
+          "material": "none"
         }
       }
     },
@@ -182,7 +174,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -216,7 +208,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -240,7 +232,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -272,7 +264,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -292,7 +284,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     }

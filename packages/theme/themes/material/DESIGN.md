@@ -446,17 +446,17 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 ## Components
 
-- **`finish.card`** (material: `{"android":{"elevation":1}}`): A surface that holds content: a card, a section.
+- **`finish.card`** (elevation: 1): A surface that holds content: a card, a section.
 - **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
-- **`finish.raised`** (backdropFilter: `none`; material: `{"android":{"elevation":1}}`): A control on a surface: a button, a chip, a pill.
-- **`finish.overlay`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): A panel floating over the page: a menu, a toast.
-- **`finish.modal`** (material: `{"android":{"elevation":6}}`): A surface the page waits for: a dialog, a sheet.
-- **`finish.inverse`** (backdropFilter: `none`; material: `{"android":{"elevation":6}}`): The page's inverse: an inverse surface, a tooltip.
-- **`finish.glass`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): A translucent surface: what is behind it shows through.
+- **`finish.raised`** (backdropFilter: `none`; elevation: 1): A control on a surface: a button, a chip, a pill.
+- **`finish.overlay`** (backdropFilter: `none`; elevation: 3): A panel floating over the page: a menu, a toast.
+- **`finish.modal`** (elevation: 6): A surface the page waits for: a dialog, a sheet.
+- **`finish.inverse`** (backdropFilter: `none`; elevation: 6): The page's inverse: an inverse surface, a tooltip.
+- **`finish.glass`** (backdropFilter: `none`; elevation: 3): A translucent surface: what is behind it shows through.
 - **`finish.accent`**: The accent's own surface, with its ink.
 - **`finish.knob`**: A knob: a switch's thumb, a slider's handle, a segmented thumb.
-- **`finish.hover`** (material: `{"android":{"elevation":1}}`): A control under the pointer.
-- **`finish.pressed`** (material: `{"android":{"elevation":1}}`): A control held down.
+- **`finish.hover`** (elevation: 1): A control under the pointer.
+- **`finish.pressed`** (elevation: 1): A control held down.
 - **`finish.disabled`**: A control that cannot be used.
 - **Disabled handling** (content=0.38, fill=true): M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).
 

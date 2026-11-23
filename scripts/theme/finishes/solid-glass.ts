@@ -3,8 +3,9 @@
  *
  * Field values use the generator vocabulary: `{role}` names a colour role of this theme's palette,
  * `oklch(from {role} l c h / a)` the role at an alpha, `{shadow.part}` a part of the scale below,
- * `"none"` and `"transparent"` their CSS keywords. `material` is the finish's platform material
- * (see the theme's README).
+ * `"none"` and `"transparent"` their CSS keywords. `material` names the platform material the
+ * layer asks for (`"none"`, `"glass"`, `"acrylic"`: the recipes of `packages/theme/materials.ts`),
+ * and `elevation` the height Android draws its own shadow at.
  */
 import type { ThemeFinishes, ThemeShadowScale } from "../dtcg";
 
@@ -15,9 +16,9 @@ export const finishes: ThemeFinishes = {
       "border-color": "{border}",
       shadow: "{shadow.md}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
-    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: null },
+    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
     raised: {
       background: "{raised}",
       "border-color": "{glass-edge}",
@@ -26,35 +27,35 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       backdropFilter: "none",
-      material: null,
+      material: "none",
     },
     overlay: {
       background: "{popover}",
       shadow: "{shadow.lg}",
       foreground: "{foreground}",
       backdropFilter: "none",
-      material: null,
+      material: "none",
     },
     modal: {
       background: "{card}",
       "border-color": "{border}",
       shadow: "{shadow.xl}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     inverse: {
       background: "{inverse}",
       shadow: "{shadow.lg}",
       foreground: "{muted-foreground}",
       backdropFilter: "none",
-      material: null,
+      material: "none",
     },
     glass: {
       background: "{raised}",
       "border-color": "{glass-edge}",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     accent: {
       "border-color": "{brand-edge}",
@@ -62,14 +63,14 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "{brand-edge}",
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
-      material: null,
+      material: "none",
     },
     knob: {
       background: "{knob}",
       "border-color": "transparent",
       shadow: "{shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     hover: {
       background: "{hover}",
@@ -78,7 +79,7 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "{glass-edge}",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     pressed: {
       "border-color": "{glass-edge}",
@@ -86,14 +87,14 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "{glass-edge}",
       shadow: "{shadow.inset}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     disabled: {
       background: "{raised}",
       "border-color": "{border}",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
   },
   light: {

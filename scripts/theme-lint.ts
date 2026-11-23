@@ -15,7 +15,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 import { colourFields, readColour } from "./theme/finish-colour";
-import { checkGlassFallback, checkMaterial } from "./theme/material";
+import { checkMaterial, checkMaterialFill } from "./theme/material";
 import { parseColor } from "./theme/oklch";
 import { scaleCitations, specBlock, specParts, specRows } from "./theme/spec";
 import { checkScales, checkStyle, citedValues } from "./theme/style";
@@ -265,9 +265,11 @@ for (const theme of themes) {
   }
 }
 
-/** Fields a finish may leave out: a flat look states no gradient, an opaque one no backdrop, and
- * only a theme whose press swaps the accent out states the pressed fill and ink. */
+/** Fields a finish may leave out: a flat look states no gradient, an opaque one no backdrop, only
+ * the platform's own layers state an elevation, and only a theme whose press swaps the accent out
+ * states the pressed fill and ink. */
 const optionalFields = new Set([
+  "elevation",
   "material",
   "gradient",
   "backdropFilter",
@@ -331,11 +333,10 @@ for (const theme of themes) {
           );
       }
 
-      // The platform material: stated on every finish, from NSH's lists, its tint a colour token.
-      for (const problem of checkMaterial(path, `${role}.${appearance}`, finish, kinds))
-        fail(problem);
-      for (const problem of checkGlassFallback(path, `${role}.${appearance}`, finish))
-        fail(problem);
+      // The platform material: stated on every finish, one of the recipes, over a fill the recipe's
+      // fallback can stand in for where the platform draws none.
+      for (const problem of checkMaterial(path, `${role}.${appearance}`, finish)) fail(problem);
+      for (const problem of checkMaterialFill(path, `${role}.${appearance}`, finish)) fail(problem);
 
       // `shadow` is ink, except any `{token}` it names must exist and be a `"color"` token.
       for (const name of findTokenRefs(finish.shadow ?? "")) {

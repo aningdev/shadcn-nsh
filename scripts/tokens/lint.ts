@@ -331,9 +331,15 @@ function validateExtAtPath(
   }
 
   if (/^finish\.[A-Za-z0-9-]+$/.test(p)) {
-    checkUnknownKeys(where, ext, ["backdropFilter", "material"], problems);
+    checkUnknownKeys(where, ext, ["backdropFilter", "material", "elevation"], problems);
     if ("backdropFilter" in ext && !isNonEmptyString(ext.backdropFilter)) {
       problems.push(`${where}.backdropFilter must be a non-empty string`);
+    }
+    if (
+      "elevation" in ext &&
+      (typeof ext.elevation !== "number" || !Number.isFinite(ext.elevation) || ext.elevation < 0)
+    ) {
+      problems.push(`${where}.elevation must be a non-negative number`);
     }
     return;
   }
@@ -928,7 +934,9 @@ function checkMergedSemantics(
         isRecord(group.$extensions) && isRecord(group.$extensions[EXT_NS])
           ? group.$extensions[EXT_NS]
           : {};
-      problems.push(...checkMaterial(label, role, { material: ext.material }, colorKinds, "dtcg"));
+      problems.push(
+        ...checkMaterial(label, role, { material: ext.material, elevation: ext.elevation }),
+      );
     }
   }
 

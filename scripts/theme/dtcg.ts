@@ -531,22 +531,12 @@ function encodeShadowGroup(
   return out;
 }
 
+/** A finish's `material` as the source states it: the recipe's name, `"none"` where it asks nothing. */
 function encodeMaterial(material: unknown): unknown {
-  if (!isRecord(material)) return material;
-  const out = structuredClone(material);
-  if (isRecord(out.apple) && typeof out.apple.tint === "string") {
-    const m = /^\{([a-z0-9-]+)\}$/.exec(out.apple.tint);
-    if (m) out.apple.tint = `{color.${m[1]!}}`;
-  }
-  if (
-    isRecord(out.android) &&
-    isRecord(out.android.ripple) &&
-    typeof out.android.ripple.color === "string"
-  ) {
-    const m = /^\{([a-z0-9-]+)\}$/.exec(out.android.ripple.color);
-    if (m) out.android.ripple.color = `{color.${m[1]!}}`;
-  }
-  return out;
+  if (material === "none" || material === "glass" || material === "acrylic") return material;
+  throw new Error(
+    `A finish's material is "none", "glass" or "acrylic", not ${JSON.stringify(material)}`,
+  );
 }
 
 /** Encode a `shared`, `light`, or `dark` finishes map into a DTCG `finish` group. */
@@ -607,6 +597,7 @@ function encodeFinishSection(
     const ext: Record<string, unknown> = {};
     if ("backdropFilter" in finish) ext.backdropFilter = finish.backdropFilter;
     if ("material" in finish) ext.material = encodeMaterial(finish.material);
+    if (typeof finish.elevation === "number") ext.elevation = finish.elevation;
     if (Object.keys(ext).length > 0) {
       group.$extensions = { [EXT_NS]: ext };
     }

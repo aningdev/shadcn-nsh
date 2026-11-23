@@ -74,11 +74,13 @@ describe("themes/", () => {
 
       test("resolves to the default finishes' roles and field sets after merging", () => {
         // A flat theme leaves out the gradient, a theme of no platform material the material,
-        // an opaque one the backdropFilter, and only a theme that paints its own pressed accent the
-        // pressed fill and ink: every other field of a role is the set default states.
+        // an opaque one the backdropFilter, only the platform's own layers an elevation, and only a
+        // theme that paints its own pressed accent the pressed fill and ink: every other field of a
+        // role is the set default states.
         const optional = new Set([
           "gradient",
           "material",
+          "elevation",
           "backdropFilter",
           "pressed-background",
           "pressed-foreground",

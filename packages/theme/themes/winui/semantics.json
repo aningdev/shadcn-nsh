@@ -222,15 +222,10 @@
         "border-color": "{border}"
       },
       "overlay": {
-        "background": "{popover}",
         "foreground": "{foreground}",
         "border-color": "{glass-edge}",
         "backdropFilter": "none",
-        "material": {
-          "windows": {
-            "backdrop": "blur"
-          }
-        }
+        "material": "acrylic"
       },
       "modal": {
         "background": "{background}",
@@ -249,11 +244,7 @@
         "foreground": "{foreground}",
         "border-color": "{glass-edge}",
         "backdropFilter": "blur(30px)",
-        "material": {
-          "windows": {
-            "backdrop": "blur"
-          }
-        }
+        "material": null
       },
       "accent": {
         "background": "{primary}",
@@ -301,6 +292,7 @@
         "border-bottom-color": "oklch(0.84522 0 0)"
       },
       "overlay": {
+        "background": "oklch(from {popover} l c h / 0.85)",
         "shadow": "0 0 8px oklch(0 0 0 / 0.2), 0 16px 32px oklch(0 0 0 / 0.24)"
       },
       "modal": {
@@ -338,6 +330,7 @@
         "border-bottom-color": "{border}"
       },
       "overlay": {
+        "background": "oklch(from {popover} l c h / 0.96)",
         "shadow": "0 0 8px oklch(0 0 0 / 0.4), 0 16px 32px oklch(0 0 0 / 0.48)"
       },
       "modal": {

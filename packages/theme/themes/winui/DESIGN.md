@@ -461,10 +461,10 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 - **`finish.card`**: A surface that holds content: a card, a section.
 - **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
 - **`finish.raised`** (backdropFilter: `none`): A control on a surface: a button, a chip, a pill.
-- **`finish.overlay`** (backdropFilter: `none`; material: `{"windows":{"backdrop":"blur"}}`): A panel floating over the page: a menu, a toast.
+- **`finish.overlay`** (backdropFilter: `none`; material: `"acrylic"`): A panel floating over the page: a menu, a toast.
 - **`finish.modal`**: A surface the page waits for: a dialog, a sheet.
 - **`finish.inverse`** (backdropFilter: `none`): The page's inverse: an inverse surface, a tooltip.
-- **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"windows":{"backdrop":"blur"}}`): A translucent surface: what is behind it shows through.
+- **`finish.glass`** (backdropFilter: `blur(30px)`): A translucent surface: what is behind it shows through.
 - **`finish.accent`**: The accent's own surface, with its ink.
 - **`finish.knob`**: A knob: a switch's thumb, a slider's handle, a segmented thumb.
 - **`finish.hover`**: A control under the pointer.

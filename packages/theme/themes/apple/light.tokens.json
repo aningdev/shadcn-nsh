@@ -1576,7 +1576,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1594,7 +1594,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1668,12 +1668,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "apple": {
-              "glass": "regular",
-              "tint": null
-            }
-          }
+          "material": "glass"
         }
       },
       "background": {
@@ -1732,15 +1727,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "apple": {
-              "glass": "regular",
-              "tint": null
-            },
-            "ios": {
-              "backdrop": "regular"
-            }
-          }
+          "material": "glass"
         }
       },
       "background": {
@@ -1788,7 +1775,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1825,15 +1812,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "apple": {
-              "glass": "regular",
-              "tint": null
-            },
-            "ios": {
-              "backdrop": "regular"
-            }
-          }
+          "material": "glass"
         }
       },
       "background": {
@@ -1879,15 +1858,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "apple": {
-              "glass": "regular",
-              "tint": null
-            },
-            "ios": {
-              "backdrop": "thin"
-            }
-          }
+          "material": "glass"
         }
       },
       "background": {
@@ -1899,7 +1870,7 @@
             0,
             0
           ],
-          "alpha": 0.4,
+          "alpha": 0.72,
           "hex": "#ffffff"
         },
         "$extensions": {
@@ -1907,7 +1878,7 @@
             "colorOp": {
               "op": "alpha",
               "color": "{color.popover}",
-              "alpha": 0.4
+              "alpha": 0.72
             }
           }
         }
@@ -1985,7 +1956,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -2025,7 +1996,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -2102,7 +2073,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -2178,7 +2149,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -2205,7 +2176,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     }

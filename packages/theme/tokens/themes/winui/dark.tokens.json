@@ -1032,6 +1032,26 @@
         "$value": "{color.border}"
       }
     },
+    "overlay": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.29313, 0, 0],
+          "alpha": 0.96,
+          "hex": "#2c2c2c"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.popover}",
+              "alpha": 0.96
+            }
+          }
+        }
+      }
+    },
     "modal": {
       "border-color": {
         "$type": "color",

@@ -768,9 +768,11 @@ export function compileDesignMd(resolverPath: string): string {
     if (typeof extL?.backdropFilter === "string") {
       notes.push(`backdropFilter: \`${extL.backdropFilter}\``);
     }
-    if (extL?.material || extD?.material) {
-      notes.push(`material: \`${JSON.stringify(extL?.material ?? extD?.material)}\``);
+    const material = extL?.material ?? extD?.material;
+    if (material !== undefined && material !== "none") {
+      notes.push(`material: \`${JSON.stringify(material)}\``);
     }
+    if (typeof extL?.elevation === "number") notes.push(`elevation: ${extL.elevation}`);
     const suffix = notes.length > 0 ? ` (${notes.join("; ")})` : "";
     lines.push(`- **\`finish.${role}\`**${suffix}: ${roleDesc ?? ""}`);
   }

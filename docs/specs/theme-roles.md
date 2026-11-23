@@ -96,15 +96,16 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `border-top-color`    | 上边覆写（WinUI 控件斜角）：`{token}` 或 `transparent`       |
 | `border-bottom-color` | 下边覆写（WinUI 控件斜角）：`{token}` 或 `transparent`       |
 | `backdropFilter`      | 只有模糊，不放颜色                                           |
-| `material`            | `null`，或平台自己的材质（见下）                             |
+| `material`            | `"none"` 之外，`"glass"` 或 `"acrylic"`（见下）              |
+| `elevation`           | 平台自己的阴影高度（dp），只有要它的层写（见下）             |
 
-颜色字段包括 `background`、`gradient`、`foreground`、`border-color` 与 `border-top-color` / `border-bottom-color`（读取后经 `themed()` 映射为 NSH 样式键 `backgroundColor`、`backgroundImage`、`color`、`borderColor`、`borderTopColor`、`borderBottomColor`）。`foreground` 以不可枚举的 getter 给出，把它展开进 `ViewStyle` 不会多写一个未知键；文字用 `finish.<role>.foreground` 取色。`shadow` 不是颜色字段：它引用刻度，刻度的值也是墨色 + alpha，`themed()` 把引用接成一条 `boxShadow`。
+颜色字段包括 `background`、`gradient`、`foreground`、`border-color` 与 `border-top-color` / `border-bottom-color`（读取后经 `themed()` 映射为 NSH 样式键 `backgroundColor`、`backgroundImage`、`color`、`borderColor`、`borderTopColor`、`borderBottomColor`）。`foreground` 以不可枚举的 getter 给出，把它展开进 `ViewStyle` 不会多写一个未知键；文字用 `finish.<role>.foreground` 取色。`shadow` 不是颜色字段：它引用刻度，刻度的值也是墨色 + alpha，`themed()` 把引用接成一条 `boxShadow`。按下时换色的主题另写 `pressed-background` / `pressed-foreground`（WinUI 的 `AccentFillColorTertiary` 与 `TextOnAccentFillColorSecondary`），同样以不可枚举的 getter 给出。
 
 `finishes` 块分为 `shared`（明暗共用字段）与稀疏覆写 `light` / `dark`（只写与 `shared` 不同的字段）；合并后每个 finish 的角色集合固定，字段集合也固定，除了可以缺的 `gradient`、`backdropFilter`、`material`。
 
 ## 2b 风格数据
 
-`semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（7 个字体角色，含 `fontSize`、整数点数 `lineHeight`、数值 `fontWeight` 与 `letterSpacing`）、`dimension`（`shape`、`size`、`stroke`、`focus`、`icon`）、`shape`（`curve`、`corners.button`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"rest-opacity"`、叠色、水波开关与禁用透明度）、`elevation`（每个外观的影子刻度：`sm`、`md`、`lg`、`xl`、`inset`，可选的两条边）、`transition`（`enter`）、`motion`（三档弹簧 `fast`、`default`、`slow`，timing 用 `timingFunction`）与 `controls`（控件几何预设家族枚举 `"base" | "material" | "winui"`）。它们与 finish 无关：一个主题写一份，light 和 dark 共用（`elevation` 例外，每个外观一份）；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
+`semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（7 个字体角色，含 `fontSize`、整数点数 `lineHeight`、数值 `fontWeight` 与 `letterSpacing`）、`dimension`（`shape`、`size`、`stroke`、`focus`、`icon`）、`shape`（`curve`、`corners.button`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"accent-pressed-opacity"`、`"rest-opacity"`、叠色、水波开关与禁用透明度）、`elevation`（每个外观的影子刻度：`sm`、`md`、`lg`、`xl`、`inset`，可选的两条边）、`transition`（`enter`）、`motion`（三档弹簧 `fast`、`default`、`slow`，timing 用 `timingFunction`）与 `controls`（控件几何预设家族枚举 `"base" | "material" | "winui"`）。它们与 finish 无关：一个主题写一份，light 和 dark 共用（`elevation` 例外，每个外观一份）；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
 
 - **键集合相同。** 所有主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
 - **枚举取白名单。** 字重（数值 `400`–`700`）、曲线、`corners.button`（`"full" | "radius"`）、焦点样式、`timingFunction`、`controls` 的值都在 `scripts/theme/style.ts` 的列表里。
@@ -167,21 +168,23 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 **折掉的档位**（有意为之，记在这里）：`solid-glass` 的旋钮投影（0.3）与控件影（0.06）落进同一档 `sm`；`default` 的卡片影（0.04）与控件影（0.05）落进同一档 `md`；`apple` 的浮层与模态面本来就没有更深的档，`lg` 与 `xl` 同值。
 
-**`material`**（2a，#199）是一个 finish 向平台要的原生材质，**每个 finish 都写**，不要就写 `null`（形状固定，不删字段）。值是 `null`，或下面这个形状里写了的几项，取值来自 NSH 的类型：
+**`material`**（#267）是一个 finish 向平台要的原生材质，**每个 finish 都写**，不要就写 `"none"`（形状固定，不删字段）。源码里的取值只有三个：`"none"`、`"glass"`、`"acrylic"`，编译进 `semantics.json` 时是 `"glass"`、`"acrylic"` 或 `null`（`"none"` 与平涂不写 `gradient` 一样，编译后什么都不写）。
 
-| 键        | 内容                                                                                                                                                 | 变成                                                                 |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `apple`   | `{ glass: "regular" \| "clear", tint: <颜色或 null> }`；`tint` 与别处一样写 `{token}`，不写字面量                                                    | style 里的 `glassEffect`、`glassTintColor`（`themed()` 随 style 给） |
-| `ios`     | `{ backdrop: "ultraThin" \| "thin" \| "regular" \| "thick" \| "chrome" }`                                                                            | `ios={{ backdropMaterial }}`                                         |
-| `macos`   | `{ backdrop: <NSVisualEffectView 材质>, blending?: "withinWindow" \| "behindWindow", state?: "followsWindowActiveState" \| "active" \| "inactive" }` | `macos={{ backdrop: { material, blending, state } }}`                |
-| `windows` | `{ backdrop: "blur" }`                                                                                                                               | `windows={{ backdrop: { material } }}`                               |
-| `android` | `{ elevation?: number, ripple?: { color: <"{token}">, borderless?: boolean, radius?: number, foreground?: boolean } }`                               | `android={{ elevation, ripple }}`                                    |
+配方只有一份，在 `packages/theme/materials.ts`；主题只点名，不写平台参数：
 
-`themed()` 从不把 `material` 放进 style；style 里只多 `glassEffect`（有 `apple` 时）和 `glassTintColor`（`tint` 不为 `null` 时），`material: null` 时键与以前完全一样。`ios`、`macos`、`windows`、`android` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 返回，组件在同一个 View 上铺开：`<View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />`（按压水波由启用了 `state.ripple` 的可按组件并入 `android`）。`check:theme` 检查 `material` 存在于每个 finish，取值在白名单里，`apple.tint` 与 `android.ripple.color` 是该主题有的颜色（`scripts/theme/material.ts`）。
+| 值        | 展开                                                                                                                        | 谁用                                               |
+| --------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `none`    | 不展开                                                                                                                      | 其余所有层                                         |
+| `glass`   | style 里的 `glassEffect: "regular"` 与 `glassTintColor`（该面自己的 `background`），`ios={{ backdropMaterial: "regular" }}` | `apple` 的 `overlay`、`inverse`、`raised`、`glass` |
+| `acrylic` | `windows={{ backdrop: { material: "blur" } }}`（宿主窗口的模糊）                                                            | `winui` 的 `overlay`                               |
 
-**玻璃要有回落。** `apple.glass` 只在 iOS / macOS 26 及以上画出来，别处画的是 `backdropFilter`。所以写了 `apple`、底又半透明（alpha 小于 1 或 `transparent`）的 finish，`backdropFilter` 必须是一个模糊，不能缺、不能是 `"none"`：否则在 Liquid Glass 之外，面板后面的文字原样透出来（#251）。`check:theme` 拦下这种 finish（`checkGlassFallback`）。
+**玻璃要有回落。** 系统玻璃只在 iOS / macOS 26 及以上画出来，Acrylic 的模糊只在 Windows 11 的透明窗口里画出来，别处画的是 `backdropFilter`。所以每个配方都带回落：模糊半径（30px）与面色的最低不透明度（`glass` 0.72、`acrylic` 0.85）。`themed()` 在缺 `backdropFilter` 时补上配方的模糊；`check:theme` 核对面色 alpha 不低于最低值（`checkMaterialFill`），否则面板后面的字会原样透出来（#251）。
 
-字段顺序固定：`background`、`gradient`、`shadow`、`foreground`、`border-color`、`border-top-color`、`border-bottom-color`、`backdropFilter`、`material`。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拦下比默认主题多一个或少一个字段的 finish。
+**`elevation`** 是 Android 自己的阴影高度（dp），只有要平台阴影的层写（`material` 主题的 `card`、`raised`、`hover`、`pressed` 是 1，`overlay`、`glass` 是 3，`modal`、`inverse` 是 6）。它和 `shadow` 无关：`shadow` 是画出来的影子，`elevation` 是平台按高度生成的影子。
+
+`themed()` 从不把 `material` 放进 style；style 里只多配方的玻璃键，`material` 为 `null` 时键与以前完全一样。`ios`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 按配方返回，`elevation` 在同一处作为 `android.elevation`，组件在同一个 View 上铺开：`<View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />`。`check:theme` 检查 `material` 存在于每个 finish、取值是三个之一，`elevation` 是非负数值（`scripts/theme/material.ts`）。
+
+字段顺序固定：`background`、`gradient`、`shadow`、`foreground`、`border-color`、`border-top-color`、`border-bottom-color`、`backdropFilter`、`material`、`elevation`（后两者按需缺）。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拦下比默认主题多一个或少一个字段的 finish。
 
 ## 4 每个 finish
 

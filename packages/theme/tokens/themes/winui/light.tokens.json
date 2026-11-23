@@ -1032,6 +1032,26 @@
         }
       }
     },
+    "overlay": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.98212, 0, 0],
+          "alpha": 0.85,
+          "hex": "#f9f9f9"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.popover}",
+              "alpha": 0.85
+            }
+          }
+        }
+      }
+    },
     "modal": {
       "border-color": {
         "$type": "color",

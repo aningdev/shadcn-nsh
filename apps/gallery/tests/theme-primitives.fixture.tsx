@@ -31,7 +31,8 @@ const { finishes } = defaultTheme.semantics;
 /**
  * A synthetic theme exercising the Phase 3 cross-platform primitives:
  * `double` focus ring, timing motion roles with M3/WinUI 3 curves, state-layer overlays on
- * gradient fills with surface-matched ink, `state.ripple`, and `material.android`.
+ * gradient fills with surface-matched ink, `state.ripple`, and a layer's `material` and
+ * `elevation`.
  */
 const expressive: AppTheme = {
   ...defaultTheme,
@@ -66,27 +67,11 @@ const expressive: AppTheme = {
           ...finishes.light.accent,
           gradient: "linear-gradient(180deg, {primary} 0%, {brand} 100%)",
         },
-        overlay: {
-          ...finishes.light.overlay,
-          material: {
-            android: {
-              elevation: 6,
-              ripple: { color: "{primary}", borderless: true, radius: 18, foreground: true },
-            },
-          },
-        },
+        overlay: { ...finishes.light.overlay, material: "acrylic", elevation: 6 },
       },
       dark: {
         ...finishes.dark,
-        overlay: {
-          ...finishes.dark.overlay,
-          material: {
-            android: {
-              elevation: 8,
-              ripple: { color: "{brand}" },
-            },
-          },
-        },
+        overlay: { ...finishes.dark.overlay, material: "acrylic", elevation: 8 },
       },
     },
   },
@@ -129,7 +114,7 @@ function App() {
       <Text>{`toggleOnAndroid=${JSON.stringify(onToggle.android ?? null)}`}</Text>
       <Text>{`toastAndroid=${JSON.stringify(toastClose.android ?? null)}`}</Text>
       <Text>{`menuMaterial=${JSON.stringify(platformMaterial("overlay"))}`}</Text>
-      <Text>{`tokens=${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}|${finish.accent.foreground}`}</Text>
+      <Text>{`tokens=${colors.primaryForeground}|${colors.inverseForeground}|${finish.accent.foreground}`}</Text>
       <Roll value={step()}>{`roll=${step()}`}</Roll>
       <View
         style={{

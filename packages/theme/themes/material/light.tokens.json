@@ -1622,11 +1622,8 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": {
-            "android": {
-              "elevation": 1
-            }
-          }
+          "material": "none",
+          "elevation": 1
         }
       }
     },
@@ -1644,7 +1641,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -1722,11 +1719,8 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": {
-            "android": {
-              "elevation": 1
-            }
-          }
+          "material": "none",
+          "elevation": 1
         }
       }
     },
@@ -1767,11 +1761,8 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": {
-            "android": {
-              "elevation": 3
-            }
-          }
+          "material": "none",
+          "elevation": 3
         }
       }
     },
@@ -1807,11 +1798,8 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": {
-            "android": {
-              "elevation": 6
-            }
-          }
+          "material": "none",
+          "elevation": 6
         }
       },
       "background": {
@@ -1864,11 +1852,8 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": {
-            "android": {
-              "elevation": 6
-            }
-          }
+          "material": "none",
+          "elevation": 6
         }
       }
     },
@@ -1910,11 +1895,8 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "material": {
-            "android": {
-              "elevation": 3
-            }
-          }
+          "material": "none",
+          "elevation": 3
         }
       }
     },
@@ -1990,7 +1972,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -2030,7 +2012,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -2107,11 +2089,8 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": {
-            "android": {
-              "elevation": 1
-            }
-          }
+          "material": "none",
+          "elevation": 1
         }
       }
     },
@@ -2187,11 +2166,8 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": {
-            "android": {
-              "elevation": 1
-            }
-          }
+          "material": "none",
+          "elevation": 1
         }
       }
     },
@@ -2246,7 +2222,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       },
       "background": {

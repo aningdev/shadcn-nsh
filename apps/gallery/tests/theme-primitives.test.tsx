@@ -58,7 +58,7 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   expect(read("roll")).toBe("2");
 
   // State-layer hover omits backgroundColor: token("hover") and stacks ink over resting gradients.
-  const [primaryForeground, inverseForeground, primary, selectedInk] = read("tokens").split("|");
+  const [primaryForeground, inverseForeground, selectedInk] = read("tokens").split("|");
   const expectedPrimaryFgHover = atAlpha(primaryForeground, 0.08);
   const expectedInverseFgHover = atAlpha(inverseForeground, 0.08);
   const expectedSelectedFgHover = atAlpha(selectedInk, 0.08);
@@ -102,12 +102,10 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   });
   expect(readJson("toastAndroid")).toEqual({ ripple: { color: atAlpha(inverseForeground, 0.1) } });
 
-  // material.android resolves {token} ripple colors and passes elevation & flags.
+  // A layer's material reaches the platform props, and its elevation rides beside them.
   expect(readJson("menuMaterial")).toEqual({
-    android: {
-      elevation: 6,
-      ripple: { color: primary, borderless: true, radius: 18, foreground: true },
-    },
+    windows: { backdrop: { material: "blur" } },
+    android: { elevation: 6 },
   });
 
   // Switch back to build-time default cleanly.

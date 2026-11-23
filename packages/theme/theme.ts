@@ -4,9 +4,6 @@ import type {
   AnimatedValue,
   BackdropMaterial,
   Easing as EasingCurve,
-  MacOsBackdropBlending,
-  MacOsBackdropMaterial,
-  MacOsBackdropState,
   TextStyle,
   Theme,
   Tokens,
@@ -26,6 +23,7 @@ import {
   token,
 } from "nsh";
 
+import { materials, type FinishMaterial, type MaterialRecipe } from "./materials";
 import semantics from "./semantics.json";
 
 // @port theme.ts
@@ -54,44 +52,7 @@ export const TERMINAL_GAP = 24;
 /** Whether the app shows its dark palette; reactive: reading it subscribes. */
 export const isDark = () => colorScheme() !== "light";
 
-/**
- * The platform's own material a finish asks for, one entry per platform that has one (an
- * absent platform draws the finish as it is: its fill, its blur, its shadow). Values are NSH's:
- * `styling.md` lists them, the allow-lists of `scripts/theme/material.ts` hold a theme to them.
- */
-export interface Material {
-  /** Liquid Glass on iOS and macOS 26 and later: it rides in the finish's style as `glassEffect`
-   * and `glassTintColor`, so every platform without it keeps the finish's `backdropFilter`. */
-  apple?: {
-    glass: "regular" | "clear";
-    /** The glass's tint: a color of the theme (`{glass}`, an alias), or `null` for the system's own. */
-    tint: string | null;
-  };
-  /** The system blur material of the finish's `backdropFilter` on iOS (`ios={{ backdropMaterial }}`). */
-  ios?: { backdrop: BackdropMaterial };
-  /** An `NSVisualEffectView` below the view on macOS (`macos={{ backdrop }}`). */
-  macos?: {
-    backdrop: MacOsBackdropMaterial;
-    blending?: MacOsBackdropBlending;
-    state?: MacOsBackdropState;
-  };
-  /** The system's blur of what is behind a transparent window on Windows 11 (`windows={{ backdrop }}`). */
-  windows?: { backdrop: WindowsBackdropMaterial };
-  /** Android's ripple and elevation (`android={{ ripple, elevation }}`). */
-  android?: {
-    /** A press's ripple: `{ color }` is a `{token}` reference; optional shape flags follow NSH's `Ripple`. */
-    ripple?: {
-      color: string;
-      borderless?: boolean;
-      radius?: number;
-      foreground?: boolean;
-    };
-    /** Surface elevation in points (`android={{ elevation }}`). */
-    elevation?: number;
-  };
-}
-
-/** A surface's finish as `semantics.json` writes it: DTCG finish fields (`background`, `gradient`, `shadow`, `border-color`) plus `backdropFilter` and the `material` it asks of the platform (`null`: none). */
+/** A surface's finish as `semantics.json` writes it: DTCG finish fields (`background`, `gradient`, `shadow`, `border-color`) plus `backdropFilter`, the `material` it asks of the platform (`null`: none) and the elevation that material's platform draws it at. */
 export interface Finish {
   background?: string;
   gradient?: string;
@@ -109,7 +70,12 @@ export interface Finish {
   "pressed-foreground"?: string;
   /** The ink on this finish's surface (a color, not a spread style key): every finish states one. */
   foreground: string;
-  material: Material | null;
+  /** The platform's own material the layer asks for: `null` asks nothing of it (see `materials`).
+   * A theme's sources spell that `"none"`; compiled, a finish that asks for nothing states no
+   * material at all, as a flat one states no gradient. */
+  material: FinishMaterial | null;
+  /** The elevation the layer's material draws it at, in points (`android={{ elevation }}`): Android's own shadow. */
+  elevation?: number;
 }
 
 /** The `finishes` block of `semantics.json`: fields shared by both appearances plus sparse light/dark overrides. */
@@ -319,7 +285,6 @@ export interface AppTheme {
 }
 
 /** The build-time semantics: `semantics.json` beside this file (the app's `nsh-ui.json` names the theme they belong to). */
-// JSON types a `material.apple.glass` as `string`; `check:theme` holds the file to "regular" | "clear".
 const builtIn = semantics as Semantics;
 
 /** The theme `selectTheme` put in; `null` while the app shows its build-time one. */
@@ -406,13 +371,18 @@ const finishOf = (role: FinishRole): Finish => {
 };
 
 /** The material one finish role asks for in the semantics in use, in the appearance shown (reactive). */
-const materialOf = (role: FinishRole): Material | null => finishOf(role).material;
+const materialOf = (role: FinishRole): FinishMaterial | null => finishOf(role).material;
 
-/** The style keys a finish's glass adds: `glassEffect` always, `glassTintColor` when it names a tint. */
+/** The recipe of the material a finish asks for, in the appearance shown (reactive); `undefined` for `null`. */
+const recipeOf = (role: FinishRole): MaterialRecipe | undefined => {
+  const material = materialOf(role);
+  return material === null ? undefined : materials[material];
+};
+
+/** The style keys a finish's glass adds: `glassEffect` and the layer's own colour as its tint. */
 const glassKeys = (role: FinishRole): readonly string[] => {
-  const glass = materialOf(role)?.apple;
-  if (glass === undefined) return [];
-  return glass.tint === null ? ["glassEffect"] : ["glassEffect", "glassTintColor"];
+  const recipe = recipeOf(role);
+  return recipe?.glassEffect === undefined ? [] : ["glassEffect", "glassTintColor"];
 };
 
 /**
@@ -422,13 +392,14 @@ const glassKeys = (role: FinishRole): readonly string[] => {
  * subscribes to the appearance, to the theme `selectTheme` put in, and to
  * host token overrides.
  *
- * `material` is not one of its keys: the glass of `material.apple` is two style keys (NSH's
- * `glassEffect` and `glassTintColor`), which the object has only while the finish asks for them, so
- * a finish with `material: null` spreads into exactly the keys it always had. The platform props of
- * the material (`ios`, `macos`, `windows`) are not style keys and come from `platformMaterial`.
+ * `material` and `elevation` are not among its keys: a glass material is two style keys instead
+ * (NSH's `glassEffect` and `glassTintColor`), which the object has only while the finish asks for
+ * them, so a finish with `material: null` spreads into exactly the keys it always had. The platform
+ * props of the material (its `ios` and `windows` blurs, its `android` elevation) come from
+ * `platformMaterial`.
  */
 const finishStyleKeys: Record<
-  Exclude<keyof Finish, "material" | "foreground" | `pressed-${string}`>,
+  Exclude<keyof Finish, "material" | "elevation" | "foreground" | `pressed-${string}`>,
   keyof FinishStyle
 > = {
   background: "backgroundColor",
@@ -455,6 +426,14 @@ function themed(role: FinishRole): FinishStyle {
       configurable: true,
       get: () => {
         const value = finishOf(role)[key];
+        if (key === "backdropFilter") {
+          // A material guarantees its blur: a platform that draws no glass nor the host's blur still
+          // blurs what is behind the layer, at the recipe's radius.
+          const recipe = recipeOf(role);
+          if (recipe !== undefined && (value === undefined || value === "none")) {
+            return `blur(${recipe.fallback.blur}px)`;
+          }
+        }
         return typeof value === "string" ? alias(value) : undefined;
       },
     });
@@ -483,10 +462,11 @@ function themed(role: FinishRole): FinishStyle {
     },
   });
   const glass = (key: string): string | undefined => {
-    const apple = materialOf(role)?.apple;
-    if (apple === undefined) return undefined;
-    if (key === "glassEffect") return apple.glass;
-    return apple.tint === null ? undefined : alias(apple.tint);
+    const recipe = recipeOf(role);
+    if (recipe?.glassEffect === undefined) return undefined;
+    if (key === "glassEffect") return recipe.glassEffect;
+    const background = finishOf(role).background;
+    return background === undefined ? undefined : alias(background);
   };
   return new Proxy(out, {
     ownKeys: (target) => [...Reflect.ownKeys(target), ...glassKeys(role)],
@@ -503,73 +483,38 @@ function themed(role: FinishRole): FinishStyle {
   });
 }
 
-/** What `platformMaterial` returns: the platform props a finish's `material` asks for. A platform it asks
- * nothing of has `undefined`. */
+/** What `platformMaterial` returns: the platform props a finish's material asks for. A platform it
+ * asks nothing of has `undefined`. */
 export interface MaterialProps {
   ios?: { backdropMaterial: BackdropMaterial };
-  macos?: {
-    backdrop: {
-      material: MacOsBackdropMaterial;
-      blending?: MacOsBackdropBlending;
-      state?: MacOsBackdropState;
-    };
-  };
   windows?: { backdrop: { material: WindowsBackdropMaterial } };
-  android?: {
-    ripple?: { color?: string; borderless?: boolean; radius?: number; foreground?: boolean };
-    elevation?: number;
-  };
+  android?: { elevation?: number };
 }
 
 /**
- * The platform props of a finish's `material`: `ios={{ backdropMaterial }}`, `macos={{ backdrop }}`,
- * `windows={{ backdrop }}` and `android={{ ripple, elevation }}`, for the view that draws the finish.
- * They are props, not style keys, so a component spreads them on the same view that spreads `finish.<role>`
- * into its `style`:
+ * The platform props of a finish's material, for the view that draws the finish: NSH's `ios`
+ * backdrop material, the `windows` backdrop blur and Android's `elevation`. They are props, not
+ * style keys, so a component spreads them on the same view that spreads `finish.<role>` into its
+ * `style`:
  *
  *     <View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />
  *
- * Its four keys are getters, so they follow `selectTheme` and the appearance as `finish` does, and
- * a finish with `material: null` (every finish the library ships) gives `undefined` for all four: the
- * view is drawn as it was. The Liquid Glass of `material.apple` needs no prop: it is in the style.
+ * Its keys are getters, so they follow `selectTheme` and the appearance as `finish` does, and a
+ * finish whose `material` is `null` and which states no `elevation` (every layer of the themes that
+ * imitate no platform) gives `undefined` for all three: the view is drawn as it was. The Liquid
+ * Glass of a glass material needs no prop: `glassEffect` and `glassTintColor` are in the style.
  */
 export function platformMaterial(role: FinishRole): MaterialProps {
   return {
     get ios() {
-      const ios = materialOf(role)?.ios;
-      return ios === undefined ? undefined : { backdropMaterial: ios.backdrop };
-    },
-    get macos() {
-      const macos = materialOf(role)?.macos;
-      if (macos === undefined) return undefined;
-      const { backdrop: material, blending, state } = macos;
-      return {
-        backdrop: {
-          material,
-          ...(blending === undefined ? {} : { blending }),
-          ...(state === undefined ? {} : { state }),
-        },
-      };
+      return recipeOf(role)?.props.ios;
     },
     get windows() {
-      const windows = materialOf(role)?.windows;
-      return windows === undefined ? undefined : { backdrop: { material: windows.backdrop } };
+      return recipeOf(role)?.props.windows;
     },
     get android() {
-      const android = materialOf(role)?.android;
-      if (android === undefined) return undefined;
-      const { ripple, elevation } = android;
-      return {
-        ...(ripple === undefined
-          ? {}
-          : {
-              ripple: {
-                ...ripple,
-                color: alias(ripple.color),
-              },
-            }),
-        ...(elevation === undefined ? {} : { elevation }),
-      };
+      const { elevation } = finishOf(role);
+      return elevation === undefined ? undefined : { elevation };
     },
   };
 }

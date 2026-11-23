@@ -281,7 +281,7 @@ components:
     textColor: "{colors.light.foreground}"
     rounded: "{rounded.control}"
   glass-overlay:
-    backgroundColor: "#ffffff66"
+    backgroundColor: "#ffffffb8"
     textColor: "{colors.light.popover-foreground}"
     rounded: "{rounded.container}"
 ---
@@ -448,11 +448,11 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 - **`finish.card`**: A surface that holds content: a card, a section.
 - **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
-- **`finish.raised`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null}}`): A control on a surface: a button, a chip, a pill.
-- **`finish.overlay`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): A panel floating over the page: a menu, a toast.
+- **`finish.raised`** (backdropFilter: `blur(30px)`; material: `"glass"`): A control on a surface: a button, a chip, a pill.
+- **`finish.overlay`** (backdropFilter: `blur(30px)`; material: `"glass"`): A panel floating over the page: a menu, a toast.
 - **`finish.modal`**: A surface the page waits for: a dialog, a sheet.
-- **`finish.inverse`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): The page's inverse: an inverse surface, a tooltip.
-- **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"thin"}}`): A translucent surface: what is behind it shows through.
+- **`finish.inverse`** (backdropFilter: `blur(30px)`; material: `"glass"`): The page's inverse: an inverse surface, a tooltip.
+- **`finish.glass`** (backdropFilter: `blur(30px)`; material: `"glass"`): A translucent surface: what is behind it shows through.
 - **`finish.accent`**: The accent's own surface, with its ink.
 - **`finish.knob`**: A knob: a switch's thumb, a slider's handle, a segmented thumb.
 - **`finish.hover`**: A control under the pointer.

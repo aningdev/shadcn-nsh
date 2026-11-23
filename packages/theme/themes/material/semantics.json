@@ -208,11 +208,8 @@
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "foreground": "{foreground}",
         "border-color": "transparent",
-        "material": {
-          "android": {
-            "elevation": 1
-          }
-        }
+        "material": null,
+        "elevation": 1
       },
       "inset": {
         "shadow": "none",
@@ -224,14 +221,11 @@
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "foreground": "{foreground}",
         "backdropFilter": "none",
-        "material": {
-          "android": {
-            "elevation": 1
-          }
-        },
+        "material": null,
         "border-color": "transparent",
         "border-top-color": "transparent",
-        "border-bottom-color": "transparent"
+        "border-bottom-color": "transparent",
+        "elevation": 1
       },
       "overlay": {
         "background": "{popover}",
@@ -239,21 +233,15 @@
         "foreground": "{foreground}",
         "border-color": "transparent",
         "backdropFilter": "none",
-        "material": {
-          "android": {
-            "elevation": 3
-          }
-        }
+        "material": null,
+        "elevation": 3
       },
       "modal": {
         "shadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)",
         "foreground": "{foreground}",
         "border-color": "transparent",
-        "material": {
-          "android": {
-            "elevation": 6
-          }
-        }
+        "material": null,
+        "elevation": 6
       },
       "inverse": {
         "background": "{inverse}",
@@ -261,23 +249,17 @@
         "foreground": "{inverse-foreground}",
         "border-color": "transparent",
         "backdropFilter": "none",
-        "material": {
-          "android": {
-            "elevation": 6
-          }
-        }
+        "material": null,
+        "elevation": 6
       },
       "glass": {
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "foreground": "{foreground}",
         "border-color": "transparent",
         "backdropFilter": "none",
-        "material": {
-          "android": {
-            "elevation": 3
-          }
-        },
-        "background": "{popover}"
+        "material": null,
+        "background": "{popover}",
+        "elevation": 3
       },
       "accent": {
         "background": "{primary}",
@@ -298,28 +280,22 @@
       "hover": {
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "foreground": "{foreground}",
-        "material": {
-          "android": {
-            "elevation": 1
-          }
-        },
+        "material": null,
         "background": "{raised}",
         "border-color": "transparent",
         "border-top-color": "transparent",
-        "border-bottom-color": "transparent"
+        "border-bottom-color": "transparent",
+        "elevation": 1
       },
       "pressed": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "material": {
-          "android": {
-            "elevation": 1
-          }
-        },
+        "material": null,
         "background": "{raised}",
         "border-color": "transparent",
         "border-top-color": "transparent",
-        "border-bottom-color": "transparent"
+        "border-bottom-color": "transparent",
+        "elevation": 1
       },
       "disabled": {
         "background": "oklch(from {foreground} l c h / 0.1)",

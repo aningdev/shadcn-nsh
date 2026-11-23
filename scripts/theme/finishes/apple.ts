@@ -3,8 +3,9 @@
  *
  * Field values use the generator vocabulary: `{role}` names a colour role of this theme's palette,
  * `oklch(from {role} l c h / a)` the role at an alpha, `{shadow.part}` a part of the scale below,
- * `"none"` and `"transparent"` their CSS keywords. `material` is the finish's platform material
- * (see the theme's README).
+ * `"none"` and `"transparent"` their CSS keywords. `material` names the platform material the
+ * layer asks for (`"none"`, `"glass"`, `"acrylic"`: the recipes of `packages/theme/materials.ts`),
+ * and `elevation` the height Android draws its own shadow at.
  */
 import type { ThemeFinishes, ThemeShadowScale } from "../dtcg";
 
@@ -15,9 +16,9 @@ export const finishes: ThemeFinishes = {
       "border-color": "{border}",
       shadow: "{shadow.md}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
-    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: null },
+    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
     raised: {
       "border-color": "transparent",
       "border-top-color": "transparent",
@@ -25,35 +26,35 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       backdropFilter: "blur(30px)",
-      material: { apple: { glass: "regular", tint: null } },
+      material: "glass",
     },
     overlay: {
       "border-color": "transparent",
       shadow: "{shadow.lg}",
       foreground: "{foreground}",
       backdropFilter: "blur(30px)",
-      material: { apple: { glass: "regular", tint: null }, ios: { backdrop: "regular" } },
+      material: "glass",
     },
     modal: {
       background: "{card}",
       "border-color": "{border}",
       shadow: "{shadow.xl}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     inverse: {
       "border-color": "transparent",
       shadow: "{shadow.lg}",
       foreground: "{muted-foreground}",
       backdropFilter: "blur(30px)",
-      material: { apple: { glass: "regular", tint: null }, ios: { backdrop: "regular" } },
+      material: "glass",
     },
     glass: {
       "border-color": "{border}",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       backdropFilter: "blur(30px)",
-      material: { apple: { glass: "regular", tint: null }, ios: { backdrop: "thin" } },
+      material: "glass",
     },
     accent: {
       background: "{primary}",
@@ -62,14 +63,14 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
-      material: null,
+      material: "none",
     },
     knob: {
       background: "{knob}",
       "border-color": "transparent",
       shadow: "{shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     hover: {
       background: "{hover}",
@@ -78,7 +79,7 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     pressed: {
       background: "{muted}",
@@ -87,27 +88,27 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.inset}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
     disabled: {
       background: "{raised}",
       "border-color": "{border}",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: null,
+      material: "none",
     },
   },
   light: {
     raised: { background: "oklch(from {raised} l c h / 0.72)" },
     overlay: { background: "oklch(from {popover} l c h / 0.72)" },
     inverse: { background: "oklch(from {inverse} l c h / 0.72)" },
-    glass: { background: "oklch(from {popover} l c h / 0.4)" },
+    glass: { background: "oklch(from {popover} l c h / 0.72)" },
   },
   dark: {
     raised: { background: "oklch(from {raised} l c h / 0.72)" },
     overlay: { background: "oklch(from {popover} l c h / 0.72)" },
     inverse: { background: "oklch(from {inverse} l c h / 0.72)" },
-    glass: { background: "oklch(from {popover} l c h / 0.4)" },
+    glass: { background: "oklch(from {popover} l c h / 0.72)" },
   },
 };
 

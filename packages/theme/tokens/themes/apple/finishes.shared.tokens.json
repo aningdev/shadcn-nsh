@@ -22,7 +22,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -38,7 +38,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -97,12 +97,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "apple": {
-              "glass": "regular",
-              "tint": null
-            }
-          }
+          "material": "glass"
         }
       }
     },
@@ -133,15 +128,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "apple": {
-              "glass": "regular",
-              "tint": null
-            },
-            "ios": {
-              "backdrop": "regular"
-            }
-          }
+          "material": "glass"
         }
       }
     },
@@ -165,7 +152,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -196,15 +183,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "apple": {
-              "glass": "regular",
-              "tint": null
-            },
-            "ios": {
-              "backdrop": "regular"
-            }
-          }
+          "material": "glass"
         }
       }
     },
@@ -225,15 +204,7 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "material": {
-            "apple": {
-              "glass": "regular",
-              "tint": null
-            },
-            "ios": {
-              "backdrop": "thin"
-            }
-          }
+          "material": "glass"
         }
       }
     },
@@ -295,7 +266,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -329,7 +300,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -391,7 +362,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -453,7 +424,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     },
@@ -477,7 +448,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": null
+          "material": "none"
         }
       }
     }

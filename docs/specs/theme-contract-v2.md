@@ -203,11 +203,11 @@
 | 配方      | 用在                                                                   | 展开                                                                                                                                                                                                                                                                                                             |
 | --------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `none`    | default、shadcn、solid-glass、material 的所有层；apple、winui 的其余层 | 不展开                                                                                                                                                                                                                                                                                                           |
-| `glass`   | apple 的 `overlay`、`inverse`、`raised`、`glass`                       | `glassEffect` regular + 层色作 tint（iOS / macOS 26+）；macOS 26 以前用 `macos.backdrop` 的 `menu` / `popover` 材质；iOS 用 `ios.backdropMaterial`；fallback：`backdropFilter: blur(30px)`，层色不透明度不低于 0.72                                                                                              |
+| `glass`   | apple 的 `overlay`、`inverse`、`raised`、`glass`                       | `glassEffect` regular + 层色作 tint（iOS / macOS 26+）；iOS 用 `ios.backdropMaterial`（26 以下的模糊）；fallback：`backdropFilter: blur(30px)`，层色不透明度不低于 0.72。不写 `macos.backdrop`：显式的它会盖过 26+ 的 `glassEffect`，26 以下由模糊回落兜住                                                       |
 | `acrylic` | winui 的 `overlay`                                                     | `backdropFilter: blur(30px)`（`AcrylicBrush.h` `sc_blurRadius`）加层色。亮：`#FCFCFC` tint 0，luminosity 0.85；暗：`#2C2C2C` tint 0.15，luminosity 0.96（`AcrylicInAppFillColorDefaultBrush`，`AcrylicBrush_themeresources.xaml` @ `1b5b1a0`）。fallback：不透明的 `FallbackColor`（亮 `#F9F9F9`，暗 `#2C2C2C`） |
 
 - 每个配方都给出 fallback：模糊半径，以及层色的最低不透明度。不画模糊的平台（Linux / GPUI）也不会透出背后的内容。这条取代 `checkGlassFallback`（#251）：fallback 由配方保证，不再靠 lint 兜底。
-- 数值（例如 0.72）在实施时用平台截图核对。
+- 数值（例如 0.72）在实施时用平台截图核对；验收里那条逐字节相同，`material` 主题除外：它的 `material.android.elevation` 挪到新的 `elevation` 字段（`material` 里不再有平台对象），`platformMaterial()` 仍给出同一个 `android.elevation`，渲染不变，产物变了表示法。
 - 不做，记为差异：
   - Acrylic 的噪点（`sc_noiseOpacity` 0.02）、luminosity 混合与饱和度 1.25；
   - Mica、macOS `behindWindow` 与侧栏 vibrancy，这些是窗口级的，属于应用；
@@ -246,7 +246,7 @@
 4. 颜色：第 1 批（逐像素相同，✅ #262）→ 第 2 批（✅ #263）→ 第 3 批（✅ #264）
 5. ✅ 尺度（第 3 节），含字体（#265）
 6. finish 按层与阴影刻度（第 5 节）
-7. 材质（第 6 节）
+7. ✅ 材质（第 6 节， #267）
 
 ## 10 已确认的问题
 

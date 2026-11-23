@@ -166,20 +166,16 @@ function compileFinishColor(tok: Record<string, unknown>): string {
   return formatDtcgColor(val as DtcgColor);
 }
 
-function compileMaterialValue(material: unknown): unknown {
-  if (!isRecord(material)) return material;
-  const out = structuredClone(material);
-  if (isRecord(out.apple) && typeof out.apple.tint === "string") {
-    out.apple.tint = toFlatColorRef(out.apple.tint);
-  }
-  if (
-    isRecord(out.android) &&
-    isRecord(out.android.ripple) &&
-    typeof out.android.ripple.color === "string"
-  ) {
-    out.android.ripple.color = toFlatColorRef(out.android.ripple.color);
-  }
-  return out;
+/**
+ * A finish's `material` as `semantics.json` writes it: the recipe's name, or `null` where the layer
+ * asks nothing of the platform (`"none"` in the source, as a `gradient` it does not state is absent).
+ */
+function compileMaterialValue(material: unknown): string | null {
+  if (material === "none") return null;
+  if (material === "glass" || material === "acrylic") return material;
+  throw new Error(
+    `Expected a finish material (none, glass, acrylic), got ${JSON.stringify(material)}`,
+  );
 }
 
 function orderFinishFields(
@@ -319,6 +315,9 @@ function compileFinishSection(
     }
     if (groupExt && "material" in groupExt) {
       item.material = compileMaterialValue(groupExt.material);
+    }
+    if (groupExt && "elevation" in groupExt) {
+      item.elevation = groupExt.elevation;
     }
 
     out[role] = item;
