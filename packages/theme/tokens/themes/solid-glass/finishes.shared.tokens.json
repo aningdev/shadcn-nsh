@@ -258,20 +258,20 @@
       }
     },
     "disabled": {
-      "$description": "A disabled control container surface.",
+      "$description": "A disabled control's container and its ink.",
       "background": {
         "$type": "color",
-        "$value": "{color.disabled}"
+        "$value": "{color.raised}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.disabled}",
+            "color": "{color.raised}",
             "position": 0
           },
           {
-            "color": "{color.disabled}",
+            "color": "{color.raised}",
             "position": 1
           }
         ],
@@ -312,6 +312,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -422,7 +426,7 @@
       }
     },
     "accentPressed": {
-      "$description": "The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).",
+      "$description": "The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.",
       "gradient": {
         "$type": "gradient",
         "$value": [
@@ -451,6 +455,10 @@
             "transparentStops": [0, 1]
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
       },
       "border-color": {
         "$type": "color",

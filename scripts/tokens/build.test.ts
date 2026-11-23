@@ -698,9 +698,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
         expect(doc.shape.$extensions[EXT_NS]).toEqual(semanticsJson.shape);
         expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
         expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
-        expect(doc.state["accent-pressed-opacity"].$value).toBe(
-          semanticsJson.state["accent-pressed-opacity"],
-        );
+        expect(doc.state["rest-opacity"].$value).toBe(semanticsJson.state["rest-opacity"]);
         expect(doc.state.$extensions[EXT_NS].ripple).toBe(semanticsJson.state.ripple);
         for (const [k, tok] of Object.entries(doc.state.overlay as Record<string, any>)) {
           if (k.startsWith("$")) continue;

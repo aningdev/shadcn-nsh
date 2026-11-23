@@ -657,25 +657,32 @@
     },
     "disabled": {
       "$description": "M3 disabled filled/tonal button container (10% onSurface, flat with no shadow).",
-      "background": {
-        "$type": "color",
-        "$value": "{color.disabled}"
-      },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.disabled}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 0
           },
           {
-            "color": "{color.disabled}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 1
           }
         ],
         "$extensions": {
           "dev.aning.shadcn-nsh": {
-            "angle": 180
+            "angle": 180,
+            "transparentStops": [0, 1]
           }
         }
       },
@@ -943,17 +950,17 @@
       "$description": "M3 pressed accent surface (state layer + ripple handles press).",
       "background": {
         "$type": "color",
-        "$value": "{color.accent-pressed}"
+        "$value": "{color.primary}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.accent-pressed}",
+            "color": "{color.primary}",
             "position": 0
           },
           {
-            "color": "{color.accent-pressed}",
+            "color": "{color.primary}",
             "position": 1
           }
         ],
@@ -994,6 +1001,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
       },
       "border-color": {
         "$type": "color",

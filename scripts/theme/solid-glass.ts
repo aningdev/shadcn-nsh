@@ -382,12 +382,6 @@ function section(appearance: Appearance): Record<string, string> {
     "up-tint": tint("up"),
     "down-tint": tint("destructive"),
     violet: s("syn-name"),
-    bevel: "var(--border)",
-    "accent-bevel": "var(--brand-edge)",
-    disabled: "var(--raised)",
-    "disabled-foreground": "var(--muted-foreground)",
-    "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--primary-foreground)",
   };
 }
 
@@ -479,10 +473,11 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       foreground: alias("foreground"),
     },
     disabled: {
-      background: alias("disabled"),
-      gradient: `linear-gradient(180deg, ${alias("disabled")} 0%, ${alias("disabled")} 100%)`,
+      background: alias("raised"),
+      gradient: `linear-gradient(180deg, ${alias("raised")} 0%, ${alias("raised")} 100%)`,
       shadow: "none",
       "border-color": alias("border"),
+      foreground: alias("muted-foreground"),
     },
     // Small things filled with the ink — a checked box, a switch that is on, the filled part of a
     // bar — are the solid pane without the shadow a button stands on.
@@ -507,8 +502,10 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       "border-top-color": alias("brand-edge"),
       "border-bottom-color": alias("brand-edge"),
     },
+    // A press keeps the accent's pane at `primary-solid`'s own share, carried by the fill, and
+    // loses the lift.
     accentPressed: {
-      ...paneAt("accent-pressed", Number(s("primary-solid").replace("%", "")) / 100),
+      ...paneAt("primary", Number(s("primary-solid").replace("%", "")) / 100),
       shadow: [
         `inset 0 1px 0 ${s("primary-rim")}`,
         `inset 0 -1px 0 ${m.under}`,
@@ -519,6 +516,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       "border-color": alias("brand-edge"),
       "border-top-color": alias("brand-edge"),
       "border-bottom-color": alias("brand-edge"),
+      foreground: alias("primary-foreground"),
     },
     // A track is a groove cut into the surface, so the light falls the other way: a shade under
     // its upper lip, a line of light along its lower one. Its edge is the theme's `border`.

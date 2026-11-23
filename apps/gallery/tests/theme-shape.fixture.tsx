@@ -1,8 +1,8 @@
 import {
-  colors,
   controlHeight,
   currentTheme,
   dimmed,
+  finish,
   hitTarget,
   iconSize,
   rounded,
@@ -81,7 +81,7 @@ function App() {
       <Text>{`concentric=${rounded(shape.control, 3).borderRadius}|${rounded(shape.control, 99).borderRadius}`}</Text>
       <Text>{`button=${button.style.height}|${button.style.borderRadius}|${button.style.borderWidth}`}</Text>
       <Text>{`fade=${dimmed.disabled}|${dimmed.pressed}|${String(themeStyle().state.disabled.fill)}`}</Text>
-      <Text>{`disabledMode=${button.disabledStyle.opacity === undefined ? "fill" : "fade"}|${String(disabledText.color === colors.disabledForeground)}`}</Text>
+      <Text>{`disabledMode=${button.disabledStyle.opacity === undefined ? "fill" : "fade"}|${String(disabledText.color === finish.disabled.foreground)}`}</Text>
       <Text>{`sizes=${controlHeight.sm}|${controlHeight.lg}|${iconSize.md}|${hitTarget()}|${stroke.hairline}|${stroke.surface}`}</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>
       <Button onPress={() => selectTheme(reshaped)}>Reshaped</Button>

@@ -63,12 +63,6 @@ colors:
     up-tint: "#138a5a1a"
     down-tint: "#d43a4a1a"
     violet: "#6e56c4"
-    bevel: "#cacbcd"
-    accent-bevel: "#9cc43a"
-    disabled: "#f3f4f7"
-    disabled-foreground: "#5f636a"
-    accent-pressed: "#c6ef6a"
-    on-accent-pressed: "#13160c"
   dark:
     background: "#16191f"
     foreground: "#eeeff1"
@@ -126,12 +120,6 @@ colors:
     up-tint: "#45d49a29"
     down-tint: "#ff617029"
     violet: "#b9a2ff"
-    bevel: "#31343a"
-    accent-bevel: "#283c008c"
-    disabled: "#33353b"
-    disabled-foreground: "#9a9ea5"
-    accent-pressed: "#c4ec6a"
-    on-accent-pressed: "#13160c"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -341,7 +329,6 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`track`** (light `#e9eaed`, dark `#33363c`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#e4e5e8`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f8fb`, dark `#1f2228`): High-contrast surface for toasts and tooltips.
-- **`disabled`** (light `#f3f4f7`, dark `#33353b`): Disabled control container surface.
 
 ### Ink
 
@@ -356,7 +343,6 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`sidebar-accent-foreground`** (light `#101319`, dark `#eeeff1`): Text and icon ink on active sidebar rows.
 - **`faint`** (light `#9a9da3`, dark `#6b6f76`): Low-emphasis text for placeholders, units, and tertiary labels.
 - **`inverse-foreground`** (light `#101319`, dark `#eeeff1`): Primary text ink on inverse surfaces.
-- **`disabled-foreground`** (light `#5f636a`, dark `#9a9ea5`): Disabled control label and icon ink.
 
 ### Brand
 
@@ -368,8 +354,6 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`brand-edge`** (light `#9cc43a`, dark `#283c008c`): Hairline border on primary accent-filled controls.
 - **`brand-tint`** (light `#8cc01d29`, dark `#c8f26d24`): Translucent brand-accent wash behind selected rows and tinted bubbles.
 - **`inverse-brand`** (`#13160c`): Accent action color on inverse surfaces.
-- **`accent-pressed`** (light `#c6ef6a`, dark `#c4ec6a`): Accent control fill while pressed.
-- **`on-accent-pressed`** (`#13160c`): Ink on pressed accent control fills.
 
 ### Status
 
@@ -399,8 +383,6 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`glass-edge`** (light `#cacbcd`, dark `#31343a`): Hairline border on glass, pill, and floating overlay surfaces.
 - **`line`** (light `#e4e4e7`, dark `#2d3036`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#a3a8b224`, dark `#5d636e24`): Translucent outer halo around focused controls.
-- **`bevel`** (light `#cacbcd`, dark `#31343a`): Directional control elevation bevel stroke.
-- **`accent-bevel`** (light `#9cc43a`, dark `#283c008c`): Accent control elevation top and side bevel stroke.
 
 ## Typography
 
@@ -485,10 +467,10 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.raised`** (backdropFilter: `none`): A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
-- **`finish.disabled`**: A disabled control container surface.
+- **`finish.disabled`**: A disabled control's container and its ink.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
-- **`finish.accentPressed`**: The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).
+- **`finish.accentPressed`**: The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.

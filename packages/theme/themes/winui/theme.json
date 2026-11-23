@@ -68,13 +68,7 @@
       "destructive-tint": "oklch(0.9462 0.02418 11.286)",
       "up-tint": "oklch(0.94958 0.04104 143.026)",
       "down-tint": "oklch(0.9462 0.02418 11.286)",
-      "violet": "oklch(0.5339 0.1647 289.689)",
-      "bevel": "oklch(0.84522 0 0)",
-      "accent-bevel": "oklch(0.52768 0.14982 252.341)",
-      "disabled": "oklch(0.97015 0 0)",
-      "disabled-foreground": "oklch(0.68949 0 0)",
-      "accent-pressed": "oklch(0.5773 0.13223 250.006)",
-      "on-accent-pressed": "oklch(0.87245 0.03754 247.003)"
+      "violet": "oklch(0.5339 0.1647 289.689)"
     },
     "dark": {
       "background": "oklch(0.24353 0 0)",
@@ -132,13 +126,7 @@
       "sidebar-border": "var(--line)",
       "sidebar-primary": "var(--primary)",
       "sidebar-primary-foreground": "var(--primary-foreground)",
-      "sidebar-ring": "var(--ring)",
-      "bevel": "oklch(0.32897 0 0)",
-      "accent-bevel": "oklch(0.81732 0.11439 230)",
-      "disabled": "oklch(0.28502 0 0)",
-      "disabled-foreground": "oklch(0.54863 0 0)",
-      "accent-pressed": "oklch(0.70029 0.10192 230.522)",
-      "on-accent-pressed": "oklch(0.42706 0.05878 229.834)"
+      "sidebar-ring": "var(--ring)"
     }
   }
 }

@@ -93,7 +93,6 @@ export interface ThemeStyleInput {
     ripple: boolean;
     "pressed-opacity": number;
     "rest-opacity": number;
-    "accent-pressed-opacity"?: number;
     disabled: { content: number; fill: boolean };
   };
   duration: { shake: number };
@@ -799,17 +798,6 @@ function encodeSharedStyleOverrides(
     stateOut["rest-opacity"] = {
       $value: style.state["rest-opacity"],
       $description: desc("state.rest-opacity", baseRestOpacity.$description),
-    };
-  }
-
-  const baseAccentPressedOpacity = getAt(baseState, "accent-pressed-opacity");
-  if (
-    style.state["accent-pressed-opacity"] !== undefined &&
-    style.state["accent-pressed-opacity"] !== baseAccentPressedOpacity.$value
-  ) {
-    stateOut["accent-pressed-opacity"] = {
-      $value: style.state["accent-pressed-opacity"],
-      $description: desc("state.accent-pressed-opacity", baseAccentPressedOpacity.$description),
     };
   }
 

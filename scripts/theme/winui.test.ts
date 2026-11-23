@@ -30,6 +30,12 @@ const NON_COLOUR_THEME_KEYS = new Set(
 
 const hexOf = (value: string) => css(parseColor(value)).toLowerCase();
 
+/** `accentPressed`'s fill and ink: `AccentFillColorTertiary` and `TextOnAccentFillColorSecondary` composited. */
+const pressedPair = {
+  light: { fill: "oklch(0.5773 0.13223 250.006)", ink: "oklch(0.87245 0.03754 247.003)" },
+  dark: { fill: "oklch(0.70029 0.10192 230.522)", ink: "oklch(0.42706 0.05878 229.834)" },
+};
+
 function relativeLuminance(oklchValue: string): number {
   const { r, g, b, a } = parseColor(oklchValue);
   if (a !== undefined && a < 1) {
@@ -304,10 +310,12 @@ describe("WCAG contrast for default accent", () => {
         ).toBeGreaterThanOrEqual(4.5);
       }
       // `TextOnAccentFillColorSecondary` (0.7 white light / 0.5 black dark) on `AccentFillColorTertiary`
-      // is WinUI 3's genuine subtle pressed ink state (~2.95–3.10 contrast).
+      // is WinUI 3's genuine subtle pressed ink state (~2.95–3.10 contrast). Both are the
+      // `accentPressed` finish's fill and ink, which no token holds: they are WinUI's own composites.
+      const pressed = pressedPair[appearance];
       expect(
-        wcagContrast(s["on-accent-pressed"], s["accent-pressed"]),
-        `${appearance} on-accent-pressed/accent-pressed`,
+        wcagContrast(pressed.ink, pressed.fill),
+        `${appearance} accentPressed ink/fill`,
       ).toBeGreaterThanOrEqual(2.8);
     });
   }
@@ -351,29 +359,32 @@ describe("compiled winui theme files", () => {
     expect(files.semantics.finishes.light.modal?.shadow).toContain("0 64px 128px");
     expect(hexOf(String(files.semantics.finishes.light.modal?.["border-color"]))).toBe("#c1c1c1");
     expect(hexOf(String(files.semantics.finishes.dark.modal?.["border-color"]))).toBe("#424242");
-    expect(files.semantics.state["accent-pressed-opacity"]).toBe(1);
     expect(files.semantics.finishes.shared.raised).toMatchObject({
       "border-color": "{border}",
       shadow: "none",
     });
     expect(files.semantics.finishes.light.raised).toMatchObject({
       "border-top-color": "{border}",
-      "border-bottom-color": "{bevel}",
+      "border-bottom-color": "oklch(0.84522 0 0)",
     });
     expect(files.semantics.finishes.dark.raised).toMatchObject({
-      "border-top-color": "{bevel}",
+      "border-top-color": "oklch(0.32897 0 0)",
       "border-bottom-color": "{border}",
     });
     expect(files.semantics.finishes.shared.accent).toMatchObject({
-      "border-color": "{accent-bevel}",
-      "border-top-color": "{accent-bevel}",
       "border-bottom-color": "{brand-edge}",
       shadow: "none",
     });
+    expect(files.semantics.finishes.light.accent).toMatchObject({
+      "border-color": "oklch(0.52768 0.14982 252.341)",
+      "border-top-color": "oklch(0.52768 0.14982 252.341)",
+    });
+    expect(files.semantics.finishes.dark.accent).toMatchObject({
+      "border-color": "oklch(0.81732 0.11439 230)",
+      "border-top-color": "oklch(0.81732 0.11439 230)",
+    });
     expect(files.semantics.finishes.shared.on).toMatchObject({
       background: "{primary}",
-      "border-color": "{accent-bevel}",
-      "border-top-color": "{accent-bevel}",
       "border-bottom-color": "{brand-edge}",
       foreground: "{primary-foreground}",
     });
@@ -384,15 +395,27 @@ describe("compiled winui theme files", () => {
       "border-color": "oklch(0.23075 0 0)",
     });
     expect(files.semantics.finishes.shared.accentPressed).toMatchObject({
-      background: "{accent-pressed}",
       "border-color": "transparent",
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
       shadow: "none",
     });
+    for (const appearance of ["light", "dark"] as const) {
+      expect(files.semantics.finishes[appearance].accentPressed).toMatchObject({
+        background: pressedPair[appearance].fill,
+        foreground: pressedPair[appearance].ink,
+      });
+    }
     expect(files.semantics.finishes.shared.disabled).toMatchObject({
-      background: "{disabled}",
       "border-color": "{border}",
+    });
+    expect(files.semantics.finishes.light.disabled).toMatchObject({
+      background: "oklch(0.97015 0 0)",
+      foreground: "oklch(0.68949 0 0)",
+    });
+    expect(files.semantics.finishes.dark.disabled).toMatchObject({
+      background: "oklch(0.28502 0 0)",
+      foreground: "oklch(0.54863 0 0)",
     });
 
     const kinds = tokenKinds(files.theme.cssVars);

@@ -63,12 +63,6 @@ colors:
     up-tint: "#0a924b1a"
     down-tint: "#e7000b1a"
     violet: "#743c98"
-    bevel: "#292e3821"
-    accent-bevel: "#161616af"
-    disabled: "#ffffff8c"
-    disabled-foreground: "#5b5b5b"
-    accent-pressed: "#161616"
-    on-accent-pressed: "#fafafa"
   dark:
     background: "#0d0d0d"
     foreground: "#fafafa"
@@ -126,12 +120,6 @@ colors:
     up-tint: "#4ac7771a"
     down-tint: "#ff64671a"
     violet: "#c8a5f0"
-    bevel: "#ffffff1c"
-    accent-bevel: "#f4f4f4aa"
-    disabled: "#ffffff12"
-    disabled-foreground: "#a4a4a4"
-    accent-pressed: "#ebebeb"
-    on-accent-pressed: "#121212"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -341,7 +329,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`track`** (light `#292e3826`, dark `#ffffff21`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#f5f5f5`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f9fb`, dark `#1a1a1a`): High-contrast surface for toasts and tooltips.
-- **`disabled`** (light `#ffffff8c`, dark `#ffffff12`): Disabled control container surface.
 
 ### Ink
 
@@ -356,7 +343,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`sidebar-accent-foreground`** (light `#0d0d0d`, dark `#fafafa`): Text and icon ink on active sidebar rows.
 - **`faint`** (light `#9e9e9e`, dark `#696969`): Low-emphasis text for placeholders, units, and tertiary labels.
 - **`inverse-foreground`** (light `#0d0d0d`, dark `#fafafa`): Primary text ink on inverse surfaces.
-- **`disabled-foreground`** (light `#5b5b5b`, dark `#a4a4a4`): Disabled control label and icon ink.
 
 ### Brand
 
@@ -368,8 +354,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`brand-edge`** (light `#161616af`, dark `#f4f4f4aa`): Primary button hairline mixed from --primary and --primary-edge.
 - **`brand-tint`** (light `#2eb1841f`, dark `#54d2a426`): Static translucent teal brand wash (--brand-muted).
 - **`inverse-brand`** (light `#fafafa`, dark `#121212`): Accent action color on inverse surfaces.
-- **`accent-pressed`** (light `#161616`, dark `#ebebeb`): Accent control fill while pressed.
-- **`on-accent-pressed`** (light `#fafafa`, dark `#121212`): Ink on pressed accent control fills.
 
 ### Status
 
@@ -399,8 +383,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`glass-edge`** (light `#3b42531a`, dark `#ffffff0f`): Hairline border on Solid Glass panes (--glass-edge).
 - **`line`** (light `#292e3821`, dark `#ffffff1c`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#16161639`, dark `#ffffff2e`): Translucent outer halo around focused controls.
-- **`bevel`** (light `#292e3821`, dark `#ffffff1c`): Directional control elevation bevel stroke.
-- **`accent-bevel`** (light `#161616af`, dark `#f4f4f4aa`): Accent control elevation top and side bevel stroke.
 
 ## Typography
 
@@ -485,10 +467,10 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.raised`** (backdropFilter: `none`): A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
-- **`finish.disabled`**: A disabled control container surface.
+- **`finish.disabled`**: A disabled control's container and its ink.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
-- **`finish.accentPressed`**: The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).
+- **`finish.accentPressed`**: The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.

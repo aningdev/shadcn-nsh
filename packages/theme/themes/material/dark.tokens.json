@@ -528,10 +528,6 @@
       "$value": 0.5,
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
     },
-    "accent-pressed-opacity": {
-      "$value": 1,
-      "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
-    },
     "disabled": {
       "$description": "M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).",
       "$extensions": {
@@ -1676,92 +1672,6 @@
         }
       },
       "$description": "Focus indicator ring color inside the sidebar."
-    },
-    "bevel": {
-      "$value": "{color.border}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Control elevation bevel stroke aliased to {color.border}."
-    },
-    "accent-bevel": {
-      "$value": "{color.brand-edge}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Accent bevel stroke aliased to {color.brand-edge}."
-    },
-    "disabled": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.91401,
-          0.01366,
-          314.754
-        ],
-        "alpha": 0.1,
-        "hex": "#e6e0e9"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 10,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Disabled control container fill (10% onSurface over transparent)."
-    },
-    "disabled-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.91401,
-          0.01366,
-          314.754
-        ],
-        "alpha": 0.38,
-        "hex": "#e6e0e9"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 38,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Disabled control content ink (38% onSurface over transparent)."
-    },
-    "accent-pressed": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Pressed accent fill aliased to {color.primary} (state layer applies press)."
-    },
-    "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Pressed accent ink aliased to {color.primary-foreground}."
     }
   },
   "finish": {
@@ -2512,25 +2422,43 @@
     },
     "disabled": {
       "$description": "M3 disabled filled/tonal button container (10% onSurface, flat with no shadow).",
-      "background": {
-        "$type": "color",
-        "$value": "{color.disabled}"
-      },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.disabled}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 0
           },
           {
-            "color": "{color.disabled}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 1
           }
         ],
         "$extensions": {
           "dev.aning.shadcn-nsh": {
-            "angle": 180
+            "angle": 180,
+            "transparentStops": [
+              0,
+              1
+            ]
           }
         }
       },
@@ -2591,6 +2519,50 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.91401,
+            0.01366,
+            314.754
+          ],
+          "alpha": 0.1,
+          "hex": "#e6e0e9"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.foreground}",
+              "alpha": 0.1
+            }
+          }
+        }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.91401,
+            0.01366,
+            314.754
+          ],
+          "alpha": 0.38,
+          "hex": "#e6e0e9"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.foreground}",
+              "alpha": 0.38
+            }
+          }
         }
       }
     },
@@ -2838,17 +2810,17 @@
       "$description": "M3 pressed accent surface (state layer + ripple handles press).",
       "background": {
         "$type": "color",
-        "$value": "{color.accent-pressed}"
+        "$value": "{color.primary}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.accent-pressed}",
+            "color": "{color.primary}",
             "position": 0
           },
           {
-            "color": "{color.accent-pressed}",
+            "color": "{color.primary}",
             "position": 1
           }
         ],
@@ -2893,6 +2865,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
       },
       "border-color": {
         "$type": "color",

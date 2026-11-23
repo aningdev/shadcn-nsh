@@ -236,12 +236,6 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     "up-tint": tints("up"),
     "down-tint": tints("destructive"),
     violet: o.violet,
-    bevel: "var(--border)",
-    "accent-bevel": "var(--brand-edge)",
-    disabled: "var(--raised)",
-    "disabled-foreground": "var(--muted-foreground)",
-    "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--primary-foreground)",
   };
 }
 
@@ -312,7 +306,10 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
       "border-bottom-color": "transparent",
       foreground: alias("foreground"),
     }),
-    disabled: surface(alias("disabled"), { "border-color": alias("border") }),
+    disabled: surface(alias("raised"), {
+      "border-color": alias("border"),
+      foreground: alias("muted-foreground"),
+    }),
     light: surface(alias("primary"), {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
@@ -321,10 +318,18 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
     }),
-    accentPressed: surface(alias("accent-pressed"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-    }),
+    // A press on the accent keeps the fill at 88 %, in the colour itself, so the border and the
+    // shadow stay full where a whole-view opacity used to fade them too.
+    accentPressed: {
+      ...surface("oklch(from {primary} l c h / 0.88)", {
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
+        foreground: alias("primary-foreground"),
+      }),
+      // The fill shows through the clear gradient: the same translucent colour twice would
+      // double its alpha.
+      gradient: "linear-gradient(180deg, transparent 0%, transparent 100%)",
+    },
     // A rail has no lip of its own (shadcn draws the track flat): the edge comes from the theme's
     // `border`, and `theme.ts`'s `insetEdge` keeps this `none` from voiding it.
     track: { shadow: "none", "border-color": alias("border") },

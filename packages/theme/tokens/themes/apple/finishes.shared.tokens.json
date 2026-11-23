@@ -491,20 +491,20 @@
       }
     },
     "disabled": {
-      "$description": "A disabled control container surface.",
+      "$description": "A disabled control's container and its ink.",
       "background": {
         "$type": "color",
-        "$value": "{color.disabled}"
+        "$value": "{color.raised}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.disabled}",
+            "color": "{color.raised}",
             "position": 0
           },
           {
-            "color": "{color.disabled}",
+            "color": "{color.raised}",
             "position": 1
           }
         ],
@@ -545,6 +545,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -765,26 +769,33 @@
       }
     },
     "accentPressed": {
-      "$description": "The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).",
-      "background": {
-        "$type": "color",
-        "$value": "{color.accent-pressed}"
-      },
+      "$description": "The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.",
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.accent-pressed}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 0
           },
           {
-            "color": "{color.accent-pressed}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 1
           }
         ],
         "$extensions": {
           "dev.aning.shadcn-nsh": {
-            "angle": 180
+            "angle": 180,
+            "transparentStops": [0, 1]
           }
         }
       },
@@ -819,6 +830,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
       },
       "border-color": {
         "$type": "color",

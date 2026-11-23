@@ -528,10 +528,6 @@
       "$value": 0.5,
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
     },
-    "accent-pressed-opacity": {
-      "$value": 0.88,
-      "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
-    },
     "disabled": {
       "$description": "Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.",
       "$extensions": {
@@ -1669,60 +1665,6 @@
           "role": "chrome"
         }
       }
-    },
-    "bevel": {
-      "$value": "{color.border}",
-      "$description": "Directional control elevation bevel stroke.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      }
-    },
-    "accent-bevel": {
-      "$value": "{color.brand-edge}",
-      "$description": "Accent control elevation top and side bevel stroke.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      }
-    },
-    "disabled": {
-      "$value": "{color.raised}",
-      "$description": "Disabled control container surface.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      }
-    },
-    "disabled-foreground": {
-      "$value": "{color.muted-foreground}",
-      "$description": "Disabled control label and icon ink.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      }
-    },
-    "accent-pressed": {
-      "$value": "{color.primary}",
-      "$description": "Accent control fill while pressed.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      }
-    },
-    "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
-      "$description": "Ink on pressed accent control fills.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      }
     }
   },
   "finish": {
@@ -2351,20 +2293,20 @@
       }
     },
     "disabled": {
-      "$description": "A disabled control container surface.",
+      "$description": "A disabled control's container and its ink.",
       "background": {
         "$type": "color",
-        "$value": "{color.disabled}"
+        "$value": "{color.raised}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.disabled}",
+            "color": "{color.raised}",
             "position": 0
           },
           {
-            "color": "{color.disabled}",
+            "color": "{color.raised}",
             "position": 1
           }
         ],
@@ -2410,6 +2352,10 @@
           }
         }
       },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
+      },
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"
@@ -2450,7 +2396,7 @@
       },
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.accent-bevel}"
+        "$value": "{color.brand-edge}"
       },
       "border-bottom-color": {
         "$type": "color",
@@ -2583,7 +2529,7 @@
       },
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.accent-bevel}"
+        "$value": "{color.brand-edge}"
       },
       "border-bottom-color": {
         "$type": "color",
@@ -2687,28 +2633,50 @@
       }
     },
     "accentPressed": {
-      "$description": "The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).",
-      "background": {
-        "$type": "color",
-        "$value": "{color.accent-pressed}"
-      },
+      "$description": "The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.",
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.accent-pressed}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 0
           },
           {
-            "color": "{color.accent-pressed}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 1
           }
         ],
         "$extensions": {
           "dev.aning.shadcn-nsh": {
-            "angle": 180
+            "angle": 180,
+            "transparentStops": [
+              0,
+              1
+            ]
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -2716,7 +2684,7 @@
       },
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.accent-bevel}"
+        "$value": "{color.brand-edge}"
       },
       "border-bottom-color": {
         "$type": "color",
@@ -2725,6 +2693,28 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.88837,
+            0.16324,
+            123.959
+          ],
+          "alpha": 0.88,
+          "hex": "#c4ec6a"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.primary}",
+              "alpha": 0.88
+            }
+          }
         }
       },
       "shadow": {

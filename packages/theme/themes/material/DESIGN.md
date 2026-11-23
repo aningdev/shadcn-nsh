@@ -63,12 +63,6 @@ colors:
     up-tint: "#138a5a1f"
     down-tint: "#b3261e1f"
     violet: "#7d5260"
-    bevel: "#cac4d0"
-    accent-bevel: "#cac4d0"
-    disabled: "#1d1b201a"
-    disabled-foreground: "#1d1b2061"
-    accent-pressed: "#6750a4"
-    on-accent-pressed: "#ffffff"
   dark:
     background: "#141218"
     foreground: "#e6e0e9"
@@ -126,12 +120,6 @@ colors:
     up-tint: "#45d49a1f"
     down-tint: "#f2b8b51f"
     violet: "#efb8c8"
-    bevel: "#49454f"
-    accent-bevel: "#49454f"
-    disabled: "#e6e0e91a"
-    disabled-foreground: "#e6e0e961"
-    accent-pressed: "#d0bcff"
-    on-accent-pressed: "#381e72"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -341,7 +329,6 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`track`** (light `#e6e0e9`, dark `#36343b`): Switch and slider track fill (M3 surfaceContainerHighest).
 - **`knob`** (light `#79747e`, dark `#938f99`): Unchecked switch thumb fill (M3 outline).
 - **`inverse`** (light `#322f35`, dark `#e6e0e9`): Inverse surface for snackbars and tooltips (M3 inverseSurface).
-- **`disabled`** (light `#1d1b201a`, dark `#e6e0e91a`): Disabled control container fill (10% onSurface over transparent).
 
 ### Ink
 
@@ -356,7 +343,6 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`sidebar-accent-foreground`** (light `#4a4458`, dark `#e8def8`): Sidebar active item text ink (M3 Expressive onSecondaryContainer).
 - **`faint`** (light `#79747e`, dark `#938f99`): Quiet caption/placeholder ink (M3 outline).
 - **`inverse-foreground`** (light `#f5eff7`, dark `#322f35`): Ink on inverse surfaces (M3 inverseOnSurface).
-- **`disabled-foreground`** (light `#1d1b2061`, dark `#e6e0e961`): Disabled control content ink (38% onSurface over transparent).
 
 ### Brand
 
@@ -368,8 +354,6 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`brand-edge`** (light `#cac4d0`, dark `#49454f`): Brand container outline (M3 outlineVariant).
 - **`brand-tint`** (light `#e8def8`, dark `#4a4458`): Opaque selected chip/tile fill (M3 secondaryContainer).
 - **`inverse-brand`** (light `#d0bcff`, dark `#6750a4`): Brand action ink on inverse surfaces (M3 inversePrimary).
-- **`accent-pressed`** (light `#6750a4`, dark `#d0bcff`): Pressed accent fill aliased to {color.primary} (state layer applies press).
-- **`on-accent-pressed`** (light `#ffffff`, dark `#381e72`): Pressed accent ink aliased to {color.primary-foreground}.
 
 ### Status
 
@@ -399,8 +383,6 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`glass-edge`** (light `#cac4d0`, dark `#49454f`): Overlay outline edge (M3 outlineVariant).
 - **`line`** (light `#cac4d0`, dark `#49454f`): Inset divider hairline (M3 outlineVariant).
 - **`ring-halo`** (light `#625b7133`, dark `#ccc2dc33`): Outer focus ring halo (20% ring color over transparent).
-- **`bevel`** (light `#cac4d0`, dark `#49454f`): Control elevation bevel stroke aliased to {color.border}.
-- **`accent-bevel`** (light `#cac4d0`, dark `#49454f`): Accent bevel stroke aliased to {color.brand-edge}.
 
 ## Typography
 

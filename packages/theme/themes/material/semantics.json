@@ -190,7 +190,6 @@
     "ripple": true,
     "pressed-opacity": 1,
     "rest-opacity": 0.5,
-    "accent-pressed-opacity": 1,
     "disabled": {
       "content": 0.38,
       "fill": true
@@ -296,9 +295,10 @@
         "border-bottom-color": "transparent"
       },
       "disabled": {
-        "background": "{disabled}",
-        "gradient": "linear-gradient(180deg, {disabled} 0%, {disabled} 100%)",
+        "background": "oklch(from {foreground} l c h / 0.1)",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
         "shadow": "none",
+        "foreground": "oklch(from {foreground} l c h / 0.38)",
         "border-color": "transparent",
         "material": null
       },
@@ -321,12 +321,13 @@
         "shadow": "none"
       },
       "accentPressed": {
-        "background": "{accent-pressed}",
-        "gradient": "linear-gradient(180deg, {accent-pressed} 0%, {accent-pressed} 100%)",
+        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
+        "foreground": "{primary-foreground}",
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent",
         "material": null,
+        "background": "{primary}",
         "shadow": "none"
       },
       "track": {

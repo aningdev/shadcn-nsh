@@ -506,10 +506,6 @@
       "$value": 0.5,
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
     },
-    "accent-pressed-opacity": {
-      "$value": 1,
-      "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
-    },
     "disabled": {
       "$description": "WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.",
       "$extensions": {
@@ -1669,108 +1665,6 @@
         }
       },
       "$description": "Library-retained violet data-series hue (no WinUI equivalent)."
-    },
-    "bevel": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.84522,
-          0,
-          0
-        ],
-        "hex": "#cccccc"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base)."
-    },
-    "accent-bevel": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.52768,
-          0.14982,
-          252.341
-        ],
-        "hex": "#146cbe"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Accent button top/side bevel stroke (WinUI ControlStrokeColorOnAccentDefault composited over primary)."
-    },
-    "disabled": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.97015,
-          0,
-          0
-        ],
-        "hex": "#f5f5f5"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Disabled control container fill (WinUI ControlFillColorDisabled composited over base)."
-    },
-    "disabled-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.68949,
-          0,
-          0
-        ],
-        "hex": "#9b9b9b"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base)."
-    },
-    "accent-pressed": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.5773,
-          0.13223,
-          250.006
-        ],
-        "hex": "#317dc4"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Pressed accent control fill (WinUI AccentFillColorTertiary composited over base)."
-    },
-    "on-accent-pressed": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.87245,
-          0.03754,
-          247.003
-        ],
-        "hex": "#c2d8ed"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed)."
     }
   },
   "finish": {
@@ -2098,7 +1992,15 @@
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.bevel}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.84522,
+            0,
+            0
+          ],
+          "hex": "#cccccc"
+        }
       }
     },
     "hover": {
@@ -2176,7 +2078,15 @@
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.bevel}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.84522,
+            0,
+            0
+          ],
+          "hex": "#cccccc"
+        }
       }
     },
     "pressed": {
@@ -2263,28 +2173,6 @@
     },
     "disabled": {
       "$description": "WinUI 3 disabled control container using ControlFillColorDisabled and ControlStrokeColorDefault border.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.disabled}"
-      },
-      "gradient": {
-        "$type": "gradient",
-        "$value": [
-          {
-            "color": "{color.disabled}",
-            "position": 0
-          },
-          {
-            "color": "{color.disabled}",
-            "position": 1
-          }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "angle": 180
-          }
-        }
-      },
       "shadow": {
         "$type": "shadow",
         "$value": {
@@ -2328,6 +2216,64 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.97015,
+            0,
+            0
+          ],
+          "hex": "#f5f5f5"
+        }
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0.97015,
+                0,
+                0
+              ],
+              "hex": "#f5f5f5"
+            },
+            "position": 0
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0.97015,
+                0,
+                0
+              ],
+              "hex": "#f5f5f5"
+            },
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.68949,
+            0,
+            0
+          ],
+          "hex": "#9b9b9b"
         }
       }
     },
@@ -2391,14 +2337,6 @@
           }
         }
       },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
       "border-bottom-color": {
         "$type": "color",
         "$value": "{color.brand-edge}"
@@ -2406,6 +2344,30 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.52768,
+            0.14982,
+            252.341
+          ],
+          "hex": "#146cbe"
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.52768,
+            0.14982,
+            252.341
+          ],
+          "hex": "#146cbe"
         }
       }
     },
@@ -2469,14 +2431,6 @@
           }
         }
       },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
       "border-bottom-color": {
         "$type": "color",
         "$value": "{color.brand-edge}"
@@ -2485,32 +2439,34 @@
         "dev.aning.shadcn-nsh": {
           "material": null
         }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.52768,
+            0.14982,
+            252.341
+          ],
+          "hex": "#146cbe"
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.52768,
+            0.14982,
+            252.341
+          ],
+          "hex": "#146cbe"
+        }
       }
     },
     "accentPressed": {
       "$description": "WinUI 3 pressed accent control surface using AccentFillColorTertiary and transparent directional borders (AccentButtonBorderBrushPressed -> ControlFillColorTransparentBrush, WinUI 2.7.0 Button_themeresources.xaml).",
-      "background": {
-        "$type": "color",
-        "$value": "{color.accent-pressed}"
-      },
-      "gradient": {
-        "$type": "gradient",
-        "$value": [
-          {
-            "color": "{color.accent-pressed}",
-            "position": 0
-          },
-          {
-            "color": "{color.accent-pressed}",
-            "position": 1
-          }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "angle": 180
-          }
-        }
-      },
       "shadow": {
         "$type": "shadow",
         "$value": {
@@ -2604,6 +2560,64 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.5773,
+            0.13223,
+            250.006
+          ],
+          "hex": "#317dc4"
+        }
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0.5773,
+                0.13223,
+                250.006
+              ],
+              "hex": "#317dc4"
+            },
+            "position": 0
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0.5773,
+                0.13223,
+                250.006
+              ],
+              "hex": "#317dc4"
+            },
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.87245,
+            0.03754,
+            247.003
+          ],
+          "hex": "#c2d8ed"
         }
       }
     },
@@ -3245,14 +3259,6 @@
         "$type": "color",
         "$value": "{color.primary-foreground}"
       },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
       "border-bottom-color": {
         "$type": "color",
         "$value": "{color.brand-edge}"
@@ -3260,6 +3266,30 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.52768,
+            0.14982,
+            252.341
+          ],
+          "hex": "#146cbe"
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.52768,
+            0.14982,
+            252.341
+          ],
+          "hex": "#146cbe"
         }
       }
     },

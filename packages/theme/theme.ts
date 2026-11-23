@@ -277,7 +277,6 @@ export interface Style {
     /** Opacity of a passive indicator at rest (a scrollbar's thumb), `rest-opacity`. */
     "rest-opacity": number;
     "pressed-opacity": number;
-    "accent-pressed-opacity": number;
     disabled: { content: number; fill: boolean };
   };
   duration: {
@@ -617,18 +616,6 @@ export interface Palette {
   inverseForeground: string;
   /** The accent on `inverse`: a toast's action. */
   inverseBrand: string;
-  /** Directional control elevation bevel stroke. */
-  bevel: string;
-  /** Accent control elevation top and side bevel stroke. */
-  accentBevel: string;
-  /** Disabled control container surface. */
-  disabled: string;
-  /** Disabled control label and icon ink. */
-  disabledForeground: string;
-  /** Accent control fill while pressed. */
-  accentPressed: string;
-  /** Ink on pressed accent control fills. */
-  onAccentPressed: string;
   /** The tone colors: information, a warning, a failure, a gain, a loss. */
   info: string;
   warn: string;
@@ -686,12 +673,6 @@ export const colors: Palette = tokens<keyof Palette>({
   inverse: "inverse",
   inverseForeground: "inverse-foreground",
   inverseBrand: "inverse-brand",
-  bevel: "bevel",
-  accentBevel: "accent-bevel",
-  disabled: "disabled",
-  disabledForeground: "disabled-foreground",
-  accentPressed: "accent-pressed",
-  onAccentPressed: "on-accent-pressed",
 });
 
 /**

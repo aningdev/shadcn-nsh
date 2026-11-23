@@ -526,10 +526,6 @@
       "$value": 0.5,
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
     },
-    "accent-pressed-opacity": {
-      "$value": 0.88,
-      "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
-    },
     "disabled": {
       "$description": "Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.",
       "$extensions": {
@@ -1663,60 +1659,6 @@
         }
       },
       "$description": "Focus indicator ring color inside the sidebar."
-    },
-    "bevel": {
-      "$value": "{color.border}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Directional control elevation bevel stroke."
-    },
-    "accent-bevel": {
-      "$value": "{color.brand-edge}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Accent control elevation top and side bevel stroke."
-    },
-    "disabled": {
-      "$value": "{color.raised}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Disabled control container surface."
-    },
-    "disabled-foreground": {
-      "$value": "{color.muted-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Disabled control label and icon ink."
-    },
-    "accent-pressed": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Accent control fill while pressed."
-    },
-    "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Ink on pressed accent control fills."
     }
   },
   "finish": {
@@ -2374,20 +2316,20 @@
       }
     },
     "disabled": {
-      "$description": "A disabled control container surface.",
+      "$description": "A disabled control's container and its ink.",
       "background": {
         "$type": "color",
-        "$value": "{color.disabled}"
+        "$value": "{color.raised}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.disabled}",
+            "color": "{color.raised}",
             "position": 0
           },
           {
-            "color": "{color.disabled}",
+            "color": "{color.raised}",
             "position": 1
           }
         ],
@@ -2432,6 +2374,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -2817,7 +2763,7 @@
       }
     },
     "accentPressed": {
-      "$description": "The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).",
+      "$description": "The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.",
       "gradient": {
         "$type": "gradient",
         "$value": [
@@ -2858,6 +2804,10 @@
           }
         }
       },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
+      },
       "border-color": {
         "$type": "color",
         "$value": "{color.brand-edge}"
@@ -2891,7 +2841,7 @@
           "dev.aning.shadcn-nsh": {
             "colorOp": {
               "op": "alpha",
-              "color": "{color.accent-pressed}",
+              "color": "{color.primary}",
               "alpha": 0.86
             }
           }

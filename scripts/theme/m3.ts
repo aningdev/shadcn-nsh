@@ -338,12 +338,6 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "up-tint": tintMix("up"),
     "down-tint": tintMix("destructive"),
     violet: c(p.tertiary),
-    bevel: "var(--border)",
-    "accent-bevel": "var(--brand-edge)",
-    disabled: "color-mix(in srgb, var(--foreground) 10%, transparent)",
-    "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
-    "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--primary-foreground)",
   };
 }
 
@@ -466,7 +460,15 @@ function finishes(modalFill: string): Record<string, Record<string, unknown>> {
       foreground: alias("foreground"),
       material: level1,
     }),
-    disabled: surface(alias("disabled")),
+    // M3's disabled container: `onSurface` at 10 % over the surface under it, and its label at
+    // 38 %.
+    disabled: {
+      ...surface("oklch(from {foreground} l c h / 0.1)", {
+        foreground: "oklch(from {foreground} l c h / 0.38)",
+      }),
+      // One wash over the surface, so the gradient stays clear instead of stacking the alpha twice.
+      gradient: "linear-gradient(180deg, transparent 0%, transparent 100%)",
+    },
     light: surface(alias("primary"), {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
@@ -475,9 +477,12 @@ function finishes(modalFill: string): Record<string, Record<string, unknown>> {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
     }),
-    accentPressed: surface(alias("accent-pressed"), {
+    // A press is the theme's own state layer and ripple over the accent, not a fill of its own: the
+    // accent's fill, undimmed (this theme dims no accent press).
+    accentPressed: surface(alias("primary"), {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      foreground: alias("primary-foreground"),
     }),
     track: { shadow: "none", "border-color": alias("input"), material: null },
     fill: {
@@ -650,7 +655,6 @@ export const m3Style = {
     ripple: true,
     "pressed-opacity": 1,
     "rest-opacity": 0.5,
-    "accent-pressed-opacity": 1,
     disabled: { content: 0.38, fill: true },
   },
   duration: { shake: 500 },
@@ -723,12 +727,6 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     "up-tint": "Translucent positive wash (12% up over transparent).",
     "down-tint": "Translucent negative wash (12% down over transparent).",
     violet: "Tertiary accent color (M3 tertiary).",
-    bevel: "Control elevation bevel stroke aliased to {color.border}.",
-    "accent-bevel": "Accent bevel stroke aliased to {color.brand-edge}.",
-    disabled: "Disabled control container fill (10% onSurface over transparent).",
-    "disabled-foreground": "Disabled control content ink (38% onSurface over transparent).",
-    "accent-pressed": "Pressed accent fill aliased to {color.primary} (state layer applies press).",
-    "on-accent-pressed": "Pressed accent ink aliased to {color.primary-foreground}.",
   };
 
   return {

@@ -366,28 +366,6 @@
     },
     "disabled": {
       "$description": "WinUI 3 disabled control container using ControlFillColorDisabled and ControlStrokeColorDefault border.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.disabled}"
-      },
-      "gradient": {
-        "$type": "gradient",
-        "$value": [
-          {
-            "color": "{color.disabled}",
-            "position": 0
-          },
-          {
-            "color": "{color.disabled}",
-            "position": 1
-          }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "angle": 180
-          }
-        }
-      },
       "shadow": {
         "$type": "shadow",
         "$value": {
@@ -486,14 +464,6 @@
           }
         }
       },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
       "border-bottom-color": {
         "$type": "color",
         "$value": "{color.brand-edge}"
@@ -560,14 +530,6 @@
           }
         }
       },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
       "border-bottom-color": {
         "$type": "color",
         "$value": "{color.brand-edge}"
@@ -580,28 +542,6 @@
     },
     "accentPressed": {
       "$description": "WinUI 3 pressed accent control surface using AccentFillColorTertiary and transparent directional borders (AccentButtonBorderBrushPressed -> ControlFillColorTransparentBrush, WinUI 2.7.0 Button_themeresources.xaml).",
-      "background": {
-        "$type": "color",
-        "$value": "{color.accent-pressed}"
-      },
-      "gradient": {
-        "$type": "gradient",
-        "$value": [
-          {
-            "color": "{color.accent-pressed}",
-            "position": 0
-          },
-          {
-            "color": "{color.accent-pressed}",
-            "position": 1
-          }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "angle": 180
-          }
-        }
-      },
       "shadow": {
         "$type": "shadow",
         "$value": {
@@ -1157,14 +1097,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.primary-foreground}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.accent-bevel}"
       },
       "border-bottom-color": {
         "$type": "color",

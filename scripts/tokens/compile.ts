@@ -534,8 +534,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       "pressed-opacity": (stateGroup["pressed-opacity"] as Record<string, unknown>)
         .$value as number,
       "rest-opacity": (stateGroup["rest-opacity"] as Record<string, unknown>).$value as number,
-      "accent-pressed-opacity": (stateGroup["accent-pressed-opacity"] as Record<string, unknown>)
-        .$value as number,
       disabled: {
         content: (stateGroup.disabled as Record<string, Record<string, unknown>>).content!
           .$value as number,

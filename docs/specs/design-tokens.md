@@ -35,8 +35,8 @@ packages/theme/tokens/
       theme.resolver.json         # 该主题的 DTCG 2025.10 Resolver
       theme.tokens.json           # 外观与输入档位无关的 token（3 个层圆角、字体家族、C 层共用色、shared 状态/枚举等覆写）
       finishes.shared.tokens.json # 明暗共用的 finish 字段（含 material）
-      light.tokens.json           # 亮色外观：A/B 层 62 个颜色 + light 稀疏 finish 覆写
-      dark.tokens.json            # 暗色外观：A/B 层 62 个颜色 + dark 稀疏 finish 覆写
+      light.tokens.json           # 亮色外观：A/B 层 56 个颜色 + light 稀疏 finish 覆写
+      dark.tokens.json            # 暗色外观：A/B 层 56 个颜色 + dark 稀疏 finish 覆写
       pointer.tokens.json         # （可选，仅平台主题 apple/material/winui）覆盖 base 的 pointer 档字阶与尺寸
       touch.tokens.json           # （可选，仅平台主题 apple/material/winui）覆盖 base 的 touch 档字阶与尺寸
 ```
@@ -162,11 +162,11 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 | `media`             | `color.media`                | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
 | `on-media`          | `color.on-media`             | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
 
-#### B. `cssVars.light` 与 `cssVars.dark`（各 62 个，进入 `light.tokens.json` / `dark.tokens.json`）
+#### B. `cssVars.light` 与 `cssVars.dark`（各 56 个，进入 `light.tokens.json` / `dark.tokens.json`）
 
 - **A 层（31 个 shadcn 槽位）**：`background`, `foreground`, `card`, `card-foreground`, `popover`, `popover-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `muted`, `muted-foreground`, `accent`, `accent-foreground`, `destructive`, `border`, `input`, `ring`, `chart-1`, `chart-2`, `chart-3`, `chart-4`, `chart-5`, `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-primary-foreground`, `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring` → 全部映射至 `color.<name>`（`$type: "color"`）。其中直接写 `var(--x)` 的槽位（如 `card-foreground`、`popover-foreground`、`secondary`、`secondary-foreground`、`accent-foreground`、`sidebar-foreground`、`sidebar-primary`、`sidebar-primary-foreground`、`sidebar-accent`、`sidebar-accent-foreground`、`sidebar-ring`）写为 DTCG 花括号别名 `"{color.<x>}"`，编译回 `theme.json` 时还原为 `"var(--<x>)"`。
-- **B 层（31 个本库扩展槽位）**：
-  - 直接 oklch 颜色或 `var(--x)` 别名（23 个）：`inset`, `raised`, `glass-edge`（`{color.border}`）, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `knob`, `info`, `warn`, `up`, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-brand`（`{color.primary-foreground}`）, `violet`, `bevel`, `accent-bevel`, `disabled`, `disabled-foreground`, `accent-pressed`, `on-accent-pressed` → `color.<name>`（`$type: "color"`）。
+- **B 层（25 个本库扩展槽位）**：
+  - 直接 oklch 颜色或 `var(--x)` 别名（17 个）：`inset`, `raised`, `glass-edge`（`{color.border}`）, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `knob`, `info`, `warn`, `up`, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-brand`（`{color.primary-foreground}`）, `violet` → `color.<name>`（`$type: "color"`）。
   - 含 `color-mix(in srgb, ...)` 算术的颜色（8 个）：`hover`, `ring-halo`, `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` → `color.<name>`（`$type: "color"`），`$value` 放静态求值后的 DTCG oklch 对象（含 `hex`），`$extensions["dev.aning.shadcn-nsh"].colorOp` 放混合配方（见第 6 节）。注：在部分平台主题（如 `winui`）中这些键是静态色而非 `color-mix`，此时直接写 DTCG oklch 对象、不附 `colorOp`。
 
 ### 4.2 `semantics.json` → DTCG 2025.10

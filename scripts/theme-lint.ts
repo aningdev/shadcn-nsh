@@ -43,6 +43,7 @@ interface Finish {
   background?: string;
   gradient?: string;
   shadow?: string;
+  foreground?: string;
   "border-color"?: string;
   "border-top-color"?: string;
   "border-bottom-color"?: string;

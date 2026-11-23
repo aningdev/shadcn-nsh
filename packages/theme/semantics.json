@@ -190,7 +190,6 @@
     "ripple": false,
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
-    "accent-pressed-opacity": 0.88,
     "disabled": {
       "content": 0.5,
       "fill": false
@@ -258,9 +257,10 @@
         "material": null
       },
       "disabled": {
-        "background": "{disabled}",
-        "gradient": "linear-gradient(180deg, {disabled} 0%, {disabled} 100%)",
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
         "shadow": "none",
+        "foreground": "{muted-foreground}",
         "border-color": "{border}",
         "material": null
       },
@@ -268,7 +268,7 @@
         "background": "{primary}",
         "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
         "border-color": "{brand-edge}",
-        "border-top-color": "{accent-bevel}",
+        "border-top-color": "{brand-edge}",
         "border-bottom-color": "{brand-edge}",
         "material": null
       },
@@ -276,15 +276,15 @@
         "background": "{primary}",
         "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
         "border-color": "{brand-edge}",
-        "border-top-color": "{accent-bevel}",
+        "border-top-color": "{brand-edge}",
         "border-bottom-color": "{brand-edge}",
         "material": null
       },
       "accentPressed": {
-        "background": "{accent-pressed}",
-        "gradient": "linear-gradient(180deg, {accent-pressed} 0%, {accent-pressed} 100%)",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "foreground": "{primary-foreground}",
         "border-color": "{brand-edge}",
-        "border-top-color": "{accent-bevel}",
+        "border-top-color": "{brand-edge}",
         "border-bottom-color": "{brand-edge}",
         "material": null
       },
@@ -400,6 +400,7 @@
         "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
       },
       "accentPressed": {
+        "background": "oklch(from {primary} l c h / 0.88)",
         "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
       },
       "track": {
@@ -499,6 +500,7 @@
         "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
       },
       "accentPressed": {
+        "background": "oklch(from {primary} l c h / 0.88)",
         "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
       },
       "track": {

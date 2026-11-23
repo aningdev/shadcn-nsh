@@ -260,10 +260,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
                   : undefined,
             )
           : filled(variant)
-            ? {
-                ...finish.accentPressed,
-                opacity: themeStyle().state["accent-pressed-opacity"],
-              }
+            ? { ...finish.accentPressed }
             : variant === "destructive"
               ? { backgroundColor: alpha(colors.destructive, 0.22), boxShadow: "none" }
               : { ...finish.pressed };
@@ -289,11 +286,14 @@ function ink(live: Live<ButtonVariant>, o?: ButtonLookOptions) {
   const variant = read(live) ?? "secondary";
   const disabled = !!read(o?.disabled);
   if (disabled) {
-    if (themeStyle().state.disabled.fill) return colors.disabledForeground;
+    if (themeStyle().state.disabled.fill)
+      return finish.disabled.foreground ?? colors.mutedForeground;
     if (filled(variant)) return colors.mutedForeground;
   }
   if (filled(variant)) {
-    return read(o?.pressed) ? colors.onAccentPressed : colors.primaryForeground;
+    return read(o?.pressed)
+      ? (finish.accentPressed.foreground ?? colors.primaryForeground)
+      : colors.primaryForeground;
   }
   if (variant === "destructive") return colors.destructive;
   if (variant === "secondary" && read(o?.selected))
@@ -470,7 +470,8 @@ export function iconButtonGlyph(o: IconButtonLookOptions = {}) {
       return iconButtonDimensions(o).glyph;
     },
     get tint() {
-      if (read(o.disabled) && themeStyle().state.disabled.fill) return colors.disabledForeground;
+      if (read(o.disabled) && themeStyle().state.disabled.fill)
+        return finish.disabled.foreground ?? colors.mutedForeground;
       return read(o.selected)
         ? colors.brand
         : o.variant === "destructive"
@@ -580,7 +581,8 @@ export function roundButtonGlyph(
   return {
     size: roundSide(o) * ROUND_GLYPH_RATIO,
     get tint() {
-      if (read(o?.disabled) && themeStyle().state.disabled.fill) return colors.disabledForeground;
+      if (read(o?.disabled) && themeStyle().state.disabled.fill)
+        return finish.disabled.foreground ?? colors.mutedForeground;
       return variant === "default" ? colors.primaryForeground : colors.foreground;
     },
   };

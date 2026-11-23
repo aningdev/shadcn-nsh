@@ -735,88 +735,48 @@
         }
       },
       "$description": "Tertiary accent color (M3 tertiary)."
-    },
-    "bevel": {
-      "$value": "{color.border}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Control elevation bevel stroke aliased to {color.border}."
-    },
-    "accent-bevel": {
-      "$value": "{color.brand-edge}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Accent bevel stroke aliased to {color.brand-edge}."
-    },
-    "disabled": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.22652, 0.00999, 303.714],
-        "alpha": 0.1,
-        "hex": "#1d1b20"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 10,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Disabled control container fill (10% onSurface over transparent)."
-    },
-    "disabled-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.22652, 0.00999, 303.714],
-        "alpha": 0.38,
-        "hex": "#1d1b20"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 38,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Disabled control content ink (38% onSurface over transparent)."
-    },
-    "accent-pressed": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Pressed accent fill aliased to {color.primary} (state layer applies press)."
-    },
-    "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Pressed accent ink aliased to {color.primary-foreground}."
     }
   },
   "finish": {
     "$description": "Sparse light-mode surface finish overrides.",
+    "disabled": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.22652, 0.00999, 303.714],
+          "alpha": 0.1,
+          "hex": "#1d1b20"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.foreground}",
+              "alpha": 0.1
+            }
+          }
+        }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.22652, 0.00999, 303.714],
+          "alpha": 0.38,
+          "hex": "#1d1b20"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.foreground}",
+              "alpha": 0.38
+            }
+          }
+        }
+      }
+    },
     "modal": {
       "background": {
         "$type": "color",

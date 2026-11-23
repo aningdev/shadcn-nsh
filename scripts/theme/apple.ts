@@ -175,12 +175,6 @@ function section(p: ReturnType<typeof palette>) {
     "up-tint": tints("up"),
     "down-tint": tints("destructive"),
     violet: p.violet,
-    bevel: "var(--border)",
-    "accent-bevel": "var(--brand-edge)",
-    disabled: "var(--raised)",
-    "disabled-foreground": "var(--muted-foreground)",
-    "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--primary-foreground)",
   };
 }
 
@@ -254,7 +248,10 @@ function finishes(appearance: Appearance) {
       "border-bottom-color": "transparent",
       foreground: alias("foreground"),
     }),
-    disabled: surface(alias("disabled"), { "border-color": alias("border") }),
+    disabled: surface(alias("raised"), {
+      "border-color": alias("border"),
+      foreground: alias("muted-foreground"),
+    }),
     light: surface(alias("primary"), {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
@@ -263,10 +260,18 @@ function finishes(appearance: Appearance) {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
     }),
-    accentPressed: surface(alias("accent-pressed"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-    }),
+    // A press on the accent keeps its fill at 88 %, in the colour itself, so the border and the
+    // shadow stay full where a whole-view opacity used to fade them too.
+    accentPressed: {
+      ...surface("oklch(from {primary} l c h / 0.88)", {
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
+        foreground: alias("primary-foreground"),
+      }),
+      // The fill shows through the clear gradient: the same translucent colour twice would
+      // double its alpha.
+      gradient: "linear-gradient(180deg, transparent 0%, transparent 100%)",
+    },
     track: { shadow: "none", "border-color": "transparent" },
     fill: {
       background: "transparent",

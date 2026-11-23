@@ -365,7 +365,7 @@ function validateExtAtPath(
   }
 
   if (
-    /^finish\.[A-Za-z0-9-]+\.(?:background|border-color|border-top-color|border-bottom-color)$/.test(
+    /^finish\.[A-Za-z0-9-]+\.(?:background|foreground|border-color|border-top-color|border-bottom-color)$/.test(
       p,
     )
   ) {
@@ -715,7 +715,6 @@ function checkMergedSemantics(
     "state.overlay.pressed",
     "state.overlay.dragged",
     "state.pressed-opacity",
-    "state.accent-pressed-opacity",
     "state.disabled.content",
   ]) {
     const tok = getAtPath(resolved, unitPath);

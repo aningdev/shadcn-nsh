@@ -739,60 +739,6 @@
           "role": "status"
         }
       }
-    },
-    "bevel": {
-      "$value": "{color.border}",
-      "$description": "Directional control elevation bevel stroke.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      }
-    },
-    "accent-bevel": {
-      "$value": "{color.brand-edge}",
-      "$description": "Accent control elevation top and side bevel stroke.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      }
-    },
-    "disabled": {
-      "$value": "{color.raised}",
-      "$description": "Disabled control container surface.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      }
-    },
-    "disabled-foreground": {
-      "$value": "{color.muted-foreground}",
-      "$description": "Disabled control label and icon ink.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      }
-    },
-    "accent-pressed": {
-      "$value": "{color.primary}",
-      "$description": "Accent control fill while pressed.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      }
-    },
-    "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
-      "$description": "Ink on pressed accent control fills.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      }
     }
   },
   "finish": {
@@ -1289,6 +1235,24 @@
       }
     },
     "accentPressed": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.89637, 0.16627, 124.031],
+          "alpha": 0.88,
+          "hex": "#c6ef6a"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.primary}",
+              "alpha": 0.88
+            }
+          }
+        }
+      },
       "shadow": {
         "$type": "shadow",
         "$value": [

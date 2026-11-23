@@ -264,10 +264,6 @@
       "$value": 1,
       "$description": "Content stays full opacity when pressed (1; ripple/state layer shows press)."
     },
-    "accent-pressed-opacity": {
-      "$value": 1,
-      "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
-    },
     "disabled": {
       "$description": "M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).",
       "content": {

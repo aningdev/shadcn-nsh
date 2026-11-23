@@ -134,7 +134,7 @@ export function toggleLook(o?: ToggleLookOptions) {
             : outline
               ? {
                   backgroundColor: "transparent",
-                  borderColor: colors.disabled,
+                  borderColor: finish.disabled.borderColor ?? colors.raised,
                   boxShadow: "none",
                 }
               : { backgroundColor: "transparent", borderColor: "transparent", boxShadow: "none" }
@@ -182,7 +182,8 @@ export function toggleLook(o?: ToggleLookOptions) {
 
 /** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
 const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
-  if (read(disabled) && themeStyle().state.disabled.fill) return colors.disabledForeground;
+  if (read(disabled) && themeStyle().state.disabled.fill)
+    return finish.disabled.foreground ?? colors.mutedForeground;
   return read(pressed) ? (finish.on.foreground ?? colors.foreground) : colors.mutedForeground;
 };
 

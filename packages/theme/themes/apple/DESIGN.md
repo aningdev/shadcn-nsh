@@ -63,12 +63,6 @@ colors:
     up-tint: "#34c7591f"
     down-tint: "#ff3b301f"
     violet: "#af52de"
-    bevel: "#dcdcdd"
-    accent-bevel: "#dcdcdd"
-    disabled: "#efeff0"
-    disabled-foreground: "#8a8a8e"
-    accent-pressed: "#007aff"
-    on-accent-pressed: "#ffffff"
   dark:
     background: "#000000"
     foreground: "#ffffff"
@@ -126,12 +120,6 @@ colors:
     up-tint: "#30d1581f"
     down-tint: "#ff453a1f"
     violet: "#bf5af2"
-    bevel: "#353538"
-    accent-bevel: "#353538"
-    disabled: "#323236"
-    disabled-foreground: "#98989f"
-    accent-pressed: "#0a84ff"
-    on-accent-pressed: "#ffffff"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -341,7 +329,6 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`track`** (light `#e9e9eb`, dark `#39393d`): Switch and slider track (UIKit secondarySystemFill composited over card).
 - **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
 - **`inverse`** (light `#ffffff`, dark `#2c2c2e`): High-contrast surface for toasts and tooltips.
-- **`disabled`** (light `#efeff0`, dark `#323236`): Disabled control container surface.
 
 ### Ink
 
@@ -356,7 +343,6 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`sidebar-accent-foreground`** (light `#000000`, dark `#ffffff`): Text and icon ink on active sidebar rows.
 - **`faint`** (light `#c5c5c7`, dark `#5a5a5f`): Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel).
 - **`inverse-foreground`** (light `#000000`, dark `#ffffff`): Primary text ink on inverse surfaces.
-- **`disabled-foreground`** (light `#8a8a8e`, dark `#98989f`): Disabled control label and icon ink.
 
 ### Brand
 
@@ -368,8 +354,6 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`brand-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on primary accent-filled controls.
 - **`brand-tint`** (light `#007aff1f`, dark `#0a84ff1f`): Translucent brand wash (12% brand over transparent).
 - **`inverse-brand`** (`#ffffff`): Accent action color on inverse surfaces.
-- **`accent-pressed`** (light `#007aff`, dark `#0a84ff`): Accent control fill while pressed.
-- **`on-accent-pressed`** (`#ffffff`): Ink on pressed accent control fills.
 
 ### Status
 
@@ -399,8 +383,6 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`glass-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on glass, pill, and floating overlay surfaces.
 - **`line`** (light `#dcdcdd`, dark `#353538`): Inset divider hairline (UIKit hairline composited over card).
 - **`ring-halo`** (light `#007aff4d`, dark `#0a84ff4d`): Outer keyboard focus halo (30% ring color over transparent).
-- **`bevel`** (light `#dcdcdd`, dark `#353538`): Directional control elevation bevel stroke.
-- **`accent-bevel`** (light `#dcdcdd`, dark `#353538`): Accent control elevation top and side bevel stroke.
 
 ## Typography
 
@@ -485,10 +467,10 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.raised`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null}}`): Raised control surface with Liquid Glass material (regular) and hairline shadow.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
-- **`finish.disabled`**: A disabled control container surface.
+- **`finish.disabled`**: A disabled control's container and its ink.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
-- **`finish.accentPressed`**: The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).
+- **`finish.accentPressed`**: The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.

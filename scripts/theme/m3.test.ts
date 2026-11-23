@@ -226,12 +226,6 @@ describe("m3Roles", () => {
     expect(css(parseColor(baselineRoles.light["secondary-foreground"])).toUpperCase()).toBe(
       "#4A4458",
     );
-    expect(baselineRoles.light["disabled"]).toBe(
-      "color-mix(in srgb, var(--foreground) 10%, transparent)",
-    );
-    expect(baselineRoles.light["disabled-foreground"]).toBe(
-      "color-mix(in srgb, var(--foreground) 38%, transparent)",
-    );
     expect(css(parseColor(baselineRoles.light.inverse)).toUpperCase()).toBe("#322F35");
     expect(css(parseColor(baselineRoles.light["inverse-foreground"])).toUpperCase()).toBe(
       "#F5EFF7",
@@ -314,7 +308,11 @@ describe("compiled material theme files", () => {
     ).toEqual([]);
 
     expect(files.semantics.controls).toBe("material");
-    expect(files.semantics.state["accent-pressed-opacity"]).toBe(1);
+    // M3's disabled container and label are `onSurface` state layers, not tokens.
+    expect(files.semantics.finishes.shared.disabled).toMatchObject({
+      background: "oklch(from {foreground} l c h / 0.1)",
+      foreground: "oklch(from {foreground} l c h / 0.38)",
+    });
     expect(files.semantics.finishes.shared.section).toMatchObject({
       material: { android: { elevation: 1 } },
     });
@@ -327,9 +325,6 @@ describe("compiled material theme files", () => {
     });
     expect(files.semantics.finishes.dark.modal).toMatchObject({
       background: "oklch(0.2859 0.01293 298.633)",
-    });
-    expect(files.semantics.finishes.shared.disabled).toMatchObject({
-      background: "{disabled}",
     });
     expect(files.semantics.finishes.shared.grabber).toMatchObject({
       background: "oklch(from {muted-foreground} l c h / 0.4)",

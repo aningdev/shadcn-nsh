@@ -239,10 +239,6 @@
       "$value": 1,
       "$description": "Content stays full opacity when pressed (1; fill brush swap shows press)."
     },
-    "accent-pressed-opacity": {
-      "$value": 1,
-      "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
-    },
     "disabled": {
       "$description": "WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.",
       "content": {

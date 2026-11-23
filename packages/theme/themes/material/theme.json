@@ -67,13 +67,7 @@
       "destructive-tint": "oklch(0.92215 0.03006 22.785)",
       "up-tint": "color-mix(in srgb, var(--up) 12%, transparent)",
       "down-tint": "color-mix(in srgb, var(--destructive) 12%, transparent)",
-      "violet": "oklch(0.49039 0.06053 358.445)",
-      "bevel": "var(--border)",
-      "accent-bevel": "var(--brand-edge)",
-      "disabled": "color-mix(in srgb, var(--foreground) 10%, transparent)",
-      "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
-      "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--primary-foreground)"
+      "violet": "oklch(0.49039 0.06053 358.445)"
     },
     "dark": {
       "background": "oklch(0.18738 0.01241 300.422)",
@@ -131,13 +125,7 @@
       "sidebar-border": "var(--border)",
       "sidebar-primary": "var(--primary)",
       "sidebar-primary-foreground": "var(--primary-foreground)",
-      "sidebar-ring": "var(--ring)",
-      "bevel": "var(--border)",
-      "accent-bevel": "var(--brand-edge)",
-      "disabled": "color-mix(in srgb, var(--foreground) 10%, transparent)",
-      "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
-      "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--primary-foreground)"
+      "sidebar-ring": "var(--ring)"
     }
   }
 }

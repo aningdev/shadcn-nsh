@@ -332,13 +332,7 @@ export type WinuiAppearanceRole =
   | "destructive-tint"
   | "up-tint"
   | "down-tint"
-  | "violet"
-  | "bevel"
-  | "accent-bevel"
-  | "disabled"
-  | "disabled-foreground"
-  | "accent-pressed"
-  | "on-accent-pressed";
+  | "violet";
 
 export interface WinuiRoles {
   theme: Record<WinuiThemeRole, string>;
@@ -385,8 +379,6 @@ function buildAppearance(
   const destructiveTint = onBase(w.SystemFillColorCriticalBackground);
   // 10% accent wash composited opaque over the window base (no WinUI resource equivalent).
   const brandTint = over(withAlpha(primary, 0.1), background);
-  // WinUI `AccentFillColorTertiary` (`AccentFillColorDefault` @ 0.80 alpha) composited over base.
-  const accentPressed = over(withAlpha(primary, 0.8), background);
 
   return {
     background,
@@ -455,12 +447,6 @@ function buildAppearance(
     "up-tint": onBase(w.SystemFillColorSuccessBackground),
     "down-tint": destructiveTint,
     violet: LIBRARY_KEPT[appearance].violet,
-    bevel: onBase(w.ControlStrokeColorSecondary),
-    "accent-bevel": compositeWinui(w.ControlStrokeColorOnAccentDefault, primary),
-    disabled: onBase(w.ControlFillColorDisabled),
-    "disabled-foreground": onBase(w.TextFillColorDisabled),
-    "accent-pressed": accentPressed,
-    "on-accent-pressed": compositeWinui(w.TextOnAccentFillColorSecondary, accentPressed),
   };
 }
 
@@ -556,9 +542,21 @@ function themeLevel(roles: WinuiRoles): Record<string, string> {
  * All 23 finish roles for WinUI 3 (`{token}` references; `glass`, `menu`, and `tooltip` ask
  * Windows for `{ windows: { backdrop: "blur" } }` as the Acrylic stand-in).
  */
-function finishes(appearance: Appearance): Record<string, Record<string, unknown>> {
+function finishes(
+  appearance: Appearance,
+  tiers: WinuiAccent,
+): Record<string, Record<string, unknown>> {
   const w = WINUI[appearance];
   const onBase = (hex: string) => compositeWinui(hex, w.SolidBackgroundFillColorBase);
+  // The accent fill the accent finishes stand on (`AccentFillColorDefault`: Dark1 light, Light2
+  // dark), and the presses WinUI swaps it for rather than fading the control.
+  const primary = appearance === "light" ? tiers.dark1 : tiers.light2;
+  const accentPressed = over(withAlpha(primary, 0.8), toOklchText(w.SolidBackgroundFillColorBase));
+  // The elevation bevels: `ControlStrokeColorSecondary` on a neutral button and
+  // `ControlStrokeColorOnAccentDefault` composited over the accent on an accent one. They flip
+  // between light and dark, so a finish states the value and the theme splits it per appearance.
+  const bevel = onBase(w.ControlStrokeColorSecondary);
+  const accentBevel = compositeWinui(w.ControlStrokeColorOnAccentDefault, primary);
   const controlShadow = elevationShadow(2, appearance);
   const flyoutShadow = elevationShadow(32, appearance);
   const blurMaterial = { windows: { backdrop: "blur" as const } };
@@ -590,16 +588,16 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       ...surface(alias("raised"), {
         shadow: "none",
         "border-color": alias("border"),
-        "border-top-color": appearance === "light" ? alias("border") : alias("bevel"),
-        "border-bottom-color": appearance === "light" ? alias("bevel") : alias("border"),
+        "border-top-color": appearance === "light" ? alias("border") : bevel,
+        "border-bottom-color": appearance === "light" ? bevel : alias("border"),
       }),
       backdropFilter: "none",
     },
     hover: surface(alias("hover"), {
       shadow: "none",
       "border-color": alias("border"),
-      "border-top-color": appearance === "light" ? alias("border") : alias("bevel"),
-      "border-bottom-color": appearance === "light" ? alias("bevel") : alias("border"),
+      "border-top-color": appearance === "light" ? alias("border") : bevel,
+      "border-bottom-color": appearance === "light" ? bevel : alias("border"),
     }),
     pressed: surface(alias("muted"), {
       shadow: "none",
@@ -608,26 +606,33 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       "border-bottom-color": alias("border"),
       foreground: alias("muted-foreground"),
     }),
-    disabled: surface(alias("disabled"), { shadow: "none", "border-color": alias("border") }),
+    // The disabled fill and the disabled ink are WinUI brushes of their own (they flip between
+    // light and dark), so the finish states them instead of naming a colour.
+    disabled: surface(onBase(w.ControlFillColorDisabled), {
+      shadow: "none",
+      "border-color": alias("border"),
+      foreground: onBase(w.TextFillColorDisabled),
+    }),
     light: surface(alias("primary"), {
       shadow: "none",
-      "border-color": alias("accent-bevel"),
-      "border-top-color": alias("accent-bevel"),
+      "border-color": accentBevel,
+      "border-top-color": accentBevel,
       "border-bottom-color": alias("brand-edge"),
     }),
     accent: surface(alias("primary"), {
       shadow: "none",
-      "border-color": alias("accent-bevel"),
-      "border-top-color": alias("accent-bevel"),
+      "border-color": accentBevel,
+      "border-top-color": accentBevel,
       "border-bottom-color": alias("brand-edge"),
     }),
     // `AccentButtonBorderBrushPressed` -> `ControlFillColorTransparentBrush`
     // (`Button_themeresources.xaml` in `winui3/release/2.7.0`).
-    accentPressed: surface(alias("accent-pressed"), {
+    accentPressed: surface(accentPressed, {
       shadow: "none",
       "border-color": "transparent",
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      foreground: compositeWinui(w.TextOnAccentFillColorSecondary, accentPressed),
     }),
     track: { shadow: "none", "border-color": alias("input"), material: null },
     fill: {
@@ -644,8 +649,8 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
     thumb: surface(alias("popover"), { shadow: controlShadow, "border-color": alias("border") }),
     on: surface(alias("primary"), {
       shadow: "none",
-      "border-color": alias("accent-bevel"),
-      "border-top-color": alias("accent-bevel"),
+      "border-color": accentBevel,
+      "border-top-color": accentBevel,
       "border-bottom-color": alias("brand-edge"),
       foreground: alias("primary-foreground"),
     }),
@@ -800,7 +805,6 @@ export const winuiStyle = {
     ripple: false,
     "pressed-opacity": 1,
     "rest-opacity": 0.5,
-    "accent-pressed-opacity": 1,
     // Disabled containers switch to the dedicated disabled brush (`ControlFillColorDisabled` /
     // `TextFillColorDisabled`) when `fill: true`; `content: 0.36` matches `TextFillColorDisabled`.
     disabled: { content: 0.36, fill: true },
@@ -823,6 +827,7 @@ export const winuiStyle = {
 /** WinUI 3 (Windows 11) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
 export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGeneratorOutput {
   const roles = winuiRoles(accent);
+  const tiers = winuiAccent(accent);
   const colorDescs = {
     background: "Window base surface (WinUI SolidBackgroundFillColorBase).",
     foreground: "Primary text and icon ink (WinUI TextFillColorPrimary composited over base).",
@@ -893,18 +898,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "down-tint":
       "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base).",
     violet: "Library-retained violet data-series hue (no WinUI equivalent).",
-    bevel:
-      "Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base).",
-    "accent-bevel":
-      "Accent button top/side bevel stroke (WinUI ControlStrokeColorOnAccentDefault composited over primary).",
-    disabled:
-      "Disabled control container fill (WinUI ControlFillColorDisabled composited over base).",
-    "disabled-foreground":
-      "Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base).",
-    "accent-pressed":
-      "Pressed accent control fill (WinUI AccentFillColorTertiary composited over base).",
-    "on-accent-pressed":
-      "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed).",
   };
 
   return {
@@ -946,8 +939,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       dark: roles.dark,
     },
     finishes: {
-      light: finishes("light"),
-      dark: finishes("dark"),
+      light: finishes("light", tiers),
+      dark: finishes("dark", tiers),
     },
     descriptions: {
       sharedColors: {

@@ -63,12 +63,6 @@ colors:
     up-tint: "#4040401a"
     down-tint: "#e7000b1a"
     violet: "#262626"
-    bevel: "#e5e5e5"
-    accent-bevel: "#e5e5e5"
-    disabled: "#f5f5f5"
-    disabled-foreground: "#737373"
-    accent-pressed: "#171717"
-    on-accent-pressed: "#fafafa"
   dark:
     background: "#0a0a0a"
     foreground: "#fafafa"
@@ -126,12 +120,6 @@ colors:
     up-tint: "#e5e5e51a"
     down-tint: "#ff64671a"
     violet: "#fafafa"
-    bevel: "#ffffff1a"
-    accent-bevel: "#ffffff1a"
-    disabled: "#262626"
-    disabled-foreground: "#a1a1a1"
-    accent-pressed: "#e5e5e5"
-    on-accent-pressed: "#171717"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -341,7 +329,6 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`track`** (light `#f5f5f5`, dark `#262626`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#fafafa`): Switch thumb fill in the off state.
 - **`inverse`** (light `#ffffff`, dark `#171717`): High-contrast surface for toasts and tooltips.
-- **`disabled`** (light `#f5f5f5`, dark `#262626`): Disabled control container surface.
 
 ### Ink
 
@@ -356,7 +343,6 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`sidebar-accent-foreground`** (light `#0a0a0a`, dark `#fafafa`): Text and icon ink on active sidebar rows.
 - **`faint`** (`#a1a1a1`): Low-emphasis text for placeholders, units, and tertiary labels.
 - **`inverse-foreground`** (light `#0a0a0a`, dark `#fafafa`): Primary text ink on inverse surfaces.
-- **`disabled-foreground`** (light `#737373`, dark `#a1a1a1`): Disabled control label and icon ink.
 
 ### Brand
 
@@ -368,8 +354,6 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`brand-edge`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline border aliased to {color.border} (shadcn draws no separate brand edge).
 - **`brand-tint`** (light `#1717171a`, dark `#e5e5e51a`): Translucent brand-accent wash behind selected rows and tinted bubbles.
 - **`inverse-brand`** (light `#fafafa`, dark `#171717`): Accent action color on inverse surfaces.
-- **`accent-pressed`** (light `#171717`, dark `#e5e5e5`): Accent control fill while pressed.
-- **`on-accent-pressed`** (light `#fafafa`, dark `#171717`): Ink on pressed accent control fills.
 
 ### Status
 
@@ -399,8 +383,6 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`glass-edge`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline border aliased to {color.border} (shadcn draws no separate glass edge).
 - **`line`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#a1a1a180`, dark `#73737380`): Translucent outer halo around focused controls.
-- **`bevel`** (light `#e5e5e5`, dark `#ffffff1a`): Directional control elevation bevel stroke.
-- **`accent-bevel`** (light `#e5e5e5`, dark `#ffffff1a`): Accent control elevation top and side bevel stroke.
 
 ## Typography
 
@@ -485,10 +467,10 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.raised`** (backdropFilter: `none`): A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
-- **`finish.disabled`**: A disabled control container surface.
+- **`finish.disabled`**: A disabled control's container and its ink.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
-- **`finish.accentPressed`**: The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).
+- **`finish.accentPressed`**: The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.

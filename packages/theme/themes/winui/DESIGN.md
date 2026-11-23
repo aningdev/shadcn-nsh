@@ -63,12 +63,6 @@ colors:
     up-tint: "#dff6dd"
     down-tint: "#fde7e9"
     violet: "#6e56c4"
-    bevel: "#cccccc"
-    accent-bevel: "#146cbe"
-    disabled: "#f5f5f5"
-    disabled-foreground: "#9b9b9b"
-    accent-pressed: "#317dc4"
-    on-accent-pressed: "#c2d8ed"
   dark:
     background: "#202020"
     foreground: "#ffffff"
@@ -126,12 +120,6 @@ colors:
     up-tint: "#393d1b"
     down-tint: "#442726"
     violet: "#b9a2ff"
-    bevel: "#353535"
-    accent-bevel: "#6cd1ff"
-    disabled: "#2a2a2a"
-    disabled-foreground: "#717171"
-    accent-pressed: "#53aad2"
-    on-accent-pressed: "#295569"
 typography:
   caption:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
@@ -357,7 +345,6 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`track`** (light `#ededed`, dark `#1d1d1d`): Switch and slider track (WinUI ControlAltFillColorSecondary).
 - **`knob`** (light `#5c5c5c`, dark `#cccccc`): Unchecked switch thumb (WinUI TextFillColorSecondary).
 - **`inverse`** (light `#f9f9f9`, dark `#282828`): TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base).
-- **`disabled`** (light `#f5f5f5`, dark `#2a2a2a`): Disabled control container fill (WinUI ControlFillColorDisabled composited over base).
 
 ### Ink
 
@@ -372,7 +359,6 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`sidebar-accent-foreground`** (light `#1a1a1a`, dark `#ffffff`): Sidebar active item ink (WinUI TextFillColorPrimary).
 - **`faint`** (light `#868686`, dark `#969696`): Tertiary label ink (WinUI TextFillColorTertiary composited over base).
 - **`inverse-foreground`** (light `#1a1a1a`, dark `#ffffff`): Ink on inverse surface (WinUI TextFillColorPrimary).
-- **`disabled-foreground`** (light `#9b9b9b`, dark `#717171`): Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base).
 
 ### Brand
 
@@ -384,8 +370,6 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`brand-edge`** (light `#00396e`, dark `#53b1dc`): Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary).
 - **`brand-tint`** (light `#dbe4ed`, dark `#263136`): 10% accent wash composited opaque over window base.
 - **`inverse-brand`** (light `#ffffff`, dark `#000000`): Action ink on inverse surface matching TextOnAccentFillColorPrimary.
-- **`accent-pressed`** (light `#317dc4`, dark `#53aad2`): Pressed accent control fill (WinUI AccentFillColorTertiary composited over base).
-- **`on-accent-pressed`** (light `#c2d8ed`, dark `#295569`): Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed).
 
 ### Status
 
@@ -415,8 +399,6 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`glass-edge`** (light `#e5e5e5`, dark `#1a1a1a`): Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base).
 - **`line`** (light `#e5e5e5`, dark `#323232`): Hairline divider stroke (WinUI DividerStrokeColorDefault).
 - **`ring-halo`** (light `#fbfbfb`, dark `#0a0a0a`): Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base).
-- **`bevel`** (light `#cccccc`, dark `#353535`): Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base).
-- **`accent-bevel`** (light `#146cbe`, dark `#6cd1ff`): Accent button top/side bevel stroke (WinUI ControlStrokeColorOnAccentDefault composited over primary).
 
 ## Typography
 
