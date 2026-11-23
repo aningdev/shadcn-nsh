@@ -35,7 +35,7 @@ CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
 
 1. 找四个标记如今的去处：v0.6 起发布模板把启动逻辑拆成独立的哈希脚本 `nsh-start.<hash>.js`（strict `script-src 'self'`），`createPlayer(document.getElementById("app"), {`（选项对象）、`player = loaded;`（播放器就绪）、`player.preloadSides(app.sides);`（应用已跑）三个都在它里面，`</head>` 还留在 `index.html`；`player-options.ts` 从 `index.html` 读出该脚本的 `src` 再注入。按新写法改它的常量与插入点。
 2. 若新模板自己就认 `?idiom=`（`createPlayer` 的选项里有 `idiom`）与 `?theme=`（`dark`），删掉对应的注入，只留它还缺的那一半。
-3. `bun run docs:demos`，然后 `bun scripts/audit/audit.ts probe --force`：phone 应是 390 宽、`platform.desktop` 为假，desktop 是 desktop idiom；`?theme=` 那一半对一个打包出的演示加 `?theme=dark` 打开，看 `colorScheme()` 跟不跟着变。（`audit.ts canvas` 自站点 2026-11-17 重构起认不出新页面的标记，重写前先用这两条。）
+3. `bun run docs:demos`，打开一个打包出的演示：`?idiom=phone` 下窗口应是 390 宽、`platform.desktop` 为假，`?theme=dark` 下 `colorScheme()` 应是 `dark`。
 4. 模板变了什么写进这一节。
 
 ### 运行时

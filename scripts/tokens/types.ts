@@ -6,6 +6,21 @@ export const EXT_NS = "dev.aning.shadcn-nsh";
 export const FORMAT_SCHEMA_URL = "https://www.designtokens.org/schemas/2025.10/format.json";
 export const RESOLVER_SCHEMA_URL = "https://www.designtokens.org/schemas/2025.10/resolver.json";
 
+/** A plain object: not `null`, not an array. */
+export const isRecord = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
+/** A token node: an object carrying `$value` (a group carries `$extensions` instead). */
+export const isTokenNode = (value: unknown): value is Record<string, unknown> =>
+  isRecord(value) && Object.hasOwn(value, "$value");
+
+/** The `dev.aning.shadcn-nsh` extension a token or group carries, when it has one. */
+export function getExt(node: unknown): Record<string, unknown> | undefined {
+  if (!isRecord(node) || !isRecord(node.$extensions)) return undefined;
+  const ns = node.$extensions[EXT_NS];
+  return isRecord(ns) ? ns : undefined;
+}
+
 export interface DtcgDimension {
   value: number;
   unit: "px" | "rem";

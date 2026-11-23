@@ -167,11 +167,9 @@ bun.lockb
 .claude/settings.local.json
 .claude/.check-stamp
 
-# Render check screenshots (bun run port:render) and the audit's (scripts/audit)
+# Render check screenshots (bun run port:render / port:render:theme)
 **/demos/shots/
 **/demos/shots-theme/
-**/demos-themed/
-**/demos/shots-audit/
 
 # Scratch space for the pi working notes and local probe servers
 .pi-tmp

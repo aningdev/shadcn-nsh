@@ -5,7 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { EXT_NS } from "./types";
+import { EXT_NS, isRecord, isTokenNode } from "./types";
 
 export interface RefObject {
   $ref: string;
@@ -46,11 +46,6 @@ export interface ResolverDoc {
   resolutionOrder: Array<RefObject | InlineSet | InlineModifier>;
 }
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  v !== null && typeof v === "object" && !Array.isArray(v);
-
-const isTokenNode = (v: unknown): boolean => isRecord(v) && Object.hasOwn(v, "$value");
-
 function hasSpringExtension(node: Record<string, unknown>): boolean {
   const exts = node.$extensions;
   if (!isRecord(exts)) return false;
@@ -76,7 +71,7 @@ export function mergeTokenTrees(
   for (const [key, val] of Object.entries(source)) {
     if (key === "$schema") continue;
     const prev = target[key];
-    if (isRecord(val) && isRecord(prev) && !isTokenNode(val) && !isTokenNode(prev)) {
+    if (isRecord(val) && isRecord(prev) && !("$value" in val) && !("$value" in prev)) {
       const merged = mergeTokenTrees({ ...prev }, val);
       // Motion role groups are a mutually-exclusive union of `timing` token or `$extensions.spring`.
       if (isTokenNode(val.timing)) {

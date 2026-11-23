@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { splitFinishes } from "../theme/tokens";
-import { formatColorOpToCss, formatDtcgColor, oklchToHex6 } from "./color";
+import { formatColorOpToCss, formatDtcgColor, oklchToHex6, srgbToHex6 } from "./color";
 import { loadSourceItem, mergeTokenTrees, resolvePermutation, type ResolverDoc } from "./resolver";
 import {
   EXT_NS,
@@ -19,6 +19,8 @@ import {
   RADIUS_KEYS,
   SHAPE_ROLES,
   TYPE_ROLES,
+  getExt,
+  isRecord,
   type ColorOpExtension,
   type DtcgColor,
   type DtcgGradientStop,
@@ -26,15 +28,6 @@ import {
   type DtcgTransition,
   type DtcgTypography,
 } from "./types";
-
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  v !== null && typeof v === "object" && !Array.isArray(v);
-
-function getExt(node: unknown): Record<string, unknown> | undefined {
-  if (!isRecord(node) || !isRecord(node.$extensions)) return undefined;
-  const ns = node.$extensions[EXT_NS];
-  return isRecord(ns) ? ns : undefined;
-}
 
 function compileColorTokenToCss(token: Record<string, unknown>): string {
   const ext = getExt(token);
@@ -654,14 +647,6 @@ function elevationSet(shadows: CompiledShadows): Record<string, unknown> {
 }
 
 const HEX6_RE = /^#[0-9a-f]{6}$/i;
-
-function srgbToHex6(r: number, g: number, b: number): string {
-  const hex2 = (n: number) =>
-    Math.round(Math.max(0, Math.min(1, n)) * 255)
-      .toString(16)
-      .padStart(2, "0");
-  return `#${hex2(r)}${hex2(g)}${hex2(b)}`;
-}
 
 function isDtcgColor(val: unknown): val is DtcgColor {
   return (

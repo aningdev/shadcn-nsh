@@ -5,7 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { oklchToHex6 } from "./color";
+import { oklchToHex6, srgbToHex6 } from "./color";
 import { compileAppearanceTokensJson } from "./compile";
 import { loadSourceItem, mergeTokenTrees, resolveAliases, type ResolverDoc } from "./resolver";
 import {
@@ -13,6 +13,9 @@ import {
   EXT_NS,
   SHAPE_ROLES,
   TYPE_ROLES,
+  getExt,
+  isRecord,
+  isTokenNode,
   type ColorRole,
   type DesignMdExtension,
   type DtcgColor,
@@ -22,30 +25,10 @@ import {
   type DtcgTypography,
 } from "./types";
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  v !== null && typeof v === "object" && !Array.isArray(v);
-
-const isTokenNode = (v: unknown): v is Record<string, unknown> =>
-  isRecord(v) && Object.hasOwn(v, "$value");
-
-function getExt(node: unknown): Record<string, unknown> | undefined {
-  if (!isRecord(node) || !isRecord(node.$extensions)) return undefined;
-  const ns = node.$extensions[EXT_NS];
-  return isRecord(ns) ? ns : undefined;
-}
-
 function getDesc(node: unknown): string | undefined {
   return isRecord(node) && typeof node.$description === "string" && node.$description.trim()
     ? node.$description.trim()
     : undefined;
-}
-
-function srgbToHex6(r: number, g: number, b: number): string {
-  const hex2 = (n: number) =>
-    Math.round(Math.max(0, Math.min(1, n)) * 255)
-      .toString(16)
-      .padStart(2, "0");
-  return `#${hex2(r)}${hex2(g)}${hex2(b)}`;
 }
 
 /** Convert a DTCG Color object into `#rrggbb` or `#rrggbbaa` when `alpha < 1`. */

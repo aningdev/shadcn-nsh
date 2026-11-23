@@ -7,6 +7,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { isRecord } from "./types";
+
 export interface JsonSchema {
   $id?: string;
   $schema?: string;
@@ -46,9 +48,6 @@ export interface ValidationError {
   path: string;
   message: string;
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  value !== null && typeof value === "object" && !Array.isArray(value);
 
 const deepEqual = (a: unknown, b: unknown): boolean => {
   if (a === b) return true;

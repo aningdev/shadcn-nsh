@@ -177,6 +177,8 @@ bun scripts/theme/generate-shadcn.ts   # shadcn 的 oklch() 规范化后，按�
 
 ## 3 预览工具
 
+> **工具已删除（#284）。** 本节记录当时的做法；`theme-preview.ts`、`theme-sheets.ts` 与 `scripts/audit/` 已不在仓库中。
+
 ```sh
 bun scripts/theme-preview.ts <name|default> [--only id,id] [--appearance light,dark]
 bun scripts/theme-sheets.ts   [id,id]        # 对照页
@@ -194,7 +196,7 @@ bun scripts/theme-sheets.ts   [id,id]        # 对照页
 
 ## 4 对比截图
 
-都在 `apps/website/demos/shots-audit/theme/`（该目录被 `.gitignore` 的 `**/demos/shots-audit/` 覆盖，**不提交**，用上面的脚本重跑即可）：
+都在 `apps/website/demos/shots-audit/theme/`（**不提交**；工具已删除，下面的路径只是当时的记录）：
 
 | 内容                    | 路径                                                                                            |
 | ----------------------- | ----------------------------------------------------------------------------------------------- |

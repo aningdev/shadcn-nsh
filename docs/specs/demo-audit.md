@@ -3,6 +3,9 @@
 > **已完成，留作记录（最后编辑 2026-11-14）。** 这是 [`demo-parity.md`](../archive/demo-parity.md)
 > 任务 1 的诊断结果，与那份记录的完成情况一一对应。现在改一个演示的流程与检查见
 > [`docs/port.md`](../port.md)、截图与比较工具见 [`docs/toolchain.md`](../toolchain.md)。
+>
+> 诊断工具（`scripts/audit/`、`scripts/theme-preview.ts`、`scripts/theme-sheets.ts`）已在 #284 删除；
+> 下文的命令、文件名与 `apps/website/demos/shots-audit/` 是当时的记录，不再可运行。
 
 [`demo-parity.md`](../archive/demo-parity.md) 任务 1：52 个组件的演示，在 Phone（390）与 Desktop（1024）两种画布下，和 `references/nsh/website/demos` 的官方示例对照，判断问题在**画布 / 套件 / 外壳 / look / 演示写法**的哪一层。本文件只诊断，不改组件、演示或文档站。
 
@@ -25,24 +28,15 @@
 | look         | 0      | 上述六处在官方尺寸下由 look 正确绘制（对照官方示例），偏离来自宽度与场景                   |
 | 画布（横向） | 52     | idiom、窗口尺寸、主题都不对；见第一节                                                      |
 
-## 怎么看出来的（可复现）
+## 怎么看出来的（历史做法）
 
-工具在 `scripts/audit/`（不属于检查流水线）：
+工具已删除（见文首），这一节与下文只记录当时的做法，不再可复现：批量 `nsh package --target web`（每个 demo / ref / 官方示例，包在 `/tmp/nsh-audit`，1.6 GB，不进仓库），
+每页截 390×844 与 1024×640 各一张，另量文档站两种布局真正给 iframe 的尺寸并截图（截图在 `apps/website/demos/shots-audit/`，524 张、13 MB，不提交；`port:render` 每次清空自己的 `shots/`）。
 
-```sh
-bun run build:docs                          # 演示打包 + 文档站构建（画布测量需要）
-bun scripts/audit/audit.ts build            # 每个 demo/ref/官方示例 nsh package --target web（/tmp/nsh-audit）
-bun scripts/audit/audit.ts shots            # 390×844 / 1024×640 各一张，落到 apps/website/demos/shots-audit
-bun scripts/audit/audit.ts canvas           # 量文档站两种布局真正给 iframe 的尺寸、平台（探针）
-bun scripts/audit/audit.ts probe            # 探针在两种 idiom 下单独截图
-bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对照页
-```
-
-- 截图**不提交**：`apps/website/demos/shots-audit/` 在 `.gitignore` 的 `**/demos/shots-audit/` 下（与渲染比对的 `shots/` 分开：`port:render` 每次清空自己的目录）（524 张、13 MB）。包在 `/tmp/nsh-audit/packages`（1.6 GB），同样不进仓库。
 - 三列分别是 `demo`（`<id>.tsx`）、`ref`（`<id>.ref.tsx`）、`official`（`references/nsh/website/demos/el-<name>.tsx`，原地打包，不复制、不改）。
 - 下文表格的证据用短名：`<id>-d-p` = `<id>-demo-phone.png`，`-r-` = `-ref-`，`-o-` = `-official-`，`p` = `-phone`，`k` = `-desktop`，`cp` = `-canvasphone`（390×844、desktop idiom，即文档站 Phone 画布），`ck` = `-canvasdesktop`（726×454，即文档站 Desktop 画布）；额外官方示例带后缀，如 `plot-official-phone-cells.png`。
 - 截图是**初始状态**：dialog、alert-dialog、sheet、popover、tooltip、hover-card、menu、context-menu、date-picker、select、combobox 在演示里由 `open` / `defaultOpen` 钉住或只显示触发器；打开态由 `port:render` 的 `steps` 覆盖，这里不重复。
-- 打包后的 release 模板不认 `?idiom=`（见下），所以 `scripts/audit/targets.ts` 在**自己的临时副本**里加回网站播放器的那一行 option，才能截 phone idiom；文档站自己的 iframe 没有这一行。
+- 打包后的 release 模板不认 `?idiom=`（见下），所以当时的 `scripts/audit/targets.ts` 在**自己的临时副本**里加回网站播放器的那一行 option，才能截 phone idiom；文档站自己的 iframe 没有这一行。
 
 ## 一、画布与套件
 
@@ -200,7 +194,7 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 3. **`apps/website/src/lib/demo-client.ts`**：`fit()` 不再按比例缩高度；高度取 `min(布局高, max(420, 内容高 + 32))`，需要 `contentHeight()` 与加载后重测（照 `references/nsh/website/src/lib/demo-client.ts:75-108,150-158`）；切换布局时**重载** iframe 让新 idiom 生效（`demo-client.ts:157-166`）；主题变化 `postMessage`。
 4. **`apps/website/demos/kit.tsx`**：`DemoSection` 增加轴向（`inline` 行 / `block` 列）；`block` 用列 + `alignItems: "stretch"`，整宽控件不再靠 `flexGrow`。`DemoPage` 加 `Scroll`（或由第 3 条的内容高度兜住），保证内容不被裁。
 5. **`apps/website/demos/`**：新增官方的演示适配层（`Stage`、`Split`、`Inspector`、`Panel`、`Log`、`Segmented`、`desktop`、`wide`、`sideBySide`），从 `references/nsh/examples/nsh-gallery-ui/demo.ts` 搬（`demo.ts:45,49,53,122-286`），只供演示，不进 registry；同步改 `AGENTS.md` 的"不搬 demo 适配"一条（demo-parity 已决定）。
-6. **验证**：`bun scripts/audit/audit.ts canvas` 应给出 Phone `390×844 / desktop=false`、Desktop `1024×<内容高> / desktop=true`；`port:check`、`catalog --check` 不变。
+6. **验证**（工具已删除，下面是当时的做法）：`bun scripts/audit/audit.ts canvas` 应给出 Phone `390×844 / desktop=false`、Desktop `1024×<内容高> / desktop=true`；`port:check`、`catalog --check` 不变。
 
 ### 3.2 任务 3：组件修复
 
@@ -300,6 +294,6 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 
 ## 附：证据与工具
 
-- 截图：`apps/website/demos/shots-audit/`（524 张，gitignored）。命名：`<id>-{demo,ref,official}-{phone,desktop}.png`；`plot` / `editor` / `text-view` 的额外官方示例带后缀（`plot-official-phone-cells.png` 等）；文档站实测尺寸另有 `<id>-{demo,ref}-canvas{phone,desktop}.png` 与 `canvas-*.png`、`probe-*.png`。
-- 工具：`scripts/audit/chrome.ts`（静态服务 + DevTools 截图）、`audit.ts`（批量打包 / 截图 / 画布 / 探针）、`shoot.ts`（任意 `.tsx` 一张）、`sheet.ts`（对照页）、`targets.ts`（官方对应表）。探针应用在 `scripts/audit/probe/`，三个一次性实验（`dock-flex`、`plot-height`、`data-table-width`）留在同目录，注释里写明用途。
+- 截图（随工具删除，不提交）：`apps/website/demos/shots-audit/`（524 张）。命名：`<id>-{demo,ref,official}-{phone,desktop}.png`；`plot` / `editor` / `text-view` 的额外官方示例带后缀（`plot-official-phone-cells.png` 等）；文档站实测尺寸另有 `<id>-{demo,ref}-canvas{phone,desktop}.png` 与 `canvas-*.png`、`probe-*.png`。
+- 工具（#284 已删除）：`scripts/audit/` 下的 `chrome.ts`（静态服务 + DevTools 截图）、`audit.ts`（批量打包 / 截图 / 画布 / 探针）、`shoot.ts`（任意 `.tsx` 一张）、`sheet.ts`（对照页）、`targets.ts`（官方对应表）；探针应用与三个一次性实验（`dock-flex`、`plot-height`、`data-table-width`）同目录。
 - 本次测量：154 个包（52 demo + 52 ref + 50 官方/额外），308 张官方尺寸截图 + 208 张文档站尺寸截图 + 8 张画布/探针截图 = 524 张；打包失败 0，截图失败 0。

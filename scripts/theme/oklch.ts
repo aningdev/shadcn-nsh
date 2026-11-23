@@ -5,7 +5,6 @@
  * hex and `rgb()` (references/nsh/website/docs/styling.md#colors), so a theme stores its colors
  * in one space instead of sRGB's three channels.
  *
- *   bun scripts/theme/to-oklch.ts            # rewrites the default theme files (idempotent)
  *   bun scripts/theme/generate-shadcn.ts     # writes themes/shadcn/* from shadcn's palette
  *
  * The matrices are Björn Ottosson's (linear sRGB ⇄ oklab), the transfer function is CSS Color

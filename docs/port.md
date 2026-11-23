@@ -196,7 +196,7 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 
 迭代时用 `--changed`（不知道哪个 id 会动）或 `--only <id,...>`（知道），只跑受影响的页；开 PR 前跑一次全量，因为 `--changed` 只回答"这次的 diff 动了哪些页"，回答不了"有没有我没想到的页"。
 
-`port:baseline --update [--only <id,...>]` 只重录这几个 id 的图（其余不动）；不带 `--only` 时全量替换。审计脚本的截图在 `apps/website/demos/shots-audit/`，`port:render` 清自己的 `shots/` 时不动它。
+`port:baseline --update [--only <id,...>]` 只重录这几个 id 的图（其余不动）；不带 `--only` 时全量替换。
 
 ## 待定
 

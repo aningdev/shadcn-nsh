@@ -1,7 +1,7 @@
 # 演示与官方示例对齐
 
 > **已完成，留作记录（最后编辑 2026-11-14）。** 完成情况与例外见文末；当时的诊断在
-> [`demo-audit.md`](../specs/demo-audit.md)。现在改演示的做法见 [`docs/port.md`](../port.md)。
+> [`demo-audit.md`](../specs/demo-audit.md)。现在改演示的做法见 [`docs/port.md`](../port.md)。证据截图（`shots-audit/`）随诊断工具在 #284 删除。
 
 ## 目标
 

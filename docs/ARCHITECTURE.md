@@ -27,7 +27,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `packages/theme/`：全部 6 套主题（`default`、`shadcn`、`solid-glass`、`apple`、`material`、`winui`）的 **Theme Source** 是 `tokens/`（DTCG 2025.10，`tokens/base/` 与 `tokens/themes/<id>/`），经 `bun run tokens:build` 编译为运行时 `theme.json`、`semantics.json` 与 `themes/<id>/{theme,semantics}.json`（oklch，归本库；标准见 [`specs/design-semantics.md`](specs/design-semantics.md)）；`theme.ts` 读取它们与运行时的 `selectTheme` / `currentTheme`；`themes/<name>/` 一套一个 `AppTheme`（`theme.json`、`semantics.json`、`index.ts`），经 `theme-<name>` 条目分发；不放组件
 - `packages/ui/<id>.tsx`：一个**组件** = look（源自上游的部分以 **Port Region** 标注来源）+ **Shell**；一个 registry 条目一个文件
 - `packages/ui/lib/`：没有所属控件的上游部分（以上游文件名命名）与多个外壳共用的接线；作为 `registry:lib` 条目分发
-- `apps/website/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `Chips` / `desktop` / `wide` / `ui()`，见 [`port.md`](port.md#演示)），`photos.ts` 是照片页用的图（上游 `photos.ts`，原样搬运），都不进 registry；`shots/` 是渲染比对的截图，`shots-audit/` 是诊断脚本的，两者都不提交
+- `apps/website/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `Chips` / `desktop` / `wide` / `ui()`，见 [`port.md`](port.md#演示)），`photos.ts` 是照片页用的图（上游 `photos.ts`，原样搬运），都不进 registry；`shots/` 与 `shots-theme/` 是渲染比对的截图（`port:render` / `port:render:theme`），不提交
 - `apps/website/public/demos/`：`docs:demos` 的打包产物（页面、运行时、wasm），不进仓库；`apps/website/scripts/build-demos.ts` 打包每个演示，`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`
 - `apps/showcase/`：展示应用（#78）——NSH 官方 Gallery 的壳（桌面侧栏、手机索引推入 nav stack、搜索）与其场景演示，全部用 `packages/ui` 重建，分批实现（`groups/<group>.ts` 一个目的一个文件，未建的入口指向共享占位屏）；调色板与外观在应用内经 `theme.ts` 实时切换并持久化，`nsh test apps/showcase` 测壳的行为；由 `build-demos.ts` 打包到 `apps/website/public/showcase/`，站点首页的 “See it running” 以 `ShowcaseFrame` 嵌入，不进文档菜单
 - `apps/website/content/docs/`：文档页（MDX / Markdown，`createFileRoute("/docs/$")` 渲染）；组件页 `<id>.md` 按固定次序分节：Installation、Usage、可选 Composition、Examples、可选 Differences from shadcn/ui、API（规则见 [`port.md`](port.md#文档页)）。`components.mdx`（组件索引）与 `components/coverage.mdx`（对照页）由 `apps/website/src/components/fd/` 里的 React 组件画，行来自生成表。`themes.mdx` 是总览；每个主题一页 `themes/<id>.mdx`，标题写在 markdown 里（目录来自标题），token 与 finish 仍由组件按 `demos/palettes.ts` 画。`apps/website/src/lib/official.ts` 是文档站唯一的登记表（shadcn/ui 与 NSH 元素各一张：来源、去向、没做的理由）；分类从它推导——页被 NSH 元素表（`references/nsh/website/elements`）某行的 `ours` 列出就是**对齐官方**，否则是**自研**（shadcn/ui 有没有对应都不影响）——`apps/website/src/lib/kinds.ts` 只留两个类名、顺序与这条推导。侧边栏分组、索引分节、每页页头的官方链接（`Official: shadcn/ui · … | NSH · …`）与对照页都从它们生成，页面自己不写。新增组件只在该表登记（若对得上某个官方组件），分类自动得出；`bun run check:pages` 会拦下没登记或没建的页
@@ -38,7 +38,6 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `scripts/install-test.ts`：`test:install`，从应用一侧验证 Copy-into-app
 - `scripts/failure.ts`：脚本报错的约定，`StepFailure` 带失败的步骤名与 `cause`
 - `scripts/port/`：抽取与上游变化提醒工具（读 `references/nsh`，见下）
-- `scripts/audit/`：诊断演示的工具（批量打包 / 截图 / 量画布 / 拼对照页），不属于检查流水线；也读 `references/nsh`（官方示例原地打包），截图落在 `apps/website/demos/shots-audit/`（gitignored，`port:render` 不清它），包落在仓库外，见 [`specs/demo-audit.md`](specs/demo-audit.md)
 - `references/`：只读子模块
 
 ## Layers
@@ -75,11 +74,11 @@ flowchart TD
 - `packages/ui/lib` 不 import `packages/ui/<id>`；组件之间可以 import（`./button`），依赖写进该条目的 `registryDependencies`
 - `packages/theme` 不 import `packages/ui`；反过来，组件只经 `@shadcn-nsh/theme` 的 token 与 finish 取外观（`colors`、`finish`、`shape`、`stroke`），不直接读两个 JSON，也不读 `themes/<name>/`
 - `packages/*` 不 import `apps/*`、`scripts/*` 或 `references/*`；运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base`、`lucide`（图标库，应用经 registry 的 `dependencies` 安装）与相对路径
-- 只有 `scripts/port`（抽取与变化提醒）与 `scripts/audit`（对照诊断截图）读 `references/nsh`；`apps/website` 的构建不需要子模块
+- 只有 `scripts/port`（抽取与变化提醒）读 `references/nsh`；`apps/website` 的构建不需要子模块
 - 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
 - `scripts/*` 可以把 `packages/cli/src/*` 当库 import（构建、serve、registry 形状校验）：它是工具，不是应用代码；CLI 本身仍只经 Registry 拿组件
 - registry JSON 的形状只在 `packages/cli/src/utils/registry-schema.ts` 校验；读到的 JSON 经它变成类型，不用 `as` 断言
-- `scripts/*` 可以 import `apps/website/demos/render-cases.ts`（渲染用例与特例）、`apps/website/demos/palettes.ts`（可切换的主题清单：站点与主题渲染检查读同一份）与 `apps/website/scripts/player-options.ts`（演示包的 `?idiom=` / `?theme=`：文档站与审计用同一份），不 import `apps/website` 的其他代码
+- `scripts/*` 可以 import `apps/website/demos/render-cases.ts`（渲染用例与特例）、`apps/website/demos/palettes.ts`（可切换的主题清单：站点与主题渲染检查读同一份）与 `apps/website/scripts/player-options.ts`（演示包的 `?idiom=` / `?theme=`），不 import `apps/website` 的其他代码
 - 每个组件的特例（渲染前的 steps、`selfReference`）只写在 `render-cases.ts`，按 id 覆盖；`packages/ui/index.ts` 手写，由检查保证它导出每个组件
 
 ## Themes

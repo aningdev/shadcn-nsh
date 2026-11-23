@@ -37,6 +37,9 @@ import {
   EXT_NS,
   RADIUS_KEYS,
   TYPE_ROLES,
+  getExt,
+  isRecord,
+  isTokenNode,
   type ColorOpExtension,
   type ColorRole,
   type DtcgColor,
@@ -44,12 +47,6 @@ import {
 
 const defaultRepoRoot = path.resolve(import.meta.dir, "..", "..");
 const CURLY_REF = /^\{([^${}.][^{}.]*(?:\.[^${}.][^{}.]*)*)\}$/;
-
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  v !== null && typeof v === "object" && !Array.isArray(v);
-
-const isTokenNode = (v: unknown): v is Record<string, unknown> =>
-  isRecord(v) && Object.hasOwn(v, "$value");
 
 const isNonEmptyString = (v: unknown): v is string => typeof v === "string" && v.trim().length > 0;
 
@@ -492,10 +489,7 @@ function checkColorOpAccuracy(
 
   const walk = (node: Record<string, unknown>, rNode: Record<string, unknown>, p: string) => {
     if (isTokenNode(node)) {
-      const ext =
-        isRecord(node.$extensions) && isRecord(node.$extensions[EXT_NS])
-          ? node.$extensions[EXT_NS]
-          : undefined;
+      const ext = getExt(node);
       if (ext && isRecord(ext.colorOp)) {
         const op = ext.colorOp as unknown as ColorOpExtension;
         const where = `${label}: ${p}`;
@@ -700,10 +694,7 @@ function checkMergedSemantics(
   // Typography: one family for every role, from `font.family.sans`; and whitelisted weights
   const typoGroup = merged.typography;
   if (isRecord(typoGroup)) {
-    const ext =
-      isRecord(typoGroup.$extensions) && isRecord(typoGroup.$extensions[EXT_NS])
-        ? typoGroup.$extensions[EXT_NS]
-        : undefined;
+    const ext = getExt(typoGroup);
     if (ext && "fontFamily" in ext) {
       problems.push(
         `${label}: typography.$extensions.fontFamily is gone — every role's fontFamily is \`{font.family.sans}\``,
@@ -844,10 +835,7 @@ function checkMergedSemantics(
         problems.push(`${label}: motion.${role} is missing`);
         continue;
       }
-      const ext =
-        isRecord(roleNode.$extensions) && isRecord(roleNode.$extensions[EXT_NS])
-          ? roleNode.$extensions[EXT_NS]
-          : undefined;
+      const ext = getExt(roleNode);
       const hasSpring = ext !== undefined && "spring" in ext;
       const hasTiming = "timing" in roleNode;
       if (hasSpring && hasTiming) {
@@ -930,10 +918,7 @@ function checkMergedSemantics(
   if (isRecord(finishGroup)) {
     for (const [role, group] of Object.entries(finishGroup)) {
       if (role.startsWith("$") || !isRecord(group)) continue;
-      const ext =
-        isRecord(group.$extensions) && isRecord(group.$extensions[EXT_NS])
-          ? group.$extensions[EXT_NS]
-          : {};
+      const ext = getExt(group) ?? {};
       problems.push(
         ...checkMaterial(label, role, { material: ext.material, elevation: ext.elevation }),
       );

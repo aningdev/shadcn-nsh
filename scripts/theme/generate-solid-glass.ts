@@ -16,7 +16,7 @@ import { emitDtcgTheme } from "./dtcg";
 import { oklch, toOklchText } from "./oklch";
 import { themeFiles } from "./solid-glass";
 
-/** Every string of a document in canonical `oklch()`, as `to-oklch.ts` does for the default files. */
+/** Every string of a document in canonical `oklch()`, as the committed theme files are. */
 const canonical = (value: unknown): unknown => {
   if (typeof value === "string") return toOklchText(value);
   if (Array.isArray(value)) return value.map(canonical);

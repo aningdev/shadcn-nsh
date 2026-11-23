@@ -12,6 +12,12 @@ export function oklchToHex6(l: number, c: number, h: number): string {
   return `#${hex2(r)}${hex2(g)}${hex2(b)}`;
 }
 
+/** 6-digit hex for sRGB components in 0–1, clamped: a gradient stop can drift past 1. */
+export function srgbToHex6(r: number, g: number, b: number): string {
+  const channel = (n: number) => hex2(Math.round(Math.max(0, Math.min(1, n)) * 255));
+  return `#${channel(r)}${channel(g)}${channel(b)}`;
+}
+
 /** Format a DTCG Color object back to canonical NSH `oklch(...)` string. */
 export function formatDtcgColor(color: DtcgColor): string {
   if (color.colorSpace === "srgb") {
