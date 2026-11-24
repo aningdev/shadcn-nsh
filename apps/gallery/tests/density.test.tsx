@@ -16,16 +16,16 @@ test("a button is compact with a pointer and roomier, with a hit slop, on a touc
 test("the switch knob sits as far from the track's end on as off", async () => {
   const desktop = await open("./density.fixture.tsx", { platform: "macos" });
   const touch = await open("./density.fixture.tsx", { platform: "ios" });
-  // width less two (border + inset) less the knob: 28 - 4 - 12 twice, then 42 - 4 - 20, 34 - 4 - 16.
-  expect(find(desktop.texts(), "travel=")).toBe("12|12");
-  expect(find(touch.texts(), "travel=")).toBe("18|14");
+  // width less two (border + inset) less the knob: 36 - 4 - 16, 28 - 4 - 12; then 44 - 4 - 20, 36 - 4 - 16 — the knob's own width either way.
+  expect(find(desktop.texts(), "travel=")).toBe("16|12");
+  expect(find(touch.texts(), "travel=")).toBe("20|16");
 });
 
 test("a standalone switch gets a 44 point target on a touch screen", async () => {
   const app = await open("./density.fixture.tsx", { platform: "ios" });
   const slop = JSON.parse(find(app.texts(), "slop=") ?? "{}");
-  // 24 tall and 42 wide: 10 above and below, 1 either side.
-  expect(slop).toEqual({ top: 10, bottom: 10, left: 1, right: 1 });
+  // 24 tall and 44 wide against 44: 10 above and below, nothing either side.
+  expect(slop).toEqual({ top: 10, bottom: 10, left: 0, right: 0 });
 });
 
 test("a popover's padding and a dialog's type grow on a touch screen", async () => {

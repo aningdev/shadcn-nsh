@@ -6,13 +6,12 @@ import {
   control,
   finish,
   hitTarget,
+  iconSize,
   motion,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   stroke,
-  tier,
-  type Tiered,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { reduceMotion, split } from "nsh";
@@ -23,7 +22,11 @@ import { type HandleLook, handleLook } from "./lib/look";
 import { cssMotion } from "./lib/motion";
 import { type SwitchGeometry, knobTravel, switchSlop } from "./lib/switch-geometry";
 
-/** A switch's size on a touch screen (`sm` 34 × 20); with a pointer both are 28 × 16. */
+/**
+ * A switch's size: `default` draws the theme's middle icon step as its knob (`icon.md`), `sm` the
+ * small one (`icon.sm`); the track is that knob plus 2 points of room on every side. A theme whose
+ * form brings its own switch recipe (Material's, WinUI's) draws that at either size.
+ */
 export type SwitchSize = "sm" | "default";
 
 /** The props `switchLook` gives a `Switch`. */
@@ -35,54 +38,72 @@ export interface SwitchLook {
   readonly thumbStyle: ViewStyle;
 }
 
-/** One family's switch, in points: one set for a pointer and, where a touch screen differs, its own. */
-interface SwitchShape {
+/**
+ * How much track the library's circle keeps around its knob, on every side: a 1-point border and 1
+ * point of padding, so the track stands 4 points taller than the knob and 2 × knob + 4 long
+ * (`docs/specs/theme-contract-v2.md` §12 M1).
+ */
+const CIRCLE_ROOM = 4;
+
+/** How a family's knob answers a hover, a press and the open state. */
+type KnobFeedback = "none" | "expand" | "stretch";
+
+/**
+ * The library's own switch: a circle's knob at the theme's `icon.md` (`icon.sm` for `sm`), and a
+ * track that is that knob plus `CIRCLE_ROOM` on every side. Only the outline is the family's.
+ */
+interface CircleShape {
+  readonly kind: "circle";
+  /** The track's outline off, and on. */
+  border: number;
+  onBorder: number;
+}
+
+/**
+ * A form that brings its own switch: the track and knob in points, the same at either size and on
+ * either tier (a form's official numbers, `docs/specs/theme-contract-v2.md` §4), so the pixels do
+ * not ride on the library's scales at all.
+ */
+interface RecipeShape {
+  readonly kind: "recipe";
   width: number;
   height: number;
-  smWidth: number;
-  smHeight: number;
   border: number;
   onBorder: number;
   knob: number;
   onKnob: number;
-  smKnob: number;
-  smOnKnob: number;
   knobHover: number;
   knobPressedWidth: number;
   knobPressedHeight: number;
-  knobFeedback: "none" | "expand" | "stretch";
+  knobFeedback: KnobFeedback;
 }
 
-// M3 Switch 52x32dp track, 2dp off / 0dp on outline, 16/24/28dp handle growth (_md-comp-switch.scss:47-65 v34.0.21 / SwitchTokens.kt).
-const materialSwitch: SwitchShape = {
+type SwitchShape = CircleShape | RecipeShape;
+
+// M3 Switch: 52x32 track, 2dp off / 0dp on outline, the 16dp knob 24dp open and 28dp pressed, no hover growth (_md-comp-switch.scss:47-65 v34.0.21 / SwitchTokens.kt).
+const materialSwitch: RecipeShape = {
+  kind: "recipe",
   width: 52,
   height: 32,
-  smWidth: 52,
-  smHeight: 32,
   border: 2,
   onBorder: 0,
   knob: 16,
   onKnob: 24,
-  smKnob: 16,
-  smOnKnob: 24,
   knobHover: 16,
   knobPressedWidth: 28,
   knobPressedHeight: 28,
   knobFeedback: "expand",
 };
 
-// WinUI 3 ToggleSwitch 40x20 track, 1px off / 0px on stroke, 12px knob scaling to 14px hover & 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312,315 in winui3/release/2.7.0).
-const winuiSwitch: SwitchShape = {
+// WinUI 3 ToggleSwitch: 40x20 track, 1px off / 0px on stroke, the 12px knob 14px hover and 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312,315 in winui3/release/2.7.0).
+const winuiSwitch: RecipeShape = {
+  kind: "recipe",
   width: 40,
   height: 20,
-  smWidth: 40,
-  smHeight: 20,
   border: 1,
   onBorder: 0,
   knob: 12,
   onKnob: 12,
-  smKnob: 12,
-  smOnKnob: 12,
   knobHover: 14,
   knobPressedWidth: 17,
   knobPressedHeight: 14,
@@ -90,47 +111,14 @@ const winuiSwitch: SwitchShape = {
 };
 
 /**
- * A switch's numbers, by the form the theme's `handle` names: a switch is always a circle (the
+ * A switch's look, by the form the theme's `handle` names: a switch is always a circle (the
  * library's disc, `docs/specs/theme-contract-v2.md` §11.4), so the form picks the family whose
- * switch the theme is — the base one, Material's growing one, or WinUI's stretching one.
+ * switch the theme is — the library's own, Material's growing one, or WinUI's stretching one.
  */
-const switchShapes: Record<HandleLook["form"], Tiered<SwitchShape>> = {
-  circle: {
-    pointer: {
-      width: 28,
-      height: 16,
-      smWidth: 28,
-      smHeight: 16,
-      border: 1,
-      onBorder: 1,
-      knob: 12,
-      onKnob: 12,
-      smKnob: 12,
-      smOnKnob: 12,
-      knobHover: 12,
-      knobPressedWidth: 12,
-      knobPressedHeight: 12,
-      knobFeedback: "none",
-    },
-    touch: {
-      width: 42,
-      height: 24,
-      smWidth: 34,
-      smHeight: 20,
-      border: 1,
-      onBorder: 1,
-      knob: 20,
-      onKnob: 20,
-      smKnob: 16,
-      smOnKnob: 16,
-      knobHover: 20,
-      knobPressedWidth: 20,
-      knobPressedHeight: 20,
-      knobFeedback: "none",
-    },
-  },
-  bar: { pointer: materialSwitch, touch: materialSwitch },
-  ring: { pointer: winuiSwitch, touch: winuiSwitch },
+const switchShapes: Record<HandleLook["form"], SwitchShape> = {
+  circle: { kind: "circle", border: 1, onBorder: 1 },
+  bar: materialSwitch,
+  ring: winuiSwitch,
 };
 
 interface ResolvedSwitchGeometry extends SwitchGeometry {
@@ -139,10 +127,10 @@ interface ResolvedSwitchGeometry extends SwitchGeometry {
   knobHover: number;
   knobPressedWidth: number;
   knobPressedHeight: number;
-  knobFeedback: SwitchShape["knobFeedback"];
+  knobFeedback: KnobFeedback;
 }
 
-/** The track and knob of a size, here (the shape its theme's `control()` handle names, or the terminal). */
+/** The track and knob of a size: the library's circle from the icon scale, a recipe from itself (or the terminal). */
 function geometry(size: SwitchSize): ResolvedSwitchGeometry {
   if (terminal)
     return {
@@ -158,23 +146,35 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       knobPressedHeight: TERMINAL_ROW,
       knobFeedback: "none",
     };
-  const g = switchShapes[handleLook(control().handle).form][tier];
-  const sm = size === "sm";
-  const width = sm ? g.smWidth : g.width;
-  const height = sm ? g.smHeight : g.height;
-  const knob = sm ? g.smKnob : g.knob;
+  const shape = switchShapes[handleLook(control().handle).form];
+  if (shape.kind === "recipe")
+    return {
+      width: shape.width,
+      height: shape.height,
+      border: shape.border,
+      inset: Math.max(0, (shape.height - shape.knob) / 2 - shape.border),
+      knob: shape.knob,
+      onBorder: shape.onBorder,
+      onKnob: shape.onKnob,
+      knobHover: shape.knobHover,
+      knobPressedWidth: shape.knobPressedWidth,
+      knobPressedHeight: shape.knobPressedHeight,
+      knobFeedback: shape.knobFeedback,
+    };
+  const knob = size === "sm" ? iconSize.sm : iconSize.md;
+  const height = knob + CIRCLE_ROOM;
   return {
-    width,
+    width: height + knob,
     height,
-    border: g.border,
-    inset: Math.max(0, (height - knob) / 2 - g.border),
+    border: shape.border,
+    inset: Math.max(0, (height - knob) / 2 - shape.border),
     knob,
-    onBorder: g.onBorder,
-    onKnob: sm ? g.smOnKnob : g.onKnob,
-    knobHover: g.knobHover,
-    knobPressedWidth: g.knobPressedWidth,
-    knobPressedHeight: g.knobPressedHeight,
-    knobFeedback: g.knobFeedback,
+    onBorder: shape.onBorder,
+    onKnob: knob,
+    knobHover: knob,
+    knobPressedWidth: knob,
+    knobPressedHeight: knob,
+    knobFeedback: "none",
   };
 }
 
@@ -195,7 +195,8 @@ function knobLook(on: boolean): ViewStyle {
 
 /**
  * The knob's size feedback, as transform classes: the knob's box never takes a new size, so a
- * hover, a press and the open state scale it — kept off `switchShapes` so the sizes stay points.
+ * hover, a press and the open state scale it — built from the geometry, so a family that brings a
+ * recipe and the library's circle take the same path.
  * A knob that stretches (WinUI) reaches toward the track's centre as it grows: a `shift` past the
  * box it grew from, and `travel - shift` back once it is open — the same pixels as today's box,
  * without moving `transformOrigin`, which a press would jump.

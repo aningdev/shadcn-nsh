@@ -15,7 +15,7 @@ test("control dimensions and component looks follow the active theme", async () 
 
   const assertBase = () => {
     const sw = find(app.texts(), "switch=") ?? "";
-    expect(sw.startsWith("28x16|1|12|")).toBe(true);
+    expect(sw.startsWith("36x20|1|16|checked:translate-x-[16px]")).toBe(true);
     expect(find(app.texts(), "slider=")).toContain(
       "h-[6px] rounded-full|h-[20px] justify-center px-[7px]",
     );
@@ -26,7 +26,7 @@ test("control dimensions and component looks follow the active theme", async () 
     expect(find(app.texts(), "tabs=")).toBe("0/1");
     expect(find(app.texts(), "tabs-indicator=")).toBe("2");
     expect(find(app.texts(), "grabber=")).toBe("36x5");
-    expect(find(app.texts(), "calendar=")).toBe("32");
+    expect(find(app.texts(), "calendar=")).toBe("28");
   };
 
   // Default pointer geometry ("base")

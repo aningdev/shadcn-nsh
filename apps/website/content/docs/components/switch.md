@@ -27,7 +27,8 @@ import { Switch } from "@/components/ui/switch";
 
 ### Size
 
-`size` is read on a touch screen; with a pointer both sizes are 28 × 16.
+`size` is the knob: `default` takes the theme's `icon.md`, `sm` its `icon.sm`, and the track is
+that knob plus 2 points of room on every side.
 
 ```tsx
 <Switch size="sm" checked={on()} onChange={({ checked }) => on.set(checked)} />
@@ -92,7 +93,8 @@ Nothing in the row names a side: `Field` lays its children out along the writing
 
 ### Alone
 
-With no children the track is all of it; a touch screen gets a 44-point target from a hit slop.
+With no children the track is all of it; a touch screen raises the target to 44 points, and the track
+is already at least that wide, so the hit slop only fills the height.
 
 ```tsx
 <Switch
@@ -132,9 +134,9 @@ Each part of `fieldFamilyLook()` reads the theme when it is drawn, so a look kep
 
 Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes through. `trackClass`, `trackStyle` and `thumbStyle` go over the look's.
 
-| Part     | Props                                                                                                                    | Description                                                                                                 |
-| -------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `Switch` | `checked`, `onChange`, `size`, `disabled`, `children`, `accessibilityLabel`, `hitSlop`, and every `nsh/base` Switch prop | An on / off switch; alone it takes a 44-point hit slop, with children it is a row whose label is the target |
+| Part     | Props                                                                                                                    | Description                                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `Switch` | `checked`, `onChange`, `size`, `disabled`, `children`, `accessibilityLabel`, `hitSlop`, and every `nsh/base` Switch prop | An on / off switch; alone it fills the touch target's height with a hit slop, with children it is a row whose label is the target |
 
 ### Where the numbers come from
 
@@ -146,10 +148,17 @@ the next frame.
 
 ### Sizes
 
-| Size      | Pointer | Touch screen |
-| --------- | ------- | ------------ |
-| `default` | 28 × 16 | 42 × 24      |
-| `sm`      | 28 × 16 | 34 × 20      |
+| Size      | Track                                      | Knob      |
+| --------- | ------------------------------------------ | --------- |
+| `default` | `icon.md` + 4 high, 2 × `icon.md` + 4 long | `icon.md` |
+| `sm`      | `icon.sm` + 4 high, 2 × `icon.sm` + 4 long | `icon.sm` |
+
+In the library's own themes that is 36 × 20 with a 16-point knob under a pointer and 44 × 24 with
+20 on a touch screen (`sm`: 28 × 16 with 12, 36 × 20 with 16): 2 points of track above, below and
+at each end, so the knob travels its own width — as far from the end on as off. A theme whose
+form brings its own switch draws that recipe at either size and on either tier: Material's track
+is 52 × 32 with a 16-point knob that grows to 24 when on and 28 under a press, WinUI's is 40 × 20
+with a 12-point knob, 14 under a hover and 17 × 14 under a press.
 
 `SwitchSize` is `"sm" | "default"`.
 

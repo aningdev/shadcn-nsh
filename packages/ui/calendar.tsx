@@ -4,6 +4,7 @@
 import {
   alpha,
   colors,
+  controlHeight,
   cornerCurve,
   rounded,
   terminal,
@@ -51,17 +52,17 @@ const WEEKDAY_INITIALS = ["S", "M", "T", "W", "T", "F", "S"];
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 /**
- * A day's cell side: 32 points with a pointer, 42 on a touch screen. A calendar does not read the
- * theme's `control()`: under Material and WinUI it keeps `nsh/base`'s look — its days the same size
- * as everywhere else, square-cornered in `shape.control`, today quiet (docs/specs/theme-contract-v2.md
- * §11.4, §11.7).
+ * A day's cell side: the theme's `height.md`, so a square day is as tall as a control row. A
+ * calendar does not read the theme's `control()`: under Material and WinUI it keeps `nsh/base`'s
+ * look — its days the same size as everywhere else, square-cornered in `shape.control`, today
+ * quiet (docs/specs/theme-contract-v2.md §11.4, §11.7, §12 M5).
  */
-const cell = () => (pointer ? 32 : 42);
+const cell = () => controlHeight.md;
 
 /** The gap between the months of a calendar of two (shadcn's `gap-4`). */
 const monthGap = 16;
 
-/** The gap over each week: rows of 36 with a pointer, as shadcn's Base UI calendar's (28-point cells, `mt-2`). */
+/** The gap over each week: rows of a cell plus this (`mt-2` in shadcn's calendar). */
 const weekGap = 4;
 
 /** The corners of header arrows and month/year grid buttons (`shape.button`). */

@@ -4,6 +4,7 @@
 import {
   colors,
   control,
+  controlHeight,
   finish,
   focusRing,
   hovered,
@@ -32,7 +33,10 @@ import { hoverOf, type TabLook, type TabState } from "./tabs";
 
 const pointer = platform.desktop;
 
-/** A segmented control's size: `default` 24 / 30 points with a pointer, 32 / 36 on a touch screen. */
+/**
+ * A segmented control's size: the theme's middle height (`height.md`) by default, its small one
+ * (`height.sm`) for `sm`.
+ */
 export type SegmentedSize = "sm" | "default";
 
 /** A corner the recipe names, in points: a scale's own, a capsule (half `extent`), half a line's
@@ -66,7 +70,7 @@ const widthOf = (edge: Scale | number): number =>
 
 /** Options of `segmentedLook`. */
 export interface SegmentedLookOptions {
-  /** Default `default`: 30 points high with a pointer (`sm`: 24). Read where it is drawn. */
+  /** Default `default`: the theme's `height.md` (`sm`: `height.sm`). Read where it is drawn. */
   size?: Live<SegmentedSize>;
   /** Span the row, the segments sharing it equally (always on a touch screen). */
   fill?: Live<boolean>;
@@ -74,10 +78,10 @@ export interface SegmentedLookOptions {
 
 /**
  * A segmented control's look. On a track (`style`, on `Tabs` or a `RadioGroup`): sunk, as wide as
- * its labels with a pointer (30 points high, 12-point labels, the thumb's corners a step inside the
- * track's), spanning the row on a touch screen or with `fill`; the selected segment's thumb,
- * standing off the track in both appearances (`finish.raised`: a lifted surface that carries the
- * label's ink; `knob` is the switch's white disc), as `Tabs`' traveling `indicatorStyle` or as a
+ * its labels with a pointer (the theme's `height.md` high, 12-point labels, the thumb's corners a
+ * step inside the track's), spanning the row on a touch screen or with `fill`; the selected
+ * segment's thumb, standing off the track in both appearances (`finish.raised`: a lifted surface
+ * that carries the label's ink; `knob` is the switch's white disc), as `Tabs`' traveling `indicatorStyle` or as a
  * `Radio`'s `checkedStyle` (`thumbStyle`). Where the theme's `group` is `cells`, as Material 3's
  * is, the control draws connected cells instead: one outline around the row, a divider between the
  * cells (none before the first), and the chosen cell on its own container behind a leading `check`
@@ -91,9 +95,9 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   const spread = () => !pointer || !!read(o?.fill);
   // The track's padding: the thumb sits inside it.
   const inset = 2;
-  // Small is as tall as a small button with a pointer (24), so the two sit level in a row. The
-  // track's own heights; the themes are moving it to `height: md` (28 / 40).
-  const height = () => (pointer ? (small() ? 24 : 30) : small() ? 32 : 36);
+  // The theme's height scale, read where it is drawn: the middle step, or the small one for `sm`
+  // (so a small control is as tall as a small button, and the two sit level in a row).
+  const height = () => (small() ? controlHeight.sm : controlHeight.md);
   // The theme's group, read where it is drawn: a change of theme redraws these parts.
   const group = () => groupLook(control().group);
   // The thumb: the track's raised face, sitting `inset` points inside the track.

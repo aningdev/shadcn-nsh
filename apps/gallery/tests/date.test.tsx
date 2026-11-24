@@ -62,8 +62,8 @@ test("Dates: a calendar, a date picker, and a time field are roomier on a touch 
   const touch = await open("./date.fixture.tsx", { platform: "ios" });
   expect(find(desktop.texts(), "desktop=")).toBe("true");
   expect(find(touch.texts(), "desktop=")).toBe("false");
-  expect(find(desktop.texts(), "calendar-size=")).toBe("32|16|13");
-  expect(find(touch.texts(), "calendar-size=")).toBe("42|16|15");
+  expect(find(desktop.texts(), "calendar-size=")).toBe("28|16|13");
+  expect(find(touch.texts(), "calendar-size=")).toBe("40|16|15");
   expect(find(desktop.texts(), "picker-size=")).toBe("32|180");
   expect(find(touch.texts(), "picker-size=")).toBe("48|0");
   expect(find(desktop.texts(), "popup=")).toBe("popup|6|none");
