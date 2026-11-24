@@ -274,7 +274,9 @@ export function inputLook(o?: FieldLookOptions) {
       // parts beside it.
       return { ...frame(o), ...text, flex: undefined, ...read(o?.style) } as InputStyle;
     },
-    disabledStyle: look.disabledStyle,
+    get disabledStyle(): ViewStyle {
+      return look.disabledStyle;
+    },
   };
 }
 

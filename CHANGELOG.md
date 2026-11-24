@@ -14,7 +14,7 @@
 
 - **A selected toggle's, or selected secondary button's, hover and press wash matches its label ink.** The state layer used `accent-foreground` while the text uses the selected finish's `primary-foreground`.
 
-### Fixed
+- **A disabled `Input` or `InputGroup` follows a theme selected after it mounted.** `inputLook` and `inputGroupLook` read the disabled dimming once, when the look was made, so a field drawn before `selectTheme` kept the earlier theme's opacity. Both read it where it is drawn now.
 
 - **`nsh run` builds the demos and the showcase again (#347).** Their start-up no longer uses a top-level `await`, which `nsh run`'s hot-reload bundle (cjs) can't compile; the page stays hidden until the chosen palette is drawn, so the first visible frame is still in the site's theme.
 

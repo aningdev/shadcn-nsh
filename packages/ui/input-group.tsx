@@ -47,7 +47,9 @@ export function inputGroupLook(o?: InputGroupLookOptions) {
         ...read(o?.style),
       };
     },
-    disabledStyle: field.disabledStyle,
+    get disabledStyle(): ViewStyle {
+      return field.disabledStyle;
+    },
   };
 }
 

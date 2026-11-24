@@ -115,7 +115,10 @@ function GroupButton(props: {
       onPress={props.onPress}
       {...buttonLook(variant, {
         ...options,
-        style: square ? { width: buttonSizes[scale].height, paddingHorizontal: 0 } : undefined,
+        // Read where it is drawn, so the width follows the theme.
+        style: square
+          ? () => ({ width: buttonSizes[scale].height, paddingHorizontal: 0 })
+          : undefined,
       })}
     >
       {typeof props.children === "string" ? (
