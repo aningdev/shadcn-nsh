@@ -1116,6 +1116,16 @@
         }
       }
     },
+    "fill": {
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.52768, 0.14982, 252.341],
+          "hex": "#146cbe"
+        }
+      }
+    },
     "hover": {
       "border-top-color": {
         "$type": "color",

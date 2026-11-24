@@ -8,31 +8,18 @@ import {
   EDGE_WIDTH,
   fillStyle,
   finish,
-  insetEdge,
   outerEdge,
   stroke,
   tier,
   type Tiered,
-  tints,
 } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewStyle } from "nsh";
 import { split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
 import { joinClass } from "./lib/class-names";
-import { type Fill, type HandleLook, handleLook, trackLook } from "./lib/look";
-
-/** A part's colour: a finish's whole layer, a palette role, or the brand's tint. */
-function fillColour(fill: Fill): string {
-  switch (fill.kind) {
-    case "finish":
-      return finish[fill.role].backgroundColor ?? "transparent";
-    case "tint":
-      return tints[fill.role];
-    case "colour":
-      return colors[fill.role];
-  }
-}
+import { type HandleLook, handleLook, trackLook } from "./lib/look";
+import { railFace, railShadow } from "./lib/track";
 
 /** The knob a slider draws: the `handle` its theme's `control()` names. */
 const knob = () => handleLook(control().handle);
@@ -104,13 +91,11 @@ export function sliderLook(o: SliderLookOptions = {}) {
     },
     get indicatorStyle(): ViewStyle {
       const g = groove();
-      const face = g.groove ? fillColour(g.groove.fill) : "transparent";
-      const shade = g.groove?.shade ?? null;
+      const face = railFace(g);
+      const shadow = railShadow(g);
       return {
         backgroundColor: face,
-        ...(shade
-          ? { boxShadow: insetEdge(finish[shade].borderColor, finish[shade].boxShadow) }
-          : {}),
+        ...(shadow === undefined ? {} : { boxShadow: shadow }),
       };
     },
     rangeClass: "rounded-full",
@@ -154,8 +139,8 @@ export function sliderLook(o: SliderLookOptions = {}) {
 }
 
 /**
- * The accent's color and edge. A vertical rail turns the theme's gradient a quarter turn. A groove
- * that is graved in (`track.sunk`) edges its run, so the run sits in the hollow the rail is.
+ * The `fill` finish's color and edge. A vertical rail turns the theme's gradient a quarter turn. A
+ * groove that is graved in (`track.sunk`) edges its run, so the run sits in the hollow the rail is.
  */
 function accentFill(vertical: boolean): ViewStyle {
   const fill = fillStyle();
@@ -165,7 +150,7 @@ function accentFill(vertical: boolean): ViewStyle {
       ? { ...fill, backgroundImage: fill.backgroundImage.replace("180deg", "90deg") }
       : fill),
     ...(shade
-      ? { borderWidth: stroke.control, borderColor: finish.accent.borderColor }
+      ? { borderWidth: stroke.control, borderColor: finish.fill.borderColor }
       : { borderWidth: 0 }),
   };
 }

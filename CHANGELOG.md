@@ -126,6 +126,10 @@
 - **Material's desktop sizes sit one step below its touch sizes (#336).** Under a pointer, controls are 24 / 32 / 40 points and icons 12 / 16 / 20, the same scale as WinUI; the switch shrinks to 40×24 with M3's proportions. Touch keeps M3's own sizes.
 - **Tabs in the default theme are the official capsule again (#358).** The list is a capsule with a hairline edge and the chosen tab a pill with its own edge; shadcn, solid-glass and apple keep the control-radius block (the new `plate` value of `selection`).
 - **Material's slider handle is a round knob (#367).** M3's 4×44 vertical bar read as a stray line beside the other controls; Material now takes the `circle` handle, and the `bar` handle form is gone from `control.handle` (now `circle` | `ring`). The switch keeps its M3 shape.
+- **Progress, slider and switch draw their run and rail the way NSH Gallery does (#357).** A running progress bar, a slider's range and an open switch's track read a new `finish.fill` layer (default: a deeper green gradient with its own edge, no longer the button's lime); a switch's thumb when on reads `finish.knob-on`; a sunk rail gets its 1-point `border` edge; a closed switch's track takes `finish.inset.border-color` instead of a black outline. Other themes keep their native on/off look. The Progress demo's Library row no longer shows a limit marker.
+
+
+- **Accordion and collapsible triggers take the theme's label weight (#352).** shadcn/ui's trigger is `font-medium`; ours drew at the title weight (semibold). `RowLabel`'s `strong` now reads the `label` type role (500; 400 in WinUI), so a checkbox "Select all" row and avatar list names follow it too.
 
 - **A menu, select, combobox or command row with a second line grows to hold it (#333).** A row's height in the size table (`menuItemSize.height`, the listbox and command row heights) is now its least height: a row with `detail` or a note under its label grows, with the theme's item inset (at least 4) above and below, instead of drawing both lines in a one-line box over the next row. One-line rows keep their height.
 

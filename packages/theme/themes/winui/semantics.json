@@ -236,6 +236,7 @@
       "inset": {
         "shadow": "none",
         "foreground": "{foreground}",
+        "border-color": "{input}",
         "material": null,
         "gradient": null,
         "pressed-background": null,
@@ -346,6 +347,19 @@
         "backdropFilter": "none",
         "elevation": null
       },
+      "fill": {
+        "shadow": "none",
+        "foreground": "{primary-foreground}",
+        "material": null,
+        "background": "{primary}",
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
+      },
       "knob": {
         "shadow": "none",
         "foreground": "{foreground}",
@@ -353,6 +367,20 @@
         "background": "{knob}",
         "gradient": null,
         "border-color": "transparent",
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
+      },
+      "knob-on": {
+        "shadow": "none",
+        "foreground": "{foreground}",
+        "material": null,
+        "background": "{primary-foreground}",
+        "border-color": "transparent",
+        "gradient": null,
         "pressed-background": null,
         "pressed-foreground": null,
         "border-top-color": null,
@@ -428,6 +456,9 @@
         "pressed-background": "oklch(0.5773 0.13223 250.006)",
         "pressed-foreground": "oklch(0.87245 0.03754 247.003)"
       },
+      "fill": {
+        "border-color": "oklch(0.52768 0.14982 252.341)"
+      },
       "hover": {
         "border-top-color": "{border}",
         "border-bottom-color": "oklch(0.84522 0 0)"
@@ -465,6 +496,9 @@
         "border-top-color": "oklch(0.81732 0.11439 230)",
         "pressed-background": "oklch(0.70029 0.10192 230.522)",
         "pressed-foreground": "oklch(0.42706 0.05878 229.834)"
+      },
+      "fill": {
+        "border-color": "oklch(0.81732 0.11439 230)"
       },
       "hover": {
         "border-top-color": "oklch(0.32897 0 0)",

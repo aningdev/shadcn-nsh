@@ -32,6 +32,10 @@
         "$type": "shadow",
         "$value": ["{shadow.inset}"]
       },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
@@ -253,6 +257,22 @@
         }
       }
     },
+    "fill": {
+      "$description": "A run's fill: a progress bar's bar, a slider's range, a meter's column.",
+      "shadow": {
+        "$type": "shadow",
+        "$value": ["{shadow.edge.accent}"]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": "none"
+        }
+      }
+    },
     "knob": {
       "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
       "shadow": {
@@ -262,6 +282,22 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": "none"
+        }
+      }
+    },
+    "knob-on": {
+      "$description": "A knob on the run it opened: a switch's thumb on the filled track.",
+      "shadow": {
+        "$type": "shadow",
+        "$value": ["{shadow.sm}"]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

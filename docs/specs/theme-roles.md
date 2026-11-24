@@ -246,7 +246,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 4 每个 finish
 
-十一个层加三种状态，一个面属于哪一层只由它“是什么”决定，不由它“画了什么”决定。旧的 27 个角色折进这里：`section`→`card`，`field`/`track`/`groove`→`inset`，`chip`/`pill`→`raised`，`menu`→`overlay`，`tooltip`→`inverse`，`light`/`fill`/`on`→`accent`，`accentPressed`→`pressed`（填充色按下见下），`thumb`→`raised`，`knobOn`/`handle`→`knob`，`grabber`→`sheet` 的控件预设。
+十三个层加三种状态，一个面属于哪一层只由它“是什么”决定，不由它“画了什么”决定。旧的 27 个角色折进这里：`section`→`card`，`field`/`track`/`groove`→`inset`，`chip`/`pill`→`raised`，`menu`→`overlay`，`tooltip`→`inverse`，`light`/`on`→`accent`，`accentPressed`→`pressed`（填充色按下见下），`thumb`→`raised`，`handle`→`knob`，`grabber`→`sheet` 的控件预设。`fill` 一度也折进 `accent`，现在单独成层（见第 6 节）：一条跑起来的进度、一段滑杆的行程不是那个按钮的面。`knobOn` 同样分出成 `knob-on`：开着的开关圆点坐在跑动填充上，不是没开的那一个。
 
 <!-- theme-lint: finishes -->
 
@@ -262,14 +262,16 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `inverse`  | 反色的面：toast、提示                                                           | The page's inverse: a toast, a tooltip                                       | `toast`、`tooltip`                                                                  |
 | `glass`    | 玻璃：半透明底 + 模糊                                                           | Glass: a translucent fill and a blur                                         | `carousel`、`lib/surface`                                                           |
 | `accent`   | 强调色的面：主操作、选中的开关/勾选/进度                                        | The accent's own surface: the main action, a chosen switch, a progress run   | `button`、`toggle`、`checkbox`、`switch`、`slider`、`progress`、`collapsing-header` |
+| `fill`     | 一段跑起来的填充：进度的条、滑杆的行程、开关打开的轨道                          | A run's fill: a progress bar's bar, a slider's range, a switch's open track  | `progress`、`slider`、`switch`                                                      |
 | `knob`     | 旋钮：开关圆点、滑杆把手（不带字）                                              | A knob: a switch's thumb, a slider's handle (no text on it)                  | `switch`、`slider`                                                                  |
+| `knob-on`  | 坐在跑动填充上的旋钮：开着的开关圆点                                            | A knob on the run it opened: the open switch's thumb                         | `switch`                                                                            |
 | `hover`    | 指针停在可点项上的那一步                                                        | The step a control takes under the pointer                                   | `button`、`carousel`                                                                |
 | `pressed`  | 按下的那一步（填充色按下读 `accent`，按它的 `pressed-opacity` 变淡，见第 6 节） | The step a control takes while pressed                                       | `button`                                                                            |
 | `disabled` | 禁用控件：容器与它自己的 `foreground`                                           | A disabled control's container and its own `foreground`                      | `button`、`toggle`                                                                  |
 
 <!-- /theme-lint: finishes -->
 
-每个 finish 都写 `foreground`（面上的字与图标），所以组件不用 `?? colors.foreground` 兜底：`card`/`inset`/`raised`/`overlay`/`modal`/`glass`/`knob`/`hover`/`pressed` 是 `{foreground}`（`knob` 上不写字，它的 `foreground` 只为形状一致，`theme:contrast` 不查它），`accent` 是 `{primary-foreground}`，`inverse` 是 `{inverse-foreground}`，`disabled` 是 `{muted-foreground}`。填充色的按下态是 `accent` 按自己的 `pressed-opacity`（`finish.accent.pressedOpacity`，每套主题都写：按下变淡的主题写 0.88，按下叠色或换面的 Material / WinUI 写 1）变淡，不再另设一个面；主题若在按下时换掉强调色（WinUI 的 `AccentFillColorTertiary`），就在 `accent` 上多写两个字段 `pressed-background` 与 `pressed-foreground`，`button` 按下时读它们。
+每个 finish 都写 `foreground`（面上的字与图标），所以组件不用 `?? colors.foreground` 兜底：`card`/`inset`/`raised`/`overlay`/`modal`/`glass`/`knob`/`hover`/`pressed` 是 `{foreground}`（`knob` 与 `knob-on` 上都不写字，它们的 `foreground` 只为形状一致，`theme:contrast` 不查它们），`knob-on` 在 default 上是 `{primary-foreground}`（白盘配强调色的字色），在五套主题上是 `{foreground}`，`accent` 是 `{primary-foreground}`，`inverse` 是 `{inverse-foreground}`，`disabled` 是 `{muted-foreground}`。填充色的按下态是 `accent` 按自己的 `pressed-opacity`（`finish.accent.pressedOpacity`，每套主题都写：按下变淡的主题写 0.88，按下叠色或换面的 Material / WinUI 写 1）变淡，不再另设一个面；主题若在按下时换掉强调色（WinUI 的 `AccentFillColorTertiary`），就在 `accent` 上多写两个字段 `pressed-background` 与 `pressed-foreground`，`button` 按下时读它们。
 
 ## 5 alias 与例外
 
@@ -284,15 +286,17 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 6 折叠与例外
 
-十一个层不是十一个恰好画得一样的面：一个面属于哪一层，由它是什么决定。三条折叠需要理由，记在这里：
+十三个层不是十三个恰好画得一样的面：一个面属于哪一层，由它是什么决定。四条折叠与两条分出需要理由，记在这里：
 
-| 折起来的东西                                     | 为什么是一层                                                                                                                                                                                                                   |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `accentPressed` → `pressed`                      | 按下是控件的事，不是面的事。填充色按下不是另一个面：`accent` 按自己的 `pressed-opacity` 变淡，按下时换强调色的主题在 `accent` 上写 `pressed-background` / `pressed-foreground`——一个面的按下态只该暗一点，不该换一整套边和阴影 |
-| `knobOn` / `handle` → `knob`；`thumb` → `raised` | 开关圆点与滑杆把手都是“一个能拨动、不带字的小块”，开着的开关圆点改读 `accent` 的字色；分段与胶囊标签页选中的那块上面有字，是井里被选中的一块，读 `plate`——`knob` 在暗色下是白色圆点（iOS、shadcn），字写不上去                 |
-| `grabber` → `sheet` 的控件预设                   | 抓取条是抽屉这个控件的一部分，不是一个层；`sheetGrabber()` 画它（`alpha(colors.mutedForeground, 0.4)`）                                                                                                                        |
+| 折起来的东西                          | 为什么是一层                                                                                                                                                                                                                                                                              |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `accentPressed` → `pressed`           | 按下是控件的事，不是面的事。填充色按下不是另一个面：`accent` 按自己的 `pressed-opacity` 变淡，按下时换强调色的主题在 `accent` 上写 `pressed-background` / `pressed-foreground`——一个面的按下态只该暗一点，不该换一整套边和阴影                                                            |
+| `handle` → `knob`；`thumb` → `raised` | 开关圆点与滑杆把手都是“一个能拨动、不带字的小块”；分段与胶囊标签页选中的那块上面有字，是井里被选中的一块，读 `plate`——`knob` 在暗色下是白色圆点（iOS、shadcn），字写不上去                                                                                                                |
+| `knobOn` 从 `knob` 分出（`knob-on`）  | 上游给开着的开关圆点另写一套值：白盘 + 跑动填充的边（`finish.knobOn`），而 `knob` 是灰边白盘。default 上两者明显不同（橄榄边 vs 灰边）；五套主题里 `knob-on` 就是它们的强调字色，与 `knob` 的盘不同色。一个层一种面，所以分开                                                             |
+| `grabber` → `sheet` 的控件预设        | 抓取条是抽屉这个控件的一部分，不是一个层；`sheetGrabber()` 画它（`alpha(colors.mutedForeground, 0.4)`）                                                                                                                                                                                   |
+| `fill` 从 `accent` 分出来             | 两者在五套主题里画同一个面（`fill` 取 `accent` 的底与边），但 default 的按钮是浅青柠、跑起来的填充是更深的一档绿：上游给它们两套值（`finish.accent` 与 `finish.fill`），放在一个层里只能二选一。分出 `fill` 后，`progress` 与 `slider` 读它、`switch` 打开的轨道也读它，按钮仍读 `accent` |
 
-`light` 与 `accent` 本来就是同一个面（在五套主题里逐字节相同），`fill` 与 `on` 是强调色的两种用法，`field`/`track`/`groove` 是井的不同深度，`chip`/`pill` 是控件面，`tooltip` 是反色面——它们不是“值相同但决定不同”，是同一层上的不同控件。
+`light` 与 `accent` 本来就是同一个面（在五套主题里逐字节相同），`on` 是强调色的字色，`field`/`track`/`groove` 是井的不同深度，`chip`/`pill` 是控件面，`tooltip` 是反色面——它们不是“值相同但决定不同”，是同一层上的不同控件。
 
 ## 7 待定颜色
 
@@ -332,12 +336,19 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | winui       | light | `oklch(0.87245 0.03754 247.003)` | `accent.pressed-foreground`（`TextOnAccentFillColorSecondary` 在按下底色上合成）           | `brand-tint`（ΔL -0.042，ΔC +0.022）        |
 | winui       | dark  | `oklch(0.70029 0.10192 230.522)` | `accent.pressed-background`（同上）                                                        | `brand-edge`（ΔL -0.021，ΔC -0.006）        |
 | winui       | dark  | `oklch(0.42706 0.05878 229.834)` | `accent.pressed-foreground`（同上）                                                        | `brand-tint`（ΔL +0.122，ΔC +0.041）        |
+| default     | light | `oklch(0.75073 0.18465 126.794)` | `fill.background`、`fill.gradient`（上游 `finish.fill` 的第二档绿）                        | `chart-1`（ΔL 0，ΔC 0，数据色，语义不同）   |
+| default     | light | `oklch(0.80472 0.1815 126.061)`  | `fill.gradient`（同上，第一档）                                                            | `brand-edge`（ΔL -0.039，ΔC -0.014）        |
+| default     | light | `oklch(0.69169 0.17204 126.956)` | `fill.border-color`（同上，跑起来那段的边）                                                | `brand-tint`（ΔL +0.052，ΔC +0.012）        |
+| default     | dark  | `oklch(0.83973 0.16469 124.137)` | `fill.background`、`fill.gradient`（同上）                                                 | `primary`（ΔL +0.049，ΔC -0.001）           |
+| default     | dark  | `oklch(0.88348 0.15928 123.937)` | `fill.gradient`（同上，第一档）                                                            | `primary`（ΔL +0.005，ΔC +0.004）           |
+| default     | dark  | `oklch(0.71963 0.15821 125.456)` | `fill.border-color`（同上）                                                                | `up`（ΔL +0.060，ΔC -0.010）                |
+| default     | light | `oklch(0.72099 0.15728 124.776)` | `knob-on.border-color`（上游 `finish.knobOn` 的橄榄边）                                    | `brand-tint`（ΔL +0.081，ΔC -0.004）        |
 
 <!-- /theme-lint: pending -->
 
 ## 8 留给应用
 
-`theme-lint` 要求每个 token 和每个 finish 都被读到，否则就是写了没人用。上游的 `pill` 折进 `raised` 之后，本库的十一个层都由组件读着，这张表是空的——写一个没人读的 finish，组件里就会多一个看不出用处的东西。
+`theme-lint` 要求每个 token 和每个 finish 都被读到，否则就是写了没人用。上游的 `pill` 折进 `raised` 之后，本库的十三个层都由组件读着，这张表是空的——写一个没人读的 finish，组件里就会多一个看不出用处的东西。
 
 <!-- theme-lint: unread -->
 

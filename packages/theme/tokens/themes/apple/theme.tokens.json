@@ -54,6 +54,11 @@
             "source": "white on Apple systemBlue"
           },
           {
+            "fg": "primary-foreground",
+            "bg": "finish.fill",
+            "source": "white on Apple systemBlue"
+          },
+          {
             "fg": "brand",
             "bg": "background",
             "source": "Apple systemBlue links"

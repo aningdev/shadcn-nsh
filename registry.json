@@ -426,6 +426,20 @@
       ]
     },
     {
+      "name": "track",
+      "type": "registry:lib",
+      "title": "Track",
+      "description": "A rail's face and its shadow: the track's colour, its 1-point edge, and the shade it hangs off.",
+      "registryDependencies": ["look", "theme"],
+      "files": [
+        {
+          "path": "packages/ui/lib/track.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/track.ts"
+        }
+      ]
+    },
+    {
       "name": "popup",
       "type": "registry:lib",
       "title": "Popup",
@@ -1026,7 +1040,15 @@
       "type": "registry:ui",
       "title": "Progress",
       "description": "A determinate or indeterminate progress bar.",
-      "registryDependencies": ["checkbox", "class-names", "live-value", "look", "surface", "theme"],
+      "registryDependencies": [
+        "checkbox",
+        "class-names",
+        "live-value",
+        "look",
+        "surface",
+        "theme",
+        "track"
+      ],
       "files": [
         {
           "path": "packages/ui/progress.tsx",
@@ -1067,8 +1089,8 @@
       "name": "slider",
       "type": "registry:ui",
       "title": "Slider",
-      "description": "A sunk rail with a citrus fill and round thumb.",
-      "registryDependencies": ["class-names", "look", "theme"],
+      "description": "A sunk rail with the theme's fill and a round thumb.",
+      "registryDependencies": ["class-names", "look", "theme", "track"],
       "files": [
         {
           "path": "packages/ui/slider.tsx",

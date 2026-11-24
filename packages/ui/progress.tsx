@@ -6,12 +6,9 @@ import {
   colors,
   control,
   fillStyle,
-  finish,
   follow,
-  insetEdge,
   motion,
   stroke,
-  tints,
   type Tone,
   toneColor,
 } from "@shadcn-nsh/theme";
@@ -33,8 +30,9 @@ import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } fro
 import { CheckboxMark, choiceWell } from "./checkbox";
 import { joinClass } from "./lib/class-names";
 import { type Live, read } from "./lib/live-value";
-import { type Fill, trackLook } from "./lib/look";
+import { trackLook } from "./lib/look";
 import { controlSize } from "./lib/surface";
+import { railFace, railShadow } from "./lib/track";
 
 /**
  * A determinate fill's classes: the whole track's width, slid back by what
@@ -48,28 +46,15 @@ export const progressGlide =
 /** A determinate fill's `translate` for `value` percent (0 to 100). */
 export const progressRemaining = (value: number) => `${Math.max(0, Math.min(100, value)) - 100}% 0`;
 
-/** What a part's fill paints, as a color: a palette role, a tint, or a finish's own face. */
-function fillColour(fill: Fill): string {
-  switch (fill.kind) {
-    case "finish":
-      return finish[fill.role].backgroundColor ?? "transparent";
-    case "tint":
-      return tints[fill.role];
-    case "colour":
-      return colors[fill.role];
-  }
-}
-
 /** A bar's rail, `height` points tall (default the `track` recipe's progress height): the groove the
- * theme's `track` form draws — its face, its shade, and, where the form is a hairline, a line
- * inside a taller box — so the form settles the rail's look instead of a per-theme table. */
+ * theme's `track` form draws — its face, its edge, its shade, and, where the form is a hairline, a
+ * line inside a taller box — so the form settles the rail's look instead of a per-theme table. */
 export function progressRail(height?: number): ViewStyle {
   const look = trackLook(control().track);
   const h = height ?? look.progress.height;
   const line = look.progress.line;
-  const face = look.groove ? fillColour(look.groove.fill) : "transparent";
-  const shade = look.groove?.shade;
-  const shadow = shade ? insetEdge(finish[shade].borderColor, finish[shade].boxShadow) : null;
+  const face = railFace(look);
+  const shadow = railShadow(look);
   const band = line === null ? 0 : (h - line) / 2;
   const trackFill: ViewStyle =
     line === null
@@ -83,14 +68,14 @@ export function progressRail(height?: number): ViewStyle {
     borderRadius: h / 2,
     overflow: "hidden",
     ...trackFill,
-    ...(shadow ? { boxShadow: shadow } : {}),
+    ...(shadow === undefined ? {} : { boxShadow: shadow }),
   };
 }
 
-/** A bar's fill, `height` points tall (default the `track` recipe's progress height): the slider's citrus run
- * (`finish.accent`: its gradient, over a `transparent` bottom), or a tone's color
- * (`up` for done, `warn`, `destructive`; `accent` is the run). Neither has an edge, so a tone's bar and
- * the run read as one kind of bar. */
+/** A bar's fill, `height` points tall (default the `track` recipe's progress height): the `fill`
+ * finish's gradient (the run a slider's range draws too), or a tone's color (`up` for done,
+ * `warn`, `destructive`; `accent` is the run). Neither has an edge, so a tone's bar and the run
+ * read as one kind of bar. */
 export function progressFill(height?: number, tone?: Tone): ViewStyle {
   const h = height ?? trackLook(control().track).progress.height;
   const fill = tone && tone !== "accent" ? { backgroundColor: toneColor(tone) } : fillStyle();

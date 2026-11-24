@@ -614,6 +614,10 @@
           "{shadow.inset}"
         ]
       },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
@@ -987,6 +991,89 @@
         "$value": "{color.primary-foreground}"
       }
     },
+    "fill": {
+      "$description": "A run's fill: a progress bar's bar, a slider's range, a meter's column.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.edge.accent}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.83973,
+            0.16469,
+            124.137
+          ],
+          "hex": "#b4dc58"
+        }
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0.88348,
+                0.15928,
+                123.937
+              ],
+              "hex": "#c3ea6c"
+            },
+            "position": 0
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0.83973,
+                0.16469,
+                124.137
+              ],
+              "hex": "#b4dc58"
+            },
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.71963,
+            0.15821,
+            125.456
+          ],
+          "hex": "#8db536"
+        }
+      }
+    },
     "knob": {
       "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
       "$extensions": {
@@ -1051,6 +1138,55 @@
             264.528
           ],
           "hex": "#c6c8cc"
+        }
+      }
+    },
+    "knob-on": {
+      "$description": "A knob on the run it opened: a switch's thumb on the filled track.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.sm}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            1,
+            0,
+            0
+          ],
+          "hex": "#ffffff"
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.71963,
+            0.15821,
+            125.456
+          ],
+          "hex": "#8db536"
         }
       }
     },

@@ -28,6 +28,20 @@
     },
     "inset": {
       "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
       "shadow": {
         "$type": "shadow",
         "$value": ["{shadow.inset}"]
@@ -333,11 +347,79 @@
         }
       }
     },
+    "fill": {
+      "$description": "A run's fill: a progress bar's bar, a slider's range, a meter's column.",
+      "background": {
+        "$type": "color",
+        "$value": "{color.primary}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": ["{shadow.edge.accent}"]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": "none"
+        }
+      }
+    },
     "knob": {
       "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
       "background": {
         "$type": "color",
         "$value": "{color.knob}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": ["{shadow.sm}"]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": "none"
+        }
+      }
+    },
+    "knob-on": {
+      "$description": "A knob on the run it opened: a switch's thumb on the filled track.",
+      "background": {
+        "$type": "color",
+        "$value": "{color.primary-foreground}"
       },
       "border-color": {
         "$type": "color",

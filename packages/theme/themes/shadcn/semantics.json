@@ -238,6 +238,7 @@
       "inset": {
         "shadow": "none",
         "foreground": "{foreground}",
+        "border-color": "{border}",
         "material": null,
         "gradient": null,
         "pressed-background": null,
@@ -359,6 +360,20 @@
         "backdropFilter": "none",
         "elevation": null
       },
+      "fill": {
+        "shadow": "none",
+        "foreground": "{primary-foreground}",
+        "material": null,
+        "background": "{primary}",
+        "gradient": null,
+        "border-color": "transparent",
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
+      },
       "knob": {
         "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
         "foreground": "{foreground}",
@@ -366,6 +381,20 @@
         "background": "{knob}",
         "gradient": null,
         "border-color": "transparent",
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
+      },
+      "knob-on": {
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
+        "foreground": "{foreground}",
+        "material": null,
+        "background": "{primary-foreground}",
+        "border-color": "transparent",
+        "gradient": null,
         "pressed-background": null,
         "pressed-foreground": null,
         "border-top-color": null,

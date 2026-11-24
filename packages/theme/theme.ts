@@ -133,7 +133,9 @@ export type FinishRole =
   | "inverse"
   | "glass"
   | "accent"
+  | "fill"
   | "knob"
+  | "knob-on"
   | "hover"
   | "pressed"
   | "disabled";
@@ -731,12 +733,14 @@ export const tints = tokens({
  * a track, a groove) is drawn by an inner shade and an edge, never by a fill alone.
  *
  * The layers are what a surface is, not what draws it: `accent` is the accent's own face (a filled
- * button, a chosen switch, a progress run), `inverse` the page's inverse (a toast, a tooltip),
+ * button, a chosen switch's track), `fill` a run's filled part (a progress bar's bar, a slider's
+ * range, a switch's open track), `inverse` the page's inverse (a toast, a tooltip),
  * `glass` a translucent pane, `knob` the small thing that moves (a switch's thumb, a slider's
- * handle), `plate` the labelled block chosen inside a well (the selected tab, a segmented
+ * handle) and `knob-on` that knob on the run it opened, `plate` the labelled block chosen inside a
+ * well (the selected tab, a segmented
  * control's thumb), and `channel` the track such a block is chosen in (a segmented control's
  * track; a tab strip's track is a well, `inset`). `hover`, `pressed` and `disabled` are the steps a control takes — a control
- * that differs (an open switch's thumb, a slider's thumb, a sheet's grabber) says so in its own
+ * that differs (a slider's thumb, a sheet's grabber) says so in its own
  * preset, not in a finish of its own.
  */
 export const finish: Record<FinishRole, FinishStyle> = {
@@ -750,7 +754,9 @@ export const finish: Record<FinishRole, FinishStyle> = {
   inverse: themed("inverse"),
   glass: themed("glass"),
   accent: themed("accent"),
+  fill: themed("fill"),
   knob: themed("knob"),
+  "knob-on": themed("knob-on"),
   hover: themed("hover"),
   pressed: themed("pressed"),
   disabled: themed("disabled"),
@@ -1165,15 +1171,23 @@ export const focusRing = (offset?: number): ViewStyle => {
  */
 
 /**
- * A theme's fill for a run, a bar or a slider's range: the accent's own face, its gradient and the
- * colour under it. The gradient carries the colour where a theme has one; the colour under it shows
+ * A theme's fill for a run, a bar or a slider's range: the `fill` finish's gradient and the colour
+ * under it. The gradient carries the colour where a theme has one; the colour under it shows
  * through the translucent stops, so the two never drift apart.
+ *
+ * A theme that draws its fill flat states no gradient, and the colour goes to both stops instead of
+ * a background colour alone: a run is one gradient in every theme, so a vertical one can turn it.
  */
 export function fillStyle(): ViewStyle {
-  return {
-    backgroundColor: finish.accent.backgroundColor,
-    backgroundImage: finish.accent.backgroundImage,
-  };
+  const face = finish.fill.backgroundColor;
+  const gradient = finish.fill.backgroundImage;
+  if (gradient !== undefined) {
+    return face === undefined
+      ? { backgroundImage: gradient }
+      : { backgroundColor: face, backgroundImage: gradient };
+  }
+  if (face === undefined) return {};
+  return { backgroundImage: `linear-gradient(180deg, ${face} 0%, ${face} 100%)` };
 }
 
 /** Default width in points of the hairline edge drawn by `insetEdge` and `outerEdge`. */

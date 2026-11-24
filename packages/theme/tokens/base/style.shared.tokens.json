@@ -522,8 +522,38 @@
         }
       }
     },
+    "fill": {
+      "$description": "A run's fill: a progress bar's bar, a slider's range, a meter's column.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      }
+    },
     "knob": {
       "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      }
+    },
+    "knob-on": {
+      "$description": "A knob on the run it opened: a switch's thumb on the filled track.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",

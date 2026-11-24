@@ -1082,6 +1082,50 @@
     }
   },
   "finish": {
+    "fill": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.83973, 0.16469, 124.137],
+          "hex": "#b4dc58"
+        }
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.88348, 0.15928, 123.937],
+              "hex": "#c3ea6c"
+            },
+            "position": 0
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.83973, 0.16469, 124.137],
+              "hex": "#b4dc58"
+            },
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.71963, 0.15821, 125.456],
+          "hex": "#8db536"
+        }
+      }
+    },
     "raised": {
       "border-color": {
         "$type": "color",
@@ -1197,6 +1241,24 @@
           "colorSpace": "oklch",
           "components": [0.8324, 0.00597, 264.528],
           "hex": "#c6c8cc"
+        }
+      }
+    },
+    "knob-on": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "hex": "#ffffff"
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.71963, 0.15821, 125.456],
+          "hex": "#8db536"
         }
       }
     },

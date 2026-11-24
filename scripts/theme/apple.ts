@@ -376,6 +376,7 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
             ["primary-foreground", "primary"],
             ["sidebar-primary-foreground", "sidebar-primary"],
             ["primary-foreground", "finish.accent"],
+            ["primary-foreground", "finish.fill"],
           ] as const
         ).map(([fg, bg]) => ({ fg, bg, source: "white on Apple systemBlue" })),
         { fg: "brand", bg: "background", source: "Apple systemBlue links" },

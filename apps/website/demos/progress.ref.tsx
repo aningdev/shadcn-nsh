@@ -207,7 +207,7 @@ function App() {
             indeterminate
             sweep={sweep}
           />
-          <Transfer label="Library" detail="212 GB of 256 GB" value={83} limit={90} sweep={sweep} />
+          <Transfer label="Library" detail="212 GB of 256 GB" value={83} sweep={sweep} />
         </View>
       </Split>
 

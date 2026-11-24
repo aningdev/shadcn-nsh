@@ -18,7 +18,12 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
       material: "none",
     },
-    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
+    inset: {
+      shadow: "{shadow.inset}",
+      "border-color": "{border}",
+      foreground: "{foreground}",
+      material: "none",
+    },
     channel: {
       background: "{inset}",
       "border-color": "{border}",
@@ -84,8 +89,24 @@ export const finishes: ThemeFinishes = {
       material: "none",
       "pressed-opacity": 0.88,
     },
+    fill: {
+      background: "{primary}",
+      "border-color": "transparent",
+      foreground: "{primary-foreground}",
+      shadow: "{shadow.edge.accent}",
+      material: "none",
+    },
     knob: {
       background: "{knob}",
+      "border-color": "transparent",
+      shadow: "{shadow.sm}",
+      foreground: "{foreground}",
+      material: "none",
+    },
+
+    // Upstream `knobOn`: the knob as it sits on the open track.
+    "knob-on": {
+      background: "{primary-foreground}",
       "border-color": "transparent",
       shadow: "{shadow.sm}",
       foreground: "{foreground}",

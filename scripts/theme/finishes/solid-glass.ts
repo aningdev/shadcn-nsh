@@ -18,7 +18,12 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
       material: "none",
     },
-    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
+    inset: {
+      shadow: "{shadow.inset}",
+      "border-color": "{border}",
+      foreground: "{foreground}",
+      material: "none",
+    },
     channel: {
       background: "{inset}",
       "border-color": "{border}",
@@ -81,8 +86,23 @@ export const finishes: ThemeFinishes = {
       material: "none",
       "pressed-opacity": 0.88,
     },
+    fill: {
+      "border-color": "{brand-edge}",
+      foreground: "{primary-foreground}",
+      shadow: "{shadow.edge.accent}",
+      material: "none",
+    },
     knob: {
       background: "{knob}",
+      "border-color": "transparent",
+      shadow: "{shadow.sm}",
+      foreground: "{foreground}",
+      material: "none",
+    },
+
+    // Upstream `knobOn`: the knob as it sits on the open track.
+    "knob-on": {
+      background: "{primary-foreground}",
       "border-color": "transparent",
       shadow: "{shadow.sm}",
       foreground: "{foreground}",
@@ -118,6 +138,7 @@ export const finishes: ThemeFinishes = {
     inverse: { "border-color": "oklch(0.38 0.03 265 / 0.22)" },
     glass: { backdropFilter: "blur(14px) saturate(180%)" },
     accent: { background: "oklch(from {primary} l c h / 0.88)" },
+    fill: { background: "oklch(from {primary} l c h / 0.88)" },
     pressed: { background: "oklch(from {muted} l c h / 0.26)" },
   },
   dark: {
@@ -125,6 +146,7 @@ export const finishes: ThemeFinishes = {
     inverse: { "border-color": "oklch(1 0 0 / 0.06)" },
     glass: { backdropFilter: "blur(14px)" },
     accent: { background: "oklch(from {primary} l c h / 0.86)" },
+    fill: { background: "oklch(from {primary} l c h / 0.86)" },
     pressed: { background: "oklch(from {muted} l c h / 0.11)" },
   },
 };

@@ -17,7 +17,12 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
       material: "none",
     },
-    inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
+    inset: {
+      shadow: "{shadow.inset}",
+      "border-color": "{input}",
+      foreground: "{foreground}",
+      material: "none",
+    },
     channel: {
       background: "{inset}",
       "border-color": "{border}",
@@ -79,8 +84,24 @@ export const finishes: ThemeFinishes = {
       // WinUI swaps the accent out on a press (`pressed-background` / `pressed-foreground`).
       "pressed-opacity": 1,
     },
+    fill: {
+      background: "{primary}",
+      "border-color": "transparent",
+      foreground: "{primary-foreground}",
+      shadow: "{shadow.edge.accent}",
+      material: "none",
+    },
     knob: {
       background: "{knob}",
+      "border-color": "transparent",
+      shadow: "{shadow.sm}",
+      foreground: "{foreground}",
+      material: "none",
+    },
+
+    // Upstream `knobOn`: the knob as it sits on the open track.
+    "knob-on": {
+      background: "{primary-foreground}",
       "border-color": "transparent",
       shadow: "{shadow.sm}",
       foreground: "{foreground}",
@@ -124,6 +145,7 @@ export const finishes: ThemeFinishes = {
       "pressed-foreground": "oklch(0.87245 0.03754 247.003)",
     },
     hover: { "border-top-color": "{border}", "border-bottom-color": "oklch(0.84522 0 0)" },
+    fill: { "border-color": "oklch(0.52768 0.14982 252.341)" },
     disabled: { background: "oklch(0.97015 0 0)", foreground: "oklch(0.68949 0 0)" },
   },
   dark: {
@@ -139,6 +161,7 @@ export const finishes: ThemeFinishes = {
       "pressed-foreground": "oklch(0.42706 0.05878 229.834)",
     },
     hover: { "border-top-color": "oklch(0.32897 0 0)", "border-bottom-color": "{border}" },
+    fill: { "border-color": "oklch(0.81732 0.11439 230)" },
     disabled: { background: "oklch(0.28502 0 0)", foreground: "oklch(0.54863 0 0)" },
   },
 };

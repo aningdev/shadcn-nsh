@@ -167,8 +167,12 @@ describe("trackLook", () => {
     expect(tracks.map((value) => trackLook(value).form)).toEqual(tracks);
   });
 
-  test("no track form draws an edge of its own", () => {
-    for (const value of tracks) expect(trackLook(value).edge).toBeNull();
+  test("only the sunk track draws an edge of its own: the border colour, one point of it", () => {
+    expect(trackLook("sunk").edge).toEqual({
+      width: "stroke.control",
+      fill: { kind: "colour", role: "border" },
+    });
+    for (const value of ["tint", "hairline"] as const) expect(trackLook(value).edge).toBeNull();
   });
 
   test("a sunk track is the track colour under the inset finish's shade", () => {

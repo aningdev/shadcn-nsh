@@ -1080,6 +1080,50 @@
     }
   },
   "finish": {
+    "fill": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.75073, 0.18465, 126.794],
+          "hex": "#8fc21f"
+        }
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.80472, 0.1815, 126.061],
+              "hex": "#a2d33c"
+            },
+            "position": 0
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.75073, 0.18465, 126.794],
+              "hex": "#8fc21f"
+            },
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.69169, 0.17204, 126.956],
+          "hex": "#7fae17"
+        }
+      }
+    },
     "raised": {
       "border-color": {
         "$type": "color",
@@ -1162,6 +1206,24 @@
       "border-color": {
         "$type": "color",
         "$value": "{color.input}"
+      }
+    },
+    "knob-on": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "hex": "#ffffff"
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.72099, 0.15728, 124.776],
+          "hex": "#8fb536"
+        }
       }
     },
     "hover": {

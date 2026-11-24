@@ -1,0 +1,15 @@
+{
+  "name": "track",
+  "type": "registry:lib",
+  "title": "Track",
+  "description": "A rail's face and its shadow: the track's colour, its 1-point edge, and the shade it hangs off.",
+  "registryDependencies": ["look", "theme"],
+  "files": [
+    {
+      "path": "packages/ui/lib/track.ts",
+      "type": "registry:lib",
+      "target": "lib/ui/track.ts",
+      "content": "// How a rail reads `trackLook` (`progressRail`, a slider's groove): one place that turns a track's\n// groove and edge into the face and the `boxShadow` both draw with, so a bar and a slider never read\n// the recipe apart.\n\nimport { colors, finish, insetEdge, stroke, tints } from \"@shadcn-nsh/theme\";\n\nimport type { Fill, TrackLook } from \"./look\";\n\n/**\n * What a rail's groove paints, as a color: a finish's own face, a palette role, or a tint, and\n * `transparent` where the form draws no groove.\n */\nexport function railFace(look: TrackLook): string {\n  if (look.groove === null) return \"transparent\";\n  return painted(look.groove.fill);\n}\n\n/**\n * A rail's edge and shade, as `boxShadow`: the edge in the color of its own fill inside the shade\n * the groove hangs off, whichever of the two the form gives, and `undefined` where it draws\n * neither. A form names a width in the look's scales; an edge draws the control stroke, or the\n * number it states.\n */\nexport function railShadow(look: TrackLook): string | undefined {\n  const { edge, groove } = look;\n  const shade = groove?.shade ?? null;\n  if (edge === null && shade === null) return undefined;\n  const line = edge === null ? undefined : edgeColour(edge.fill);\n  const width = edge !== null && typeof edge.width === \"number\" ? edge.width : stroke.control;\n  const shadow = shade === null ? undefined : finish[shade].boxShadow;\n  return insetEdge(line, shadow, width);\n}\n\n/** What a fill paints, as a color: a finish's own face, a palette role, or a tint. */\nfunction painted(fill: Fill): string {\n  switch (fill.kind) {\n    case \"finish\":\n      return finish[fill.role].backgroundColor ?? \"transparent\";\n    case \"colour\":\n      return colors[fill.role];\n    case \"tint\":\n      return tints[fill.role];\n  }\n}\n\n/** What an edge painted by a fill takes as its color: a finish's own border, a palette role, or a tint. */\nfunction edgeColour(fill: Fill): string {\n  switch (fill.kind) {\n    case \"finish\":\n      return finish[fill.role].borderColor ?? colors.border;\n    case \"colour\":\n      return colors[fill.role];\n    case \"tint\":\n      return tints[fill.role];\n  }\n}\n"
+    }
+  ]
+}

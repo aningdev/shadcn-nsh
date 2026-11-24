@@ -46,10 +46,11 @@ const roles: [string, string][] = [
 ];
 
 /**
- * Finishes that carry no text a reader must read: an inactive control's (SC 1.4.3), and the knob,
- * a switch's disc and a slider's handle (a selected segment carries its label on `raised`).
+ * Finishes that carry no text a reader must read: an inactive control's (SC 1.4.3), and the knobs,
+ * a switch's disc and a slider's handle on either side of the track (a selected segment carries its
+ * label on `raised`).
  */
-const inkless = new Set(["disabled", "knob"]);
+const inkless = new Set(["disabled", "knob", "knob-on"]);
 
 const stem = (name: string) => name.slice(0, -"-foreground".length);
 
