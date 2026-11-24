@@ -370,7 +370,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
    - `colour`：颜色角色或画颜色的 finish 字段。
    - `value`：尺寸、字阶、阴影、材质、状态、动效、不透明度。
    - `contract`：增删了键，或改了所有主题共用的源（基础 token、读取层、编译）。契约冻结在 v3，这一类的改动要同一分支的 `docs/decisions/` 记录，否则 `bun run theme:diff --gate` 失败；表达不了的外观应该是值改动加差异表的一行（第 2.1 节）。
-2. `bun run port:render:theme --changed`：按这个分类只渲染会动的页面（`--list` 先看会渲染哪些、为什么）。只改颜色时不重画每一页，改值时重画这套主题的所有页，改契约时全部重画。
+2. `bun run port:render:theme --changed`：按这个分类只渲染会动的页面（`--list` 先看会渲染哪些、为什么）。只改颜色时不重画每一页，改值时重画这套主题的所有页，改契约时全部重画。CI 里 PR 只画改动代码触及的页（`--code-only`），主题改动带来的重画在合进 `main` 后的那次运行里做。
 3. 人眼审阅截图，把有意的可见变化写进 `CHANGELOG.md`。审过后 `bun run port:baseline --update` 更新基线。
 4. 重构如果要求一个像素都不变，用 `bun run theme:diff --same` 当门槛。
 

@@ -2,6 +2,10 @@ name: Check
 
 on:
   pull_request:
+  # A merged pull request runs again on `main` with the full theme render (no `--code-only`): the
+  # pull request draws only the pages its code reaches, and `main` is not required to be up to date.
+  push:
+    branches: [main]
   workflow_dispatch:
   # A release runs the same gate first (publish-cli.yml), without the render check.
   workflow_call:
@@ -15,7 +19,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: check-${{ github.ref }}
+  # A new push to a pull request replaces its run; each merge to `main` keeps its own.
+  group: check-${{ github.event_name == 'push' && github.sha || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -45,7 +50,8 @@ jobs:
           if [ "$EVENT" != "pull_request" ]; then
             if [ "$RENDER_INPUT" = "false" ]; then echo "render=false"; else echo "render=true"; fi >> "$GITHUB_OUTPUT"
             echo "install=true" >> "$GITHUB_OUTPUT"
-            echo "contract=true" >> "$GITHUB_OUTPUT"
+            # The freeze gate judges a pull request with its label; `main` has passed it already.
+            if [ "$EVENT" = "push" ]; then echo "contract=false"; else echo "contract=true"; fi >> "$GITHUB_OUTPUT"
             exit 0
           fi
           files="$(git diff --name-only "$BASE" HEAD)"
@@ -202,8 +208,12 @@ jobs:
 
       # The five themed passes, narrowed to what this change can move: a colour alone draws
       # nothing, a dimension only the themes that carry it, a contract every page in every theme.
+      # A pull request draws only the pages its code reaches (`--code-only`); what a theme change
+      # moves is drawn by the push to `main` once it lands.
       - name: Theme render check
-        run: bun run port:render:theme --shard ${{ matrix.shard }}/4 --changed "$BASE"
+        env:
+          CODE_ONLY: ${{ github.event_name == 'pull_request' && '--code-only' || '' }}
+        run: bun run port:render:theme --shard ${{ matrix.shard }}/4 --changed "$BASE" ${CODE_ONLY:-}
 
       - name: Upload render screenshots
         if: always()

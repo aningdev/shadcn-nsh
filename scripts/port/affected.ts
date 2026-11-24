@@ -14,6 +14,10 @@
  * change and a component change add up: the pages keep the whole theme pool when the change moves
  * them, because a page's colours come from whichever theme it is drawn in.
  *
+ * `--code-only` keeps the component half and drops the theme half: a pull request draws the pages
+ * its code reaches, and a theme change on its own draws nothing there. The push to `main` runs
+ * without it, so a theme change is drawn on every page it moves once it lands (`check.yml`).
+ *
  * The diff is the merge base of `<ref>` and `HEAD` against the working tree, so a branch behind
  * `main` does not report `main`'s newer files as its own, and uncommitted work counts.
  */
@@ -166,6 +170,11 @@ export function changedRef(argv = process.argv.slice(2)): string | undefined {
   return next && !next.startsWith("-") ? next : "origin/main";
 }
 
+/** Whether `--code-only` was given: the pages the changed code reaches, not the ones a theme moves. */
+export function codeOnly(argv = process.argv.slice(2)): boolean {
+  return argv.includes("--code-only");
+}
+
 /** Why a changed file moves every page; nothing when it moves none or one. */
 function shared(file: string): string | undefined {
   return everywhere.find((entry) => entry.file === file)?.why;
@@ -284,13 +293,19 @@ export function changedScope(pass: string, pool: string[]): Scope {
     diff.contract.map(({ file, why }) => `${file} (${why})`),
     pool,
   );
-  const ids = [...new Set([...componentIds, ...(theme.ids === "all" ? pageIds : [])])];
-  const themes = componentIds.length > 0 ? [...pool] : theme.themes;
+  const code = codeOnly();
+  const themeIds = !code && theme.ids === "all" ? pageIds : [];
+  const ids = [...new Set([...componentIds, ...themeIds])];
+  const themes = componentIds.length > 0 ? [...pool] : code ? [] : theme.themes;
+  const themeWhy =
+    code && theme.why.length > 0
+      ? theme.why.map((line) => `deferred to the push to main (--code-only): ${line}`)
+      : theme.why;
   const why = [
     ...(componentIds.length > 0
       ? [`${componentIds.length} of ${pageIds.length} pages import the changed code`]
       : []),
-    ...theme.why,
+    ...themeWhy,
   ];
   if (ids.length === 0) {
     console.log(
@@ -307,7 +322,7 @@ export function changedScope(pass: string, pool: string[]): Scope {
       entry.ids === "all" ? `all ${pageIds.length} ids (${entry.why})` : entry.ids.join(", ");
     console.log(`${pass}:   ${entry.file} → ${what}`);
   }
-  for (const line of theme.why) console.log(`${pass}:   ${line}`);
+  for (const line of themeWhy) console.log(`${pass}:   ${line}`);
   return { ids, themes, why };
 }
 

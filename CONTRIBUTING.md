@@ -41,7 +41,7 @@ bun run nsh:bootstrap                     # 校验 CLI 与 references/nsh 在基
 
 ## 分支与 PR
 
-`main` 受保护：不直接推，每个改动都是一个 PR，`check` 通过后 **squash 合并**，`main` 上一个 PR 一个提交，分支合并后自动删除。
+`main` 受保护：不直接推，每个改动都是一个 PR，`check` 通过后 **squash 合并**，`main` 上一个 PR 一个提交，分支合并后自动删除。合并前不要求分支追上 `main`（不用反复 "Update branch"）：每次合并后 `main` 上会再跑一遍 `check`，主题改动带来的全页主题渲染也放在这一遍（PR 上只画改动代码触及的页）；它红了就开 PR 修，不回推。
 
 - **先有 issue**：bug 与新组件先开 issue，PR 正文写 `Closes #N`。错字、文档小修可以直接开 PR。三个模板：**Bug report**（受影响的组件、现象、最小复现、版本）、**Feature request**（想要什么、为什么、参照）、**Task**（维护者或代理在动手前写的计划：问题与证据、改什么、完成标准、不做什么与破坏性变更）。
 - **分支名** `<type>/<短描述>`，type 与提交信息的相同：`fix/field-label-wrap`、`feat/combobox-chips`、`docs/install-tabs`。
