@@ -20,7 +20,7 @@ import { reduceMotion, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
 import { joinClass } from "./lib/class-names";
-import { type HandleLook, handleLook } from "./lib/look";
+import { handleLook } from "./lib/look";
 import { cssMotion } from "./lib/motion";
 import { type SwitchGeometry, knobTravel, switchSlop } from "./lib/switch-geometry";
 
@@ -129,20 +129,17 @@ const winuiSwitch: RecipeShape = {
 };
 
 /**
- * A switch's look, by the form the theme's `handle` names: a switch is always a circle (the
- * library's disc, `docs/specs/theme-contract-v2.md` §11.4), so the form picks the family whose
- * switch the theme is — the library's own, Material's growing one, or WinUI's stretching one.
+ * A switch's look: a switch is always a circle (the library's disc,
+ * `docs/specs/theme-contract-v2.md` §11.4), so the form the theme's `handle` names picks the family
+ * whose switch the theme is — the library's own on `circle`, WinUI's stretching one on `ring`.
+ * M3's growing knob has no form of its own (material's slider handle is the library's circle, #367):
+ * it rides on the `tint` track, the filled M3 track only material paints.
  */
-const switchShapes: Record<HandleLook["form"], SwitchShape | Tiered<RecipeShape>> = {
-  circle: { kind: "circle", border: 1, onBorder: 1 },
-  bar: materialSwitch,
-  ring: winuiSwitch,
-};
-
-/** The shape a form draws on this screen's tier: a recipe stated per tier takes this one. */
-function switchShape(form: HandleLook["form"]): SwitchShape {
-  const shape = switchShapes[form];
-  return "pointer" in shape ? shape[tier] : shape;
+/** The shape this theme's switch draws on this screen's tier: a recipe stated per tier takes this one. */
+function switchShape(): SwitchShape {
+  if (handleLook(control().handle).form === "ring") return winuiSwitch;
+  if (control().track === "tint") return materialSwitch[tier];
+  return { kind: "circle", border: 1, onBorder: 1 };
 }
 
 interface ResolvedSwitchGeometry extends SwitchGeometry {
@@ -170,7 +167,7 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       knobPressedHeight: TERMINAL_ROW,
       knobFeedback: "none",
     };
-  const shape = switchShape(handleLook(control().handle).form);
+  const shape = switchShape();
   if (shape.kind === "recipe")
     return {
       width: shape.width,
@@ -250,7 +247,8 @@ function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[
 /**
  * The gallery's switch, as the props of `Switch`'s parts (spread them:
  * `<Switch {...switchLook(() => on())}>`): track, knob geometry, border, and
- * hover/press knob feedback come from the shape the theme's `control()` handle names. `on` is the
+ * hover/press knob feedback come from the family the theme's `control()` names (`switchShape`)
+ * and from its `track`. `on` is the
  * value the app owns: the knob follows it, from a press or from elsewhere.
  *
  * The knob's box stays one size; its travel and its hover/press growth are CSS classes, so a

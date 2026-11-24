@@ -236,8 +236,8 @@ export type Choice = "well" | "outline" | "inset";
 /** A track's look (a progress bar, a slider, a segmented control): `sunk` a grooved channel, `tint` a flat band, `hairline` a thin line. */
 export type Track = "sunk" | "tint" | "hairline";
 
-/** A handle's look (a slider's thumb, a switch's knob): `circle` a dot, `bar` a wide bar, `ring` a ring. */
-export type Handle = "circle" | "bar" | "ring";
+/** A handle's look (a slider's thumb, a switch's knob): `circle` a dot, `ring` a ring. */
+export type Handle = "circle" | "ring";
 
 /** A group's look (a segmented control): `track` choices in a groove, `capsule` choices in a capsule (iOS), `cells` adjacent cells. */
 export type Group = "track" | "capsule" | "cells";

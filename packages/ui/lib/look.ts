@@ -383,21 +383,6 @@ export interface CircleHandleLook {
   readonly brightensOnHover: true;
 }
 
-/** A bar handle's numbers: M3's 4 × 44 knob on a 16-point rail. */
-export interface BarHandleLook {
-  readonly form: "bar";
-  readonly knob: { readonly width: number; readonly height: number };
-  readonly knobPressedWidth: number;
-  readonly rail: number;
-  /** The band is as tall as the knob: M3's run *is* the band's height. */
-  readonly band: number;
-  readonly verticalLength: Tiered<number>;
-  readonly endRadius: number;
-  /** A switch keeps its circle on a theme whose slider handle is a bar. */
-  readonly switch: null;
-  readonly brightensOnHover: false;
-}
-
 /** A ring handle's numbers: WinUI's 18 px knob with a 12 px dot on a 4-point rail. */
 export interface RingHandleLook {
   readonly form: "ring";
@@ -414,7 +399,7 @@ export interface RingHandleLook {
 }
 
 /** The parts a handle value draws: a slider's knob, and a switch's where the form makes one. */
-export type HandleLook = CircleHandleLook | BarHandleLook | RingHandleLook;
+export type HandleLook = CircleHandleLook | RingHandleLook;
 
 /**
  * How long a vertical slider's rail is, in points: the same on every handle form, because a slider
@@ -424,8 +409,8 @@ const verticalLength: Tiered<number> = { pointer: 128, touch: 144 };
 
 /**
  * The knob a `control()` value draws. `circle` is the library's disc, the one a switch also uses;
- * `bar` is M3's vertical bar; `ring` is WinUI's ring around a dot. Only `circle` gives a switch its
- * knob: `docs/specs/theme-contract-v2.md` §11.4 has a switch fall back to it on every theme.
+ * `ring` is WinUI's ring around a dot. Only `circle` gives a switch its knob:
+ * `docs/specs/theme-contract-v2.md` §11.4 has a switch fall back to it on every theme.
  */
 export function handleLook(value: Handle): HandleLook {
   switch (value) {
@@ -443,20 +428,6 @@ export function handleLook(value: Handle): HandleLook {
         verticalLength,
         switch: { knob: "icon.md", track: "height.md" },
         brightensOnHover: true,
-      };
-    case "bar":
-      return {
-        form: value,
-        // M3's 4 × 44 knob, 2 wide while pressed.
-        knob: { width: 4, height: 44 },
-        knobPressedWidth: 2,
-        rail: 16,
-        band: 44,
-        verticalLength,
-        // 2 points: the bar's rounded end.
-        endRadius: 2,
-        switch: null,
-        brightensOnHover: false,
       };
     case "ring":
       return {

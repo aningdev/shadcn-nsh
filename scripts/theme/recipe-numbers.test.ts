@@ -130,7 +130,7 @@ describe("collectNumbers", () => {
   });
 
   test("reads a look's numbers", () => {
-    expect(numbersOf("handle", "bar")).toEqual([4, 44, 2, 16, 128, 144]);
+    expect(numbersOf("handle", "circle")).toEqual([6, 8, 20, 32, 14, 128, 144]);
     expect(numbersOf("group", "cells")).toEqual([40, 12, 8, 18]);
   });
 });

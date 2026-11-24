@@ -85,7 +85,7 @@ describe("the spec's control dimensions", () => {
       field: "underline",
       choice: "outline",
       track: "tint",
-      handle: "bar",
+      handle: "circle",
       group: "cells",
     });
     expect(semantics("winui").dimension.control).toEqual({

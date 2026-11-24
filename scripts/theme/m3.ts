@@ -453,13 +453,14 @@ export const m3Style = {
     focus: { style: "outline", width: 3, offset: 2 },
     control: {
       // M3's own controls (docs/specs/theme-contract-v2.md §11.2): PrimaryTabs' underline,
-      // underlined text fields, outlined radios and checkboxes, a tinted track with a bar handle,
-      // and SegmentedButton's cells.
+      // underlined text fields, outlined radios and checkboxes, a tinted track, the library's
+      // circle for a handle (M3's 4×44 bar was a stray line in the app, #367), and
+      // SegmentedButton's cells.
       selection: "underline",
       field: "underline",
       choice: "outline",
       track: "tint",
-      handle: "bar",
+      handle: "circle",
       group: "cells",
     },
     icon: {
@@ -610,7 +611,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
         "dimension.focus.offset": "2px outward focus indicator offset per M3.",
         "dimension.control":
-          "M3 control dimensions: tabs and fields underlined (PrimaryTabs, _md-comp-filled-text-field.scss), selection controls outlined, tracks tinted with a bar handle, and SegmentedButton's cells (docs/specs/theme-contract-v2.md §11.2).",
+          "M3 control dimensions: tabs and fields underlined (PrimaryTabs, _md-comp-filled-text-field.scss), selection controls outlined, tracks tinted, the library's circle for a handle, and SegmentedButton's cells (docs/specs/theme-contract-v2.md §11.2).",
         shape: "M3 circular arc corners (ShapeTokens.kt).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; M3 uses state layer + Android ripple).",

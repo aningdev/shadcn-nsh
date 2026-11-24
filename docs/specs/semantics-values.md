@@ -144,7 +144,7 @@
 | `dimension.control.field` | 输入井的框：四条边、只下边，还是框加下边 | `box` | `box` | `box` | `underline` | `box-underline` |
 | `dimension.control.choice` | 选择框静止时的面 | `well` | `well` | `well` | `outline` | `inset` |
 | `dimension.control.track` | 轨道：凹槽、色带，还是一条细线 | `sunk` | `sunk` | `sunk` | `tint` | `hairline` |
-| `dimension.control.handle` | 手柄：圆钮、竖条，还是环 | `circle` | `circle` | `circle` | `bar` | `ring` |
+| `dimension.control.handle` | 手柄：圆钮、竖条，还是环 | `circle` | `circle` | `circle` | `circle` | `ring` |
 | `dimension.control.group` | 一组互斥按钮的分组形状 | `track` | `track` | `capsule` | `cells` | `track` |
 
 ## 4 shape

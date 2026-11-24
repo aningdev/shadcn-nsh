@@ -42,7 +42,7 @@ const groove = () => trackLook(control().track);
 
 /** Options of `sliderLook`. */
 export interface SliderLookOptions {
-  /** A vertical slider: rotated rail, bar handle, and track band. */
+  /** A vertical slider: rotated rail, and a track band as tall as the knob. */
   vertical?: boolean;
   /** The value column after the track (`children`: a 42-point label). */
   value?: boolean;
@@ -67,9 +67,8 @@ export function sliderLook(o: SliderLookOptions = {}) {
   const fade = "transition duration-150 motion-reduce:transition-none";
   /** A number a form states once, or once per input (`circle`'s knob and band differ by input). */
   const perTier = (v: Tiered<number> | number) => (typeof v === "number" ? v : v[tier]);
-  /** The knob's width, on a form whose knob is a disc of one size or a bar of its own shape. */
-  const knobWidth = (h: HandleLook) =>
-    h.form === "bar" ? h.knob.width : h.form === "ring" ? h.knob : h.knob[tier];
+  /** The knob's width, on a form whose knob is a disc of one size (`ring`) or one per input. */
+  const knobWidth = (h: HandleLook) => (h.form === "ring" ? h.knob : h.knob[tier]);
   return {
     // A vertical value sits above the rail (`flex-col-reverse`: the track is the first child).
     // It does not take `flex-1`: the rail keeps the height its band asks for.
@@ -120,14 +119,6 @@ export function sliderLook(o: SliderLookOptions = {}) {
     get thumbClass(): string {
       const h = knob();
       const focusRingClass = "focus-visible:outline-3 focus-visible:outline-ring/50";
-      if (h.form === "bar") {
-        const width = vertical ? h.knob.height : h.knob.width;
-        const height = vertical ? h.knob.width : h.knob.height;
-        const pressed = vertical
-          ? `active:h-[${h.knobPressedWidth}px]`
-          : `active:w-[${h.knobPressedWidth}px]`;
-        return `w-[${width}px] h-[${height}px] ${pressed} rounded-full ${fade} ${focusRingClass}`;
-      }
       if (h.form === "ring") {
         const outer = h.knob - 2 * EDGE_WIDTH;
         const rim = (outer - h.dot) / 2;
@@ -146,12 +137,6 @@ export function sliderLook(o: SliderLookOptions = {}) {
     },
     get thumbStyle(): ViewStyle {
       const h = knob();
-      if (h.form === "bar") {
-        return {
-          backgroundColor: finish.knob.backgroundColor,
-          borderWidth: 0,
-        };
-      }
       if (h.form === "ring") {
         return {
           backgroundColor: colors.primary,

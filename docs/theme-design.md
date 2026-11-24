@@ -306,14 +306,14 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | `field`     | 输入框的边界             | `box`（盒子）、`underline`（下划线）、`box-underline`（盒子加强调底边） |
 | `choice`    | 一组里被选中的那一格     | `well`（沟槽底）、`outline`（外包框）、`inset`（内嵌底）                |
 | `track`     | 滑动轨道与进度的剩余部分 | `sunk`（内凹槽）、`tint`（同色淡底）、`hairline`（一条细线）            |
-| `handle`    | 滑杆、开关的可拖部分     | `circle`（圆点）、`bar`（竖条把手）、`ring`（带外圈的圆）               |
+| `handle`    | 滑杆、开关的可拖部分     | `circle`（圆点）、`ring`（带外圈的圆）                                  |
 | `group`     | 并排一组控件之间         | `track`（轨道到底）、`cells`（格子分段）                                |
 
 每个取值画成什么样、按什么数字，见 [`specs/theme-roles.md`](specs/theme-roles.md) 第 11、14 节；枚举值登记在同文件的枚举表里，`check:theme` 把表、`style.ts` 的白名单和三套平台主题编译出的值三方对账。
 
 **约束**：主题只选维度，不在主题里细调某个控件的几何；以组件命名的值（开关多宽、日历格多大）不进主题——同样大小的开关和复选框，几何由各自组件决定，维度只决定“画成哪一类”。要新增一种形态，先在本表登记一个新取值，再改组件怎么画它。
 
-**参照**：`default` / `shadcn` / `solid-glass` / `apple` 用中性一套（胶囊、盒子、沟槽底、内凹槽、圆点、轨道）；`material` 照 M3 的 PrimaryTabs / outlined、text field / tinted track / SegmentedButton，取 `underline`、`underline`、`outline`、`tint`、`bar`、`cells`；`winui` 照 WinUI 的 NavigationView 指示条、控件描边与 ToggleSwitch，取 `bar`、`box-underline`、`inset`、`hairline`、`ring`，并排仍是 `track`。
+**参照**：`default` / `shadcn` / `solid-glass` / `apple` 用中性一套（胶囊、盒子、沟槽底、内凹槽、圆点、轨道）；`material` 照 M3 的 PrimaryTabs / outlined、text field / tinted track / SegmentedButton，取 `underline`、`underline`、`outline`、`tint`、`circle`、`cells`；`winui` 照 WinUI 的 NavigationView 指示条、控件描边与 ToggleSwitch，取 `bar`、`box-underline`、`inset`、`hairline`、`ring`，并排仍是 `track`。
 
 ## 3 不属于主题的东西
 

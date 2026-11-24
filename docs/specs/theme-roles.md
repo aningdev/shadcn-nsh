@@ -146,7 +146,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `dimension.control.field`         | `box` `underline` `box-underline`                                                                                                           | 输入井的框：四条边、只下边、还是框加下边                   |
 | `dimension.control.choice`        | `well` `outline` `inset`                                                                                                                    | 选择框静止时的面，勾选记号由值推出                         |
 | `dimension.control.track`         | `sunk` `tint` `hairline`                                                                                                                    | 轨道：凹槽、色带、还是一条细线                             |
-| `dimension.control.handle`        | `circle` `bar` `ring`                                                                                                                       | 手柄：圆钮、竖条、环                                       |
+| `dimension.control.handle`        | `circle` `ring`                                                                                                                             | 手柄：圆钮、环                                             |
 | `dimension.control.group`         | `track` `capsule` `cells`                                                                                                                   | 一组互斥按钮：槽里的圆角块、胶囊轨道里的胶囊块，还是相邻格 |
 | `transition.enter.timingFunction` | `out-cubic` `in-cubic` `in-out-cubic` `standard` `emphasized-decelerate` `emphasized-accelerate` `decelerate` `accelerate` `point-to-point` | 表面进场用的缓动名（引用 `cubicBezier.<name>`）            |
 
@@ -166,7 +166,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `field`     | `box`     | `box`                  | `box`     | `underline` | `box-underline` |
 | `choice`    | `well`    | `well`                 | `well`    | `outline`   | `inset`         |
 | `track`     | `sunk`    | `sunk`                 | `sunk`    | `tint`      | `hairline`      |
-| `handle`    | `circle`  | `circle`               | `circle`  | `bar`       | `ring`          |
+| `handle`    | `circle`  | `circle`               | `circle`  | `circle`    | `ring`          |
 | `group`     | `track`   | `track`                | `capsule` | `cells`     | `track`         |
 
 <!-- /theme-lint: controls -->
@@ -186,7 +186,6 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `track`     | `tint`      | 色带：progress 4、slider 16                                                                                                                  | M3 16 dp 轨道                                               |
 | `track`     | `hairline`  | progress 3 的条 + 1 的线、slider 4                                                                                                           | WinUI                                                       |
 | `handle`    | `circle`    | slider 6 轨道 / 20 带 / 14 钮（触屏 8 / 32 / 20，按压 32）、竖 128 / 144；switch 的钮是 `icon.md`（`sm` 读 `icon.sm`），轨道是钮四周各留两点 | 本库自有                                                    |
-| `handle`    | `bar`       | 4 × 44 钮（按压 2 宽）、16 轨道、带 44、端点圆 2、竖 128 / 144                                                                               | M3                                                          |
 | `handle`    | `ring`      | 18 px 钮带 12 的点（悬停 14、按下 10）、4 px 轨道、带 32、竖 128 / 144                                                                       | WinUI                                                       |
 | `group`     | `cells`     | 格高 40、内边距 12、间隙 8、勾 18                                                                                                            | M3 SegmentedButton                                          |
 

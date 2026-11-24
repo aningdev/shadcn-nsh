@@ -11,7 +11,7 @@ const selections = values<Selection>({ pill: true, plate: true, underline: true,
 const fields = values<Field>({ box: true, underline: true, "box-underline": true });
 const choices = values<Choice>({ well: true, outline: true, inset: true });
 const tracks = values<Track>({ sunk: true, tint: true, hairline: true });
-const handles = values<Handle>({ circle: true, bar: true, ring: true });
+const handles = values<Handle>({ circle: true, ring: true });
 const groups = values<Group>({ track: true, capsule: true, cells: true });
 
 describe("selectionLook", () => {
@@ -222,18 +222,6 @@ describe("handleLook", () => {
   test("only the circle makes a switch's knob: the icon scale on the height scale", () => {
     expect(handleLook("circle")).toMatchObject({ switch: { knob: "icon.md", track: "height.md" } });
     expect(handles.filter((value) => handleLook(value).switch !== null)).toEqual(["circle"]);
-  });
-
-  test("M3's bar is a 4 × 44 knob on a 16-point rail, 2 wide while pressed", () => {
-    expect(handleLook("bar")).toMatchObject({
-      knob: { width: 4, height: 44 },
-      knobPressedWidth: 2,
-      rail: 16,
-      band: 44,
-      verticalLength: { pointer: 128, touch: 144 },
-      endRadius: 2,
-      brightensOnHover: false,
-    });
   });
 
   test("WinUI's ring is an 18 px knob with a 12 px dot on a 4-point rail", () => {

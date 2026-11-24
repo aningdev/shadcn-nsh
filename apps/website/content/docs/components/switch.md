@@ -140,9 +140,9 @@ Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes throug
 
 ### Where the numbers come from
 
-A switch's knob is a circle on every theme: a theme whose slider draws a bar or a ring still gives
-its switch a round knob, and the form the theme's `handle` names picks the family whose switch the
-numbers come from — the library's own (above), Material's growing knob, or WinUI's stretching one.
+A switch's knob is a circle on every theme: WinUI's `ring` handle still gives its switch a round
+knob, and the family whose numbers it uses is the theme's own — the library's disc (above) or
+WinUI's stretching knob, with Material's growing knob wherever the theme tints its track (`tint`).
 The look reads `control()` where it draws, so switching the theme redraws the track and the knob on
 the next frame.
 

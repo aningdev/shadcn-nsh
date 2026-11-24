@@ -169,7 +169,7 @@
       "field": "underline",
       "choice": "outline",
       "track": "tint",
-      "handle": "bar",
+      "handle": "circle",
       "group": "cells"
     }
   },
