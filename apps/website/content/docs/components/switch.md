@@ -164,3 +164,8 @@ with a 12-point knob, 14 under a hover and 17 × 14 under a press.
 
 The knob keeps its size on and off: off it is `finish.knob`, and on it takes the accent's own ink
 (`finish.accent.foreground`), as the switch's preset (`packages/ui/switch.tsx`, `knobLook`).
+
+The track's edge is the accent's when on and nothing when off: the off track keeps the point of
+border as room, drawn `transparent`, so no theme's colour can stand around a switch that is off.
+A theme whose form brings its own switch keeps that form's off edge — Material's and WinUI's read
+the theme's `input`, which is the edge their own switches draw.
