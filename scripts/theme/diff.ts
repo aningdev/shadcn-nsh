@@ -3,7 +3,7 @@
  * field of every theme, in light and in dark, resolved through its aliases (`var(--x)`, `{x}`,
  * `oklch(from {x} l c h / a)`) and compared between `<ref>` and the working tree.
  *
- *   bun scripts/theme/diff.ts [<ref>] [--same] [--gate [--freeze]] [--json]
+ *   bun scripts/theme/diff.ts [<ref>] [--same] [--gate] [--json]
  *
  * The base is the merge base of `<ref>` (`origin/main` by default) and `HEAD`, as `--changed`
  * reads it (`scripts/port/affected.ts`), so a branch behind `main` does not report `main`'s
@@ -20,12 +20,10 @@
  * exits 1 when any key that exists on both sides resolves to a different value. Removed and added
  * keys pass: whether the components read the new key is `port:render:theme --against`'s question.
  *
- * `--gate` is the freeze's gate (docs/decisions/0004-theme-contract-freeze.md): the contract is
+ * `--gate` is the contract's gate (docs/decisions/0004-theme-contract-freeze.md): the contract is
  * closed, so a change that adds or removes a key, or moves a source outside the values, is a
  * breaking change and fails unless the same branch adds a `docs/decisions/` record. A look the
  * contract cannot express is a value inside it plus a row in `docs/specs/native-themes.md`.
- * `--freeze` is the door for the four changes 0004 itself authorizes (#340, #293 P6, #357,
- * #358): CI passes it for a pull request labeled `theme-contract-freeze`.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -110,7 +108,7 @@ export function contractSources(files: string[]): ContractSource[] {
   });
 }
 
-/** Something the freeze gates: a key added or removed, or a shared source that moved. */
+/** Something the gate checks: a key added or removed, or a shared source that moved. */
 export type ContractMove = { where: string; what: string };
 
 /** Everything this branch moves in the contract, as the gate lists it. */
@@ -389,8 +387,8 @@ function report(diff: ThemeDiff, sides: Map<string, Side>, same: boolean) {
   if (same && changed > 0) process.exit(1);
 }
 
-/** The freeze's gate: a contract move without a decision record fails, saying why and what to do. */
-function gate(diff: ThemeDiff, json: boolean, freeze: boolean) {
+/** The contract's gate: a contract move without a decision record fails, saying why and what to do. */
+function gate(diff: ThemeDiff, json: boolean) {
   const say = json ? console.error : console.log;
   const { passed, moves, records } = gateVerdict(diff, addedFiles(diff.base));
   if (moves.length === 0) {
@@ -403,19 +401,13 @@ function gate(diff: ThemeDiff, json: boolean, freeze: boolean) {
     );
     return;
   }
-  if (freeze) {
-    say(
-      `theme:diff --gate: ${moves.length} contract change${moves.length === 1 ? "" : "s"} under --freeze, which docs/decisions/0004-theme-contract-freeze.md authorizes`,
-    );
-    return;
-  }
   console.error(
     "theme:diff --gate: this branch moves the theme contract and adds no decision record.",
   );
   for (const move of moves) console.error(`  ${move.where}: ${move.what}`);
   console.error(
     [
-      "The contract is frozen between versions (docs/decisions/0004-theme-contract-freeze.md).",
+      "The contract changes only with a decision record (docs/decisions/0004-theme-contract-freeze.md).",
       "A look it cannot express is a value inside it plus a row in docs/specs/native-themes.md's",
       "difference table, not a new key, layer or field. To change the contract, add",
       "docs/decisions/<NNNN>-<slug>.md saying why in this same pull request; it is a breaking",
@@ -429,7 +421,6 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const same = args.includes("--same");
   const gated = args.includes("--gate");
-  const freeze = args.includes("--freeze");
   const json = args.includes("--json");
   const ref = args.find((arg) => !arg.startsWith("--")) ?? "origin/main";
   let result: { diff: ThemeDiff; sides: Map<string, Side> };
@@ -441,5 +432,5 @@ if (import.meta.main) {
   }
   if (json) console.log(JSON.stringify(result.diff, null, 2));
   else report(result.diff, result.sides, same);
-  if (gated) gate(result.diff, json, freeze);
+  if (gated) gate(result.diff, json);
 }

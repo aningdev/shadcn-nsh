@@ -70,7 +70,7 @@ bun run check:docs                文档站自身
 按改动涉及的东西再补：
 
 - **改组件或演示** → `bun run port:render`，四张截图人眼看过。迭代时加 `--changed`（不知道哪个 id 会动）或 `--only <id,...>`（知道）只跑受影响的页，一次几十秒；开 PR 前跑一次全量。`--jobs <n>` 控制同时开几个 `nsh test` 进程，默认 CPU 核数的一半、至多 6，`--jobs 1` 是逐页串行——只用来对照。
-- **改主题数据**（token、finish、角色、预设）→ 按 [`docs/port.md`](docs/port.md#主题改动的验收) 分层验收：`bun run theme:diff` 比解析后的值，`port:render:theme --only <ids> --against <目录>` 比改动前后，全量截图开 PR 前只跑一次。契约冻结在 contract v3（[`decisions/0004`](docs/decisions/0004-theme-contract-freeze.md)）：表达不了的外观改值降级、记进 [`native-themes.md`](docs/specs/native-themes.md) 的差异表，不加键、不加层；真要改契约，同一 PR 里加 `docs/decisions/` 记录，否则 `bun run theme:diff --gate` 失败（四件冻结工作自己的 PR 打 `theme-contract-freeze` 标签）。
+- **改主题数据**（token、finish、角色、预设）→ 按 [`docs/port.md`](docs/port.md#主题改动的验收) 分层验收：`bun run theme:diff` 比解析后的值，`port:render:theme --only <ids> --against <目录>` 比改动前后，全量截图开 PR 前只跑一次。契约冻结在 contract v3（[`decisions/0004`](docs/decisions/0004-theme-contract-freeze.md)）：表达不了的外观改值降级、记进 [`native-themes.md`](docs/specs/native-themes.md) 的差异表，不加键、不加层；真要改契约，同一 PR 里加 `docs/decisions/` 记录，否则 `bun run theme:diff --gate` 失败。
 - **改行为** → `bun run test:gallery`（原生行为测试）。
 - **改 registry 条目或 CLI** → `bun run test:install`（在真实 NSH 应用里 `init` / `add`，逐条目）。
 - **改过 `registry.json` 或组件文件** → `bun run registry:build`，把 `public/r` 的改动一起提交；`check` 里的 `registry:build --check` 会拦下没重建的提交。

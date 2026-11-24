@@ -50,7 +50,7 @@ jobs:
           if [ "$EVENT" != "pull_request" ]; then
             if [ "$RENDER_INPUT" = "false" ]; then echo "render=false"; else echo "render=true"; fi >> "$GITHUB_OUTPUT"
             echo "install=true" >> "$GITHUB_OUTPUT"
-            # The freeze gate judges a pull request with its label; `main` has passed it already.
+            # The contract gate judges a pull request; `main` has passed it already.
             if [ "$EVENT" = "push" ]; then echo "contract=false"; else echo "contract=true"; fi >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -129,11 +129,9 @@ jobs:
       - name: Check the docs site
         run: bun run check:docs
 
-  # The contract is frozen between versions (docs/decisions/0004-theme-contract-freeze.md):
-  # adding or removing a key, or moving a source outside the theme values, needs a decision
-  # record in the same pull request. Seconds, so it is its own job rather than part of `fast`.
-  # The four changes that record authorizes (#340, #293 P6, #357, #358) pass with the
-  # `theme-contract-freeze` label; both go away when the freeze lands.
+  # The contract changes only with a decision record (docs/decisions/0004-theme-contract-freeze.md):
+  # adding or removing a key, or moving a source outside the theme values, needs one in the same
+  # pull request. Seconds, so it is its own job rather than part of `fast`.
   contract:
     needs: changes
     if: needs.changes.outputs.contract == 'true'
@@ -153,12 +151,8 @@ jobs:
         with:
           bun-version-file: package.json
 
-      - name: Theme contract freeze
-        env:
-          # 0004 is the record for the four freeze changes: a pull request that says so with this
-          # label moves the schema without a second record.
-          FREEZE: ${{ contains(github.event.pull_request.labels.*.name, 'theme-contract-freeze') && '--freeze' || '' }}
-        run: bun run theme:diff --gate "$BASE" ${FREEZE:-}
+      - name: Theme contract gate
+        run: bun run theme:diff --gate "$BASE"
 
   # Each component's screenshot must equal the same page written against nsh/base
   # directly (P4). Four runners split the pages between them (`--shard`): the drawing is

@@ -45,6 +45,7 @@ import {
   type SplitFinishes,
   type ThemeCssVars,
 } from "./theme/tokens";
+import { checkWhitelist, type WhitelistSemantics } from "./theme/whitelist";
 import { lintDtcgSources } from "./tokens/lint";
 import { isRecord } from "./tokens/types";
 
@@ -525,13 +526,20 @@ for (const name of Object.keys(themeBlock)) {
   if (!platformTokens.has(name) && !readsToken(name) && !unread.has(name))
     fail(`packages/theme/theme.json: token \`${name}\` is read nowhere and not left to the app`);
 }
-// A theme owns no font family (ADR 0009): the app's `font-sans` and `font-mono` do.
-for (const theme of themes)
-  for (const name of Object.keys(tokensOf.get(theme)?.cssVars.theme ?? {}))
-    if (name.startsWith("font-"))
-      fail(
-        `packages/theme/themes/${theme}/theme.json: \`${name}\`; a theme owns no font family (ADR 0009)`,
-      );
+
+// 5b. The scope of a theme's customization (ADR 0007, ADR 0009): colour keys are sources and
+// references, a reference never carries a literal, the control dimensions are four, no theme owns
+// a font family or a type size.
+for (const theme of themes) {
+  const own = readJson<WhitelistSemantics>(`packages/theme/themes/${theme}/semantics.json`);
+  for (const problem of checkWhitelist(
+    `packages/theme/themes/${theme}`,
+    tokensOf.get(theme)!,
+    own,
+    defaultSemantics as unknown as WhitelistSemantics,
+  ))
+    fail(problem);
+}
 
 // 6. The spec's pending table holds only colours its themes still write.
 for (const entry of pending)

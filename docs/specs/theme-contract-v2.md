@@ -530,7 +530,7 @@
 2. **不扩张。** 不为一套主题加键、加层、加字段，也不在组件里写这套主题的代码或分支（[`ARCHITECTURE.md`](../ARCHITECTURE.md) 的 P8）。新的一层（finish）只给一种不同的**表面**，不给状态；状态是 finish 上的字段（`pressed-opacity`、`pressed-background`、`checked-*`）。
 3. **一处例外。** `default`（NSH Gallery）是官方 look，契约必须能完整表达它；另外五套（shadcn、solid-glass、apple、material、winui）可以降级。
 
-**闸门。** `bun run theme:diff --gate <base>` 在 diff 里有 `contract` 类改动（键的新增或删除，或共用源改动：基础 token、读取层、编译）且分支在 `<base>...HEAD` 上没有新增 `docs/decisions/*.md` 时，以非零退出并列出每一处改动。CI 在碰 `packages/theme/`、`scripts/theme/`、`scripts/tokens/` 的 PR 上跑它。四件冻结工作自己的 PR 由 0004 授权：给它打 `theme-contract-freeze` 标签，CI 就带上 `--freeze`，闸门照样列出改动但放行。标签只有维护者能打，冻结完成后这个标签与开关一起删掉。
+**闸门。** `bun run theme:diff --gate <base>` 在 diff 里有 `contract` 类改动（键的新增或删除，或共用源改动：基础 token、读取层、编译）且分支在 `<base>...HEAD` 上没有新增 `docs/decisions/*.md` 时，以非零退出并列出每一处改动。CI 在碰 `packages/theme/`、`scripts/theme/`、`scripts/tokens/` 的 PR 上跑它。闸门没有放行开关：契约改动只靠同一分支的决定记录通过。
 
 闸门看的是键与共用源，看不到两种同类的改动：**给已有的键加一个取值**（枚举增长，如 #358 的 `plate`；`theme:diff` 把它读成这套主题的一次值改动），以及**给 finish 加一个字段**（字段的清单在 `theme.ts` 的类型与 `theme-lint` 里，不在键上）。这两种同样是契约改动，同样需要决策记录；它们由 `check:theme`、类型与审阅守住，不靠闸门。
 
