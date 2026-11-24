@@ -187,7 +187,7 @@ function App() {
               }}
               onOpenChange={opened("Assignee", (next) => assigneeOpen.set(next))}
               {...comboboxLook(() => assigneeOpen())}
-              triggerButton={<ComboToggle open={assigneeOpen()} />}
+              triggerButton={<ComboToggle id="assignee-toggle" open={assigneeOpen()} />}
               renderItem={(item) => <OptionRow item={item} detail={teamOf(item.value)} />}
               {...listboxProps()}
             />

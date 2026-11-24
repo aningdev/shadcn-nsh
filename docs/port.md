@@ -15,7 +15,7 @@ bun run port:new <id> --view [--family]
 
 脚手架依次：在 `port-map.json` 加路由（已有路由时报错）→ 建 `packages/ui/<id>.tsx`（文件头含致谢行、外壳骨架；`--family` 生成 Root / Trigger / Content / Close 与 `use<Id>()`）→ `port:vendor <id>` 把文件里还缺的上游声明填成初稿（已有的一律不动）并列出缺的 import → 建 `demos/<id>.tsx` 与 `<id>.ref.tsx` → 建文档页骨架 → 加 registry 条目 → 在 `packages/ui/index.ts` 导出它 → 重新生成 `demos/catalog.generated.ts`。
 
-组件 id 不手写：脚本从 `registry.json` 经 `scripts/catalog.ts` 取集合，NSH 运行时从 `demos/catalog.generated.ts` 取。`render-cases.ts` 只写这个组件需要时的 `steps` / `pointerSteps` / `selfReference` 覆盖（`selfReference` 是判断，不是开关：参照页画的就是组件本身时才写，并写明为什么比不了；`pointerSteps` 只在指针那一半跑，给触屏那一半到不了或不能要的状态——`select` 用它把弹层搜索框里闪烁的光标停住）；`App.tsx` 不再列 id。
+组件 id 不手写：脚本从 `registry.json` 经 `scripts/catalog.ts` 取集合，NSH 运行时从 `demos/catalog.generated.ts` 取。`render-cases.ts` 只写这个组件需要时的 `steps` / `pointerSteps` / `selfReference` 覆盖（`selfReference` 是判断，不是开关：参照页画的就是组件本身时才写，并写明为什么比不了；`pointerSteps` 只在指针那一半跑，给触屏那一半到不了或不能要的状态——`select` 与 `combobox` 用它把弹层打开后落在字段里的光标停住）；`App.tsx` 不再列 id。
 
 **没有上游声明的组件**（本库自己的，如 `pressable`）不给 `--from`：
 
