@@ -21,21 +21,29 @@ import { switchLook } from "@/packages/ui/switch";
 import { DemoPage } from "./kit";
 import { buttonStyle, desktop, Log, Panel, Split, ui } from "./stage";
 
+/**
+ * The languages: each under its own name, with the English one under it where the two differ (a
+ * row grows to hold that second line; its neighbour with one keeps the one-line height).
+ */
 const LANGUAGES = [
   { value: "en", title: "English" },
-  { value: "de", title: "Deutsch" },
-  { value: "es", title: "Español" },
-  { value: "fr", title: "Français" },
-  { value: "it", title: "Italiano" },
-  { value: "nl", title: "Nederlands" },
-  { value: "pl", title: "Polski" },
-  { value: "pt", title: "Português" },
-  { value: "sv", title: "Svenska" },
-  { value: "tr", title: "Türkçe" },
-  { value: "ja", title: "日本語" },
-  { value: "ko", title: "한국어" },
-  { value: "zh", title: "中文" },
+  { value: "de", title: "Deutsch", english: "German" },
+  { value: "es", title: "Español", english: "Spanish" },
+  { value: "fr", title: "Français", english: "French" },
+  { value: "it", title: "Italiano", english: "Italian" },
+  { value: "nl", title: "Nederlands", english: "Dutch" },
+  { value: "pl", title: "Polski", english: "Polish" },
+  { value: "pt", title: "Português", english: "Portuguese" },
+  { value: "sv", title: "Svenska", english: "Swedish" },
+  { value: "tr", title: "Türkçe", english: "Turkish" },
+  { value: "ja", title: "日本語", english: "Japanese" },
+  { value: "ko", title: "한국어", english: "Korean" },
+  { value: "zh", title: "中文", english: "Chinese" },
 ];
+
+/** The line under a language's own name: what English calls it. */
+const englishOf = (value: string) =>
+  LANGUAGES.find((language) => language.value === value)?.english;
 
 const REGIONS = [
   { value: "us-east-1", title: "US East (Virginia)", group: "Americas" },
@@ -169,7 +177,7 @@ function App() {
                   style={trigger}
                 />
               }
-              renderItem={(item) => <OptionRow item={item} />}
+              renderItem={(item) => <OptionRow item={item} detail={englishOf(item.value)} />}
             />
           </Field>
           <Field label="Region" detail="Search by name; one region is at capacity">
@@ -231,7 +239,7 @@ function App() {
                   style={trigger}
                 />
               }
-              renderItem={(item) => <OptionRow item={item} />}
+              renderItem={(item) => <OptionRow item={item} detail={englishOf(item.value)} />}
             />
           </Field>
         </View>

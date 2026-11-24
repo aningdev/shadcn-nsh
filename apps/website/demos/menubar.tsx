@@ -3,7 +3,7 @@
 // one-of-many rows, and an inspector holding what was chosen.
 import { mount, signal, Text, View } from "nsh";
 
-import { menuItemLabel } from "@/packages/ui/menu";
+import { menuItemLabel, menuItemNote } from "@/packages/ui/menu";
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -42,10 +42,22 @@ function App() {
       [`${name} · ${event.open ? "opened" : "closed"} · ${event.reason}`, ...events()].slice(0, 6),
     );
   };
-  /** A row's label and its shortcut, the two things a menu row holds. */
-  const keyed = (label: string, keys: string, variant?: "default" | "destructive") => (
+  /** A row's label, its shortcut, and a line under the label when the row has a description. */
+  const keyed = (
+    label: string,
+    keys: string,
+    variant?: "default" | "destructive",
+    detail?: string,
+  ) => (
     <>
-      <Text style={menuItemLabel({ variant })}>{label}</Text>
+      {detail ? (
+        <View style={{ flexGrow: 1, flexShrink: 1, gap: 2 }}>
+          <Text style={menuItemLabel({ variant })}>{label}</Text>
+          <Text style={menuItemNote()}>{detail}</Text>
+        </View>
+      ) : (
+        <Text style={menuItemLabel({ variant })}>{label}</Text>
+      )}
       <MenubarShortcut>{keys}</MenubarShortcut>
     </>
   );
@@ -80,7 +92,9 @@ function App() {
               <MenubarItem onSelect={() => choose("New document")}>
                 {keyed("New document", "⌘N")}
               </MenubarItem>
-              <MenubarItem onSelect={() => choose("Open…")}>{keyed("Open…", "⌘O")}</MenubarItem>
+              <MenubarItem onSelect={() => choose("Open…")}>
+                {keyed("Open…", "⌘O", undefined, "A note from your disk")}
+              </MenubarItem>
               <MenubarSub>
                 <MenubarSubTrigger>Open recent</MenubarSubTrigger>
                 <MenubarSubContent>

@@ -27,6 +27,8 @@ import {
   MenuSubTrigger,
   MenuTrigger,
   menuItemGlyph,
+  menuItemLabel,
+  menuItemNote,
 } from "@/packages/ui/menu";
 
 import { DemoPage } from "./kit";
@@ -87,7 +89,13 @@ function App() {
               <MenuItem variant="default" onSelect={() => choose("New")}>
                 New
               </MenuItem>
-              <MenuItem onSelect={() => choose("Open…")}>Open…</MenuItem>
+              {/* A row with a line under its label: it grows past a one-line row. */}
+              <MenuItem onSelect={() => choose("Open…")}>
+                <View style={{ flexGrow: 1, flexShrink: 1, gap: 2 }}>
+                  <Text style={menuItemLabel()}>Open…</Text>
+                  <Text style={menuItemNote()}>A file, a folder or a link</Text>
+                </View>
+              </MenuItem>
               <MenuItem disabled>Paste</MenuItem>
               <MenuSeparator />
               <MenuSub>

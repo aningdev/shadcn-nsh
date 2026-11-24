@@ -39,11 +39,14 @@ const LABELS = [
 ];
 
 const PEOPLE = [
-  { value: "ada", title: "Ada Lovelace" },
-  { value: "grace", title: "Grace Hopper" },
-  { value: "linus", title: "Linus Torvalds" },
-  { value: "margaret", title: "Margaret Hamilton" },
+  { value: "ada", title: "Ada Lovelace", team: "Mathematics" },
+  { value: "grace", title: "Grace Hopper", team: "Compilers" },
+  { value: "linus", title: "Linus Torvalds", team: "Kernel" },
+  { value: "margaret", title: "Margaret Hamilton", team: "Flight software" },
 ];
+
+/** The line under a person's name: the team they are on. */
+const teamOf = (value: string) => PEOPLE.find((person) => person.value === value)?.team;
 
 const titlesOf = (items: { value: string; title: string }[], values: string[]) =>
   values.map((v) => items.find((i) => i.value === v)?.title ?? v);
@@ -164,7 +167,7 @@ function App() {
               <ComboboxTrigger />
               <ComboboxContent
                 accessibilityLabel="Assignee"
-                renderItem={(item) => <OptionRow item={item} />}
+                renderItem={(item) => <OptionRow item={item} detail={teamOf(item.value)} />}
               >
                 {PEOPLE.map((item) => (
                   <ComboboxItem value={item.value}>{item.title}</ComboboxItem>
@@ -224,7 +227,7 @@ function App() {
               <ComboboxTrigger />
               <ComboboxContent
                 accessibilityLabel="Reviewers"
-                renderItem={(item) => <OptionRow item={item} />}
+                renderItem={(item) => <OptionRow item={item} detail={teamOf(item.value)} />}
               >
                 {PEOPLE.map((item) => (
                   <ComboboxItem value={item.value}>{item.title}</ComboboxItem>

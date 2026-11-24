@@ -57,10 +57,15 @@ export function popupSurface(): ViewStyle {
       ? {
           ...rounded(shape.container),
           borderWidth: stroke.hairline,
-          padding: 4,
+          padding: POPUP_PAD,
           borderColor: finish.overlay.borderColor,
         }
-      : { ...rounded(shape.container), borderWidth: stroke.hairline, padding: 4, ...finish.overlay }
+      : {
+          ...rounded(shape.container),
+          borderWidth: stroke.hairline,
+          padding: POPUP_PAD,
+          ...finish.overlay,
+        }
   );
 }
 
@@ -78,6 +83,21 @@ export const itemSpacing = reactive<ItemSpacing>(["inset", "pad"], () =>
 /** The room above and below a full-bleed list's rows (inset 0), so the first and last clear the
  * container's corners: Material 3's `DropdownMenuVerticalPadding`. */
 const BLEED_VERTICAL = 8;
+
+/** The least room a popup keeps around its rows: 4 points, which is also the least room a row
+ * keeps above and below its own content (`rowVerticalPad`). */
+export const POPUP_PAD = 4;
+
+/**
+ * The room above and below a row's content, so a row can hold a line under its title
+ * (`detail`) without touching the row after it: the theme's `inset` between rows — the same
+ * room the list keeps at its edges — and `POPUP_PAD` for a theme that draws its rows
+ * full-bleed (Material). A one-line row does not grow by it: the row's least height is the
+ * taller of the two.
+ */
+export function rowVerticalPad(): number {
+  return Math.max(itemSpacing.inset, POPUP_PAD);
+}
 
 /** A list's container padding around its rows: `inset` on every side, or `BLEED_VERTICAL`
  * above and below a full-bleed list. */

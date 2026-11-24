@@ -11,6 +11,7 @@ import { MenuMark, menuIndicator } from "@/packages/ui/lib/popup";
 import {
   menuItemLabel,
   menuItemLook,
+  menuItemNote,
   menuItemSize,
   menuPopup,
   menuSeparator,
@@ -19,9 +20,10 @@ import {
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, wide } from "./stage";
 
-/** One row: the look's row, its mark when it can be checked, its label (the danger tone for a destructive one). */
+/** One row: the look's row, its mark when it can be checked, its label (the danger tone for a destructive one), and a line under it when it has a description. */
 function Item(props: {
   label: string;
+  detail?: string;
   onSelect?: () => void;
   checked?: boolean;
   disabled?: boolean;
@@ -49,7 +51,14 @@ function Item(props: {
       activeStyle={props.disabled ? undefined : look.activeStyle}
       disabledStyle={look.disabledStyle}
     >
-      <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+      {props.detail ? (
+        <View style={{ flexGrow: 1, flexShrink: 1, gap: 2 }}>
+          <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+          <Text style={menuItemNote({ variant: props.variant })}>{props.detail}</Text>
+        </View>
+      ) : (
+        <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+      )}
     </MenuItem>
   );
 }
@@ -120,7 +129,7 @@ function App() {
             }}
           />
           <Item inset label="Cut" onSelect={() => last.set("Cut")} />
-          <Item inset label="Copy" onSelect={() => last.set("Copy")} />
+          <Item inset label="Copy" detail="With the formatting" onSelect={() => last.set("Copy")} />
           <Item inset label="Paste" disabled />
           <MenuSeparator style={menuSeparator()} />
           <Item inset label="Delete" variant="destructive" onSelect={() => last.set("Delete")} />

@@ -193,6 +193,9 @@ const overrides: Record<string, Override> = {
       await app.waitFor("text:presented · toast-1");
     },
   },
+  // The language list, whose rows carry the English name under each language's own (the two-line
+  // row the select shares with the combobox): its first row has no second line, so one picture
+  // holds both heights.
   select: { steps: (app) => app.press("label:Language") },
   "date-picker": { steps: (app) => app.press("No due date") },
   // The pages whose photos come over the network mark themselves once every image is there.

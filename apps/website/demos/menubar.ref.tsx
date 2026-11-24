@@ -26,9 +26,10 @@ import { desktop, Log, Panel, Split, ui } from "./stage";
 const ZOOMS = ["100%", "125%", "150%"];
 const RECENT = ["Harbour at dusk", "Rough ideas", "Trip to the lakes"];
 
-/** One row: the look's row, its mark when it can be checked, its label and its shortcut. */
+/** One row: the look's row, its mark when it can be checked, its label, the line under it when it has a description, and its shortcut. */
 function Item(props: {
   label: string;
+  detail?: string;
   keys?: string;
   onSelect?: () => void;
   checked?: boolean;
@@ -60,7 +61,14 @@ function Item(props: {
       activeStyle={look.activeStyle}
       disabledStyle={look.disabledStyle}
     >
-      <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+      {props.detail ? (
+        <View style={{ flexGrow: 1, flexShrink: 1, gap: 2 }}>
+          <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+          <Text style={menuItemNote({ variant: props.variant })}>{props.detail}</Text>
+        </View>
+      ) : (
+        <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+      )}
       {props.keys ? (
         <Text style={[menuItemNote(), { marginLeft: "auto" }]}>{props.keys}</Text>
       ) : null}
@@ -137,7 +145,12 @@ function App() {
           >
             <MenuLabel>Document</MenuLabel>
             <Item label="New document" keys="⌘N" onSelect={() => choose("New document")} />
-            <Item label="Open…" keys="⌘O" onSelect={() => choose("Open…")} />
+            <Item
+              label="Open…"
+              detail="A note from your disk"
+              keys="⌘O"
+              onSelect={() => choose("Open…")}
+            />
             <Submenu
               trigger={<SubmenuRow>Open recent</SubmenuRow>}
               back={desktop ? undefined : <SubmenuBack label="Open recent" />}

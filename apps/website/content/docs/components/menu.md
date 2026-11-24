@@ -60,6 +60,19 @@ Menu
 </MenuRadioItem>
 ```
 
+### A line under the label
+
+A row's height in the size table is its least: give it a `View` holding its label and a note under it (`menuItemNote`) and the row grows to hold both, growing over the theme's row inset so it never touches the row after it. A neighbour with one line keeps the one-line height.
+
+```tsx
+<MenuItem onSelect={() => {}}>
+  <View style={{ flexGrow: 1, flexShrink: 1, gap: 2 }}>
+    <Text style={menuItemLabel()}>Open…</Text>
+    <Text style={menuItemNote()}>A file, a folder or a link</Text>
+  </View>
+</MenuItem>
+```
+
 ### A destructive item
 
 `variant="destructive"` puts the danger tone on the row's label, its note and its icon; `default` is the row as it is.
@@ -125,7 +138,7 @@ A string child is the row's label and its name for screen readers; `accessibilit
 
 ## API
 
-Looks are `menuItemLook`, `menuItemLabel`, `menuItemNote`, `menuItemGlyph`, `menuPopup`, `menuSeparator` and `menuHighlight`; `SubmenuRow` and `SubmenuBack` draw a submenu's row and its touch back row. Every prop of [`nsh/base` Menu](https://nsh.dev/elements/menu) on `MenuContent` passes through except open state and `trigger`. There is no radio-group part: a `MenuGroup` holds the rows, and each `MenuRadioItem` carries its own `checked`.
+Looks are `menuItemLook`, `menuItemLabel`, `menuItemNote`, `menuItemGlyph`, `menuPopup`, `menuSeparator` and `menuHighlight`; `menuItemSize.height` is a row's least height, not its height; `SubmenuRow` and `SubmenuBack` draw a submenu's row and its touch back row. Every prop of [`nsh/base` Menu](https://nsh.dev/elements/menu) on `MenuContent` passes through except open state and `trigger`. There is no radio-group part: a `MenuGroup` holds the rows, and each `MenuRadioItem` carries its own `checked`.
 
 | Part               | Props                                                                                                                        | Description                                                                    |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |

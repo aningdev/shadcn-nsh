@@ -173,6 +173,7 @@ function App() {
               <CommandRow
                 entry={entry}
                 icon={icons[entry.id]}
+                detail={entry.id === "open" ? "A folder on this Mac" : undefined}
                 note={entry.disabled ? "Pro" : undefined}
               />
             )}

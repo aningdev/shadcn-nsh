@@ -17,6 +17,7 @@ import {
   menuItemGlyph,
   menuItemLabel,
   menuItemLook,
+  menuItemNote,
   menuItemSize,
   menuPopup,
   menuSeparator,
@@ -29,9 +30,10 @@ import { desktop, Panel, Split, wide } from "./stage";
 
 const SORTS = ["Name", "Date modified", "Size"];
 
-/** One row: the look's row, its mark when it can be checked, its label (the danger tone for a destructive one). */
+/** One row: the look's row, its mark when it can be checked, its label (the danger tone for a destructive one), and a line under it when it has a description. */
 function Item(props: {
   label: string;
+  detail?: string;
   onSelect?: () => void;
   checked?: boolean;
   radio?: boolean;
@@ -65,7 +67,14 @@ function Item(props: {
       activeStyle={props.disabled ? undefined : look.activeStyle}
       disabledStyle={look.disabledStyle}
     >
-      <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+      {props.detail ? (
+        <View style={{ flexGrow: 1, flexShrink: 1, gap: 2 }}>
+          <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+          <Text style={menuItemNote({ variant: props.variant })}>{props.detail}</Text>
+        </View>
+      ) : (
+        <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
+      )}
     </MenuItem>
   );
 }
@@ -142,7 +151,11 @@ function App() {
             onOpenChange={({ open, reason }) => changed("File")({ open, reason })}
           >
             <Item label="New" onSelect={() => choose("New")} />
-            <Item label="Open…" onSelect={() => choose("Open…")} />
+            <Item
+              label="Open…"
+              detail="A file, a folder or a link"
+              onSelect={() => choose("Open…")}
+            />
             <Item label="Paste" disabled />
             <MenuSeparator style={menuSeparator()} />
             <Share onSelect={(what) => choose(`Share › ${what}`)} />

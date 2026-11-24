@@ -11,6 +11,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/packages/ui/context-menu";
+import { menuItemLabel, menuItemNote } from "@/packages/ui/menu";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, ui, wide } from "./stage";
@@ -81,8 +82,12 @@ function App() {
             <ContextMenuItem inset onSelect={() => last.set("Cut")}>
               Cut
             </ContextMenuItem>
+            {/* A row with a line under its label: it grows past a one-line row. */}
             <ContextMenuItem inset onSelect={() => last.set("Copy")}>
-              Copy
+              <View style={{ flexGrow: 1, flexShrink: 1, gap: 2 }}>
+                <Text style={menuItemLabel()}>Copy</Text>
+                <Text style={menuItemNote()}>With the formatting</Text>
+              </View>
             </ContextMenuItem>
             <ContextMenuItem inset disabled>
               Paste

@@ -17,7 +17,7 @@ import {
 import { Kbd } from "./kbd";
 import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
-import { itemRadius, itemSpacing, listPadding } from "./lib/popup";
+import { itemRadius, itemSpacing, listPadding, rowVerticalPad } from "./lib/popup";
 import { controlSize } from "./lib/surface";
 
 const desktop = platform.desktop;
@@ -125,7 +125,8 @@ export function CommandRow(props: {
     <View
       style={{
         // A second line of text takes the row past its least height, so the row asks for density's height.
-        height: props.detail ? size.row : size.rowSm,
+        minHeight: props.detail ? size.row : size.rowSm,
+        paddingVertical: rowVerticalPad(),
         flexDirection: "row",
         alignItems: "center",
         gap: 10,

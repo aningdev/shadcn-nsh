@@ -17,7 +17,14 @@ import { platform, Text, View } from "nsh";
 import type { SelectEntry, SelectGroup } from "nsh/base";
 
 import { Icon } from "./icons";
-import { backdrop, itemRadius, itemSpacing, listPadding, popInStyles } from "./popup";
+import {
+  backdrop,
+  itemRadius,
+  itemSpacing,
+  listPadding,
+  popInStyles,
+  rowVerticalPad,
+} from "./popup";
 import { controlSize } from "./surface";
 
 const pointer = platform.desktop;
@@ -176,8 +183,9 @@ export function clearButtonLook(o?: ClearButtonOptions) {
   };
 }
 
-/** A row's height: the title alone, and with a line under it; compact with a pointer (shadcn's
- * `SelectItem`, `py-1.5` around a 20-point line), a finger's target on a touch screen. */
+/** A row's least height: the title alone, and with a line under it; compact with a pointer (shadcn's
+ * `SelectItem`, `py-1.5` around a 20-point line), a finger's target on a touch screen. A row grows
+ * past it when its content (`detail`) needs the room, with `rowVerticalPad` around it. */
 const rowHeights = {
   pointer: { title: 32, detail: 40 },
   touch: { title: 44, detail: 52 },
@@ -200,9 +208,10 @@ export function OptionRow(props: {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        height: (pointer ? rowHeights.pointer : rowHeights.touch)[
+        minHeight: (pointer ? rowHeights.pointer : rowHeights.touch)[
           props.detail ? "detail" : "title"
         ],
+        paddingVertical: rowVerticalPad(),
         // With the popup's inset, the trigger's text inset (`triggerPadding`): a select's chosen row lies over the trigger, title on title.
         paddingHorizontal: itemSpacing.pad,
       }}

@@ -38,11 +38,14 @@ const LABELS = [
 ];
 
 const PEOPLE = [
-  { value: "ada", title: "Ada Lovelace" },
-  { value: "grace", title: "Grace Hopper" },
-  { value: "linus", title: "Linus Torvalds" },
-  { value: "margaret", title: "Margaret Hamilton" },
+  { value: "ada", title: "Ada Lovelace", team: "Mathematics" },
+  { value: "grace", title: "Grace Hopper", team: "Compilers" },
+  { value: "linus", title: "Linus Torvalds", team: "Kernel" },
+  { value: "margaret", title: "Margaret Hamilton", team: "Flight software" },
 ];
+
+/** The line under a person's name: the team they are on. */
+const teamOf = (value: string) => PEOPLE.find((person) => person.value === value)?.team;
 
 const titlesOf = (items: { value: string; title: string }[], values: string[]) =>
   values.map((v) => items.find((i) => i.value === v)?.title ?? v);
@@ -185,7 +188,7 @@ function App() {
               onOpenChange={opened("Assignee", (next) => assigneeOpen.set(next))}
               {...comboboxLook(() => assigneeOpen())}
               triggerButton={<ComboToggle open={assigneeOpen()} />}
-              renderItem={(item) => <OptionRow item={item} />}
+              renderItem={(item) => <OptionRow item={item} detail={teamOf(item.value)} />}
               {...listboxProps()}
             />
           </Field>
@@ -258,7 +261,7 @@ function App() {
               onOpenChange={opened("Reviewers", (next) => reviewersOpen.set(next))}
               {...comboboxLook(() => reviewersOpen(), { filled: () => reviewers().length > 0 })}
               triggerButton={<ComboToggle open={reviewersOpen()} />}
-              renderItem={(item) => <OptionRow item={item} />}
+              renderItem={(item) => <OptionRow item={item} detail={teamOf(item.value)} />}
               {...listboxProps()}
             />
           </Field>

@@ -52,6 +52,7 @@ import {
   listPadding,
   type PopupSide,
   popupSurface,
+  rowVerticalPad,
 } from "./lib/popup";
 
 const pointer = platform.desktop;
@@ -72,9 +73,10 @@ export function menuIsPopup(): boolean {
   );
 }
 
-/** A menu row's height and type: compact with a pointer, a
+/** A menu row's least height and its type: compact with a pointer, a
  * finger's row on a touch screen. */
 export interface MenuItemDimensions {
+  /** The least height of a row: one with a line under its label grows past it. */
   height: number;
   font: number;
   /** A note's size (a shortcut, a value). */
@@ -83,7 +85,7 @@ export interface MenuItemDimensions {
   icon: number;
 }
 
-/** A menu row's height and type: 26 points tall with a pointer, 46 on a touch screen. */
+/** A menu row's least height and its type: 26 points with a pointer, 46 on a touch screen. */
 export const menuItemSize: MenuItemDimensions = pointer
   ? {
       height: 26,
@@ -123,9 +125,11 @@ export interface MenuItemLookOptions {
 
 /**
  * A menu row's props (spread them on `nsh/base`'s `MenuItem`, or on a
- * `Submenu`'s trigger): a row 8 points apart, 26 points tall with a
+ * `Submenu`'s trigger): a row 8 points apart, at least 26 points tall with a
  * pointer and 46 on a touch screen (`menuItemSize`), its text the theme's
- * `pad` in from its fill, its corners concentric with the popup's (`itemRadius`). Under the pointer and under the keyboard alike it takes
+ * `pad` in from its fill, its corners concentric with the popup's (`itemRadius`). A row grows to
+ * its content: a note on a line under its label (`menuItemNote`) takes the room it needs, and
+ * the rows keep `rowVerticalPad` apart. Under the pointer and under the keyboard alike it takes
  * the neutral `accent` fill (`menuHighlight`), so arrow keys show where
  * they are; pressed, a shade deeper; disabled, 50%. Its label takes
  * `menuItemLabel`, a note `menuItemNote`, an icon `menuItemGlyph`.
@@ -137,7 +141,8 @@ export function menuItemLook(o?: MenuItemLookOptions) {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        height: menuItemSize.height,
+        minHeight: menuItemSize.height,
+        paddingVertical: rowVerticalPad(),
         paddingHorizontal: itemSpacing.pad,
         ...(o?.inset ? { paddingStart: itemSpacing.pad + markRoom } : {}),
         ...rounded(itemRadius()),
