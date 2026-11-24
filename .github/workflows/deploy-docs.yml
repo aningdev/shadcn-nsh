@@ -82,7 +82,7 @@ jobs:
           # Empty for the dev docs: the push's own commit.
           ref: ${{ steps.site.outputs.ref }}
 
-      - uses: actions/setup-bun@v2
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 
