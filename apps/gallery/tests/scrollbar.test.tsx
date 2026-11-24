@@ -32,7 +32,11 @@ test("a Scrollbar is thicker with a pointer than on a touch screen, and fades on
   expect(find(desktop.texts(), "mode=")).toBe("hover");
 });
 
+// The thumb's size and fill ride a style transition (`thumbStyle`, #296), so reduced motion drops
+// the transition property there, not a `motion-reduce:` class.
 test("a Scrollbar thumb transition opts out under reduced motion", async () => {
-  const app = await open("./scrollbar.fixture.tsx", { reducedMotion: true });
-  expect(find(app.texts(), "thumb=")).toContain("motion-reduce:transition-none");
+  const still = await open("./scrollbar.fixture.tsx", { reducedMotion: true });
+  expect(find(still.texts(), "transition=")).toBe("none");
+  const moving = await open("./scrollbar.fixture.tsx", { reducedMotion: false });
+  expect(find(moving.texts(), "transition=")).toBe("transform, background-color");
 });

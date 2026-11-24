@@ -39,13 +39,16 @@ test("control dimensions and component looks follow the active theme", async () 
   // Material Design 3 ("material")
   await app.press("text:Material");
   expect(app.texts()).toContain("theme:material");
+  // The desktop tier is one step below M3's touch numbers (ADR 0003): 40x24, the knob 16 → 20 → 22.
   expect(find(app.texts(), "switch=")).toBe(
-    "52x32|2|16|checked:translate-x-[20px] checked:scale-[1.5] active:scale-[1.75]",
+    "40x24|1|16|checked:translate-x-[16px] checked:scale-[1.25] active:scale-[1.375]",
   );
+  // Material's slider keeps the library's round knob on its tinted track (#367, a downgrade
+  // recorded in docs/specs/native-themes.md): the circle's 6-point rail and 20-point band.
   expect(find(app.texts(), "slider=")).toContain(
-    "h-[16px] rounded-full|h-[44px] justify-center px-[2px]",
+    "h-[6px] rounded-full|h-[20px] justify-center px-[7px]",
   );
-  expect(find(app.texts(), "slider=")).toContain("|false|w-[4px] h-[44px] active:w-[2px]");
+  expect(find(app.texts(), "slider=")).toContain("|false|rounded-full");
   expect(find(app.texts(), "slider=")?.endsWith("|false|true|false")).toBe(true);
   expect(find(app.texts(), "checkbox=")).toBe("2|true|false");
   expect(find(app.texts(), "progress=")).toBe("4/solid/false");

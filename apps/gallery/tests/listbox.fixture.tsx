@@ -27,7 +27,7 @@ function edge(value: unknown): string {
 function popupChrome() {
   const p = listboxPopup();
   if (platform.desktop) {
-    return `popup|${p.padding}|none`;
+    return `popup|${p.paddingHorizontal}|${p.paddingVertical}|none`;
   }
   return `sheet|${p.borderTopLeftRadius}|${p.borderTopRightRadius}|${p.maxHeight}|${p.paddingHorizontal}|${p.paddingBottom}`;
 }

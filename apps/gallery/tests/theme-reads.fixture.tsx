@@ -20,6 +20,7 @@ import {
   REFRESH_INDICATOR_HEIGHT,
   refreshIndicatorLook,
 } from "../../../packages/ui";
+import { controlSize } from "../../../packages/ui/lib/surface";
 
 function App() {
   const row = signal(-1);
@@ -34,6 +35,7 @@ function App() {
     };
   return (
     <View style={{ gap: 8, padding: 12 }}>
+      <Text>{`row-min=${controlSize.row}`}</Text>
       <Text>{`row=${row()}`}</Text>
       <Text>{`tile=${tile()}`}</Text>
       <Text>{`chip=${chip()}`}</Text>

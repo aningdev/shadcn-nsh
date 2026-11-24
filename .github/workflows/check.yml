@@ -33,6 +33,7 @@ jobs:
       render: ${{ steps.paths.outputs.render }}
       install: ${{ steps.paths.outputs.install }}
       contract: ${{ steps.paths.outputs.contract }}
+      gallery: ${{ steps.paths.outputs.gallery }}
     steps:
       - name: Checkout
         if: github.event_name == 'pull_request'
@@ -50,6 +51,7 @@ jobs:
           if [ "$EVENT" != "pull_request" ]; then
             if [ "$RENDER_INPUT" = "false" ]; then echo "render=false"; else echo "render=true"; fi >> "$GITHUB_OUTPUT"
             echo "install=true" >> "$GITHUB_OUTPUT"
+            echo "gallery=true" >> "$GITHUB_OUTPUT"
             # The contract gate judges a pull request; `main` has passed it already.
             if [ "$EVENT" = "push" ]; then echo "contract=false"; else echo "contract=true"; fi >> "$GITHUB_OUTPUT"
             exit 0
@@ -61,14 +63,17 @@ jobs:
           render='^(packages/ui/|packages/theme/|apps/website/demos/)'
           install='^(packages/cli/|packages/ui/|packages/theme/|registry\.json|public/r/)'
           contract='^(packages/theme/|scripts/theme/|scripts/tokens/)'
+          gallery='^(packages/ui/|packages/theme/|apps/gallery/)'
           if [ "$(matches "$all")" = true ]; then
             echo "render=true" >> "$GITHUB_OUTPUT"
             echo "install=true" >> "$GITHUB_OUTPUT"
             echo "contract=true" >> "$GITHUB_OUTPUT"
+            echo "gallery=true" >> "$GITHUB_OUTPUT"
           else
             echo "render=$(matches "$render")" >> "$GITHUB_OUTPUT"
             echo "install=$(matches "$install")" >> "$GITHUB_OUTPUT"
             echo "contract=$(matches "$contract")" >> "$GITHUB_OUTPUT"
+            echo "gallery=$(matches "$gallery")" >> "$GITHUB_OUTPUT"
           fi
 
   # Every change: about a minute.
@@ -227,6 +232,27 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  # What the components do in a running app (docs/ARCHITECTURE.md): `nsh test apps/gallery` opens
+  # each fixture on a native engine and presses, types and reads it back, so it needs the nsh CLI
+  # that Setup installs and no browser.
+  gallery:
+    needs: changes
+    if: needs.changes.outputs.gallery == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          nsh-channel: ${{ vars.NSH_CHANNEL }}
+
+      - name: Gallery tests
+        run: bun run test:gallery
+
   # The registry as an app receives it (docs/port.md): `init` + `add` copy every item into a
   # real NSH app and `nsh check` it — the whole registry, and once per `registry:ui` item alone.
   install:
@@ -250,7 +276,7 @@ jobs:
   # The one status branch protection requires. A skipped job passed: the change could not
   # affect it.
   check:
-    needs: [changes, fast, contract, render, install]
+    needs: [changes, fast, contract, render, gallery, install]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -258,7 +284,7 @@ jobs:
         env:
           RESULTS: ${{ join(needs.*.result, ' ') }}
         run: |
-          echo "changes fast contract render install: $RESULTS"
+          echo "changes fast contract render gallery install: $RESULTS"
           for result in $RESULTS; do
             case "$result" in
               success | skipped) ;;

@@ -72,8 +72,8 @@ export interface SplitFinishes {
 
 /**
  * What a component reads of a finish (`finish.overlay`): the style keys, spread into a `style`. A
- * finish whose `material` has `apple` also has `glassEffect` (and `glassTintColor`, unless its tint is
- * `null`); otherwise these keys are not there at all. `material` itself is never a style key.
+ * finish whose `material` has `apple` also has `glassEffect` (and `glassTintColor`, the finish's own
+ * `background`); otherwise these keys are not there at all. `material` itself is never a style key.
  */
 interface FinishStyleFields {
   backgroundColor?: string;

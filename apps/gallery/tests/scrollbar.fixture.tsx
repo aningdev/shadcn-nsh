@@ -1,4 +1,4 @@
-import { mount, platform, signal, Scroll, Text, View, type ScrollRef } from "nsh";
+import { mount, platform, signal, Scroll, Text, View, type ScrollRef, type ViewStyle } from "nsh";
 
 import { Scrollbar, scrollbarTheme } from "../../../packages/ui";
 
@@ -26,6 +26,7 @@ function App() {
       <Text>{`desktop=${platform.desktop}`}</Text>
       <Text>{`thumb=${chrome.thumbClass}`}</Text>
       <Text>{`across=${across.thumbClass}`}</Text>
+      <Text>{`transition=${String((chrome.thumbStyle as ViewStyle | undefined)?.transitionProperty)}`}</Text>
       <Text>{`motion=${scrollbarTheme.motion!.enter}|${scrollbarTheme.motion!.exit}`}</Text>
       <Text>{`mode=${scrollbarTheme.mode}`}</Text>
     </View>
