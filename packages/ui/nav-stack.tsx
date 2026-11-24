@@ -2,10 +2,10 @@
 // draw — a back button, the title, a trailing slot — which iOS and Android take from the system
 // instead. The looks are `navStackLook` and `navPageLook` below; the parts only wear them.
 
-import { colors, header, font, stroke } from "@shadcn-nsh/theme";
+import { colors, controlHeight, header, font, iconSize, stroke, tier } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
-import { context, platform, split, Text, View } from "nsh";
+import { context, split, Text, View } from "nsh";
 import {
   NavPage as BaseNavPage,
   NavStack as BaseNavStack,
@@ -20,16 +20,34 @@ import { Icon } from "./lib/icons";
 // page's navigation from.
 export { createNavStack, type NavStackChangeEvent, type NavStackState } from "nsh/base";
 
-const pointer = platform.desktop;
+const pointer = tier === "pointer";
+
+/** A page header is a bar, not a control row: shadcn's `h-12`, above a control height scale whose
+ * tallest step is the row — the same call `sidebar.tsx`'s `TEAM_ROW` makes. */
+const HEADER = 48;
 
 /**
- * The page header's numbers: its `height`, the `padding` either side, the `gap` between its items,
- * and the sides of its `title` and of the back button's `glyph`. A pointer's header is a desktop
- * toolbar's 48 points; a touch screen's is 52, with the title at the size of a page's.
+ * The page header's numbers: its `height` (a bar's: the theme's tallest height step, and never
+ * shorter than `HEADER`), the `padding` either side and the `gap` between its items (the header's
+ * own: shadcn's `px-3` and a 8-point gap, the frame's rather than a control's), and the sides of
+ * its `title` (the theme's `title` type role) and of the back button's `glyph` (the theme's middle
+ * icon).
  */
-export const navPageSize = pointer
-  ? { height: 48, padding: 12, gap: 8, title: 15, glyph: 18 }
-  : { height: 52, padding: 16, gap: 8, title: 17, glyph: 20 };
+export const navPageSize = {
+  get height() {
+    return Math.max(controlHeight.lg, HEADER);
+  },
+  get padding() {
+    return pointer ? 12 : 16;
+  },
+  gap: 8,
+  get title() {
+    return font.size("title");
+  },
+  get glyph() {
+    return iconSize.md;
+  },
+};
 
 /** The stack's parts as the styles they wear. */
 export interface NavStackLook {
@@ -54,10 +72,10 @@ export function navStackLook(): NavStackLook {
 export interface NavPageLook {
   /** The page: the window's area, on the page's fill. */
   page(): ViewStyle;
-  /** The header the desktops and the web draw: a row `navPageSize.height` tall on the page's fill,
+  /** The header the desktops and the web draw: a bar `navPageSize.height` tall on the page's fill,
    * a hairline under it, the room either side its padding leaves. */
   header(): ViewStyle;
-  /** The header's title: `navPageSize.title` points, semibold, in the page's text color, taking
+  /** The header's title: `navPageSize.title`, semibold, in the page's text color, taking
    * the room the back button and the trailing slot leave. */
   title(): TextStyle;
   /** The back button's glyph: the side of its square and its tint, the accent — the system

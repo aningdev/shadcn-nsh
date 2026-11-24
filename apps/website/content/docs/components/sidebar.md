@@ -156,14 +156,15 @@ const sidebar = useSidebar(); // in a view inside the provider
 ### A row
 
 `SidebarMenuButton` is a row of `SidebarMenu`, inside a `SidebarGroupContent` of a `SidebarGroup`
-that a `SidebarGroupLabel` names: 32 points high with a pointer (44 on a touch screen), its label 13
-points, the pointer's fill under it, the `sidebarAccent` fill when `isActive` (the page the app is
-on), the keyboard's ring, and 50% while `disabled`. It takes a press (`onPress`), or it is a row of
-its own; no `href`, as a navigation menu's link has none.
+that a `SidebarGroupLabel` names: the theme's row high (`controlSize.row`), its label the `body`
+type role, the pointer's fill under it, the `sidebarAccent` fill when `isActive` (the page the app
+is on), the keyboard's ring, and 50% while `disabled`. It takes a press (`onPress`), or it is a
+row of its own; no `href`, as a navigation menu's link has none.
 
-`size` is the row's step — `sm` (28), `default` (32), `lg` (48, a team's switcher or a user's row) —
-and `variant` is its look: `default`, bare until the pointer is over it, or `outline`, a card of its
-own on the column.
+`size` is the row's step — `default` the theme's row, `sm` the height step under it, `lg` a team's
+switcher or a user's row, 48 points where the row is a pointer's (a touch screen's row is already a
+finger's height) — and `variant` is its look: `default`, bare until the pointer is over it, or
+`outline`, a card of its own on the column.
 
 A string child is the row's name. Anything else is drawn as given, which is how an icon leads a name:
 the look has the words for it.
@@ -177,7 +178,8 @@ const row = sidebarMenuButtonLook({ size: () => "sm" });
 </SidebarMenuButton>;
 ```
 
-Folded to icons, the row is a 32-point square with its icon, and `tooltip` names it on a desktop: a
+Folded to icons, the row is a square the height of a row (`sidebarSize.folded`) with its icon, and
+`tooltip` names it on a desktop: a
 string is the name, or the tooltip's own props (`placement`, `delay`, …). It also names the row for
 screen readers when nothing else does — and it replaces `nsh/base`'s element `tooltip`, which is what
 this prop is.
@@ -213,7 +215,7 @@ An action is always there: hover alone is something a touch screen has no way to
 ### A sub menu
 
 `SidebarMenuSub` holds the rows under a row that opens them — `SidebarMenuSubItem` and its
-`SidebarMenuSubButton`, 28 points high with a pointer (40 on a touch screen). It is 14 points in from
+`SidebarMenuSubButton`, the height step under the row (`controlHeight.md`). It is 14 points in from
 the row above it, with a hairline down its start in the sidebar's edge color, and it hides while the
 column is folded.
 

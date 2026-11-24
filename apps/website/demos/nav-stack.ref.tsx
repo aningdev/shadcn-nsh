@@ -235,7 +235,9 @@ function GeneralPage() {
     language.set(languages[0]);
     reduceMotion.set(false);
   };
-  const right = (
+  // The trailing action twice over: the system header's item and the drawn header's slot. An
+  // element mounts once, so the second place needs an element of its own.
+  const right = () => (
     <Button variant="ghost" size="sm" onPress={reset}>
       Reset
     </Button>
@@ -243,12 +245,12 @@ function GeneralPage() {
   return (
     <BaseNavPage
       title="General"
-      headerRight={right}
+      headerRight={right()}
       style={navPageLook().page()}
       header={
         <PageHeader
           title="General"
-          right={right}
+          right={right()}
           back={() => nav.pop()}
           above={() => nav.routes().length > 1}
         />

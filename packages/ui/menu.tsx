@@ -4,8 +4,10 @@
 import {
   alpha,
   colors,
+  controlHeight,
   cornerCurve,
   finish,
+  iconSize,
   rounded,
   font,
   shape,
@@ -85,24 +87,29 @@ export interface MenuItemDimensions {
   icon: number;
 }
 
-/** A menu row's least height and its type: 26 points with a pointer, 46 on a touch screen. */
-export const menuItemSize: MenuItemDimensions = pointer
-  ? {
-      height: 26,
-      font: 13,
-      note: 11.5,
-      icon: 14,
-    }
-  : {
-      height: 46,
-      font: 16,
-      note: 14,
-      icon: 18,
-    };
+/**
+ * A menu row's least height and type, from the theme in use: the height step under a row
+ * (`controlHeight.md`), the label a type role (`body`), a note the next one down (`detail`), a
+ * leading icon the theme's middle icon.
+ */
+export const menuItemSize: MenuItemDimensions = {
+  get height() {
+    return controlHeight.md;
+  },
+  get font() {
+    return font.size("body");
+  },
+  get note() {
+    return font.size("detail");
+  },
+  get icon() {
+    return iconSize.md;
+  },
+};
 
 /** The room a checkable row's mark takes before its label: the mark and the row's gap. An `inset`
  * row starts its label that much further in, so it lines up with the checkable rows. */
-const markRoom = menuItemSize.icon + 8;
+const markRoom = () => menuItemSize.icon + itemSpacing.pad;
 
 /** A row under the pointer or the keyboard (`hoverStyle`, `focusStyle`): a
  * flat neutral fill, the theme's `accent`. */
@@ -125,8 +132,8 @@ export interface MenuItemLookOptions {
 
 /**
  * A menu row's props (spread them on `nsh/base`'s `MenuItem`, or on a
- * `Submenu`'s trigger): a row 8 points apart, at least 26 points tall with a
- * pointer and 46 on a touch screen (`menuItemSize`), its text the theme's
+ * `Submenu`'s trigger): a row 8 points apart, at least the height step under a row
+ * (`menuItemSize`), its text the theme's
  * `pad` in from its fill, its corners concentric with the popup's (`itemRadius`). A row grows to
  * its content: a note on a line under its label (`menuItemNote`) takes the room it needs, and
  * the rows keep `rowVerticalPad` apart. Under the pointer and under the keyboard alike it takes
@@ -144,7 +151,7 @@ export function menuItemLook(o?: MenuItemLookOptions) {
         minHeight: menuItemSize.height,
         paddingVertical: rowVerticalPad(),
         paddingHorizontal: itemSpacing.pad,
-        ...(o?.inset ? { paddingStart: itemSpacing.pad + markRoom } : {}),
+        ...(o?.inset ? { paddingStart: itemSpacing.pad + markRoom() } : {}),
         ...rounded(itemRadius()),
         ...o?.style,
       };
@@ -173,7 +180,7 @@ export interface MenuItemTextOptions {
   variant?: MenuItemVariant;
 }
 
-/** A menu row's label: 13 points with a pointer, 16 on a touch screen, on one line, taking the row's free width. */
+/** A menu row's label: the theme's `body` type role, on one line, taking the row's free width. */
 export function menuItemLabel(o?: MenuItemTextOptions): TextStyle {
   return {
     numberOfLines: 1,
@@ -184,7 +191,7 @@ export function menuItemLabel(o?: MenuItemTextOptions): TextStyle {
   };
 }
 
-/** A menu row's note at its trailing edge (a shortcut, a value): 11.5 points with a pointer, 14 on a touch screen, faint (the danger tone on a destructive row). */
+/** A menu row's note at its trailing edge (a shortcut, a value): the theme's `detail` type role, faint (the danger tone on a destructive row). */
 export function menuItemNote(o?: MenuItemTextOptions): TextStyle {
   return {
     fontSize: menuItemSize.note,
@@ -192,7 +199,7 @@ export function menuItemNote(o?: MenuItemTextOptions): TextStyle {
   };
 }
 
-/** A menu row's leading icon (`<Icon {...menuItemGlyph()} />`): 14 points with a pointer, 18 on a touch screen, muted (the danger tone for a destructive item). */
+/** A menu row's leading icon (`<Icon {...menuItemGlyph()} />`): the theme's middle icon, muted (the danger tone for a destructive item). */
 export function menuItemGlyph(o?: MenuItemTextOptions) {
   return {
     size: menuItemSize.icon,
@@ -272,7 +279,7 @@ export function MenuLabel(props: MenuLabelProps) {
           fontWeight: font.weight("title"),
           color: colors.faint,
           paddingHorizontal: itemSpacing.pad,
-          ...(props.inset ? { paddingStart: itemSpacing.pad + markRoom } : {}),
+          ...(props.inset ? { paddingStart: itemSpacing.pad + markRoom() } : {}),
           // 6 points down from the group above it, 2 up from its own rows.
           paddingTop: 6,
           paddingBottom: 2,

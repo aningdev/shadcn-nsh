@@ -35,17 +35,19 @@ test("a popover's padding and a dialog's type grow on a touch screen", async () 
   expect(find(touch.texts(), "overlay=")).toBe("16|20|15|20");
 });
 
-test("a menu row is a 26-point line with a pointer and a 46-point finger row on a touch screen", async () => {
+test("a menu row is the theme's step under a row, its label a type role and its icon the middle one", async () => {
   const desktop = await open("./density.fixture.tsx", { platform: "macos" });
   const touch = await open("./density.fixture.tsx", { platform: "ios" });
-  expect(find(desktop.texts(), "menu=")).toBe("26|13|11.5|14");
-  expect(find(touch.texts(), "menu=")).toBe("46|16|14|18");
+  // 28 high, the `body` and `detail` roles, a 16-point icon.
+  expect(find(desktop.texts(), "menu=")).toBe("28|13|12|16");
+  // 40 high, 15 and 13 points, a 20-point icon.
+  expect(find(touch.texts(), "menu=")).toBe("40|15|13|20");
 });
 
 test("a toggle is compact with a pointer and roomier, with a hit slop, on a touch screen", async () => {
   const desktop = await open("./density.fixture.tsx", { platform: "macos" });
   const touch = await open("./density.fixture.tsx", { platform: "ios" });
   expect(find(desktop.texts(), "toggle=")).toBe("28|undefined");
-  // 38 tall, and presses count 3 points past it: 44.
-  expect(find(touch.texts(), "toggle=")).toBe("38|3");
+  // The theme's middle height, and presses count 2 points past it: 44.
+  expect(find(touch.texts(), "toggle=")).toBe("40|2");
 });

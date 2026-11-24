@@ -34,6 +34,8 @@
 
 ### Changed
 
+- **Toggle, menu, menubar, navigation menu, nav stack, sidebar, trace and terminal sizes read the theme's scales (#293).** Their size tables are getters over `controlHeight`, `iconSize`, the `font.size` roles and `controlSize.row`, so a theme that states other steps resizes them. On screen in the default theme: a menu row is 28 high on a pointer (was 26) and 40 on touch (was 46), with 16-point icons; toggle sides are 24 / 28 / 32 on a pointer and 32 / 40 / 48 on touch; the menubar bar is 38 and a navigation-menu trigger 32; a touch sidebar row is 48. **Breaking:** `sidebarSize.glyph` is gone (the icon is `iconSize.md`), and `sidebarSize.folded` is a getter.
+
 - **`Segmented` is listed under Enhanced in the docs.** It is the library's own component, no longer grouped with shadcn/ui's Tabs.
 
 - **Switch, segmented and calendar sizes read the theme's scales.** In the circle themes (default, shadcn, solid-glass, apple) the switch knob is `iconSize` and the track is knob + 4 high: pointer 28×16 → 36×20 (`sm` 28×16), touch 42×24 → 44×24 (`sm` 36×20). Material and WinUI keep their own switch recipes, unchanged. The segmented track and the calendar day cell are `controlHeight` high: pointer 30 → 28 and 32 → 28, touch 36 / 42 → 40 (apple 44, WinUI segmented 32).

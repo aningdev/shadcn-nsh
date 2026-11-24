@@ -1,9 +1,19 @@
 // A menubar: a row of menus whose triggers stand in one bar, as a desktop app's menu bar. The
 // rows, submenus and popups are `menu.tsx`'s; this file is the bar, its triggers and the shell.
 
-import { colors, focusRing, rounded, font, shape, stroke, dimmed } from "@shadcn-nsh/theme";
+import {
+  colors,
+  controlHeight,
+  focusRing,
+  rounded,
+  font,
+  shape,
+  stroke,
+  dimmed,
+  tier,
+} from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, platform, split, View } from "nsh";
+import { context, split, View } from "nsh";
 import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
@@ -11,14 +21,18 @@ import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/op
 import type { PopupSide } from "./lib/popup";
 import { menuHighlight, menuItemSize, menuPopup } from "./menu";
 
-const pointer = platform.desktop;
+const pointer = tier === "pointer";
 
-/** A bar's height, its padding and the gap between its triggers, and a trigger's height: with a
- * pointer a 36-point bar around 26-point triggers (shadcn's `h-9` and `h-7`), on a touch screen 50
- * and 40, a finger's target. */
-const menubarSize = pointer
-  ? { height: 36, padding: 4, gap: 4, trigger: 26 }
-  : { height: 50, padding: 4, gap: 6, trigger: 40 };
+/** The room around a bar's triggers, and the gap between them (shadcn's `p-1` and `gap-1`): 4
+ * points either way, 6 between on a touch screen. The theme's spacing has no step this small. */
+const barPadding = 4;
+const barGap = pointer ? 4 : 6;
+
+/** A trigger's height: the theme's height step under a row (shadcn's `h-7`). */
+const triggerHeight = () => controlHeight.md;
+
+/** A bar's height: its triggers, the room either side of them and its own 1-point edge. */
+const barHeight = () => triggerHeight() + 2 * barPadding + 2 * stroke.control;
 
 /** A trigger's inset from its sides (shadcn's `px-2`). */
 const triggerPad = 8;
@@ -37,9 +51,9 @@ export interface MenubarLook {
 }
 
 /**
- * A menubar's look, after shadcn/ui's: a 36-point bar (50 on a touch screen) around its triggers,
- * inside a 1-point edge, in the card's fill, at the theme's control corners; a trigger as tall as a
- * menu row (`menuItemSize`), its name in the menu's type, the control corners and 8 points either side.
+ * A menubar's look, after shadcn/ui's: a bar a step over its triggers, inside a 1-point edge, in the
+ * card's fill, at the theme's control corners; a trigger the theme's height step under a row, its
+ * name in the menu's type, the control corners and 8 points either side.
  */
 export function menubarLook(): MenubarLook {
   return {
@@ -48,9 +62,9 @@ export function menubarLook(): MenubarLook {
         flexDirection: "row",
         alignItems: "center",
         alignSelf: "flex-start",
-        gap: menubarSize.gap,
-        height: menubarSize.height,
-        paddingHorizontal: menubarSize.padding,
+        gap: barGap,
+        height: barHeight(),
+        paddingHorizontal: barPadding,
         ...rounded(shape.control),
         borderWidth: stroke.control,
         borderColor: colors.border,
@@ -63,7 +77,7 @@ export function menubarLook(): MenubarLook {
         alignItems: "center",
         justifyContent: "center",
         gap: triggerGap,
-        height: menubarSize.trigger,
+        height: triggerHeight(),
         paddingHorizontal: triggerPad,
         ...rounded(shape.control),
       };

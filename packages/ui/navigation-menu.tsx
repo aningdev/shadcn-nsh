@@ -4,17 +4,20 @@
 import {
   alpha,
   colors,
+  controlHeight,
   focusRing,
+  iconSize,
   rounded,
   font,
   shape,
   dimmed,
   stateLayer,
   style as themeStyle,
+  tier,
 } from "@shadcn-nsh/theme";
 import { ChevronDown } from "lucide";
 import type { AndroidProps, JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, platform, reduceMotion, signal, split, token, View } from "nsh";
+import { context, reduceMotion, signal, split, token, View } from "nsh";
 import {
   Link as BaseLink,
   type LinkProps as BaseLinkProps,
@@ -31,17 +34,29 @@ import { itemSpacing, PopIn, popupSurface, type PopupSide } from "./lib/popup";
 import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 
 /** A pointer's compact bar; a touch screen's roomier one, a finger's target in every trigger. */
-const pointer = platform.desktop;
+const pointer = tier === "pointer";
 
 /**
- * A bar's measurements: a trigger's height, its inset from its sides, the gap between triggers,
- * the room inside a panel, and the side of a trigger's chevron. With a pointer a 36-point trigger
- * 16 points in (shadcn's `h-9 px-4`) with a 14-point chevron; on a touch screen a 44-point
- * trigger, a finger's target, and a 16-point chevron.
+ * A bar's measurements: a trigger's height (the theme's tallest height step, shadcn's `h-9`), its
+ * inset from its sides (shadcn's `px-4`, the trigger's own: the theme's control padding is the
+ * field's, and a bar's trigger is not a field), the gap between triggers, the room inside a panel,
+ * and the side of a trigger's chevron (the theme's smallest icon, an indicator's).
  */
-export const navigationMenuSize = pointer
-  ? { trigger: 36, padding: 16, gap: 4, panel: 10, chevron: 14 }
-  : { trigger: 44, padding: 16, gap: 6, panel: 12, chevron: 16 };
+export const navigationMenuSize = {
+  get trigger() {
+    return controlHeight.lg;
+  },
+  padding: 16,
+  get gap() {
+    return pointer ? 4 : 6;
+  },
+  get panel() {
+    return pointer ? 10 : 12;
+  },
+  get chevron() {
+    return iconSize.sm;
+  },
+};
 
 /** The gap inside a trigger, between its name and its chevron (shadcn's `ml-1`). */
 const chevronGap = 4;
@@ -148,7 +163,7 @@ export interface NavigationMenuTriggerLookOptions {
 }
 
 /**
- * A trigger's look: 36 points tall with a pointer (44 on a touch screen), `navigationMenuSize`'s
+ * A trigger's look: the theme's tallest height step, `navigationMenuSize`'s
  * inset either side, its name the `body` type medium and a chevron after it which turns 180° while its
  * panel is open (at once with reduced motion, in 200 ms otherwise). At rest it is bare; the chosen
  * `accent` fill sits under it while its panel is open, and the full `accent` under the pointer, the

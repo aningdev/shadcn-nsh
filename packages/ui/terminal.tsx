@@ -10,14 +10,13 @@ import {
   rounded,
   shape,
   stroke,
+  tier,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
-import { platform, split } from "nsh";
+import { split } from "nsh";
 import { Terminal as BaseTerminal, type TerminalProps as BaseTerminalProps } from "nsh/base";
 
 import { type Live, read } from "./lib/live-value";
-
-const pointer = platform.desktop;
 
 /**
  * A terminal's variants: `default` is a well — the field's fill and edge, the theme's inner corners,
@@ -36,8 +35,13 @@ export interface TerminalLookOptions {
   style?: Live<ViewStyle | undefined>;
 }
 
-/** A well's padding: the text of a program starts a little inside its edge. */
-const wellPad = pointer ? { x: 12, y: 10 } : { x: 14, y: 12 };
+/**
+ * A well's padding: the text of a program starts a little inside its edge. A well's own room — the
+ * theme's control padding leaves a line of type against the edge — compact with a pointer, roomier
+ * on a touch screen.
+ */
+const wellPad = (): { x: number; y: number } =>
+  tier === "pointer" ? { x: 12, y: 10 } : { x: 14, y: 12 };
 
 /**
  * A terminal's look: the well a program's output is drawn in, and its cursor. The well takes an
@@ -68,8 +72,8 @@ export function terminalLook(o?: TerminalLookOptions) {
         borderWidth: stroke.hairline,
         borderColor: colors.input,
         ...rounded(shape.control),
-        paddingHorizontal: wellPad.x,
-        paddingVertical: wellPad.y,
+        paddingHorizontal: wellPad().x,
+        paddingVertical: wellPad().y,
         ...read(o?.style),
       };
     },

@@ -1,7 +1,7 @@
 // The reference of `trace.tsx`: the same page, the look spread on `nsh`'s own View and Text and
 // `nsh/base`'s Collapsible instead of worn by the parts. The render check requires the two to draw
 // the same pixels.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, iconSize } from "@shadcn-nsh/theme";
 import { Brain, ChevronRight, CircleAlert, FileText, Terminal } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 import { Collapsible } from "nsh/base";
@@ -30,7 +30,7 @@ function Slot(props: { status?: TraceStatus; children: unknown }) {
   return (
     <View style={[traceLook().icon]}>
       {props.status === "running" ? (
-        <Spinner side={14} tint={colors.mutedForeground} />
+        <Spinner side={iconSize.sm} tint={colors.mutedForeground} />
       ) : (
         (props.children as never)
       )}
@@ -86,7 +86,7 @@ function Opens(props: {
           <View style={[traceLook().icon, traceLook().chevron(props.open)]}>
             <Icon
               icon={ChevronRight}
-              size={16}
+              size={iconSize.md}
               tint={props.status === "error" ? colors.destructive : colors.mutedForeground}
             />
           </View>

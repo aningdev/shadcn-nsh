@@ -67,11 +67,11 @@ takes the topmost page of a route out. `onChange` reports the routes after a pag
 ### The header on a desktop
 
 A page's `title` is the system header's on iOS and Android, and on the desktops and the web — which
-have no system header — it is the one `NavPage` draws: 48 points with a pointer (52 on a touch
-screen), on the page's fill, a hairline under it, the title `navPageSize.title` points semibold and
-the room between the back button and the trailing slot. It takes the roles the theme keeps for a
-header wherever it comes from (`header.headerStyle`: the page's fill, the text color, the accent for
-the back button's tint).
+have no system header — it is the one `NavPage` draws: a bar's height (the theme's tallest height
+step, and never under 48 points — shadcn's `h-12`), on the page's fill, a hairline under it, the
+title the theme's `title` type role semibold and the room between the back button and the trailing
+slot. It takes the roles the theme keeps for a header wherever it comes from
+(`header.headerStyle`: the page's fill, the text color, the accent for the back button's tint).
 
 ```tsx
 <NavPage

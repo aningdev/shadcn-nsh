@@ -51,7 +51,10 @@ ToggleGroup
 <Toggle size="lg">Large</Toggle>
 ```
 
-A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch screen (32 / 38 / 44), where a hit slop makes the target 44 points.
+A size is a step of the theme's own scales: its `side` the three heights (`dimension.size.height`),
+its `icon` the three icons (`dimension.icon`), its label the `detail`, `body` and `label` type roles.
+The default theme's heights are 24 / 28 / 32 points with a pointer and 32 / 40 / 48 on a touch
+screen, where a hit slop makes the target 44 points.
 
 ### Disabled
 
@@ -151,4 +154,7 @@ Every prop of [`nsh/base` Toggle](https://nsh.dev/elements/toggle) and ToggleGro
 | `Toggle`      | `variant`, `size`, `children`, and every `nsh/base` Toggle prop (`pressed`, `onChange`, `disabled`) | A two-state button; a string child is its name for screen readers        |
 | `ToggleGroup` | `vertical`, `inset`, and every `nsh/base` ToggleGroup prop                                          | The inset track of `toolbarTrack` holding a row (or column) of `Toggle`s |
 
-`toggleLook`, `toggleLabel` and `toggleGlyph` are the look's parts, for a pressable of your own. `toggleSizes` is the table a size reads — `side`, `icon`, `text` and `pad`, compact with a pointer and roomier on a touch screen — so a bar's own geometry can match a tool's (`toggleSizes.default.side`, 28 points with a pointer).
+`toggleLook`, `toggleLabel` and `toggleGlyph` are the look's parts, for a pressable of your own.
+`toggleSizes` is the table a size reads — `side`, `icon` and `text` from the theme's height, icon and
+type scales, its `pad` the toggle's own (compact with a pointer, roomier on a touch screen) — so a
+bar's own geometry can match a tool's (`toggleSizes.default.side`).

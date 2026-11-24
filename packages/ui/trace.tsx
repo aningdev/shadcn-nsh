@@ -1,10 +1,20 @@
 // A trace: the steps an agent took, one line each — a reasoning, a tool call, a source — and a line
 // that opens onto what it did.
 
-import { colors, dimmed, focusRing, font, rounded, shape, terminal } from "@shadcn-nsh/theme";
+import {
+  colors,
+  controlHeight,
+  dimmed,
+  focusRing,
+  font,
+  iconSize,
+  rounded,
+  shape,
+  terminal,
+} from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, effect, platform, reduceMotion, signal, split, Text, View } from "nsh";
+import { context, effect, reduceMotion, signal, split, Text, View } from "nsh";
 import {
   Collapsible as BaseCollapsible,
   type CollapsibleProps as BaseCollapsibleProps,
@@ -22,11 +32,11 @@ export type TraceStatus = "running" | "pending" | "error";
 /** A color fade that stands still with reduced motion. */
 const fade = "transition-colors duration-150 motion-reduce:transition-none";
 
-/** The side of the icon slot, in points: shadcn's `size-4`. */
-const ICON = 16;
+/** The side of the icon slot: the theme's middle icon (shadcn's `size-4`). */
+const iconSide = () => iconSize.md;
 
-/** The side of the spinner in the icon slot: a step smaller than the icon's box. */
-const SPINNER = 14;
+/** The side of the spinner in the icon slot: the icon step under it, so it clears the box. */
+const spinnerSide = () => iconSize.sm;
 
 /** A trace's parts as the styles and classes they wear: spread each one onto the part that matches its name. */
 export interface TraceLook {
@@ -76,7 +86,7 @@ export function traceLook(): TraceLook {
       columnGap: 8,
       minWidth: 0,
       maxWidth: "100%",
-      minHeight: platform.desktop ? 28 : 36,
+      minHeight: controlHeight.md,
       opacity: status === "pending" ? 0.6 : 1,
     }),
     get lineClass(): string {
@@ -87,8 +97,8 @@ export function traceLook(): TraceLook {
     },
     get icon(): ViewStyle {
       return {
-        width: terminal ? undefined : ICON,
-        height: terminal ? undefined : ICON,
+        width: terminal ? undefined : iconSide(),
+        height: terminal ? undefined : iconSide(),
         flexShrink: 0,
         alignItems: "center",
         justifyContent: "center",
@@ -240,8 +250,9 @@ export function TraceLine(props: TraceLineProps) {
 export type TraceIconProps = ViewProps;
 
 /**
- * The icon slot of a line: its children, 16 points square — an `Icon` tinted in the muted ink
- * (`destructive` for an `error` line). While the line is `running` it shows a `Spinner` instead.
+ * The icon slot of a line: its children, the theme's middle icon square — an `Icon` tinted in the
+ * muted ink (`destructive` for an `error` line). While the line is `running` it shows a `Spinner`
+ * instead.
  */
 export function TraceIcon(props: TraceIconProps) {
   const [, rest] = split(props, ["style"]);
@@ -249,7 +260,7 @@ export function TraceIcon(props: TraceIconProps) {
   return (
     <View {...rest} style={[traceLook().icon, props.style ?? null]}>
       {line.status === "running" ? (
-        <Spinner side={SPINNER} tint={colors.mutedForeground} />
+        <Spinner side={spinnerSide()} tint={colors.mutedForeground} />
       ) : (
         props.children
       )}
@@ -359,7 +370,7 @@ export function TraceCollapsibleTrigger(props: TraceCollapsibleTriggerProps) {
         {terminal ? (
           <Text style={{ color: chevronInk() }}>›</Text>
         ) : (
-          <Icon icon={ChevronRight} size={ICON} tint={chevronInk()} />
+          <Icon icon={ChevronRight} size={iconSide()} tint={chevronInk()} />
         )}
       </View>
     </View>,

@@ -6,9 +6,11 @@ import {
   alpha,
   colors,
   control,
+  controlHeight,
   finish,
   focusRing,
   hovered,
+  iconSize,
   stateLayer,
   style as themeStyle,
   terminal,
@@ -45,7 +47,7 @@ import { IconLabel } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
 import { type Fill, selectionLook } from "./lib/look";
 import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
-import { narrowWindow } from "./lib/surface";
+import { controlSize, narrowWindow } from "./lib/surface";
 import { Separator, type SeparatorProps } from "./separator";
 import { Sheet, SheetContent } from "./sheet";
 import { Skeleton } from "./skeleton";
@@ -90,15 +92,13 @@ export function navBarStyle(): ViewStyle {
   };
 }
 
-/** A pointer's density; a touch screen's rows are taller, a finger's target. */
-const pointer = platform.desktop;
-
 /**
  * A sidebar's measurements, in points, after shadcn/ui's: 256 across (`16rem`), 48 folded to its
  * icons (`3rem`), 288 in a phone's sheet (`18rem`); 8 of room around a floating or inset column, 8
  * inside a header, a footer or a group, 4 between menu rows; a group's label 32 high; an action and
  * a badge 20 square; the rail 8 wide inside the column's edge (16 with its hit slop); a sub menu 14
- * in from the row above it.
+ * in from the row above it. The column's frame, not a control's: the only row here is `folded`, and
+ * it is the theme's row height.
  */
 export const sidebarSize = {
   width: 256,
@@ -109,13 +109,15 @@ export const sidebarSize = {
   gap: 8,
   menuGap: 4,
   label: 32,
-  folded: 32,
+  /** The square a row takes folded to its icon: a row's height, without its label. */
+  get folded() {
+    return controlSize.row;
+  },
   action: 20,
   badge: 20,
   rail: 8,
   sub: 14,
   subPadding: 10,
-  glyph: 16,
 } as const;
 
 /** Which edge the column stands on. */
@@ -139,8 +141,8 @@ export type SidebarState = "expanded" | "collapsed";
 /** Why the sidebar opened or closed (`onOpenChange`'s `reason`). */
 export type SidebarOpenChangeReason = "triggerPress" | "railPress" | "shortcut";
 
-/** A row's height: the scale's three steps (`default` 32 points with a pointer, 44 on a touch
- * screen). */
+/** A row's height: the theme's height scale, `default` the row itself and `sm` the step under it;
+ * `lg` is a team switcher's row, taller than the scale where the row is a pointer's. */
 export type SidebarMenuButtonSize = "sm" | "default" | "lg";
 
 /** A row's look: `default` bare until the pointer is over it, `outline` a card of its own on the
@@ -157,36 +159,74 @@ export type SidebarMenuSubButtonSize = "sm" | "default";
  */
 export type SidebarMenuTrailing = "action" | "badge" | "both";
 
-/** A row's height by size: 32, 28 and 48 points with a pointer; 44, 36 and 52 on a touch screen. */
-const rowHeight: Record<SidebarMenuButtonSize, number> = pointer
-  ? { sm: 28, default: 32, lg: 48 }
-  : { sm: 36, default: 44, lg: 52 };
+/** A team switcher's row stands a step over the height scale, which stops at the row: shadcn's
+ * `h-12`, 48 points with a pointer (a touch screen's row is already a finger's height). */
+const TEAM_ROW = 48;
 
-/** A row's label size by size: the button scale's steps (12, 13, 14 with a pointer). */
-const rowLabel: Record<SidebarMenuButtonSize, number> = pointer
-  ? { sm: 12, default: 13, lg: 14 }
-  : { sm: 14, default: 15, lg: 17 };
+/** A row's height by size: `default` the theme's row (`controlSize.row`), `sm` the height step
+ * under it, `lg` a team switcher's row. */
+const rowHeight: Record<SidebarMenuButtonSize, number> = {
+  get sm() {
+    return controlHeight.md;
+  },
+  get default() {
+    return controlSize.row;
+  },
+  get lg() {
+    return Math.max(controlSize.row, TEAM_ROW);
+  },
+};
 
-/** A sub menu row's height and label size: 24 and 28 points high with a pointer (12, 13 points). */
-const subRowHeight: Record<SidebarMenuSubButtonSize, number> = pointer
-  ? { sm: 24, default: 28 }
-  : { sm: 32, default: 40 };
+/** A row's label size by size: the theme's `body` type role, a step under and over it. */
+const rowLabel: Record<SidebarMenuButtonSize, number> = {
+  get sm() {
+    return font.size("detail");
+  },
+  get default() {
+    return font.size("body");
+  },
+  get lg() {
+    return font.size("label");
+  },
+};
 
-const subRowLabel: Record<SidebarMenuSubButtonSize, number> = pointer
-  ? { sm: 12, default: 13 }
-  : { sm: 13, default: 14 };
+/** A sub menu row's height by size: the two steps under the row, `controlHeight.sm` and `.md`. */
+const subRowHeight: Record<SidebarMenuSubButtonSize, number> = {
+  get sm() {
+    return controlHeight.sm;
+  },
+  get default() {
+    return controlHeight.md;
+  },
+};
 
-/** A row's icon: 16 points with a pointer, 18 on a touch screen. */
-const rowIcon = pointer ? sidebarSize.glyph : 18;
+/** A sub menu row's label by size: `detail` and `body`. */
+const subRowLabel: Record<SidebarMenuSubButtonSize, number> = {
+  get sm() {
+    return font.size("detail");
+  },
+  get default() {
+    return font.size("body");
+  },
+};
 
-/** The room a row keeps for an action (32, shadcn's `pr-8`), a badge (24), or both (52). */
+/** A row's icon: the theme's middle icon (`iconSize.md`). */
+const rowIcon = () => iconSize.md;
+
+/** The room a row keeps for a part on its trailing edge: an action's (32, shadcn's `pr-8`), a
+ * badge's (24), and both together (52). The frame's room, off the height scale. */
+const actionRoom = 32;
+const badgeRoom = 24;
+const bothRoom = 52;
+
+/** The room a row keeps for an action, a badge, or both. */
 const trailingRoom = (trailing: SidebarMenuTrailing | null | undefined) =>
   trailing === "action"
-    ? 32
+    ? actionRoom
     : trailing === "badge"
-      ? 24
+      ? badgeRoom
       : trailing === "both"
-        ? 52
+        ? bothRoom
         : sidebarSize.padding;
 
 /** Whether a badge stands at the row's trailing edge, so an action steps in past it. */
@@ -477,7 +517,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
 
 /** A menu row's options: the column as it stands, and the row's own axes. */
 export interface SidebarMenuButtonLookOptions extends SidebarFoldOptions {
-  /** Default `default`: 32 points high (44 on a touch screen). */
+  /** Default `default`: the theme's row (`controlSize.row`). */
   size?: Live<SidebarMenuButtonSize | undefined>;
   /** Default `default`: bare until the pointer is over it. `outline` is a card of its own. */
   variant?: Live<SidebarMenuButtonVariant | undefined>;
@@ -565,10 +605,10 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
         ...(folded(o) ? { display: "none" } : {}),
       };
     },
-    /** A row's leading icon: 16 points (18 on a touch screen), the muted ink — the text's on the
-     * page the app is on. */
+    /** A row's leading icon: the theme's middle icon, the muted ink — the text's on the page the
+     * app is on. */
     get glyph(): { size: number; tint: string } {
-      return { size: rowIcon, tint: active() ? colors.foreground : colors.mutedForeground };
+      return { size: rowIcon(), tint: active() ? colors.foreground : colors.mutedForeground };
     },
   };
 }
@@ -612,7 +652,7 @@ export function sidebarMenuActionLook(o?: SidebarMenuActionLookOptions) {
     },
     /** Its glyph: 16 points in the muted ink. */
     get glyph(): { size: number; tint: string } {
-      return { size: rowIcon, tint: colors.mutedForeground };
+      return { size: rowIcon(), tint: colors.mutedForeground };
     },
   };
 }
@@ -679,7 +719,7 @@ export function sidebarMenuSubLook(o?: SidebarFoldOptions) {
 
 /** A sub menu row's options. */
 export interface SidebarMenuSubButtonLookOptions extends SidebarFoldOptions {
-  /** Default `default`: 28 points high (40 on a touch screen). */
+  /** Default `default`: the height step under the row (`controlHeight.md`). */
   size?: Live<SidebarMenuSubButtonSize | undefined>;
   /** The page the app is on: the chosen fill under it. */
   active?: Live<boolean>;
@@ -747,7 +787,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
 }
 
 /**
- * A loading row's look (`SidebarMenuSkeleton`): a row 32 points high 8 points in, an icon's box and
+ * A loading row's look (`SidebarMenuSkeleton`): a row the height of a row 8 points in, an icon's box and
  * a line of text in the skeleton's breathing blocks. Colors as `sidebarLook`'s.
  */
 export function sidebarMenuSkeletonLook() {
@@ -762,7 +802,7 @@ export function sidebarMenuSkeletonLook() {
       };
     },
     get icon(): ViewStyle {
-      return { width: rowIcon, height: rowIcon };
+      return { width: rowIcon(), height: rowIcon() };
     },
     /** The line of text: as tall as its type, `width` of the row across. */
     get text(): ViewStyle {
@@ -1320,7 +1360,7 @@ export type SidebarMenuButtonProps = Omit<
 > & {
   /** The page the app is on: the chosen fill under it. */
   isActive?: boolean;
-  /** Default `default`: 32 points high (44 on a touch screen). */
+  /** Default `default`: the theme's row (`controlSize.row`). */
   size?: SidebarMenuButtonSize;
   /** Default `default`: bare until the pointer is over it. `outline` is a card of its own. */
   variant?: SidebarMenuButtonVariant;
@@ -1345,7 +1385,7 @@ function tooltipName(props: SidebarMenuButtonProps): string | undefined {
 }
 
 /**
- * A row of the sidebar's menu: an icon and a name, 32 points high (44 on a touch screen), the
+ * A row of the sidebar's menu: an icon and a name, the height of the theme's row, the
  * pointer's fill under it, the chosen fill on the page the app is on. It takes a press (`onPress`)
  * or is a row of its own; folded to icons it is a square with its icon, and its `tooltip` names it
  * on the desktops.
@@ -1555,14 +1595,14 @@ export function SidebarMenuSubItem(props: SidebarMenuSubItemProps) {
   );
 }
 
-/** A sub menu row: a name, 28 points high (40 on a touch screen). */
+/** A sub menu row: a name, the height step under the row. */
 export type SidebarMenuSubButtonProps = Omit<
   BaseButtonProps,
   "children" | "selected" | "role" | "accessibilityLabel"
 > & {
   /** The page the app is on: the chosen fill under it. */
   isActive?: boolean;
-  /** Default `default`: 28 points high (40 on a touch screen). `sm` is a step under it. */
+  /** Default `default`: the height step under the row; `sm` a step under that. */
   size?: SidebarMenuSubButtonSize;
   children?: string | JSX.Element;
   accessibilityLabel?: string | null;

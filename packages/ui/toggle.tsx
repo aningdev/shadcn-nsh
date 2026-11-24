@@ -4,9 +4,11 @@
 
 import {
   colors,
+  controlHeight,
   finish,
   focusRing,
   hovered,
+  iconSize,
   rounded,
   shape,
   stateLayer,
@@ -15,9 +17,10 @@ import {
   font,
   stroke,
   dimmed,
+  tier,
 } from "@shadcn-nsh/theme";
 import type { AndroidProps, JSX, TextStyle, ViewStyle } from "nsh";
-import { platform, split, Text } from "nsh";
+import { split, Text } from "nsh";
 import {
   Toggle as BaseToggle,
   ToggleGroup as BaseToggleGroup,
@@ -29,7 +32,8 @@ import { type Live, read } from "./lib/live-value";
 import { pressHostProps, pressRipple, pressSink, pressTransition, touchSlop } from "./lib/press";
 import { toolbarTrack } from "./lib/tool";
 
-/** A toggle's size: 24 / 28 / 34 points with a pointer, 32 / 38 / 44 on a touch screen. */
+/** A toggle's size: the theme's three heights, `default` the middle (`sm` and `lg` the steps under
+ * and over it). */
 export type ToggleSize = "sm" | "default" | "lg";
 
 /** A toggle's variants: `default` bare while off, `outline` on a field's edge while off. */
@@ -64,20 +68,53 @@ export interface ToggleDimensions {
   pad: number;
 }
 
-const pointer = platform.desktop;
+/** The tier the theme measures at: a pointer's compact padding, a touch screen's roomier one. */
+const pointer = tier === "pointer";
 
-/** A toggle's sides, icon and label sizes and paddings, by size: compact with a pointer, roomier on a touch screen. */
-export const toggleSizes: Record<ToggleSize, ToggleDimensions> = pointer
-  ? {
-      sm: { side: 24, icon: 14, text: 12, pad: 8 },
-      default: { side: 28, icon: 16, text: 13, pad: 10 },
-      lg: { side: 34, icon: 18, text: 14, pad: 12 },
-    }
-  : {
-      sm: { side: 32, icon: 16, text: 13, pad: 10 },
-      default: { side: 38, icon: 18, text: 15, pad: 12 },
-      lg: { side: 44, icon: 20, text: 16, pad: 14 },
-    };
+/**
+ * A toggle's sides, icon and label sizes and paddings, by size: compact with a pointer, roomier on
+ * a touch screen. The side is the theme's `size.height`, the icon its `icon.size` and the label a
+ * type role, all read where they are used so they follow `selectTheme`; the padding is the
+ * toggle's own (no scale has a step for it).
+ */
+export const toggleSizes: Record<ToggleSize, ToggleDimensions> = {
+  sm: {
+    get side() {
+      return controlHeight.sm;
+    },
+    get icon() {
+      return iconSize.sm;
+    },
+    get text() {
+      return font.size("detail");
+    },
+    pad: pointer ? 8 : 10,
+  },
+  default: {
+    get side() {
+      return controlHeight.md;
+    },
+    get icon() {
+      return iconSize.md;
+    },
+    get text() {
+      return font.size("body");
+    },
+    pad: pointer ? 10 : 12,
+  },
+  lg: {
+    get side() {
+      return controlHeight.lg;
+    },
+    get icon() {
+      return iconSize.lg;
+    },
+    get text() {
+      return font.size("label");
+    },
+    pad: pointer ? 12 : 14,
+  },
+};
 
 /** How far a press sinks a toggle (`activeStyle`): none with reduced motion. */
 const sink = (scale: number): ViewStyle => pressSink(scale).activeStyle;
@@ -92,8 +129,8 @@ const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "defa
 /**
  * A toggle's props (spread them: `<Toggle pressed={..} {...toggleLook()}>`,
  * or on a toolbar's `Button` or trigger with `on`): its style and its
- * states. A square 28 points across with a pointer, 38 on a touch screen
- * (`sm` 24 / 32, `lg` 34 / 44), padded at its sides when it carries
+ * states. A square the theme's middle height across (`sm` and `lg` its
+ * steps under and over), padded at its sides when it carries
  * text, its corners a quarter of its side; a hit slop makes a touch target
  * 44 points. Off, a default toggle is bare and an `outline` sits on a
  * field's edge; on (`pressedStyle`), it takes `finish.accent`, a fill that stands off
@@ -188,7 +225,7 @@ const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undef
   return read(pressed) ? finish.accent.foreground : colors.mutedForeground;
 };
 
-/** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 13, `lg` 14 / 16), medium weight, muted while off. */
+/** The label of a `toggleLook` of the same options: the theme's `body` type role (`sm` `detail`, `lg` `label`), medium weight, muted while off. */
 export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOptions): TextStyle {
   return {
     get color() {
@@ -203,7 +240,7 @@ export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOp
   };
 }
 
-/** An icon in a `toggleLook` (`<Icon {...toggleGlyph(pressed)} />`): 16 points with a pointer, 18 on a touch screen (`sm` 14 / 16, `lg` 18 / 20), muted while off. */
+/** An icon in a `toggleLook` (`<Icon {...toggleGlyph(pressed)} />`): the theme's `icon.size` step of the size, muted while off. */
 export function toggleGlyph(pressed: Live<boolean | undefined>, o?: ToggleLookOptions) {
   return {
     get size() {

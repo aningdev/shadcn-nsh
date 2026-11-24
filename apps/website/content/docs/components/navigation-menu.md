@@ -69,8 +69,9 @@ the window is narrow. An item is its trigger, or a link of its own. A trigger is
 item's content, which is what places it in the bar: a `NavigationMenuTrigger` declared after its
 `NavigationMenuContent` draws nothing.
 
-A trigger is 36 points high and 16 points in either side (`navigationMenuSize`) with a pointer — 44
-high on a touch screen, a finger's target — its name in the bar's type and a chevron after it.
+A trigger is the theme's tallest height step high and 16 points in either side
+(`navigationMenuSize`), its name in the bar's type and a chevron after it — the theme's smallest
+icon, an indicator's.
 
 ### What a trigger opens
 
