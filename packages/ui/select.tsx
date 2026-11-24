@@ -604,10 +604,21 @@ export function SelectContent(props: SelectContentProps) {
   );
 }
 
-/** A section of a list: its items take `SelectLabel`'s name as their group. */
+/**
+ * A section of a list: its items take `SelectLabel`'s name as their group.
+ *
+ * The children sit in a `View` because of an nsh web-target bug: a `context()` provider loses
+ * its value for children that reach it through a nested array (items from a `.map()` beside the
+ * `SelectLabel`), while a real element between the provider and the array keeps the scope. A
+ * `View` draws nothing here (labels and items do not draw) and an empty box takes no height.
+ */
 export function SelectGroup(props: SelectGroupProps) {
   const group: SelectGroupValue = {};
-  return <SelectGroupContext.Provider value={group}>{props.children}</SelectGroupContext.Provider>;
+  return (
+    <SelectGroupContext.Provider value={group}>
+      <View>{props.children}</View>
+    </SelectGroupContext.Provider>
+  );
 }
 
 /** A section's name: the list's header. It draws nothing itself. */

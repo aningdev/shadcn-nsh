@@ -21,7 +21,16 @@ import { cases, clock, networkOf, schemes, settle, same, testName } from "./rend
 // measures itself, and at the test's 390 points it is a phone.
 const platform = { platform: "macos" } as const;
 
-for (const { id, steps, selfReference, photos, tolerance, extraSettle, viewport } of cases) {
+for (const {
+  id,
+  steps,
+  pointerSteps,
+  selfReference,
+  photos,
+  tolerance,
+  extraSettle,
+  viewport,
+} of cases) {
   for (const colorScheme of schemes) {
     test(testName(id, "pointer", colorScheme), async () => {
       // A manual clock and reduced motion: animations land at once, endless ones (a spinner)
@@ -39,7 +48,11 @@ for (const { id, steps, selfReference, photos, tolerance, extraSettle, viewport 
       // No shell: the reference page draws the same component, so there is nothing to compare.
       const reference = selfReference ? null : await open(`./${id}.ref.tsx`, options);
       await steps?.(ours);
-      if (reference) await steps?.(reference);
+      await pointerSteps?.(ours);
+      if (reference) {
+        await steps?.(reference);
+        await pointerSteps?.(reference);
+      }
       await settle(ours);
       if (reference) await settle(reference);
       if (extraSettle) {

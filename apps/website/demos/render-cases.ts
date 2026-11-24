@@ -33,6 +33,8 @@ type App = {
   waitFor(selector: string, options?: { timeout?: number } | null): Promise<void>;
   /** The texts on screen now, in order. */
   texts(): string[];
+  /** Keys, as a keyboard sends them ("shift+left"): the focused field takes them. */
+  keyboard: { press(keys: string): Promise<void> };
   wait(ms: number): Promise<void>;
 };
 
@@ -64,6 +66,11 @@ export type Case = {
    * A field's focus appearance is the gallery's to hold apart: a class's report, not a picture.
    */
   steps?: (app: App) => Promise<void>;
+  /**
+   * Steps only the pointer pass takes, after `steps`: for a page whose browser shot wants a state
+   * the touch pass cannot reach, or must not (see `select`). The touch pass takes `steps` alone.
+   */
+  pointerSteps?: (app: App) => Promise<void>;
   /**
    * The pointer pass's window, for a page whose desktop layout a phone's 390 × 844 never reaches
    * (the sidebar's column beside its page, and the folds it shows only when wide). The touch pass
@@ -193,10 +200,24 @@ const overrides: Record<string, Override> = {
       await app.waitFor("text:presented · toast-1");
     },
   },
-  // The language list, whose rows carry the English name under each language's own (the two-line
-  // row the select shares with the combobox): its first row has no second line, so one picture
-  // holds both heights.
-  select: { steps: (app) => app.press("label:Language") },
+  // The sectioned list (a search field, three group headers, a note per row, one row at
+  // capacity, a clear button) rather than the plain language one: the headers are what a
+  // `SelectGroup`/`SelectLabel`/`SelectItem` list draws, and a shot without them proved nothing
+  // about the children form (an nsh web bug dropped their group, see `packages/ui/select.tsx`).
+  select: {
+    steps: (app) => app.press("label:Region"),
+    // The popup's search field takes the focus when it opens (`listbox.rs`'s
+    // `auto_focus(!sheet)`), and a field's caret blinks on the browser's clock, which the manual
+    // one does not hold: one still caught it drawn, its pair's not — 17 pixels, one column of the
+    // caret's height, the whole way from the text to the field's color. A type does not settle it
+    // (the still lands a blink later), so the pointer pass types a letter and selects it: a
+    // selection draws no caret, and the pair is byte for byte. The touch pass has none to settle,
+    // as the simulator draws the list as a sheet, which takes no focus.
+    pointerSteps: async (app) => {
+      await app.keyboard.press("a");
+      await app.keyboard.press("shift+left");
+    },
+  },
   "date-picker": { steps: (app) => app.press("No due date") },
   // The pages whose photos come over the network mark themselves once every image is there.
   carousel: {

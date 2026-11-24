@@ -650,8 +650,13 @@ export function ComboboxEmpty(props: ComboboxEmptyProps) {
 /** A section of options: its items take `ComboboxLabel`'s name as their group. */
 export function ComboboxGroup(props: ComboboxGroupProps) {
   const group: ComboboxGroupValue = {};
+  // The children sit in a `View`: an nsh web-target bug drops a `context()` provider's value for
+  // children that reach it through a nested array (items from a `.map()` beside the
+  // `ComboboxLabel`), and a real element between the provider and the array keeps the scope.
   return (
-    <ComboboxGroupContext.Provider value={group}>{props.children}</ComboboxGroupContext.Provider>
+    <ComboboxGroupContext.Provider value={group}>
+      <View>{props.children}</View>
+    </ComboboxGroupContext.Provider>
   );
 }
 

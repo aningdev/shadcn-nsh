@@ -123,6 +123,7 @@
 
 - **A menu, select, combobox or command row with a second line grows to hold it (#333).** A row's height in the size table (`menuItemSize.height`, the listbox and command row heights) is now its least height: a row with `detail` or a note under its label grows, with the theme's item inset (at least 4) above and below, instead of drawing both lines in a one-line box over the next row. One-line rows keep their height.
 
+- **A `SelectGroup` or `ComboboxGroup` built from children shows its heading on the web (#345).** Items mapped beside a `SelectLabel` lost their group on the web target, so the heading was missing and same-named items in different groups merged; the group's children now sit in a `View`, which keeps the group in scope.
 - **The pill `TabsList` looks like shadcn/ui's under the `shadcn` theme (#331).** The list hugs its tabs instead of stretching across the row (`fill` spreads it), takes the control radius instead of a full pill, and the chosen tab is a visible plate (white in light, a lifted plate with an `input` edge in dark) where it used to be the well's own colour.
 
 - **Hovering a tab or a segment shades the same box as the selected one (#337).** In pill tabs and `Segmented` the hover shade filled the whole cell while the selected block sat inset; the cell's box is now the block's, so the two match in height, inset and corners in every theme.

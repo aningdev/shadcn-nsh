@@ -24,7 +24,7 @@ const palettes = PALETTES.filter((palette) => palette.id !== "default");
  * page beside it and takes both, for the script to compare pairwise.
  */
 export function renderThemePages({ reference = true }: { reference?: boolean } = {}) {
-  for (const { id, steps, selfReference, photos, tolerance, extraSettle } of cases) {
+  for (const { id, steps, pointerSteps, selfReference, photos, tolerance, extraSettle } of cases) {
     for (const palette of palettes) {
       for (const colorScheme of schemes) {
         test(`id=${id}: ${palette.id}, ${colorScheme}`, async () => {
@@ -43,7 +43,11 @@ export function renderThemePages({ reference = true }: { reference?: boolean } =
           const theirs =
             reference && !selfReference ? await open(`./${id}.ref.tsx`, options) : null;
           await steps?.(ours);
-          if (theirs) await steps?.(theirs);
+          await pointerSteps?.(ours);
+          if (theirs) {
+            await steps?.(theirs);
+            await pointerSteps?.(theirs);
+          }
           await settle(ours);
           if (theirs) await settle(theirs);
           if (extraSettle) {
