@@ -7,8 +7,9 @@
 - 修订：2026-11-23（#293）控件形态改为按行为命名的维度，撤销 D4，第 4 节重写；新增第 11–19 节：取值的逐像素表、不在刻度上的数字、可选 finish 字段、官方枚举、按主题 id 的例外去向、分档继承、动效角色与 43 处硬编码时长
 - 修订：2026-11-23（#293 评审）按原则 6 降级 winui / material 里辨识度低、却要单占一个维度的还原（第 11.7 节）：维度定为六个，删 `mark`、`trigger`、`arrow`，`cells` 移进新维度 `group`；第 19 节的 5 个问题已确认
 - 修订：2026-11-24（P5 数字收口）第 12 节逐条落地并记实测：分段轨道与日历格高的数字改读 `height.md`，开关改读 `icon.md`（钮，`circle` 形制），material / winui 的开关保留各自形制的官方配方，spinner 与抓杆记为组件常量。M1 第一版按“轨道高读 `height.md`”落地，指针档 44×28 超出“差 1–8 点”的预期，当天由 owner 改定为“钮 = `icon.md`、轨道 = 钮 + 4”；第 12 节 M1 的“差”列记的是改定后的实测
+- 修订：2026-11-24（#366）契约冻结为 contract v3（第 20 节）：#340、#293 P6、#357、#358 落地即冻结，此后表达不了的外观降级并记进 `native-themes.md` 的差异表，不加键、不加层；`bun run theme:diff --gate` 守着
 - 取代：[`theme-roles.md`](theme-roles.md) 中与本文冲突的部分；每一步落地时，`theme-roles.md`、[`native-themes.md`](native-themes.md)、[`design-tokens.md`](design-tokens.md)、[`design-semantics.md`](design-semantics.md)、`docs/GLOSSARY.md`、`docs/ARCHITECTURE.md` 在同一个 PR 里改成新的事实
-- 决定记录：[`docs/decisions/0001-theme-contract-v2.md`](../decisions/0001-theme-contract-v2.md)
+- 决定记录：[`docs/decisions/0001-theme-contract-v2.md`](../decisions/0001-theme-contract-v2.md)、[`docs/decisions/0004-theme-contract-freeze.md`](../decisions/0004-theme-contract-freeze.md)
 
 ## 目标
 
@@ -46,7 +47,7 @@
    - 平台固定、不随主题变的身份色（macOS 红绿灯）属于组件。
 4. **纯 alias 删除。** 一个角色在每套主题里都等于某个已有角色时，就删掉它，读它的组件改读那个角色。
 5. **对外格式不动。** NSH 的 `Theme` 就是 shadcn 的 token（`references/nsh/crates/nsh-base/src/theme.rs`），这一层的槽名照旧全写，因为应用会经 `Theme::of` 或 `bg-sidebar` 这类类名读取它们。
-6. **原生主题可以裁剪。** 原生主题（apple、material、winui）照官方外观实现；某个控件的官方外观个性化太强、放进契约代价太大时，可以在实现上裁剪，并把裁剪写进该主题的文档（主题 README 与 [`native-themes.md`](native-themes.md) 的差异表），不为它新增层、角色或刻度档。
+6. **原生主题可以裁剪；契约冻结后只降级，不扩张。** 原生主题（apple、material、winui）照官方外观实现；某个控件的官方外观个性化太强、放进契约代价太大时，可以在实现上裁剪，并把裁剪写进该主题的文档（主题 README 与 [`native-themes.md`](native-themes.md) 的差异表），不为它新增层、角色或刻度档。契约在 #340、#293 P6、#357、#358 落地后冻结为 **contract v3**，此后这条从几何扩到整个契约（finish 的层与字段、颜色与圆角阴影角色、控件维度、动效）：表达不了的外观改值降级并记账，不加键、不加层、不在组件里写这套主题的分支（第 20 节，[决策 0004](../decisions/0004-theme-contract-freeze.md)）。`default` 是例外，契约要能完整表达它。
 
 ## 1 颜色角色
 
@@ -520,3 +521,21 @@
 3. **tabs 的 `padX`**：固定 8，第 3 节记为反例。
 4. **`state` 的数字**：照第 17 节的表（winui 83 ms、apple 120 ms）。
 5. **`cells`**：移出 `selection`，成为新维度 `group` 的值；material 的分段按钮取 `cells`，标签页仍是下划线。
+
+## 20 冻结与降级（#366）
+
+契约就是 `semantics.json` 的 schema：finish 的层与字段、颜色与圆角阴影角色、控件维度、动效角色。
+
+**冻结在 contract v3。** 最后四件是 #340（删 `cells`、`ripple` 与弹簧）、#293 P6（`motion.state` 等动效角色）、#357（`fill` 层；开关的 `checked-*` 字段）、#358（`dimension.control.selection` 增加取值 `plate`：`pill` 是 `default` 的胶囊，`plate` 是 shadcn、solid-glass、apple 里按控件圆角切齐的块）。它们落地即冻结；在那之前，schema 只有它们能改。
+
+冻结之后，一套主题表达不了的外观按三条处置（现在写主题也该照这个来，冻结只是让它不可绕过）：
+
+1. **降级。** 在这套主题的现有键里改值，向契约里最近的一档靠；与原生的差别写进 [`native-themes.md`](native-themes.md) 第 3.6 节的差异表。第 11.7 节就是这样降级的一批（winui 的日历选中日、日期选择器触发器、轮播箭头，material 与 winui 的日历 `today` 与日格，material 的 spinner 弧）。
+2. **不扩张。** 不为一套主题加键、加层、加字段，也不在组件里写这套主题的代码或分支（[`ARCHITECTURE.md`](../ARCHITECTURE.md) 的 P8）。新的一层（finish）只给一种不同的**表面**，不给状态；状态是 finish 上的字段（`pressed-opacity`、`pressed-background`、`checked-*`）。
+3. **一处例外。** `default`（NSH Gallery）是官方 look，契约必须能完整表达它；另外五套（shadcn、solid-glass、apple、material、winui）可以降级。
+
+**闸门。** `bun run theme:diff --gate <base>` 在 diff 里有 `contract` 类改动（键的新增或删除，或共用源改动：基础 token、读取层、编译）且分支在 `<base>...HEAD` 上没有新增 `docs/decisions/*.md` 时，以非零退出并列出每一处改动。CI 在碰 `packages/theme/`、`scripts/theme/`、`scripts/tokens/` 的 PR 上跑它。四件冻结工作自己的 PR 由 0004 授权：给它打 `theme-contract-freeze` 标签，CI 就带上 `--freeze`，闸门照样列出改动但放行。标签只有维护者能打，冻结完成后这个标签与开关一起删掉。
+
+闸门看的是键与共用源，看不到两种同类的改动：**给已有的键加一个取值**（枚举增长，如 #358 的 `plate`；`theme:diff` 把它读成这套主题的一次值改动），以及**给 finish 加一个字段**（字段的清单在 `theme.ts` 的类型与 `theme-lint` 里，不在键上）。这两种同样是契约改动，同样需要决策记录；它们由 `check:theme`、类型与审阅守住，不靠闸门。
+
+契约改动是 breaking change：`CHANGELOG.md` 的 `Unreleased` 由维护者写。决定记录见 [`docs/decisions/0004-theme-contract-freeze.md`](../decisions/0004-theme-contract-freeze.md)。

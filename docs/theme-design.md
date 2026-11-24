@@ -10,7 +10,7 @@
 | 文档                                                       | 管什么                                                                           |
 | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [`specs/theme-roles.md`](specs/theme-roles.md)             | 每个颜色角色、每个 finish 的含义与读者；刻度例外的出处表（`theme-lint: scales`） |
-| [`specs/theme-contract-v2.md`](specs/theme-contract-v2.md) | 当前契约的由来：原则、删除与去向、实施顺序                                       |
+| [`specs/theme-contract-v2.md`](specs/theme-contract-v2.md) | 当前契约的由来：原则、删除与去向、实施顺序、冻结（第 20 节）                     |
 | [`specs/design-semantics.md`](specs/design-semantics.md)   | 一个值进 `theme.json` 还是 `semantics.json` 的判定规则                           |
 | [`specs/design-tokens.md`](specs/design-tokens.md)         | DTCG 2025.10 源码的文件布局、组结构与编译                                        |
 | [`specs/native-themes.md`](specs/native-themes.md)         | Apple、Material、WinUI 三套原生主题的出处与差异                                  |
@@ -53,9 +53,9 @@ flowchart LR
 
 - 主题类型：自有主题（`default`、`shadcn`、`solid-glass`）照自己的设计语言；原生主题（`apple`、`material`、`winui`）照平台官方外观。
 - 出处：原生主题的每个值都能指到官方资源名（M3 的 `SurfaceContainerHigh`、WinUI 的 `ControlFillColorDefault`），写在生成器注释和主题 README 里。
-- 裁剪：某个控件的官方外观个性化太强、放进契约代价太大时，原生主题可以裁剪，写进主题 README 与 [`native-themes.md`](specs/native-themes.md) 的差异表（契约原则 6）。
+- 裁剪：某个控件的官方外观个性化太强、放进契约代价太大时，原生主题可以裁剪，写进主题 README 与 [`native-themes.md`](specs/native-themes.md) 的差异表（契约原则 6）。契约冻结在 contract v3，降级并记账是它的出路：表达不了的外观改值、写进差异表，不加键、不加层。
 
-**约束**：不为一套主题新增层、角色或刻度档。差异先找已有的位置：面的差异进 finish，控件形态进 `dimension.control` 的某一档，实在放不进就裁剪并记下来。
+**约束**：不为一套主题新增键、层、字段，也不在组件里写这套主题的代码或分支（[`decisions/0004`](decisions/0004-theme-contract-freeze.md)）。差异先找已有的位置：面的差异进 finish，控件形态进 `dimension.control` 的某一档；状态不是新的一层，而是 finish 上的字段。实在放不进就改值降级，并把差别写进差异表。
 
 **参照**：`shadcn` 对齐 shadcn/ui 的 `neutral`；`solid-glass` 对齐 Solid Glass；`apple` 对齐 Apple HIG 与 Liquid Glass；`material` 对齐 Material 3 Expressive；`winui` 对齐 WinUI 3（Windows 11）。
 
@@ -359,13 +359,14 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | `bun run theme:contrast`                    | 每套主题亮暗的角色对与每个 finish 的墨达到 WCAG AA；平台例外要点名                                                                                                                                  |
 | `bun run tokens:build --check`              | 产物与源码一致                                                                                                                                                                                      |
 | `bun run test:unit`（`generators.test.ts`） | 生成器逐字节重现提交的源码                                                                                                                                                                          |
+| `bun run theme:diff --gate`                 | 契约的改动（键的新增或删除、共用源改动）没有同一分支的 `docs/decisions/` 记录；CI 在碰主题的 PR 上跑，`theme-contract-freeze` 标签放行四件冻结工作                                                  |
 
 ### 4.4 改完怎么验收
 
 1. `bun run theme:diff`：把每处改动分成三类。
    - `colour`：颜色角色或画颜色的 finish 字段。
    - `value`：尺寸、字阶、阴影、材质、状态、动效、不透明度。
-   - `contract`：增删了键，或改了所有主题共用的源（基础 token、读取层、编译）。
+   - `contract`：增删了键，或改了所有主题共用的源（基础 token、读取层、编译）。契约冻结在 v3，这一类的改动要同一分支的 `docs/decisions/` 记录，否则 `bun run theme:diff --gate` 失败；表达不了的外观应该是值改动加差异表的一行（第 2.1 节）。
 2. `bun run port:render:theme --changed`：按这个分类只渲染会动的页面（`--list` 先看会渲染哪些、为什么）。只改颜色时不重画每一页，改值时重画这套主题的所有页，改契约时全部重画。
 3. 人眼审阅截图，把有意的可见变化写进 `CHANGELOG.md`。审过后 `bun run port:baseline --update` 更新基线。
 4. 重构如果要求一个像素都不变，用 `bun run theme:diff --same` 当门槛。
@@ -376,7 +377,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 | #   | 设计问题       | 定义项                                                                   | 文件                                                        | 检查 / 验收                           |
 | --- | -------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------- |
-| 1   | 对齐谁，差多少 | 主题类型、出处、裁剪                                                     | 生成器注释、主题 README、`native-themes.md`                 | 审阅                                  |
+| 1   | 对齐谁，差多少 | 主题类型、出处、裁剪、契约表达不了的降级                                 | 生成器注释、主题 README、`native-themes.md` 差异表          | 审阅                                  |
 | 2   | 调色板与语义色 | A 层 31、B 层 25、C 层 3                                                 | `theme.tokens.json`、`{light,dark}.tokens.json`             | `check:theme`、`theme:contrast`       |
 | 3   | 面的层级       | 14 个 finish                                                             | `finishes.shared.tokens.json`（生成器：`finishes/<id>.ts`） | `check:theme`、`theme:contrast`       |
 | 4   | 深度           | `elevation`：`sm`–`xl`、`inset`、`edge`                                  | `{light,dark}.tokens.json` 的 `shadow`                      | `check:theme`、截图                   |

@@ -301,6 +301,21 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 | `material`（3 已做） | M3 Expressive 基线色（`#6750A4`，浅色 `on*Container` Tone 30，含 `inverse*`）                                  | 平涂，Material Web Level 1–3 阴影 + `elevation`（1/3/6dp）；不用模糊                                                                              | 系统字体（Roboto）；圆角 `4/12/28` + 按钮胶囊 `full`；circular 曲率；触控 48 / 指针 44；`8/10/10/16%` 叠色，`ripple` 开；expressive 弹簧 + `emphasized-decelerate`；`tabs`/`field` 下划线 |
 | `winui`（3 已做）    | WinUI 3 资源在基色上不透明合成，默认蓝 `#0078D4`（`primary` `#005FB8`/`#60CDFF`，`brand` `#003E92`/`#99EBFF`） | 控件与卡片平涂 + 推导两层阴影（`2/8/16/32/128` 近似 `ThemeShadow`）；`overlay` 是 `material: "acrylic"`（`windows.backdrop`），`glass` 平涂加模糊 | `Segoe UI Variable` + `Consolas`；圆角 `4/8/8`；circular 曲率；Standard 行高 40 / 控件高 32；`double` 双线焦点环；83/167/250/333ms 时序曲线；`tabs`/`field` 下划线、`nav` 前缘竖条        |
 
+### 3.6 差异表：契约表达不了的还原
+
+契约冻结在 contract v3（[`theme-contract-v2.md`](theme-contract-v2.md) 第 20 节，[决策 0004](../decisions/0004-theme-contract-freeze.md)）：一套主题表达不了的官方外观按契约原则 6 **降级**——在契约已有的档里改值，把差别记在这里。不为它加键、加层、加字段，也不在组件里为这套主题写分支；`default` 是官方 look，不在表里，契约得能完整表达它。
+
+新加一行之前，先在契约里找位置：面的差异进 finish（表面的种类），形态的差异进 `dimension.control` 的某一档，状态用 finish 上的字段。确实放不进去、降级代价又小，才写进这张表。
+
+| 主题       | 哪里                      | 官方                                               | 本库（降级后）                    | 省掉的契约项                           | 出处       |
+| ---------- | ------------------------- | -------------------------------------------------- | --------------------------------- | -------------------------------------- | ---------- |
+| `winui`    | 日期选择器的触发器        | 32 点日历格 + 右侧下拉箭头（`CalendarDatePicker`） | 整块按钮，文字加图标              | `trigger` 维度；`Picker` 的 `iconCell` | #286，11.7 |
+| `winui`    | 轮播的翻页箭头            | 贴边方钮 16×38、字形 `icon.sm`（`FlipView`）       | 胶囊按钮，图标 `icon.md`          | `arrow` 维度；`placement: "over"`      | #287，11.7 |
+| `winui`    | 日历的选中日              | 只描 2 px 边（`CalendarView`）                     | 填 `primary`                      | `mark` 维度                            | #293，11.7 |
+| `material` | 日历的 `today` 与日格形状 | outline 的描边 + 圆格                              | `quiet` 与 `shape.control` 的圆角 | 第 9 个维度 `hint` 与 `cellShape`      | #293，11.7 |
+| `winui`    | 日历的 `today` 与日格形状 | fill 的面 + 圆格                                   | `quiet` 与 `shape.control` 的圆角 | 同上                                   | #293，11.7 |
+| `material` | spinner 的弧宽比例        | 10                                                 | 8                                 | 一处刻度外的数字                       | #293，11.7 |
+
 ## 4 主题做不到的部分
 
 ### B 类：组件结构（本库按组件逐项决定）

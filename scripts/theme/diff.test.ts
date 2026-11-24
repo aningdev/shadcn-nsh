@@ -1,7 +1,19 @@
 import { describe, expect, test } from "bun:test";
 
 import { themeScope } from "../port/affected";
-import { classifyChanges, contractSources, flatten, keyKind, type Flat } from "./diff";
+import {
+  classifyChanges,
+  contractMoves,
+  contractSources,
+  decisionRecords,
+  flatten,
+  gateVerdict,
+  keyKind,
+  type ContractSource,
+  type Flat,
+  type ThemeChange,
+  type ThemeDiff,
+} from "./diff";
 
 const theme = {
   cssVars: {
@@ -149,5 +161,84 @@ describe("themeScope", () => {
 
   test("nothing changed moves nothing", () => {
     expect(themeScope({}, [], pool)).toEqual({ ids: "none", themes: [], why: [] });
+  });
+});
+
+describe("contractMoves", () => {
+  const diffOf = (
+    themes: Record<string, ThemeChange> = {},
+    contract: ContractSource[] = [],
+  ): ThemeDiff => ({ ref: "origin/main", base: "abcdef", files: [], contract, themes });
+
+  test("a shared source and an added key, named by theme and mode", () => {
+    const theme: ThemeChange = {
+      id: "default",
+      kinds: ["contract"],
+      modes: {
+        light: [{ key: "color.fill", kind: "contract", after: "oklch(1 0 0)" }],
+        dark: [{ key: "color.mark", kind: "contract" }],
+      },
+    };
+    expect(
+      contractMoves(
+        diffOf({ default: theme }, [
+          { file: "packages/theme/theme.ts", why: "the theme's reader" },
+        ]),
+      ),
+    ).toEqual([
+      { where: "packages/theme/theme.ts", what: "the theme's reader" },
+      { where: "default light", what: "+ color.fill" },
+      { where: "default dark", what: "- color.mark" },
+    ]);
+  });
+
+  test("a value change alone is not the contract", () => {
+    const theme: ThemeChange = {
+      id: "apple",
+      kinds: ["value"],
+      modes: {
+        light: [{ key: "color.primary", kind: "value", before: "a", after: "b" }],
+        dark: [],
+      },
+    };
+    expect(contractMoves(diffOf({ apple: theme }))).toEqual([]);
+  });
+});
+
+describe("gateVerdict", () => {
+  const diffOf = (themes: Record<string, ThemeChange> = {}): ThemeDiff => ({
+    ref: "origin/main",
+    base: "abcdef",
+    files: [],
+    contract: [],
+    themes,
+  });
+  const added: ThemeChange = {
+    id: "default",
+    kinds: ["contract"],
+    modes: { light: [{ key: "color.fill", kind: "contract" }], dark: [] },
+  };
+
+  test("only the decision records a branch adds count", () => {
+    expect(
+      decisionRecords([
+        "docs/decisions/0005-fill-layer.md",
+        "docs/decisions/README.md",
+        "docs/specs/native-themes.md",
+        "packages/ui/button.tsx",
+      ]),
+    ).toEqual(["docs/decisions/0005-fill-layer.md"]);
+  });
+
+  test("nothing moved passes", () => {
+    expect(gateVerdict(diffOf(), []).passed).toBe(true);
+  });
+
+  test("a key without a record fails, with the record passes", () => {
+    expect(gateVerdict(diffOf({ default: added }), []).passed).toBe(false);
+    expect(
+      gateVerdict(diffOf({ default: added }), ["docs/decisions/0004-theme-contract-freeze.md"])
+        .passed,
+    ).toBe(true);
   });
 });

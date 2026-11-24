@@ -123,3 +123,7 @@ _Avoid_: 把 `add theme-<x>` 当成换构建时主题、把主题叫“皮肤”
 **Control Dimension（控件维度 / `dimension.control`）**:
 主题对“一个控件怎么画自己的零件”的六个按行为命名的答案：`selection`（选中项标在哪：`pill` / `underline` / `bar`）、`field`（输入框边界：`box` / `underline` / `box-underline`）、`choice`（一组里被选中的那一格：`well` / `outline` / `inset`）、`track`（滑动轨道与进度剩余：`sunk` / `tint` / `hairline`）、`handle`（可拖部分：`circle` / `bar` / `ring`）、`group`（并排一组控件之间：`track` / `cells`）。各档画成什么样、按什么数字见 [`specs/theme-roles.md`](specs/theme-roles.md) 第 11、14 节；组件经 `@shadcn-nsh/theme` 的 `control()` 读取，换主题后下一帧重画。
 _Avoid_: 用组件名当维度名、把某个控件的整套尺寸塞进主题、为单个控件在 `theme.json` / `semantics.json` 里逐键放宽几何或状态字段、在组件里按主题 `id` 分支（`bun run check:ui` 拦下）
+
+**Difference Table（差异表）**:
+[`specs/native-themes.md`](specs/native-themes.md) 第 3.6 节：契约表达不了、因而被降级掉的原生外观，逐行记着“官方长什么样、本库降级成什么、省掉了哪个契约项”。契约冻结在 contract v3 之后，一套主题的差异只有两条出路——改值靠向契约，或者进这张表；加键、加层、加字段不在其中。
+_Avoid_: 在主题 README 里各记一段、把待办当差异、为一张表加一个维度

@@ -3,7 +3,7 @@
  * field of every theme, in light and in dark, resolved through its aliases (`var(--x)`, `{x}`,
  * `oklch(from {x} l c h / a)`) and compared between `<ref>` and the working tree.
  *
- *   bun scripts/theme/diff.ts [<ref>] [--same] [--json]
+ *   bun scripts/theme/diff.ts [<ref>] [--same] [--gate [--freeze]] [--json]
  *
  * The base is the merge base of `<ref>` (`origin/main` by default) and `HEAD`, as `--changed`
  * reads it (`scripts/port/affected.ts`), so a branch behind `main` does not report `main`'s
@@ -19,6 +19,13 @@
  * the render checks with. `--same` makes it a gate for a refactor that must not change a pixel: it
  * exits 1 when any key that exists on both sides resolves to a different value. Removed and added
  * keys pass: whether the components read the new key is `port:render:theme --against`'s question.
+ *
+ * `--gate` is the freeze's gate (docs/decisions/0004-theme-contract-freeze.md): the contract is
+ * closed, so a change that adds or removes a key, or moves a source outside the values, is a
+ * breaking change and fails unless the same branch adds a `docs/decisions/` record. A look the
+ * contract cannot express is a value inside it plus a row in `docs/specs/native-themes.md`.
+ * `--freeze` is the door for the four changes 0004 itself authorizes (#340, #293 P6, #357,
+ * #358): CI passes it for a pull request labeled `theme-contract-freeze`.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -101,6 +108,51 @@ export function contractSources(files: string[]): ContractSource[] {
     const why = contractWhy(file);
     return why ? [{ file, why }] : [];
   });
+}
+
+/** Something the freeze gates: a key added or removed, or a shared source that moved. */
+export type ContractMove = { where: string; what: string };
+
+/** Everything this branch moves in the contract, as the gate lists it. */
+export function contractMoves(diff: ThemeDiff): ContractMove[] {
+  const moves: ContractMove[] = diff.contract.map(({ file, why }) => ({ where: file, what: why }));
+  for (const theme of Object.values(diff.themes)) {
+    for (const mode of modes) {
+      for (const change of theme.modes[mode]) {
+        if (change.kind !== "contract") continue;
+        moves.push({
+          where: `${theme.id} ${mode}`,
+          what: `${change.after === undefined ? "-" : "+"} ${change.key}`,
+        });
+      }
+    }
+  }
+  return moves;
+}
+
+/** The decision records among the files a branch adds: `docs/decisions/<NNNN>-<slug>.md`. */
+export function decisionRecords(added: string[]): string[] {
+  return added.filter((file) => /^docs\/decisions\/\d{4}-[^/]+\.md$/.test(file));
+}
+
+/** Whether the branch may move the contract: it did not, or it recorded why. */
+export function gateVerdict(
+  diff: ThemeDiff,
+  added: string[],
+): { passed: boolean; moves: ContractMove[]; records: string[] } {
+  const moves = contractMoves(diff);
+  const records = decisionRecords(added);
+  return { passed: moves.length === 0 || records.length > 0, moves, records };
+}
+
+/** The files `<base>...HEAD` adds, plus the ones the working tree has not committed yet. */
+function addedFiles(base: string): string[] {
+  return [
+    ...git("diff", "--name-only", "--diff-filter=A", `${base}...HEAD`).stdout.split("\n"),
+    ...git("ls-files", "--others", "--exclude-standard").stdout.split("\n"),
+  ]
+    .map((file) => file.trim())
+    .filter(Boolean);
 }
 
 const baseFiles = new Map<string, Json | undefined>();
@@ -337,9 +389,47 @@ function report(diff: ThemeDiff, sides: Map<string, Side>, same: boolean) {
   if (same && changed > 0) process.exit(1);
 }
 
+/** The freeze's gate: a contract move without a decision record fails, saying why and what to do. */
+function gate(diff: ThemeDiff, json: boolean, freeze: boolean) {
+  const say = json ? console.error : console.log;
+  const { passed, moves, records } = gateVerdict(diff, addedFiles(diff.base));
+  if (moves.length === 0) {
+    say("theme:diff --gate: no contract change");
+    return;
+  }
+  if (passed) {
+    say(
+      `theme:diff --gate: ${moves.length} contract change${moves.length === 1 ? "" : "s"} recorded in ${records.join(", ")}`,
+    );
+    return;
+  }
+  if (freeze) {
+    say(
+      `theme:diff --gate: ${moves.length} contract change${moves.length === 1 ? "" : "s"} under --freeze, which docs/decisions/0004-theme-contract-freeze.md authorizes`,
+    );
+    return;
+  }
+  console.error(
+    "theme:diff --gate: this branch moves the theme contract and adds no decision record.",
+  );
+  for (const move of moves) console.error(`  ${move.where}: ${move.what}`);
+  console.error(
+    [
+      "The contract is frozen between versions (docs/decisions/0004-theme-contract-freeze.md).",
+      "A look it cannot express is a value inside it plus a row in docs/specs/native-themes.md's",
+      "difference table, not a new key, layer or field. To change the contract, add",
+      "docs/decisions/<NNNN>-<slug>.md saying why in this same pull request; it is a breaking",
+      "change, and the maintainer writes CHANGELOG.md.",
+    ].join(" "),
+  );
+  process.exit(1);
+}
+
 if (import.meta.main) {
   const args = process.argv.slice(2);
   const same = args.includes("--same");
+  const gated = args.includes("--gate");
+  const freeze = args.includes("--freeze");
   const json = args.includes("--json");
   const ref = args.find((arg) => !arg.startsWith("--")) ?? "origin/main";
   let result: { diff: ThemeDiff; sides: Map<string, Side> };
@@ -351,4 +441,5 @@ if (import.meta.main) {
   }
   if (json) console.log(JSON.stringify(result.diff, null, 2));
   else report(result.diff, result.sides, same);
+  if (gated) gate(result.diff, json, freeze);
 }
