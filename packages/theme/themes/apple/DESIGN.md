@@ -116,43 +116,36 @@ colors:
     down-tint: "#ff453a1f"
 typography:
   caption:
-    fontFamily: system-ui
-    fontSize: 10px
-    fontWeight: 400
-    lineHeight: 13px
-    letterSpacing: 0px
-  detail:
-    fontFamily: system-ui
     fontSize: 11px
     fontWeight: 400
-    lineHeight: 14px
+    lineHeight: 16px
     letterSpacing: 0px
-  body:
-    fontFamily: system-ui
-    fontSize: 13px
+  detail:
+    fontSize: 12px
     fontWeight: 400
     lineHeight: 16px
     letterSpacing: 0px
-  label:
-    fontFamily: system-ui
+  body:
     fontSize: 13px
+    fontWeight: 400
+    lineHeight: 20px
+    letterSpacing: 0px
+  label:
+    fontSize: 14px
     fontWeight: 500
-    lineHeight: 16px
+    lineHeight: 20px
     letterSpacing: 0px
   title:
-    fontFamily: system-ui
-    fontSize: 13px
+    fontSize: 16px
     fontWeight: 600
-    lineHeight: 16px
+    lineHeight: 24px
     letterSpacing: 0px
   headline:
-    fontFamily: system-ui
-    fontSize: 22px
+    fontSize: 20px
     fontWeight: 600
-    lineHeight: 26px
+    lineHeight: 28px
     letterSpacing: 0px
   display:
-    fontFamily: system-ui
     fontSize: 26px
     fontWeight: 600
     lineHeight: 32px
@@ -375,18 +368,15 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 
 Semantic typography roles referencing tier-specific font.size and font.line-height.
 
-- **Font stacks:** Font family stacks.
-  - `sans` (`system-ui`): Primary sans-serif font family stack.
-  - `mono` (`monospace`): Monospace font family for code blocks and numeric readouts.
-  - Every role's `fontFamily` is `{font.family.sans}`.
+- The family is the app's `font-sans` (`font-mono` for code); the sizes are the one shared scale, which the user's system font size scales (ADR 0009).
 
-- **`caption`** (10px (touch: 12px), weight 400, line-height 13px, line-height 16px on touch, letter-spacing 0px): Small captions and segmented counter labels.
-- **`detail`** (11px (touch: 13px), weight 400, line-height 14px, line-height 18px on touch, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
-- **`body`** (13px (touch: 17px), weight 400, line-height 16px, line-height 22px on touch, letter-spacing 0px): Standard body copy, list rows, and dialog content.
-- **`label`** (13px (touch: 17px), weight 500, line-height 16px, line-height 22px on touch, letter-spacing 0px): Control labels, form labels, and interactive triggers.
-- **`title`** (13px (touch: 17px), weight 600, line-height 16px, line-height 22px on touch, letter-spacing 0px): Card and section headings.
-- **`headline`** (22px, weight 600, line-height 26px, line-height 28px on touch, letter-spacing 0px): Page-level headings.
-- **`display`** (26px (touch: 34px), weight 600, line-height 32px, line-height 41px on touch, letter-spacing 0px): Large display numerals and hero headings.
+- **`caption`** (11px (touch: 12px), weight 400, line-height 16px, letter-spacing 0px): Small captions and segmented counter labels.
+- **`detail`** (12px (touch: 13px), weight 400, line-height 16px, line-height 20px on touch, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
+- **`body`** (13px (touch: 15px), weight 400, line-height 20px, letter-spacing 0px): Standard body copy, list rows, and dialog content.
+- **`label`** (14px (touch: 15px), weight 500, line-height 20px, letter-spacing 0px): Control labels, form labels, and interactive triggers.
+- **`title`** (16px, weight 600, line-height 24px, letter-spacing 0px): Card and section headings.
+- **`headline`** (20px (touch: 22px), weight 600, line-height 28px, letter-spacing 0px): Page-level headings.
+- **`display`** (26px (touch: 28px), weight 600, line-height 32px, line-height 36px on touch, letter-spacing 0px): Large display numerals and hero headings.
 
 ## Layout
 

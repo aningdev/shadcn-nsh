@@ -1,16 +1,7 @@
 // A code block: a titled block of code or output, a copy button that flips to a check, line numbers
 // and a footer.
 
-import {
-  alpha,
-  colors,
-  font,
-  mono,
-  rounded,
-  shape,
-  stroke,
-  type TypeName,
-} from "@shadcn-nsh/theme";
+import { alpha, colors, font, rounded, shape, stroke, type TypeName } from "@shadcn-nsh/theme";
 import { Check, Copy } from "lucide";
 import type { JSX, ScrollProps, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { Clipboard, context, Scroll, split, Text, View } from "nsh";
@@ -114,7 +105,7 @@ export function codeBlockLook(): CodeBlockLook {
     }),
     code: (variant, size) => ({
       userSelect: "text",
-      fontFamily: mono(),
+      fontFamily: "monospace",
       fontSize: font.size(codeRole(size)),
       lineHeight: font.lineHeight(codeRole(size)),
       color: variant === "destructive" ? colors.destructive : colors.foreground,
@@ -137,7 +128,7 @@ export function codeBlockLook(): CodeBlockLook {
     }),
     gutter: (variant, size, digits) => ({
       userSelect: "none",
-      fontFamily: mono(),
+      fontFamily: "monospace",
       fontSize: font.size(codeRole(size)),
       lineHeight: font.lineHeight(codeRole(size)),
       width: Math.ceil(digits * font.size(codeRole(size)) * DIGIT),
@@ -148,7 +139,7 @@ export function codeBlockLook(): CodeBlockLook {
     }),
     marker: (variant, size) => ({
       userSelect: "none",
-      fontFamily: mono(),
+      fontFamily: "monospace",
       fontSize: font.size(codeRole(size)),
       lineHeight: font.lineHeight(codeRole(size)),
       width: Math.ceil(font.size(codeRole(size)) * DIGIT * 2),

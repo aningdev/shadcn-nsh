@@ -1,44 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Material 3 Expressive desktop pointer input-tier overrides: control heights one step below the touch scale (24, 32, 40dp), glyphs 12, 16, 20dp, no hit padding (docs/decisions/0003-material-desktop-tier.md).",
-  "font": {
-    "$description": "Desktop pointer typography metrics.",
-    "size": {
-      "$type": "dimension",
-      "$description": "Font sizes per type role for pointer input.",
-      "body": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        }
-      },
-      "headline": {
-        "$value": {
-          "value": 24,
-          "unit": "px"
-        }
-      },
-      "display": {
-        "$value": {
-          "value": 36,
-          "unit": "px"
-        }
-      }
-    },
-    "line-height": {
-      "$type": "number",
-      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
-      "body": {
-        "$value": 1.428571
-      },
-      "headline": {
-        "$value": 1.333333
-      },
-      "display": {
-        "$value": 1.222222
-      }
-    }
-  },
   "dimension": {
     "$type": "dimension",
     "$description": "Desktop pointer layout density, control geometry, and icon sizes.",

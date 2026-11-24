@@ -11,7 +11,6 @@ const known = new Map<string, TokenKind>([
   ["card", "color"],
   ["border", "color"],
   ["radius-container", "dimension"],
-  ["font-mono", "fontFamily"],
 ]);
 const pending = new Set(["default light oklch(0.5 0 0)", "default light oklch(0.4 0 0)"]);
 
@@ -51,8 +50,8 @@ describe("a finish's colour field", () => {
     expect(judge("{radius-container}").problems).toEqual([
       { kind: "wrong-kind", name: "radius-container", expected: "color", actual: "dimension" },
     ]);
-    expect(judge("linear-gradient(180deg, {font-mono} 0%, {card} 100%)").problems).toEqual([
-      { kind: "wrong-kind", name: "font-mono", expected: "color", actual: "fontFamily" },
+    expect(judge("linear-gradient(180deg, {radius-container} 0%, {card} 100%)").problems).toEqual([
+      { kind: "wrong-kind", name: "radius-container", expected: "color", actual: "dimension" },
     ]);
   });
 

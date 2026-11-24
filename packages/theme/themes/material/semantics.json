@@ -3,7 +3,7 @@
     "caption": {
       "fontSize": {
         "pointer": 11,
-        "touch": 11
+        "touch": 12
       },
       "lineHeight": {
         "pointer": 16,
@@ -15,19 +15,19 @@
     "detail": {
       "fontSize": {
         "pointer": 12,
-        "touch": 12
+        "touch": 13
       },
       "lineHeight": {
         "pointer": 16,
-        "touch": 16
+        "touch": 20
       },
       "fontWeight": 400,
       "letterSpacing": 0.4
     },
     "body": {
       "fontSize": {
-        "pointer": 14,
-        "touch": 14
+        "pointer": 13,
+        "touch": 15
       },
       "lineHeight": {
         "pointer": 20,
@@ -39,7 +39,7 @@
     "label": {
       "fontSize": {
         "pointer": 14,
-        "touch": 14
+        "touch": 15
       },
       "lineHeight": {
         "pointer": 20,
@@ -62,24 +62,24 @@
     },
     "headline": {
       "fontSize": {
-        "pointer": 24,
-        "touch": 24
+        "pointer": 20,
+        "touch": 22
       },
       "lineHeight": {
-        "pointer": 32,
-        "touch": 32
+        "pointer": 28,
+        "touch": 28
       },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "display": {
       "fontSize": {
-        "pointer": 36,
-        "touch": 36
+        "pointer": 26,
+        "touch": 28
       },
       "lineHeight": {
-        "pointer": 44,
-        "touch": 44
+        "pointer": 32,
+        "touch": 36
       },
       "fontWeight": 400,
       "letterSpacing": 0

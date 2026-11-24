@@ -3,16 +3,7 @@
 // pressed row opens, a layout animation between tree changes, an input accessory over the iOS
 // keyboard, a view that keeps clear of the keyboard, a dialog's platform options, and the
 // platform itself read from the app.
-import {
-  colors,
-  finish,
-  mono,
-  tints,
-  toneColor,
-  toneTint,
-  type Tone,
-  shape,
-} from "@shadcn-nsh/theme";
+import { colors, finish, tints, toneColor, toneTint, type Tone, shape } from "@shadcn-nsh/theme";
 import {
   announce,
   type InputRef,
@@ -86,7 +77,9 @@ function Tile(props: { title: string; note: string; children?: JSX.Element }) {
     >
       <View style={{ flex: 1, gap: 2 }}>
         <Text style={{ fontSize: 15, color: colors.foreground }}>{props.title}</Text>
-        <Text style={{ fontSize: 12, color: colors.faint, fontFamily: mono() }}>{props.note}</Text>
+        <Text style={{ fontSize: 12, color: colors.faint, fontFamily: "monospace" }}>
+          {props.note}
+        </Text>
       </View>
       {props.children}
     </View>

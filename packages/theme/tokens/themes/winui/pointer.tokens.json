@@ -1,53 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "WinUI 3 desktop pointer input-tier overrides (Standard 40px ListViewItemMinHeight, 32px controls, 12/16/20px icons).",
-  "font": {
-    "$description": "Desktop pointer typography metrics.",
-    "size": {
-      "$type": "dimension",
-      "$description": "Font sizes per type role for pointer input.",
-      "caption": {
-        "$value": {
-          "value": 12,
-          "unit": "px"
-        }
-      },
-      "body": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        }
-      },
-      "title": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        }
-      },
-      "display": {
-        "$value": {
-          "value": 28,
-          "unit": "px"
-        }
-      }
-    },
-    "line-height": {
-      "$type": "number",
-      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
-      "caption": {
-        "$value": 1.333333
-      },
-      "body": {
-        "$value": 1.428571
-      },
-      "title": {
-        "$value": 1.428571
-      },
-      "display": {
-        "$value": 1.285714
-      }
-    }
-  },
   "dimension": {
     "$type": "dimension",
     "$description": "Desktop pointer layout density, control geometry, and icon sizes.",

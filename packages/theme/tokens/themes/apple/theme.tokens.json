@@ -106,21 +106,6 @@
       }
     }
   },
-  "font": {
-    "$description": "Base font family tokens.",
-    "family": {
-      "$type": "fontFamily",
-      "$description": "Font family stacks.",
-      "sans": {
-        "$value": "system-ui",
-        "$description": "Primary sans-serif font family stack."
-      },
-      "mono": {
-        "$value": "monospace",
-        "$description": "Monospace font family for code blocks and numeric readouts."
-      }
-    }
-  },
   "shape": {
     "$description": "Non-dimensional corner curve and button capsule flag.",
     "$extensions": {

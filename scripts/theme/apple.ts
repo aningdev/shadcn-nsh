@@ -110,9 +110,6 @@ const themeLevel = (): Record<string, string> => ({
   "radius-control": "8px",
   "radius-container": "12px",
   "radius-modal": "26px",
-  // The families: the platform's own, neither shade ships a font face.
-  "font-sans": "system-ui",
-  "font-mono": "monospace",
   scrim: oklchColor(0, 0, 0, 0.4),
   media: oklchColor(0.1869, 0.0151, 266.766),
   "on-media": oklchColor(1, 0, 0),
@@ -193,44 +190,30 @@ function section(p: ReturnType<typeof palette>) {
 export const style = {
   typography: {
     caption: {
-      fontSize: { pointer: 10, touch: 12 },
-      lineHeight: { pointer: 13, touch: 16 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     detail: {
-      fontSize: { pointer: 11, touch: 13 },
-      lineHeight: { pointer: 14, touch: 18 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     body: {
-      fontSize: { pointer: 13, touch: 17 },
-      lineHeight: { pointer: 16, touch: 22 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     label: {
-      fontSize: { pointer: 13, touch: 17 },
-      lineHeight: { pointer: 16, touch: 22 },
       fontWeight: 500,
       letterSpacing: 0,
     },
     title: {
-      fontSize: { pointer: 13, touch: 17 },
-      lineHeight: { pointer: 16, touch: 22 },
       fontWeight: 600,
       letterSpacing: 0,
     },
     headline: {
-      fontSize: { pointer: 22, touch: 22 },
-      lineHeight: { pointer: 26, touch: 28 },
       fontWeight: 600,
       letterSpacing: 0,
     },
     display: {
-      fontSize: { pointer: 26, touch: 34 },
-      lineHeight: { pointer: 32, touch: 41 },
       fontWeight: 600,
       letterSpacing: 0,
     },

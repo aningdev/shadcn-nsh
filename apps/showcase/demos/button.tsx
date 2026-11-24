@@ -11,7 +11,6 @@ import {
   animate,
   colors,
   finish,
-  mono,
   motion,
   rounded,
   shape,
@@ -722,7 +721,7 @@ function CopyCard(props: Ctx) {
           numberOfLines: 1,
           fontSize: pointer ? 12 : 14,
           color: colors.foreground,
-          fontFamily: mono(),
+          fontFamily: "monospace",
         }}
       >
         {props.text}

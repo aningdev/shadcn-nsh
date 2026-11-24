@@ -373,7 +373,7 @@ export function m3Roles(scheme: M3Scheme): M3Roles {
 /**
  * Shared theme-level tokens (`cssVars.theme`) for Material 3 Expressive: M3 Compose tokens at
  * `ac364f3c` (`CornerExtraSmall` 4dp, `CornerLarge` / medium container 12dp, `CornerExtraLarge`
- * 28dp; capsule buttons use `shape.corners.button: "full"`), system monospace font, and M3 colour
+ * 28dp; capsule buttons use `shape.corners.button: "full"`), and M3 colour
  * tokens from `m3Roles`.
  */
 function themeLevel(roles: M3Roles): Record<string, string> {
@@ -382,8 +382,6 @@ function themeLevel(roles: M3Roles): Record<string, string> {
     "radius-control": "4px",
     "radius-container": "12px",
     "radius-modal": "28px",
-    "font-sans": "system-ui",
-    "font-mono": "monospace",
     ...roles.theme,
   };
 }
@@ -392,44 +390,30 @@ function themeLevel(roles: M3Roles): Record<string, string> {
 export const m3Style = {
   typography: {
     caption: {
-      fontSize: { pointer: 11, touch: 11 },
-      lineHeight: { pointer: 16, touch: 16 },
       fontWeight: 500,
       letterSpacing: 0.5,
     },
     detail: {
-      fontSize: { pointer: 12, touch: 12 },
-      lineHeight: { pointer: 16, touch: 16 },
       fontWeight: 400,
       letterSpacing: 0.4,
     },
     body: {
-      fontSize: { pointer: 14, touch: 14 },
-      lineHeight: { pointer: 20, touch: 20 },
       fontWeight: 400,
       letterSpacing: 0.25,
     },
     label: {
-      fontSize: { pointer: 14, touch: 14 },
-      lineHeight: { pointer: 20, touch: 20 },
       fontWeight: 500,
       letterSpacing: 0.1,
     },
     title: {
-      fontSize: { pointer: 16, touch: 16 },
-      lineHeight: { pointer: 24, touch: 24 },
       fontWeight: 500,
       letterSpacing: 0.15,
     },
     headline: {
-      fontSize: { pointer: 24, touch: 24 },
-      lineHeight: { pointer: 32, touch: 32 },
       fontWeight: 400,
       letterSpacing: 0,
     },
     display: {
-      fontSize: { pointer: 36, touch: 36 },
-      lineHeight: { pointer: 44, touch: 44 },
       fontWeight: 400,
       letterSpacing: 0,
     },
@@ -610,8 +594,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       style: {
         "dimension.size.item":
           "Material 3 menu rows: the fill spans the menu's width (inset 0; a DropdownMenuItem takes no horizontal margin) and the text sits 12dp in (DropdownMenuItemHorizontalPadding, androidx compose material3 Menu.kt).",
-        typography:
-          "Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).",
+        typography: "Material 3 Expressive type weights; sizes follow the shared scale (ADR 0009).",
         "dimension.focus":
           "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
         "dimension.focus.offset": "2px outward focus indicator offset per M3.",

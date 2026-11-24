@@ -1,4 +1,4 @@
-import { colors, mono } from "@shadcn-nsh/theme";
+import { colors } from "@shadcn-nsh/theme";
 // Pagination: the official gallery's scene
 // (`references/nsh/examples/gallery/demos/PaginationDemo.tsx`) with this library's parts — search
 // results with a count, a table's footer with its page size, a compact pager for a phone, and an
@@ -188,7 +188,7 @@ function TableFooter() {
               }}
             >
               <Text
-                style={{ fontSize: 13, color: colors.foreground, fontFamily: mono() }}
+                style={{ fontSize: 13, color: colors.foreground, fontFamily: "monospace" }}
               >{`#${20000 - n()}`}</Text>
               <Text
                 style={{
@@ -406,7 +406,7 @@ function Archive() {
             <Text
               style={{
                 fontSize: 12,
-                fontFamily: mono(),
+                fontFamily: "monospace",
                 color: i() === 0 ? colors.foreground : colors.faint,
               }}
             >

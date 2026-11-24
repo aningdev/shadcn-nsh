@@ -1,4 +1,4 @@
-import { colors, focusRing, mono } from "@shadcn-nsh/theme";
+import { colors, focusRing } from "@shadcn-nsh/theme";
 // Editor: the official gallery's scene (`references/nsh/examples/gallery/demos/EditorDemo.tsx`)
 // with this library's editor and dock. The session around it — find bar, problems, hover,
 // code actions, the simulated language server — is the app's, as upstream's is. The shell gives
@@ -448,7 +448,7 @@ function Problems() {
             </Text>
             <Text
               style={{
-                fontFamily: mono(),
+                fontFamily: "monospace",
                 fontSize: 11,
                 color: colors.mutedForeground,
                 fontVariant: ["tabular-nums"],
@@ -714,7 +714,7 @@ function StatusBar() {
     >
       <Text
         style={{
-          fontFamily: mono(),
+          fontFamily: "monospace",
           fontSize: 11,
           color: colors.foreground,
           fontVariant: ["tabular-nums"],
@@ -724,21 +724,26 @@ function StatusBar() {
         {m.caret()}
       </Text>
       <Text
-        style={{ fontFamily: mono(), fontSize: 11, color: colors.destructive, numberOfLines: 1 }}
+        style={{
+          fontFamily: "monospace",
+          fontSize: 11,
+          color: colors.destructive,
+          numberOfLines: 1,
+        }}
       >
         {plural(m.count("error"), "error")}
       </Text>
-      <Text style={{ fontFamily: mono(), fontSize: 11, color: colors.warn, numberOfLines: 1 }}>
+      <Text style={{ fontFamily: "monospace", fontSize: 11, color: colors.warn, numberOfLines: 1 }}>
         {plural(m.count("warning"), "warning")}
       </Text>
-      <Text style={{ fontFamily: mono(), fontSize: 11, color: colors.info, numberOfLines: 1 }}>
+      <Text style={{ fontFamily: "monospace", fontSize: 11, color: colors.info, numberOfLines: 1 }}>
         {plural(m.count("info"), "info")}
       </Text>
       <If when={m.last() !== "—"}>
         <Text
           style={{
             flexShrink: 1,
-            fontFamily: mono(),
+            fontFamily: "monospace",
             fontSize: 11,
             color: colors.mutedForeground,
             numberOfLines: 1,
@@ -751,7 +756,7 @@ function StatusBar() {
         style={{
           marginLeft: "auto",
           flexShrink: 1,
-          fontFamily: mono(),
+          fontFamily: "monospace",
           fontSize: 11,
           color: colors.mutedForeground,
           numberOfLines: 1,

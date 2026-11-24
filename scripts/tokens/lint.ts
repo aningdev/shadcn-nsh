@@ -39,6 +39,7 @@ import {
   EXT_NS,
   RADIUS_KEYS,
   TYPE_ROLES,
+  TYPOGRAPHY_FONT_FAMILY,
   getExt,
   isRecord,
   isTokenNode,
@@ -800,13 +801,13 @@ function checkMergedSemantics(
   requireDescriptions: boolean,
   problems: string[],
 ): void {
-  // Typography: one family for every role, from `font.family.sans`; and whitelisted weights
+  // Typography: the placeholder family on every role (the app owns the family); whitelisted weights
   const typoGroup = merged.typography;
   if (isRecord(typoGroup)) {
     const ext = getExt(typoGroup);
     if (ext && "fontFamily" in ext) {
       problems.push(
-        `${label}: typography.$extensions.fontFamily is gone — every role's fontFamily is \`{font.family.sans}\``,
+        `${label}: typography.$extensions.fontFamily is gone — every role's fontFamily is the \`${TYPOGRAPHY_FONT_FAMILY}\` placeholder`,
       );
     }
     for (const role of TYPE_ROLES) {
@@ -817,9 +818,9 @@ function checkMergedSemantics(
           `${label}: typography.${role}.fontWeight is ${JSON.stringify(tok.$value.fontWeight)}, not in whitelist`,
         );
       }
-      if (tok.$value.fontFamily !== "{font.family.sans}") {
+      if (tok.$value.fontFamily !== TYPOGRAPHY_FONT_FAMILY) {
         problems.push(
-          `${label}: typography.${role}.fontFamily is ${JSON.stringify(tok.$value.fontFamily)}, not \`{font.family.sans}\``,
+          `${label}: typography.${role}.fontFamily is ${JSON.stringify(tok.$value.fontFamily)}, not the \`${TYPOGRAPHY_FONT_FAMILY}\` placeholder (a theme owns no family, ADR 0009)`,
         );
       }
     }

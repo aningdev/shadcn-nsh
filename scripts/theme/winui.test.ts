@@ -24,7 +24,7 @@ const defaultSemantics = JSON.parse(
 
 const NON_COLOUR_THEME_KEYS = new Set(
   Object.keys(defaultTheme.cssVars.theme).filter(
-    (key) => key === "radius" || key.startsWith("radius-") || key.startsWith("font-"),
+    (key) => key === "radius" || key.startsWith("radius-"),
   ),
 );
 
@@ -316,9 +316,10 @@ describe("compiled winui theme files", () => {
   test("match the default keys, the style schema and the WinUI 3 values", () => {
     const files = shipped;
     expect(files.theme.name).toBe("WinUI 3");
-    expect(files.theme.cssVars.theme["font-mono"]).toBe("Consolas, monospace");
     expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(defaultTheme.cssVars.theme));
-    expect(files.theme.cssVars.theme["font-sans"]).toBe("Segoe UI Variable, Segoe UI, sans-serif");
+    expect(Object.keys(files.theme.cssVars.theme).some((key) => key.startsWith("font-"))).toBe(
+      false,
+    );
     expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));
     expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(defaultTheme.cssVars.dark));
 

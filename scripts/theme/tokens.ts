@@ -14,7 +14,7 @@
 export const BUILD_ROOT_THEME = "default";
 
 /** Token kinds named after W3C Design Tokens Format Module 2025.10 (`$type`). */
-export type TokenKind = "color" | "dimension" | "fontFamily";
+export type TokenKind = "color" | "dimension";
 
 /** A theme file's `cssVars` block, as `theme.json` writes it. */
 export interface ThemeCssVars {
@@ -32,7 +32,6 @@ export interface SplitFinishes<F = Record<string, unknown>> {
 
 /** The DTCG `$type` of one token in `cssVars.theme`. */
 export function tokenKind(name: string, value: string): TokenKind {
-  if (name.startsWith("font-")) return "fontFamily";
   if (/^\d+(?:\.\d+)?(?:px|rem)$/.test(value.trim())) return "dimension";
   return "color";
 }

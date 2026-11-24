@@ -165,7 +165,6 @@ export function compileDesignMd(resolverPath: string): string {
   const typographyYaml: Record<
     string,
     {
-      fontFamily: string;
       fontSize: string;
       fontWeight: number;
       lineHeight: string;
@@ -174,14 +173,10 @@ export function compileDesignMd(resolverPath: string): string {
   > = {};
   for (const role of TYPE_ROLES) {
     const val = typoResolved[role]!.$value as DtcgTypography;
-    const fontFamily = Array.isArray(val.fontFamily)
-      ? val.fontFamily.join(", ")
-      : String(val.fontFamily);
     const fontSize = val.fontSize as DtcgDimension;
     // DTCG's `lineHeight` is a multiple of the font size; a design language states the line box in points.
     const lineHeight = Math.round(fontSize.value * (val.lineHeight as number));
     typographyYaml[role] = {
-      fontFamily,
       fontSize: fmtDim(fontSize),
       fontWeight: val.fontWeight,
       lineHeight: `${lineHeight}${fontSize.unit}`,
@@ -483,8 +478,6 @@ export function compileDesignMd(resolverPath: string): string {
   const strokeGroup = (dimGroup.stroke ?? {}) as Record<string, Record<string, unknown>>;
   const focusGroup = (dimGroup.focus ?? {}) as Record<string, Record<string, unknown>>;
   const iconGroup = (dimGroup.icon ?? {}) as Record<string, Record<string, unknown>>;
-  const fontGroup = (lightMerged.font ?? {}) as Record<string, Record<string, unknown>>;
-  const fontFamilyGroup = (fontGroup.family ?? {}) as Record<string, Record<string, unknown>>;
   const typoGroup = (lightMerged.typography ?? {}) as Record<string, Record<string, unknown>>;
   const stateGroup = (lightMerged.state ?? {}) as Record<string, Record<string, unknown>>;
   const motionGroup = (lightMerged.motion ?? {}) as Record<string, Record<string, unknown>>;
@@ -566,17 +559,10 @@ export function compileDesignMd(resolverPath: string): string {
   lines.push("");
   const typoDesc = getDesc(typoGroup);
   if (typoDesc) lines.push(typoDesc);
-  const fontFamDesc = getDesc(fontFamilyGroup);
-  if (fontFamDesc) {
-    if (typoDesc) lines.push("");
-    lines.push(`- **Font stacks:** ${fontFamDesc}`);
-    for (const [k, tok] of Object.entries(fontFamilyGroup)) {
-      if (k.startsWith("$") || !isTokenNode(tok)) continue;
-      const val = Array.isArray(tok.$value) ? tok.$value.join(", ") : String(tok.$value);
-      lines.push(`  - \`${k}\` (\`${val}\`): ${getDesc(tok) ?? ""}`);
-    }
-    lines.push("  - Every role's `fontFamily` is `{font.family.sans}`.");
-  }
+  lines.push("");
+  lines.push(
+    "- The family is the app's `font-sans` (`font-mono` for code); the sizes are the one shared scale, which the user's system font size scales (ADR 0009).",
+  );
   lines.push("");
   for (const role of TYPE_ROLES) {
     const t = typographyYaml[role]!;

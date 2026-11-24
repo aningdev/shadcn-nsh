@@ -1,6 +1,6 @@
 // The reference of `code-block.tsx`: the same page, the look spread on `nsh`'s own View, Text and
 // Scroll instead of worn by the parts. The render check requires the two to draw the same pixels.
-import { mono } from "@shadcn-nsh/theme";
+
 import { Copy } from "lucide";
 import { mount, Scroll, Text, View } from "nsh";
 
@@ -126,7 +126,12 @@ function App() {
             <View style={[codeBlockLook().footer("default", "sm")]}>
               <Text style={[codeBlockLook().footerText("default")]}>Output</Text>
               <Text
-                style={{ fontSize: density.note, flexGrow: 1, fontFamily: mono(), color: ui().up }}
+                style={{
+                  fontSize: density.note,
+                  flexGrow: 1,
+                  fontFamily: "monospace",
+                  color: ui().up,
+                }}
               >
                 2 pass, 0 fail
               </Text>

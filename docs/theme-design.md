@@ -229,16 +229,16 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 ### 2.8 排版
 
-**设计问题**：用什么字体？字阶几级？行高多少？用户放大字号时比例还对不对？
+**设计问题**：字阶里每个角色多重、字距多少？用户放大字号时比例还对不对？
 
 **定义项**
 
-- 字体：`font-sans` 与 `font-mono` 两族（`theme.json` `cssVars.theme`，必填）。
-- 字阶：`typography` 的 7 个角色，`caption`、`detail`、`body`、`label`、`title`、`headline`、`display`。每个角色有 `fontSize` / `lineHeight`（分 `pointer` / `touch`）、`fontWeight`、`letterSpacing`。
+- 字体：主题不带字体族，没有可填的项；应用的 `font-sans` 画正文，等宽文字写 `monospace`（[决策 0009](decisions/0009-no-theme-type-scale.md)）。
+- 字阶：`typography` 的 7 个角色，`caption`、`detail`、`body`、`label`、`title`、`headline`、`display`。字号与行高是全主题共用的一把字阶，主题只写每个角色的 `fontWeight`、`letterSpacing`。
 
 **约束**：字号按角色顺序不降；行高是整数点，且不小于字号（DTCG 源码存倍数，编译时换回点）。字阶成比例设计，不放零散的数。
 
-**参照**：`winui` 用 `Segoe UI Variable`；`material` 的 `title` 字重 500（M3），其余主题 600。
+**参照**：`material` 的 `title` 字重 500（M3），其余主题 600；WinUI 3 只用 400 与 600 两档。
 
 ### 2.9 描边与焦点
 
@@ -337,13 +337,13 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 所有主题的真源是 `packages/theme/tokens/` 下的 DTCG 2025.10 源码（[`design-tokens.md`](specs/design-tokens.md#2-源文件布局与-resolver-架构)）：
 
-| 文件                                                   | 管什么                                     |
-| ------------------------------------------------------ | ------------------------------------------ |
-| `tokens/base/style.{shared,pointer,touch}.tokens.json` | 各主题共用的基础 token                     |
-| `tokens/themes/<id>/theme.tokens.json`                 | 这套主题的颜色（C 层）、圆角、字体与风格组 |
-| `tokens/themes/<id>/{light,dark}.tokens.json`          | 两种外观的颜色与阴影刻度                   |
-| `tokens/themes/<id>/finishes.shared.tokens.json`       | 15 个 finish                               |
-| `tokens/themes/<id>/theme.resolver.json`               | 把上面几个文件按外观与档位组合起来         |
+| 文件                                                   | 管什么                               |
+| ------------------------------------------------------ | ------------------------------------ |
+| `tokens/base/style.{shared,pointer,touch}.tokens.json` | 各主题共用的基础 token               |
+| `tokens/themes/<id>/theme.tokens.json`                 | 这套主题的颜色（C 层）、圆角与风格组 |
+| `tokens/themes/<id>/{light,dark}.tokens.json`          | 两种外观的颜色与阴影刻度             |
+| `tokens/themes/<id>/finishes.shared.tokens.json`       | 15 个 finish                         |
+| `tokens/themes/<id>/theme.resolver.json`               | 把上面几个文件按外观与档位组合起来   |
 
 除 `default` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 15 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。`default` 是唯一手写的主题：它同时是构建时的根主题，编译产物除了 `themes/default/` 还有 `packages/theme/` 顶层那对 `theme.json` / `semantics.json`（`BUILD_ROOT_THEME`，`scripts/theme/tokens.ts`），这是它唯一特殊的地方——没有一条规则因为它是 `default` 而不同。
 
@@ -392,7 +392,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | 5   | 透明材质       | finish 的 `material`                                                     | `finishes.shared.tokens.json`                               | `check:theme`（不透明度下限）         |
 | 6   | 圆角           | `radius-control/container/modal`、`corners.button`、`curve`              | `theme.tokens.json`                                         | `check:theme`、截图                   |
 | 7   | 尺度与密度     | `size.height`、`icon`、`density`、`control`、`hit`                       | `theme.tokens.json`                                         | `checkScales`，例外进出处表           |
-| 8   | 字体与字阶     | `font-sans`、`font-mono`、7 个 `typography` 角色                         | `theme.tokens.json`                                         | `checkScales`                         |
+| 8   | 字重与字距     | 7 个 `typography` 角色的 `fontWeight`、`letterSpacing`                   | `theme.tokens.json`                                         | `checkScales`                         |
 | 9   | 线与焦点       | `stroke`、`focus`                                                        | `theme.tokens.json`                                         | 截图（键盘焦点）                      |
 | 10  | 交互状态       | `hover` / `pressed` / `disabled` finish、`accent` 的按下字段、`state` 组 | `finishes.shared.tokens.json`、`theme.tokens.json`          | `theme:contrast`、截图                |
 | 11  | 动效           | `motion.{fast,default,slow}`、`motion.state`、`transition.enter`         | `theme.tokens.json`                                         | 真机或演示里看                        |

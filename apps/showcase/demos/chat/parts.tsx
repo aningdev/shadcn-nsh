@@ -7,7 +7,6 @@ import {
   colors,
   finish,
   focusRing,
-  mono,
   rounded,
   type Tone,
   toneColor,
@@ -326,7 +325,7 @@ function ToolBody(props: { tool: Tool }) {
             style={{
               userSelect: "text",
               flex: 1,
-              fontFamily: mono(),
+              fontFamily: "monospace",
               fontSize: 14,
               color: colors.up,
             }}

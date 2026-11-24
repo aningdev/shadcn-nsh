@@ -2,7 +2,7 @@
 // figure, a caption, a row, a legend, an icon tile and the action row its scenes are made of.
 // They are rebuilt here rather than reused from another batch's shared file, so this batch owns
 // what it draws. Colors come from the theme only, never a literal.
-import { alpha, colors, mono, toneColor, type Tone } from "@shadcn-nsh/theme";
+import { alpha, colors, toneColor, type Tone } from "@shadcn-nsh/theme";
 import { ChevronRight, type IconNode } from "lucide";
 import type { JSX, TextStyle } from "nsh";
 import { Text, View } from "nsh";
@@ -200,7 +200,7 @@ export function Note(props: { children: string }) {
 
 /** A mono run's style, in the given size and ink. */
 export function monoText(size = 12, color: string = colors.foreground): TextStyle {
-  return { fontSize: size, fontFamily: mono(), color, fontVariant: ["tabular-nums"] };
+  return { fontSize: size, fontFamily: "monospace", color, fontVariant: ["tabular-nums"] };
 }
 
 /** `1 char` / `N chars`, as the gallery counts. */

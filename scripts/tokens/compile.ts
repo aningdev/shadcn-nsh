@@ -95,24 +95,10 @@ export function compileThemeJson(resolverPath: string): {
     cssTheme[cssVar] = `${dim.value}${dim.unit}`;
   }
 
-  const fontFamilies = ((sharedTree.font as Record<string, unknown> | undefined)?.family ??
-    {}) as Record<string, Record<string, unknown>>;
-  if (fontFamilies.mono) {
-    const v = fontFamilies.mono.$value;
-    cssTheme["font-mono"] = Array.isArray(v) ? v.join(", ") : String(v);
-  }
-
   const sharedColors = (themeSetTree.color ?? {}) as Record<string, Record<string, unknown>>;
   for (const [k, tok] of Object.entries(sharedColors)) {
     if (k.startsWith("$")) continue;
     cssTheme[k] = compileColorTokenToCss(tok);
-  }
-
-  // Optional families (e.g. `font-sans`) follow C-layer colors, matching `scripts/theme/order.ts`.
-  for (const [k, tok] of Object.entries(fontFamilies)) {
-    if (k.startsWith("$") || k === "mono") continue;
-    const v = tok.$value;
-    cssTheme[`font-${k}`] = Array.isArray(v) ? v.join(", ") : String(v);
   }
 
   const compileAppearanceColors = (tree: Record<string, unknown>) => {

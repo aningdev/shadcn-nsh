@@ -85,6 +85,8 @@ export function Badge(props: BadgeProps) {
       <Text
         style={{
           fontSize: size.font,
+          // The pill is a fixed height: the text follows the system size, but only so far.
+          maxFontSizeMultiplier: 1.2,
           fontWeight: font.weight("label"),
           color: tone() === "neutral" ? colors.foreground : toneColor(tone()),
           numberOfLines: 1,

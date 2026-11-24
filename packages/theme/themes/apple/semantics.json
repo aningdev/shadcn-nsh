@@ -2,11 +2,11 @@
   "typography": {
     "caption": {
       "fontSize": {
-        "pointer": 10,
+        "pointer": 11,
         "touch": 12
       },
       "lineHeight": {
-        "pointer": 13,
+        "pointer": 16,
         "touch": 16
       },
       "fontWeight": 400,
@@ -14,12 +14,12 @@
     },
     "detail": {
       "fontSize": {
-        "pointer": 11,
+        "pointer": 12,
         "touch": 13
       },
       "lineHeight": {
-        "pointer": 14,
-        "touch": 18
+        "pointer": 16,
+        "touch": 20
       },
       "fontWeight": 400,
       "letterSpacing": 0
@@ -27,46 +27,46 @@
     "body": {
       "fontSize": {
         "pointer": 13,
-        "touch": 17
+        "touch": 15
       },
       "lineHeight": {
-        "pointer": 16,
-        "touch": 22
+        "pointer": 20,
+        "touch": 20
       },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "label": {
       "fontSize": {
-        "pointer": 13,
-        "touch": 17
+        "pointer": 14,
+        "touch": 15
       },
       "lineHeight": {
-        "pointer": 16,
-        "touch": 22
+        "pointer": 20,
+        "touch": 20
       },
       "fontWeight": 500,
       "letterSpacing": 0
     },
     "title": {
       "fontSize": {
-        "pointer": 13,
-        "touch": 17
+        "pointer": 16,
+        "touch": 16
       },
       "lineHeight": {
-        "pointer": 16,
-        "touch": 22
+        "pointer": 24,
+        "touch": 24
       },
       "fontWeight": 600,
       "letterSpacing": 0
     },
     "headline": {
       "fontSize": {
-        "pointer": 22,
+        "pointer": 20,
         "touch": 22
       },
       "lineHeight": {
-        "pointer": 26,
+        "pointer": 28,
         "touch": 28
       },
       "fontWeight": 600,
@@ -75,11 +75,11 @@
     "display": {
       "fontSize": {
         "pointer": 26,
-        "touch": 34
+        "touch": 28
       },
       "lineHeight": {
         "pointer": 32,
-        "touch": 41
+        "touch": 36
       },
       "fontWeight": 600,
       "letterSpacing": 0

@@ -2,12 +2,12 @@
 
 本库的颜色、圆角、字体只有一个来源，一个面的样子只有一张表，二者之间用 `{token}` alias 相连。设计语义标准与分层判定规则见 [`design-semantics.md`](design-semantics.md)：
 
-| 文件                            | 管什么                                                                                                                                              | 不管什么               |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `packages/theme/theme.json`     | 基础 token：颜色（light / dark 与共用）、圆角（3 个层圆角 `radius-{control,container,modal}` 与 A 层 `radius`）、字体（`font-sans` 与 `font-mono`） | 面、边、影、渐变、模糊 |
-| `packages/theme/semantics.json` | 语义层：与外观无关的字体字阶、形状、尺寸、动效、状态、枚举，加上 `finishes`（`shared` + 稀疏 `light`/`dark`）与 `elevation`（每个外观的影子刻度）   | 颜色/圆角/字体字面量   |
-| `packages/theme/theme.ts`       | 读时把 `{token}` 换成当前主题、外观与宿主覆写的值（`themed()`、`shape.*`、`elevation()`、`mono()`）                                                 | 具体颜色或圆角值       |
-| `packages/ui/*.tsx`             | 只经 `finish.*`、`colors.*`、`shape.*` 取外观                                                                                                       | 内联颜色               |
+| 文件                            | 管什么                                                                                                                                            | 不管什么               |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `packages/theme/theme.json`     | 基础 token：颜色（light / dark 与共用）、圆角（3 个层圆角 `radius-{control,container,modal}` 与 A 层 `radius`）                                   | 面、边、影、渐变、模糊 |
+| `packages/theme/semantics.json` | 语义层：与外观无关的字体字阶、形状、尺寸、动效、状态、枚举，加上 `finishes`（`shared` + 稀疏 `light`/`dark`）与 `elevation`（每个外观的影子刻度） | 颜色/圆角/字体字面量   |
+| `packages/theme/theme.ts`       | 读时把 `{token}` 换成当前主题、外观与宿主覆写的值（`themed()`、`shape.*`、`elevation()`）                                                         | 具体颜色或圆角值       |
+| `packages/ui/*.tsx`             | 只经 `finish.*`、`colors.*`、`shape.*` 取外观                                                                                                     | 内联颜色               |
 
 每套主题解析之后的具体值——每个颜色角色的 oklch、每个风格组的数字、每个 finish 的字段、每一步影子——列在生成页 [`semantics-values.md`](semantics-values.md)：查值看那里，规则与含义看本文。
 
@@ -70,7 +70,6 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | 键                                                                | 值                              | 用途                                                                                                        |
 | ----------------------------------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `radius` / `radius-control` / `radius-container` / `radius-modal` | `8px` / `8px` / `12px` / `14px` | A 层 `radius` 槽与按层划分的 3 个圆角角色；`semantics.json` 的 `dimension.shape.*` 以 `{radius-…}` 引用它们 |
-| `font-mono`                                                       | `monospace`                     | 等宽字：`font-mono` 类、`Text` 里的代码、`theme.ts` 的 `mono()`                                             |
 | `scrim`                                                           | 遮罩                            | `lib/popup`、`dock-area`                                                                                    |
 | `media`                                                           | 照片与影片的底                  | `theme.ts` 的 `colors.media`、`image-viewer` 的 ground；不随外观或主题翻转                                  |
 | `on-media`                                                        | 照片与深色图块上的白字          | `image-viewer`、`theme.ts` 的 `colors.onMedia`；不随外观翻转                                                |
@@ -79,7 +78,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 3 个层圆角（`radius-control`、`radius-container`、`radius-modal`）及编译出的 A 层 `radius` 槽（等于 `radius-control`）均为非负 `px` 长度，读主题圆角的角一律用 `rounded()`，`shape.curve` 只在 `packages/theme/theme.ts` 给；嵌套元素用 `rounded(outer, inset)` 按同心推出（`Math.max(outer - inset, 0)`）。
 
-两个字体族都是 token，不是颜色：`font-sans` 是正文家族（系统字体写通用族 `system-ui`，WinUI 写 `Segoe UI Variable, Segoe UI, sans-serif`），`font-mono` 是等宽家族（`monospace`，WinUI `Consolas, monospace`）。NSH 取列表里第一个不是通用名的家族（`theme.rs` 的 `font_family`），所以写通用族的主题在构建产物里**没有**这个 token —— 那正是“用系统字体”的意思：`font-sans` 由 NSH 自己画在每一段没写字体的文字上，本库不读它；等宽文字经 `mono()` 读 `font-mono`（通用族 `monospace` 不在 NSH 的通用名列表里，所以它总是有 token）。
+字体族不在主题里（[0009](../decisions/0009-no-theme-type-scale.md)）：`theme.json` 没有 `font-sans` / `font-mono`。应用在 `nsh.json` 的主题里设它们，没写字体的文字都用 `font-sans`，等宽处用 `font-mono`；本库的代码里等宽字写通用族 `monospace`（`fontFamily: "monospace"`）。
 
 ## 2 semantics.json 的两条线
 
@@ -132,7 +131,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 - **键集合相同。** 所有主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
 - **枚举取白名单。** 字重（数值 `400`–`700`）、曲线、`corners.button`（`"full" | "radius"`）、焦点样式、`dimension.control` 的四个维度、`timingFunction` 的值都取下表的枚举清单：`scripts/theme/enums.ts` 在模块加载时读这张表，`check:theme` 再核对表里的键在主题里真的存在。
-- **`{token}` 引用按 DTCG `$type` 校验。** `dimension.shape` 的 3 个层圆角（`control`、`container`、`modal`）必须是 `"{radius-…}"`（`dimension` 类型），不允许写数字字面量；字体家族只来自 `theme.json` 的 `font-sans` / `font-mono`：7 个字阶复合 token 的 `fontFamily` 一律是 `{font.family.sans}`（DTCG 复合类型的必填字段，设计工具导入要用），`typography` 自己不另设家族。
+- **`{token}` 引用按 DTCG `$type` 校验。** `dimension.shape` 的 3 个层圆角（`control`、`container`、`modal`）必须是 `"{radius-…}"`（`dimension` 类型），不允许写数字字面量；主题不带字体家族：7 个字阶复合 token 的 `fontFamily` 一律是占位字面量 `system-ui`（DTCG 复合类型的必填字段，没有组件读它），真正的家族归应用的 `font-sans`。
 - **两档齐全**（`checkTiers`）：随设备变的值分 `pointer` / `touch` 两档，一个值要么两档都给、要么两档都不给（继承 `tokens/base/style.{pointer,touch}.tokens.json`），且两档的键相同。分档的键是这些：`dimension.size.height`（`sm`/`md`/`lg`）、`dimension.icon`（`sm`/`md`/`lg`）、`dimension.size.density`（`pad`/`gap`）、`dimension.size.item`（`inset`/`pad`）、`dimension.size.control`（`padding`/`gap`/`dot`/`switch`）、`dimension.size.hit`，以及 `typography.<role>` 的 `fontSize` / `lineHeight`（7 个角色）。主题在 `tokens/themes/<id>/` 下写 `pointer.tokens.json` / `touch.tokens.json` 就多一套自己的档位值，只写一个档是错的；不写这两个文件就完全继承 base。
 - **尺寸落在三把尺子上**（`checkScales`）：高度与图标各三个台阶，逐档递增、都是 4 的整数倍；间距（`density.pad` / `density.gap` / `control.padding` / `control.gap`）取自 `4, 8, 12, 16, 24, 32`，每档最多三个值；列表行的 `item.inset` / `item.pad` 也取这些台阶（`inset` 可为 0，即填充铺满容器），`pad` 不小于 `inset`，不计入每档三个值；字号按 `caption → display` 不递减，行高是不小于字号的整数点数；touch 档的点按区 `dimension.size.hit` 不小于 44（Apple HIG 的最小点按区，WCAG 2.2 SC 2.5.5）。平台自己规定的例外值写在各自主题的 `$extensions` 里点名，附出处；没出处的值一个都不许。
 
@@ -148,7 +147,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 **留在代码里的值**，各处有注释：Tailwind 类里的 `rounded-(--radius-control)` / `rounded-(--radius-container)` / `rounded-(--radius-modal)` / `rounded-[4px]`、`active:opacity-70`、`disabled:opacity-50`、`border`（类名读不了 getter，前三者读 `theme.json` 的 token，与 `shape` 同值）；半高或半径推出的圆（`height / 2`、`side / 2`：胶囊、圆点、开关、进度条）；选择器的 2 点焦点边（`select.tsx` 的 `outlineWidth: 2`，它是边的渐显，不是焦点环）；实心按钮悬停与选中的 0.94 / 0.88 不透明度，附件失败时的 0.6，子菜单禁用的 0.35（没有对应的 state 角色）；toast 的 2 点色条、进度的 2 点限位、头像 2 点的环（装饰，不是 stroke 角色）；圆角 1 / 2 / 3 / 4 / 5 的小件（拇指、插入符、进度条端点、日历格的 17 等）。
 
-正文家族不经本库读取：每个字阶复合 token 的 `fontFamily` 是 `{font.family.sans}`，NSH 用它画所有没写字体的文字，所以 `typography` 组上没有字体家族的扩展，语义层里没有顶层的字体家族键，`theme.ts` 里也没有解析正文家族的 getter；宿主覆写 `font-sans` 由 NSH 生效。
+家族不经本库读取：复合 token 的 `fontFamily` 只是 DTCG 的必填占位（`system-ui`），NSH 用应用的 `font-sans` 画所有没写字体的文字，等宽处用 `font-mono`；所以 `typography` 组上没有字体家族的扩展，语义层里没有顶层的字体家族键，`theme.ts` 里也没有解析家族的 getter。字号与行高是**一套**（`default` 的值），所有主题共用；Apple、Material、WinUI 的平台字阶不再进主题（记在 [`native-themes.md`](native-themes.md) 第 3.6 节）；只有字重与字距按主题。
 
 ### 枚举与取值
 

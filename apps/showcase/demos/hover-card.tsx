@@ -1,4 +1,4 @@
-import { alpha, colors, finish, focusRing, mono, rounded, toneColor } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, focusRing, rounded, toneColor } from "@shadcn-nsh/theme";
 // Hover card: the official gallery's scene (`references/nsh/examples/gallery/demos/HoverCardDemo.tsx`).
 // Mentions, link previews, live quotes, delays, and a card the app pins open. The card's surface is
 // `popoverLook` on a `PopIn`. The trigger is one of the scene's own views, handed to
@@ -562,7 +562,7 @@ function Ticker(props: {
             style={{
               fontSize: small,
               fontWeight: "600",
-              fontFamily: mono(),
+              fontFamily: "monospace",
               color: colors.foreground,
             }}
           >

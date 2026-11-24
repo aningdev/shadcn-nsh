@@ -2,17 +2,7 @@
 // and category colors, grid, baseline, cross line, hover dot, wash, axis text, tooltip), plus `Legend`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  alpha,
-  chart,
-  colors,
-  finish,
-  mono,
-  rounded,
-  terminal,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
+import { alpha, chart, colors, finish, rounded, terminal, shape, stroke } from "@shadcn-nsh/theme";
 import { Text, token, View } from "nsh";
 import type { TextStyle, ViewStyle } from "nsh";
 
@@ -115,7 +105,7 @@ export const plotWash = (color: string, top = 0.18): ViewStyle => ({
 export const plotAxisText = (): TextStyle => ({
   // No type role has this size: an axis value's 10.5.
   fontSize: 10.5,
-  fontFamily: mono(),
+  fontFamily: "monospace",
   color: colors.faint,
   fontVariant: ["tabular-nums"],
 });
@@ -134,7 +124,7 @@ export const plotTooltip = (): ViewStyle => ({
 export const plotTooltipTitle = (): TextStyle => ({
   // No type role has this size: a tooltip title's 10, tracked out.
   fontSize: 10,
-  fontFamily: mono(),
+  fontFamily: "monospace",
   letterSpacing: 0.8,
   color: colors.mutedForeground,
 });

@@ -1,7 +1,7 @@
 // Editor: `editorClasses`, `editorFrame`, the `Editor` that wears them and the `EditorFindBar`
 // that finds in it.
 
-import { colors, control, finish, mono, platformMaterial } from "@shadcn-nsh/theme";
+import { colors, control, finish, platformMaterial } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import {
   cleanup,
@@ -218,7 +218,7 @@ export function EditorFindBar(props: EditorFindBarProps) {
             style={{
               numberOfLines: 1,
               paddingHorizontal: 4,
-              fontFamily: mono(),
+              fontFamily: "monospace",
               fontSize: 11,
               color: colors.mutedForeground,
               fontVariant: ["tabular-nums"],

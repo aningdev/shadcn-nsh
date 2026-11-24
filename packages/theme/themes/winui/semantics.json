@@ -2,7 +2,7 @@
   "typography": {
     "caption": {
       "fontSize": {
-        "pointer": 12,
+        "pointer": 11,
         "touch": 12
       },
       "lineHeight": {
@@ -15,19 +15,19 @@
     "detail": {
       "fontSize": {
         "pointer": 12,
-        "touch": 12
+        "touch": 13
       },
       "lineHeight": {
         "pointer": 16,
-        "touch": 16
+        "touch": 20
       },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "body": {
       "fontSize": {
-        "pointer": 14,
-        "touch": 14
+        "pointer": 13,
+        "touch": 15
       },
       "lineHeight": {
         "pointer": 20,
@@ -39,7 +39,7 @@
     "label": {
       "fontSize": {
         "pointer": 14,
-        "touch": 14
+        "touch": 15
       },
       "lineHeight": {
         "pointer": 20,
@@ -50,12 +50,12 @@
     },
     "title": {
       "fontSize": {
-        "pointer": 14,
-        "touch": 14
+        "pointer": 16,
+        "touch": 16
       },
       "lineHeight": {
-        "pointer": 20,
-        "touch": 20
+        "pointer": 24,
+        "touch": 24
       },
       "fontWeight": 600,
       "letterSpacing": 0
@@ -63,7 +63,7 @@
     "headline": {
       "fontSize": {
         "pointer": 20,
-        "touch": 20
+        "touch": 22
       },
       "lineHeight": {
         "pointer": 28,
@@ -74,11 +74,11 @@
     },
     "display": {
       "fontSize": {
-        "pointer": 28,
+        "pointer": 26,
         "touch": 28
       },
       "lineHeight": {
-        "pointer": 36,
+        "pointer": 32,
         "touch": 36
       },
       "fontWeight": 600,

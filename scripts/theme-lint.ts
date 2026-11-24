@@ -19,7 +19,6 @@ import { finishFields, type FinishRole } from "../packages/theme/finish-fields";
 import { scaleCitationsOf } from "./theme/extensions";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkMaterial, checkMaterialFill } from "./theme/material";
-import { parseColor } from "./theme/oklch";
 import { checkRecipeNumbers, lookNumbers } from "./theme/recipe-numbers";
 import {
   specBlock,
@@ -84,9 +83,6 @@ interface SemanticsFile {
 
 /** The two appearances a theme states. */
 const appearances = ["light", "dark"] as const;
-
-/** Optional C-layer tokens that a theme may omit when it defers to the system default. */
-const optionalThemeTokens = new Set(["font-sans"]);
 
 /** A clear value: unset (`null` included: the base set's neutrals), `transparent`, or a gradient
  * that is transparent at every stop. */
@@ -295,13 +291,13 @@ for (const { role } of specPartsOf.finishes)
   if (!defaultRoles.includes(role))
     fail(`docs/specs/theme-roles.md: states finish \`${role}\`, which semantics.json has not`);
 
-// The C layer is `cssVars.theme` (minus optional theme tokens like `font-sans` when absent).
+// The C layer is `cssVars.theme` .
 const sharedKeys = Object.keys(tokensOf.get(first)?.cssVars.theme ?? {});
 for (const name of sharedKeys)
-  if (!optionalThemeTokens.has(name) && !specPartsOf.shared.includes(name))
+  if (!specPartsOf.shared.includes(name))
     fail(`docs/specs/theme-roles.md: the C layer states no \`${name}\`, which cssVars.theme has`);
 for (const name of specPartsOf.shared)
-  if (!optionalThemeTokens.has(name) && !sharedKeys.includes(name))
+  if (!sharedKeys.includes(name))
     fail(`docs/specs/theme-roles.md: the C layer states \`${name}\`, which cssVars.theme has not`);
 
 // Every `radius*` token in `cssVars.theme` must be the exact 4-slot set and a non-negative `px` length.
@@ -504,10 +500,9 @@ for (const row of specRecipes(spec)) {
 for (const problem of checkRecipeNumbers(specRecipes(spec), lookNumbers())) fail(problem);
 
 // 5. Nothing in the files is written and never read.
-// Two tokens need no reader of this library's: `font-sans` is every text's default family, which
-// NSH applies itself (`Theme::font_sans` reads the token), and `radius` is the A layer's base slot
-// an app's own Tailwind utilities take (`rounded-lg`, `rounded-(--radius)`).
-const platformTokens = new Set(["radius", "font-sans"]);
+// `radius` needs no reader of this library's: it is the A layer's base slot an app's own Tailwind
+// utilities take (`rounded-lg`, `rounded-(--radius)`).
+const platformTokens = new Set(["radius"]);
 const shared = new Set(Object.keys(tokensOf.get(first)?.cssVars.theme ?? {}));
 const shadcn = new Set(slots);
 for (const name of names)
@@ -526,29 +521,17 @@ for (const role of defaultRoles)
     );
 
 const themeBlock = tokensOf.get(first)?.cssVars.theme ?? {};
-const isColour = (value: string) => {
-  try {
-    parseColor(value);
-    return true;
-  } catch {
-    return false;
-  }
-};
-for (const [name, value] of Object.entries(themeBlock)) {
+for (const name of Object.keys(themeBlock)) {
   if (!platformTokens.has(name) && !readsToken(name) && !unread.has(name))
     fail(`packages/theme/theme.json: token \`${name}\` is read nowhere and not left to the app`);
-  if (name.startsWith("font-") && isColour(value))
-    fail(
-      `packages/theme/theme.json: \`${name}\` is ${value}, a colour; a font token names a family`,
-    );
 }
-for (const theme of themes) {
-  const path = `packages/theme/themes/${theme}/theme.json`;
-  for (const [name, value] of Object.entries(tokensOf.get(theme)?.cssVars.theme ?? {})) {
-    if (name.startsWith("font-") && isColour(value))
-      fail(`${path}: \`${name}\` is ${value}, a colour; a font token names a family`);
-  }
-}
+// A theme owns no font family (ADR 0009): the app's `font-sans` and `font-mono` do.
+for (const theme of themes)
+  for (const name of Object.keys(tokensOf.get(theme)?.cssVars.theme ?? {}))
+    if (name.startsWith("font-"))
+      fail(
+        `packages/theme/themes/${theme}/theme.json: \`${name}\`; a theme owns no font family (ADR 0009)`,
+      );
 
 // 6. The spec's pending table holds only colours its themes still write.
 for (const entry of pending)

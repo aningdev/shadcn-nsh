@@ -6,11 +6,9 @@
       "radius-control": "4px",
       "radius-container": "8px",
       "radius-modal": "8px",
-      "font-mono": "Consolas, monospace",
       "scrim": "oklch(0 0 0 / 0.302)",
       "media": "oklch(0.1869 0.0151 266.766)",
-      "on-media": "oklch(1 0 0)",
-      "font-sans": "Segoe UI Variable, Segoe UI, sans-serif"
+      "on-media": "oklch(1 0 0)"
     },
     "light": {
       "background": "oklch(0.96415 0 0)",

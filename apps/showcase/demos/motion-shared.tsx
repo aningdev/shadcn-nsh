@@ -6,7 +6,6 @@ import {
   colors,
   finish,
   isDark,
-  mono,
   motion,
   terminal,
   TERMINAL_GAP,
@@ -128,7 +127,7 @@ export function Api(props: { label: string; api: string }) {
           minWidth: 0,
           textAlign: "right",
           fontSize: density.note,
-          fontFamily: mono(),
+          fontFamily: "monospace",
           color: colors.faint,
         }}
       >

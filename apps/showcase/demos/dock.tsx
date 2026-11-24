@@ -1,4 +1,4 @@
-import { colors, hovered, mono, rounded, shape } from "@shadcn-nsh/theme";
+import { colors, hovered, rounded, shape } from "@shadcn-nsh/theme";
 // Dock: the official gallery's scene (`references/nsh/examples/gallery/demos/Dock.tsx`) with this
 // library's dock — editor tabs dragged between groups, files in a left dock, a terminal under
 // them, closed, zoomed and resized. The shell gives the screen a flex view, so the workspace
@@ -112,7 +112,7 @@ function EditorPane(props: { panel: string }) {
                 style={{
                   width: 16,
                   textAlign: "right",
-                  fontFamily: mono(),
+                  fontFamily: "monospace",
                   fontSize: 12,
                   color: colors.faint,
                   fontVariant: ["tabular-nums"],
@@ -123,7 +123,7 @@ function EditorPane(props: { panel: string }) {
               <Text
                 style={{
                   flex: 1,
-                  fontFamily: mono(),
+                  fontFamily: "monospace",
                   fontSize: 12,
                   color: colors.foreground,
                   numberOfLines: 1,
@@ -178,7 +178,7 @@ function Panel(props: { panel: string }) {
                     backgroundColor: file().folder ? colors.brand : colors.faint,
                   }}
                 />
-                <Text style={{ fontFamily: mono(), fontSize: 12, color: colors.foreground }}>
+                <Text style={{ fontFamily: "monospace", fontSize: 12, color: colors.foreground }}>
                   {file().name}
                 </Text>
               </View>
@@ -205,13 +205,13 @@ function Panel(props: { panel: string }) {
     default:
       return (
         <View style={{ flex: 1, gap: 4, padding: 12 }}>
-          <Text style={{ fontFamily: mono(), fontSize: 12, color: colors.foreground }}>
+          <Text style={{ fontFamily: "monospace", fontSize: 12, color: colors.foreground }}>
             $ cargo run
           </Text>
-          <Text style={{ fontFamily: mono(), fontSize: 12, color: colors.mutedForeground }}>
+          <Text style={{ fontFamily: "monospace", fontSize: 12, color: colors.mutedForeground }}>
             Compiling hopper v0.1.0
           </Text>
-          <Text style={{ fontFamily: mono(), fontSize: 12, color: colors.brand }}>
+          <Text style={{ fontFamily: "monospace", fontSize: 12, color: colors.brand }}>
             Finished in 1.92s
           </Text>
         </View>

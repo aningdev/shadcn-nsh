@@ -116,46 +116,39 @@ colors:
     down-tint: "#ff99a424"
 typography:
   caption:
-    fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
-    fontSize: 12px
+    fontSize: 11px
     fontWeight: 400
     lineHeight: 16px
     letterSpacing: 0px
   detail:
-    fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 12px
     fontWeight: 400
     lineHeight: 16px
     letterSpacing: 0px
   body:
-    fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
-    fontSize: 14px
+    fontSize: 13px
     fontWeight: 400
     lineHeight: 20px
     letterSpacing: 0px
   label:
-    fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 14px
     fontWeight: 400
     lineHeight: 20px
     letterSpacing: 0px
   title:
-    fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
-    fontSize: 14px
+    fontSize: 16px
     fontWeight: 600
-    lineHeight: 20px
+    lineHeight: 24px
     letterSpacing: 0px
   headline:
-    fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
     fontSize: 20px
     fontWeight: 600
     lineHeight: 28px
     letterSpacing: 0px
   display:
-    fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
-    fontSize: 28px
+    fontSize: 26px
     fontWeight: 600
-    lineHeight: 36px
+    lineHeight: 32px
     letterSpacing: 0px
 rounded:
   control: 4px
@@ -304,7 +297,7 @@ components:
 
 WinUI 3 theme (Windows 11, winui3/release/2.7.0).
 
-WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.
+WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, double focus strokes, and deterministic timing curves.
 
 ## Colors
 
@@ -385,20 +378,17 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 
 ## Typography
 
-WinUI 3 typography scale mapped from TextBlock_themeresources.xaml (400 and 600 weights only).
+WinUI 3 type weights (400 and 600 only); sizes follow the shared scale (ADR 0009).
 
-- **Font stacks:** Font family stacks.
-  - `mono` (`Consolas, monospace`): WinUI 3 monospace font stack (Consolas, monospace).
-  - `sans` (`Segoe UI Variable, Segoe UI, sans-serif`): WinUI 3 primary UI font stack (Segoe UI Variable, Segoe UI, sans-serif; typography.md).
-  - Every role's `fontFamily` is `{font.family.sans}`.
+- The family is the app's `font-sans` (`font-mono` for code); the sizes are the one shared scale, which the user's system font size scales (ADR 0009).
 
-- **`caption`** (12px, weight 400, line-height 16px, letter-spacing 0px): Small captions and segmented counter labels.
-- **`detail`** (12px, weight 400, line-height 16px, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
-- **`body`** (14px, weight 400, line-height 20px, letter-spacing 0px): Standard body copy, list rows, and dialog content.
-- **`label`** (14px, weight 400, line-height 20px, letter-spacing 0px): Control labels, form labels, and interactive triggers.
-- **`title`** (14px, weight 600, line-height 20px, letter-spacing 0px): Card and section headings.
-- **`headline`** (20px, weight 600, line-height 28px, letter-spacing 0px): Page-level headings.
-- **`display`** (28px, weight 600, line-height 36px, letter-spacing 0px): Large display numerals and hero headings.
+- **`caption`** (11px (touch: 12px), weight 400, line-height 16px, letter-spacing 0px): Small captions and segmented counter labels.
+- **`detail`** (12px (touch: 13px), weight 400, line-height 16px, line-height 20px on touch, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
+- **`body`** (13px (touch: 15px), weight 400, line-height 20px, letter-spacing 0px): Standard body copy, list rows, and dialog content.
+- **`label`** (14px (touch: 15px), weight 400, line-height 20px, letter-spacing 0px): Control labels, form labels, and interactive triggers.
+- **`title`** (16px, weight 600, line-height 24px, letter-spacing 0px): Card and section headings.
+- **`headline`** (20px (touch: 22px), weight 600, line-height 28px, letter-spacing 0px): Page-level headings.
+- **`display`** (26px (touch: 28px), weight 600, line-height 32px, line-height 36px on touch, letter-spacing 0px): Large display numerals and hero headings.
 
 ## Layout
 
@@ -489,7 +479,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
 - **Do:** Use `4px` `ControlCornerRadius` for `control` and `8px` `OverlayCornerRadius` for `container` and `modal` with `shape.curve: "circular"`.
 - **Do:** Use `focus.style: "double"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).
-- **Do:** Use underlined tabs and fields with leading navigation bar indicators, and `Segoe UI Variable` (`{font.family.sans}`).
+- **Do:** Use underlined tabs and fields with leading navigation bar indicators.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way.

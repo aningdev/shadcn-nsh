@@ -146,7 +146,7 @@
     "$description": "Semantic typography roles referencing tier-specific font.size and font.line-height.",
     "caption": {
       "$value": {
-        "fontFamily": "{font.family.sans}",
+        "fontFamily": "system-ui",
         "fontSize": "{font.size.caption}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.caption}",
@@ -159,7 +159,7 @@
     },
     "detail": {
       "$value": {
-        "fontFamily": "{font.family.sans}",
+        "fontFamily": "system-ui",
         "fontSize": "{font.size.detail}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.detail}",
@@ -172,7 +172,7 @@
     },
     "body": {
       "$value": {
-        "fontFamily": "{font.family.sans}",
+        "fontFamily": "system-ui",
         "fontSize": "{font.size.body}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.body}",
@@ -185,7 +185,7 @@
     },
     "label": {
       "$value": {
-        "fontFamily": "{font.family.sans}",
+        "fontFamily": "system-ui",
         "fontSize": "{font.size.label}",
         "fontWeight": 500,
         "lineHeight": "{font.line-height.label}",
@@ -198,7 +198,7 @@
     },
     "title": {
       "$value": {
-        "fontFamily": "{font.family.sans}",
+        "fontFamily": "system-ui",
         "fontSize": "{font.size.title}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.title}",
@@ -211,7 +211,7 @@
     },
     "headline": {
       "$value": {
-        "fontFamily": "{font.family.sans}",
+        "fontFamily": "system-ui",
         "fontSize": "{font.size.headline}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.headline}",
@@ -224,7 +224,7 @@
     },
     "display": {
       "$value": {
-        "fontFamily": "{font.family.sans}",
+        "fontFamily": "system-ui",
         "fontSize": "{font.size.display}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.display}",
@@ -1166,92 +1166,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      }
-    }
-  },
-  "font": {
-    "$description": "Desktop pointer typography metrics.",
-    "family": {
-      "$type": "fontFamily",
-      "$description": "Font family stacks.",
-      "sans": {
-        "$value": "system-ui",
-        "$description": "Primary sans-serif font family stack."
-      },
-      "mono": {
-        "$value": "monospace",
-        "$description": "Monospace font family for code blocks and numeric readouts."
-      }
-    },
-    "size": {
-      "$type": "dimension",
-      "$description": "Font sizes per type role for pointer input.",
-      "caption": {
-        "$value": {
-          "value": 11,
-          "unit": "px"
-        }
-      },
-      "detail": {
-        "$value": {
-          "value": 12,
-          "unit": "px"
-        }
-      },
-      "body": {
-        "$value": {
-          "value": 13,
-          "unit": "px"
-        }
-      },
-      "label": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        }
-      },
-      "title": {
-        "$value": {
-          "value": 16,
-          "unit": "px"
-        }
-      },
-      "headline": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        }
-      },
-      "display": {
-        "$value": {
-          "value": 26,
-          "unit": "px"
-        }
-      }
-    },
-    "line-height": {
-      "$type": "number",
-      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
-      "caption": {
-        "$value": 1.454545
-      },
-      "detail": {
-        "$value": 1.333333
-      },
-      "body": {
-        "$value": 1.538462
-      },
-      "label": {
-        "$value": 1.428571
-      },
-      "title": {
-        "$value": 1.5
-      },
-      "headline": {
-        "$value": 1.4
-      },
-      "display": {
-        "$value": 1.230769
       }
     }
   },
@@ -2419,6 +2333,80 @@
             "none": true
           }
         }
+      }
+    }
+  },
+  "font": {
+    "$description": "Desktop pointer typography metrics.",
+    "size": {
+      "$type": "dimension",
+      "$description": "Font sizes per type role for pointer input.",
+      "caption": {
+        "$value": {
+          "value": 11,
+          "unit": "px"
+        }
+      },
+      "detail": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "body": {
+        "$value": {
+          "value": 13,
+          "unit": "px"
+        }
+      },
+      "label": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        }
+      },
+      "title": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        }
+      },
+      "headline": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        }
+      },
+      "display": {
+        "$value": {
+          "value": 26,
+          "unit": "px"
+        }
+      }
+    },
+    "line-height": {
+      "$type": "number",
+      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
+      "caption": {
+        "$value": 1.454545
+      },
+      "detail": {
+        "$value": 1.333333
+      },
+      "body": {
+        "$value": 1.538462
+      },
+      "label": {
+        "$value": 1.428571
+      },
+      "title": {
+        "$value": 1.5
+      },
+      "headline": {
+        "$value": 1.4
+      },
+      "display": {
+        "$value": 1.230769
       }
     }
   }

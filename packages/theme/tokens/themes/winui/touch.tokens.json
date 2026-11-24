@@ -1,62 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "WinUI 3 touch input-tier overrides (40px hit target and controls, 16/20/24px icons).",
-  "font": {
-    "$description": "Touch typography metrics.",
-    "size": {
-      "$type": "dimension",
-      "$description": "Font sizes per type role for touch input.",
-      "detail": {
-        "$value": {
-          "value": 12,
-          "unit": "px"
-        }
-      },
-      "body": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        }
-      },
-      "label": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        }
-      },
-      "title": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        }
-      },
-      "headline": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        }
-      }
-    },
-    "line-height": {
-      "$type": "number",
-      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
-      "detail": {
-        "$value": 1.333333
-      },
-      "body": {
-        "$value": 1.428571
-      },
-      "label": {
-        "$value": 1.428571
-      },
-      "title": {
-        "$value": 1.428571
-      },
-      "headline": {
-        "$value": 1.4
-      }
-    }
-  },
   "dimension": {
     "$type": "dimension",
     "$description": "Touch layout density, control geometry, and icon sizes.",

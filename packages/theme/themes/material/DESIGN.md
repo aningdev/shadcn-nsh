@@ -116,46 +116,39 @@ colors:
     down-tint: "#f2b8b51f"
 typography:
   caption:
-    fontFamily: system-ui
     fontSize: 11px
     fontWeight: 500
     lineHeight: 16px
     letterSpacing: 0.5px
   detail:
-    fontFamily: system-ui
     fontSize: 12px
     fontWeight: 400
     lineHeight: 16px
     letterSpacing: 0.4px
   body:
-    fontFamily: system-ui
-    fontSize: 14px
+    fontSize: 13px
     fontWeight: 400
     lineHeight: 20px
     letterSpacing: 0.25px
   label:
-    fontFamily: system-ui
     fontSize: 14px
     fontWeight: 500
     lineHeight: 20px
     letterSpacing: 0.1px
   title:
-    fontFamily: system-ui
     fontSize: 16px
     fontWeight: 500
     lineHeight: 24px
     letterSpacing: 0.15px
   headline:
-    fontFamily: system-ui
-    fontSize: 24px
+    fontSize: 20px
     fontWeight: 400
-    lineHeight: 32px
+    lineHeight: 28px
     letterSpacing: 0px
   display:
-    fontFamily: system-ui
-    fontSize: 36px
+    fontSize: 26px
     fontWeight: 400
-    lineHeight: 44px
+    lineHeight: 32px
     letterSpacing: 0px
 rounded:
   control: 4px
@@ -373,20 +366,17 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 
 ## Typography
 
-Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).
+Material 3 Expressive type weights; sizes follow the shared scale (ADR 0009).
 
-- **Font stacks:** Font family stacks.
-  - `sans` (`system-ui`): Primary sans-serif font family stack.
-  - `mono` (`monospace`): Monospace font family for code blocks and numeric readouts.
-  - Every role's `fontFamily` is `{font.family.sans}`.
+- The family is the app's `font-sans` (`font-mono` for code); the sizes are the one shared scale, which the user's system font size scales (ADR 0009).
 
-- **`caption`** (11px, weight 500, line-height 16px, letter-spacing 0.5px): Small captions and segmented counter labels.
-- **`detail`** (12px, weight 400, line-height 16px, letter-spacing 0.4px): Sidebar section labels, counts, and supporting metadata.
-- **`body`** (14px, weight 400, line-height 20px, letter-spacing 0.25px): Standard body copy, list rows, and dialog content.
-- **`label`** (14px, weight 500, line-height 20px, letter-spacing 0.1px): Control labels, form labels, and interactive triggers.
+- **`caption`** (11px (touch: 12px), weight 500, line-height 16px, letter-spacing 0.5px): Small captions and segmented counter labels.
+- **`detail`** (12px (touch: 13px), weight 400, line-height 16px, line-height 20px on touch, letter-spacing 0.4px): Sidebar section labels, counts, and supporting metadata.
+- **`body`** (13px (touch: 15px), weight 400, line-height 20px, letter-spacing 0.25px): Standard body copy, list rows, and dialog content.
+- **`label`** (14px (touch: 15px), weight 500, line-height 20px, letter-spacing 0.1px): Control labels, form labels, and interactive triggers.
 - **`title`** (16px, weight 500, line-height 24px, letter-spacing 0.15px): Card and section headings.
-- **`headline`** (24px, weight 400, line-height 32px, letter-spacing 0px): Page-level headings.
-- **`display`** (36px, weight 400, line-height 44px, letter-spacing 0px): Large display numerals and hero headings.
+- **`headline`** (20px (touch: 22px), weight 400, line-height 28px, letter-spacing 0px): Page-level headings.
+- **`display`** (26px (touch: 28px), weight 400, line-height 32px, line-height 36px on touch, letter-spacing 0px): Large display numerals and hero headings.
 
 ## Layout
 

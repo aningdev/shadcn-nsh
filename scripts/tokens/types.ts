@@ -150,6 +150,12 @@ export const TYPE_ROLES = [
   "display",
 ] as const;
 
+/**
+ * The DTCG typography composite requires a `fontFamily`. A theme owns no family (ADR 0009): the
+ * app's `font-sans` does, and no component reads this one. Every role writes this placeholder.
+ */
+export const TYPOGRAPHY_FONT_FAMILY = "system-ui";
+
 export const SHAPE_ROLES = ["control", "container", "modal"] as const;
 
 /**

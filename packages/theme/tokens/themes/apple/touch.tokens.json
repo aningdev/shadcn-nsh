@@ -1,56 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Apple iOS touch input-tier overrides (Apple HIG Layout and Typography).",
-  "font": {
-    "$description": "Touch typography metrics.",
-    "size": {
-      "$type": "dimension",
-      "$description": "Font sizes per type role for touch input.",
-      "body": {
-        "$value": {
-          "value": 17,
-          "unit": "px"
-        }
-      },
-      "label": {
-        "$value": {
-          "value": 17,
-          "unit": "px"
-        }
-      },
-      "title": {
-        "$value": {
-          "value": 17,
-          "unit": "px"
-        }
-      },
-      "display": {
-        "$value": {
-          "value": 34,
-          "unit": "px"
-        }
-      }
-    },
-    "line-height": {
-      "$type": "number",
-      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
-      "detail": {
-        "$value": 1.384615
-      },
-      "body": {
-        "$value": 1.294118
-      },
-      "label": {
-        "$value": 1.294118
-      },
-      "title": {
-        "$value": 1.294118
-      },
-      "display": {
-        "$value": 1.205882
-      }
-    }
-  },
   "dimension": {
     "$type": "dimension",
     "$description": "Touch layout density, control geometry, and icon sizes.",

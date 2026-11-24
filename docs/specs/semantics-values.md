@@ -79,32 +79,32 @@
 
 | 字段 | 说明 | NSH Gallery | shadcn/ui | Apple | Material | WinUI |
 | --- | --- | --- | --- | --- | --- | --- |
-| `typography.caption.fontSize` | 小号说明与分段计数的字号 | 11 / 12 | 11 / 12 | 10 / 12 | 11 | 12 |
-| `typography.caption.lineHeight` | 小号说明与分段计数的行高 | 16 | 16 | 13 / 16 | 16 | 16 |
+| `typography.caption.fontSize` | 小号说明与分段计数的字号 | 11 / 12 | 11 / 12 | 11 / 12 | 11 / 12 | 11 / 12 |
+| `typography.caption.lineHeight` | 小号说明与分段计数的行高 | 16 | 16 | 16 | 16 | 16 |
 | `typography.caption.fontWeight` | 小号说明与分段计数的字重 | 400 | 400 | 400 | 500 | 400 |
 | `typography.caption.letterSpacing` | 小号说明与分段计数的字距 | 0 | 0 | 0 | 0.5 | 0 |
-| `typography.detail.fontSize` | 侧栏分组名与计数的字号 | 12 / 13 | 12 / 13 | 11 / 13 | 12 | 12 |
-| `typography.detail.lineHeight` | 侧栏分组名与计数的行高 | 16 / 20 | 16 / 20 | 14 / 18 | 16 | 16 |
+| `typography.detail.fontSize` | 侧栏分组名与计数的字号 | 12 / 13 | 12 / 13 | 12 / 13 | 12 / 13 | 12 / 13 |
+| `typography.detail.lineHeight` | 侧栏分组名与计数的行高 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 |
 | `typography.detail.fontWeight` | 侧栏分组名与计数的字重 | 400 | 400 | 400 | 400 | 400 |
 | `typography.detail.letterSpacing` | 侧栏分组名与计数的字距 | 0 | 0 | 0 | 0.4 | 0 |
-| `typography.body.fontSize` | 正文的字号 | 13 / 15 | 13 / 15 | 13 / 17 | 14 | 14 |
-| `typography.body.lineHeight` | 正文的行高 | 20 | 20 | 16 / 22 | 20 | 20 |
+| `typography.body.fontSize` | 正文的字号 | 13 / 15 | 13 / 15 | 13 / 15 | 13 / 15 | 13 / 15 |
+| `typography.body.lineHeight` | 正文的行高 | 20 | 20 | 20 | 20 | 20 |
 | `typography.body.fontWeight` | 正文的字重 | 400 | 400 | 400 | 400 | 400 |
 | `typography.body.letterSpacing` | 正文的字距 | 0 | 0 | 0 | 0.25 | 0 |
-| `typography.label.fontSize` | 控件与表单的标签的字号 | 14 / 15 | 14 / 15 | 13 / 17 | 14 | 14 |
-| `typography.label.lineHeight` | 控件与表单的标签的行高 | 20 | 20 | 16 / 22 | 20 | 20 |
+| `typography.label.fontSize` | 控件与表单的标签的字号 | 14 / 15 | 14 / 15 | 14 / 15 | 14 / 15 | 14 / 15 |
+| `typography.label.lineHeight` | 控件与表单的标签的行高 | 20 | 20 | 20 | 20 | 20 |
 | `typography.label.fontWeight` | 控件与表单的标签的字重 | 500 | 500 | 500 | 500 | 400 |
 | `typography.label.letterSpacing` | 控件与表单的标签的字距 | 0 | 0 | 0 | 0.1 | 0 |
-| `typography.title.fontSize` | 卡片与区块标题的字号 | 16 | 16 | 13 / 17 | 16 | 14 |
-| `typography.title.lineHeight` | 卡片与区块标题的行高 | 24 | 24 | 16 / 22 | 24 | 20 |
+| `typography.title.fontSize` | 卡片与区块标题的字号 | 16 | 16 | 16 | 16 | 16 |
+| `typography.title.lineHeight` | 卡片与区块标题的行高 | 24 | 24 | 24 | 24 | 24 |
 | `typography.title.fontWeight` | 卡片与区块标题的字重 | 600 | 600 | 600 | 500 | 600 |
 | `typography.title.letterSpacing` | 卡片与区块标题的字距 | 0 | 0 | 0 | 0.15 | 0 |
-| `typography.headline.fontSize` | 页面标题的字号 | 20 / 22 | 20 / 22 | 22 | 24 | 20 |
-| `typography.headline.lineHeight` | 页面标题的行高 | 28 | 28 | 26 / 28 | 32 | 28 |
+| `typography.headline.fontSize` | 页面标题的字号 | 20 / 22 | 20 / 22 | 20 / 22 | 20 / 22 | 20 / 22 |
+| `typography.headline.lineHeight` | 页面标题的行高 | 28 | 28 | 28 | 28 | 28 |
 | `typography.headline.fontWeight` | 页面标题的字重 | 600 | 600 | 600 | 400 | 600 |
 | `typography.headline.letterSpacing` | 页面标题的字距 | 0 | 0 | 0 | 0 | 0 |
-| `typography.display.fontSize` | 大号数字与主视觉标题的字号 | 26 / 28 | 26 / 28 | 26 / 34 | 36 | 28 |
-| `typography.display.lineHeight` | 大号数字与主视觉标题的行高 | 32 / 36 | 32 / 36 | 32 / 41 | 44 | 36 |
+| `typography.display.fontSize` | 大号数字与主视觉标题的字号 | 26 / 28 | 26 / 28 | 26 / 28 | 26 / 28 | 26 / 28 |
+| `typography.display.lineHeight` | 大号数字与主视觉标题的行高 | 32 / 36 | 32 / 36 | 32 / 36 | 32 / 36 | 32 / 36 |
 | `typography.display.fontWeight` | 大号数字与主视觉标题的字重 | 600 | 600 | 600 | 400 | 600 |
 | `typography.display.letterSpacing` | 大号数字与主视觉标题的字距 | 0 | 0 | 0 | 0 | 0 |
 

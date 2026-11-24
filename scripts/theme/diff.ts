@@ -232,7 +232,7 @@ export function flatten(theme: Json | undefined, semantics: Json | undefined, mo
 
 /**
  * Whether a key that exists on both sides is a colour or another value. The file it came from
- * says nothing: `color.<name>` is a colour role unless it is one of the theme's dimension or font
+ * says nothing: `color.<name>` is a colour role unless it is one of the theme's dimension
  * tokens (they share the `color.` prefix the diff gives every CSS variable), and a finish field is
  * a colour only when it paints one (`finish-colour.ts`).
  */

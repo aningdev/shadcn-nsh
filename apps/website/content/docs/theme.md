@@ -9,11 +9,11 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 
 | File                                    | What it holds                                                                                                                                                                                                                                                                                                                                                             |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `theme.json`                            | Base tokens: colors (light / dark and shared), the three `radius-*` layer lengths (plus `radius`), and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                                                                                                                                                      |
+| `theme.json`                            | Base tokens: colors (light / dark and shared), the three `radius-*` layer lengths (plus `radius`), in shadcn's `cssVars` shape                                                                                                                                                                                                                                            |
 | `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance at the `pointer` tier (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio, and Style Dictionary v4; static snapshots as shipped                                                                                                                             |
 | `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from DTCG sources and the pointer-tier `light`/`dark` resolutions; static snapshot as shipped                                                                                                                                                                                         |
 | `semantics.json`                        | Semantic layer in DTCG names: 7 style groups (`typography`, `dimension` — with the four control dimensions under `dimension.control` — `shape`, `state`, `transition`, `motion` (three springs plus the `state` fade), `controls`), `elevation` (the shadow scale, per appearance) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}` |
-| `lib/ui/theme.ts`                       | `colors`, `finish`, `shape`, `font`, `style`, `mono`, `control`, `focusRing` and `alpha`, read reactively from `theme.json` and `semantics.json`                                                                                                                                                                                                                          |
+| `lib/ui/theme.ts`                       | `colors`, `finish`, `shape`, `font`, `style`, `control`, `focusRing` and `alpha`, read reactively from `theme.json` and `semantics.json`                                                                                                                                                                                                                                  |
 
 ## Installation
 
@@ -170,10 +170,10 @@ const dim = alpha(colors.foreground, 0.4); // a color at 40%
 
 An app's `nsh.json` sets the look in two places, and the two do not merge:
 
-| Key in `nsh.json` | What it sets                                                                                         | When it is read                                                                                     |
-| ----------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `"theme"`         | the path to `theme.json`: every base token — colours, the `radius-*` tokens, `font-sans`/`font-mono` | on each read, at runtime — so `setTheme`, `setThemeOverrides`, `shape` and `font.family()` reach it |
-| `"tailwind"`      | the app's own class strings: `colors`, `fontFamily`, `spacing`, `radius`, …                          | when the app is built, into the class strings — no component here reads it                          |
+| Key in `nsh.json` | What it sets                                                                | When it is read                                                                 |
+| ----------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `"theme"`         | the path to `theme.json`: every base token — colours, the `radius-*` tokens | on each read, at runtime — so `setTheme`, `setThemeOverrides`, `shape` reach it |
+| `"tailwind"`      | the app's own class strings: `colors`, `fontFamily`, `spacing`, `radius`, … | when the app is built, into the class strings — no component here reads it      |
 
 Components take their look from `"theme"`: `colors`, `finish`, `shape` and `font` read the tokens where they are used. `"tailwind"` shapes class names — which this library writes too (`bg-muted`, `text-sm`, `h-8`) — but it is fixed at build time, so nothing in it can follow `setTheme`. NSH's [theme tokens](https://nsh.dev/docs/tailwind#theme-tokens) has the rule in full.
 
@@ -192,11 +192,13 @@ Add a colour the app's own classes use (both appearances — a token in one alon
 }
 ```
 
-Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-control`, `radius-container` or `radius-modal` in `cssVars.theme` (keep `radius` equal to `radius-control`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. Set the fonts in the same block: see [Fonts](#fonts).
+Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-control`, `radius-container` or `radius-modal` in `cssVars.theme` (keep `radius` equal to `radius-control`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. Fonts are the app's own: see [Fonts](#fonts).
 
 ## Fonts
 
-Two base tokens are fonts: `font-sans` is the app's body font — every text that names no family of its own — and `font-mono` is the monospaced family: the `font-mono` class, code in a `Text`, and this library's `mono()`. Both live in `cssVars.theme`, and every shipped theme declares each of them. Nothing in `semantics.json` names a family: each of the 7 typography composites carries `fontFamily: "{font.family.sans}"` because DTCG requires the field, but the library never reads it — NSH draws every text that names no family in `font-sans` itself, which is why a theme whose body font is the platform's writes a generic family:
+A theme owns no font: none of the shipped themes declares a family, and one type scale (sizes and line heights) serves them all, so switching themes never reflows text. Each theme still states its own weight and letter spacing per role. Text names no family of its own; it takes the app's `font-sans`, and monospaced text (the `font-mono` class, code in a `Text`) takes `font-mono` — this library writes the generic `monospace` where it needs a monospaced face. Each of the 7 typography composites carries `fontFamily: "system-ui"` because DTCG requires the field, but the library never reads it. The user's system font size scales every size.
+
+Set the app's families in the `cssVars.theme` block of its own `theme.json`:
 
 ```json
 {
@@ -206,22 +208,22 @@ Two base tokens are fonts: `font-sans` is the app's body font — every text tha
 }
 ```
 
-NSH takes the first family of the list that is not a generic one (`system-ui`, `sans-serif`, `monospace` …), and a list of generics alone is the system's own font. That is why this library states `"font-mono": "monospace"`: the system's monospaced font, not a font called "monospace".
+NSH takes the first family of the list that is not a generic one (`system-ui`, `sans-serif`, `monospace` …), and a list of generics alone is the system's own font. That is why this library writes `monospace`: the system's monospaced font, not a font called "monospace".
 
 A font file is the app's. Import it in TSX — the import registers it before the first frame, and its value is the family name the file declares, not the file name — and name that family in the theme:
 
 ```tsx
-// app.tsx: the import bundles and registers the family; `theme.json` names it.
+// app.tsx: the import bundles and registers the family; the app's `theme.json` names it.
 import "./fonts/JetBrainsMono-Regular.ttf";
 ```
 
 The side-effect import is deliberate: TypeScript drops an import whose value is unused, and the font with it, when the theme names the family as a string. A weight or an italic is a file of its own, `registerFont(bytes)` reads one the app did not ship, and the fallback after the app's family is what NSH draws for a family it cannot find — see NSH's [fonts](https://nsh.dev/docs/fonts#shipping-a-font).
 
-This library distributes no font files: `add theme` writes JSON and TypeScript, and the families it names are the ones every platform has.
+This library distributes no font files: `add theme` writes JSON and TypeScript and names no family.
 
 ## Restyling
 
-Edit the sources; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius or font in `cssVars.theme`, a shadow part in the DTCG `shadow` group, a gradient, style group or material in the theme's `tokens/` files. Keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape — a finish you add states every field of its neighbours, and a value that follows the device is stated twice, `pointer` and `touch`, with the same keys — a theme that has its own device sizes writes them in `tokens/themes/<id>/pointer.tokens.json` and `touch.tokens.json`, and one that does not inherits the base set's.
+Edit the sources; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius in `cssVars.theme`, a shadow part in the DTCG `shadow` group, a gradient, style group or material in the theme's `tokens/` files. Keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape — a finish you add states every field of its neighbours, and a value that follows the device is stated twice, `pointer` and `touch`, with the same keys — a theme that has its own device sizes writes them in `tokens/themes/<id>/pointer.tokens.json` and `touch.tokens.json`, and one that does not inherits the base set's.
 
 - Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it); subsequent `add` runs key-merge missing entries into `theme.json` and `semantics.json` while keeping your values.
 - Replacing both files together rebrands the whole library; a key added upstream should be added here too.

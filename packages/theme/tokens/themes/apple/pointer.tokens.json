@@ -1,65 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Apple macOS pointer input-tier overrides (Apple HIG Layout and Typography).",
-  "font": {
-    "$description": "Desktop pointer typography metrics.",
-    "size": {
-      "$type": "dimension",
-      "$description": "Font sizes per type role for pointer input.",
-      "caption": {
-        "$value": {
-          "value": 10,
-          "unit": "px"
-        }
-      },
-      "detail": {
-        "$value": {
-          "value": 11,
-          "unit": "px"
-        }
-      },
-      "label": {
-        "$value": {
-          "value": 13,
-          "unit": "px"
-        }
-      },
-      "title": {
-        "$value": {
-          "value": 13,
-          "unit": "px"
-        }
-      },
-      "headline": {
-        "$value": {
-          "value": 22,
-          "unit": "px"
-        }
-      }
-    },
-    "line-height": {
-      "$type": "number",
-      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
-      "caption": {
-        "$value": 1.3
-      },
-      "detail": {
-        "$value": 1.272727
-      },
-      "body": {
-        "$value": 1.230769
-      },
-      "label": {
-        "$value": 1.230769
-      },
-      "title": {
-        "$value": 1.230769
-      },
-      "headline": {
-        "$value": 1.181818
-      }
-    }
-  },
   "dimension": {
     "$type": "dimension",
     "$description": "Desktop pointer layout density, control geometry, and icon sizes.",

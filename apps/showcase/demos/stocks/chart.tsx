@@ -1,4 +1,4 @@
-import { alpha, colors, mono, rounded, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, rounded, shape } from "@shadcn-nsh/theme";
 // The stock's chart: the intraday time-share line with its average price, or candles with MA 5 / 10
 // / 20, both over volume. The gallery draws it on a canvas of its own; here it is the library's
 // `Plot` and its parts, so the axes, the cross line, the hover and the last price's tag are the
@@ -305,7 +305,7 @@ export function Chart(props: { stock: Stock; height?: number }) {
               ...rounded(5),
               backgroundColor: tone(last()),
               fontSize: 10.5,
-              fontFamily: mono(),
+              fontFamily: "monospace",
               fontWeight: "600",
               color: colors.inset,
               fontVariant: ["tabular-nums"],

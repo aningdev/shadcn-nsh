@@ -30,21 +30,6 @@
       }
     }
   },
-  "font": {
-    "$description": "Base font family tokens.",
-    "family": {
-      "$type": "fontFamily",
-      "$description": "Font family stacks.",
-      "sans": {
-        "$value": "system-ui",
-        "$description": "The UI's font: the platform's own sans-serif."
-      },
-      "mono": {
-        "$value": "monospace",
-        "$description": "Monospace font family for code blocks and numeric readouts."
-      }
-    }
-  },
   "color": {
     "$type": "color",
     "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",

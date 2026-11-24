@@ -1,7 +1,7 @@
 // The reference of `editor.tsx`: the same page with `editorClasses` and `editorFrame()` on
 // `nsh/base`'s Editor, the way the editor is written without a shell.
 // It differs from the component page only in what it names.
-import { colors, mono } from "@shadcn-nsh/theme";
+import { colors } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import {
   type Bounds,
@@ -193,7 +193,7 @@ function FindBar(props: {
             style={{
               numberOfLines: 1,
               paddingHorizontal: 4,
-              fontFamily: mono(),
+              fontFamily: "monospace",
               fontSize: 11,
               color: colors.mutedForeground,
               fontVariant: ["tabular-nums"],

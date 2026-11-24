@@ -104,7 +104,7 @@ describe("the colour roles of theme.json", () => {
       theme({
         light: { background: "oklch(1 0 0)", ring: "var(--foreground)" },
         dark: { background: "oklch(0 0 0)", ring: "var(--foreground)" },
-        theme: { scrim: "oklch(0 0 0 / 0.4)", radius: "8px", "font-sans": "system-ui" },
+        theme: { scrim: "oklch(0 0 0 / 0.4)", radius: "8px" },
       }),
     );
     expect(cells(read)).toEqual({

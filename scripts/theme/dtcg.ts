@@ -26,6 +26,7 @@ import {
   RADIUS_KEYS,
   RESOLVER_SCHEMA_URL,
   TYPE_ROLES,
+  TYPOGRAPHY_FONT_FAMILY,
   type ColorRole,
   type ControlDimension,
   type DesignMdExtension,
@@ -35,9 +36,11 @@ import type { ContrastWaiver } from "./extensions";
 import { toOklchText } from "./oklch";
 import type { SplitFinishes } from "./tokens";
 
+/**
+ * A theme states a type role's weight and tracking only: the size and line height come from the
+ * one shared scale and the family from the app (ADR 0009).
+ */
 export interface ThemeTypeRoleStyle {
-  fontSize: { pointer: number; touch: number };
-  lineHeight: { pointer: number; touch: number };
   fontWeight: number;
   letterSpacing: number;
 }
@@ -771,7 +774,7 @@ function encodeSharedStyleOverrides(
     if (nextWeight !== baseVal.fontWeight || !deepEqual(nextTracking, baseVal.letterSpacing)) {
       typoOverrides[role] = {
         $value: {
-          fontFamily: "{font.family.sans}",
+          fontFamily: TYPOGRAPHY_FONT_FAMILY,
           fontSize: `{font.size.${role}}`,
           fontWeight: nextWeight,
           lineHeight: `{font.line-height.${role}}`,
@@ -1038,45 +1041,6 @@ function encodeInputTierOverrides(
     styleDescs?.[key] ??
     (typeof fallback === "string" ? fallback : key);
 
-  // font.size & font.line-height
-  const baseFont = getAt(baseTier, "font");
-  const baseFontSize = getAt(baseFont, "size");
-  const baseLineHeight = getAt(baseFont, "line-height");
-  const fontSizeDiff: Record<string, unknown> = {};
-  const lineHeightDiff: Record<string, unknown> = {};
-
-  for (const role of TYPE_ROLES) {
-    const sizeVal = style.typography[role].fontSize[tier];
-    const points = style.typography[role].lineHeight[tier];
-    const baseSize = (getAt(baseFontSize, role).$value as { value: number }).value;
-    const baseLineHeightVal = getAt(baseLineHeight, role).$value as number;
-    // DTCG's `lineHeight` is a multiple of the font size: the theme authors whole points, the
-    // source keeps the ratio, and `tokens:build` works the points back out.
-    const lineHeight = Number((points / sizeVal).toFixed(6));
-    if (sizeVal !== baseSize) {
-      fontSizeDiff[role] = { $value: { value: sizeVal, unit: "px" } };
-    }
-    if (lineHeight !== baseLineHeightVal) {
-      lineHeightDiff[role] = { $value: lineHeight };
-    }
-  }
-
-  const fontGroup: Record<string, unknown> = {};
-  if (Object.keys(fontSizeDiff).length > 0) {
-    fontGroup.size = {
-      $type: "dimension",
-      $description: desc("font.size", baseFontSize.$description),
-      ...fontSizeDiff,
-    };
-  }
-  if (Object.keys(lineHeightDiff).length > 0) {
-    fontGroup["line-height"] = {
-      $type: "number",
-      $description: desc("font.line-height", baseLineHeight.$description),
-      ...lineHeightDiff,
-    };
-  }
-
   // dimension.size.* & dimension.icon.*
   const baseDim = getAt(baseTier, "dimension");
   const baseSizeGroup = getAt(baseDim, "size");
@@ -1166,21 +1130,13 @@ function encodeInputTierOverrides(
     dimGroup.icon = iconOut;
   }
 
-  if (Object.keys(fontGroup).length === 0 && Object.keys(dimGroup).length === 0) {
+  if (Object.keys(dimGroup).length === 0) {
     return null;
   }
 
   return {
     $schema: FORMAT_SCHEMA_URL,
     $description: docDescription,
-    ...(Object.keys(fontGroup).length > 0
-      ? {
-          font: {
-            $description: desc("font", baseFont.$description),
-            ...fontGroup,
-          },
-        }
-      : {}),
     ...(Object.keys(dimGroup).length > 0
       ? {
           dimension: {
@@ -1315,24 +1271,6 @@ export function themeSourceDocs(
     };
   }
 
-  const fontFamilyEntries: Record<string, unknown> = {
-    $type: "fontFamily",
-    $description: "Font family stacks.",
-  };
-  for (const [k, v] of Object.entries(output.cssVars.theme)) {
-    if (!k.startsWith("font-")) continue;
-    const sub = k.slice("font-".length);
-    const items = v.includes(",") ? v.split(",").map((s) => s.trim()) : v;
-    fontFamilyEntries[sub] = {
-      $value: items,
-      $description:
-        output.descriptions?.style?.[`font.family.${sub}`] ??
-        (sub === "mono"
-          ? "Monospace font family for code blocks and numeric readouts."
-          : "Primary sans-serif font family stack."),
-    };
-  }
-
   const themeColors: Record<string, unknown> = {
     $type: "color",
     $description: "Appearance-invariant C-layer color roles shared by light and dark modes.",
@@ -1340,11 +1278,7 @@ export function themeSourceDocs(
   const sharedColorKeys = [
     ...meta.sharedColorKeys.filter((k) => k in output.cssVars.theme),
     ...Object.keys(output.cssVars.theme).filter(
-      (k) =>
-        !k.startsWith("font-") &&
-        k !== "radius" &&
-        !k.startsWith("radius-") &&
-        !meta.sharedColorKeys.includes(k),
+      (k) => k !== "radius" && !k.startsWith("radius-") && !meta.sharedColorKeys.includes(k),
     ),
   ];
   const themeColorLookup: Record<string, string> = {
@@ -1388,10 +1322,6 @@ export function themeSourceDocs(
       radius: radiusEntries,
       ...(sharedStyle?.dimensionExtras ?? {}),
       ...(ownControl ? { control: ownControl } : {}),
-    },
-    font: {
-      $description: "Base font family tokens.",
-      family: fontFamilyEntries,
     },
     ...(sharedStyle?.typography ? { typography: sharedStyle.typography } : {}),
     ...(sharedStyle?.shape ? { shape: sharedStyle.shape } : {}),

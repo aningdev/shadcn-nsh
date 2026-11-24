@@ -2,7 +2,7 @@
 // Pan, pinch and rotation on one photo, a PanResponder ball, hover, wheel, raw touches, press
 // events, hit slop, pointer events and accessibility. Recognizers and the responder system are
 // `nsh`'s; buttons, badges, stats and press targets are this library's.
-import { alpha, colors, finish, focusRing, mono, terminal, tints, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, focusRing, terminal, tints, shape } from "@shadcn-nsh/theme";
 import { Bell, Play, Star, type IconNode } from "lucide";
 import type { GestureResponderEvent, JSX, MouseButton } from "nsh";
 import {
@@ -361,7 +361,7 @@ function TouchPad() {
                   style={{
                     width: 52,
                     fontSize: 12,
-                    fontFamily: mono(),
+                    fontFamily: "monospace",
                     color: i() === 0 ? colors.brand : colors.faint,
                   }}
                 >
@@ -456,7 +456,9 @@ function PressEvents() {
                 }),
               }}
             >
-              <Text style={{ fontSize: 11, fontFamily: mono(), color: colors.mutedForeground }}>
+              <Text
+                style={{ fontSize: 11, fontFamily: "monospace", color: colors.mutedForeground }}
+              >
                 {name()}
               </Text>
             </View>
@@ -467,7 +469,7 @@ function PressEvents() {
         style={{
           numberOfLines: 1,
           fontSize: 11,
-          fontFamily: mono(),
+          fontFamily: "monospace",
           color: colors.faint,
           paddingHorizontal: 2,
         }}
@@ -764,7 +766,9 @@ function Accessibility() {
                   {item().hint}
                 </Text>
               </View>
-              <Text style={{ fontSize: 11, fontFamily: mono(), color: colors.faint }}>button</Text>
+              <Text style={{ fontSize: 11, fontFamily: "monospace", color: colors.faint }}>
+                button
+              </Text>
             </Row>
           </View>
         )}

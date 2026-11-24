@@ -1,15 +1,6 @@
 // A keyboard key, alone or in a group of them, on `nsh`'s own View and Text.
 
-import {
-  colors,
-  mono,
-  rounded,
-  TERMINAL_ROW,
-  terminal,
-  font,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
+import { colors, rounded, TERMINAL_ROW, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, token, View } from "nsh";
 
@@ -58,7 +49,7 @@ export function kbdLook(): KbdLook {
         fontSize: terminal ? 14 : 12,
         fontWeight: font.weight("label"),
         color: colors.mutedForeground,
-        ...(terminal ? { fontFamily: mono() } : {}),
+        ...(terminal ? { fontFamily: "monospace" } : {}),
         numberOfLines: 1,
       };
     },

@@ -1,7 +1,7 @@
 // The official rich editor scene (`references/nsh/website/demos/el-rich-editor.tsx`) with this
 // library's RichEditor: its toolbar, its markdown and its events. The editor is
 // `editor.tsx`.
-import { mono } from "@shadcn-nsh/theme";
+
 import { Check, ExternalLink, Pencil, Undo2, Unlink, X } from "lucide";
 import { mount, openUrl, signal, Text, type TextStyle, View } from "nsh";
 
@@ -340,7 +340,7 @@ function App() {
         inspector={
           <>
             <Panel title="markdown">
-              <Text style={{ fontSize: 12, fontFamily: mono(), color: ui().text }}>
+              <Text style={{ fontSize: 12, fontFamily: "monospace", color: ui().text }}>
                 {markdown()}
               </Text>
             </Panel>
@@ -452,7 +452,7 @@ function App() {
               {control(
                 "</>",
                 "Inline code",
-                { fontSize: 11, fontFamily: mono() },
+                { fontSize: 11, fontFamily: "monospace" },
                 () => notesOn("code"),
                 command("toggleCode"),
               )}

@@ -24,7 +24,7 @@ const defaultSemantics = JSON.parse(
 
 const NON_COLOUR_THEME_KEYS = new Set(
   Object.keys(defaultTheme.cssVars.theme).filter(
-    (key) => key === "radius" || key.startsWith("radius-") || key.startsWith("font-"),
+    (key) => key === "radius" || key.startsWith("radius-"),
   ),
 );
 

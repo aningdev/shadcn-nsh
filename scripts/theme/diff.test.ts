@@ -21,7 +21,6 @@ const theme = {
       background: "oklch(1 0 0)",
       primary: "oklch(0.2 0 0)",
       radius: "0.625rem",
-      "font-sans": "Inter",
     },
     light: {},
     dark: {},
@@ -31,10 +30,9 @@ const theme = {
 const flat = (entries: [string, string][]): Flat => new Map(entries);
 
 describe("keyKind", () => {
-  test("a colour role is a colour; a dimension or font token sharing the prefix is a value", () => {
+  test("a colour role is a colour; a dimension token sharing the prefix is a value", () => {
     expect(keyKind("color.background", theme)).toBe("colour");
     expect(keyKind("color.radius", theme)).toBe("value");
-    expect(keyKind("color.font-sans", theme)).toBe("value");
   });
 
   test("a finish field is a colour only when it paints one", () => {

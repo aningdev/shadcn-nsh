@@ -2,7 +2,7 @@
 // A card dragged on the UI thread and released into a spring, a decay or the nearest corner,
 // with a canvas tether drawn from the same animated values. The segmented choices, the badge
 // and the figures are this library's; the spring, the decay and the pan are `nsh`'s.
-import { colors, finish, mono, terminal, tints, shape } from "@shadcn-nsh/theme";
+import { colors, finish, terminal, tints, shape } from "@shadcn-nsh/theme";
 import { Hand, Orbit } from "lucide";
 import type { AnimatedValue, PanEvent } from "nsh";
 import { Canvas, computed, createAnimatedValue, Scroll, signal, Text, View, windowSize } from "nsh";
@@ -295,7 +295,7 @@ export function PhysicsDemo() {
                 ? "Coasts to a stop, then springs home"
                 : "Springs to the corner the fling points at"}
           </Text>
-          <Text style={{ fontSize: 12, fontFamily: mono(), color: colors.faint }}>
+          <Text style={{ fontSize: 12, fontFamily: "monospace", color: colors.faint }}>
             {mode() === "coast" ? "decay" : "spring"}
           </Text>
         </View>

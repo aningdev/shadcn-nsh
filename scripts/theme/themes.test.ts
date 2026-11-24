@@ -29,7 +29,7 @@ const alternatives = readdirSync(join(theme, "themes"), { withFileTypes: true })
   .map((entry) => entry.name);
 
 const sorted = (value: object) => Object.keys(value).sort();
-/** Every token a theme declares: the sets are equal, so `font-sans` is not optional. */
+/** Every token a theme declares: the sets are equal: no token is optional. */
 const requiredThemeKeys = (vars: Vars) => Object.keys(vars).sort();
 
 /** Every string a theme file holds, at any depth (a gradient's stops and a shadow's colors are in one). */

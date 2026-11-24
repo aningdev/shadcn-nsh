@@ -4,7 +4,6 @@ import {
   colors,
   finish,
   isDark,
-  mono,
   terminal,
   type Tone,
   toneColor,
@@ -1082,7 +1081,7 @@ function SvgImage() {
           );
         }}
       />
-      <Caption label="drawImage" note={`SVG 120 × 60${terminal ? ` · ${mono()}` : ""}`} />
+      <Caption label="drawImage" note={`SVG 120 × 60${terminal ? ` · ${"monospace"}` : ""}`} />
     </SceneCard>
   );
 }

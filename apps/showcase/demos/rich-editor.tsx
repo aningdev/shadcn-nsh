@@ -1,4 +1,4 @@
-import { alpha, colors, mono, rounded, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, rounded, shape } from "@shadcn-nsh/theme";
 // RichEditor: the official gallery's scene
 // (`references/nsh/examples/gallery/demos/RichEditorDemo.tsx`, with its link menu, toolbar and
 // node views). The document is this library's session API (`nsh/base`'s, re-exported beside the
@@ -514,7 +514,12 @@ function DocumentPanel(props: {
           <View style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 20 }}>
             <Text
               testID="markdown-source"
-              style={{ fontFamily: mono(), fontSize: 13, lineHeight: 20, color: colors.foreground }}
+              style={{
+                fontFamily: "monospace",
+                fontSize: 13,
+                lineHeight: 20,
+                color: colors.foreground,
+              }}
             >
               {props.source()}
             </Text>
@@ -780,7 +785,7 @@ function NodeViews() {
             style={{
               fontSize: 12,
               color: colors.mutedForeground,
-              fontFamily: mono(),
+              fontFamily: "monospace",
               fontVariant: ["tabular-nums"],
             }}
           >

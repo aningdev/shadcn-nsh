@@ -1,4 +1,4 @@
-import { alpha, colors, finish, mono, rounded, toneColor, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, rounded, toneColor, shape } from "@shadcn-nsh/theme";
 // Helpers the overlay demos share: a trigger, a field, the event log, and a toast host that
 // delegates to the library's `toast` / `Toaster`. Menu, popover and sheet still call
 // `createToaster` and resolve with the action label. Sounds stay out.
@@ -63,7 +63,7 @@ export function createEvents(empty: string) {
                 <Text
                   style={{
                     fontSize: 12,
-                    fontFamily: mono(),
+                    fontFamily: "monospace",
                     color: i() === 0 ? colors.foreground : colors.faint,
                   }}
                 >

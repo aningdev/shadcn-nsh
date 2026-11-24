@@ -149,10 +149,6 @@ function own(appearance: Appearance) {
 /** The theme's own tokens, shared by the appearances (a colour may name one: `var(--primary)`). */
 const themeLevel = (): Record<string, string> => ({
   ...scaledRadii(RADII),
-  // The families: NSH's generic `system-ui` and `monospace`, the system's own — neither theme
-  // ships a font face. A theme that names one states its family here (the app imports the file).
-  "font-sans": "system-ui",
-  "font-mono": "monospace",
   scrim: oklchColor(0, 0, 0, 0.5),
   // The ground a photograph sits on, white ink on it. Neither flips.
   media: oklchColor(0.1869, 0.0151, 266.766),
