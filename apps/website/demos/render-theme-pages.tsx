@@ -8,7 +8,7 @@
 // check is `render.test.tsx`.
 import { open, test } from "nsh/test";
 
-import { PALETTES, PALETTE_KEY } from "./palettes";
+import { PALETTES, PALETTE_DRAWN_KEY, PALETTE_KEY } from "./palettes";
 import { cases, clock, networkOf, same, schemes, settle } from "./render-cases";
 
 // A desktop platform starts the page in the desktop idiom at any width; without one the page
@@ -43,9 +43,13 @@ export function renderThemePages({ reference = true }: { reference?: boolean } =
           const theirs =
             reference && !selfReference ? await open(`./${id}.ref.tsx`, options) : null;
           // The palette arrives after the app has mounted (`apply-palette.ts`: `Storage` answers a
-          // promise), so both pages settle into it before a step puts a field in a state.
-          await settle(ours);
-          if (theirs) await settle(theirs);
+          // promise, and the theme file is imported on demand), so both pages wait until it is drawn
+          // before a step puts a field in a state: a fixed wait loses that race on a slow machine.
+          for (const page of theirs ? [ours, theirs] : [ours]) {
+            await page.waitUntil(() => page.storage()[PALETTE_DRAWN_KEY] === palette.id, {
+              timeout: 15_000,
+            });
+          }
           await steps?.(ours);
           await pointerSteps?.(ours);
           if (theirs) {

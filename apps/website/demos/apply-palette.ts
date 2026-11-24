@@ -16,7 +16,8 @@
 // The engine takes a theme up one render behind `setTheme`: a view keeps the styles it drew with
 // until the next render. So the page is shown two frames after the theme is selected, and
 // `check:palette` (the colors of the first frame a visitor can see) and `check:first-frame` (that
-// it comes within budget) hold both ends.
+// it comes within budget) hold both ends. Then the palette's id goes into `PALETTE_DRAWN_KEY`, the
+// one sign from inside the app that its theme is drawn, which the theme render check waits on.
 //
 // The theme files are imported on demand: a page that is not switched to one carries neither its
 // tokens nor its finishes. A running app cannot see a later write (the engine loads its entries
@@ -26,7 +27,7 @@ import { selectTheme } from "@shadcn-nsh/theme";
 import { Storage } from "nsh";
 
 import { paletteTheme } from "./palette-themes";
-import { PALETTES, PALETTE_KEY } from "./palettes";
+import { PALETTES, PALETTE_DRAWN_KEY, PALETTE_KEY, type PaletteId } from "./palettes";
 
 /** A document, as far as this module needs one: `#app`, the element the player draws an app into. */
 type Page = { getElementById(id: string): { style: { visibility: string } } | null };
@@ -51,33 +52,29 @@ if (app) app.style.visibility = "hidden";
 
 void start();
 
-/** Applies the palette this page was switched to, then shows the page. */
+/** Applies the palette this page was switched to, shows the page once it is drawn, and records
+ * that it is. */
 async function start() {
-  let themed = false;
+  let drawn: PaletteId | null = null;
   try {
     const stored = await Storage.getItem(PALETTE_KEY);
     /** An id nothing offers is as good as none: the page keeps the build-time theme. */
     const chosen = PALETTES.find((palette) => palette.id === stored);
     if (chosen) {
       selectTheme(await paletteTheme(chosen.id));
-      themed = true;
+      await twoFrames();
+      drawn = chosen.id;
     }
   } finally {
-    show(themed);
+    if (app) app.style.visibility = "";
   }
+  if (drawn) await Storage.setItem(PALETTE_DRAWN_KEY, drawn);
 }
 
-/** Shows the page, once the theme has been drawn when one was chosen: `setTheme` reaches the views
- * one render behind it, so two frames. */
-function show(themed: boolean) {
-  if (!app) return;
-  if (!themed) {
-    app.style.visibility = "";
-    return;
-  }
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      app.style.visibility = "";
-    });
+/** Resolves once a theme selected now is on screen: `setTheme` reaches the views one render behind
+ * it, so two frames. */
+function twoFrames() {
+  return new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
   });
 }
