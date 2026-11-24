@@ -39,7 +39,7 @@ import {
 ```
 
 The code is one color in the theme's monospaced family: there is no syntax highlighting. For
-highlighted, editable code, use [`CodeEditor`](./code-editor), which is `nsh/base`'s.
+highlighted, editable code, use [`Editor`](./editor), which is `nsh/base`'s.
 
 ## Composition
 

@@ -1,6 +1,6 @@
 // Rich editor: `richEditorClasses`, the `RichEditor` that wears them, and the session API an app
 // runs it with (`createRichEditor`, the kits, the commands and their types), so the editor is one
-// import. The code editor is `code-editor.tsx` (`CodeEditor`).
+// import. The editor is `editor.tsx` (`Editor`).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { split } from "nsh";

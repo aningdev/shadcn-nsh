@@ -52,7 +52,7 @@ export const componentIds = [
   "text-view",
   "emoji-picker",
   "rich-editor",
-  "code-editor",
+  "editor",
   "color-picker",
   "card",
   "field",

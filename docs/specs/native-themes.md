@@ -377,7 +377,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 #### 2a：材质的数据与接线（完成，#199）
 
 - ✅ finish 增加 `material` 字段，所有主题、所有 finish 都写（不要材质的写 `"none"`），`check:theme` 检查它存在、取值是配方之一。
-- ✅ `themed()` 按配方给出玻璃键，`platformMaterial(role)` 给出 `ios`、`windows`；`popup` 的 `PopIn`（Popover、HoverCard、NavigationMenu 的面板）、`Toast`、`CodeEditorFindBar`（`overlay`）和 `CarouselPrevious` / `CarouselNext` 的 `glass` 铺开平台 props。`listbox`、`menu`、`plot`、`refresh-indicator` 的 look 只交出 style，玻璃键随 style 走，平台 props 由画这个 View 的人铺开。侧栏的 `finish.card` 只取了 `boxShadow`，没有画玻璃，不用铺。
+- ✅ `themed()` 按配方给出玻璃键，`platformMaterial(role)` 给出 `ios`、`windows`；`popup` 的 `PopIn`（Popover、HoverCard、NavigationMenu 的面板）、`Toast`、`EditorFindBar`（`overlay`）和 `CarouselPrevious` / `CarouselNext` 的 `glass` 铺开平台 props。`listbox`、`menu`、`plot`、`refresh-indicator` 的 look 只交出 style，玻璃键随 style 走，平台 props 由画这个 View 的人铺开。侧栏的 `finish.card` 只取了 `boxShadow`，没有画玻璃，不用铺。
 - ✅ 验收：`port:render` 与 `port:render:theme` 逐像素不变；`apps/gallery/tests/theme-material.test.tsx` 切到临时主题后 View 带上 `glassEffect`、`glassTintColor` 与平台 props，`selectTheme(null)` 后下一帧消失。
 
 #### 2b：`nativeTheme()` 与 `apple` 主题（完成，#200）
@@ -402,7 +402,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 
 - ✅ 标签页指示器：`Tabs` 的 `TabsList` 在未给 `variant` 时按 `tabsPresets[controls()].indicator` 选 `default`（胶囊）或 `line`（下划线），指示条粗细由同表 `indicatorThickness` 给出（`2` / `3`）。
 - ✅ 侧栏选中条：`sidebarPresets[controls()].navIndicator === "bar"` 时侧栏菜单项（`SidebarMenuButton`、`SidebarMenuSubButton`）的选中态不填色，改画前缘一条 `indicatorThickness` 宽、强调色的竖条。`NavigationMenu` 是横排的触发器，不读它。
-- ✅ 字段指示器与圆角：共用逻辑在 `lib/indicator`（`fieldPresets`、`fieldIndicator`、`fieldCorners`、`fieldCornerClass`、`fieldEdgeWidths`、`fieldEdgeClass`、`fieldRestEdge`、`fieldFocusClass`、`fieldFocusEdge`），`Input`、`Textarea`、`InputGroup`、`Select`、`DatePicker`、`Combobox`、`CodeEditor`、`NumberInput`、`TimeField` 与 OTP 的格子都读它。`indicator` 三值：`box` 是 `stroke.control` 的方框（`input` 色），聚焦时方框连同光环一起变成强调色；`underline` 只画下边线（静止时 `muted-foreground`，聚焦时 `focus.width` 的强调色，不画光环）；`box-underline` 是 `border` 色的方框、下边为 `input` 色（WinUI `TextBox`：三边 `ControlStrokeColorDefault`，底边 `ControlStrongStrokeColorDefault`），悬停时不变，聚焦时只有下边线变成 `focus.width` 的强调色（无效时 `destructive`），方框保持本色、不画光环（WinUI `TextBox`）。`top` 只圆上两角。终端里的字段一律按 `box` 画（`border` 加光环），与之前相同。
+- ✅ 字段指示器与圆角：共用逻辑在 `lib/indicator`（`fieldPresets`、`fieldIndicator`、`fieldCorners`、`fieldCornerClass`、`fieldEdgeWidths`、`fieldEdgeClass`、`fieldRestEdge`、`fieldFocusClass`、`fieldFocusEdge`），`Input`、`Textarea`、`InputGroup`、`Select`、`DatePicker`、`Combobox`、`Editor`、`NumberInput`、`TimeField` 与 OTP 的格子都读它。`indicator` 三值：`box` 是 `stroke.control` 的方框（`input` 色），聚焦时方框连同光环一起变成强调色；`underline` 只画下边线（静止时 `muted-foreground`，聚焦时 `focus.width` 的强调色，不画光环）；`box-underline` 是 `border` 色的方框、下边为 `input` 色（WinUI `TextBox`：三边 `ControlStrokeColorDefault`，底边 `ControlStrongStrokeColorDefault`），悬停时不变，聚焦时只有下边线变成 `focus.width` 的强调色（无效时 `destructive`），方框保持本色、不画光环（WinUI `TextBox`）。`top` 只圆上两角。终端里的字段一律按 `box` 画（`border` 加光环），与之前相同。
 - ✅ 颜色 token `inverse`、`inverse-foreground`、`inverse-brand`；finish `dialog`、`tooltip`、`inverse`。读取方：`DialogContent`、`Tooltip`、`Toast`、`Bubble` 的淡底变体（后者的字读 `accent-foreground`）。`AlertDialog` 不画卡片，没有读取方。
 
 #### 批 2：跨平台主题原语（完成，#231）

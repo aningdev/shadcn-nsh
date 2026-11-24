@@ -1,6 +1,6 @@
 import { colors, focusRing, mono } from "@shadcn-nsh/theme";
 // Editor: the official gallery's scene (`references/nsh/examples/gallery/demos/EditorDemo.tsx`)
-// with this library's code editor and dock. The session around it — find bar, problems, hover,
+// with this library's editor and dock. The session around it — find bar, problems, hover,
 // code actions, the simulated language server — is the app's, as upstream's is. The shell gives
 // the screen a flex view, so the editor fills it as upstream's does.
 import { Code, Search, SlidersHorizontal } from "lucide";
@@ -27,9 +27,10 @@ import {
 } from "nsh/desktop";
 
 import { IconButton } from "@/packages/ui/button";
+import { DockArea, type DockAreaRef, type DockTabValue } from "@/packages/ui/dock-area";
 import {
-  CodeEditor,
-  CodeEditorFindBar,
+  Editor,
+  EditorFindBar,
   type EditorDecoration,
   type EditorDiagnostic,
   type EditorPosition,
@@ -37,8 +38,7 @@ import {
   type EditorRef,
   type EditorSearchResult,
   type EditorSelection,
-} from "@/packages/ui/code-editor";
-import { DockArea, type DockAreaRef, type DockTabValue } from "@/packages/ui/dock-area";
+} from "@/packages/ui/editor";
 import { Icon } from "@/packages/ui/lib/icons";
 import { popupSurface } from "@/packages/ui/lib/popup";
 import {
@@ -300,7 +300,7 @@ function FindBar() {
       margin={8}
       onCancel={m.closeFind}
     >
-      <CodeEditorFindBar
+      <EditorFindBar
         editor={m.editor()}
         search={{
           query: m.query(),
@@ -330,7 +330,7 @@ function Source() {
         const lang = m.language();
         const lsp = lang === "typescript";
         return (
-          <CodeEditor
+          <Editor
             ref={(editor) => m.setEditor(editor)}
             defaultValue={m.texts()[lang] ?? SAMPLES[lang].text}
             language={lang}

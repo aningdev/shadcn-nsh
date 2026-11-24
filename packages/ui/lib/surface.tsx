@@ -352,8 +352,8 @@ const DETAIL_WIDTH = 24 * TERMINAL_COLUMN;
 
 /**
  * A row's label and a quieter line under it (after it in the terminal):
- * `controlSize.label` in the text color, regular weight (`strong`: the theme's
- * `label` weight, for a row that leads others, as a "Select all", or a trigger's title), the detail 12 points with a
+ * `controlSize.label` in the text color, regular weight (`strong`: 600, the
+ * row that leads others, as a "Select all"), the detail 12 points with a
  * pointer, 13 on a touch screen, muted, wrapping rather than cut short
  * beside a control. `width`: the terminal's label column.
  */
@@ -378,7 +378,7 @@ export function RowLabel(props: {
           minWidth: terminal ? (props.width ?? LABEL_WIDTH) + TERMINAL_GAP : undefined,
           flexShrink: 0,
           fontSize: controlSize.label,
-          fontWeight: props.strong ? font.weight("label") : font.weight("body"),
+          fontWeight: props.strong ? font.weight("title") : font.weight("body"),
           color: colors.foreground,
         }}
       >

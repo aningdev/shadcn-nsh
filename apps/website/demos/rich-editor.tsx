@@ -1,6 +1,6 @@
 // The official rich editor scene (`references/nsh/website/demos/el-rich-editor.tsx`) with this
-// library's RichEditor: its toolbar, its markdown and its events. The code editor is
-// `code-editor.tsx`.
+// library's RichEditor: its toolbar, its markdown and its events. The editor is
+// `editor.tsx`.
 import { mono } from "@shadcn-nsh/theme";
 import { Check, ExternalLink, Pencil, Undo2, Unlink, X } from "lucide";
 import { mount, openUrl, signal, Text, type TextStyle, View } from "nsh";

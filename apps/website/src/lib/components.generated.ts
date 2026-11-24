@@ -60,15 +60,6 @@ export const components: ComponentDoc[] = [
     description: "A sunk box that fills in citrus, with a check or a dash springing in.",
   },
   {
-    slug: "code-editor",
-    title: "Code Editor",
-    kind: "official",
-    shadcn: null,
-    nshElement: "editor",
-    description:
-      "A code editor on the field's well, with line numbers, diagnostics and a find bar.",
-  },
-  {
     slug: "collapsible",
     title: "Collapsible",
     kind: "official",
@@ -148,6 +139,14 @@ export const components: ComponentDoc[] = [
     shadcn: null,
     nshElement: "dock",
     description: "Dockable workspace chrome for tabs, splits, and edge docks.",
+  },
+  {
+    slug: "editor",
+    title: "Editor",
+    kind: "official",
+    shadcn: null,
+    nshElement: "editor",
+    description: "An editor on the field's well, with line numbers, diagnostics and a find bar.",
   },
   {
     slug: "emoji-picker",
@@ -237,6 +236,14 @@ export const components: ComponentDoc[] = [
     shadcn: "popover",
     nshElement: "popover",
     description: "A popup panel that grows from its trigger, on the shared menu surface.",
+  },
+  {
+    slug: "pressable",
+    title: "Pressable",
+    kind: "official",
+    shadcn: null,
+    nshElement: "button",
+    description: "A region that takes presses and adds only their feedback.",
   },
   {
     slug: "progress",
@@ -596,14 +603,6 @@ export const components: ComponentDoc[] = [
     nshElement: null,
     description:
       "A row of triggers, each opening a panel of anything under the bar — one at a time.",
-  },
-  {
-    slug: "pressable",
-    title: "Pressable",
-    kind: "own",
-    shadcn: null,
-    nshElement: null,
-    description: "A region that takes presses and adds only their feedback.",
   },
   {
     slug: "refresh-indicator",

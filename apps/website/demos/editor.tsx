@@ -1,17 +1,17 @@
-// The official code editor scene (`references/nsh/website/demos/el-editor.tsx`) with this
-// library's `CodeEditor`: a file per language, a linter's marks, the caret moved, the text
-// reported, and an inspector beside it that follows both.
+// The official editor scene (`references/nsh/website/demos/el-editor.tsx`) with this library's
+// `Editor`: a file per language, a linter's marks, the caret moved, the text reported, and an
+// inspector beside it that follows both.
 import { type Bounds, cleanup, keymap, mount, Overlay, signal, Text, View } from "nsh";
 import type { EditorDiagnostic, EditorRange } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
 import {
-  CodeEditor,
-  CodeEditorFindBar,
+  Editor,
+  EditorFindBar,
   type EditorRef,
   type EditorSearch,
   type EditorSearchResult,
-} from "@/packages/ui/code-editor";
+} from "@/packages/ui/editor";
 import { popoverLook } from "@/packages/ui/popover";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
@@ -134,7 +134,7 @@ function App() {
   keymap.bind("mod+f", () => finding.set(true));
 
   return (
-    <DemoPage title="Code editor">
+    <DemoPage title="Editor">
       <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click into the code and type; switching the language keeps each file's text"
@@ -174,7 +174,7 @@ function App() {
           {() => {
             const lang = language();
             return (
-              <CodeEditor
+              <Editor
                 value={sources()[lang]}
                 onChange={({ value }) => {
                   sources.set({ ...sources(), [lang]: value });
@@ -204,7 +204,7 @@ function App() {
             many a Replace all rewrote. Return in the query finds the next match.
           </Text>
           <View style={{ height: wide() ? 220 : 250, overflow: "hidden" }}>
-            <CodeEditor
+            <Editor
               value={searched()}
               onChange={({ value }) => searched.set(value)}
               language="typescript"
@@ -217,7 +217,7 @@ function App() {
             {() => {
               const editor = findEditor();
               return editor ? (
-                <CodeEditorFindBar
+                <EditorFindBar
                   editor={editor}
                   search={search()}
                   onSearchChange={(next) => search.set(next)}
@@ -238,7 +238,7 @@ function App() {
             is over it, so its fixes can be pressed; a fix rewrites the file, which the app owns.
           </Text>
           <View style={{ height: wide() ? 200 : 170, overflow: "hidden" }}>
-            <CodeEditor
+            <Editor
               value={linted()}
               onChange={({ value }) => linted.set(value)}
               language="typescript"

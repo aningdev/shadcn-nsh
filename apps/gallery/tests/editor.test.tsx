@@ -3,8 +3,8 @@ import { expect, open, test } from "nsh/test";
 const find = (texts: string[], prefix: string) =>
   texts.find((line) => line.startsWith(prefix))?.slice(prefix.length);
 
-test("a CodeEditor reports typing, and its accessible name finds it", async () => {
-  const app = await open("./code-editor.fixture.tsx", { platform: "macos", reducedMotion: true });
+test("an Editor reports typing, and its accessible name finds it", async () => {
+  const app = await open("./editor.fixture.tsx", { platform: "macos", reducedMotion: true });
   expect(app.shows("label:Code sample")).toBe(true);
   await app.type("id:code", "Z");
   await app.wait(50);
@@ -13,16 +13,16 @@ test("a CodeEditor reports typing, and its accessible name finds it", async () =
   expect(find(app.texts(), "value=")).toContain("Z");
 });
 
-test("a read-only CodeEditor takes no text", async () => {
-  const app = await open("./code-editor.fixture.tsx", { platform: "macos", reducedMotion: true });
+test("a read-only Editor takes no text", async () => {
+  const app = await open("./editor.fixture.tsx", { platform: "macos", reducedMotion: true });
   expect(app.shows("label:Locked source")).toBe(true);
   await app.type("id:locked", "NO").catch(() => {});
   await app.wait(50);
   expect(find(app.texts(), "locked=")).toBe("keep");
 });
 
-test("a controlled CodeEditor shows a new value the app sets", async () => {
-  const app = await open("./code-editor.fixture.tsx", { platform: "macos", reducedMotion: true });
+test("a controlled Editor shows a new value the app sets", async () => {
+  const app = await open("./editor.fixture.tsx", { platform: "macos", reducedMotion: true });
   await app.press("label:Load a file");
   await app.wait(50);
   expect(find(app.texts(), "typescript=")).toContain("43");
@@ -33,8 +33,8 @@ test("a controlled CodeEditor shows a new value the app sets", async () => {
   expect(find(app.texts(), "typescript=")).toContain("Y");
 });
 
-test("a CodeEditor keeps each file's text when the language switches", async () => {
-  const app = await open("./code-editor.fixture.tsx", { platform: "macos", reducedMotion: true });
+test("an Editor keeps each file's text when the language switches", async () => {
+  const app = await open("./editor.fixture.tsx", { platform: "macos", reducedMotion: true });
   await app.type("id:code", "X");
   await app.wait(50);
   await app.press("label:Switch language");
@@ -49,8 +49,8 @@ test("a CodeEditor keeps each file's text when the language switches", async () 
   expect(find(app.texts(), "typescript=")).toContain("X");
 });
 
-test("a CodeEditorFindBar finds what is typed, and steps the matches", async () => {
-  const app = await open("./code-editor.fixture.tsx", { platform: "macos", reducedMotion: true });
+test("an EditorFindBar finds what is typed, and steps the matches", async () => {
+  const app = await open("./editor.fixture.tsx", { platform: "macos", reducedMotion: true });
   expect(app.shows("label:Find")).toBe(true);
   await app.type("label:Find", "const");
   await app.wait(100);
@@ -62,8 +62,8 @@ test("a CodeEditorFindBar finds what is typed, and steps the matches", async () 
   expect(app.texts()).toContain("1 of 2");
 });
 
-test("a CodeEditorFindBar replaces every match, and its close button hides it", async () => {
-  const app = await open("./code-editor.fixture.tsx", { platform: "macos", reducedMotion: true });
+test("an EditorFindBar replaces every match, and its close button hides it", async () => {
+  const app = await open("./editor.fixture.tsx", { platform: "macos", reducedMotion: true });
   await app.type("label:Find", "const");
   await app.wait(100);
   await app.type("label:Replace", "let");

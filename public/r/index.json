@@ -1124,15 +1124,15 @@
       ]
     },
     {
-      "name": "code-editor",
+      "name": "editor",
       "type": "registry:ui",
-      "title": "Code Editor",
-      "description": "A code editor on the field's well, with line numbers, diagnostics and a find bar.",
+      "title": "Editor",
+      "description": "An editor on the field's well, with line numbers, diagnostics and a find bar.",
       "files": [
         {
-          "path": "packages/ui/code-editor.tsx",
+          "path": "packages/ui/editor.tsx",
           "type": "registry:ui",
-          "target": "components/ui/code-editor.tsx"
+          "target": "components/ui/editor.tsx"
         }
       ]
     },

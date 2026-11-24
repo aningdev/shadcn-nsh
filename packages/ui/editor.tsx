@@ -1,5 +1,5 @@
-// Code editor: `codeEditorClasses`, `codeEditorFrame`, the `CodeEditor` that wears them and the
-// `CodeEditorFindBar` that finds in it.
+// Editor: `editorClasses`, `editorFrame`, the `Editor` that wears them and the `EditorFindBar`
+// that finds in it.
 
 import { colors, control, finish, mono, platformMaterial } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
@@ -32,14 +32,14 @@ import { popupSurface } from "./lib/popup";
 import { Toggle } from "./toggle";
 
 /**
- * A code editor's parts, as classes: line numbers and fold markers muted, the lines with a caret
+ * An editor's parts, as classes: line numbers and fold markers muted, the lines with a caret
  * and their numbers in the text color, the caret's line a faint `muted` band behind the text,
  * selected text a tint of the brand, the carets and the indent guides in the text and border
  * colors, the placeholder muted, search matches in the warning tone (the one on the selection
  * stronger), and diagnostics underlined in the theme's semantic colors — `destructive` for an
  * error, `warn` for a warning, `info` for information, `muted-foreground` for a hint.
  */
-export const codeEditorClasses: EditorClasses = {
+export const editorClasses: EditorClasses = {
   gutter: "bg-muted/40",
   lineNumber: "text-muted-foreground",
   activeLineNumber: "text-foreground",
@@ -64,12 +64,12 @@ export const codeEditorClasses: EditorClasses = {
 };
 
 /**
- * The surface a code editor sits on (its `style`): the field's well — the field color, a hairline
+ * The surface the editor sits on (its `style`): the field's well — the field color, a hairline
  * of the field's edge, the control tier's corners and the finish a field has — the same well a text
  * field has, so a file and a value look like the two kinds of field they are. Read where it is
  * used, so it follows the appearance and the theme; an app's `style` goes over it.
  */
-export function codeEditorFrame(): ViewStyle {
+export function editorFrame(): ViewStyle {
   const field = fieldLook(control().field);
   return {
     backgroundColor: colors.field,
@@ -84,23 +84,23 @@ export function codeEditorFrame(): ViewStyle {
  * Every prop of `nsh/base` Editor: the text model, the highlighting, the editing keys, folding,
  * search and diagnostics stay in base.
  */
-export type CodeEditorProps = BaseEditorProps;
+export type EditorProps = BaseEditorProps;
 
 /**
- * A code editor on the field's well. Pass `language` for the highlighting and the editing rules
+ * An editor on the field's well. Pass `language` for the highlighting and the editing rules
  * (`"typescript"`, `"json"`, `"css"`, or an extension or file name), `value` and `onChange` to
  * control the text, `diagnostics` to mark problems; `classes` and `styles` paint its parts over
- * `codeEditorClasses`, and `style` goes over `codeEditorFrame()`. It fills the box the app gives
+ * `editorClasses`, and `style` goes over `editorFrame()`. It fills the box the app gives
  * it and scrolls its rows inside.
  */
-export function CodeEditor(props: CodeEditorProps) {
+export function Editor(props: EditorProps) {
   const [, rest] = split(props, ["class", "style", "classes", "styles"]);
   return (
     <BaseEditor
       {...rest}
       class={props.class}
-      style={[codeEditorFrame(), props.style ?? null]}
-      classes={mergeClasses(codeEditorClasses, props.classes)}
+      style={[editorFrame(), props.style ?? null]}
+      classes={mergeClasses(editorClasses, props.classes)}
       styles={props.styles}
     />
   );
@@ -130,8 +130,8 @@ function matchLabel(search: EditorSearch, result: EditorSearchResult | null | un
  * (a `View` around it, or an `Overlay` anchored to the editor), so nothing here says whether it is
  * open.
  */
-export type CodeEditorFindBarProps = {
-  /** The editor to find in: the `ref` a `CodeEditor` hands the app. */
+export type EditorFindBarProps = {
+  /** The editor to find in: the `ref` a `Editor` hands the app. */
   editor?: EditorRef | null;
   /**
    * What to find — the same search the app hands the editor's `search`, so the bar writes the
@@ -155,12 +155,12 @@ export type CodeEditorFindBarProps = {
 };
 
 /**
- * The find bar of a code editor: the query with its count, its three matching modes and the two
+ * The find bar of an editor: the query with its count, its three matching modes and the two
  * buttons that step through the matches, and a line that replaces: a replacement, one match, or
  * all of them, its count shown in the place of the search's for a moment. Escape, and the keys
  * that open the bar, are the app's `keymap`; Return in the query finds the next match.
  */
-export function CodeEditorFindBar(props: CodeEditorFindBarProps) {
+export function EditorFindBar(props: EditorFindBarProps) {
   const [, rest] = split(props, [
     "class",
     "style",
@@ -309,8 +309,8 @@ export function CodeEditorFindBar(props: CodeEditorFindBarProps) {
 }
 
 /**
- * The session an app drives the editor with, from `nsh/base`, so `@/components/ui/code-editor` is
- * the only import. `EditorProps` stays `CodeEditorProps`.
+ * The session an app drives the editor with, from `nsh/base`, so `@/components/ui/editor` is the
+ * only import.
  */
 export type {
   EditorBounds,

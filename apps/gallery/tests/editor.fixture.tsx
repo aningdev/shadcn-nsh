@@ -1,7 +1,7 @@
 import { mount, signal, Text, View } from "nsh";
 import type { EditorRef, EditorSearch, EditorSearchResult } from "nsh/base";
 
-import { CodeEditor, CodeEditorFindBar } from "../../../packages/ui";
+import { Editor, EditorFindBar } from "../../../packages/ui";
 
 const TYPESCRIPT = `const answer = 42;
 `;
@@ -27,7 +27,7 @@ function App() {
   const findEditor = signal<EditorRef | null>(null);
   return (
     <View style={{ padding: 12, gap: 8 }}>
-      <CodeEditor
+      <Editor
         testID="code"
         accessibilityLabel="Code sample"
         value={value()}
@@ -40,7 +40,7 @@ function App() {
       <Text>{`typescript=${typescript()}`}</Text>
       <Text>{`json=${json()}`}</Text>
       <Text>{`focus=${focus()}`}</Text>
-      <CodeEditor
+      <Editor
         testID="locked"
         accessibilityLabel="Locked source"
         readOnly
@@ -58,7 +58,7 @@ function App() {
       <Text accessibilityLabel="Load a file" onPress={() => typescript.set("const answer = 43;\n")}>
         Load a file
       </Text>
-      <CodeEditor
+      <Editor
         testID="found"
         accessibilityLabel="Found source"
         value={found()}
@@ -70,7 +70,7 @@ function App() {
         style={{ width: 320, height: 96 }}
       />
       {finding() && findEditor() ? (
-        <CodeEditorFindBar
+        <EditorFindBar
           editor={findEditor()}
           search={search()}
           onSearchChange={(next) => search.set(next)}

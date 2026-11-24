@@ -17,7 +17,7 @@ Not gaps: Stocks' intraday chart washes the area under the price with `Plot`'s o
 composition). Upstream's funnel animates drawn `Canvas` geometry with `createAnimatedValue`, which
 `nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up`
 / `destructive` roles, and a terminal's ANSI colors are the program's output, not theme roles. The
-find bar is the library's `CodeEditorFindBar`; quick-fix menus and the editor zoom are `nsh`
+find bar is the library's `EditorFindBar`; quick-fix menus and the editor zoom are `nsh`
 `Overlay`s, the code-action menu is the native `nsh/desktop` `Menu`, and Chat's empty-state emblem (`apps-shared` `IconTile`) is its own kit (item rows use `ItemMedia`). Animations' ink on a saturated tone is `onBrand` / `knob`, and System's
 status-bar preview inks with the foreground and background, all theme roles. The Gallery's `Meter`,
 `Toggle` (a switch) and `Field` are this library's `Progress`, `Switch` and a labelled `Input`. The

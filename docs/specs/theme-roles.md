@@ -43,7 +43,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | ------------------------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `inset`                  | 卡片里凹下去的一层（井）                                                                      | `lib/surface`、`otp-input`、`sidebar`、`menu`、`dock-area`                   |
 | `raised`                 | 卡片上凸起的一层：按钮、字段、轨道                                                            | `button`、`select`、`radio-group`、`carousel`、`dock-area`                   |
-| `field`                  | 输入井：比卡片和 inset 更下一层                                                               | `input`、`select`、`combobox`、`checkbox`、`code-editor`                     |
+| `field`                  | 输入井：比卡片和 inset 更下一层                                                               | `input`、`select`、`checkbox`、`combobox`、`editor`                          |
 | `hover`                  | 指针停在可点项上的那一步                                                                      | `button`、`select`、`input`、`command`、`tree`、`menu`                       |
 | `line`                   | 井里的发丝线（分隔、网格）                                                                    | `tabs`、`otp-input`、`number-input`、`input`、`lib/surface`                  |
 | `faint`                  | 更弱的字：占位、单位、次要标记                                                                | `input`、`combobox`、`number-input`                                          |
@@ -52,7 +52,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `glass-edge`             | 玻璃面上的发丝线：控件、胶囊、玻璃、浮层外框                                                  | `theme.ts` 的 `colors.glassEdge`                                             |
 | `track`                  | 关着的开关、滑杆与进度条的底槽（后两者按控件预设也可读 `brand-tint` / `input`）               | `switch`、`slider`、`progress`、`tabs`、`listbox`                            |
 | `knob`                   | 关着的开关圆点（`finish.knob` 的白底）                                                        | `theme.ts` 的 `colors.knob`                                                  |
-| `info` / `warn` / `up`   | 三状态色：提示、警告、增长；下降读 `destructive`                                              | `progress`、`diff-view`、`code-editor`、`status`                             |
+| `info` / `warn` / `up`   | 三状态色：提示、警告、增长；下降读 `destructive`                                              | `progress`、`diff-view`、`editor`、`status`                                  |
 | `brand-tint` 等 `*-tint` | 状态色的淡底（`info`、`warn`、`destructive`、`up` 各一，另留 `down-tint` 给数据的下降）       | `theme.ts` 的 `colors` 映射；`brand-tint` 另见 `calendar`、`tree`、`command` |
 | `inverse`                | 提示与 toast 的反色面（今天的主题与浮层同色）                                                 | `toast`、`tooltip`（经 `finish.inverse`）                                    |
 | `inverse-foreground`     | `inverse` 上的字                                                                              | `toast`、`tooltip`                                                           |

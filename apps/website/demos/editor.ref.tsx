@@ -1,5 +1,5 @@
-// The reference of `code-editor.tsx`: the same page with `codeEditorClasses` and
-// `codeEditorFrame()` on `nsh/base`'s Editor, the way a code editor is written without a shell.
+// The reference of `editor.tsx`: the same page with `editorClasses` and `editorFrame()` on
+// `nsh/base`'s Editor, the way the editor is written without a shell.
 // It differs from the component page only in what it names.
 import { colors, mono } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
@@ -24,7 +24,7 @@ import {
 } from "nsh/base";
 
 import { Button, buttonGlyph } from "@/packages/ui/button";
-import { codeEditorClasses, codeEditorFrame } from "@/packages/ui/code-editor";
+import { editorClasses, editorFrame } from "@/packages/ui/editor";
 import {
   InputGroup,
   InputGroupAddon,
@@ -312,7 +312,7 @@ function App() {
   const searched = signal<string>(SAMPLES.typescript);
 
   return (
-    <DemoPage title="Code editor">
+    <DemoPage title="Editor">
       <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click into the code and type; switching the language keeps each file's text"
@@ -361,14 +361,14 @@ function App() {
                 language={lang}
                 diagnostics={PROBLEMS[lang]}
                 accessibilityLabel="Code"
-                classes={codeEditorClasses}
+                classes={editorClasses}
                 onSelectionChange={({ selections }) => {
                   const head = selections[selections.length - 1].head;
                   caret.set(`${head.line + 1}:${head.column + 1}`);
                 }}
                 onFocus={() => log("onFocus")}
                 onBlur={() => log("onBlur")}
-                style={[codeEditorFrame(), { flex: 1 }]}
+                style={[editorFrame(), { flex: 1 }]}
               />
             );
           }}
@@ -391,8 +391,8 @@ function App() {
               accessibilityLabel="Searched code"
               search={finding() ? search() : null}
               onSearchChange={({ result }) => found.set(result)}
-              classes={codeEditorClasses}
-              style={[codeEditorFrame(), { flex: 1 }]}
+              classes={editorClasses}
+              style={[editorFrame(), { flex: 1 }]}
             />
             {() => {
               const editor = findEditor();
@@ -424,7 +424,7 @@ function App() {
               language="typescript"
               diagnostics={LINT}
               accessibilityLabel="Linted code"
-              classes={codeEditorClasses}
+              classes={editorClasses}
               onHover={(event) => {
                 clearTimeout(closeTimer);
                 if (event.diagnostics.length === 0) {
@@ -434,7 +434,7 @@ function App() {
                 card.set({ anchor: event.pageBounds, diagnostics: event.diagnostics });
               }}
               onHoverEnd={closeSoon}
-              style={[codeEditorFrame(), { flex: 1 }]}
+              style={[editorFrame(), { flex: 1 }]}
             />
           </View>
         </DemoSection>

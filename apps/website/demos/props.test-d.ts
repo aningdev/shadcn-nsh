@@ -135,7 +135,7 @@ import type {
   CarouselPreviousProps,
   CarouselProps,
   CheckboxProps,
-  CodeEditorProps,
+  EditorProps,
   CollapsibleContentProps,
   ComboboxContentProps,
   CommandProps,
@@ -346,8 +346,8 @@ type _dialogContent = Assert<
 type _diffView = Assert<KeepsBase<BaseDiffViewProps, DiffViewProps, never>>;
 /** `DockAreaProps`. */
 type _dockArea = Assert<KeepsBase<BaseDockAreaProps, DockAreaProps, never>>;
-/** `CodeEditorProps`. */
-type _codeEditor = Assert<KeepsBase<BaseEditorProps, CodeEditorProps, never>>;
+/** `EditorProps`. */
+type _editor = Assert<KeepsBase<BaseEditorProps, EditorProps, never>>;
 /** `RichEditorProps`. */
 type _richEditor = Assert<KeepsBase<BaseRichEditorProps, RichEditorProps, never>>;
 /** `HoverCardContentProps` — the root holds the trigger, the open state and the two delays. */
@@ -694,7 +694,7 @@ export type {
   _dialogContent,
   _diffView,
   _dockArea,
-  _codeEditor,
+  _editor,
   _richEditor,
   _hoverCardContent,
   _input,

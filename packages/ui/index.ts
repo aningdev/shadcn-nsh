@@ -72,7 +72,7 @@ export * from "./message-scroller";
 export * from "./navigation-menu";
 export * from "./sidebar";
 export * from "./terminal";
-export * from "./code-editor";
+export * from "./editor";
 export * from "./nav-stack";
 export * from "./split-view";
 export * from "./code-block";

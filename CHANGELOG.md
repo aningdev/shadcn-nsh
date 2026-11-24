@@ -34,6 +34,8 @@
 
 ### Changed
 
+- **`CodeEditor` is `Editor`, NSH's own name for it (#354).** The registry item is `editor` (`shadcn-nsh add editor`), the file `editor.tsx`, and the exports `Editor`, `EditorFindBar`, `EditorProps`, `EditorFindBarProps`, `editorClasses` and `editorFrame`. **Breaking:** `code-editor` and the `CodeEditor*` / `codeEditor*` names are gone, with no alias; an app that installed `code-editor` keeps its copy, and a new `add` takes `editor`.
+
 - **Toggle, menu, menubar, navigation menu, nav stack, sidebar, trace and terminal sizes read the theme's scales (#293).** Their size tables are getters over `controlHeight`, `iconSize`, the `font.size` roles and `controlSize.row`, so a theme that states other steps resizes them. On screen in the default theme: a menu row is 28 high on a pointer (was 26) and 40 on touch (was 46), with 16-point icons; toggle sides are 24 / 28 / 32 on a pointer and 32 / 40 / 48 on touch; the menubar bar is 38 and a navigation-menu trigger 32; a touch sidebar row is 48. **Breaking:** `sidebarSize.glyph` is gone (the icon is `iconSize.md`), and `sidebarSize.folded` is a getter.
 
 - **`Segmented` is listed under Enhanced in the docs.** It is the library's own component, no longer grouped with shadcn/ui's Tabs.
@@ -120,8 +122,6 @@
 - **The home page runs the showcase app (#208).** “See it running” embeds the showcase app itself, the Gallery shell and its scenes with the theme and appearance switched inside it, in place of the theme demo and a link. The separate `/showcase` page is gone; the app is packaged to `public/showcase/`.
 
 ### Fixed
-
-- **Accordion and collapsible triggers take the theme's label weight (#352).** shadcn/ui's trigger is `font-medium`; ours drew at the title weight (semibold). `RowLabel`'s `strong` now reads the `label` type role (500; 400 in WinUI), so a checkbox "Select all" row and avatar list names follow it too.
 
 - **A menu, select, combobox or command row with a second line grows to hold it (#333).** A row's height in the size table (`menuItemSize.height`, the listbox and command row heights) is now its least height: a row with `detail` or a note under its label grows, with the theme's item inset (at least 4) above and below, instead of drawing both lines in a one-line box over the next row. One-line rows keep their height.
 
