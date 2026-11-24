@@ -229,7 +229,7 @@ function Glow() {
           source={GLOW}
           uniforms={{
             a: colors.destructive,
-            b: token("violet"),
+            b: colors.up,
             c: colors.info,
             base: colors.media,
             pointer: [x, y],
@@ -251,7 +251,7 @@ function Plasma() {
       <View style={{ gap: 10 }}>
         <Shader
           source={PLASMA}
-          uniforms={{ pointer: [x, y], a: colors.info, b: token("violet"), c: colors.warn }}
+          uniforms={{ pointer: [x, y], a: colors.info, b: colors.up, c: colors.warn }}
           style={{ height: 200, borderRadius: 14 }}
           {...drag((px, py) => {
             x.set(px);
@@ -556,7 +556,7 @@ function Screen() {
     <SceneCard title="Screen effect" subtitle="The whole surface through a shader">
       <View style={{ gap: 10 }}>
         <If when={on()}>
-          <ScreenEffect source={DUOTONE} uniforms={{ a: token("violet"), b: colors.warn }} />
+          <ScreenEffect source={DUOTONE} uniforms={{ a: colors.up, b: colors.warn }} />
         </If>
         <Switch
           checked={on()}

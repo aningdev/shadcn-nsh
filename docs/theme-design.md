@@ -64,13 +64,17 @@ flowchart LR
 
 **设计问题**：调色板是什么？页面分几层，每层什么色？亮暗怎么翻？墨色和底色的对比度要多少？哪些语义要单独的颜色（品牌、信息、警告、涨跌）？
 
-**定义项**（`theme.json`，共 59 个角色）
+**定义项**（`theme.json`，共 56 个角色：约 15 个源色写值，其余只引用或派生，见 [ADR 0007](decisions/0007-theme-customization-scope.md) 第 4 条）
 
-| 层           | 内容                                                                                                                                                                                                                                              | 说明                                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| A 层（31）   | shadcn / NSH 的槽：`background`、`foreground`、`card`、`popover`、`primary`、`secondary`、`muted`、`accent`、`destructive`、`border`、`input`、`ring`、`chart-1…5`、`sidebar-*` 及各自的 `*-foreground`                                           | 一个都不能缺：缺了 NSH 会退回 shadcn 的 neutral 灰。`sidebar-*` 写成指向本层角色的 alias |
-| B 层（25）   | 面 `inset`、`raised`、`field`、`track`、`knob`；墨 `faint`、`brand`；边 `line`、`brand-edge`、`glass-edge`、`ring-halo`；状态 `hover`；数据 `info`、`warn`、`up`、`violet` 与六个 `*-tint`；反色 `inverse`、`inverse-foreground`、`inverse-brand` | 本库自己的角色，按层分组                                                                 |
-| C 层（3 色） | `scrim`、`media`、`on-media`                                                                                                                                                                                                                      | 亮暗共用（同层还有 3 个圆角和两族字体，见 2.6、2.8）                                     |
+| 类           | 角色                                                                                                                                                                                                                        | 主题写什么                                                                 |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 源色（15）   | `primary`、`primary-foreground`、`secondary`、`foreground`、`muted-foreground`、`faint`、`background`、`card`、`muted`、`border`（强：控件与输入框的边）、`line`（弱：分割线、卡片边）、`destructive`、`warn`、`info`、`up` | 字面值                                                                     |
+| 引用         | `popover`、`accent`、`inset`、`raised`、`field`、`track`、`knob`、`hover`、`input`、`ring`、`brand`、`brand-edge`、`inverse*`、`sidebar*`、`*-foreground`（foreground 族）                                                  | DTCG 引用（`{color.x}`）指向某个源色，每套主题自己选指向哪个               |
+| 派生         | 六个 `*-tint`（`brand-tint`、`info-tint`、`warn-tint`、`destructive-tint`、`up-tint`、`down-tint`）                                                                                                                         | 同一条公式 `color-mix(in srgb, X N%, transparent)`，`N` 每套主题一个数     |
+| 图表         | `chart-1…5`                                                                                                                                                                                                                 | 只引用源色：状态色序列（主色、蓝、绿、黄、红）或由 `foreground` 混出的灰阶 |
+| C 层（3 色） | `scrim`、`media`、`on-media`                                                                                                                                                                                                | 亮暗共用（同层还有 3 个圆角，见 2.6、2.8）                                 |
+
+`violet`、`glass-edge`、`ring-halo` 已删：读它们的组件改读源色（链接的已访问色读 `muted-foreground`，焦点环的晕是 `ring` 的 30%，`double` 的内线读 `card`，玻璃的边读 `line`）。
 
 **约束**
 
@@ -243,7 +247,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 **定义项**
 
 - `dimension.stroke`：`hairline`（分割线、面的边）与 `control`（控件的边）。
-- `dimension.focus`：`style`（`halo` 光晕、`outline` 外描边、`double` 双线）、`width`、`offset`；颜色读 `ring`，`double` 的内线读 `ring-halo`。
+- `dimension.focus`：`style`（`halo` 光晕、`outline` 外描边、`double` 双线）、`width`、`offset`；颜色读 `ring`，`halo` 的晕是它的 30%，`double` 的内线读 `card`。
 
 **约束**：描边只有两档。不想要边的面，在 finish 里把边色写成 `transparent`，不用 0 宽。焦点只在键盘导航时出现，不能和选中、悬停混淆。
 

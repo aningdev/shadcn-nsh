@@ -428,8 +428,8 @@ describe("DTCG source lint", () => {
         "packages/theme/tokens/themes/solid-glass/dark.tokens.json",
       );
       const sgDark = JSON.parse(fs.readFileSync(sgDarkPath, "utf8"));
-      // Corrupt ring-halo (mix of translucent ring 0.4 alpha and transparent) -> must fail.
-      sgDark.color["ring-halo"].$value.alpha = 0.5;
+      // Corrupt info-tint (a mix of info and transparent) -> must fail.
+      sgDark.color["info-tint"].$value.alpha = 0.5;
       // Corrupt finish.accent.background (alpha colorOp) -> must fail.
       sgDark.finish.accent.background.$value.alpha = 0.9;
       fs.writeFileSync(sgDarkPath, JSON.stringify(sgDark, null, 2));
@@ -439,7 +439,7 @@ describe("DTCG source lint", () => {
         { repoRoot: tmp },
       ).join("\n");
       expect(problems).toContain(
-        "color.ring-halo: static $value differs from live colorOp evaluation",
+        "color.info-tint: static $value differs from live colorOp evaluation",
       );
       expect(problems).toContain(
         "finish.accent.background: static $value differs from live colorOp evaluation",

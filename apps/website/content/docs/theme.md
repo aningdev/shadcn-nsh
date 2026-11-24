@@ -35,10 +35,9 @@ npx shadcn-nsh@latest add theme
 | `field` / `input`                                                                  | An input's well and its edge                                                                                |
 | `line` / `border`                                                                  | Hairlines inside insets, and the edge of a card or control                                                  |
 | `hover` / `faint`                                                                  | The pointer's wash, and the quietest text                                                                   |
-| `ring-halo`                                                                        | The keyboard focus's halo around the `ring` edge                                                            |
 | `brand`                                                                            | The accent as ink                                                                                           |
 | `track` / `knob`                                                                   | A switch's track when off, and a switch's knob; sliders and progress bars read their preset's track role    |
-| `info` / `warn` / `up` / `violet`                                                  | The tones beside the accent; a data loss reads `destructive`                                                |
+| `info` / `warn` / `up`                                                             | The tones beside the accent; a data loss reads `destructive`                                                |
 | `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` | The same tones as fills behind text                                                                         |
 | `inverse` / `inverse-foreground` / `inverse-brand`                                 | A toast's and a tooltip's reversed surface, its text and action; quieter ink is `finish.inverse.foreground` |
 
@@ -165,7 +164,7 @@ const ring = focusRing(); // the keyboard focus outline
 const dim = alpha(colors.foreground, 0.4); // a color at 40%
 ```
 
-`focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo of `ring-halo`. `hovered()` is the pointer's fill, the `hover` token (plus `stateLayer("hover")` when `state.overlay.hover > 0`). `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish`, `shape` and `style()` are reactive: read them where they are used.
+`focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo of `ring` at 30%. `hovered()` is the pointer's fill, the `hover` token (plus `stateLayer("hover")` when `state.overlay.hover > 0`). `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish`, `shape` and `style()` are reactive: read them where they are used.
 
 ## Override from nsh.json
 

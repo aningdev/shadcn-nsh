@@ -50,8 +50,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `line`                   | 井里的发丝线（分隔、网格）                                                                    | `tabs`、`otp-input`、`number-input`、`input`、`lib/surface`                  |
 | `faint`                  | 更弱的字：占位、单位、次要标记                                                                | `input`、`combobox`、`number-input`                                          |
 | `brand`                  | 强调色作为前景：字、图标、线                                                                  | `input`、`calendar`、`command`、`otp-input`、`lib/listbox`                   |
-| `brand-edge`             | 强调色填充的那条边：主按钮的发丝线（WinUI 下作 `AccentControlElevationBorderBrush` 下边斜角） | `theme.ts` 的 `colors.brandEdge`、`finish.accent`                            |
-| `glass-edge`             | 玻璃面上的发丝线：控件、胶囊、玻璃、浮层外框                                                  | `theme.ts` 的 `colors.glassEdge`                                             |
+| `brand-edge`             | 强调色填充的那条边：主按钮的发丝线（WinUI 下作 `AccentControlElevationBorderBrush` 下边斜角） | `theme.ts` 的 `colors.brandEdge`、`finish.accent`（引用 `border`）           |
 | `track`                  | 关着的开关、滑杆与进度条的底槽（后两者按控件预设也可读 `brand-tint` / `input`）               | `switch`、`slider`、`progress`、`tabs`、`listbox`                            |
 | `knob`                   | 关着的开关圆点（`finish.knob` 的白底）                                                        | `theme.ts` 的 `colors.knob`                                                  |
 | `info` / `warn` / `up`   | 三状态色：提示、警告、增长；下降读 `destructive`                                              | `progress`、`diff-view`、`editor`、`status`                                  |
@@ -59,8 +58,6 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `inverse`                | 提示与 toast 的反色面（今天的主题与浮层同色）                                                 | `toast`、`tooltip`（经 `finish.inverse`）                                    |
 | `inverse-foreground`     | `inverse` 上的字                                                                              | `toast`、`tooltip`                                                           |
 | `inverse-brand`          | `inverse` 上的强调色：toast 的操作                                                            | `toast`                                                                      |
-| `ring-halo`              | 焦点环外面的一圈晕                                                                            | `theme.ts` 的 `focusRing`                                                    |
-| `violet`                 | 第三个数据色：图的一条线、链接                                                                | `link`、`plot`                                                               |
 
 `destructive` 本身是 A 层（shadcn 的），本库的 `colors.destructive` 指向它；数据的下降也读它（`toneColor("down")`），不再单设 `down` 角色，`down-tint` 仍作为下降的淡底保留。
 

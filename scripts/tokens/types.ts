@@ -177,7 +177,7 @@ export interface DesignMdExtension {
   voiceOmitted?: string;
 }
 
-/** Semantic color-role grouping for every token in `color.*` (59 total: 3 C-layer + 56 A/B-layer). */
+/** Semantic color-role grouping for every token in `color.*` (56 total: 3 C-layer + 53 A/B-layer). */
 export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   // surface (15 A/B-layer + 2 C-layer)
   background: "surface",
@@ -231,7 +231,6 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   up: "status",
   "up-tint": "status",
   "down-tint": "status",
-  violet: "status",
   "chart-1": "status",
   "chart-2": "status",
   "chart-3": "status",
@@ -242,9 +241,7 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   border: "chrome",
   input: "chrome",
   ring: "chrome",
-  "ring-halo": "chrome",
   line: "chrome",
-  "glass-edge": "chrome",
   "sidebar-border": "chrome",
   "sidebar-ring": "chrome",
 };

@@ -65,14 +65,14 @@
 
 ### B 层：本库的角色（按层分组）
 
-| 组       | 角色                                                                                                                                |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 面       | `inset`、`raised`、`field`、`track`、`knob`                                                                                         |
-| 墨       | `faint`、`brand`                                                                                                                    |
-| 边       | `line`、`brand-edge`、`glass-edge`、`ring-halo`                                                                                     |
-| 交互状态 | `hover`；`state.disabled` 与 `state.pressed` 的颜色字段（见第 3 批）                                                                |
-| 数据     | `info`、`warn`、`up`、`violet`，及其 `*-tint`（`brand-tint`、`info-tint`、`warn-tint`、`destructive-tint`、`up-tint`、`down-tint`） |
-| 反色     | `inverse`、`inverse-foreground`、`inverse-brand`                                                                                    |
+| 组       | 角色                                                                                                                      |
+| -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| 面       | `inset`、`raised`、`field`、`track`、`knob`                                                                               |
+| 墨       | `faint`、`brand`                                                                                                          |
+| 边       | `line`、`brand-edge`                                                                                                      |
+| 交互状态 | `hover`；`state.disabled` 与 `state.pressed` 的颜色字段（见第 3 批）                                                      |
+| 数据     | `info`、`warn`、`up`，及其 `*-tint`（`brand-tint`、`info-tint`、`warn-tint`、`destructive-tint`、`up-tint`、`down-tint`） |
+| 反色     | `inverse`、`inverse-foreground`、`inverse-brand`                                                                          |
 
 ### C 层：明暗共用
 

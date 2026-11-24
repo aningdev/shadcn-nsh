@@ -58,12 +58,12 @@ export const seriesColor = (i: number): string => {
 
 /** Colors for categories that must read apart at a glance (sectors,
  * regions, platforms), in order: the citrus lead, then the theme's info,
- * warn and violet, and a graphite. */
+ * warn and up, and a graphite. */
 export const categoryColors = (): string[] => [
   chart.chart1,
   colors.info,
   colors.warn,
-  token("violet"),
+  colors.up,
   chart.chart3,
 ];
 

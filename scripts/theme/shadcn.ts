@@ -23,6 +23,7 @@
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { finishes, shadows } from "./finishes/shadcn";
 import { oklch, oklchColor, over, parseColor, toOklchText, withAlpha } from "./oklch";
+import { reduceColours, type ColourScheme } from "./sources";
 import { scaledRadii } from "./style";
 
 /** shadcn's neutrals, quoted from `registry/themes.ts` (theme `neutral`). */
@@ -141,7 +142,6 @@ function own(appearance: Appearance) {
     info: p.mutedForeground,
     warn: appearance === "light" ? p.chart[2] : p.chart[0],
     up: appearance === "light" ? p.chart[3] : p.primary,
-    violet: appearance === "light" ? p.chart[4] : p.foreground,
     line: p.border,
   };
 }
@@ -158,6 +158,18 @@ const themeLevel = (): Record<string, string> => ({
   media: oklchColor(0.1869, 0.0151, 266.766),
   "on-media": oklchColor(1, 0, 0),
 });
+
+/** The choices the derived keys make (ADR 0007 §4). */
+const scheme: ColourScheme = {
+  tint: 10,
+  ring: "muted-foreground",
+  field: "card",
+  knob: ["card", "foreground"],
+  secondaryIsRaised: true,
+  raised: "secondary",
+  inverse: ["card", "foreground"],
+  chart: "ramp",
+};
 
 /** One appearance's colour tokens. */
 function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
@@ -199,12 +211,9 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     line: o.line,
     // A pressable under the pointer: shadcn's `hover:bg-accent`, not an ink over the surface.
     hover: "var(--accent)",
-    // The keyboard focus's halo: shadcn's `ring-ring/50`.
-    "ring-halo": "color-mix(in srgb, var(--ring) 50%, transparent)",
     // shadcn draws no edge on a filled pane or round a glass surface (`border-transparent`), so both
     // roles name the theme's border: a theme switched to this one still has the tokens.
     "brand-edge": "var(--border)",
-    "glass-edge": "var(--border)",
     faint: o.faint,
     brand: p.primary,
     track: o.track,
@@ -221,7 +230,6 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     "destructive-tint": tints("destructive"),
     "up-tint": tints("up"),
     "down-tint": tints("destructive"),
-    violet: o.violet,
   };
 }
 
@@ -235,12 +243,9 @@ export function themeFiles(): ThemeGeneratorOutput {
     hover: "Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.",
     "brand-edge":
       "Hairline border aliased to {color.border} (shadcn draws no separate brand edge).",
-    "glass-edge":
-      "Hairline border aliased to {color.border} (shadcn draws no separate glass edge).",
     info: "Informational semantic status color mapped onto shadcn's neutral grey ramp.",
     warn: "Warning semantic status color mapped onto shadcn's neutral chart ramp.",
     up: "Positive trend color mapped onto shadcn's neutral ramp.",
-    violet: "Accent data-visualization and link color mapped onto shadcn's neutral ramp.",
   };
 
   return {
@@ -279,8 +284,8 @@ export function themeFiles(): ThemeGeneratorOutput {
     },
     cssVars: {
       theme: themeLevel(),
-      light: section(light, ownLight),
-      dark: section(dark, ownDark),
+      light: reduceColours(section(light, ownLight), scheme, "light"),
+      dark: reduceColours(section(dark, ownDark), scheme, "dark"),
     },
     finishes,
     shadows,

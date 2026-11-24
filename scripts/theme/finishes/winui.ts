@@ -41,7 +41,7 @@ export const finishes: ThemeFinishes = {
     },
     overlay: {
       background: "{popover}",
-      "border-color": "{glass-edge}",
+      "border-color": "{line}",
       shadow: "{shadow.lg}",
       foreground: "{foreground}",
       material: "acrylic",
@@ -53,12 +53,12 @@ export const finishes: ThemeFinishes = {
     },
     inverse: {
       background: "{inverse}",
-      "border-color": "{glass-edge}",
+      "border-color": "{line}",
       shadow: "{shadow.lg}",
       foreground: "{inverse-foreground}",
     },
     glass: {
-      "border-color": "{glass-edge}",
+      "border-color": "{line}",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       backdropFilter: "blur(30px)",

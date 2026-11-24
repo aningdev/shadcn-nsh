@@ -167,8 +167,8 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 
 - **A 层（31 个 shadcn 槽位）**：`background`, `foreground`, `card`, `card-foreground`, `popover`, `popover-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `muted`, `muted-foreground`, `accent`, `accent-foreground`, `destructive`, `border`, `input`, `ring`, `chart-1`, `chart-2`, `chart-3`, `chart-4`, `chart-5`, `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-primary-foreground`, `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring` → 全部映射至 `color.<name>`（`$type: "color"`）。其中直接写 `var(--x)` 的槽位（如 `card-foreground`、`popover-foreground`、`secondary`、`secondary-foreground`、`accent-foreground`、`sidebar-foreground`、`sidebar-primary`、`sidebar-primary-foreground`、`sidebar-accent`、`sidebar-accent-foreground`、`sidebar-ring`）写为 DTCG 花括号别名 `"{color.<x>}"`，编译回 `theme.json` 时还原为 `"var(--<x>)"`。
 - **B 层（25 个本库扩展槽位）**：
-  - 直接 oklch 颜色或 `var(--x)` 别名（17 个）：`inset`, `raised`, `glass-edge`（`{color.border}`）, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `knob`, `info`, `warn`, `up`, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-brand`（`{color.primary-foreground}`）, `violet` → `color.<name>`（`$type: "color"`）。
-  - 含 `color-mix(in srgb, ...)` 算术的颜色（8 个）：`hover`, `ring-halo`, `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` → `color.<name>`（`$type: "color"`），`$value` 放静态求值后的 DTCG oklch 对象（含 `hex`），`$extensions["dev.aning.shadcn-nsh"].colorOp` 放混合配方（见第 6 节）。注：在部分平台主题（如 `winui`）中这些键是静态色而非 `color-mix`，此时直接写 DTCG oklch 对象、不附 `colorOp`。
+  - 直接 oklch 颜色或 `var(--x)` 别名（14 个）：`inset`, `raised`, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `knob`, `info`, `warn`, `up`, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-brand`（`{color.primary-foreground}`） → `color.<name>`（`$type: "color"`）。
+  - 含 `color-mix(in srgb, ...)` 算术的颜色（7 个）：`hover`, `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` → `color.<name>`（`$type: "color"`），`$value` 放静态求值后的 DTCG oklch 对象（含 `hex`），`$extensions["dev.aning.shadcn-nsh"].colorOp` 放混合配方（见第 6 节）。注：在部分平台主题（如 `winui`）中这些键是静态色而非 `color-mix`，此时直接写 DTCG oklch 对象、不附 `colorOp`。
 
 ### 4.2 `semantics.json` → DTCG 2025.10
 
@@ -291,7 +291,7 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 
 DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处动态算术需求：
 
-- `theme.json` 中每套主题约 8–20 处 `color-mix(in srgb, <A> <P>%, <B>)`（`hover`, `ring-halo`, `*-tint`）；
+- `theme.json` 中每套主题约 8–20 处 `color-mix(in srgb, <A> <P>%, <B>)`（`*-tint`）；
 - `semantics.json` 中 `oklch(from {token} l c h / a)`（如 `apple` 的 `glass` / `overlay` / `inverse` / `raised`、`winui` 的 `glass`、`solid-glass` 的 `accent` / `pressed`）；
 
 **规范写法（双重表示：静态回退 + 符号配方）**：

@@ -252,7 +252,7 @@
       },
       "overlay": {
         "foreground": "{foreground}",
-        "border-color": "{glass-edge}",
+        "border-color": "{line}",
         "backdropFilter": "none",
         "material": "acrylic",
         "elevation": null
@@ -265,7 +265,7 @@
       "inverse": {
         "background": "{inverse}",
         "foreground": "{inverse-foreground}",
-        "border-color": "{glass-edge}",
+        "border-color": "{line}",
         "backdropFilter": "none",
         "material": null,
         "elevation": null
@@ -273,7 +273,7 @@
       "glass": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{glass-edge}",
+        "border-color": "{line}",
         "backdropFilter": "blur(30px)",
         "material": null,
         "elevation": null

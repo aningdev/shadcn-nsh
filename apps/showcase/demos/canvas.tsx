@@ -391,13 +391,13 @@ const ridges = days.map((_, day) => {
 
 const ridgePeak = Math.max(...ridges.flat());
 
-/** Seven days, six hue roles: chart-1, up, info, warn, violet, destructive, then brand again. */
+/** Seven days, six hue roles: chart-1, up, info, warn, muted-foreground, destructive, then brand again. */
 const dayColors = [
   chart.chart1,
   colors.up,
   colors.info,
   colors.warn,
-  token("violet"),
+  colors.mutedForeground,
   colors.destructive,
   colors.brand,
 ];

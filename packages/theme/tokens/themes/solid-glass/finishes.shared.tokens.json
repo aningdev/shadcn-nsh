@@ -63,15 +63,15 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -90,7 +90,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -158,7 +158,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -248,15 +248,15 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -271,7 +271,7 @@
       "$description": "A control held down.",
       "border-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",

@@ -92,7 +92,7 @@ function App() {
   return (
     <View>
       <Text>{`focus=${JSON.stringify(focusRing())}`}</Text>
-      <Text>{`ringTokens=${String(token("ring"))}|${String(token("ring-halo"))}`}</Text>
+      <Text>{`ringTokens=${String(token("ring"))}|${String(token("card"))}`}</Text>
       <Text>{`motionFast=${showMotion(motion.fast)}`}</Text>
       <Text>{`motionDefault=${showMotion(motion.default)}`}</Text>
       <Text>{`motionSlow=${showMotion(motion.slow)}`}</Text>

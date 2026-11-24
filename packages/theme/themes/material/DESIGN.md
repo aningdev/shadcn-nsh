@@ -11,115 +11,109 @@ colors:
     foreground: "#1d1b20"
     card: "#f7f2fa"
     card-foreground: "#1d1b20"
-    popover: "#f3edf7"
+    popover: "#f7f2fa"
     popover-foreground: "#1d1b20"
     primary: "#6750a4"
     primary-foreground: "#ffffff"
     secondary: "#e8def8"
-    secondary-foreground: "#4a4458"
+    secondary-foreground: "#1d1b20"
     muted: "#e6e0e9"
     muted-foreground: "#49454f"
-    accent: "#e8def8"
-    accent-foreground: "#4a4458"
+    accent: "#e6e0e9"
+    accent-foreground: "#1d1b20"
     destructive: "#b3261e"
-    border: "#cac4d0"
+    border: "#79747e"
     input: "#79747e"
-    ring: "#625b71"
+    ring: "#6750a4"
     chart-1: "#6750a4"
-    chart-2: "#7d5260"
-    chart-3: "#625b71"
-    chart-4: "#79747e"
-    chart-5: "#cac4d0"
+    chart-2: "#138a5a"
+    chart-3: "#b26a00"
+    chart-4: "#b3261e"
+    chart-5: "#49454f"
     sidebar: "#fef7ff"
     sidebar-foreground: "#1d1b20"
     sidebar-primary: "#6750a4"
     sidebar-primary-foreground: "#ffffff"
-    sidebar-accent: "#e8def8"
-    sidebar-accent-foreground: "#4a4458"
+    sidebar-accent: "#e6e0e9"
+    sidebar-accent-foreground: "#1d1b20"
     sidebar-border: "#cac4d0"
-    sidebar-ring: "#625b71"
-    inset: "#f3edf7"
+    sidebar-ring: "#6750a4"
+    inset: "#e6e0e9"
     raised: "#f7f2fa"
-    glass-edge: "#cac4d0"
     field: "#e6e0e9"
     line: "#cac4d0"
-    hover: "#1d1b2014"
-    ring-halo: "#625b7133"
+    hover: "#e6e0e9"
     faint: "#79747e"
     brand: "#6750a4"
-    brand-edge: "#cac4d0"
+    brand-edge: "#79747e"
     track: "#e6e0e9"
     knob: "#79747e"
     info: "#6750a4"
     warn: "#b26a00"
     up: "#138a5a"
-    brand-tint: "#e8def8"
-    inverse: "#322f35"
-    inverse-foreground: "#f5eff7"
-    inverse-brand: "#d0bcff"
+    brand-tint: "#6750a41f"
+    inverse: "#1d1b20"
+    inverse-foreground: "#fef7ff"
+    inverse-brand: "#ffffff"
     info-tint: "#6750a41f"
     warn-tint: "#b26a001f"
-    destructive-tint: "#f9dedc"
+    destructive-tint: "#b3261e1f"
     up-tint: "#138a5a1f"
     down-tint: "#b3261e1f"
-    violet: "#7d5260"
   dark:
     background: "#141218"
     foreground: "#e6e0e9"
     card: "#1d1b20"
     card-foreground: "#e6e0e9"
-    popover: "#211f26"
+    popover: "#1d1b20"
     popover-foreground: "#e6e0e9"
     primary: "#d0bcff"
     primary-foreground: "#381e72"
     secondary: "#4a4458"
-    secondary-foreground: "#e8def8"
+    secondary-foreground: "#e6e0e9"
     muted: "#36343b"
     muted-foreground: "#cac4d0"
-    accent: "#4a4458"
-    accent-foreground: "#e8def8"
+    accent: "#36343b"
+    accent-foreground: "#e6e0e9"
     destructive: "#f2b8b5"
-    border: "#49454f"
+    border: "#938f99"
     input: "#938f99"
-    ring: "#ccc2dc"
+    ring: "#d0bcff"
     chart-1: "#d0bcff"
-    chart-2: "#efb8c8"
-    chart-3: "#ccc2dc"
-    chart-4: "#938f99"
-    chart-5: "#49454f"
+    chart-2: "#45d49a"
+    chart-3: "#ffb547"
+    chart-4: "#f2b8b5"
+    chart-5: "#cac4d0"
     sidebar: "#141218"
     sidebar-foreground: "#e6e0e9"
     sidebar-primary: "#d0bcff"
     sidebar-primary-foreground: "#381e72"
-    sidebar-accent: "#4a4458"
-    sidebar-accent-foreground: "#e8def8"
+    sidebar-accent: "#36343b"
+    sidebar-accent-foreground: "#e6e0e9"
     sidebar-border: "#49454f"
-    sidebar-ring: "#ccc2dc"
-    inset: "#211f26"
+    sidebar-ring: "#d0bcff"
+    inset: "#36343b"
     raised: "#1d1b20"
-    glass-edge: "#49454f"
     field: "#36343b"
     line: "#49454f"
-    hover: "#e6e0e914"
-    ring-halo: "#ccc2dc33"
+    hover: "#36343b"
     faint: "#938f99"
     brand: "#d0bcff"
-    brand-edge: "#49454f"
+    brand-edge: "#938f99"
     track: "#36343b"
     knob: "#938f99"
     info: "#d0bcff"
     warn: "#ffb547"
     up: "#45d49a"
-    brand-tint: "#4a4458"
+    brand-tint: "#d0bcff1f"
     inverse: "#e6e0e9"
-    inverse-foreground: "#322f35"
-    inverse-brand: "#6750a4"
+    inverse-foreground: "#141218"
+    inverse-brand: "#381e72"
     info-tint: "#d0bcff1f"
     warn-tint: "#ffb5471f"
-    destructive-tint: "#8c1d18"
+    destructive-tint: "#f2b8b51f"
     up-tint: "#45d49a1f"
     down-tint: "#f2b8b51f"
-    violet: "#efb8c8"
 typography:
   caption:
     fontFamily: system-ui
@@ -312,19 +306,19 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`media`** (`#10131a`): Ground behind photographs and videos; invariant across appearances.
 - **`background`** (light `#fef7ff`, dark `#141218`): Primary page surface (M3 surface role, material-web v34.0.21).
 - **`card`** (light `#f7f2fa`, dark `#1d1b20`): Elevated card container background (M3 surfaceContainerLow).
-- **`popover`** (light `#f3edf7`, dark `#211f26`): Floating popover and menu container background (M3 surfaceContainer).
+- **`popover`** (light `#f7f2fa`, dark `#1d1b20`): Floating popover and menu container background (M3 surfaceContainer).
 - **`secondary`** (light `#e8def8`, dark `#4a4458`): Secondary tonal container fill (M3 secondaryContainer).
 - **`muted`** (light `#e6e0e9`, dark `#36343b`): Muted/highest surface container fill (M3 surfaceContainerHighest).
-- **`accent`** (light `#e8def8`, dark `#4a4458`): Tonal accent fill (M3 secondaryContainer).
+- **`accent`** (light `#e6e0e9`, dark `#36343b`): Tonal accent fill (M3 secondaryContainer).
 - **`sidebar`** (light `#fef7ff`, dark `#141218`): Sidebar canvas background (M3 surface).
-- **`sidebar-accent`** (light `#e8def8`, dark `#4a4458`): Sidebar active item fill (M3 secondaryContainer).
-- **`inset`** (light `#f3edf7`, dark `#211f26`): Inset container surface (M3 surfaceContainer).
+- **`sidebar-accent`** (light `#e6e0e9`, dark `#36343b`): Sidebar active item fill (M3 secondaryContainer).
+- **`inset`** (light `#e6e0e9`, dark `#36343b`): Inset container surface (M3 surfaceContainer).
 - **`raised`** (light `#f7f2fa`, dark `#1d1b20`): Raised control surface (M3 surfaceContainerLow).
 - **`field`** (light `#e6e0e9`, dark `#36343b`): Filled text field background (M3 surfaceContainerHighest).
-- **`hover`** (light `#1d1b2014`, dark `#e6e0e914`): M3 hover state-layer ink (8% foreground over transparent, StateTokens.kt).
+- **`hover`** (light `#e6e0e9`, dark `#36343b`): M3 hover state-layer ink (8% foreground over transparent, StateTokens.kt).
 - **`track`** (light `#e6e0e9`, dark `#36343b`): Switch and slider track fill (M3 surfaceContainerHighest).
 - **`knob`** (light `#79747e`, dark `#938f99`): Unchecked switch thumb fill (M3 outline).
-- **`inverse`** (light `#322f35`, dark `#e6e0e9`): Inverse surface for snackbars and tooltips (M3 inverseSurface).
+- **`inverse`** (light `#1d1b20`, dark `#e6e0e9`): Inverse surface for snackbars and tooltips (M3 inverseSurface).
 
 ### Ink
 
@@ -332,13 +326,13 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`foreground`** (light `#1d1b20`, dark `#e6e0e9`): Default text and icon ink on surfaces (M3 onSurface).
 - **`card-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Primary text and icon ink on card surfaces.
 - **`popover-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Primary text and icon ink on popover surfaces.
-- **`secondary-foreground`** (light `#4a4458`, dark `#e8def8`): Text and icon ink on secondary containers (M3 Expressive onSecondaryContainer, Tone 30 in light).
+- **`secondary-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Text and icon ink on secondary containers (M3 Expressive onSecondaryContainer, Tone 30 in light).
 - **`muted-foreground`** (light `#49454f`, dark `#cac4d0`): Secondary supporting text and icon ink (M3 onSurfaceVariant).
-- **`accent-foreground`** (light `#4a4458`, dark `#e8def8`): Text and icon ink on accent fills (M3 Expressive onSecondaryContainer).
+- **`accent-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Text and icon ink on accent fills (M3 Expressive onSecondaryContainer).
 - **`sidebar-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Primary text and icon ink inside the sidebar.
-- **`sidebar-accent-foreground`** (light `#4a4458`, dark `#e8def8`): Sidebar active item text ink (M3 Expressive onSecondaryContainer).
+- **`sidebar-accent-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Sidebar active item text ink (M3 Expressive onSecondaryContainer).
 - **`faint`** (light `#79747e`, dark `#938f99`): Quiet caption/placeholder ink (M3 outline).
-- **`inverse-foreground`** (light `#f5eff7`, dark `#322f35`): Ink on inverse surfaces (M3 inverseOnSurface).
+- **`inverse-foreground`** (light `#fef7ff`, dark `#141218`): Ink on inverse surfaces (M3 inverseOnSurface).
 
 ### Brand
 
@@ -347,38 +341,35 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`sidebar-primary`** (light `#6750a4`, dark `#d0bcff`): Primary action highlight color in the sidebar.
 - **`sidebar-primary-foreground`** (light `#ffffff`, dark `#381e72`): Text and icon ink on sidebar-primary highlights.
 - **`brand`** (light `#6750a4`, dark `#d0bcff`): Inline brand accent ink, aliased to {color.primary}.
-- **`brand-edge`** (light `#cac4d0`, dark `#49454f`): Brand container outline (M3 outlineVariant).
-- **`brand-tint`** (light `#e8def8`, dark `#4a4458`): Opaque selected chip/tile fill (M3 secondaryContainer).
-- **`inverse-brand`** (light `#d0bcff`, dark `#6750a4`): Brand action ink on inverse surfaces (M3 inversePrimary).
+- **`brand-edge`** (light `#79747e`, dark `#938f99`): Brand container outline (M3 outlineVariant).
+- **`brand-tint`** (light `#6750a41f`, dark `#d0bcff1f`): Opaque selected chip/tile fill (M3 secondaryContainer).
+- **`inverse-brand`** (light `#ffffff`, dark `#381e72`): Brand action ink on inverse surfaces (M3 inversePrimary).
 
 ### Status
 
 - **`destructive`** (light `#b3261e`, dark `#f2b8b5`): Error and destructive action color (M3 error).
 - **`chart-1`** (light `#6750a4`, dark `#d0bcff`): First chart series color (M3 primary).
-- **`chart-2`** (light `#7d5260`, dark `#efb8c8`): Second chart series color (M3 tertiary).
-- **`chart-3`** (light `#625b71`, dark `#ccc2dc`): Third chart series color (M3 secondary).
-- **`chart-4`** (light `#79747e`, dark `#938f99`): Fourth chart series color (M3 outline).
-- **`chart-5`** (light `#cac4d0`, dark `#49454f`): Fifth chart series color (M3 outlineVariant).
+- **`chart-2`** (light `#138a5a`, dark `#45d49a`): Second chart series color (M3 tertiary).
+- **`chart-3`** (light `#b26a00`, dark `#ffb547`): Third chart series color (M3 secondary).
+- **`chart-4`** (light `#b3261e`, dark `#f2b8b5`): Fourth chart series color (M3 outline).
+- **`chart-5`** (light `#49454f`, dark `#cac4d0`): Fifth chart series color (M3 outlineVariant).
 - **`info`** (light `#6750a4`, dark `#d0bcff`): Informational semantic color matching M3 primary.
 - **`warn`** (light `#b26a00`, dark `#ffb547`): Warning semantic status color.
 - **`up`** (light `#138a5a`, dark `#45d49a`): Positive trend and growth semantic color.
 - **`info-tint`** (light `#6750a41f`, dark `#d0bcff1f`): Translucent informational wash (12% info over transparent).
 - **`warn-tint`** (light `#b26a001f`, dark `#ffb5471f`): Translucent warning wash (12% warn over transparent).
-- **`destructive-tint`** (light `#f9dedc`, dark `#8c1d18`): Tonal error container background (M3 errorContainer).
+- **`destructive-tint`** (light `#b3261e1f`, dark `#f2b8b51f`): Tonal error container background (M3 errorContainer).
 - **`up-tint`** (light `#138a5a1f`, dark `#45d49a1f`): Translucent positive wash (12% up over transparent).
 - **`down-tint`** (light `#b3261e1f`, dark `#f2b8b51f`): Translucent negative wash (12% down over transparent).
-- **`violet`** (light `#7d5260`, dark `#efb8c8`): Tertiary accent color (M3 tertiary).
 
 ### Chrome
 
-- **`border`** (light `#cac4d0`, dark `#49454f`): Hairline container border color (M3 outlineVariant).
+- **`border`** (light `#79747e`, dark `#938f99`): Hairline container border color (M3 outlineVariant).
 - **`input`** (light `#79747e`, dark `#938f99`): Input outline color (M3 outline).
-- **`ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color (M3 secondary).
+- **`ring`** (light `#6750a4`, dark `#d0bcff`): Focus indicator ring color (M3 secondary).
 - **`sidebar-border`** (light `#cac4d0`, dark `#49454f`): Sidebar divider border (M3 outlineVariant).
-- **`sidebar-ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color inside the sidebar.
-- **`glass-edge`** (light `#cac4d0`, dark `#49454f`): Overlay outline edge (M3 outlineVariant).
+- **`sidebar-ring`** (light `#6750a4`, dark `#d0bcff`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#cac4d0`, dark `#49454f`): Inset divider hairline (M3 outlineVariant).
-- **`ring-halo`** (light `#625b7133`, dark `#ccc2dc33`): Outer focus ring halo (20% ring color over transparent).
 
 ## Typography
 

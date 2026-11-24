@@ -19,36 +19,34 @@ colors:
     secondary-foreground: "#000000"
     muted: "#efeff0"
     muted-foreground: "#8a8a8e"
-    accent: "#f4f4f5"
+    accent: "#efeff0"
     accent-foreground: "#000000"
     destructive: "#ff3b30"
     border: "#dcdcdd"
-    input: "#c6c6c8"
+    input: "#dcdcdd"
     ring: "#007aff"
     chart-1: "#007aff"
     chart-2: "#34c759"
     chart-3: "#ff9500"
-    chart-4: "#af52de"
-    chart-5: "#ff3b30"
+    chart-4: "#ff3b30"
+    chart-5: "#8a8a8e"
     sidebar: "#f2f2f7"
     sidebar-foreground: "#000000"
     sidebar-primary: "#007aff"
     sidebar-primary-foreground: "#ffffff"
-    sidebar-accent: "#f4f4f5"
+    sidebar-accent: "#efeff0"
     sidebar-accent-foreground: "#000000"
     sidebar-border: "#dcdcdd"
     sidebar-ring: "#007aff"
-    inset: "#f4f4f5"
+    inset: "#efeff0"
     raised: "#efeff0"
-    glass-edge: "#dcdcdd"
     field: "#efeff0"
     line: "#dcdcdd"
-    hover: "#0000000f"
-    ring-halo: "#007aff4d"
+    hover: "#efeff0"
     faint: "#c5c5c7"
     brand: "#007aff"
     brand-edge: "#dcdcdd"
-    track: "#e9e9eb"
+    track: "#efeff0"
     knob: "#ffffff"
     info: "#007aff"
     warn: "#ff9500"
@@ -62,13 +60,12 @@ colors:
     destructive-tint: "#ff3b301f"
     up-tint: "#34c7591f"
     down-tint: "#ff3b301f"
-    violet: "#af52de"
   dark:
     background: "#000000"
     foreground: "#ffffff"
     card: "#1c1c1e"
     card-foreground: "#ffffff"
-    popover: "#2c2c2e"
+    popover: "#1c1c1e"
     popover-foreground: "#ffffff"
     primary: "#0a84ff"
     primary-foreground: "#ffffff"
@@ -76,42 +73,40 @@ colors:
     secondary-foreground: "#ffffff"
     muted: "#323236"
     muted-foreground: "#98989f"
-    accent: "#2c2c30"
+    accent: "#323236"
     accent-foreground: "#ffffff"
     destructive: "#ff453a"
     border: "#353538"
-    input: "#3e3e41"
+    input: "#353538"
     ring: "#0a84ff"
     chart-1: "#0a84ff"
     chart-2: "#30d158"
     chart-3: "#ff9f0a"
-    chart-4: "#bf5af2"
-    chart-5: "#ff453a"
-    sidebar: "#1c1c1e"
+    chart-4: "#ff453a"
+    chart-5: "#98989f"
+    sidebar: "#000000"
     sidebar-foreground: "#ffffff"
     sidebar-primary: "#0a84ff"
     sidebar-primary-foreground: "#ffffff"
-    sidebar-accent: "#2c2c30"
+    sidebar-accent: "#323236"
     sidebar-accent-foreground: "#ffffff"
     sidebar-border: "#353538"
     sidebar-ring: "#0a84ff"
-    inset: "#2c2c30"
+    inset: "#323236"
     raised: "#323236"
-    glass-edge: "#353538"
     field: "#323236"
     line: "#353538"
-    hover: "#ffffff0f"
-    ring-halo: "#0a84ff4d"
+    hover: "#323236"
     faint: "#5a5a5f"
     brand: "#0a84ff"
     brand-edge: "#353538"
-    track: "#39393d"
+    track: "#323236"
     knob: "#ffffff"
     info: "#0a84ff"
     warn: "#ff9f0a"
     up: "#30d158"
     brand-tint: "#0a84ff1f"
-    inverse: "#2c2c2e"
+    inverse: "#1c1c1e"
     inverse-foreground: "#ffffff"
     inverse-brand: "#ffffff"
     info-tint: "#0a84ff1f"
@@ -119,7 +114,6 @@ colors:
     destructive-tint: "#ff453a1f"
     up-tint: "#30d1581f"
     down-tint: "#ff453a1f"
-    violet: "#bf5af2"
 typography:
   caption:
     fontFamily: system-ui
@@ -312,19 +306,19 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`media`** (`#10131a`): Ground behind photographs and videos; invariant across appearances.
 - **`background`** (light `#f2f2f7`, dark `#000000`): Grouped page canvas background (UIKit systemGroupedBackground).
 - **`card`** (light `#ffffff`, dark `#1c1c1e`): Elevated list and card surface (UIKit systemBackground).
-- **`popover`** (light `#ffffff`, dark `#2c2c2e`): Floating popover and sheet surface (UIKit secondarySystemBackground / popover).
+- **`popover`** (light `#ffffff`, dark `#1c1c1e`): Floating popover and sheet surface (UIKit secondarySystemBackground / popover).
 - **`secondary`** (light `#efeff0`, dark `#323236`): Secondary control surface fill.
 - **`muted`** (light `#efeff0`, dark `#323236`): Subdued container fill (UIKit tertiarySystemFill composited over card).
-- **`accent`** (light `#f4f4f5`, dark `#2c2c30`): Subtle hover/selection fill (UIKit quaternarySystemFill composited over card).
-- **`sidebar`** (light `#f2f2f7`, dark `#1c1c1e`): Sidebar surface matching Apple system sidebar/grouped background.
-- **`sidebar-accent`** (light `#f4f4f5`, dark `#2c2c30`): Selected or active row fill in the sidebar.
-- **`inset`** (light `#f4f4f5`, dark `#2c2c30`): Inset surface (UIKit quaternarySystemFill composited over card).
+- **`accent`** (light `#efeff0`, dark `#323236`): Subtle hover/selection fill (UIKit quaternarySystemFill composited over card).
+- **`sidebar`** (light `#f2f2f7`, dark `#000000`): Sidebar surface matching Apple system sidebar/grouped background.
+- **`sidebar-accent`** (light `#efeff0`, dark `#323236`): Selected or active row fill in the sidebar.
+- **`inset`** (light `#efeff0`, dark `#323236`): Inset surface (UIKit quaternarySystemFill composited over card).
 - **`raised`** (light `#efeff0`, dark `#323236`): Raised control surface (UIKit tertiarySystemFill composited over card).
 - **`field`** (light `#efeff0`, dark `#323236`): Form input background (UIKit tertiarySystemFill composited over card).
-- **`hover`** (light `#0000000f`, dark `#ffffff0f`): Pointer hover tint (6% foreground ink over transparent).
-- **`track`** (light `#e9e9eb`, dark `#39393d`): Switch and slider track (UIKit secondarySystemFill composited over card).
+- **`hover`** (light `#efeff0`, dark `#323236`): Pointer hover tint (6% foreground ink over transparent).
+- **`track`** (light `#efeff0`, dark `#323236`): Switch and slider track (UIKit secondarySystemFill composited over card).
 - **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
-- **`inverse`** (light `#ffffff`, dark `#2c2c2e`): High-contrast surface for toasts and tooltips.
+- **`inverse`** (light `#ffffff`, dark `#1c1c1e`): High-contrast surface for toasts and tooltips.
 
 ### Ink
 
@@ -357,8 +351,8 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`chart-1`** (light `#007aff`, dark `#0a84ff`): First chart series color (UIKit systemBlue).
 - **`chart-2`** (light `#34c759`, dark `#30d158`): Second chart series color (UIKit systemGreen).
 - **`chart-3`** (light `#ff9500`, dark `#ff9f0a`): Third chart series color (UIKit systemOrange).
-- **`chart-4`** (light `#af52de`, dark `#bf5af2`): Fourth chart series color (UIKit systemPurple).
-- **`chart-5`** (light `#ff3b30`, dark `#ff453a`): Fifth chart series color (UIKit systemRed).
+- **`chart-4`** (light `#ff3b30`, dark `#ff453a`): Fourth chart series color (UIKit systemPurple).
+- **`chart-5`** (light `#8a8a8e`, dark `#98989f`): Fifth chart series color (UIKit systemRed).
 - **`info`** (light `#007aff`, dark `#0a84ff`): Informational semantic color (UIKit systemBlue).
 - **`warn`** (light `#ff9500`, dark `#ff9f0a`): Warning semantic color (UIKit systemOrange).
 - **`up`** (light `#34c759`, dark `#30d158`): Positive trend semantic color (UIKit systemGreen).
@@ -367,18 +361,15 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`destructive-tint`** (light `#ff3b301f`, dark `#ff453a1f`): Translucent destructive wash (12% destructive over transparent).
 - **`up-tint`** (light `#34c7591f`, dark `#30d1581f`): Translucent positive wash (12% up over transparent).
 - **`down-tint`** (light `#ff3b301f`, dark `#ff453a1f`): Translucent negative wash (12% destructive over transparent).
-- **`violet`** (light `#af52de`, dark `#bf5af2`): Accent purple ink (UIKit systemPurple).
 
 ### Chrome
 
 - **`border`** (light `#dcdcdd`, dark `#353538`): Hairline separator (UIKit separator hairline composited over card).
-- **`input`** (light `#c6c6c8`, dark `#3e3e41`): Input control border (UIKit separator composited over card).
+- **`input`** (light `#dcdcdd`, dark `#353538`): Input control border (UIKit separator composited over card).
 - **`ring`** (light `#007aff`, dark `#0a84ff`): Focus ring color matching UIKit systemBlue.
 - **`sidebar-border`** (light `#dcdcdd`, dark `#353538`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#007aff`, dark `#0a84ff`): Focus indicator ring color inside the sidebar.
-- **`glass-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on glass, pill, and floating overlay surfaces.
 - **`line`** (light `#dcdcdd`, dark `#353538`): Inset divider hairline (UIKit hairline composited over card).
-- **`ring-halo`** (light `#007aff4d`, dark `#0a84ff4d`): Outer keyboard focus halo (30% ring color over transparent).
 
 ## Typography
 

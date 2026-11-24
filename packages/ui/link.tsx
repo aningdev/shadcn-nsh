@@ -34,7 +34,7 @@ export interface LinkState {
   quiet?: boolean;
 }
 
-/** A link's color: the accent; violet once visited; the text color for the
+/** A link's color: the accent; muted once visited; the text color for the
  * current page; muted when quiet; faint while disabled. */
 export function linkColor(o?: LinkState): string {
   return o?.disabled
@@ -42,7 +42,7 @@ export function linkColor(o?: LinkState): string {
     : o?.current
       ? colors.foreground
       : o?.visited
-        ? token("violet")
+        ? colors.mutedForeground
         : o?.quiet
           ? colors.mutedForeground
           : colors.brand;
@@ -116,7 +116,7 @@ export type LinkProps = Omit<BaseLinkProps, "children"> & {
   quiet?: boolean;
   /** The page it names is the one shown. */
   current?: boolean;
-  /** The app has opened it before (violet). */
+  /** The app has opened it before (muted). */
   visited?: boolean;
   /** Inline on a paragraph's baseline. */
   inline?: boolean;

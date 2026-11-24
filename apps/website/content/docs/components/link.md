@@ -59,8 +59,8 @@ A string child is the link's name for screen readers too, so `<Link href="/docs"
 
 ## API
 
-| Part   | Props                                                                                                                                                                                                                         | Description                           |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `Link` | `quiet`: `boolean` (muted footer style), `current`: `boolean` (current page), `visited`: `boolean` (violet once opened), `inline`: `boolean` (in a paragraph), `icon`: `boolean` (external arrow); every `nsh/base` Link prop | A text link with the underline motion |
+| Part   | Props                                                                                                                                                                                                                        | Description                           |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `Link` | `quiet`: `boolean` (muted footer style), `current`: `boolean` (current page), `visited`: `boolean` (muted once opened), `inline`: `boolean` (in a paragraph), `icon`: `boolean` (external arrow); every `nsh/base` Link prop | A text link with the underline motion |
 
 Uses `linkLook` and `LinkText`. Every prop of [`nsh/base` Link](https://nsh.dev/elements/link) passes through.

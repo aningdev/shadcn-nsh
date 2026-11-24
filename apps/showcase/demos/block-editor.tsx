@@ -422,7 +422,7 @@ const TEXT_COLORS: { name: string; label: string; class: string }[] = [
   { name: "orange", label: "Orange", class: "text-warn" },
   { name: "green", label: "Green", class: "text-up" },
   { name: "blue", label: "Blue", class: "text-info" },
-  { name: "purple", label: "Purple", class: "text-violet" },
+  { name: "purple", label: "Brand", class: "text-brand" },
 ];
 
 /**

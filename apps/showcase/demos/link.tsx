@@ -35,7 +35,7 @@ const TITLED =
   'Read [the changelog](https://nsh.dev/changelog "What changed in this release") before you update: a Markdown link shows its title over the address.';
 
 /**
- * A link of the gallery's look, with the app's memory of what it opened: the accent, violet once
+ * A link of the gallery's look, with the app's memory of what it opened: the accent, muted once
  * visited, the text color for the current page, muted when quiet, and a footer's closed page
  * staying disabled. `onRoute` hears the press the way the app routes it.
  */
@@ -98,7 +98,7 @@ function Paragraph() {
         {"."}
       </Text>
       <CaptionRow
-        label="Opened links turn violet; the app remembers them"
+        label="Opened links turn muted; the app remembers them"
         note={`${visited().size} visited`}
       />
     </Card>

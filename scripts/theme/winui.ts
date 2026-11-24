@@ -34,6 +34,7 @@ import {
   toOklchText,
   withAlpha,
 } from "./oklch";
+import { reduceColours, type ColourScheme } from "./sources";
 
 export type Appearance = "light" | "dark";
 
@@ -311,11 +312,9 @@ export type WinuiAppearanceRole =
   | "sidebar-ring"
   | "inset"
   | "raised"
-  | "glass-edge"
   | "field"
   | "line"
   | "hover"
-  | "ring-halo"
   | "faint"
   | "brand"
   | "brand-edge"
@@ -332,24 +331,13 @@ export type WinuiAppearanceRole =
   | "warn-tint"
   | "destructive-tint"
   | "up-tint"
-  | "down-tint"
-  | "violet";
+  | "down-tint";
 
 export interface WinuiRoles {
   theme: Record<WinuiThemeRole, string>;
   light: Record<WinuiAppearanceRole, string>;
   dark: Record<WinuiAppearanceRole, string>;
 }
-
-// Library-shared values with no WinUI counterpart (`violet` data series).
-const LIBRARY_KEPT = {
-  light: {
-    violet: "oklch(0.5339 0.1647 289.689)",
-  },
-  dark: {
-    violet: "oklch(0.76787 0.13219 294.446)",
-  },
-} as const;
 
 function buildAppearance(
   appearance: Appearance,
@@ -419,11 +407,9 @@ function buildAppearance(
     "sidebar-ring": "var(--ring)",
     inset,
     raised: secondary,
-    "glass-edge": onBase(w.SurfaceStrokeColorFlyout),
     field: secondary,
     line: divider,
     hover: onBase(w.ControlFillColorSecondary),
-    "ring-halo": onBase(w.FocusStrokeColorInner),
     faint: onBase(w.TextFillColorTertiary),
     brand,
     // `ControlStrokeColorOnAccentSecondary` (bottom bevel of `AccentControlElevationBorderBrush`)
@@ -447,7 +433,6 @@ function buildAppearance(
     "destructive-tint": destructiveTint,
     "up-tint": onBase(w.SystemFillColorSuccessBackground),
     "down-tint": destructiveTint,
-    violet: LIBRARY_KEPT[appearance].violet,
   };
 }
 
@@ -610,6 +595,19 @@ export const winuiStyle = {
   },
 };
 
+/** The choices the derived keys make (ADR 0007 §4): `border` is the control stroke WinUI draws on a field's edge. */
+const colourScheme: ColourScheme = {
+  tint: 14,
+  ring: "foreground",
+  field: "card",
+  knob: ["muted-foreground", "muted-foreground"],
+  secondaryIsRaised: false,
+  raised: "card",
+  strongBorder: true,
+  inverse: ["card", "foreground"],
+  chart: ["primary", "info", "up", "warn", "destructive"],
+};
+
 /** WinUI 3 (Windows 11) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
 export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGeneratorOutput {
   const roles = winuiRoles(accent);
@@ -652,12 +650,9 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "sidebar-ring": "Sidebar focus stroke (WinUI FocusStrokeColorOuter).",
     inset: "Inset well fill (WinUI ControlAltFillColorSecondary composited over base).",
     raised: "Raised control fill (WinUI ControlFillColorDefault composited over base).",
-    "glass-edge":
-      "Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base).",
     field: "Text input surface (WinUI ControlFillColorDefault composited over base).",
     line: "Hairline divider stroke (WinUI DividerStrokeColorDefault).",
     hover: "Pointer hover fill (WinUI ControlFillColorSecondary composited over base).",
-    "ring-halo": "Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base).",
     faint: "Tertiary label ink (WinUI TextFillColorTertiary composited over base).",
     brand:
       "Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark).",
@@ -682,7 +677,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "up-tint": "Success wash (WinUI SystemFillColorSuccessBackground composited over base).",
     "down-tint":
       "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base).",
-    violet: "Library-retained violet data-series hue (no WinUI equivalent).",
   };
 
   return {
@@ -746,8 +740,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     },
     cssVars: {
       theme: themeLevel(roles),
-      light: roles.light,
-      dark: roles.dark,
+      light: reduceColours(roles.light, colourScheme, "light"),
+      dark: reduceColours(roles.dark, colourScheme, "dark"),
     },
     finishes,
     shadows,

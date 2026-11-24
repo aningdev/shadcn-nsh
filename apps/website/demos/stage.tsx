@@ -268,7 +268,6 @@ export const ui = () => ({
   info: colors.info,
   warn: colors.warn,
   danger: colors.destructive,
-  violet: token("violet"),
   // The ink of content drawn over a photograph, a caption or a chart's tile: `on-media`, the one
   // text role the theme keeps out of the appearance (a carousel's caption, a chart's label).
   onMedia: colors.onMedia,

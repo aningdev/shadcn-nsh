@@ -25,6 +25,7 @@ import { finishes, shadows } from "./finishes/solid-glass";
  * compiles `packages/theme/themes/solid-glass/{theme,semantics}.json`.
  */
 import { over } from "./oklch";
+import { reduceColours, type ColourScheme } from "./sources";
 import { scaledRadii } from "./style";
 
 /** One appearance of the stylesheet's variables, by name (without the `--`). */
@@ -54,7 +55,6 @@ const LIGHT: Source = {
   // hairline round the outside, the shadow underneath.
   "glass-rim": "oklch(1 0 0 / 90%)",
   "glass-inner": "oklch(1 0 0 / 35%)",
-  "glass-edge": "oklch(0.38 0.03 265 / 10%)",
   "popover-edge": "oklch(0.38 0.03 265 / 22%)",
   "popover-under": "oklch(0.38 0.03 265 / 16%)",
   "glass-shade": "oklch(0.3 0.06 265 / 28%)",
@@ -127,7 +127,6 @@ const DARK: Source = {
   ring: "oklch(0.52 0 0)",
   "glass-rim": "oklch(1 0 0 / 16%)",
   "glass-inner": "oklch(1 0 0 / 4%)",
-  "glass-edge": "oklch(1 0 0 / 6%)",
   "popover-edge": "oklch(1 0 0 / 6%)",
   "popover-under": "oklch(0 0 0 / 0%)",
   "glass-shade": "oklch(0 0 0 / 60%)",
@@ -256,6 +255,18 @@ function laid(appearance: Appearance) {
  * the colour written here. The tints that are *meant* to let a surface through (`muted`, `accent`,
  * `hover`, `border`, `field`, `raised`, the `*-tint`s) stay translucent.
  */
+/** The choices the derived keys make (ADR 0007 §4). */
+const scheme: ColourScheme = {
+  tint: 12,
+  ring: "primary",
+  field: "card",
+  knob: ["card", "foreground"],
+  secondaryIsRaised: true,
+  raised: "secondary",
+  inverse: ["card", "foreground"],
+  chart: "ramp",
+};
+
 function section(appearance: Appearance): Record<string, string> {
   const s = source(appearance);
   const panes = laid(appearance);
@@ -305,14 +316,11 @@ function section(appearance: Appearance): Record<string, string> {
     // `color-mix(in oklab, var(--primary) 55%, var(--primary-edge))`, mixed here because the two
     // ends are greys and the mix is one value (`mixed`).
     "brand-edge": m.hairline,
-    // The line round a glass surface: the stylesheet's one hairline, `--glass-edge`.
-    "glass-edge": s("glass-edge"),
     // A field's well: a pane of clear glass to type on, its rim drawn by the finish.
     field: s("field"),
     // Hairlines inside insets: the stylesheet has one hairline, `--border`.
     line: "var(--border)",
     hover: s("hover"),
-    "ring-halo": "color-mix(in srgb, var(--ring) 45%, transparent)",
     // The quietest text: `--ring` is a step off the muted grey in each appearance (lighter on the
     // pale page, darker on the dark one).
     faint: s("ring"),
@@ -336,7 +344,6 @@ function section(appearance: Appearance): Record<string, string> {
     "destructive-tint": tint("destructive"),
     "up-tint": tint("up"),
     "down-tint": tint("destructive"),
-    violet: s("syn-name"),
   };
 }
 
@@ -364,7 +371,6 @@ export function themeFiles(): ThemeGeneratorOutput {
     sidebar: "Opaque composite of Solid Glass panel pane over background canvas.",
     inset: "Opaque composite of Solid Glass thinnest panel pane laid over card.",
     "brand-edge": "Primary button hairline mixed from --primary and --primary-edge.",
-    "glass-edge": "Hairline border on Solid Glass panes (--glass-edge).",
     "brand-tint": "Static translucent teal brand wash (--brand-muted).",
   };
 
@@ -397,8 +403,8 @@ export function themeFiles(): ThemeGeneratorOutput {
     },
     cssVars: {
       theme: themeLevel(),
-      light: section("light"),
-      dark: section("dark"),
+      light: reduceColours(section("light"), scheme, "light"),
+      dark: reduceColours(section("dark"), scheme, "dark"),
     },
     finishes,
     shadows,

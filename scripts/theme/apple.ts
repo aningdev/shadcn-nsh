@@ -13,6 +13,7 @@
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { finishes, shadows } from "./finishes/apple";
 import { oklchColor, over, toOklchText } from "./oklch";
+import { reduceColours, type ColourScheme } from "./sources";
 
 /** Apple's system colours, per appearance (sRGB, as UIKit documents them). */
 const SYSTEM = {
@@ -96,7 +97,6 @@ function palette(appearance: Appearance) {
     info: t(s.blue),
     warn: t(s.orange),
     up: t(s.green),
-    violet: t(s.purple),
   };
 }
 
@@ -117,6 +117,18 @@ const themeLevel = (): Record<string, string> => ({
   media: oklchColor(0.1869, 0.0151, 266.766),
   "on-media": oklchColor(1, 0, 0),
 });
+
+/** The choices the derived keys make (ADR 0007 §4). */
+const scheme: ColourScheme = {
+  tint: 12,
+  ring: "primary",
+  field: "muted",
+  knob: ["card", "foreground"],
+  secondaryIsRaised: true,
+  raised: "secondary",
+  inverse: ["card", "foreground"],
+  chart: ["primary", "up", "warn", "destructive", "muted-foreground"],
+};
 
 /** One appearance's colour tokens. */
 function section(p: ReturnType<typeof palette>) {
@@ -154,11 +166,9 @@ function section(p: ReturnType<typeof palette>) {
     "sidebar-ring": "var(--ring)",
     inset: p.inset,
     raised: p.raised,
-    "glass-edge": "var(--border)",
     field: p.field,
     line: p.line,
     hover: "color-mix(in srgb, var(--foreground) 6%, transparent)",
-    "ring-halo": "color-mix(in srgb, var(--ring) 30%, transparent)",
     faint: p.faint,
     brand: p.primary,
     "brand-edge": "var(--border)",
@@ -176,7 +186,6 @@ function section(p: ReturnType<typeof palette>) {
     "destructive-tint": tints("destructive"),
     "up-tint": tints("up"),
     "down-tint": tints("destructive"),
-    violet: p.violet,
   };
 }
 
@@ -309,7 +318,6 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     field: "Form input background (UIKit tertiarySystemFill composited over card).",
     line: "Inset divider hairline (UIKit hairline composited over card).",
     hover: "Pointer hover tint (6% foreground ink over transparent).",
-    "ring-halo": "Outer keyboard focus halo (30% ring color over transparent).",
     faint: "Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel).",
     brand: "Inline brand accent ink (UIKit systemBlue).",
     track: "Switch and slider track (UIKit secondarySystemFill composited over card).",
@@ -323,7 +331,6 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     "destructive-tint": "Translucent destructive wash (12% destructive over transparent).",
     "up-tint": "Translucent positive wash (12% up over transparent).",
     "down-tint": "Translucent negative wash (12% destructive over transparent).",
-    violet: "Accent purple ink (UIKit systemPurple).",
   };
 
   return {
@@ -380,8 +387,8 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     },
     cssVars: {
       theme: themeLevel(),
-      light: section(palette("light")),
-      dark: section(palette("dark")),
+      light: reduceColours(section(palette("light")), scheme, "light"),
+      dark: reduceColours(section(palette("dark")), scheme, "dark"),
     },
     finishes,
     shadows,

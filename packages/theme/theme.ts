@@ -617,12 +617,8 @@ export interface Palette {
   border: string;
   /** Hairlines inside insets. */
   line: string;
-  /** The edge a filled pane draws (a primary button, a chosen run, a chip): the accent a step down,
-   * or `border` where the theme's fill is flat. */
+  /** The edge a filled pane draws (a primary button, a chosen run, a chip): `border`. */
   brandEdge: string;
-  /** The hairline round a glass surface (a raised pane, a track's thumb, a popover): Solid Glass' own
-   * line, `border` in a flat theme. */
-  glassEdge: string;
   /** Body text. */
   foreground: string;
   /** Secondary text: a detail, a caption. */
@@ -688,7 +684,6 @@ export const colors: Palette = tokens<keyof Palette>({
   border: "border",
   line: "line",
   brandEdge: "brand-edge",
-  glassEdge: "glass-edge",
   foreground: "foreground",
   mutedForeground: "muted-foreground",
   faint: "faint",
@@ -1145,9 +1140,9 @@ export const hovered = (ink: keyof Tokens = "foreground"): ViewStyle => {
 
 /**
  * The keyboard focus (`focusVisibleStyle`: not after a click or a tap):
- * - `"halo"`: `borderColor` turns `ring` and a halo of `ring-halo` (`focus.width` points, 3 by default) sits outside.
+ * - `"halo"`: `borderColor` turns `ring` and a halo of `ring` at 30% (`focus.width` points, 3 by default) sits outside.
  * - `"outline"`: `borderColor` stays untouched; `outlineColor` is `ring`.
- * - `"double"`: `borderColor` stays untouched; a 1 px line of `ring-halo` hugs the edge (a spread shadow, which
+ * - `"double"`: `borderColor` stays untouched; a 1 px line of `card` hugs the edge (a spread shadow, which
  *   stands in for the surface's own shadow while focused) and the `focus.width` outline of `ring` lies just outside
  *   it, so the outline's offset grows by that 1 px (WinUI 3's `FocusStrokeColorInner` / `Outer`).
  */
@@ -1156,7 +1151,7 @@ export const focusRing = (offset?: number): ViewStyle => {
   const ringOutline: ViewStyle = {
     outlineStyle: "solid",
     outlineWidth: width,
-    outlineColor: token(look === "halo" ? "ring-halo" : "ring"),
+    outlineColor: look === "halo" ? alpha(token("ring"), 0.3) : token("ring"),
     outlineOffset: offset ?? base,
   };
   if (look === "halo") {
@@ -1169,7 +1164,7 @@ export const focusRing = (offset?: number): ViewStyle => {
     return {
       ...ringOutline,
       outlineOffset: (offset ?? base) + 1,
-      boxShadow: `0 0 0 1px ${token("ring-halo")}`,
+      boxShadow: `0 0 0 1px ${token("card")}`,
     };
   }
   return ringOutline;

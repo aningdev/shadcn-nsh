@@ -200,7 +200,7 @@ packages/theme/themes/<id>/
 
 `stroke` 只有两条（#265）：控件描边 `stroke.control`，其余是 `stroke.hairline`。Material 的表面不要边，做法是在 finish 里把 `border-color` 写成 `transparent`（`card`、`overlay`、`modal` 等），而不是把线宽设成 0 —— 线宽是画布的属性，0 会让 Material 之外的组件也少一条边。
 
-`focus.style` 白名单包含 `halo`、`outline` 与 `double`（#231）：`halo` 给边缘着色并绕 `ring-halo` 光晕，`outline` 只画 `ring` 外框而不改 `borderColor`，`double` 在边缘外先画一条 1 px 的 `ring-halo`（扩散阴影，聚焦时代替表面自己的阴影），`ring` 外框再往外让出这 1 px，对应 WinUI 3 的 `FocusStrokeColorOuter` / `FocusStrokeColorInner`。焦点环的线宽只有 `focus.width` 一个键（1b 并掉了 `stroke.focus`）。
+`focus.style` 白名单包含 `halo`、`outline` 与 `double`（#231）：`halo` 给边缘着色并绕 `ring` 的 30% 光晕，`outline` 只画 `ring` 外框而不改 `borderColor`，`double` 在边缘外先画一条 1 px 的 `card`（扩散阴影，聚焦时代替表面自己的阴影），`ring` 外框再往外让出这 1 px，对应 WinUI 3 的 `FocusStrokeColorOuter` / `FocusStrokeColorInner`。焦点环的线宽只有 `focus.width` 一个键（1b 并掉了 `stroke.focus`）。
 
 #### 控件专属几何与颜色（checkbox / switch / slider / radio / progress / spinner / tabs / calendar）
 
@@ -270,7 +270,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 "overlay": {
   "background": "oklch(from {popover} l c h / 0.85)",
   "shadow": "…",
-  "border-color": "{glass-edge}",
+  "border-color": "{line}",
   "backdropFilter": "blur(30px)",   // 平台不画材质时的回落，所有平台都用得上
   "$extensions": { "dev.aning.shadcn-nsh": { "material": "acrylic" } }
 },
@@ -431,7 +431,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 
 在 `material`（#224）与 `winui`（#225 / #240）之前补齐剩余跨平台主题原语，四套现有主题保持零像素变化：
 
-- ✅ `focus.style: "double"`：贴边 1 px `ring-halo`（扩散阴影）+ 其外 `focus.width` 宽 `ring` 实线；只有 `halo` 写 `borderColor: token("ring")`，`outline` 与 `double` 均不覆写边框色。
+- ✅ `focus.style: "double"`：贴边 1 px `card`（扩散阴影）+ 其外 `focus.width` 宽 `ring` 实线；只有 `halo` 写 `borderColor: token("ring")`，`outline` 与 `double` 均不覆写边框色。
 - ✅ `motion` 时序曲线联合类型：`press` / `settle` / `control` / `move` 均支持 `{ stiffness, damping }` 或 `{ duration, easing }`，响应式随 `selectTheme()` 切换，经 `animate()`、`follow()` 与 `Roll` 统一分发并尊从 `reduceMotion()`。
 - ✅ 曲线白名单扩至 9 项（`out-cubic`、`in-cubic`、`in-out-cubic`、`standard`、`emphasized-decelerate`、`emphasized-accelerate`、`decelerate`、`accelerate`、`point-to-point`），`enter.easing` 与时序角色共享一份清单。
 - ✅ `stateLayer(kind, ink?, under?)` 按表面前景墨色（强调/品牌、选中开关、破坏性与反色各传对应 token）把叠色叠在已有 `backgroundImage` 之上；`hovered(ink?, under?)` 仅在 `overlay.hover === 0` 时写 `backgroundColor: token("hover")`。

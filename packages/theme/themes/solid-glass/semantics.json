@@ -237,16 +237,16 @@
       "raised": {
         "background": "{raised}",
         "foreground": "{foreground}",
-        "border-color": "{glass-edge}",
-        "border-top-color": "{glass-edge}",
-        "border-bottom-color": "{glass-edge}",
+        "border-color": "{line}",
+        "border-top-color": "{line}",
+        "border-bottom-color": "{line}",
         "backdropFilter": "none",
         "material": null
       },
       "plate": {
         "background": "{field}",
         "foreground": "{foreground}",
-        "border-color": "{glass-edge}",
+        "border-color": "{line}",
         "elevation": null
       },
       "overlay": {
@@ -271,7 +271,7 @@
       },
       "glass": {
         "foreground": "{foreground}",
-        "border-color": "{glass-edge}",
+        "border-color": "{line}",
         "background": "{raised}",
         "material": null,
         "elevation": null
@@ -299,14 +299,14 @@
       "hover": {
         "foreground": "{foreground}",
         "background": "{hover}",
-        "border-color": "{glass-edge}",
-        "border-top-color": "{glass-edge}",
-        "border-bottom-color": "{glass-edge}",
+        "border-color": "{line}",
+        "border-top-color": "{line}",
+        "border-bottom-color": "{line}",
         "elevation": null
       },
       "pressed": {
         "foreground": "{foreground}",
-        "border-color": "{glass-edge}",
+        "border-color": "{line}",
         "elevation": null
       },
       "disabled": {

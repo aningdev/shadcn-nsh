@@ -97,7 +97,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -136,7 +136,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -151,7 +151,7 @@
       "$description": "A translucent surface: what is behind it shows through.",
       "border-color": {
         "$type": "color",
-        "$value": "{color.glass-edge}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",

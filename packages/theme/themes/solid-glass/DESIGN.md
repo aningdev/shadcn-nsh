@@ -11,7 +11,7 @@ colors:
     foreground: "#0d0d0d"
     card: "#eff1f5"
     card-foreground: "#0d0d0d"
-    popover: "#f8f9fb"
+    popover: "#eff1f5"
     popover-foreground: "#0d0d0d"
     primary: "#161616"
     primary-foreground: "#fafafa"
@@ -19,56 +19,53 @@ colors:
     secondary-foreground: "#0d0d0d"
     muted: "#292e3812"
     muted-foreground: "#5b5b5b"
-    accent: "#292e3817"
+    accent: "#292e3812"
     accent-foreground: "#0d0d0d"
     destructive: "#e7000b"
     border: "#292e3821"
-    input: "#292e3824"
-    ring: "#16161680"
-    chart-1: "#9e9e9e"
-    chart-2: "#6f6f6f"
-    chart-3: "#525252"
-    chart-4: "#3a3a3a"
-    chart-5: "#262626"
-    sidebar: "#ebedf2"
-    sidebar-foreground: "#222222"
+    input: "#292e3821"
+    ring: "#161616"
+    chart-1: "#222323"
+    chart-2: "#4e4e50"
+    chart-3: "#6e6f71"
+    chart-4: "#8e8f92"
+    chart-5: "#aeb0b4"
+    sidebar: "#e4e6eb"
+    sidebar-foreground: "#0d0d0d"
     sidebar-primary: "#161616"
     sidebar-primary-foreground: "#fafafa"
-    sidebar-accent: "#292e3817"
+    sidebar-accent: "#292e3812"
     sidebar-accent-foreground: "#0d0d0d"
-    sidebar-border: "#292e381f"
-    sidebar-ring: "#16161680"
-    inset: "#f2f4f7"
+    sidebar-border: "#292e3821"
+    sidebar-ring: "#161616"
+    inset: "#292e3812"
     raised: "#ffffff8c"
-    glass-edge: "#3b42531a"
-    field: "#ffffff99"
+    field: "#eff1f5"
     line: "#292e3821"
-    hover: "#292e381a"
-    ring-halo: "#16161639"
+    hover: "#292e3812"
     faint: "#9e9e9e"
-    brand: "#00754f"
-    brand-edge: "#161616af"
-    track: "#292e3826"
-    knob: "#ffffff"
+    brand: "#161616"
+    brand-edge: "#292e3821"
+    track: "#292e3812"
+    knob: "#eff1f5"
     info: "#0078cc"
     warn: "#d87400"
     up: "#0a924b"
-    brand-tint: "#2eb1841f"
-    inverse: "#f8f9fb"
+    brand-tint: "#1616161f"
+    inverse: "#eff1f5"
     inverse-foreground: "#0d0d0d"
     inverse-brand: "#fafafa"
-    info-tint: "#0078cc1a"
-    warn-tint: "#d874001a"
-    destructive-tint: "#e7000b1a"
-    up-tint: "#0a924b1a"
-    down-tint: "#e7000b1a"
-    violet: "#743c98"
+    info-tint: "#0078cc1f"
+    warn-tint: "#d874001f"
+    destructive-tint: "#e7000b1f"
+    up-tint: "#0a924b1f"
+    down-tint: "#e7000b1f"
   dark:
     background: "#0d0d0d"
     foreground: "#fafafa"
     card: "#1d1d1d"
     card-foreground: "#fafafa"
-    popover: "#1a1a1a"
+    popover: "#1d1d1d"
     popover-foreground: "#fafafa"
     primary: "#ebebeb"
     primary-foreground: "#121212"
@@ -76,50 +73,47 @@ colors:
     secondary-foreground: "#fafafa"
     muted: "#ffffff12"
     muted-foreground: "#a4a4a4"
-    accent: "#ffffff14"
+    accent: "#ffffff12"
     accent-foreground: "#fafafa"
     destructive: "#ff6467"
     border: "#ffffff1c"
-    input: "#ffffff14"
-    ring: "#ffffff66"
-    chart-1: "#ebebeb"
-    chart-2: "#c7c7c7"
-    chart-3: "#9b9b9b"
-    chart-4: "#747474"
-    chart-5: "#525252"
-    sidebar: "#090909"
-    sidebar-foreground: "#dedede"
+    input: "#ffffff1c"
+    ring: "#ebebeb"
+    chart-1: "#e2e2e2"
+    chart-2: "#b3b3b3"
+    chart-3: "#8f8f8f"
+    chart-4: "#6c6c6c"
+    chart-5: "#484848"
+    sidebar: "#0d0d0d"
+    sidebar-foreground: "#fafafa"
     sidebar-primary: "#ebebeb"
     sidebar-primary-foreground: "#121212"
-    sidebar-accent: "#ffffff14"
+    sidebar-accent: "#ffffff12"
     sidebar-accent-foreground: "#fafafa"
-    sidebar-border: "#ffffff1a"
-    sidebar-ring: "#ffffff66"
-    inset: "#272727"
+    sidebar-border: "#ffffff1c"
+    sidebar-ring: "#ebebeb"
+    inset: "#ffffff12"
     raised: "#ffffff12"
-    glass-edge: "#ffffff0f"
-    field: "#ffffff0f"
+    field: "#1d1d1d"
     line: "#ffffff1c"
-    hover: "#ffffff14"
-    ring-halo: "#ffffff2e"
+    hover: "#ffffff12"
     faint: "#696969"
-    brand: "#54d2a4"
-    brand-edge: "#f4f4f4aa"
-    track: "#ffffff21"
-    knob: "#f5f5f5"
+    brand: "#ebebeb"
+    brand-edge: "#ffffff1c"
+    track: "#ffffff12"
+    knob: "#fafafa"
     info: "#449df0"
     warn: "#f79c40"
     up: "#4ac777"
-    brand-tint: "#54d2a426"
-    inverse: "#1a1a1a"
+    brand-tint: "#ebebeb1f"
+    inverse: "#1d1d1d"
     inverse-foreground: "#fafafa"
     inverse-brand: "#121212"
-    info-tint: "#449df01a"
-    warn-tint: "#f79c401a"
-    destructive-tint: "#ff64671a"
-    up-tint: "#4ac7771a"
-    down-tint: "#ff64671a"
-    violet: "#c8a5f0"
+    info-tint: "#449df01f"
+    warn-tint: "#f79c401f"
+    destructive-tint: "#ff64671f"
+    up-tint: "#4ac7771f"
+    down-tint: "#ff64671f"
 typography:
   caption:
     fontFamily: system-ui
@@ -312,19 +306,19 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`media`** (`#10131a`): Ground behind photographs and videos; invariant across appearances.
 - **`background`** (light `#e4e6eb`, dark `#0d0d0d`): Primary application page canvas background.
 - **`card`** (light `#eff1f5`, dark `#1d1d1d`): Opaque composite of Solid Glass card pane over background canvas (no blur on card role).
-- **`popover`** (light `#f8f9fb`, dark `#1a1a1a`): Opaque composite of Solid Glass popover pane over background canvas.
+- **`popover`** (light `#eff1f5`, dark `#1d1d1d`): Opaque composite of Solid Glass popover pane over background canvas.
 - **`secondary`** (light `#ffffff8c`, dark `#ffffff12`): Secondary control surface fill.
 - **`muted`** (light `#292e3812`, dark `#ffffff12`): Subdued container and subtle background surface.
-- **`accent`** (light `#292e3817`, dark `#ffffff14`): Subtle highlight fill for hovered or active items.
-- **`sidebar`** (light `#ebedf2`, dark `#090909`): Opaque composite of Solid Glass panel pane over background canvas.
-- **`sidebar-accent`** (light `#292e3817`, dark `#ffffff14`): Selected or active row fill in the sidebar.
-- **`inset`** (light `#f2f4f7`, dark `#272727`): Opaque composite of Solid Glass thinnest panel pane laid over card.
+- **`accent`** (light `#292e3812`, dark `#ffffff12`): Subtle highlight fill for hovered or active items.
+- **`sidebar`** (light `#e4e6eb`, dark `#0d0d0d`): Opaque composite of Solid Glass panel pane over background canvas.
+- **`sidebar-accent`** (light `#292e3812`, dark `#ffffff12`): Selected or active row fill in the sidebar.
+- **`inset`** (light `#292e3812`, dark `#ffffff12`): Opaque composite of Solid Glass thinnest panel pane laid over card.
 - **`raised`** (light `#ffffff8c`, dark `#ffffff12`): Raised control surface resting on a card.
-- **`field`** (light `#ffffff99`, dark `#ffffff0f`): Input well surface below card and inset layers.
-- **`hover`** (light `#292e381a`, dark `#ffffff14`): Pointer hover overlay fill on interactive items.
-- **`track`** (light `#292e3826`, dark `#ffffff21`): Inactive track background for switches, sliders, and progress bars.
-- **`knob`** (light `#ffffff`, dark `#f5f5f5`): Switch thumb fill in the off state.
-- **`inverse`** (light `#f8f9fb`, dark `#1a1a1a`): High-contrast surface for toasts and tooltips.
+- **`field`** (light `#eff1f5`, dark `#1d1d1d`): Input well surface below card and inset layers.
+- **`hover`** (light `#292e3812`, dark `#ffffff12`): Pointer hover overlay fill on interactive items.
+- **`track`** (light `#292e3812`, dark `#ffffff12`): Inactive track background for switches, sliders, and progress bars.
+- **`knob`** (light `#eff1f5`, dark `#fafafa`): Switch thumb fill in the off state.
+- **`inverse`** (light `#eff1f5`, dark `#1d1d1d`): High-contrast surface for toasts and tooltips.
 
 ### Ink
 
@@ -335,7 +329,7 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`secondary-foreground`** (light `#0d0d0d`, dark `#fafafa`): Text and icon ink on secondary control surfaces.
 - **`muted-foreground`** (light `#5b5b5b`, dark `#a4a4a4`): Secondary and supporting text and icon ink.
 - **`accent-foreground`** (light `#0d0d0d`, dark `#fafafa`): Text and icon ink on accent surfaces.
-- **`sidebar-foreground`** (light `#222222`, dark `#dedede`): Primary text and icon ink inside the sidebar.
+- **`sidebar-foreground`** (light `#0d0d0d`, dark `#fafafa`): Primary text and icon ink inside the sidebar.
 - **`sidebar-accent-foreground`** (light `#0d0d0d`, dark `#fafafa`): Text and icon ink on active sidebar rows.
 - **`faint`** (light `#9e9e9e`, dark `#696969`): Low-emphasis text for placeholders, units, and tertiary labels.
 - **`inverse-foreground`** (light `#0d0d0d`, dark `#fafafa`): Primary text ink on inverse surfaces.
@@ -346,39 +340,36 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`primary-foreground`** (light `#fafafa`, dark `#121212`): Text and icon ink on primary brand action fills.
 - **`sidebar-primary`** (light `#161616`, dark `#ebebeb`): Primary action highlight color in the sidebar.
 - **`sidebar-primary-foreground`** (light `#fafafa`, dark `#121212`): Text and icon ink on sidebar-primary highlights.
-- **`brand`** (light `#00754f`, dark `#54d2a4`): Accent ink for text, icons, and active rules.
-- **`brand-edge`** (light `#161616af`, dark `#f4f4f4aa`): Primary button hairline mixed from --primary and --primary-edge.
-- **`brand-tint`** (light `#2eb1841f`, dark `#54d2a426`): Static translucent teal brand wash (--brand-muted).
+- **`brand`** (light `#161616`, dark `#ebebeb`): Accent ink for text, icons, and active rules.
+- **`brand-edge`** (light `#292e3821`, dark `#ffffff1c`): Primary button hairline mixed from --primary and --primary-edge.
+- **`brand-tint`** (light `#1616161f`, dark `#ebebeb1f`): Static translucent teal brand wash (--brand-muted).
 - **`inverse-brand`** (light `#fafafa`, dark `#121212`): Accent action color on inverse surfaces.
 
 ### Status
 
 - **`destructive`** (light `#e7000b`, dark `#ff6467`): Semantic danger color for destructive actions and errors.
-- **`chart-1`** (light `#9e9e9e`, dark `#ebebeb`): Primary chart series color.
-- **`chart-2`** (light `#6f6f6f`, dark `#c7c7c7`): Second chart series color.
-- **`chart-3`** (light `#525252`, dark `#9b9b9b`): Third chart series color.
-- **`chart-4`** (light `#3a3a3a`, dark `#747474`): Fourth chart series color.
-- **`chart-5`** (light `#262626`, dark `#525252`): Fifth chart series color.
+- **`chart-1`** (light `#222323`, dark `#e2e2e2`): Primary chart series color.
+- **`chart-2`** (light `#4e4e50`, dark `#b3b3b3`): Second chart series color.
+- **`chart-3`** (light `#6e6f71`, dark `#8f8f8f`): Third chart series color.
+- **`chart-4`** (light `#8e8f92`, dark `#6c6c6c`): Fourth chart series color.
+- **`chart-5`** (light `#aeb0b4`, dark `#484848`): Fifth chart series color.
 - **`info`** (light `#0078cc`, dark `#449df0`): Informational semantic status color.
 - **`warn`** (light `#d87400`, dark `#f79c40`): Warning semantic status color.
 - **`up`** (light `#0a924b`, dark `#4ac777`): Positive trend and growth semantic color.
-- **`info-tint`** (light `#0078cc1a`, dark `#449df01a`): Translucent informational status background tint.
-- **`warn-tint`** (light `#d874001a`, dark `#f79c401a`): Translucent warning status background tint.
-- **`destructive-tint`** (light `#e7000b1a`, dark `#ff64671a`): Translucent destructive status background tint.
-- **`up-tint`** (light `#0a924b1a`, dark `#4ac7771a`): Translucent positive trend background tint.
-- **`down-tint`** (light `#e7000b1a`, dark `#ff64671a`): Translucent negative trend background tint.
-- **`violet`** (light `#743c98`, dark `#c8a5f0`): Accent data-visualization and link color.
+- **`info-tint`** (light `#0078cc1f`, dark `#449df01f`): Translucent informational status background tint.
+- **`warn-tint`** (light `#d874001f`, dark `#f79c401f`): Translucent warning status background tint.
+- **`destructive-tint`** (light `#e7000b1f`, dark `#ff64671f`): Translucent destructive status background tint.
+- **`up-tint`** (light `#0a924b1f`, dark `#4ac7771f`): Translucent positive trend background tint.
+- **`down-tint`** (light `#e7000b1f`, dark `#ff64671f`): Translucent negative trend background tint.
 
 ### Chrome
 
 - **`border`** (light `#292e3821`, dark `#ffffff1c`): Standard hairline border color for containers and controls.
-- **`input`** (light `#292e3824`, dark `#ffffff14`): Border and stroke color for form fields and control edges.
-- **`ring`** (light `#16161680`, dark `#ffffff66`): Focus indicator ring stroke color.
-- **`sidebar-border`** (light `#292e381f`, dark `#ffffff1a`): Sidebar divider and toolbar hairline border color.
-- **`sidebar-ring`** (light `#16161680`, dark `#ffffff66`): Focus indicator ring color inside the sidebar.
-- **`glass-edge`** (light `#3b42531a`, dark `#ffffff0f`): Hairline border on Solid Glass panes (--glass-edge).
+- **`input`** (light `#292e3821`, dark `#ffffff1c`): Border and stroke color for form fields and control edges.
+- **`ring`** (light `#161616`, dark `#ebebeb`): Focus indicator ring stroke color.
+- **`sidebar-border`** (light `#292e3821`, dark `#ffffff1c`): Sidebar divider and toolbar hairline border color.
+- **`sidebar-ring`** (light `#161616`, dark `#ebebeb`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#292e3821`, dark `#ffffff1c`): Hairline divider and grid rule inside recessed wells.
-- **`ring-halo`** (light `#16161639`, dark `#ffffff2e`): Translucent outer halo around focused controls.
 
 ## Typography
 

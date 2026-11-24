@@ -11,7 +11,7 @@ colors:
     foreground: "#1a1a1a"
     card: "#fbfbfb"
     card-foreground: "#1a1a1a"
-    popover: "#f9f9f9"
+    popover: "#fbfbfb"
     popover-foreground: "#1a1a1a"
     primary: "#005fb8"
     primary-foreground: "#ffffff"
@@ -19,56 +19,53 @@ colors:
     secondary-foreground: "#1a1a1a"
     muted: "#eeeeee"
     muted-foreground: "#5c5c5c"
-    accent: "#eaeaea"
+    accent: "#eeeeee"
     accent-foreground: "#1a1a1a"
     destructive: "#c42b1c"
-    border: "#e5e5e5"
+    border: "#868686"
     input: "#868686"
     ring: "#1a1a1a"
     chart-1: "#005fb8"
-    chart-2: "#0f7b0f"
-    chart-3: "#9d5d00"
-    chart-4: "#c42b1c"
-    chart-5: "#868686"
+    chart-2: "#0078d4"
+    chart-3: "#0f7b0f"
+    chart-4: "#9d5d00"
+    chart-5: "#c42b1c"
     sidebar: "#f3f3f3"
     sidebar-foreground: "#1a1a1a"
     sidebar-primary: "#005fb8"
     sidebar-primary-foreground: "#ffffff"
-    sidebar-accent: "#eaeaea"
+    sidebar-accent: "#eeeeee"
     sidebar-accent-foreground: "#1a1a1a"
     sidebar-border: "#e5e5e5"
     sidebar-ring: "#1a1a1a"
-    inset: "#ededed"
+    inset: "#eeeeee"
     raised: "#fbfbfb"
-    glass-edge: "#e5e5e5"
     field: "#fbfbfb"
     line: "#e5e5e5"
-    hover: "#f6f6f6"
-    ring-halo: "#fbfbfb"
+    hover: "#eeeeee"
     faint: "#868686"
-    brand: "#003e92"
-    brand-edge: "#00396e"
-    track: "#ededed"
+    brand: "#005fb8"
+    brand-edge: "#868686"
+    track: "#eeeeee"
     knob: "#5c5c5c"
     info: "#0078d4"
     warn: "#9d5d00"
     up: "#0f7b0f"
-    brand-tint: "#dbe4ed"
-    inverse: "#f9f9f9"
+    brand-tint: "#005fb824"
+    inverse: "#fbfbfb"
     inverse-foreground: "#1a1a1a"
     inverse-brand: "#ffffff"
-    info-tint: "#f5f5f5"
-    warn-tint: "#fff4ce"
-    destructive-tint: "#fde7e9"
-    up-tint: "#dff6dd"
-    down-tint: "#fde7e9"
-    violet: "#6e56c4"
+    info-tint: "#0078d424"
+    warn-tint: "#9d5d0024"
+    destructive-tint: "#c42b1c24"
+    up-tint: "#0f7b0f24"
+    down-tint: "#c42b1c24"
   dark:
     background: "#202020"
     foreground: "#ffffff"
     card: "#2b2b2b"
     card-foreground: "#ffffff"
-    popover: "#2c2c2c"
+    popover: "#2b2b2b"
     popover-foreground: "#ffffff"
     primary: "#60cdff"
     primary-foreground: "#000000"
@@ -76,50 +73,47 @@ colors:
     secondary-foreground: "#ffffff"
     muted: "#1c1c1c"
     muted-foreground: "#cccccc"
-    accent: "#2d2d2d"
+    accent: "#1c1c1c"
     accent-foreground: "#ffffff"
     destructive: "#ff99a4"
-    border: "#303030"
+    border: "#9a9a9a"
     input: "#9a9a9a"
     ring: "#ffffff"
     chart-1: "#60cdff"
-    chart-2: "#6ccb5f"
-    chart-3: "#fce100"
-    chart-4: "#ff99a4"
-    chart-5: "#9a9a9a"
+    chart-2: "#60cdff"
+    chart-3: "#6ccb5f"
+    chart-4: "#fce100"
+    chart-5: "#ff99a4"
     sidebar: "#202020"
     sidebar-foreground: "#ffffff"
     sidebar-primary: "#60cdff"
     sidebar-primary-foreground: "#000000"
-    sidebar-accent: "#2d2d2d"
+    sidebar-accent: "#1c1c1c"
     sidebar-accent-foreground: "#ffffff"
     sidebar-border: "#323232"
     sidebar-ring: "#ffffff"
-    inset: "#1d1d1d"
-    raised: "#2d2d2d"
-    glass-edge: "#1a1a1a"
-    field: "#2d2d2d"
+    inset: "#1c1c1c"
+    raised: "#2b2b2b"
+    field: "#2b2b2b"
     line: "#323232"
-    hover: "#323232"
-    ring-halo: "#0a0a0a"
+    hover: "#1c1c1c"
     faint: "#969696"
-    brand: "#99ebff"
-    brand-edge: "#53b1dc"
-    track: "#1d1d1d"
+    brand: "#60cdff"
+    brand-edge: "#9a9a9a"
+    track: "#1c1c1c"
     knob: "#cccccc"
     info: "#60cdff"
     warn: "#fce100"
     up: "#6ccb5f"
-    brand-tint: "#263136"
-    inverse: "#282828"
+    brand-tint: "#60cdff24"
+    inverse: "#2b2b2b"
     inverse-foreground: "#ffffff"
     inverse-brand: "#000000"
-    info-tint: "#272727"
-    warn-tint: "#433519"
-    destructive-tint: "#442726"
-    up-tint: "#393d1b"
-    down-tint: "#442726"
-    violet: "#b9a2ff"
+    info-tint: "#60cdff24"
+    warn-tint: "#fce10024"
+    destructive-tint: "#ff99a424"
+    up-tint: "#6ccb5f24"
+    down-tint: "#ff99a424"
 typography:
   caption:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
@@ -257,7 +251,7 @@ components:
     typography: "{typography.caption}"
     rounded: "{rounded.control}"
   menu-popover:
-    backgroundColor: "#f9f9f9d9"
+    backgroundColor: "#fbfbfbd9"
     textColor: "{colors.light.popover-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.container}"
@@ -299,7 +293,7 @@ components:
     textColor: "{colors.light.primary-foreground}"
     rounded: "{rounded.control}"
   glass-overlay:
-    backgroundColor: "#f9f9f9d9"
+    backgroundColor: "#fbfbfbd9"
     textColor: "{colors.light.popover-foreground}"
     rounded: "{rounded.container}"
 ---
@@ -324,19 +318,19 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`media`** (`#10131a`): Ground behind photographs and videos; invariant across appearances.
 - **`background`** (light `#f3f3f3`, dark `#202020`): Window base surface (WinUI SolidBackgroundFillColorBase).
 - **`card`** (light `#fbfbfb`, dark `#2b2b2b`): Elevated card background (WinUI CardBackgroundFillColorDefault composited over base).
-- **`popover`** (light `#f9f9f9`, dark `#2c2c2c`): Acrylic flyout/popover fallback surface (WinUI AcrylicInAppFillColorDefaultFallback).
+- **`popover`** (light `#fbfbfb`, dark `#2b2b2b`): Acrylic flyout/popover fallback surface (WinUI AcrylicInAppFillColorDefaultFallback).
 - **`secondary`** (light `#fbfbfb`, dark `#2d2d2d`): Standard control fill (WinUI ControlFillColorDefault composited over base).
 - **`muted`** (light `#eeeeee`, dark `#1c1c1c`): Recessed neutral surface (WinUI SolidBackgroundFillColorSecondary composited over base).
-- **`accent`** (light `#eaeaea`, dark `#2d2d2d`): Subtle list/menu hover fill (WinUI SubtleFillColorSecondary composited over base).
+- **`accent`** (light `#eeeeee`, dark `#1c1c1c`): Subtle list/menu hover fill (WinUI SubtleFillColorSecondary composited over base).
 - **`sidebar`** (light `#f3f3f3`, dark `#202020`): NavigationView expanded pane background matching window base.
-- **`sidebar-accent`** (light `#eaeaea`, dark `#2d2d2d`): Sidebar active item fill (WinUI SubtleFillColorSecondary).
-- **`inset`** (light `#ededed`, dark `#1d1d1d`): Inset well fill (WinUI ControlAltFillColorSecondary composited over base).
-- **`raised`** (light `#fbfbfb`, dark `#2d2d2d`): Raised control fill (WinUI ControlFillColorDefault composited over base).
-- **`field`** (light `#fbfbfb`, dark `#2d2d2d`): Text input surface (WinUI ControlFillColorDefault composited over base).
-- **`hover`** (light `#f6f6f6`, dark `#323232`): Pointer hover fill (WinUI ControlFillColorSecondary composited over base).
-- **`track`** (light `#ededed`, dark `#1d1d1d`): Switch and slider track (WinUI ControlAltFillColorSecondary).
+- **`sidebar-accent`** (light `#eeeeee`, dark `#1c1c1c`): Sidebar active item fill (WinUI SubtleFillColorSecondary).
+- **`inset`** (light `#eeeeee`, dark `#1c1c1c`): Inset well fill (WinUI ControlAltFillColorSecondary composited over base).
+- **`raised`** (light `#fbfbfb`, dark `#2b2b2b`): Raised control fill (WinUI ControlFillColorDefault composited over base).
+- **`field`** (light `#fbfbfb`, dark `#2b2b2b`): Text input surface (WinUI ControlFillColorDefault composited over base).
+- **`hover`** (light `#eeeeee`, dark `#1c1c1c`): Pointer hover fill (WinUI ControlFillColorSecondary composited over base).
+- **`track`** (light `#eeeeee`, dark `#1c1c1c`): Switch and slider track (WinUI ControlAltFillColorSecondary).
 - **`knob`** (light `#5c5c5c`, dark `#cccccc`): Unchecked switch thumb (WinUI TextFillColorSecondary).
-- **`inverse`** (light `#f9f9f9`, dark `#282828`): TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base).
+- **`inverse`** (light `#fbfbfb`, dark `#2b2b2b`): TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base).
 
 ### Ink
 
@@ -358,39 +352,36 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`primary-foreground`** (light `#ffffff`, dark `#000000`): Ink on accent fills (WinUI TextOnAccentFillColorPrimary).
 - **`sidebar-primary`** (light `#005fb8`, dark `#60cdff`): Sidebar primary accent matching AccentFillColorDefault.
 - **`sidebar-primary-foreground`** (light `#ffffff`, dark `#000000`): Sidebar primary ink matching TextOnAccentFillColorPrimary.
-- **`brand`** (light `#003e92`, dark `#99ebff`): Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark).
-- **`brand-edge`** (light `#00396e`, dark `#53b1dc`): Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary).
-- **`brand-tint`** (light `#dbe4ed`, dark `#263136`): 10% accent wash composited opaque over window base.
+- **`brand`** (light `#005fb8`, dark `#60cdff`): Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark).
+- **`brand-edge`** (light `#868686`, dark `#9a9a9a`): Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary).
+- **`brand-tint`** (light `#005fb824`, dark `#60cdff24`): 10% accent wash composited opaque over window base.
 - **`inverse-brand`** (light `#ffffff`, dark `#000000`): Action ink on inverse surface matching TextOnAccentFillColorPrimary.
 
 ### Status
 
 - **`destructive`** (light `#c42b1c`, dark `#ff99a4`): Critical/error status ink (WinUI SystemFillColorCritical).
 - **`chart-1`** (light `#005fb8`, dark `#60cdff`): First chart series color matching WinUI primary accent.
-- **`chart-2`** (light `#0f7b0f`, dark `#6ccb5f`): Second chart series color (WinUI SystemFillColorSuccess).
-- **`chart-3`** (light `#9d5d00`, dark `#fce100`): Third chart series color (WinUI SystemFillColorCaution).
-- **`chart-4`** (light `#c42b1c`, dark `#ff99a4`): Fourth chart series color (WinUI SystemFillColorCritical).
-- **`chart-5`** (light `#868686`, dark `#9a9a9a`): Fifth chart series color (WinUI ControlStrongFillColorDefault).
+- **`chart-2`** (light `#0078d4`, dark `#60cdff`): Second chart series color (WinUI SystemFillColorSuccess).
+- **`chart-3`** (light `#0f7b0f`, dark `#6ccb5f`): Third chart series color (WinUI SystemFillColorCaution).
+- **`chart-4`** (light `#9d5d00`, dark `#fce100`): Fourth chart series color (WinUI SystemFillColorCritical).
+- **`chart-5`** (light `#c42b1c`, dark `#ff99a4`): Fifth chart series color (WinUI ControlStrongFillColorDefault).
 - **`info`** (light `#0078d4`, dark `#60cdff`): Informational semantic color (WinUI SystemFillColorAttentionBrush).
 - **`warn`** (light `#9d5d00`, dark `#fce100`): Caution semantic color (WinUI SystemFillColorCaution).
 - **`up`** (light `#0f7b0f`, dark `#6ccb5f`): Success semantic color (WinUI SystemFillColorSuccess).
-- **`info-tint`** (light `#f5f5f5`, dark `#272727`): Informational wash (WinUI SystemFillColorAttentionBackground composited over base).
-- **`warn-tint`** (light `#fff4ce`, dark `#433519`): Caution wash (WinUI SystemFillColorCautionBackground composited over base).
-- **`destructive-tint`** (light `#fde7e9`, dark `#442726`): Critical wash (WinUI SystemFillColorCriticalBackground composited over base).
-- **`up-tint`** (light `#dff6dd`, dark `#393d1b`): Success wash (WinUI SystemFillColorSuccessBackground composited over base).
-- **`down-tint`** (light `#fde7e9`, dark `#442726`): Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base).
-- **`violet`** (light `#6e56c4`, dark `#b9a2ff`): Library-retained violet data-series hue (no WinUI equivalent).
+- **`info-tint`** (light `#0078d424`, dark `#60cdff24`): Informational wash (WinUI SystemFillColorAttentionBackground composited over base).
+- **`warn-tint`** (light `#9d5d0024`, dark `#fce10024`): Caution wash (WinUI SystemFillColorCautionBackground composited over base).
+- **`destructive-tint`** (light `#c42b1c24`, dark `#ff99a424`): Critical wash (WinUI SystemFillColorCriticalBackground composited over base).
+- **`up-tint`** (light `#0f7b0f24`, dark `#6ccb5f24`): Success wash (WinUI SystemFillColorSuccessBackground composited over base).
+- **`down-tint`** (light `#c42b1c24`, dark `#ff99a424`): Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base).
 
 ### Chrome
 
-- **`border`** (light `#e5e5e5`, dark `#303030`): Standard control hairline border (WinUI ControlStrokeColorDefault composited over base).
+- **`border`** (light `#868686`, dark `#9a9a9a`): Standard control hairline border (WinUI ControlStrokeColorDefault composited over base).
 - **`input`** (light `#868686`, dark `#9a9a9a`): Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base).
 - **`ring`** (light `#1a1a1a`, dark `#ffffff`): Outer keyboard focus stroke (WinUI FocusStrokeColorOuter).
 - **`sidebar-border`** (light `#e5e5e5`, dark `#323232`): Sidebar separator stroke (WinUI DividerStrokeColorDefault).
 - **`sidebar-ring`** (light `#1a1a1a`, dark `#ffffff`): Sidebar focus stroke (WinUI FocusStrokeColorOuter).
-- **`glass-edge`** (light `#e5e5e5`, dark `#1a1a1a`): Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base).
 - **`line`** (light `#e5e5e5`, dark `#323232`): Hairline divider stroke (WinUI DividerStrokeColorDefault).
-- **`ring-halo`** (light `#fbfbfb`, dark `#0a0a0a`): Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base).
 
 ## Typography
 

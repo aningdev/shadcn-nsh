@@ -39,13 +39,13 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   // Switch to the synthetic Expressive theme.
   await app.press("text:Expressive");
 
-  const [ring, ringHalo] = read("ringTokens").split("|");
+  const [ring, card] = read("ringTokens").split("|");
   const expressiveFocus = readJson<Record<string, unknown>>("focus");
   expect(expressiveFocus.borderColor).toBeUndefined();
   expect(expressiveFocus.outlineColor).toBe(ring);
   expect(expressiveFocus.outlineWidth).toBe(2);
   expect(expressiveFocus.outlineOffset).toBe(3);
-  expect(expressiveFocus.boxShadow).toBe(`0 0 0 1px ${ringHalo}`);
+  expect(expressiveFocus.boxShadow).toBe(`0 0 0 1px ${card}`);
 
   // Timing roles & new platform-neutral curves are resolved reactively.
   expect(read("motionFast")).toBe("timing:150:[0.05,0.7,0.1,1]");

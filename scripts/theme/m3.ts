@@ -35,6 +35,7 @@ import {
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { finishes, shadows } from "./finishes/material";
 import { oklchColor, toOklchText } from "./oklch";
+import { reduceColours, type ColourScheme } from "./sources";
 
 export const M3_BASELINE_SEED = "#6750A4";
 
@@ -279,6 +280,19 @@ const NSH_EXTENSIONS = {
 
 const tintMix = (token: string) => `color-mix(in srgb, var(--${token}) 12%, transparent)`;
 
+/** The choices the derived keys make (ADR 0007 §4): the hairline is M3's weak outline, a field's edge the strong one. */
+const colourScheme: ColourScheme = {
+  tint: 12,
+  ring: "primary",
+  field: "muted",
+  knob: ["border", "border"],
+  secondaryIsRaised: false,
+  raised: "card",
+  strongBorder: true,
+  inverse: ["foreground", "background"],
+  chart: ["primary", "up", "warn", "destructive", "muted-foreground"],
+};
+
 function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, string> {
   const c = (hex: string) => toOklchText(hex);
   return {
@@ -315,11 +329,9 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "sidebar-ring": "var(--ring)",
     inset: c(p.surfaceContainer),
     raised: c(p.surfaceContainerLow),
-    "glass-edge": c(p.outlineVariant),
     field: c(p.surfaceContainerHighest),
     line: c(p.outlineVariant),
     hover: "color-mix(in srgb, var(--foreground) 8%, transparent)",
-    "ring-halo": "color-mix(in srgb, var(--ring) 20%, transparent)",
     faint: c(p.outline),
     brand: "var(--primary)",
     "brand-edge": c(p.outlineVariant),
@@ -338,7 +350,6 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "destructive-tint": c(p.errorContainer),
     "up-tint": tintMix("up"),
     "down-tint": tintMix("destructive"),
-    violet: c(p.tertiary),
   };
 }
 
@@ -531,11 +542,9 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     "sidebar-border": "Sidebar divider border (M3 outlineVariant).",
     inset: "Inset container surface (M3 surfaceContainer).",
     raised: "Raised control surface (M3 surfaceContainerLow).",
-    "glass-edge": "Overlay outline edge (M3 outlineVariant).",
     field: "Filled text field background (M3 surfaceContainerHighest).",
     line: "Inset divider hairline (M3 outlineVariant).",
     hover: "M3 hover state-layer ink (8% foreground over transparent, StateTokens.kt).",
-    "ring-halo": "Outer focus ring halo (20% ring color over transparent).",
     faint: "Quiet caption/placeholder ink (M3 outline).",
     brand: "Inline brand accent ink, aliased to {color.primary}.",
     "brand-edge": "Brand container outline (M3 outlineVariant).",
@@ -551,7 +560,6 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     "destructive-tint": "Tonal error container background (M3 errorContainer).",
     "up-tint": "Translucent positive wash (12% up over transparent).",
     "down-tint": "Translucent negative wash (12% down over transparent).",
-    violet: "Tertiary accent color (M3 tertiary).",
   };
 
   return {
@@ -588,8 +596,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     },
     cssVars: {
       theme: themeLevel(roles),
-      light: roles.light,
-      dark: roles.dark,
+      light: reduceColours(roles.light, colourScheme, "light"),
+      dark: reduceColours(roles.dark, colourScheme, "dark"),
     },
     finishes,
     shadows,

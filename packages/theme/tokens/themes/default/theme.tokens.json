@@ -103,6 +103,15 @@
           "Do not flatten shadows or remove inner highlights on `card`, `raised`, `inset`, or `pill` finishes.",
           "Do not merge distinct semantic finishes (`light` vs `accent`, `thumb` vs `raised`, `knob` vs `handle`)."
         ]
+      },
+      "contrast": {
+        "waivers": [
+          {
+            "fg": "brand",
+            "bg": "background",
+            "source": "NSH Gallery citrus lime primary is a fill: brand is a reference to primary (ADR 0007), so light-mode brand text is lime on paper"
+          }
+        ]
       }
     }
   }
