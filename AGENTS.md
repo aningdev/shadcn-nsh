@@ -38,12 +38,13 @@
 
 只读参考，默认不在 submodule 内改代码或向上游提 PR（除非用户明确要求）。
 
-| 路径                                           | 用途                                                                                                                |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| [`references/nsh`](references/nsh)             | 上游：`examples/nsh-gallery-ui`（参考规范）；`nsh` / `nsh/base`；文档                                               |
-| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app                                                                      |
-| [`references/design.md`](references/design.md) | DESIGN.md 格式规范（Google Labs）：用 token + 说明向编码代理描述一套设计语言；本库将来的 DESIGN.md 照它写           |
-| [nsh.dev/llms.txt](https://nsh.dev/llms.txt)   | NSH 官方文档索引（在线）：每页的 URL 加 `.md` 即 Markdown 原文；`references/nsh` 的 `website/` 是它的源，以基线为准 |
+| 路径                                           | 用途                                                                                                                 |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`references/nsh`](references/nsh)             | 上游：`examples/nsh-gallery-ui`（参考规范）；`nsh` / `nsh/base`；文档                                                |
+| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app                                                                       |
+| [`references/design.md`](references/design.md) | DESIGN.md 格式规范（Google Labs）：用 token + 说明向编码代理描述一套设计语言；本库将来的 DESIGN.md 照它写            |
+| [`references/ui-sdk`](references/ui-sdk)       | Vercel UI SDK：与框架无关的行为层（behavior → primitive → parts）与面向代理的写法（skill、expert、文档），作对照参考 |
+| [nsh.dev/llms.txt](https://nsh.dev/llms.txt)   | NSH 官方文档索引（在线）：每页的 URL 加 `.md` 即 Markdown 原文；`references/nsh` 的 `website/` 是它的源，以基线为准  |
 
 克隆后若目录为空：`git submodule update --init --recursive`。
 
@@ -55,6 +56,7 @@
 - **控件行为、parts、平台差异** — `references/nsh` 与 [nsh.dev/llms.txt](https://nsh.dev/llms.txt)。
 - **为设计语言写 DESIGN.md** — `references/design.md` 的 `README.md` 与 `docs/spec.md`。
 - **Registry / CLI / 文档页的组织** — `references/shadcn-ui`：先 `CONTRIBUTING.md`，再 `apps/v4/registry`；本仓实现见 `packages/cli`。
+- **行为如何拆成可组合的部件、怎样写给代理用** — `references/ui-sdk`：先 `AGENTS.md`，再 `packages/core` 与 `.agents/`。
 
 ## 分层
 

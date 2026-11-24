@@ -7,3 +7,6 @@
 [submodule "references/design.md"]
 	path = references/design.md
 	url = https://github.com/google-labs-code/design.md.git
+[submodule "references/ui-sdk"]
+	path = references/ui-sdk
+	url = https://github.com/vercel-labs/ui.git
