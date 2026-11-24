@@ -140,7 +140,7 @@ function App() {
         </View>
 
         {/* A toggle on its own, with a label: the toggles' look, a favorite's accent tint in
-            place of the on fill (`pressedStyle`); the look keeps the chip's full 1px edge. */}
+            place of the on fill (`pressedStyle`). */}
         <Toggle
           text
           pressed={starred()}
@@ -149,7 +149,10 @@ function App() {
             log(`Star: ${pressed}`);
           }}
           style={{ alignSelf: "flex-start" }}
-          pressedStyle={{ backgroundColor: alpha(ui().accent, 0.12) }}
+          pressedStyle={{
+            backgroundColor: alpha(ui().accent, 0.12),
+            borderColor: alpha(ui().accent, 0.3),
+          }}
         >
           <Text style={{ ...toggleLabel(starred), color: starred() ? ui().accent : ui().muted }}>
             {starred() ? "★" : "☆"}

@@ -122,15 +122,6 @@ A row of single-select capsules is a recipe, not a part. shadcn/ui has no capsul
 
 ### Pressed
 
-Pressed is the theme's selected state, not the brand's: the toggle takes the `accent` role as its
-fill and `accent-foreground` for its content — shadcn's `bg-accent text-accent-foreground`, a quiet
-neutral behind an always-legible glyph. Each theme's `accent` is its own selected recipe (Material's
-tinted container, WinUI's control fill, Apple's selected grey), so the pair always comes from one
-role, light and dark. While off the label and the icon stay `muted-foreground`; while pressed both
-take `accent-foreground`. The pressed chip also carries the theme's `input` as its 1px edge, the
-same edge the `outline` variant sits on while it is off, on all four sides — a chip that reads as a
-chip on any surface rather than a tint that may fade into it.
-
 ```tsx
 <Toggle pressed={on()} onChange={({ pressed }) => on.set(pressed)}>
   Bold
@@ -160,4 +151,4 @@ Every prop of [`nsh/base` Toggle](https://nsh.dev/elements/toggle) and ToggleGro
 | `Toggle`      | `variant`, `size`, `children`, and every `nsh/base` Toggle prop (`pressed`, `onChange`, `disabled`) | A two-state button; a string child is its name for screen readers        |
 | `ToggleGroup` | `vertical`, `inset`, and every `nsh/base` ToggleGroup prop                                          | The inset track of `toolbarTrack` holding a row (or column) of `Toggle`s |
 
-`toggleLook`, `toggleLabel` and `toggleGlyph` are the look's parts, for a pressable of your own: `on` wears the pressed fill (the `accent` role) and the label and glyph take `accent-foreground` while pressed. `toggleSizes` is the table a size reads — `side`, `icon`, `text` and `pad`, compact with a pointer and roomier on a touch screen — so a bar's own geometry can match a tool's (`toggleSizes.default.side`, 28 points with a pointer).
+`toggleLook`, `toggleLabel` and `toggleGlyph` are the look's parts, for a pressable of your own. `toggleSizes` is the table a size reads — `side`, `icon`, `text` and `pad`, compact with a pointer and roomier on a touch screen — so a bar's own geometry can match a tool's (`toggleSizes.default.side`, 28 points with a pointer).

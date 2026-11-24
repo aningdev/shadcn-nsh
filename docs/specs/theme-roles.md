@@ -247,20 +247,20 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- theme-lint: finishes -->
 
-| finish     | 画什么                                                                          | What it draws                                                              | 谁读                                                                             |
-| ---------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `card`     | 卡片的底：一道接触影                                                            | A card's face: one contact shadow                                          | `sidebar`、`card`、`lib/surface`                                                 |
-| `inset`    | 凹下去的一层：输入井、轨道、槽、凹槽                                            | A well: a field, a track, a groove                                         | `lib/surface`、`input`、`select`、`tabs`、`switch`、`slider`、`progress`、`menu` |
-| `raised`   | 卡片上的控件：内高光、接触影、边；分段与胶囊标签页选中的那块                    | A control on a card: an inner highlight, a contact shadow, an edge         | `button`、`select`、`radio-group`、`carousel`、`combobox`、`segmented`、`tabs`   |
-| `overlay`  | 浮层：菜单、弹层、toast                                                         | A floating surface: a menu, a popover                                      | `popover`、`lib/listbox`、`menu`、`command`                                      |
-| `modal`    | 模态面：对话框、抽屉、底部面板                                                  | A modal's face: a dialog, a sheet                                          | `dialog`、`sheet`                                                                |
-| `inverse`  | 反色的面：toast、提示                                                           | The page's inverse: a toast, a tooltip                                     | `toast`、`tooltip`                                                               |
-| `glass`    | 玻璃：半透明底 + 模糊                                                           | Glass: a translucent fill and a blur                                       | `carousel`、`lib/surface`                                                        |
-| `accent`   | 强调色的面：主操作、选中的开关/勾选/进度                                        | The accent's own surface: the main action, a chosen switch, a progress run | `button`、`checkbox`、`switch`、`slider`、`progress`、`collapsing-header`        |
-| `knob`     | 旋钮：开关圆点、滑杆把手（不带字）                                              | A knob: a switch's thumb, a slider's handle (no text on it)                | `switch`、`slider`                                                               |
-| `hover`    | 指针停在可点项上的那一步                                                        | The step a control takes under the pointer                                 | `button`、`carousel`                                                             |
-| `pressed`  | 按下的那一步（填充色按下读 `accent`，按它的 `pressed-opacity` 变淡，见第 6 节） | The step a control takes while pressed                                     | `button`                                                                         |
-| `disabled` | 禁用控件：容器与它自己的 `foreground`                                           | A disabled control's container and its own `foreground`                    | `button`、`toggle`                                                               |
+| finish     | 画什么                                                                          | What it draws                                                              | 谁读                                                                                |
+| ---------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `card`     | 卡片的底：一道接触影                                                            | A card's face: one contact shadow                                          | `sidebar`、`card`、`lib/surface`                                                    |
+| `inset`    | 凹下去的一层：输入井、轨道、槽、凹槽                                            | A well: a field, a track, a groove                                         | `lib/surface`、`input`、`select`、`tabs`、`switch`、`slider`、`progress`、`menu`    |
+| `raised`   | 卡片上的控件：内高光、接触影、边；分段与胶囊标签页选中的那块                    | A control on a card: an inner highlight, a contact shadow, an edge         | `button`、`select`、`radio-group`、`carousel`、`combobox`、`segmented`、`tabs`      |
+| `overlay`  | 浮层：菜单、弹层、toast                                                         | A floating surface: a menu, a popover                                      | `popover`、`lib/listbox`、`menu`、`command`                                         |
+| `modal`    | 模态面：对话框、抽屉、底部面板                                                  | A modal's face: a dialog, a sheet                                          | `dialog`、`sheet`                                                                   |
+| `inverse`  | 反色的面：toast、提示                                                           | The page's inverse: a toast, a tooltip                                     | `toast`、`tooltip`                                                                  |
+| `glass`    | 玻璃：半透明底 + 模糊                                                           | Glass: a translucent fill and a blur                                       | `carousel`、`lib/surface`                                                           |
+| `accent`   | 强调色的面：主操作、选中的开关/勾选/进度                                        | The accent's own surface: the main action, a chosen switch, a progress run | `button`、`toggle`、`checkbox`、`switch`、`slider`、`progress`、`collapsing-header` |
+| `knob`     | 旋钮：开关圆点、滑杆把手（不带字）                                              | A knob: a switch's thumb, a slider's handle (no text on it)                | `switch`、`slider`                                                                  |
+| `hover`    | 指针停在可点项上的那一步                                                        | The step a control takes under the pointer                                 | `button`、`carousel`                                                                |
+| `pressed`  | 按下的那一步（填充色按下读 `accent`，按它的 `pressed-opacity` 变淡，见第 6 节） | The step a control takes while pressed                                     | `button`                                                                            |
+| `disabled` | 禁用控件：容器与它自己的 `foreground`                                           | A disabled control's container and its own `foreground`                    | `button`、`toggle`                                                                  |
 
 <!-- /theme-lint: finishes -->
 
@@ -288,8 +288,6 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `grabber` → `sheet` 的控件预设                   | 抓取条是抽屉这个控件的一部分，不是一个层；`sheetGrabber()` 画它（`alpha(colors.mutedForeground, 0.4)`）                                                                                                                        |
 
 `light` 与 `accent` 本来就是同一个面（在五套主题里逐字节相同），`fill` 与 `on` 是强调色的两种用法，`field`/`track`/`groove` 是井的不同深度，`chip`/`pill` 是控件面，`tooltip` 是反色面——它们不是“值相同但决定不同”，是同一层上的不同控件。
-
-按下的 `Toggle` 不读 `accent` 这个面：它是安静的选择态，读 A 层的 `accent` / `accent-foreground` 两个角色（shadcn 的 `bg-accent text-accent-foreground`），不穿品牌强调色的填充与边，图标与字始终取配对的字色；Material / WinUI / Apple 各自 `accent` 的值就是它们选中的配方。所以 `accent` 这一行的读者里没有 `toggle`。`shadcn` 与 `apple` 的 `accent` 和 `inset` 是同一个值：按下的 toggle 在组的轨道上（`toolbarTrack` 读 `inset`）填充与轨道重合，选中靠 1px 的 `input` 边和墨色（`muted-foreground` → `accent-foreground`）读出——这是这两套扁平配色自己的取舍，组件不为它分支。
 
 ## 7 待定颜色
 
