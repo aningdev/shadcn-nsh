@@ -1,4 +1,4 @@
-import { colors, control, finish, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
+import { colors, finish, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import materialTheme from "../../../packages/theme/themes/material/index";
@@ -42,7 +42,7 @@ function App() {
       <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>
       <Text testID="frame">{`frame:${inputLook().class}`}</Text>
-      <Text testID="corners">{`corners:${fieldCorners(fieldLook(control().field)).borderBottomLeftRadius}|${fieldCorners(fieldLook(control().field)).borderTopLeftRadius}`}</Text>
+      <Text testID="corners">{`corners:${fieldCorners(fieldLook()).borderBottomLeftRadius}|${fieldCorners(fieldLook()).borderTopLeftRadius}`}</Text>
       <Button onPress={() => selectTheme(materialTheme)}>Material</Button>
       <Button onPress={() => selectTheme(marked)}>Marked</Button>
       <Button onPress={() => selectTheme(null)}>Build-time</Button>

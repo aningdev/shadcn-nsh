@@ -124,9 +124,9 @@ _Avoid_: 在语义层写 `var(--token)` 或重复的色值/圆角数字；用别
 **构建时主题**是 `nsh.json` 指向的 `theme.json` 与 `lib/ui/semantics.json`，由 `init --theme <name>` 定；**AppTheme**（`{ id, label, theme, semantics }`）是运行时可切的一套，装在 `themes/<name>/`，`selectTheme` 切过去、`selectTheme(null)` 回构建时那套、`currentTheme()` 读当前 `id`（还在构建时主题上时为 `null`）。应用清单里的构建时主题就是 `null`。
 _Avoid_: 把 `add theme-<x>` 当成换构建时主题、把主题叫“皮肤”、把 finish 当 token
 
-**Control Dimension（控件维度 / `dimension.control`）**:
-主题对“一个控件怎么画自己的零件”的四个按行为命名的答案：`field`（输入框边界：`box` / `underline` / `box-underline`）、`choice`（一组里被选中的那一格：`well` / `outline` / `inset`）、`track`（滑动轨道与进度剩余：`sunk` / `tint` / `hairline`）、`handle`（可拖部分：`circle` / `ring`）。标签页、分段控件与侧边栏的形态不在维度里：它们各画一种（[决策 0008](decisions/0008-drop-selection-group.md)）。各档画成什么样、按什么数字见 [`specs/theme-roles.md`](specs/theme-roles.md) 第 11、14 节；组件经 `@shadcn-nsh/theme` 的 `control()` 读取，换主题后下一帧重画。
-_Avoid_: 用组件名当维度名、把某个控件的整套尺寸塞进主题、为单个控件在 `theme.json` / `semantics.json` 里逐键放宽几何或状态字段、在组件里按主题 `id` 分支（`bun run check:ui` 拦下）
+**Slot（槽 / `semantics.json` 的 `slots`）**:
+主题对一个控件零件的**一个值**：输入框的底、边宽与边色，选择框的尺寸与勾，开关的轨道与钮的宽 × 高，滑杆的轨道粗细与内点，进度条的高度与内线，禁用时换成哪个面。一套主题给每个槽一个值，组件按槽画**一种**画法，没有形态枚举、没有按主题的分支（[决策 0013](decisions/0013-one-contract-value-slots.md)）。形态由值的退化表达：边宽 0 或边色等于底 → 只有填充；侧边与上边宽 0 → 下划线；宽 = 高 → 圆；内点 0 → 实心；圆角 = 高度一半 → 胶囊。槽的名单、单位与分组见 [`specs/theme-slots.md`](specs/theme-slots.md)，每套主题今天的值见 [`specs/theme-contract-v2.md`](specs/theme-contract-v2.md) 第 11 节；组件经 `packages/ui/lib/look.ts` 读取，换主题后下一帧重画。
+_Avoid_: 把槽当成“再一个枚举”、用一个槽只服务一套主题、把某个控件的整套尺寸塞进主题、在组件里按主题 `id` 或形态分支（`bun run check:ui` 拦下）、把槽值写成颜色字面量（只允许颜色角色、finish 与 `none` / `keep`）
 
 **Difference Table（差异表）**:
 [`specs/native-themes.md`](specs/native-themes.md) 第 3.6 节：契约表达不了、因而被降级掉的原生外观，逐行记着“官方长什么样、本库降级成什么、省掉了哪个契约项”。契约冻结在 contract v3 之后，一套主题的差异只有两条出路——改值靠向契约，或者进这张表；加键、加层、加字段不在其中。

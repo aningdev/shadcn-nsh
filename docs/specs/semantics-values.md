@@ -137,10 +137,6 @@
 | `dimension.icon.sm` | 图标的小档 | 12 / 16 | 12 / 16 | 12 / 16 | 12 / 16 | 12 / 16 |
 | `dimension.icon.md` | 图标的中档 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 |
 | `dimension.icon.lg` | 图标的大档 | 20 / 24 | 20 / 24 | 20 / 24 | 20 / 24 | 20 / 24 |
-| `dimension.control.field` | 输入井的框：四条边、只下边，还是框加下边 | `box` | `box` | `box` | `underline` | `box-underline` |
-| `dimension.control.choice` | 选择框静止时的面 | `well` | `well` | `well` | `outline` | `inset` |
-| `dimension.control.track` | 轨道：凹槽、色带，还是一条细线 | `sunk` | `sunk` | `sunk` | `tint` | `hairline` |
-| `dimension.control.handle` | 手柄：圆钮、竖条，还是环 | `circle` | `circle` | `circle` | `circle` | `ring` |
 
 ## 4 shape
 
@@ -149,7 +145,7 @@
 | 字段 | 说明 | NSH Gallery | shadcn/ui | Apple | Material | WinUI |
 | --- | --- | --- | --- | --- | --- | --- |
 | `shape.curve` | 圆角的曲率：连续曲线（Apple）还是圆弧 | `continuous` | `continuous` | `continuous` | `circular` | `circular` |
-| `shape.corners.button` | 按钮的角：取圆角刻度，还是胶囊 | `radius` | `radius` | `full` | `full` | `radius` |
+| `shape.corners.button` | 按钮的角：取圆角刻度，还是胶囊 | `{radius-control}` | `{radius-control}` | `full` | `full` | `{radius-control}` |
 
 ## 5 state
 
@@ -164,8 +160,7 @@
 | `state.overlay.dragged` | 拖动的叠色透明度 | 0 | 0 | 0 | 0.16 | 0 |
 | `state.pressed-opacity` | 按下时内容的透明度 | 0.7 | 0.7 | 0.7 | 1 | 1 |
 | `state.rest-opacity` | 指示器静止时的透明度（滚动条滑块） | 0.5 | 0.5 | 0.5 | 0.38 | 0.5 |
-| `state.disabled.content` | 禁用时内容的透明度 | 0.5 | 0.5 | 0.3 | 0.38 | 0.36 |
-| `state.disabled.fill` | 禁用时容器是否改画专用的禁用底，否则沿用统一透明度 | false | false | false | true | true |
+| `state.disabled.content` | 禁用时内容的透明度（容器的槽写 `keep` 时用它） | 0.5 | 0.5 | 0.3 | 0.38 | 0.36 |
 
 ## 6 transition
 

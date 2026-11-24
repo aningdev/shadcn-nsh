@@ -4,7 +4,6 @@
 import {
   animate,
   colors,
-  control,
   fillStyle,
   follow,
   motion,
@@ -46,11 +45,11 @@ export const progressGlide =
 /** A determinate fill's `translate` for `value` percent (0 to 100). */
 export const progressRemaining = (value: number) => `${Math.max(0, Math.min(100, value)) - 100}% 0`;
 
-/** A bar's rail, `height` points tall (default the `track` recipe's progress height): the groove the
- * theme's `track` form draws — its face, its edge, its shade, and, where the form is a hairline, a
- * line inside a taller box — so the form settles the rail's look instead of a per-theme table. */
+/** A bar's rail, `height` points tall (default the theme's `progress.height` slot): the groove the
+ * theme states — its face, its edge, its shade, and, where it states a line, a line inside a taller
+ * box — so the slots settle the rail's look instead of a per-theme table. */
 export function progressRail(height?: number): ViewStyle {
-  const look = trackLook(control().track);
+  const look = trackLook("progress");
   const h = height ?? look.progress.height;
   const line = look.progress.line;
   const face = railFace(look);
@@ -72,12 +71,12 @@ export function progressRail(height?: number): ViewStyle {
   };
 }
 
-/** A bar's fill, `height` points tall (default the `track` recipe's progress height): the `fill`
+/** A bar's fill, `height` points tall (default the theme's `progress.height` slot): the `fill`
  * finish's gradient (the run a slider's range draws too), or a tone's color (`up` for done,
  * `warn`, `destructive`; `accent` is the run). Neither has an edge, so a tone's bar and the run
  * read as one kind of bar. */
 export function progressFill(height?: number, tone?: Tone): ViewStyle {
-  const h = height ?? trackLook(control().track).progress.height;
+  const h = height ?? trackLook("progress").progress.height;
   const fill = tone && tone !== "accent" ? { backgroundColor: toneColor(tone) } : fillStyle();
   return { height: h, borderRadius: h / 2, ...fill };
 }
@@ -87,7 +86,7 @@ export function progressFill(height?: number, tone?: Tone): ViewStyle {
  * hairline is a view of its own on the bar's frame: the rail comes first in the bar's row, a
  * label after it. */
 export function progressMarker(value: number, height?: number): ViewStyle {
-  const h = height ?? trackLook(control().track).progress.height;
+  const h = height ?? trackLook("progress").progress.height;
   return {
     position: "absolute",
     // physical: the fill is a full-width bar slid by a translate, which keeps the physical left; the
@@ -160,7 +159,7 @@ export interface ProgressLookOptions {
  * following `sweep`.
  */
 export function progressLook(value: Live<number>, o?: ProgressLookOptions) {
-  const height = () => o?.height ?? trackLook(control().track).progress.height;
+  const height = () => o?.height ?? trackLook("progress").progress.height;
   const indeterminate = () => !!read(o?.indeterminate);
   return {
     get trackStyle(): ViewStyle {
@@ -219,7 +218,7 @@ export function Progress(props: ProgressProps) {
   });
   return (
     <ProgressContext.Provider
-      value={{ height: () => props.height ?? trackLook(control().track).progress.height }}
+      value={{ height: () => props.height ?? trackLook("progress").progress.height }}
     >
       <BaseProgress
         {...rest}
@@ -385,7 +384,7 @@ export type ProgressStepsProps = ViewProps;
  */
 export function ProgressSteps(props: ProgressStepsProps) {
   const [, rest] = split(props, ["children", "style"]);
-  const height = () => ProgressContext()?.height() ?? trackLook(control().track).progress.height;
+  const height = () => ProgressContext()?.height() ?? trackLook("progress").progress.height;
   // Each step takes its place in the row as it is made; the count tells which is last.
   const count = signal(0);
   const made = { count: 0 };

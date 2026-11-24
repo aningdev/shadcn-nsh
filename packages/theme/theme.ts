@@ -212,30 +212,34 @@ export interface Timing {
   timingFunction: EasingCurve;
 }
 
+/** A face a slot paints: a colour role, a tint, a finish field, or nothing. */
+export type SlotFace =
+  | { colour: string; alpha?: number }
+  | { tint: string; alpha?: number }
+  | { finish: string; field?: string }
+  | "none"
+  | "keep";
+
+/** A corner a slot cuts: the theme's control radius, a capsule, or points. */
+export type SlotCorner = number | "control" | "full";
+
 /**
- * A field's look: `box` four edges, `underline` the bottom edge only, `box-underline` four edges with round corners.
+ * One slot's value: a length, a ratio, a flag, a face, or a corner — or the two sides of the input
+ * tier, or of the appearance, where the theme states them separately.
  */
-export type Field = "box" | "underline" | "box-underline";
+export type SlotValue =
+  | number
+  | boolean
+  | string
+  | Exclude<SlotFace, "none" | "keep">
+  | { pointer: SlotValue; touch: SlotValue }
+  | { light: SlotValue; dark: SlotValue };
 
-/** A choice's look (a radio, a checkbox): `well` a sunk face, `outline` an edge alone, `inset` a flat face. */
-export type Choice = "well" | "outline" | "inset";
+/** The slots, flat and dotted (`docs/specs/theme-slots.md`): every theme states every one. */
+export type Slots = Record<string, SlotValue>;
 
-/** A track's look (a progress bar, a slider, a segmented control): `sunk` a grooved channel, `tint` a flat band, `hairline` a thin line. */
-export type Track = "sunk" | "tint" | "hairline";
-
-/** A handle's look (a slider's thumb, a switch's knob): `circle` a dot, `ring` a ring. */
-export type Handle = "circle" | "ring";
-
-/** The four control dimensions of `semantics.json`'s `dimension.control`: one value each. */
-export interface ControlDimensions {
-  field: Field;
-  choice: Choice;
-  track: Track;
-  handle: Handle;
-}
-
-/** The keys of `ControlDimensions`, in the order `semantics.json` writes them. */
-export const CONTROL_DIMENSIONS = ["field", "choice", "track", "handle"] as const;
+/** What a theme's `switch.feedback` names: nothing, a growing knob, or a widening one. */
+export type KnobFeedback = "none" | "expand" | "stretch";
 
 /**
  * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
@@ -253,6 +257,8 @@ export interface Style {
     headline: TypographyRole;
     display: TypographyRole;
   };
+  /** The control slots every theme states (`docs/specs/theme-slots.md`). */
+  slots: Slots;
   dimension: {
     shape: {
       control: string;
@@ -268,14 +274,13 @@ export interface Style {
     };
     stroke: { hairline: number; control: number };
     focus: { style: string; width: number; offset: number };
-    /** The four axes a theme decides for its controls (`control()`); nothing here names a platform. */
-    control: ControlDimensions;
     icon: Tiered<Steps>;
   };
   shape: {
     curve: string;
     corners: {
-      button: "full" | "radius";
+      /** `full` for a capsule, else the radius in points or a scale reference (`{radius-control}`). */
+      button: string;
     };
   };
   state: {
@@ -284,7 +289,7 @@ export interface Style {
     /** Opacity of a passive indicator at rest (a scrollbar's thumb), `rest-opacity`. */
     "rest-opacity": number;
     "pressed-opacity": number;
-    disabled: { content: number; fill: boolean };
+    disabled: { content: number };
   };
   transition: {
     enter: TimingSpec;
@@ -852,14 +857,14 @@ export const font = {
   letterSpacing: (role: TypeName) => style().typography[role].letterSpacing,
 };
 
-/** Radius used by `shape.button` when `shape.corners.button === "full"` (capsule-shaped buttons). */
-const CAPSULE_RADIUS = 999;
+/** The radius a `full` corner states: every renderer clamps a radius past half the box to a capsule. */
+export const CAPSULE_RADIUS = 999;
 
 /**
  * The corner radii by layer (`semantics.json`'s `dimension.shape`), resolved from `theme.json`'s
  * `radius-*` tokens via `token()`: `control` (in-page elements), `container` (cards, menus,
  * popovers, tooltips, list panels, toasts, frames), `modal` (dialogs, sheets, drawers), and
- * `button` (`CAPSULE_RADIUS` when `shape.corners.button === "full"`, else `control`). Reactive:
+ * `button` (`CAPSULE_RADIUS` when `shape.corners.button` is `full`, else its radius). Reactive:
  * reading one in JSX, a `draw` or an effect follows `selectTheme` and host token overrides.
  */
 export const shape = {
@@ -873,7 +878,8 @@ export const shape = {
     return resolveDimension(style().dimension.shape.modal);
   },
   get button() {
-    return style().shape.corners.button === "full" ? CAPSULE_RADIUS : shape.control;
+    const corner = style().shape.corners.button;
+    return corner === "full" ? CAPSULE_RADIUS : resolveDimension(corner);
   },
 };
 
@@ -936,21 +942,15 @@ export function stateLayer(
 /** The smallest target a finger or a pointer gets (`dimension.size.hit` of the tier): 0 adds none. */
 export const hitTarget = (): number => style().dimension.size.hit[tier];
 
-/** The control dimensions in use, made once at import (a `computed` made inside a component would
- * be disposed with it), so `control().field` follows `selectTheme` and re-runs only when that
- * value changes. A control reads the axis it draws and keeps its own fallback where a value cannot
- * express it; see `docs/specs/theme-contract-v2.md` §11. */
-const controlDimensions = reactive<ControlDimensions>(
-  CONTROL_DIMENSIONS,
-  () => style().dimension.control,
-);
-
 /**
- * The four control dimensions a theme decides (`semantics.json`'s `dimension.control`): how a
- * field, a choice, a track and a handle are drawn. Reactive: reading one in JSX, a `draw` or an
- * effect follows `selectTheme`.
+ * The slots in use (`semantics.json`'s `slot` group), made once at import: every theme states every
+ * one (`docs/specs/theme-slots.md`, ADR 0013), so a reader can take one without a fallback.
+ * Reactive: reading one in JSX, a `draw` or an effect follows `selectTheme`.
  */
-export const control = (): ControlDimensions => controlDimensions;
+const slotValues = computed(() => style().slots);
+
+/** The control slots a theme states: how a field, a choice, a groove, a slider, a switch and a disabled control are drawn. Reactive. */
+export const slots = (): Slots => slotValues();
 
 /** A button's height by size (`dimension.size.height` of the tier). */
 export const controlHeight = {

@@ -10,7 +10,8 @@
  * value name is stated in `docs/specs/theme-roles.md` and nowhere else.
  */
 import { MOTION_ROLES } from "../tokens/types";
-import { controlDimensionValues, easingNames, whitelists } from "./enums";
+import { easingNames, whitelists } from "./enums";
+import { SLOTS } from "./slots";
 import { parseTokenRef, type SplitFinishes, type TokenKind } from "./tokens";
 
 /** The groups of `semantics.json` that are style, in the order the file writes them. */
@@ -28,7 +29,7 @@ export const styleOf = (file: Record<string, unknown>): Record<string, unknown> 
   Object.fromEntries(styleGroups.filter((group) => group in file).map((g) => [g, file[g]]));
 
 /** The enums a theme's style values come from: read from the spec (`./enums`), re-exported here. */
-export { controlDimensionValues, easingNames, whitelists };
+export { easingNames, whitelists };
 
 /** The motion roles, named by speed and the state fade (`docs/specs/theme-contract-v2.md` §17). */
 export const motionRoleNames = MOTION_ROLES;
@@ -458,5 +459,12 @@ export function checkStyle(
           `${path}: \`${key}\` is ${JSON.stringify(value)}, not one of ${allowed.map((v) => JSON.stringify(v)).join(", ")}`,
         );
   }
+
+  // A slot a theme overrides is named by the list (`docs/specs/theme-slots.md`); its value's grammar
+  // is the decoder's (`slots-dtcg.ts`), which throws where a theme writes something unparsable.
+  const slots = isObject(file.slots) ? file.slots : {};
+  for (const slot of Object.keys(slots))
+    if (!Object.hasOwn(SLOTS, slot))
+      problems.push(`${path}: \`${slot}\` is not a slot (docs/specs/theme-slots.md)`);
   return problems;
 }

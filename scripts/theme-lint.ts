@@ -19,20 +19,12 @@ import { finishFields, type FinishRole } from "../packages/theme/finish-fields";
 import { colourSources, scaleCitationsOf } from "./theme/extensions";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkMaterial, checkMaterialFill } from "./theme/material";
-import { checkRecipeNumbers, lookNumbers } from "./theme/recipe-numbers";
-import {
-  specBlock,
-  specControlDimensions,
-  specEnums,
-  specParts,
-  specRecipes,
-  specRows,
-} from "./theme/spec";
+import { SLOTS } from "./theme/slots";
+import { specBlock, specEnums, specParts, specRows } from "./theme/spec";
 import {
   checkScales,
   checkStyle,
   checkTiers,
-  controlDimensionValues,
   keyMatches,
   leaves,
   styleOf,
@@ -438,10 +430,8 @@ for (const theme of themes) {
   for (const problem of checkTiers(path, file)) fail(problem);
 }
 
-// 4c. The spec's tables are the one list of enumerated values: `style.ts` reads its whitelists from
-// the enum table, so every listed key must appear in every theme; and each of the four control
-// dimensions reads from every theme's `semantics.json` as the spec's control table says, the
-// theme-to-column mapping coming from the table's own header.
+// 4c. The spec's enum table is the one list of enumerated values: `style.ts` reads its whitelists
+// from it, so every listed key must appear in every theme.
 const enumKeys = specEnums(spec).map((row) => row.key);
 const styleKeys = [
   ...leaves(styleOf(defaultSemantics as unknown as Record<string, unknown>)).keys(),
@@ -455,53 +445,24 @@ for (const key of Object.keys(whitelists))
   if (!enumKeys.includes(key))
     fail(`scripts/theme/style.ts: whitelist \`${key}\` is not in the spec's enum table`);
 
-const controlRows = specControlDimensions(spec);
-for (const key of Object.keys(controlDimensionValues))
-  if (!controlRows.some((row) => row.dimension === key))
-    fail(`docs/specs/theme-roles.md: the control table states no row for \`${key}\``);
-for (const row of controlRows) {
-  const values = controlDimensionValues[row.dimension as keyof typeof controlDimensionValues];
-  if (values === undefined) {
-    fail(
-      `docs/specs/theme-roles.md: the control table names \`${row.dimension}\`, not one of the four control dimensions`,
-    );
+// 4d. Every theme carries every control slot (`docs/specs/theme-slots.md` is the list): a theme
+// states the ones it answers differently, inherits the rest, and a name the list has no row for is
+// a typo rather than a new slot.
+const slotPaths = new Set(Object.keys(SLOTS));
+for (const theme of themes) {
+  const path = `packages/theme/themes/${theme}/semantics.json`;
+  const compiled = readJson<Record<string, unknown>>(path).slots;
+  if (!isRecord(compiled)) {
+    fail(`${path}: states no slots`);
     continue;
   }
-  for (const column of row.columns)
-    if (!values.includes(column.value))
-      fail(
-        `docs/specs/theme-roles.md: \`${row.dimension}\` takes \`${column.value}\`, not in the enum table`,
-      );
-  for (const theme of themes) {
-    const column = row.columns.find((entry) => entry.themes.includes(theme));
-    if (column === undefined) {
-      fail(
-        `docs/specs/theme-roles.md: the control table's header names no column for \`${theme}\``,
-      );
-      continue;
-    }
-    const path = `packages/theme/themes/${theme}/semantics.json`;
-    const dimension = readJson<Record<string, unknown>>(path).dimension;
-    const control = isRecord(dimension) && isRecord(dimension.control) ? dimension.control : {};
-    const actual = control[row.dimension];
-    if (actual !== column.value)
-      fail(
-        `${path}: dimension.control.${row.dimension} is ${JSON.stringify(actual)}, the spec states \`${column.value}\``,
-      );
-  }
+  const stated = new Set(Object.keys(compiled));
+  for (const slot of slotPaths)
+    if (!stated.has(slot)) fail(`${path}: states no \`${slot}\` slot (docs/specs/theme-slots.md)`);
+  for (const slot of stated)
+    if (!slotPaths.has(slot))
+      fail(`${path}: states \`${slot}\`, which is not a slot (docs/specs/theme-slots.md)`);
 }
-for (const row of specRecipes(spec)) {
-  const values = controlDimensionValues[row.dimension as keyof typeof controlDimensionValues];
-  if (values === undefined)
-    fail(
-      `docs/specs/theme-roles.md: the recipe table names \`${row.dimension}\`, not one of the four control dimensions`,
-    );
-  else if (!values.includes(row.value as never))
-    fail(
-      `docs/specs/theme-roles.md: the recipe table measures \`${row.value}\`, which \`${row.dimension}\` does not take`,
-    );
-}
-for (const problem of checkRecipeNumbers(specRecipes(spec), lookNumbers())) fail(problem);
 
 // 5. Nothing in the files is written and never read.
 // `radius` needs no reader of this library's: it is the A layer's base slot an app's own Tailwind
@@ -518,8 +479,24 @@ for (const name of names)
     !unread.has(name)
   )
     fail(`packages/theme/theme.json: token \`${name}\` is read nowhere and not left to the app`);
+// A finish a slot names is read by the slot's reader (`disabledLook().face`, `face("choice.checked.face")`),
+// so the slot values count as readers as well as the code.
+const slotFinishes = new Set<string>();
+const readSlotFinishes = (node: unknown): void => {
+  if (typeof node === "string") {
+    const match = /^finish:([a-z0-9-]+)/.exec(node);
+    if (match !== null) slotFinishes.add(match[1]!);
+  } else if (isRecord(node)) {
+    if (typeof node.finish === "string") slotFinishes.add(node.finish);
+    for (const value of Object.values(node)) readSlotFinishes(value);
+  }
+};
+for (const theme of themes)
+  readSlotFinishes(
+    readJson<Record<string, unknown>>(`packages/theme/themes/${theme}/semantics.json`).slots,
+  );
 for (const role of defaultRoles)
-  if (!readsRole(role) && !unread.has(role))
+  if (!readsRole(role) && !slotFinishes.has(role) && !unread.has(role))
     fail(
       `packages/theme/semantics.json: finish \`${role}\` is read nowhere and not left to the app`,
     );

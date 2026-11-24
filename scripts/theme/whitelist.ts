@@ -1,8 +1,9 @@
+import { SLOTS } from "./slots";
 /**
  * The scope of a theme's customization (docs/decisions/0007-theme-customization-scope.md,
  * docs/decisions/0012-derived-colours-are-defaults.md), as the lint reads it: every colour a theme
  * writes is a source or a reference, and a reference that states a value rather than pointing at a
- * source carries that value's provenance; the control dimensions; and the type scale, which no theme
+ * source carries that value's provenance; the control slots; and the type scale, which no theme
  * owns (docs/decisions/0009-no-theme-type-scale.md). `theme-lint` runs it on every theme; the
  * fixtures in `whitelist.test.ts` show what it refuses.
  */
@@ -14,9 +15,6 @@ import {
   tintColours,
   type ColourProvenance,
 } from "./sources";
-
-/** ADR 0007 §1: the control dimensions a theme chooses a form for. */
-export const controlDimensions: readonly string[] = ["field", "choice", "track", "handle"];
 
 /** A colour that is a value of its own, not a pointer. */
 const literal = /oklch\(|#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklab|lab|lch|color)\(/i;
@@ -38,7 +36,7 @@ export interface WhitelistTheme {
 
 export interface WhitelistSemantics {
   typography: Record<string, { fontSize: unknown; lineHeight: unknown }>;
-  dimension: { control: Record<string, unknown> };
+  slots: Record<string, unknown>;
 }
 
 const nothing: ColourProvenance = { theme: {}, light: {}, dark: {} };
@@ -109,14 +107,12 @@ export function checkWhitelist(
         );
     }
 
-  for (const key of Object.keys(semantics.dimension.control))
-    if (!controlDimensions.includes(key))
-      problems.push(
-        `${path}: dimension.control.${key} is not one of ${controlDimensions.join(", ")} (ADR 0007)`,
-      );
-  for (const key of controlDimensions)
-    if (!(key in semantics.dimension.control))
-      problems.push(`${path}: dimension.control.${key} is missing`);
+  for (const slot of Object.keys(semantics.slots))
+    if (!Object.hasOwn(SLOTS, slot))
+      problems.push(`${path}: \`${slot}\` is not a control slot (docs/specs/theme-slots.md)`);
+  for (const slot of Object.keys(SLOTS))
+    if (!Object.hasOwn(semantics.slots, slot))
+      problems.push(`${path}: \`${slot}\` is missing (docs/specs/theme-slots.md)`);
 
   for (const [role, own] of Object.entries(semantics.typography)) {
     const base = shared.typography[role];

@@ -9,9 +9,12 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { BASE_SLOTS } from "../theme/slots";
+import { slotsDoc } from "../theme/slots-dtcg";
 import { BUILD_ROOT_THEME } from "../theme/tokens";
 import { compileAppearanceTokensJson, compileSemanticsJson, compileThemeJson } from "./compile";
 import { compileDesignMd } from "./design-md";
+import { FORMAT_SCHEMA_URL } from "./types";
 
 const defaultRepoRoot = path.resolve(import.meta.dir, "..", "..");
 
@@ -32,6 +35,20 @@ export function discoverDtcgThemes(repoRoot = defaultRepoRoot): string[] {
     .map((entry) => entry.name)
     .filter((name) => fs.existsSync(path.join(themesDir, name, "theme.resolver.json")))
     .sort();
+}
+
+/**
+ * The base slot source: the values every theme inherits (`scripts/theme/slots.ts` is their source, so
+ * a slot is added in one place and lands in a DTCG file the same build writes).
+ */
+export const BASE_SLOTS_PATH = "packages/theme/tokens/base/slots.tokens.json";
+
+/** The base slot group, as the DTCG source file every theme's resolver reads first. */
+export function baseSlotsTarget(): CompiledTarget {
+  return {
+    relPath: BASE_SLOTS_PATH,
+    content: `${JSON.stringify({ $schema: FORMAT_SCHEMA_URL, ...slotsDoc(BASE_SLOTS) }, null, 2)}\n`,
+  };
 }
 
 /** Compile a DTCG-sourced theme into all of its shipped runtime and DTCG targets. */
@@ -70,6 +87,12 @@ export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): 
   return targets;
 }
 
+/** Every file the sources build: the base slot group, then each theme's runtime and DTCG outputs. */
+export function* allTargets(repoRoot = defaultRepoRoot): Generator<CompiledTarget> {
+  yield baseSlotsTarget();
+  for (const themeId of discoverDtcgThemes(repoRoot)) yield* buildThemeTargets(themeId, repoRoot);
+}
+
 /** Write compiled runtime files for every DTCG-sourced theme. */
 export function buildAllTokens(repoRoot = defaultRepoRoot): {
   themes: string[];
@@ -80,18 +103,16 @@ export function buildAllTokens(repoRoot = defaultRepoRoot): {
   const written: string[] = [];
   const unchanged: string[] = [];
 
-  for (const themeId of themes) {
-    for (const target of buildThemeTargets(themeId, repoRoot)) {
-      const abs = path.join(repoRoot, target.relPath);
-      const existing = fs.existsSync(abs) ? fs.readFileSync(abs, "utf8") : null;
-      if (existing === target.content) {
-        unchanged.push(target.relPath);
-      } else {
-        fs.mkdirSync(path.dirname(abs), { recursive: true });
-        fs.writeFileSync(abs, target.content);
-        written.push(target.relPath);
-      }
+  for (const target of allTargets(repoRoot)) {
+    const abs = path.join(repoRoot, target.relPath);
+    const existing = fs.existsSync(abs) ? fs.readFileSync(abs, "utf8") : null;
+    if (existing === target.content) {
+      unchanged.push(target.relPath);
+      continue;
     }
+    fs.mkdirSync(path.dirname(abs), { recursive: true });
+    fs.writeFileSync(abs, target.content);
+    written.push(target.relPath);
   }
 
   return { themes, written, unchanged };
@@ -105,17 +126,14 @@ export function checkAllTokens(repoRoot = defaultRepoRoot): {
   const themes = discoverDtcgThemes(repoRoot);
   const problems: string[] = [];
 
-  for (const themeId of themes) {
-    for (const target of buildThemeTargets(themeId, repoRoot)) {
-      const abs = path.join(repoRoot, target.relPath);
-      if (!fs.existsSync(abs)) {
-        problems.push(`${target.relPath} is missing`);
-        continue;
-      }
-      const existing = fs.readFileSync(abs, "utf8");
-      if (existing !== target.content) {
-        problems.push(`${target.relPath} differs from what packages/theme/tokens builds`);
-      }
+  for (const target of allTargets(repoRoot)) {
+    const abs = path.join(repoRoot, target.relPath);
+    if (!fs.existsSync(abs)) {
+      problems.push(`${target.relPath} is missing`);
+      continue;
+    }
+    if (fs.readFileSync(abs, "utf8") !== target.content) {
+      problems.push(`${target.relPath} differs from what packages/theme/tokens builds`);
     }
   }
 

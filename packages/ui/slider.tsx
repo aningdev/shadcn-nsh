@@ -4,7 +4,6 @@
 import {
   alpha,
   colors,
-  control,
   EDGE_WIDTH,
   fillStyle,
   finish,
@@ -18,14 +17,14 @@ import { split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
 import { joinClass } from "./lib/class-names";
-import { type HandleLook, handleLook, trackLook } from "./lib/look";
+import { sliderLook as sliderSlots, trackLook } from "./lib/look";
 import { railFace, railShadow } from "./lib/track";
 
-/** The knob a slider draws: the `handle` its theme's `control()` names. */
-const knob = () => handleLook(control().handle);
+/** The knob a slider draws: the theme's `slider.*` slots. */
+const knob = () => sliderSlots();
 
-/** The groove the knob runs in: the `track` its theme's `control()` names. */
-const groove = () => trackLook(control().track);
+/** The groove the knob runs in: the theme's groove slots, under a slider. */
+const groove = () => trackLook("slider");
 
 /** Options of `sliderLook`. */
 export interface SliderLookOptions {
@@ -45,17 +44,17 @@ export const sliderValueClass = "w-[42px] text-right font-mono text-[11px] leadi
 export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.foreground, 0.6) });
 
 /**
- * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading its knob from the `handle`
- * and its groove from the `track` the theme's `control()` names: the rail's thickness, the band
+ * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading its knob from the
+ * theme's `slider.*` slots and its groove from its groove slots: the rail's thickness, the band
  * around it, the knob's size and its pressed size, and whether the groove is graved in with an edge.
  */
 export function sliderLook(o: SliderLookOptions = {}) {
   const vertical = !!o.vertical;
   const fade = "transition duration-150 motion-reduce:transition-none";
-  /** A number a form states once, or once per input (`circle`'s knob and band differ by input). */
+  /** A number the theme states once, or once per input (a knob's band differs by input). */
   const perTier = (v: Tiered<number> | number) => (typeof v === "number" ? v : v[tier]);
-  /** The knob's width, on a form whose knob is a disc of one size (`ring`) or one per input. */
-  const knobWidth = (h: HandleLook) => (h.form === "ring" ? h.knob : h.knob[tier]);
+  /** The knob's width: the disc's, which the theme states per input. */
+  const knobWidth = (h: ReturnType<typeof knob>) => h.knob[tier];
   return {
     // A vertical value sits above the rail (`flex-col-reverse`: the track is the first child).
     // It does not take `flex-1`: the rail keeps the height its band asks for.
@@ -70,7 +69,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
     get trackClass(): string {
       const h = knob();
       const pad = knobWidth(h) / 2;
-      const length = h.verticalLength[tier];
+      const length = h.vertical[tier];
       const bandClass = vertical
         ? `w-[${perTier(h.band)}px] h-[${length}px] items-center py-[${pad}px]`
         : `h-[${perTier(h.band)}px] justify-center px-[${pad}px]`;
@@ -104,14 +103,14 @@ export function sliderLook(o: SliderLookOptions = {}) {
     get thumbClass(): string {
       const h = knob();
       const focusRingClass = "focus-visible:outline-3 focus-visible:outline-ring/50";
-      if (h.form === "ring") {
-        const outer = h.knob - 2 * EDGE_WIDTH;
+      if (h.dot > 0) {
+        const outer = h.knob[tier] - 2 * EDGE_WIDTH;
         const rim = (outer - h.dot) / 2;
-        const hoverRim = (outer - h.knobHover) / 2;
-        const pressRim = (outer - h.knobPressed) / 2;
+        const hoverRim = (outer - h.dotHover) / 2;
+        const pressRim = (outer - h.dotPressed) / 2;
         return `w-[${outer}px] h-[${outer}px] rounded-full border-solid border-popover border-[${rim}px] hover:border-[${hoverRim}px] active:border-[${pressRim}px] ${fade} ${focusRingClass}`;
       }
-      const hoverMods = h.brightensOnHover
+      const hoverMods = h.brightens
         ? "hover:brightness-105 active:brightness-95 disabled:brightness-100"
         : "";
       // A press swells the knob (a touch screen's 20 points reach 32): as a transform, so the
@@ -122,7 +121,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
     },
     get thumbStyle(): ViewStyle {
       const h = knob();
-      if (h.form === "ring") {
+      if (h.dot > 0) {
         return {
           backgroundColor: colors.primary,
           boxShadow: outerEdge(finish.knob.borderColor, finish.knob.boxShadow, EDGE_WIDTH),

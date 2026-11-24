@@ -420,19 +420,13 @@ Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline bor
 
 Corner radius roles by layer (8px control, 12px container, 14px modal) referenced by semantic shape roles.
 
-Non-dimensional corner curve and button capsule flag. (`curve: "continuous"`, `corners.button: "radius"`).
+Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "{dimension.radius.control}"`).
 
 Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
 
 - **`control`** (8px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
 - **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (14px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
-
-**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): Control dimensions: the four behaviour-named axes a theme decides for its controls (field, choice, track, handle). Themes override only the axes that differ.
-- **`field`**: `box`
-- **`choice`**: `well`
-- **`track`**: `sunk`
-- **`handle`**: `circle`
 
 ## Motion & Micro-interaction
 
@@ -469,7 +463,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **`finish.hover`**: A control under the pointer.
 - **`finish.pressed`**: A control held down.
 - **`finish.disabled`**: A control that cannot be used.
-- **Disabled handling** (content=0.5, fill=false): Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.
+- **Disabled handling** (content=0.5, fill=undefined): Disabled content opacity multiplier.
 
 ## Do's and Don'ts
 

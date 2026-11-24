@@ -4,9 +4,9 @@ const find = (texts: string[], prefix: string) =>
   texts.find((t) => t.startsWith(prefix))?.slice(prefix.length);
 
 /**
- * Control dimensions (`control()`, read by the per-component looks: `checkbox`, `switch`,
- * `slider`, `radio`, `progress`, `spinner`, `calendar`) update reactively on `selectTheme`. Tabs
- * draw one form, the same under every theme.
+ * The theme's slots (read by the per-component looks: `checkbox`, `switch`, `slider`, `radio`,
+ * `progress`, `spinner`, `calendar`) update reactively on `selectTheme`. Tabs draw one form, the
+ * same under every theme.
  */
 test("control dimensions and component looks follow the active theme", async () => {
   const app = await open("./theme-control-geometry.fixture.tsx", {
@@ -17,6 +17,9 @@ test("control dimensions and component looks follow the active theme", async () 
   const assertBase = () => {
     const sw = find(app.texts(), "switch=") ?? "";
     expect(sw.startsWith("36x20|1|16|checked:translate-x-[16px]")).toBe(true);
+    // A small switch is the theme's `switch.small.*` slots: a knob one icon step down, its
+    // hover and press scaled by the same ratio, its travel the smaller track's.
+    expect(find(app.texts(), "small=")).toBe("28x16|12|checked:translate-x-[12px]");
     expect(find(app.texts(), "slider=")).toContain(
       "h-[6px] rounded-full|h-[20px] justify-center px-[7px]",
     );

@@ -4,7 +4,6 @@
 
 import {
   colors,
-  control,
   finish,
   focusRing,
   rounded,
@@ -86,7 +85,7 @@ const fieldMinWidth = 160;
 export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
   return {
     get style(): ViewStyle {
-      const field = fieldLook(control().field);
+      const field = fieldLook();
       return {
         flexDirection: "row",
         alignItems: "center",

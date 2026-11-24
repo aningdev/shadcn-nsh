@@ -1,7 +1,7 @@
 # 0007 主题的定制范围：全局风格 + 关键组件 + 约 15 个源色
 
 - 日期：2026-11-24
-- 状态：已采纳（2026-11-24）；第 4 条与第 5 条里“只引用或派生的键不写字面量”一句由 [0012](0012-derived-colours-are-defaults.md) 取代（2026-11-25）
+- 状态：已采纳（2026-11-24）；第 4 条与第 5 条里“只引用或派生的键不写字面量”一句由 [0012](0012-derived-colours-are-defaults.md) 取代（2026-11-25）；第 2 条与第 3 条中保留 `field`、`choice`、`track`、`handle` 四个枚举的部分由 [0013](0013-one-contract-value-slots.md) 取代，其余照旧
 - 取代：[0004](0004-theme-contract-freeze.md) 第 1 条里“冻结前的四件”的清单（#340、#358 按本文重判）；0004 其余各条照旧
 - 规范：[`docs/specs/theme-contract-v2.md`](../specs/theme-contract-v2.md)、[`docs/specs/native-themes.md`](../specs/native-themes.md) 第 3.6 节
 

@@ -67,13 +67,11 @@ describe("checkStyle", () => {
     expect(problems).toContain("typography.body.fontWeight` is 450");
   });
 
-  test("names a control dimension outside its list", () => {
+  test("names a slot the list does not have", () => {
     const file = copy();
-    file.dimension.control.field = "swatch";
-    file.dimension.control.track = "row";
+    file.slots["field.selection"] = { colour: "field" };
     const problems = check(file).join("\n");
-    expect(problems).toContain('dimension.control.field` is "swatch"');
-    expect(problems).toContain('dimension.control.track` is "row"');
+    expect(problems).toContain("`field.selection` is not a slot");
   });
 
   test("holds every whitelist to the value the build-time theme states", () => {

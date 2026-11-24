@@ -2,21 +2,18 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
-  alpha,
   colors,
-  control,
   finish,
   focusRing,
   follow,
-  isDark,
   rounded,
   stateLayerColor,
   terminal,
   TERMINAL_ROW,
   tier,
-  tints,
   shape,
   stroke,
+  tints,
   dimmed,
 } from "@shadcn-nsh/theme";
 import { Check, Minus, type IconNode } from "lucide";
@@ -28,7 +25,7 @@ import { AsText } from "./lib/as-text";
 import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { choiceLook, type ChoiceLook, type Fill, HIT_TARGET } from "./lib/look";
+import { choiceLook, type ChoiceLook, type Fill, edged, fillOf } from "./lib/look";
 import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 
@@ -55,89 +52,31 @@ const dims = (scale = 1) => ({
   check: Math.round(controlSize.check * scale),
 });
 
-/**
- * A fill the recipe names, as the style keys it draws: a finish's whole layer (its fill, its shade,
- * its edge), a palette role, or a brand tint.
- */
-export const fillOf = (fill: Fill): ViewStyle => {
-  switch (fill.kind) {
-    case "finish":
-      return { ...finish[fill.role] };
-    case "colour":
-      return { backgroundColor: colors[fill.role] };
-    case "tint":
-      return { backgroundColor: tints.brand };
-  }
-};
-
-/** The colour a fill paints, where a part takes one by name (an edge). */
-const colourOf = (fill: Fill): string => {
-  switch (fill.kind) {
-    case "finish":
-      return finish[fill.role].borderColor ?? colors.border;
-    case "colour":
-      return colors[fill.role];
-    case "tint":
-      return tints.brand;
-  }
-};
-
-/**
- * The edge's width a choice recipe states: its own number, or the control stroke where it names the
- * scale. Zero where the form draws no edge.
- */
-export const choiceEdge = (look: ChoiceLook): number => {
-  const width = look.edge?.width ?? 0;
-  return typeof width === "number" ? width : stroke.control;
-};
-
-/** The form's corner in points, per tier. */
+/** The choice's corner in points, at this tier. */
 export const choiceCorner = (look: ChoiceLook): number => look.corner[tier];
 
-/** The fill of a box or ring that is off: spread it after the box's
- * `borderWidth` (a quick setting's icon lights up from it too, under a
- * `ChoiceLight`). Light, the field's well; dark, a step above the card
- * (shadcn's `dark:bg-input/30`) inside an edge a step brighter than a
- * field's, so an empty box still stands out, dimmed too: `disabled`, its
- * edge twice as strong, so the row's half opacity leaves it as strong as an
- * enabled box's (the mark and the label fade, the box stays drawn).
- *
- * Which face, edge and shade a form paints is its recipe's (`choiceLook`): WinUI's flat track
- * face, M3's empty middle with its outline, or the well's own — the library's, whose ground changes
- * with the appearance because no role names "the field under the inset shade". */
+/**
+ * The edge's width a choice states: its own points, zero where the theme draws no edge.
+ */
+export const choiceEdge = (look: ChoiceLook): number => look.edge?.width ?? 0;
+
+/**
+ * The fill of a box or ring that is off, as the theme's `choice.*` slots state it: a face where it
+ * paints that layer, an edge in the colour the theme gives (a stronger one on a disabled box), and
+ * the `boxShadow` of the finish its face hangs off. An empty box still stands out: light, the
+ * field's well; dark, a step above the card (`color:input@0.3` in the base theme's slots).
+ */
 export const choiceWell = (o?: { disabled?: boolean; look?: ChoiceLook }): ViewStyle => {
-  const look = o?.look ?? choiceLook("well");
+  const look = o?.look ?? choiceLook();
   const shade = look.shade === null ? "none" : finish[look.shade].boxShadow;
-  const edge = look.edge === null ? colors.border : colourOf(look.edge.fill);
-  if (look.form === "inset") {
-    return {
-      ...(look.face === null ? {} : fillOf(look.face)),
-      backgroundImage: "none",
-      borderColor: edge,
-      boxShadow: shade,
-    };
-  }
-  if (look.form === "outline") {
-    return {
-      backgroundColor: "transparent",
-      backgroundImage: "none",
-      borderColor: edge,
-      boxShadow: shade,
-    };
-  }
-  return isDark()
-    ? {
-        backgroundColor: alpha(colors.input, 0.3),
-        backgroundImage: "none",
-        borderColor: alpha(colors.foreground, o?.disabled ? 0.4 : 0.2),
-        boxShadow: shade,
-      }
-    : {
-        backgroundColor: colors.field,
-        backgroundImage: "none",
-        borderColor: colors.input,
-        boxShadow: shade,
-      };
+  const edgeLook =
+    o?.disabled === true && look.edgeDisabled !== null ? look.edgeDisabled : look.edge;
+  return {
+    ...(look.face === null ? { backgroundColor: "transparent" } : fillOf(look.face)),
+    backgroundImage: "none",
+    borderColor: edged(edgeLook?.fill ?? null),
+    boxShadow: shade,
+  };
 };
 
 /**
@@ -193,7 +132,7 @@ export interface CheckboxLook {
 /**
  * A checkbox's box, as the props of `Checkbox`'s indicator (spread them:
  * `<Checkbox class="group" {...checkboxLook()} indicator={<CheckboxMark mark={..} />}>`):
- * the theme's choice recipe (`choiceLook(control().choice)`), its box the icon scale's `md`
+ * the theme's choice slots (`choiceLook()`), its box the icon scale's `md`
  * (16 points with a pointer, 20 on a touch screen), its corner the recipe's (`round`: a circle),
  * sinking to 90% while its row (the `group`) is pressed. `CheckboxMark` fills it.
  */
@@ -202,7 +141,7 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
     indicatorClass: choiceSink,
     get indicatorStyle(): ViewStyle {
       const { control: box, height } = dims(o?.scale);
-      const look = choiceLook(control().choice);
+      const look = choiceLook();
       const corner = Math.round(choiceCorner(look) * (o?.scale ?? 1));
       return {
         width: box,
@@ -279,7 +218,7 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
       <Icon icon={icon} size={checkSize} tint={colors.primaryForeground} weight={MARK_WEIGHT} />
     </View>
   );
-  const cb = choiceLook(control().choice);
+  const cb = choiceLook();
   const border = choiceEdge(cb);
   const innerW = box - 2 * border;
   const innerH = height - 2 * border;
@@ -288,9 +227,9 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
   // absolutely made it 0 × 0 and the fill a speck at the box's middle.
   return (
     <View style={{ width: innerW, height: innerH }}>
-      {cb.target !== null ? (
+      {cb.halo !== null ? (
         <ChoiceTarget
-          target={Math.round(HIT_TARGET * (props.scale ?? 1))}
+          target={Math.round(cb.halo * (props.scale ?? 1))}
           innerW={innerW}
           innerH={innerH}
           checked={!!props.mark}

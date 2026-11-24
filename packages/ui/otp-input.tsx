@@ -1,15 +1,7 @@
 // An OTP input: the cells (`otpCells`, `otpCellLook`) and the `OtpInput` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  control,
-  finish,
-  terminal,
-  type Tone,
-  toneColor,
-  toneTint,
-} from "@shadcn-nsh/theme";
+import { colors, finish, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
@@ -49,12 +41,12 @@ export interface OtpCellOptions {
 export function otpCellLook(o?: OtpCellOptions) {
   const cells = o?.cells ?? otpCells;
   return {
-    // A cell is a field (`control().field`), read here, where the classes are applied: a cell drawn
+    // A cell is a field (`fieldLook()`), read here, where the classes are applied: a cell drawn
     // after the theme changed wears that theme's form (material's line, winui's box and line).
     get cellClass(): string {
       if (terminal)
         return "w-10 h-12 items-center justify-center border border-line font-semibold text-foreground focus:border-brand disabled:opacity-50";
-      const field = fieldLook(control().field);
+      const field = fieldLook();
       return `${cells} items-center justify-center ${fieldCornerClass(field)} bg-inset font-semibold text-foreground ${fieldEdgeClass(field)} border-line data-filled:border-input data-filled:bg-card data-filled:focus:border-brand disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`;
     },
     get cellStyle(): ViewStyle {

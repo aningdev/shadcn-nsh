@@ -107,12 +107,12 @@
     }
   },
   "shape": {
-    "$description": "Non-dimensional corner curve and button capsule flag.",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "corners": {
-          "button": "full"
-        }
+    "$description": "Non-dimensional corner curve and the radius a button takes.",
+    "corners": {
+      "$description": "How a control cuts its corners.",
+      "button": {
+        "$value": "full",
+        "$description": "A button's corner: the control radius, `full` for a capsule, or points."
       }
     }
   },

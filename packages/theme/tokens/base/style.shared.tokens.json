@@ -225,27 +225,21 @@
         },
         "$description": "Focus ring outward offset from control bounds."
       }
-    },
-    "control": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "field": "box",
-          "choice": "well",
-          "track": "sunk",
-          "handle": "circle"
-        }
-      },
-      "$description": "Control dimensions: the four behaviour-named axes a theme decides for its controls (field, choice, track, handle). Themes override only the axes that differ."
     }
   },
   "shape": {
-    "$description": "Non-dimensional corner curve and button capsule flag.",
+    "$description": "Non-dimensional corner curve and the radius a button takes.",
     "$extensions": {
       "dev.aning.shadcn-nsh": {
-        "curve": "continuous",
-        "corners": {
-          "button": "radius"
-        }
+        "curve": "continuous"
+      }
+    },
+    "corners": {
+      "$description": "How a control cuts its corners.",
+      "button": {
+        "$type": "dimension",
+        "$value": "{dimension.radius.control}",
+        "$description": "A button's corner: the control radius, `full` for a capsule, or points."
       }
     }
   },
@@ -280,12 +274,7 @@
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
     },
     "disabled": {
-      "$description": "Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "fill": false
-        }
-      },
+      "$description": "Disabled content opacity multiplier.",
       "content": {
         "$value": 0.5
       }

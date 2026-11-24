@@ -2,7 +2,7 @@
 // `numberInputSteps`) and the `NumberInput` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, control, terminal } from "@shadcn-nsh/theme";
+import { colors, terminal } from "@shadcn-nsh/theme";
 import { ChevronDown, ChevronUp, Minus, Plus, type IconNode } from "lucide";
 import type { InputStyle } from "nsh";
 import { platform, split, Text } from "nsh";
@@ -36,7 +36,7 @@ export const numberInputClasses = {
   /** The well: its corners and edge are the theme's field, read where it is drawn. */
   get frame(): string {
     if (terminal) return "h-4 flex-row items-stretch bg-field pl-2 disabled:opacity-50";
-    const field = fieldLook(control().field);
+    const field = fieldLook();
     return [
       pointer ? "h-8" : "h-11",
       fieldCornerClass(field),

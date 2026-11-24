@@ -310,14 +310,27 @@ describe("DTCG source lint", () => {
     expect(text).toContain("elevation must be a non-negative number");
   });
 
-  test("rejects an invalid shape.corners.button in $extensions", () => {
+  test("rejects a shape.corners.button that is neither a radius, points, nor `full`", () => {
     const problems = withMutatedDefault((tmp) => {
       const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
       const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
-      shared.shape.$extensions["dev.aning.shadcn-nsh"].corners.button = "pill";
+      shared.shape.corners.button.$value = "pill";
       fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
     });
-    expect(problems.join("\n")).toContain('corners.button: "pill"');
+    expect(problems.join("\n")).toContain('shape.corners.button is "pill"');
+  });
+
+  test("rejects a slot the list has no row for", () => {
+    const problems = withMutatedDefault((tmp) => {
+      const themePath = path.join(
+        tmp,
+        "packages/theme/tokens/themes/nsh-gallery/theme.tokens.json",
+      );
+      const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
+      themeDoc.slot = { field: { selection: { $value: "color:field" } } };
+      fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
+    });
+    expect(problems.join("\n")).toContain("`field.selection` is not a slot");
   });
 
   test("rejects missing or extra radius and shape roles", () => {
@@ -673,7 +686,17 @@ describe("per-appearance standalone .tokens.json distribution", () => {
         }
 
         // Shape, state, duration, transition, motion
-        expect(doc.shape.$extensions[EXT_NS]).toEqual(semanticsJson.shape);
+        expect(doc.shape.$extensions[EXT_NS].curve).toBe(semanticsJson.shape.curve);
+        // A corner is a capsule, or the radius token it names resolved to its points.
+        const corner = resolved.shape.corners.button.$value;
+        const cornerRole = /^\{radius-([a-z0-9-]+)\}$/.exec(
+          semanticsJson.shape.corners.button,
+        )?.[1];
+        if (cornerRole === undefined) expect(corner).toBe(semanticsJson.shape.corners.button);
+        else
+          expect((corner as { value: number }).value).toBe(
+            (resolved.dimension.radius[cornerRole] as { $value: { value: number } }).$value.value,
+          );
         expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
         expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
         expect(doc.state["rest-opacity"].$value).toBe(semanticsJson.state["rest-opacity"]);
@@ -685,7 +708,6 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           if (k.startsWith("$")) continue;
           expect(tok.$value).toBe(semanticsJson.state.disabled[k]);
         }
-        expect(doc.state.disabled.$extensions[EXT_NS].fill).toBe(semanticsJson.state.disabled.fill);
         expect(doc.duration, "no duration group").toBeUndefined();
 
         const bezierNameOf = (tf: [number, number, number, number], ref: string) => {

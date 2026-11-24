@@ -163,13 +163,172 @@
         "md": 20,
         "lg": 24
       }
-    },
-    "control": {
-      "field": "box",
-      "choice": "well",
-      "track": "sunk",
-      "handle": "circle"
     }
+  },
+  "slots": {
+    "field.face": {
+      "colour": "field"
+    },
+    "field.shade": "inset",
+    "field.edge.width": "control",
+    "field.edge.sides": true,
+    "field.edge.colour": {
+      "colour": "input"
+    },
+    "field.edge.bottom": {
+      "colour": "input"
+    },
+    "field.corner.top": "control",
+    "field.corner.bottom": "control",
+    "field.focus.line": false,
+    "choice.size": {
+      "pointer": 16,
+      "touch": 22
+    },
+    "choice.corner": {
+      "pointer": 5,
+      "touch": 7
+    },
+    "choice.face": {
+      "light": {
+        "colour": "field"
+      },
+      "dark": {
+        "colour": "input",
+        "alpha": 0.3
+      }
+    },
+    "choice.shade": "inset",
+    "choice.edge.width": 1,
+    "choice.edge.colour": {
+      "light": {
+        "colour": "input"
+      },
+      "dark": {
+        "colour": "foreground",
+        "alpha": 0.2
+      }
+    },
+    "choice.edge.disabled": {
+      "light": {
+        "colour": "input"
+      },
+      "dark": {
+        "colour": "foreground",
+        "alpha": 0.4
+      }
+    },
+    "choice.checked.face": {
+      "finish": "accent"
+    },
+    "choice.mark.size": {
+      "pointer": 6,
+      "touch": 8
+    },
+    "choice.mark.hover": "none",
+    "choice.mark.pressed": "none",
+    "choice.halo": "none",
+    "switch.width": {
+      "pointer": 36,
+      "touch": 44
+    },
+    "switch.height": {
+      "pointer": 20,
+      "touch": 24
+    },
+    "switch.small.width": {
+      "pointer": 28,
+      "touch": 36
+    },
+    "switch.small.height": {
+      "pointer": 16,
+      "touch": 20
+    },
+    "switch.small.knob.width": {
+      "pointer": 12,
+      "touch": 16
+    },
+    "switch.small.knob.height": {
+      "pointer": 12,
+      "touch": 16
+    },
+    "switch.edge.off": 1,
+    "switch.edge.on": 1,
+    "switch.knob.width": {
+      "pointer": 16,
+      "touch": 20
+    },
+    "switch.knob.height": {
+      "pointer": 16,
+      "touch": 20
+    },
+    "switch.knob.on.width": {
+      "pointer": 16,
+      "touch": 20
+    },
+    "switch.knob.on.height": {
+      "pointer": 16,
+      "touch": 20
+    },
+    "switch.knob.hover": {
+      "pointer": 16,
+      "touch": 20
+    },
+    "switch.knob.pressed.width": {
+      "pointer": 16,
+      "touch": 20
+    },
+    "switch.knob.pressed.height": {
+      "pointer": 16,
+      "touch": 20
+    },
+    "switch.feedback": "none",
+    "slider.rail": {
+      "pointer": 6,
+      "touch": 8
+    },
+    "slider.band": {
+      "pointer": 20,
+      "touch": 32
+    },
+    "slider.vertical": {
+      "pointer": 128,
+      "touch": 144
+    },
+    "slider.face": {
+      "colour": "track"
+    },
+    "slider.shade": "inset",
+    "slider.edge.colour": {
+      "colour": "border"
+    },
+    "slider.edge.width": "control",
+    "slider.knob.size": {
+      "pointer": 14,
+      "touch": 20
+    },
+    "slider.knob.pressed.size": {
+      "pointer": 14,
+      "touch": 32
+    },
+    "slider.mark.size": 0,
+    "slider.mark.hover": 0,
+    "slider.mark.pressed": 0,
+    "slider.brightens": true,
+    "progress.height": 6,
+    "progress.line": 0,
+    "progress.face": {
+      "colour": "track"
+    },
+    "progress.shade": "inset",
+    "progress.edge.colour": {
+      "colour": "border"
+    },
+    "progress.edge.width": "control",
+    "spinner.opacity": 0.25,
+    "state.disabled.face": "keep",
+    "state.disabled.ink": "keep",
+    "state.disabled.edge": "keep"
   },
   "shape": {
     "curve": "continuous",
@@ -188,8 +347,7 @@
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
     "disabled": {
-      "content": 0.3,
-      "fill": false
+      "content": 0.3
     }
   },
   "transition": {

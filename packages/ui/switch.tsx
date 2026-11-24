@@ -3,16 +3,13 @@
 
 import {
   colors,
-  control,
   finish,
   hitTarget,
-  iconSize,
   motion,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   stroke,
-  type Tiered,
   tier,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
@@ -20,14 +17,14 @@ import { reduceMotion, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
 import { joinClass } from "./lib/class-names";
-import { handleLook } from "./lib/look";
+import { switchLook as switchSlots } from "./lib/look";
 import { cssMotion } from "./lib/motion";
 import { type SwitchGeometry, knobTravel, switchSlop } from "./lib/switch-geometry";
 
 /**
- * A switch's size: `default` draws the theme's middle icon step as its knob (`icon.md`), `sm` the
- * small one (`icon.sm`); the track is that knob plus 2 points of room on every side. A theme whose
- * form brings its own switch recipe (Material's, WinUI's) draws that at either size.
+ * A switch's size: `default` draws the theme's own knob and track, `sm` the compact ones a theme
+ * states in `switch.small.*` (the library's is a knob one icon step down with the track four points
+ * taller than it; a theme that publishes one switch size states the same numbers twice).
  */
 export type SwitchSize = "sm" | "default";
 
@@ -40,118 +37,27 @@ export interface SwitchLook {
   readonly thumbStyle: ViewStyle;
 }
 
-/**
- * How much track the library's circle keeps around its knob, on every side: a 1-point border and 1
- * point of padding, so the track stands 4 points taller than the knob and 2 × knob + 4 long
- * (`docs/specs/theme-contract-v2.md` §12 M1).
- */
-const CIRCLE_ROOM = 4;
-
-/** How a family's knob answers a hover, a press and the open state. */
+/** What a press does to a knob (`switch.feedback`): nothing, a grow, or a widening slide. */
 type KnobFeedback = "none" | "expand" | "stretch";
 
-/**
- * The library's own switch: a circle's knob at the theme's `icon.md` (`icon.sm` for `sm`), and a
- * track that is that knob plus `CIRCLE_ROOM` on every side. Only the outline is the family's.
- */
-interface CircleShape {
-  readonly kind: "circle";
-  /** The track's outline off, and on. */
-  border: number;
-  onBorder: number;
-}
-
-/**
- * A form that brings its own switch: the track and knob in points, the same at either size, so the
- * pixels do not ride on the library's scales at all (a form's official numbers,
- * `docs/specs/theme-contract-v2.md` §4). A form that publishes no desktop density states its
- * numbers once per tier (`Tiered<RecipeShape>`) — WinUI's switch has one, Material's does not.
- */
-interface RecipeShape {
-  readonly kind: "recipe";
-  width: number;
-  height: number;
-  border: number;
-  onBorder: number;
-  knob: number;
-  onKnob: number;
-  knobHover: number;
-  knobPressedWidth: number;
-  knobPressedHeight: number;
-  knobFeedback: KnobFeedback;
-}
-
-type SwitchShape = CircleShape | RecipeShape;
-
-// M3 Switch: 52x32 track, 2dp off / 0dp on outline, the 16dp knob 24dp open and 28dp pressed, no hover growth (_md-comp-switch.scss:47-65 v34.0.21 / SwitchTokens.kt). M3 gives the switch no density, so the desktop numbers are the library's own one step down: 40x24, the knob 16 open 20 and 22 pressed, and a 1-point outline (M3's 2dp against a track a quarter shorter; `docs/decisions/0003-material-desktop-tier.md`).
-const materialSwitch: Tiered<RecipeShape> = {
-  pointer: {
-    kind: "recipe",
-    width: 40,
-    height: 24,
-    border: 1,
-    onBorder: 0,
-    knob: 16,
-    onKnob: 20,
-    knobHover: 16,
-    knobPressedWidth: 22,
-    knobPressedHeight: 22,
-    knobFeedback: "expand",
-  },
-  touch: {
-    kind: "recipe",
-    width: 52,
-    height: 32,
-    border: 2,
-    onBorder: 0,
-    knob: 16,
-    onKnob: 24,
-    knobHover: 16,
-    knobPressedWidth: 28,
-    knobPressedHeight: 28,
-    knobFeedback: "expand",
-  },
-};
-
-// WinUI 3 ToggleSwitch: 40x20 track, 1px off / 0px on stroke, the 12px knob 14px hover and 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312,315 in winui3/release/2.7.0). WinUI 3 publishes one density, so one recipe serves both tiers.
-const winuiSwitch: RecipeShape = {
-  kind: "recipe",
-  width: 40,
-  height: 20,
-  border: 1,
-  onBorder: 0,
-  knob: 12,
-  onKnob: 12,
-  knobHover: 14,
-  knobPressedWidth: 17,
-  knobPressedHeight: 14,
-  knobFeedback: "stretch",
-};
-
-/**
- * A switch's look: a switch is always a circle (the library's disc,
- * `docs/specs/theme-contract-v2.md` §11.4), so the form the theme's `handle` names picks the family
- * whose switch the theme is — the library's own on `circle`, WinUI's stretching one on `ring`.
- * M3's growing knob has no form of its own (material's slider handle is the library's circle, #367):
- * it rides on the `tint` track, the filled M3 track only material paints.
- */
-/** The shape this theme's switch draws on this screen's tier: a recipe stated per tier takes this one. */
-function switchShape(): SwitchShape {
-  if (handleLook(control().handle).form === "ring") return winuiSwitch;
-  if (control().track === "tint") return materialSwitch[tier];
-  return { kind: "circle", border: 1, onBorder: 1 };
-}
-
+/** A switch's geometry with every number its states need, resolved for this tier. */
 interface ResolvedSwitchGeometry extends SwitchGeometry {
-  onBorder: number;
-  onKnob: number;
-  knobHover: number;
-  knobPressedWidth: number;
-  knobPressedHeight: number;
-  knobFeedback: KnobFeedback;
+  /** The knob's height, where a theme states one apart from its width. */
+  readonly knobHeight: number;
+  readonly onBorder: number;
+  readonly onKnobWidth: number;
+  readonly onKnobHeight: number;
+  readonly knobHover: number;
+  readonly knobPressedWidth: number;
+  readonly knobPressedHeight: number;
+  readonly knobFeedback: KnobFeedback;
 }
 
-/** The track and knob of a size: the library's circle from the icon scale, a recipe from itself (or the terminal). */
+/**
+ * The track and knob of a size: the theme's `switch.*` slots at this tier, or the terminal's own —
+ * a shell's switch is its grid's, whatever the theme says. A small switch scales the knob's hover
+ * and press by the knob's own shrink, so a theme whose small knob is its knob keeps its feedback.
+ */
 function geometry(size: SwitchSize): ResolvedSwitchGeometry {
   if (terminal)
     return {
@@ -160,42 +66,36 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       border: 1,
       inset: 0,
       knob: TERMINAL_ROW,
+      knobHeight: TERMINAL_ROW,
       onBorder: 1,
-      onKnob: TERMINAL_ROW,
+      onKnobWidth: TERMINAL_ROW,
+      onKnobHeight: TERMINAL_ROW,
       knobHover: TERMINAL_ROW,
       knobPressedWidth: TERMINAL_ROW,
       knobPressedHeight: TERMINAL_ROW,
       knobFeedback: "none",
     };
-  const shape = switchShape();
-  if (shape.kind === "recipe")
-    return {
-      width: shape.width,
-      height: shape.height,
-      border: shape.border,
-      inset: Math.max(0, (shape.height - shape.knob) / 2 - shape.border),
-      knob: shape.knob,
-      onBorder: shape.onBorder,
-      onKnob: shape.onKnob,
-      knobHover: shape.knobHover,
-      knobPressedWidth: shape.knobPressedWidth,
-      knobPressedHeight: shape.knobPressedHeight,
-      knobFeedback: shape.knobFeedback,
-    };
-  const knob = size === "sm" ? iconSize.sm : iconSize.md;
-  const height = knob + CIRCLE_ROOM;
+  const look = switchSlots();
+  const small = size === "sm";
+  const knob = small ? look.knobSmall[tier] : look.knob[tier];
+  const knobHeight = small ? look.knobSmallHeight[tier] : look.knobHeight[tier];
+  const ratio = knob / look.knob[tier];
+  const border = look.edge.off[tier];
+  const height = small ? look.smallHeight[tier] : look.height[tier];
   return {
-    width: height + knob,
+    width: small ? look.smallWidth[tier] : look.width[tier],
     height,
-    border: shape.border,
-    inset: Math.max(0, (height - knob) / 2 - shape.border),
+    border,
+    inset: Math.max(0, (height - knobHeight) / 2 - border),
     knob,
-    onBorder: shape.onBorder,
-    onKnob: knob,
-    knobHover: knob,
-    knobPressedWidth: knob,
-    knobPressedHeight: knob,
-    knobFeedback: "none",
+    knobHeight,
+    onBorder: look.edge.on[tier],
+    onKnobWidth: look.knobOn[tier] * ratio,
+    onKnobHeight: look.knobOnHeight[tier] * ratio,
+    knobHover: look.knobHover[tier] * ratio,
+    knobPressedWidth: look.knobPressed[tier] * ratio,
+    knobPressedHeight: look.knobPressedHeight[tier] * ratio,
+    knobFeedback: look.feedback,
   };
 }
 
@@ -229,14 +129,16 @@ function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[
   if (g.knobFeedback === "none") return [];
   /** A size as a scale of the knob's box, to four places (a whole number of points fits). */
   const of = (size: number) => Number((size / g.knob).toFixed(4));
+  /** A height as a scale of the knob's box. */
+  const ofH = (size: number) => Number((size / g.knobHeight).toFixed(4));
   /** Both axes together as `scale`, apart as `scale-x` and `scale-y`. */
   const scale = (w: number, h: number): string[] =>
-    w === h ? [`scale-[${of(w)}]`] : [`scale-x-[${of(w)}]`, `scale-y-[${of(h)}]`];
+    of(w) === ofH(h) ? [`scale-[${of(w)}]`] : [`scale-x-[${of(w)}]`, `scale-y-[${ofH(h)}]`];
   const under = (variant: string, utilities: string[]): string[] =>
     utilities.map((utility) => `${variant}:${utility}`);
   const pressed = under("active", scale(g.knobPressedWidth, g.knobPressedHeight));
   if (g.knobFeedback === "expand") {
-    return [...under("checked", scale(g.onKnob, g.onKnob)), ...pressed];
+    return [...under("checked", scale(g.onKnobWidth, g.onKnobHeight)), ...pressed];
   }
   const shift = (g.knobPressedWidth - g.knobHover) / 2;
   return [
@@ -250,8 +152,7 @@ function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[
 /**
  * The gallery's switch, as the props of `Switch`'s parts (spread them:
  * `<Switch {...switchLook(() => on())}>`): track, knob geometry, border, and
- * hover/press knob feedback come from the family the theme's `control()` names (`switchShape`)
- * and from its `track`. `on` is the
+ * hover/press knob feedback come from the theme's `switch.*` slots (`geometry`). `on` is the
  * value the app owns: the knob follows it, from a press or from elsewhere.
  *
  * The knob's box stays one size; its travel and its hover/press growth are CSS classes, so a
@@ -289,15 +190,14 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
       const g = geometry(size);
       const checked = on();
       const border = checked ? g.onBorder : g.border;
-      const offset = g.height / 2 - border - g.knob / 2;
       return {
         position: "absolute",
         // physical: the knob's travel is a translateX from the track's left edge, and transforms do not mirror.
-        left: offset,
-        top: offset,
+        left: g.height / 2 - border - g.knob / 2,
+        top: g.height / 2 - border - g.knobHeight / 2,
         width: g.knob,
-        height: g.knob,
-        borderRadius: g.knob / 2,
+        height: g.knobHeight,
+        borderRadius: Math.min(g.knob, g.knobHeight) / 2,
         borderWidth: stroke.control,
         ...knobLook(checked),
         transitionProperty: reduceMotion() ? "none" : "transform",

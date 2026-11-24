@@ -2,7 +2,7 @@
 // `SelectTrigger`, `SelectContent`), which wear the shared listbox look.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, control, finish, terminal, TERMINAL_COLUMN, dimmed } from "@shadcn-nsh/theme";
+import { colors, finish, terminal, TERMINAL_COLUMN, dimmed } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, effect, platform, reduceMotion, signal, split, Text, View } from "nsh";
@@ -99,7 +99,7 @@ export function pickerLook(o?: PickerLookOptions) {
   return {
     get style(): ViewStyle {
       const clearable = !!read(o?.clearable);
-      const field = fieldLook(control().field);
+      const field = fieldLook();
       return {
         flexDirection: "row",
         alignItems: "center",
@@ -146,7 +146,7 @@ export function pickerLook(o?: PickerLookOptions) {
     // states' order. Only for the keyboard: a click's focus, and the focus a closing list gives back, draw nothing.
     get focusVisibleStyle(): ViewStyle {
       const tone = invalid() ? colors.destructive : colors.brand;
-      return terminal ? { borderColor: tone } : fieldFocusEdge(fieldLook(control().field), tone);
+      return terminal ? { borderColor: tone } : fieldFocusEdge(fieldLook(), tone);
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };

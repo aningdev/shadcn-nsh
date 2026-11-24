@@ -10,7 +10,6 @@ import { compileAppearanceTokensJson } from "./compile";
 import { loadSourceItem, mergeTokenTrees, resolveAliases, type ResolverDoc } from "./resolver";
 import {
   COLOR_ROLES,
-  CONTROL_DIMENSIONS,
   EXT_NS,
   MOTION_ROLES,
   SHAPE_ROLES,
@@ -667,9 +666,9 @@ export function compileDesignMd(resolverPath: string): string {
   if (radiusGroupDesc) lines.push(radiusGroupDesc);
   if (shapeExtDesc) {
     if (radiusGroupDesc) lines.push("");
-    const corners = (shapeExt.corners ?? {}) as Record<string, unknown>;
+    const button = cornerValue(lightMerged.shape);
     lines.push(
-      `${shapeExtDesc} (\`curve: "${String(shapeExt.curve)}"\`, \`corners.button: "${String(corners.button)}"\`).`,
+      `${shapeExtDesc} (\`curve: "${String(shapeExt.curve)}"\`, \`corners.button: "${button}"\`).`,
     );
   }
   if (shapeDimDesc) {
@@ -680,16 +679,6 @@ export function compileDesignMd(resolverPath: string): string {
   for (const role of SHAPE_ROLES) {
     const desc = getDesc(shapeDimGroup[role]) ?? getDesc(radiusGroup[role]) ?? "";
     lines.push(`- **\`${role}\`** (${roundedYaml[role]}): ${desc}`);
-  }
-  const controlDesc = getDesc(dimResolved.control);
-  const controlExt = getExt(dimResolved.control) ?? {};
-  if (CONTROL_DIMENSIONS.some((key) => controlExt[key] !== undefined)) {
-    lines.push("");
-    lines.push(
-      `**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): ${controlDesc ?? ""}`,
-    );
-    for (const key of CONTROL_DIMENSIONS)
-      lines.push(`- **\`${key}\`**: \`${String(controlExt[key])}\``);
   }
   lines.push("");
 
@@ -812,4 +801,15 @@ function resolvePermutationDescriptions(
     docDescription: tierDesc,
     typography: withTier.typography as Record<string, Record<string, unknown>> | undefined,
   };
+}
+
+/** A theme's `shape.corners.button`: `full`, a radius token reference, or a width in points. */
+function cornerValue(shape: unknown): string {
+  const group = isRecord(shape)
+    ? (shape.corners as Record<string, unknown> | undefined)
+    : undefined;
+  const node = isRecord(group) ? group.button : undefined;
+  const value = isRecord(node) ? node.$value : undefined;
+  if (isRecord(value)) return `${String(value.value)}${String(value.unit)}`;
+  return String(value);
 }

@@ -123,10 +123,13 @@ describe("the whitelist", () => {
     expect(lint(f).join("\n")).toContain("one number per theme");
   });
 
-  test("a control dimension outside field, choice, track, handle fails", () => {
+  test("a slot the list does not have fails, and one it has and the theme omits fails", () => {
     const f = fixture();
-    f.semantics.dimension.control["selection"] = "bar";
-    expect(lint(f).join("\n")).toContain("dimension.control.selection");
+    f.semantics.slots["slider.selection"] = 1;
+    delete f.semantics.slots["switch.feedback"];
+    const text = lint(f).join("\n");
+    expect(text).toContain("`slider.selection` is not a control slot");
+    expect(text).toContain("`switch.feedback` is missing");
   });
 
   test("a font family or a per-theme size fails", () => {

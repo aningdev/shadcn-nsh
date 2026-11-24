@@ -421,19 +421,13 @@ WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStroke
 
 WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).
 
-Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md). (`curve: "circular"`, `corners.button: "radius"`).
+Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md). (`curve: "circular"`, `corners.button: "{dimension.radius.control}"`).
 
 Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
 
 - **`control`** (4px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
 - **`container`** (8px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (8px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
-
-**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): WinUI 3 control dimensions: TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).
-- **`field`**: `box-underline`
-- **`choice`**: `inset`
-- **`track`**: `hairline`
-- **`handle`**: `ring`
 
 ## Motion & Micro-interaction
 
@@ -470,7 +464,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **`finish.hover`**: A control under the pointer.
 - **`finish.pressed`**: A control held down.
 - **`finish.disabled`**: A control that cannot be used.
-- **Disabled handling** (content=0.36, fill=true): WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.
+- **Disabled handling** (content=0.36, fill=undefined): WinUI 3 disabled styling: 0.36 content opacity, the disabled finish as their face and its TextFillColorDisabled as their ink.
 
 ## Do's and Don'ts
 

@@ -421,19 +421,13 @@ Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over pa
 
 Solid Glass layered corner radius scale (11px control, 14px container, 20px modal) referenced by semantic shape roles.
 
-Non-dimensional corner curve and button capsule flag. (`curve: "continuous"`, `corners.button: "radius"`).
+Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "{dimension.radius.control}"`).
 
 Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
 
 - **`control`** (11px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
 - **`container`** (14px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (20px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
-
-**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): Control dimensions: the four behaviour-named axes a theme decides for its controls (field, choice, track, handle). Themes override only the axes that differ.
-- **`field`**: `box`
-- **`choice`**: `well`
-- **`track`**: `sunk`
-- **`handle`**: `circle`
 
 ## Motion & Micro-interaction
 
@@ -470,7 +464,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **`finish.hover`**: A control under the pointer.
 - **`finish.pressed`**: A control held down.
 - **`finish.disabled`**: A control that cannot be used.
-- **Disabled handling** (content=0.5, fill=false): Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.
+- **Disabled handling** (content=0.5, fill=undefined): Disabled content opacity multiplier.
 
 ## Do's and Don'ts
 

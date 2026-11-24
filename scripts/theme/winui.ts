@@ -477,6 +477,79 @@ function themeLevel(roles: WinuiRoles): Record<string, string> {
 }
 
 /**
+ * The slots WinUI 3 states for its own controls (`docs/specs/theme-slots.md`): TextBox's
+ * box-underline, inset choices, a hairline groove, a ring slider and a switch whose pressed knob
+ * stretches toward the edge it heads for.
+ */
+const winuiField = {
+  "field.edge.sides": true,
+  "field.edge.colour": "color:border",
+  "field.edge.bottom": "color:input",
+  "field.corner.bottom": "control",
+  "field.focus.line": true,
+} as const;
+
+const winuiChoice = {
+  "choice.size": { pointer: 20, touch: 20 },
+  "choice.corner": { pointer: 4, touch: 4 },
+  "choice.face": "color:track",
+  "choice.shade": "none",
+  "choice.checked.face": "finish:accent",
+  "choice.edge.width": 1,
+  "choice.edge.colour": "color:input",
+  // A WinUI box keeps its edge whether it can be used or not: only the mark fades.
+  "choice.edge.disabled": "color:input",
+  "choice.mark.size": { pointer: 12, touch: 12 },
+  "choice.mark.hover": 14,
+  "choice.mark.pressed": 10,
+  "choice.halo": "none",
+} as const;
+
+/** WinUI's switch: a 40×20 track, a 12pt knob, and a press that stretches it sideways. */
+const winuiSwitch = {
+  "switch.width": { pointer: 40, touch: 40 },
+  "switch.height": { pointer: 20, touch: 20 },
+  // WinUI publishes one switch size: its small one states the same numbers.
+  "switch.small.width": { pointer: 40, touch: 40 },
+  "switch.small.height": { pointer: 20, touch: 20 },
+  "switch.small.knob.width": { pointer: 12, touch: 12 },
+  "switch.small.knob.height": { pointer: 12, touch: 12 },
+  "switch.edge.off": 1,
+  "switch.edge.on": 0,
+  "switch.knob.width": { pointer: 12, touch: 12 },
+  "switch.knob.height": { pointer: 12, touch: 12 },
+  "switch.knob.on.width": { pointer: 12, touch: 12 },
+  "switch.knob.on.height": { pointer: 12, touch: 12 },
+  "switch.knob.hover": { pointer: 14, touch: 14 },
+  "switch.knob.pressed.width": { pointer: 17, touch: 17 },
+  "switch.knob.pressed.height": { pointer: 14, touch: 14 },
+  "switch.feedback": "stretch",
+} as const;
+
+/** WinUI's groove: a hairline bar, a ring slider, and no spinner ring. */
+const winuiTrack = {
+  "slider.rail": { pointer: 4, touch: 4 },
+  "slider.band": { pointer: 32, touch: 32 },
+  "slider.face": "color:input",
+  "slider.shade": "none",
+  "slider.edge.colour": "none",
+  "slider.edge.width": 0,
+  "slider.knob.size": { pointer: 18, touch: 18 },
+  "slider.knob.pressed.size": { pointer: 18, touch: 18 },
+  "slider.mark.size": 12,
+  "slider.mark.hover": 14,
+  "slider.mark.pressed": 10,
+  "slider.brightens": false,
+  "progress.height": 3,
+  "progress.line": 1,
+  "progress.face": "color:input",
+  "progress.shade": "none",
+  "progress.edge.colour": "none",
+  "progress.edge.width": 0,
+  "spinner.opacity": 0,
+} as const;
+
+/**
  * All 23 finish roles for WinUI 3 (`{token}` references; `glass`, `menu`, and `tooltip` ask
 /** WinUI 3 style groups (`semantics.json`); verified values in `docs/specs/native-themes.md` §3.2. */
 export const winuiStyle = {
@@ -536,23 +609,27 @@ export const winuiStyle = {
     },
     stroke: { hairline: 1, control: 1 },
     focus: { style: "double", width: 2, offset: 0 },
-    control: {
-      // WinUI 3's own controls (docs/specs/theme-contract-v2.md §11.2): TextBox's box-underline,
-      // inset radios and checkboxes, a hairline track and a ring knob.
-      field: "box-underline",
-      choice: "inset",
-      track: "hairline",
-      handle: "ring",
-    },
     icon: {
       pointer: { sm: 12, md: 16, lg: 20 },
       touch: { sm: 16, md: 20, lg: 24 },
     },
   },
+  slots: {
+    // WinUI 3's own controls (docs/specs/theme-contract-v2.md §11, docs/specs/theme-slots.md):
+    // TextBox's box-underline, inset radios and checkboxes, a hairline groove, a ring slider and a
+    // switch whose pressed knob stretches toward the edge it heads for.
+    ...winuiField,
+    ...winuiChoice,
+    ...winuiSwitch,
+    ...winuiTrack,
+    "state.disabled.face": "finish:disabled",
+    "state.disabled.ink": "finish:disabled:foreground",
+    "state.disabled.edge": "finish:disabled:border-color",
+  },
   shape: {
     curve: "circular",
     corners: {
-      button: "radius" as const,
+      button: "{dimension.radius.control}",
     },
   },
   state: {
@@ -560,9 +637,10 @@ export const winuiStyle = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     "pressed-opacity": 1,
     "rest-opacity": 0.5,
-    // Disabled containers switch to the dedicated disabled brush (`ControlFillColorDisabled` /
-    // `TextFillColorDisabled`) when `fill: true`; `content: 0.36` matches `TextFillColorDisabled`.
-    disabled: { content: 0.36, fill: true },
+    // `state.disabled.*` turns a disabled control over to the dedicated disabled brush
+    // (`ControlFillColorDisabled` / `TextFillColorDisabled`); `content: 0.36` matches
+    // `TextFillColorDisabled` where the theme fades instead.
+    disabled: { content: 0.36 },
   },
   transition: {
     enter: { duration: 250, timingFunction: "decelerate" },
@@ -796,15 +874,15 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         "dimension.focus":
           "WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).",
         "dimension.focus.width": "2px outer focus stroke width per WinUI 3.",
-        "dimension.control":
-          "WinUI 3 control dimensions: TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).",
+        slots:
+          "WinUI 3 control slots: a field whose box keeps a line under its bottom edge, inset selection controls, a hairline track, a ring knob, and controls that swap to a disabled face (docs/specs/theme-contract-v2.md §11).",
         shape: "Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; WinUI 3 swaps fill brushes instead).",
         "state.pressed-opacity":
           "Content stays full opacity when pressed (1; fill brush swap shows press).",
         "state.disabled":
-          "WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.",
+          "WinUI 3 disabled styling: 0.36 content opacity, the disabled finish as their face and its TextFillColorDisabled as their ink.",
         "transition.enter":
           "WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).",
         "motion.fast":

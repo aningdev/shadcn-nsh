@@ -421,19 +421,13 @@ Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` fini
 
 Apple HIG corner radius scale (8px control, 12px container, 26px modal; capsule buttons via shape.corners.button).
 
-Non-dimensional corner curve and button capsule flag. (`curve: "continuous"`, `corners.button: "full"`).
+Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "full"`).
 
 Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
 
 - **`control`** (8px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
 - **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (26px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
-
-**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): Control dimensions: the four behaviour-named axes a theme decides for its controls (field, choice, track, handle). Themes override only the axes that differ.
-- **`field`**: `box`
-- **`choice`**: `well`
-- **`track`**: `sunk`
-- **`handle`**: `circle`
 
 ## Motion & Micro-interaction
 
@@ -470,7 +464,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **`finish.hover`**: A control under the pointer.
 - **`finish.pressed`**: A control held down.
 - **`finish.disabled`**: A control that cannot be used.
-- **Disabled handling** (content=0.3, fill=false): UIKit disabled content opacity multiplier (0.3); containers keep resting fills.
+- **Disabled handling** (content=0.3, fill=undefined): UIKit disabled content opacity multiplier (0.3); containers keep resting fills.
 
 ## Do's and Don'ts
 

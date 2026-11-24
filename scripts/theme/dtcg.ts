@@ -19,7 +19,6 @@ import { buildThemeTargets } from "../tokens/build";
 import { evaluateColorMix, oklchToHex6 } from "../tokens/color";
 import {
   COLOR_ROLE_BY_NAME,
-  CONTROL_DIMENSIONS,
   EXT_NS,
   FORMAT_SCHEMA_URL,
   MOTION_ROLES,
@@ -28,12 +27,13 @@ import {
   TYPE_ROLES,
   TYPOGRAPHY_FONT_FAMILY,
   type ColorRole,
-  type ControlDimension,
   type DesignMdExtension,
   type DtcgColor,
 } from "../tokens/types";
 import type { ContrastWaiver } from "./extensions";
 import { toOklchText } from "./oklch";
+import { BASE_SLOTS, type SlotValue } from "./slots";
+import { slotOverridesDoc } from "./slots-dtcg";
 import type { ColourProvenance } from "./sources";
 import { BUILD_ROOT_THEME, type SplitFinishes } from "./tokens";
 
@@ -62,6 +62,11 @@ export interface ThemeStyleInput {
     headline: ThemeTypeRoleStyle;
     display: ThemeTypeRoleStyle;
   };
+  /**
+   * The control slots this theme answers differently from the base (`docs/specs/theme-slots.md`): the
+   * ones it states land in its `theme.tokens.json`, the rest are inherited.
+   */
+  slots?: Record<string, SlotValue>;
   dimension: {
     shape: {
       control: string;
@@ -89,11 +94,6 @@ export interface ThemeStyleInput {
     };
     stroke: { hairline: number; control: number };
     focus: { style: string; width: number; offset: number };
-    /**
-     * The four control dimensions that differ from the base theme's. A theme states all four when it
-     * imitates a platform's controls (Material, WinUI); one that agrees with the base states none.
-     */
-    control?: Partial<Record<ControlDimension, string>>;
     icon: {
       pointer: { sm: number; md: number; lg: number };
       touch: { sm: number; md: number; lg: number };
@@ -102,7 +102,8 @@ export interface ThemeStyleInput {
   shape: {
     curve: string;
     corners: {
-      button: "full" | "radius";
+      /** A capsule, the control radius, or points: `full`, `{dimension.radius.*}`, or a number. */
+      button: string;
     };
   };
   state: {
@@ -110,7 +111,7 @@ export interface ThemeStyleInput {
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     "pressed-opacity": number;
     "rest-opacity": number;
-    disabled: { content: number; fill: boolean };
+    disabled: { content: number };
   };
   transition: { enter: { duration: number; timingFunction: string } };
   motion: {
@@ -152,11 +153,6 @@ export interface ThemeGeneratorOutput {
   "press-scale"?: number;
   radiusGroupDescription?: string;
   style?: ThemeStyleInput;
-  /**
-   * The six control dimensions, for a theme that answers them differently but otherwise takes the
-   * base's style (one with no `style` of its own).
-   */
-  control?: Partial<Record<ControlDimension, string>>;
   designMd?: Pick<DesignMdExtension, "overview" | "elevation" | "dos" | "donts">;
   /** The pairs this theme keeps below AA, each with its platform source (`theme:contrast`). */
   contrast?: { waivers: ContrastWaiver[] };
@@ -719,6 +715,20 @@ function readDefaultMetadata(repoRoot: string) {
   };
 }
 
+/**
+ * A button's corner as its token states it: `full`, a radius scale reference, or points (`12px`).
+ * One string type for the token in every theme, so the base's reference and a theme's capsule or
+ * number stay comparable.
+ */
+function cornerValue(corner: string | number): string {
+  return typeof corner === "number" ? `${corner}px` : corner;
+}
+
+/** A corner is stated in points (`dimension`) unless it names a scale or asks for a capsule. */
+function cornerType(corner: string | number): string | null {
+  return typeof corner === "number" ? "dimension" : corner === "full" ? null : "dimension";
+}
+
 function getAt(root: Record<string, unknown>, ...keys: string[]): Record<string, unknown> {
   let cur: unknown = root;
   for (const k of keys) {
@@ -734,26 +744,6 @@ function getExtNs(node: Record<string, unknown>): Record<string, unknown> {
   const exts = node.$extensions;
   if (!isRecord(exts) || !isRecord(exts[EXT_NS])) return {};
   return exts[EXT_NS];
-}
-
-/** A theme's control dimensions that differ from the base's, as the `dimension.control` token group. */
-function encodeControlExtras(
-  control: Partial<Record<ControlDimension, string>> | undefined,
-  baseShared: Record<string, unknown>,
-  describe: (fallback: unknown) => string,
-): Record<string, unknown> | undefined {
-  const baseControl = getAt(baseShared, "dimension", "control");
-  const baseControlExt = getExtNs(baseControl);
-  const overrides: Record<string, string> = {};
-  for (const key of CONTROL_DIMENSIONS) {
-    const value = control?.[key];
-    if (value !== undefined && value !== baseControlExt[key]) overrides[key] = value;
-  }
-  if (Object.keys(overrides).length === 0) return undefined;
-  return {
-    $description: describe(baseControl.$description),
-    $extensions: { [EXT_NS]: overrides },
-  };
 }
 
 function encodeSharedStyleOverrides(
@@ -846,26 +836,34 @@ function encodeSharedStyleOverrides(
     };
   }
 
-  // 3. dimension.control (four enum dimensions, group $extensions)
-  const control = encodeControlExtras(style.dimension.control, baseShared, (fallback) =>
-    desc("dimension.control", fallback),
-  );
-  if (control) dimensionExtras.control = control;
-
-  // 4. shape ($extensions)
+  // 3. shape: the corner curve (an extension) and the radius a button takes (a token)
   const baseShape = getAt(baseShared, "shape");
   const baseShapeExt = getExtNs(baseShape);
-  const baseCorners = (baseShapeExt.corners as Record<string, unknown> | undefined) ?? {};
+  const baseCorner = getAt(baseShape, "corners", "button");
   const shapeExtOut: Record<string, unknown> = {};
   if (style.shape.curve !== baseShapeExt.curve) shapeExtOut.curve = style.shape.curve;
-  if (style.shape.corners.button !== baseCorners.button) {
-    shapeExtOut.corners = { button: style.shape.corners.button };
-  }
+  const cornerDiffers = style.shape.corners.button !== baseCorner.$value;
   const shape =
-    Object.keys(shapeExtOut).length > 0
+    Object.keys(shapeExtOut).length > 0 || cornerDiffers
       ? {
           $description: desc("shape", baseShape.$description),
-          $extensions: { [EXT_NS]: shapeExtOut },
+          ...(Object.keys(shapeExtOut).length > 0
+            ? { $extensions: { [EXT_NS]: shapeExtOut } }
+            : {}),
+          ...(cornerDiffers
+            ? {
+                corners: {
+                  $description: getAt(baseShape, "corners").$description,
+                  button: {
+                    ...(cornerType(style.shape.corners.button) === null
+                      ? {}
+                      : { $type: cornerType(style.shape.corners.button) as string }),
+                    $value: cornerValue(style.shape.corners.button),
+                    $description: baseCorner.$description,
+                  },
+                },
+              }
+            : {}),
         }
       : undefined;
 
@@ -917,19 +915,9 @@ function encodeSharedStyleOverrides(
 
   const baseDisabled = getAt(baseState, "disabled");
   const baseDisabledContent = getAt(baseDisabled, "content");
-  const baseDisabledFill = (
-    (baseDisabled.$extensions as Record<string, Record<string, unknown>> | undefined)?.[EXT_NS] as
-      | Record<string, unknown>
-      | undefined
-  )?.fill;
   const disabledOverrides: Record<string, unknown> = {};
   if (style.state.disabled.content !== baseDisabledContent.$value) {
     disabledOverrides.content = { $value: style.state.disabled.content };
-  }
-  if (style.state.disabled.fill !== baseDisabledFill) {
-    disabledOverrides.$extensions = {
-      [EXT_NS]: { fill: style.state.disabled.fill },
-    };
   }
   if (Object.keys(disabledOverrides).length > 0) {
     stateOut.disabled = {
@@ -1171,9 +1159,6 @@ export function themeSourceDocs(
   const sharedStyle = output.style
     ? encodeSharedStyleOverrides(output.style, meta.baseShared, output.descriptions?.style)
     : null;
-  const ownControl = encodeControlExtras(output.control, meta.baseShared, (fallback) =>
-    typeof fallback === "string" ? fallback : "dimension.control",
-  );
   const pointerDoc = output.style
     ? encodeInputTierOverrides(
         "pointer",
@@ -1206,8 +1191,12 @@ export function themeSourceDocs(
     description: output.resolverDescription,
     sets: {
       base: {
-        description: "Cross-theme semantic defaults and shared typography/motion structure.",
-        sources: [{ $ref: "../../base/style.shared.tokens.json" }],
+        description:
+          "Cross-theme semantic defaults, the control slots every theme draws from, and shared typography/motion structure.",
+        sources: [
+          { $ref: "../../base/style.shared.tokens.json" },
+          { $ref: "../../base/slots.tokens.json" },
+        ],
       },
       theme: {
         description: `${output.name} appearance-invariant base tokens, shared finishes, and state overrides.`,
@@ -1281,6 +1270,7 @@ export function themeSourceDocs(
     );
   }
 
+  const slots = slotOverridesDoc(output.style?.slots ?? {}, BASE_SLOTS);
   const pressScale = output["press-scale"] ?? output.style?.state["press-scale"];
   if (pressScale === undefined) {
     throw new Error(
@@ -1312,10 +1302,10 @@ export function themeSourceDocs(
       $description: "Appearance-invariant base dimensional tokens.",
       radius: radiusEntries,
       ...(sharedStyle?.dimensionExtras ?? {}),
-      ...(ownControl ? { control: ownControl } : {}),
     },
     ...(sharedStyle?.typography ? { typography: sharedStyle.typography } : {}),
     ...(sharedStyle?.shape ? { shape: sharedStyle.shape } : {}),
+    ...(slots ? { slot: slots } : {}),
     color: themeColors,
     state: sharedStyle
       ? sharedStyle.state

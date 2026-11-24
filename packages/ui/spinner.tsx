@@ -1,7 +1,7 @@
 // A spinner: a ring turning with its top arc in one color, the shape of work going on.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, control, iconSize } from "@shadcn-nsh/theme";
+import { alpha, iconSize } from "@shadcn-nsh/theme";
 import { reduceMotion, View } from "nsh";
 
 import { trackLook } from "./lib/look";
@@ -27,25 +27,24 @@ export interface SpinnerProps {
   size?: SpinnerSize;
   /** The ring's side in points, for a place that needs an exact size over the scale's. */
   side?: number;
-  /** The moving arc's color (the theme's text, a tone); the rest of the ring follows the theme's
-   * `track` form: sunk, a groove behind the arc at the recipe's opacity — `tint` and `hairline` draw
-   * none, and the arc stands alone. */
+  /** The moving arc's color (the theme's text, a tone); the ring behind it follows the theme's
+   * `spinner.opacity` slot: an arc at that much of the tone where the theme states one, and an arc
+   * alone where it states `0`. */
   tint: string;
 }
 
-/** The color of the ring behind the arc: `tint` at the recipe's opacity when the theme's `track`
- * form draws a groove, transparent when it does not. */
+/** The color of the ring behind the arc: the tone at the theme's `spinner.opacity`, transparent
+ * where the theme draws no ring. */
 function grooveColor(tint: string): string {
-  const groove = trackLook(control().track).spinner;
-  const opacity = groove.groove ? groove.opacity : null;
+  const opacity = trackLook("progress").spinner.opacity;
   return opacity === null ? "transparent" : alpha(tint, opacity);
 }
 
 /**
  * A ring turning with its top arc in `tint`: work going on. Its side is `side` when given,
  * else the theme's icon tier named by `size`; the stroke is that side over `STROKE_SHARE`, no
- * thinner than `MIN_STROKE`; whether a groove shows behind the arc is the theme's `track` form to
- * say (`control().track`). It stands still when the user asks for less motion.
+ * thinner than `MIN_STROKE`; whether a ring shows behind the arc is the theme's `spinner.opacity`
+ * slot to say. It stands still when the user asks for less motion.
  */
 export function Spinner(props: SpinnerProps) {
   const side = () =>

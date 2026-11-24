@@ -278,6 +278,67 @@ const NSH_EXTENSIONS = {
   },
 } as const;
 
+/**
+ * The slots M3 states for its own controls (`docs/specs/theme-slots.md`): an underlined field, an
+ * outlined choice, a tinted groove, and a switch that grows its knob rather than fading its track.
+ */
+const m3Field = {
+  "field.edge.sides": false,
+  "field.edge.bottom": "color:mutedForeground",
+  "field.corner.bottom": 0,
+  "field.focus.line": true,
+} as const;
+
+const m3Choice = {
+  "choice.size": { pointer: 20, touch: 20 },
+  "choice.corner": { pointer: 2, touch: 2 },
+  "choice.face": "none",
+  "choice.shade": "none",
+  "choice.checked.face": "none",
+  "choice.edge.width": 2,
+  "choice.mark.size": { pointer: 10, touch: 10 },
+  "choice.edge.colour": "color:mutedForeground",
+  // M3 outlines a box the same way whether it can be used or not: only the mark fades.
+  "choice.edge.disabled": "color:mutedForeground",
+  "choice.halo": 40,
+} as const;
+
+/** M3's switch: a 40×24 track whose knob grows in place (the library's circle is M3's handle). */
+const m3Switch = {
+  "switch.width": { pointer: 40, touch: 52 },
+  "switch.height": { pointer: 24, touch: 32 },
+  // M3 publishes one switch size: its small one states the same numbers.
+  "switch.small.width": { pointer: 40, touch: 52 },
+  "switch.small.height": { pointer: 24, touch: 32 },
+  "switch.small.knob.width": { pointer: 16, touch: 16 },
+  "switch.small.knob.height": { pointer: 16, touch: 16 },
+  "switch.edge.off": { pointer: 1, touch: 2 },
+  "switch.edge.on": 0,
+  "switch.knob.width": { pointer: 16, touch: 16 },
+  "switch.knob.height": { pointer: 16, touch: 16 },
+  "switch.knob.on.width": { pointer: 20, touch: 24 },
+  "switch.knob.on.height": { pointer: 20, touch: 24 },
+  "switch.knob.hover": { pointer: 16, touch: 16 },
+  "switch.knob.pressed.width": { pointer: 22, touch: 28 },
+  "switch.knob.pressed.height": { pointer: 22, touch: 28 },
+  "switch.feedback": "expand",
+} as const;
+
+/** M3's groove: a tinted bar with no edge, and no spinner ring around it. */
+const m3Track = {
+  "slider.face": "tint:brand",
+  "slider.shade": "none",
+  "slider.edge.colour": "none",
+  "slider.edge.width": 0,
+  "progress.height": 4,
+  "progress.line": 0,
+  "progress.face": "tint:brand",
+  "progress.shade": "none",
+  "progress.edge.colour": "none",
+  "progress.edge.width": 0,
+  "spinner.opacity": 0,
+} as const;
+
 const tintMix = (token: string) => `color-mix(in srgb, var(--${token}) 12%, transparent)`;
 
 /** The choices the derived keys make (ADR 0007 §4): the hairline is M3's weak outline, a field's edge the strong one. */
@@ -477,20 +538,24 @@ export const m3Style = {
     },
     stroke: { hairline: 1, control: 1 },
     focus: { style: "outline", width: 3, offset: 2 },
-    control: {
-      // M3's own controls (docs/specs/theme-contract-v2.md §11.2): underlined text fields,
-      // outlined radios and checkboxes, a tinted track, and the library's circle for a handle
-      // (M3's 4×44 bar was a stray line in the app, #367).
-      field: "underline",
-      choice: "outline",
-      track: "tint",
-      handle: "circle",
-    },
     icon: {
       // A desktop's glyphs keep the base scale (12/16/20); M3's own 16/20/24 stay on touch.
       pointer: { sm: 12, md: 16, lg: 20 },
       touch: { sm: 16, md: 20, lg: 24 },
     },
+  },
+  slots: {
+    // M3's own controls (docs/specs/theme-contract-v2.md §11, docs/specs/theme-slots.md):
+    // an underlined text field, outlined radios and checkboxes, a tinted track and groove, a
+    // switch that only grows its knob, and a disabled control that turns over to the disabled
+    // finish instead of fading (M3's 4×44 bar was a stray line in the app, #367).
+    ...m3Field,
+    ...m3Choice,
+    ...m3Switch,
+    ...m3Track,
+    "state.disabled.face": "finish:disabled",
+    "state.disabled.ink": "finish:disabled:foreground",
+    "state.disabled.edge": "finish:disabled:border-color",
   },
   shape: {
     curve: "circular",
@@ -504,7 +569,7 @@ export const m3Style = {
     overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
     "pressed-opacity": 1,
     "rest-opacity": 0.38,
-    disabled: { content: 0.38, fill: true },
+    disabled: { content: 0.38 },
   },
   transition: {
     enter: { duration: 500, timingFunction: "emphasized-decelerate" },
@@ -636,8 +701,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "dimension.focus":
           "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
         "dimension.focus.offset": "2px outward focus indicator offset per M3.",
-        "dimension.control":
-          "M3 control dimensions: underlined text fields (_md-comp-filled-text-field.scss), outlined selection controls, tinted tracks and the library's circle for a handle (docs/specs/theme-contract-v2.md §11.2).",
+        slots:
+          "M3 control slots: a text field that keeps only its bottom line (_md-comp-filled-text-field.scss), outlined selection controls, tinted tracks, and a box that fades its mark rather than its edge when disabled (docs/specs/theme-contract-v2.md §11).",
         shape: "M3 circular arc corners (ShapeTokens.kt).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; M3 uses the state layer).",
@@ -646,7 +711,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "state.pressed-opacity":
           "Content stays full opacity when pressed (1; the state layer shows press).",
         "state.disabled":
-          "M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).",
+          "M3 disabled controls: 0.38 content opacity, the disabled finish as their face (10% onSurface container) and its foreground as their ink (_md-comp-button-filled.scss).",
         "transition.enter":
           "M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).",
         "motion.fast":

@@ -34,7 +34,9 @@ describe("view", () => {
 
     expect(out.result).toBe(0);
     expect(out.text).toContain("button (registry:ui)");
-    expect(out.text).toContain("  depends on: as-text, icons, live-value, press, spinner, theme");
+    expect(out.text).toContain(
+      "  depends on: as-text, icons, live-value, look, press, spinner, theme",
+    );
     expect(out.text).toContain("file components/ui/button.tsx");
     expect(out.text).toContain("file lib/ui/as-text.tsx");
     expect(out.text).toContain("file lib/ui/live-value.ts");

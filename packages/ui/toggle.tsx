@@ -29,6 +29,7 @@ import {
 } from "nsh/base";
 
 import { type Live, read } from "./lib/live-value";
+import { disabledLook, edged, fillOf } from "./lib/look";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { toolbarTrack } from "./lib/tool";
 
@@ -147,7 +148,8 @@ export function toggleLook(o?: ToggleLookOptions) {
       const dims = dimensions(o);
       const on = !!read(o?.on);
       const disabled = !!read(o?.disabled);
-      const split = disabled && themeStyle().state.disabled.fill;
+      const off = disabled ? disabledLook() : null;
+      const split = off !== null && off.face !== null;
       return {
         // The terminal sizes it to its label, which it never breaks: a
         // track too narrow for its tools wraps them instead.
@@ -165,13 +167,13 @@ export function toggleLook(o?: ToggleLookOptions) {
           ? { borderColor: colors.input, backgroundColor: colors.field }
           : { borderColor: "transparent" }),
         ...(on && !split ? finish.accent : {}),
-        ...(split
+        ...(split && off.face !== null
           ? on
-            ? finish.disabled
+            ? fillOf(off.face)
             : outline
               ? {
                   backgroundColor: "transparent",
-                  borderColor: finish.disabled.borderColor ?? colors.border,
+                  borderColor: off.edge === null ? colors.border : edged(off.edge),
                   boxShadow: "none",
                 }
               : { backgroundColor: "transparent", borderColor: "transparent", boxShadow: "none" }
@@ -206,7 +208,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       return focusRing(1);
     },
     get disabledStyle(): ViewStyle {
-      return themeStyle().state.disabled.fill ? {} : { opacity: dimmed.disabled };
+      return disabledLook().face === null ? { opacity: dimmed.disabled } : {};
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).side);
@@ -216,7 +218,10 @@ export function toggleLook(o?: ToggleLookOptions) {
 
 /** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
 const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
-  if (read(disabled) && themeStyle().state.disabled.fill) return finish.disabled.foreground;
+  if (read(disabled)) {
+    const ink = disabledLook().ink;
+    if (ink !== null) return ink;
+  }
   return read(pressed) ? finish.accent.foreground : colors.mutedForeground;
 };
 

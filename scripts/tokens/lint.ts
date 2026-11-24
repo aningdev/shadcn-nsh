@@ -19,6 +19,7 @@ import path from "node:path";
 import { finishFields, type FinishRole } from "../../packages/theme/finish-fields";
 import { checkMaterial } from "../theme/material";
 import { oklchToRgb } from "../theme/oklch";
+import { SLOTS } from "../theme/slots";
 import {
   checkTimingSpec,
   easingNames,
@@ -34,7 +35,6 @@ import { loadSourceItem, resolvePermutation, type ResolverDoc } from "./resolver
 import { validateResolverDocument, validateTokensDocument } from "./schema-validate";
 import {
   COLOR_ROLES,
-  CONTROL_DIMENSIONS,
   EXT_NS,
   RADIUS_KEYS,
   TYPE_ROLES,
@@ -220,6 +220,18 @@ function checkExtensionNodes(
   walk(tree, "");
 }
 
+/** A button's corner: the radius token it names, points, or `full`. */
+function isCorner(value: unknown): boolean {
+  if (value === "full") return true;
+  if (typeof value === "number") return value >= 0;
+  // A resolved length: the radius token the source names, after the resolver flattens it.
+  if (isRecord(value) && typeof value.value === "number") return value.value >= 0;
+  return (
+    typeof value === "string" &&
+    (/^\{dimension\.radius\.[a-z0-9-]+\}$/.test(value) || /^\d+(?:\.\d+)?px$/.test(value))
+  );
+}
+
 function validateExtAtPath(
   label: string,
   p: string,
@@ -245,17 +257,13 @@ function validateExtAtPath(
       } else {
         checkUnknownKeys(`${where}.corners`, ext.corners, ["button"], problems);
         if ("button" in ext.corners) {
-          if (!whitelists["shape.corners.button"]!.includes(ext.corners.button as string)) {
+          if (!isCorner(ext.corners.button)) {
             problems.push(
-              `${where}.corners.button: ${JSON.stringify(ext.corners.button)} is not in whitelist`,
+              `${where}.corners.button: ${JSON.stringify(ext.corners.button)} is not a radius, points, or \`full\``,
             );
           }
-        } else if (mode === "merged") {
-          problems.push(`${where}.corners.button is missing`);
         }
       }
-    } else if (mode === "merged") {
-      problems.push(`${where}.corners is missing`);
     }
     return;
   }
@@ -276,25 +284,17 @@ function validateExtAtPath(
     return;
   }
 
-  if (p === "dimension.control") {
-    checkUnknownKeys(where, ext, CONTROL_DIMENSIONS, problems);
-    for (const key of CONTROL_DIMENSIONS) {
-      if (!(key in ext)) {
-        if (mode === "merged") problems.push(`${where}.${key} is missing`);
-        continue;
-      }
-      if (!whitelists[`dimension.control.${key}`]!.includes(ext[key] as string)) {
-        problems.push(`${where}.${key}: ${JSON.stringify(ext[key])} is not in whitelist`);
-      }
+  // A slot that answers per tier or per appearance carries the other side in its extension
+  // (`docs/specs/theme-slots.md`): `touch` for the input tier, `dark` for the appearance.
+  if (p.startsWith("slot.")) {
+    const slot = p.slice("slot.".length);
+    const kind = SLOTS[slot]?.kind;
+    if (kind === undefined) {
+      problems.push(`${where}: \`${slot}\` is not a slot (docs/specs/theme-slots.md)`);
+      return;
     }
-    return;
-  }
-
-  if (p === "state.disabled") {
-    checkUnknownKeys(where, ext, ["fill"], problems);
-    if (typeof ext.fill !== "boolean") {
-      problems.push(`${where}.fill must be a boolean`);
-    }
+    const pair = kind === "face" ? ["dark"] : ["touch"];
+    checkUnknownKeys(where, ext, pair, problems);
     return;
   }
 
@@ -888,13 +888,6 @@ function checkMergedSemantics(
       }
     }
   }
-  const disabledNode = getAtPath(resolved, "state.disabled") as Record<string, unknown> | undefined;
-  const disabledExt = (disabledNode?.$extensions as Record<string, unknown> | undefined)?.[
-    EXT_NS
-  ] as Record<string, unknown> | undefined;
-  if (typeof disabledExt?.fill !== "boolean") {
-    problems.push(`${label}: state.disabled.$extensions.${EXT_NS}.fill must be a boolean`);
-  }
   for (const dimGroupPath of [
     "dimension.stroke",
     "dimension.focus",
@@ -918,6 +911,28 @@ function checkMergedSemantics(
       }
     };
     walkDim(group, dimGroupPath);
+  }
+  // A button's corner: the radius token it names, points, or `full`.
+  const cornerNode = getAtPath(resolved, "shape.corners.button");
+  if (isTokenNode(cornerNode) && !isCorner(cornerNode.$value)) {
+    problems.push(
+      `${label}: shape.corners.button is ${JSON.stringify(cornerNode.$value)}, not a radius, points, or \`full\``,
+    );
+  }
+  // Slots: every path the list has, and no path it does not (`docs/specs/theme-slots.md`).
+  const slotGroup = getAtPath(resolved, "slot");
+  if (isRecord(slotGroup)) {
+    const walkSlot = (node: Record<string, unknown>, prefix: string): void => {
+      for (const [k, v] of Object.entries(node)) {
+        if (k.startsWith("$")) continue;
+        const slot = prefix === "" ? k : `${prefix}.${k}`;
+        if (isRecord(v) && "$value" in v) {
+          if (!Object.hasOwn(SLOTS, slot))
+            problems.push(`${label}: \`${slot}\` is not a slot (docs/specs/theme-slots.md)`);
+        } else if (isRecord(v)) walkSlot(v, slot);
+      }
+    };
+    walkSlot(slotGroup, "");
   }
   // Motion roles: each a timing token (never missing)
   const motionGroup = merged.motion;

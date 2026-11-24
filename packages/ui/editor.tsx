@@ -1,7 +1,7 @@
 // Editor: `editorClasses`, `editorFrame`, the `Editor` that wears them and the `EditorFindBar`
 // that finds in it.
 
-import { colors, control, finish, platformMaterial } from "@shadcn-nsh/theme";
+import { colors, finish, platformMaterial } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import {
   cleanup,
@@ -70,7 +70,7 @@ export const editorClasses: EditorClasses = {
  * used, so it follows the appearance and the theme; an app's `style` goes over it.
  */
 export function editorFrame(): ViewStyle {
-  const field = fieldLook(control().field);
+  const field = fieldLook();
   return {
     backgroundColor: colors.field,
     ...fieldEdgeWidths(field),

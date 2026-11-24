@@ -5,10 +5,13 @@
   "description": "Apple theme (Apple HIG / UIKit system palette and Liquid Glass).",
   "sets": {
     "base": {
-      "description": "Cross-theme semantic defaults and shared typography/motion structure.",
+      "description": "Cross-theme semantic defaults, the control slots every theme draws from, and shared typography/motion structure.",
       "sources": [
         {
           "$ref": "../../base/style.shared.tokens.json"
+        },
+        {
+          "$ref": "../../base/slots.tokens.json"
         }
       ]
     },

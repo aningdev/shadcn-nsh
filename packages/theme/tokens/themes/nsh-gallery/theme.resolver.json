@@ -9,6 +9,9 @@
       "sources": [
         {
           "$ref": "../../base/style.shared.tokens.json"
+        },
+        {
+          "$ref": "../../base/slots.tokens.json"
         }
       ]
     },

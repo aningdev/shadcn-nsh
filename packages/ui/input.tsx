@@ -4,7 +4,6 @@
 
 import {
   colors,
-  control,
   finish,
   terminal,
   TERMINAL_COLUMN,
@@ -26,7 +25,7 @@ import {
 } from "./lib/indicator";
 import { type Live, read } from "./lib/live-value";
 // `fieldLook` is the well's own look in this file; the recipe's is read as `fieldRecipe`.
-import { fieldLook as fieldRecipe } from "./lib/look";
+import { borderClass, fieldLook as fieldRecipe, sameFill } from "./lib/look";
 import { createRejectShake } from "./lib/motion";
 
 const pointer = platform.desktop;
@@ -103,25 +102,27 @@ export function edgeClass(o: EdgeOptions): string {
   const tone = o.invalid ? "destructive" : "brand";
   const focus = o.focus ?? "focus-within";
   const hover = o.hoverVariant ?? "hover";
-  const indicator = fieldDrawn(fieldRecipe(control().field)).form;
-  // A field's own edge is the input one, and the preset redraws it: a line in the muted foreground,
-  // or a hairline box whose bottom edge stays the input color (and keeps it under the pointer, as
-  // WinUI's does). Another color (the danger tone, a flat or a ghost field) is the field's own, and
-  // the box and its bottom edge both keep it.
+  const drawn = fieldDrawn(fieldRecipe());
+  // The theme's own edge, in the classes that paint it: the sides where it draws them, and the bottom
+  // edge in its own colour where that differs (a box carrying a line keeps it under the pointer, as
+  // WinUI's does). A preset that names another colour (the danger tone, a flat or a ghost field) is
+  // the field's own, and its box and bottom edge both keep it.
+  const sideFill = drawn.side ?? drawn.bottom;
+  // A box whose bottom edge is a colour of its own (`border-border border-b-input`), versus a field
+  // that reads as one edge all round.
+  const split = !sameFill(sideFill, drawn.bottom);
+  const sides = borderClass(sideFill);
+  const bottom = borderClass(drawn.bottom, split ? "border-b" : "border");
   const own = o.rest === "border-input";
-  const line = indicator !== "box";
-  const rest =
-    !own || indicator === "box"
-      ? o.rest
-      : indicator === "underline"
-        ? "border-muted-foreground"
-        : "border-border border-b-input";
-  // The line's color, and the accent under the pointer and with the keys: a line preset lights its
-  // bottom edge alone.
+  // The theme lights its bottom line in place of the ring (`field.focus.line`): M3's underline and
+  // WinUI's box with a line both do, and both take the accent on that edge, `focus.width` wide.
+  const line = drawn.focusLine;
+  // The accent under the pointer and with the keys: a preset that draws a line lights its bottom
+  // edge alone.
   const edge = `${line ? "border-b" : "border"}-${tone}`;
-  const hoverEdge = own && indicator === "box-underline" ? undefined : o.hover;
+  const hoverEdge = own && split ? undefined : o.hover;
   return [
-    rest,
+    own ? (split ? `${sides} ${bottom}` : sides) : o.rest,
     hoverEdge ? `${hover}:${hoverEdge} ${hover}:${focus}:${edge}` : "",
     `${focus}:${edge}`,
     line ? fieldFocusLine(focus) : "",
@@ -152,13 +153,14 @@ function fieldEdge(o: FieldLookOptions | undefined): string {
 function frame(o: FieldLookOptions | undefined): ViewStyle {
   const ghost = (read(o?.variant) ?? "default") === "ghost";
   const flat = !!read(o?.readonly) || !!read(o?.disabled);
-  const field = fieldRecipe(control().field);
+  const field = fieldDrawn(fieldRecipe());
   return {
     ...fieldCorners(field),
     ...fieldEdgeWidths(field),
     backgroundColor: ghost ? "transparent" : colors.field,
     // Recessed while editable; a read-only, disabled or ghost field lies flat. Its edge is
-    // `fieldEdge`'s classes.
+    // `fieldEdge`'s classes, and so is its color: a theme whose inset is a fill alone states a
+    // transparent edge there, and a box keeps its stroke.
     ...(flat || ghost ? {} : finish.inset),
   };
 }
@@ -287,7 +289,7 @@ export function inputLook(o?: FieldLookOptions) {
  * edge are the preset's, so read it where it is used: the preset is the theme's, which changes at runtime.
  */
 export function timeFieldClass(): string {
-  const field = fieldRecipe(control().field);
+  const field = fieldRecipe();
   return [
     pointer ? "h-8 px-2" : "h-11 px-3",
     fieldCornerClass(field),

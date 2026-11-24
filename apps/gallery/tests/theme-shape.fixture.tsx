@@ -50,7 +50,15 @@ const reshaped: AppTheme = {
     state: {
       ...state,
       "pressed-opacity": 0.5,
-      disabled: { content: 0.3, fill: true },
+      disabled: { content: 0.3 },
+    },
+    // A theme that swaps to a disabled face instead of fading the whole view (the slots every theme
+    // inherits name `keep`; this one names `finish.disabled`).
+    slots: {
+      ...nshGallery.semantics.slots,
+      "state.disabled.face": { finish: "disabled" },
+      "state.disabled.ink": { finish: "disabled", field: "foreground" },
+      "state.disabled.edge": { finish: "disabled", field: "borderColor" },
     },
   },
 };
@@ -79,7 +87,7 @@ function App() {
       <Text>{`field=${inputLook().style.borderRadius}|${inputLook().style.borderWidth}`}</Text>
       <Text>{`concentric=${rounded(shape.control, 3).borderRadius}|${rounded(shape.control, 99).borderRadius}`}</Text>
       <Text>{`button=${button.style.height}|${button.style.borderRadius}|${button.style.borderWidth}`}</Text>
-      <Text>{`fade=${dimmed.disabled}|${dimmed.pressed}|${String(themeStyle().state.disabled.fill)}`}</Text>
+      <Text>{`fade=${dimmed.disabled}|${dimmed.pressed}|${String(themeStyle().slots["state.disabled.face"] !== "keep")}`}</Text>
       <Text>{`disabledMode=${button.disabledStyle.opacity === undefined ? "fill" : "fade"}|${String(disabledText.color === buttonLabel("secondary").color)}`}</Text>
       <Text>{`sizes=${controlHeight.sm}|${controlHeight.lg}|${iconSize.md}|${hitTarget()}|${stroke.hairline}|${stroke.control}`}</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>

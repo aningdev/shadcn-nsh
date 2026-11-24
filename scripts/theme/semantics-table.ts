@@ -373,10 +373,6 @@ const DESCRIPTIONS: Record<string, string> = {
   "dimension.focus.style": "焦点环的画法：晕、外框还是双线",
   "dimension.focus.width": "焦点环的线宽",
   "dimension.focus.offset": "焦点环从控件边界向外的偏移",
-  "dimension.control.field": "输入井的框：四条边、只下边，还是框加下边",
-  "dimension.control.choice": "选择框静止时的面",
-  "dimension.control.track": "轨道：凹槽、色带，还是一条细线",
-  "dimension.control.handle": "手柄：圆钮、竖条，还是环",
 
   // shape: what a theme decides about corners, off the size scales.
   "shape.curve": "圆角的曲率：连续曲线（Apple）还是圆弧",
@@ -390,8 +386,7 @@ const DESCRIPTIONS: Record<string, string> = {
   "state.overlay.dragged": "拖动的叠色透明度",
   "state.pressed-opacity": "按下时内容的透明度",
   "state.rest-opacity": "指示器静止时的透明度（滚动条滑块）",
-  "state.disabled.content": "禁用时内容的透明度",
-  "state.disabled.fill": "禁用时容器是否改画专用的禁用底，否则沿用统一透明度",
+  "state.disabled.content": "禁用时内容的透明度（容器的槽写 `keep` 时用它）",
 
   // transition: the one named preset.
   "transition.enter.duration": "表面进场的时长（ms）",

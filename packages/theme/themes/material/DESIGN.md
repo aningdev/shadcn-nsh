@@ -429,12 +429,6 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (28px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
-**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): M3 control dimensions: underlined text fields (_md-comp-filled-text-field.scss), outlined selection controls, tinted tracks and the library's circle for a handle (docs/specs/theme-contract-v2.md §11.2).
-- **`field`**: `underline`
-- **`choice`**: `outline`
-- **`track`**: `tint`
-- **`handle`**: `circle`
-
 ## Motion & Micro-interaction
 
 Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
@@ -470,7 +464,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **`finish.hover`** (elevation: 1): A control under the pointer.
 - **`finish.pressed`** (elevation: 1): A control held down.
 - **`finish.disabled`**: A control that cannot be used.
-- **Disabled handling** (content=0.38, fill=true): M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).
+- **Disabled handling** (content=0.38, fill=undefined): M3 disabled controls: 0.38 content opacity, the disabled finish as their face (10% onSurface container) and its foreground as their ink (_md-comp-button-filled.scss).
 
 ## Do's and Don'ts
 

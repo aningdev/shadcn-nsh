@@ -9,7 +9,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { CONTROL_DIMENSIONS, type ControlDimension } from "../tokens/types";
 import { specEnums, type EnumRow } from "./spec";
 
 const SPEC = path.resolve(import.meta.dir, "..", "..", "docs/specs/theme-roles.md");
@@ -35,15 +34,6 @@ const namesOf = (key: string): readonly string[] => row(key).values;
 
 /** Every easing name a theme may name in `transition.enter.timingFunction` or a timing `motion.<role>`. */
 export const easingNames: readonly string[] = namesOf("transition.enter.timingFunction");
-
-/**
- * The values each control dimension may take (`docs/specs/theme-contract-v2.md` §14): the axes are
- * behaviour-named, so a name may recur in another dimension with another meaning (`track`).
- */
-export const controlDimensionValues: Record<ControlDimension, readonly string[]> =
-  Object.fromEntries(
-    CONTROL_DIMENSIONS.map((key) => [key, namesOf(`dimension.control.${key}`)]),
-  ) as Record<ControlDimension, readonly string[]>;
 
 /** One theme's values that must come from a list: the path of the key, and the values it may take. */
 export const whitelists: Record<string, readonly (string | number)[]> = Object.fromEntries(

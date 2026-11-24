@@ -1,7 +1,7 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, control, follow, motion, terminal, TERMINAL_ROW, tier } from "@shadcn-nsh/theme";
+import { colors, follow, motion, terminal, TERMINAL_ROW, tier } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { reduceMotion, split, View } from "nsh";
 import {
@@ -23,31 +23,31 @@ import {
 } from "./checkbox";
 import { AsText } from "./lib/as-text";
 import { joinClass } from "./lib/class-names";
-import { choiceLook, HIT_TARGET } from "./lib/look";
+import { choiceLook } from "./lib/look";
 import { cssMotion } from "./lib/motion";
-import { controlSize } from "./lib/surface";
 
 /**
  * A radio's ring, among the `Radio`'s children (give the radio `class="group"`, so the ring
  * responds to row hover/press): outer diameter, dot diameter, stroke, interior well, whether the
  * face turns over or the ring stays a ring, state-layer target, and the dot's hover/press growth (a
- * scale of its box, its own view) all come from the theme's choice recipe
- * (`choiceLook(control().choice)`), read here so the ring follows `selectTheme`.
+ * scale of its box, its own view) all come from the theme's choice slots
+ * (`choiceLook()`), read here so the ring follows `selectTheme`.
  */
 export function RadioRing(props: { on: boolean; scale?: number; disabled?: boolean }) {
   const scale = props.scale ?? 1;
-  const look = () => choiceLook(control().choice);
+  const look = () => choiceLook();
   const size = () => Math.round(look().size[tier] * scale);
   const height = () => (terminal ? TERMINAL_ROW : size());
-  /** The dot: the control's dot scale, or none where the form states none. */
-  const dot = () => (look().dot === null ? 0 : Math.round(controlSize.dot * scale));
+  /** The dot: the mark the theme draws inside the ring, at this tier. */
+  const dot = () => Math.round(look().dot[tier] * scale);
   const dotHover = () => Math.round((look().dotHover ?? 0) * scale);
   const dotPressed = () => Math.round((look().dotPressed ?? 0) * scale);
   const border = () => choiceEdge(look());
-  /** A ring form draws its mark as the ring itself, so the ring keeps its edge only while off. */
+  /** A theme that leaves the box empty draws its mark as the ring itself, and keeps the edge while on. */
   const ringOnly = () => look().checked === null;
   const wellStyle = () => choiceWell({ look: look(), disabled: props.disabled });
-  const ringBorderColor = () => (ringOnly() && props.on ? colors.brand : wellStyle().borderColor);
+  const ringBorderColor = () =>
+    ringOnly() && props.on ? colors.brand : (wellStyle().borderColor ?? colors.border);
   const on = follow(() => (props.on ? 1 : 0));
   /** The dot's growth under hover and press, as a scale of its box, where the recipe states it: the
    * ring around it is the pointer's, so the classes ride the group's states, paced by the theme's
@@ -80,9 +80,9 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
         borderColor: ringBorderColor(),
       }}
     >
-      {look().target !== null ? (
+      {look().halo !== null ? (
         <ChoiceTarget
-          target={Math.round(HIT_TARGET * scale)}
+          target={Math.round((look().halo ?? 0) * scale)}
           innerW={size() - 2 * border()}
           innerH={height() - 2 * border()}
           checked={props.on}

@@ -533,7 +533,15 @@
       "type": "registry:ui",
       "title": "Button",
       "description": "A button, an icon button, a round button, and a split button.",
-      "registryDependencies": ["as-text", "icons", "live-value", "press", "spinner", "theme"],
+      "registryDependencies": [
+        "as-text",
+        "icons",
+        "live-value",
+        "look",
+        "press",
+        "spinner",
+        "theme"
+      ],
       "files": [
         {
           "path": "packages/ui/button.tsx",
@@ -590,7 +598,7 @@
       "type": "registry:ui",
       "title": "Toggle",
       "description": "A two-state button, bare or outlined, and a group of them on the inset track.",
-      "registryDependencies": ["live-value", "press", "theme", "tool"],
+      "registryDependencies": ["live-value", "look", "press", "theme", "tool"],
       "files": [
         {
           "path": "packages/ui/toggle.tsx",
@@ -628,15 +636,7 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
-      "registryDependencies": [
-        "as-text",
-        "checkbox",
-        "class-names",
-        "look",
-        "motion",
-        "surface",
-        "theme"
-      ],
+      "registryDependencies": ["as-text", "checkbox", "class-names", "look", "motion", "theme"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",

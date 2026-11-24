@@ -9,11 +9,11 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { readSlots } from "../theme/slots-dtcg";
 import { BUILD_ROOT_THEME, splitFinishes } from "../theme/tokens";
 import { formatColorOpToCss, formatDtcgColor, oklchToHex6, srgbToHex6 } from "./color";
 import { loadSourceItem, mergeTokenTrees, resolvePermutation, type ResolverDoc } from "./resolver";
 import {
-  CONTROL_DIMENSIONS,
   EXT_NS,
   FORMAT_SCHEMA_URL,
   MOTION_ROLES,
@@ -468,20 +468,19 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   const lpSize = lpDim.size as Record<string, unknown>;
   const ltSize = ltDim.size as Record<string, unknown>;
   const focusExt = getExt(lpDim.focus)!;
-  const controlExt = getExt(lpDim.control);
-  if (controlExt === undefined) {
-    throw new Error(`${absPath}: dimension.control carries none of the four control dimensions`);
-  }
-  const controlOut: Record<string, string> = {};
-  for (const key of CONTROL_DIMENSIONS) {
-    const value = controlExt[key];
-    if (typeof value !== "string") {
-      throw new Error(
-        `${absPath}: dimension.control.${key} is ${JSON.stringify(value)}, not one of the four control dimensions`,
-      );
+  /** A corner states the control radius (a reference) or `full` (a capsule). */
+  const cornerOf = (value: unknown): string => {
+    if (value === "full") return "full";
+    if (typeof value === "string") {
+      const ref = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(value);
+      if (ref !== null) return `{radius-${ref[1]}}`;
+      const points = /^(\d+(?:\.\d+)?)px$/.exec(value);
+      if (points !== null) return points[1]!;
     }
-    controlOut[key] = value;
-  }
+    throw new Error(
+      `Expected {dimension.radius.*}, points as \`Npx\`, or "full", got ${JSON.stringify(value)}`,
+    );
+  };
   const stateGroup = lp.state as Record<string, unknown>;
 
   const readNumMap = (group: Record<string, Record<string, unknown>>) =>
@@ -637,11 +636,16 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         pointer: readDimMap(lpDim.icon as Record<string, Record<string, unknown>>),
         touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
       },
-      control: controlOut,
     },
+    slots: readSlots(lp),
     shape: {
       curve: shapeExt.curve,
-      corners: shapeExt.corners,
+      corners: {
+        button: cornerOf(
+          (lp.shape as Record<string, Record<string, Record<string, unknown>>>).corners!.button!
+            .$value,
+        ),
+      },
     },
     state: {
       "press-scale": (stateGroup["press-scale"] as Record<string, unknown>).$value as number,
@@ -652,7 +656,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       disabled: {
         content: (stateGroup.disabled as Record<string, Record<string, unknown>>).content!
           .$value as number,
-        fill: getExt(stateGroup.disabled)?.fill as boolean,
       },
     },
     transition: transitionOut,

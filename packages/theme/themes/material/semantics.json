@@ -163,12 +163,156 @@
         "md": 20,
         "lg": 24
       }
+    }
+  },
+  "slots": {
+    "field.face": {
+      "colour": "field"
     },
-    "control": {
-      "field": "underline",
-      "choice": "outline",
-      "track": "tint",
-      "handle": "circle"
+    "field.shade": "inset",
+    "field.edge.width": "control",
+    "field.edge.sides": false,
+    "field.edge.colour": {
+      "colour": "input"
+    },
+    "field.edge.bottom": {
+      "colour": "mutedForeground"
+    },
+    "field.corner.top": "control",
+    "field.corner.bottom": 0,
+    "field.focus.line": true,
+    "choice.size": {
+      "pointer": 20,
+      "touch": 20
+    },
+    "choice.corner": {
+      "pointer": 2,
+      "touch": 2
+    },
+    "choice.face": "none",
+    "choice.shade": "none",
+    "choice.edge.width": 2,
+    "choice.edge.colour": {
+      "colour": "mutedForeground"
+    },
+    "choice.edge.disabled": {
+      "colour": "mutedForeground"
+    },
+    "choice.checked.face": "none",
+    "choice.mark.size": {
+      "pointer": 10,
+      "touch": 10
+    },
+    "choice.mark.hover": "none",
+    "choice.mark.pressed": "none",
+    "choice.halo": 40,
+    "switch.width": {
+      "pointer": 40,
+      "touch": 52
+    },
+    "switch.height": {
+      "pointer": 24,
+      "touch": 32
+    },
+    "switch.small.width": {
+      "pointer": 40,
+      "touch": 52
+    },
+    "switch.small.height": {
+      "pointer": 24,
+      "touch": 32
+    },
+    "switch.small.knob.width": {
+      "pointer": 16,
+      "touch": 16
+    },
+    "switch.small.knob.height": {
+      "pointer": 16,
+      "touch": 16
+    },
+    "switch.edge.off": {
+      "pointer": 1,
+      "touch": 2
+    },
+    "switch.edge.on": 0,
+    "switch.knob.width": {
+      "pointer": 16,
+      "touch": 16
+    },
+    "switch.knob.height": {
+      "pointer": 16,
+      "touch": 16
+    },
+    "switch.knob.on.width": {
+      "pointer": 20,
+      "touch": 24
+    },
+    "switch.knob.on.height": {
+      "pointer": 20,
+      "touch": 24
+    },
+    "switch.knob.hover": {
+      "pointer": 16,
+      "touch": 16
+    },
+    "switch.knob.pressed.width": {
+      "pointer": 22,
+      "touch": 28
+    },
+    "switch.knob.pressed.height": {
+      "pointer": 22,
+      "touch": 28
+    },
+    "switch.feedback": "expand",
+    "slider.rail": {
+      "pointer": 6,
+      "touch": 8
+    },
+    "slider.band": {
+      "pointer": 20,
+      "touch": 32
+    },
+    "slider.vertical": {
+      "pointer": 128,
+      "touch": 144
+    },
+    "slider.face": {
+      "tint": "brand"
+    },
+    "slider.shade": "none",
+    "slider.edge.colour": "none",
+    "slider.edge.width": 0,
+    "slider.knob.size": {
+      "pointer": 14,
+      "touch": 20
+    },
+    "slider.knob.pressed.size": {
+      "pointer": 14,
+      "touch": 32
+    },
+    "slider.mark.size": 0,
+    "slider.mark.hover": 0,
+    "slider.mark.pressed": 0,
+    "slider.brightens": true,
+    "progress.height": 4,
+    "progress.line": 0,
+    "progress.face": {
+      "tint": "brand"
+    },
+    "progress.shade": "none",
+    "progress.edge.colour": "none",
+    "progress.edge.width": 0,
+    "spinner.opacity": 0,
+    "state.disabled.face": {
+      "finish": "disabled"
+    },
+    "state.disabled.ink": {
+      "finish": "disabled",
+      "field": "foreground"
+    },
+    "state.disabled.edge": {
+      "finish": "disabled",
+      "field": "borderColor"
     }
   },
   "shape": {
@@ -188,8 +332,7 @@
     "pressed-opacity": 1,
     "rest-opacity": 0.38,
     "disabled": {
-      "content": 0.38,
-      "fill": true
+      "content": 0.38
     }
   },
   "transition": {
