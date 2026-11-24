@@ -4,16 +4,19 @@
 // build-time theme, so its first frame is the one `port:render` records.
 //
 // Every demo imports this module before it mounts (`kit.tsx` and the pages that skip the kit), and
-// a module waits for what it imports: the page's module is evaluated after this one. `Storage.getItem`
-// answers a promise (an app's entries live in the engine), and the web runtime's loader keeps
-// top-level await, which is what holds the mount.
-//
-// The engine takes a theme up one render behind `setTheme`: the render that mounts a page is drawn
-// with the app's own tokens, and the chosen theme's arrive with the next one. So a page switched to
-// a palette has its frame hidden until that next render is in, and no frame of the app's own theme
-// is ever shown (`one theme, from the first frame the visitor sees`). The frame is the player page's
-// `#app`, the document around this app; without one (a native target) nothing is hidden and the
+// the palette is applied as the app starts. `Storage.getItem` answers a promise (an app's entries
+// live in the engine, and `nsh run`'s hot-reload bundle is cjs, which has no top-level `await`), so
+// the palette arrives a moment after the app has mounted. The page's frame is therefore hidden
+// before the app draws into it and shown once the palette is in: no frame of the app's own theme is
+// ever shown (`one theme, from the first frame the visitor sees`). `#app` is the element the player
+// draws into: the page around this app's own (the player gives an app an iframe), or this document
+// when the app runs in the page's realm; without one (a native target) nothing is hidden and the
 // theme is simply selected.
+//
+// The engine takes a theme up one render behind `setTheme`: a view keeps the styles it drew with
+// until the next render. So the page is shown two frames after the theme is selected, and
+// `check:palette` (the colors of the first frame a visitor can see) and `check:first-frame` (that
+// it comes within budget) hold both ends.
 //
 // The theme files are imported on demand: a page that is not switched to one carries neither its
 // tokens nor its finishes. A running app cannot see a later write (the engine loads its entries
@@ -25,32 +28,56 @@ import { Storage } from "nsh";
 import { paletteTheme } from "./palette-themes";
 import { PALETTES, PALETTE_KEY } from "./palettes";
 
-/** The element an app draws into, in the document around it (`#app` of the player page): the one
- * thing this module needs of a page, none of a native target. */
+/** A document, as far as this module needs one: `#app`, the element the player draws an app into. */
 type Page = { getElementById(id: string): { style: { visibility: string } } | null };
 
-/** The app as the browser runs it: its page is `parent`, or itself when it is the page. */
-const view = globalThis as unknown as { parent?: { document?: Page }; document?: Page };
+/** The app as the browser runs it: the page it is in (the player gives an app a page of its own, an
+ * iframe, so the page carrying `#app` is usually the one around it), and the document itself when
+ * the app runs in the page's own realm. Nothing on a native target. */
+const view = globalThis as unknown as { document?: Page; parent?: { document?: Page } };
 
-const stored: string | null = await Storage.getItem(PALETTE_KEY);
-/** An id nothing offers is as good as none: the page keeps the build-time theme. */
-const chosen = PALETTES.find((palette) => palette.id === stored);
-
-if (chosen) {
-  const theme = await paletteTheme(chosen.id);
-  const page = (view.parent?.document ?? view.document) as Page | undefined;
-  const app = page?.getElementById("app") ?? null;
-  if (app) app.style.visibility = "hidden";
-  selectTheme(theme);
-  if (app) {
-    requestAnimationFrame(() => {
-      selectTheme(null);
-      selectTheme(theme);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          app.style.visibility = "";
-        });
-      });
-    });
+/** The element the app draws into: `#app` of the document around it, else of its own. */
+const frame = (): { style: { visibility: string } } | null => {
+  for (const page of [view.parent?.document, view.document]) {
+    const element = page?.getElementById("app");
+    if (element) return element;
   }
+  return null;
+};
+
+// The page is hidden before the app's first frame; `start` shows it once the palette is in.
+const app = frame();
+if (app) app.style.visibility = "hidden";
+
+void start();
+
+/** Applies the palette this page was switched to, then shows the page. */
+async function start() {
+  let themed = false;
+  try {
+    const stored = await Storage.getItem(PALETTE_KEY);
+    /** An id nothing offers is as good as none: the page keeps the build-time theme. */
+    const chosen = PALETTES.find((palette) => palette.id === stored);
+    if (chosen) {
+      selectTheme(await paletteTheme(chosen.id));
+      themed = true;
+    }
+  } finally {
+    show(themed);
+  }
+}
+
+/** Shows the page, once the theme has been drawn when one was chosen: `setTheme` reaches the views
+ * one render behind it, so two frames. */
+function show(themed: boolean) {
+  if (!app) return;
+  if (!themed) {
+    app.style.visibility = "";
+    return;
+  }
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      app.style.visibility = "";
+    });
+  });
 }

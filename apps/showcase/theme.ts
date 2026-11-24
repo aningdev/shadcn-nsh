@@ -4,9 +4,10 @@
 // for the palette, `setColorScheme` for the appearance — so no reload is ever needed.
 //
 // The start-up palette follows the docs demos' approach (`apps/website/demos/apply-palette.ts`):
-// the choice in this app's storage, applied before the first frame a visitor can see — and a page
-// that carries the website's palette key (same origin, so the entry the site keeps for the docs
-// demos is this page's localStorage too) starts in that palette when the app has none of its own.
+// the choice in this app's storage, applied as the app starts, the page hidden until it is in so
+// no visitor sees a frame of the build-time theme — and a page that carries the website's palette
+// key (same origin, so the entry the site keeps for the docs demos is this page's localStorage
+// too) starts in that palette when the app has none of its own.
 import { selectTheme } from "@shadcn-nsh/theme";
 import { setColorScheme, signal } from "nsh";
 import { Storage } from "nsh";
@@ -55,16 +56,27 @@ export function choosePalette(id: PaletteId) {
   void Storage.setItem(PALETTE_KEY, id);
 }
 
-/** The element an app draws into, in the document around it: the one thing of a page the
- * start-up palette needs, none of a native target. */
+/** A document, as far as this module needs one: `#app`, the element the player draws an app into. */
 type Page = { getElementById(id: string): { style: { visibility: string } } | null };
 
-/** The app as the browser runs it: its page is `parent`, or itself when it is the page. */
+/** The app as the browser runs it: the page it is in (the player gives an app a page of its own, an
+ * iframe, so the page carrying `#app` is usually the one around it), the document itself when the
+ * app runs in the page's own realm, and that page's storage for the site's palette. Nothing on a
+ * native target. */
 const view = globalThis as unknown as {
-  parent?: { document?: Page };
   document?: Page;
+  parent?: { document?: Page };
   localStorage?: { getItem(key: string): string | null };
 };
+
+/** The element the app draws into: `#app` of the document around it, else of its own. */
+function frame(): { style: { visibility: string } } | null {
+  for (const page of [view.parent?.document, view.document]) {
+    const element = page?.getElementById("app");
+    if (element) return element;
+  }
+  return null;
+}
 
 /** The website's palette, if the page this app runs in has one chosen; none elsewhere. */
 function sitePalette(): string | null {
@@ -80,36 +92,52 @@ function paletteOf(stored: string | null): PaletteId | null {
   return PALETTES.find((p) => p.id === stored)?.id ?? null;
 }
 
-// The palette the app starts in: its own choice, else the website's, else the build-time theme.
-const own = await Storage.getItem(PALETTE_KEY);
-const start = paletteOf(own) ?? paletteOf(sitePalette()) ?? "default";
-palette.set(start);
+// The page is hidden before the app's first frame; `start` shows it once the palette is in. A
+// native target has no page: nothing is hidden, and the app draws as soon as it mounts.
+const app = frame();
+if (app) app.style.visibility = "hidden";
 
-// An appearance kept from an earlier run (`"system"` when the entry is gone or unknown).
-const keptAppearance = await Storage.getItem(APPEARANCE_KEY);
-const startAppearance: Appearance =
-  keptAppearance === "light" || keptAppearance === "dark" ? keptAppearance : "system";
-appearance.set(startAppearance);
-setColorScheme(startAppearance);
+void start();
 
-// The theme arrives one render behind `setTheme`, so the frame that mounts the app is hidden
-// until the chosen palette's has been drawn — the same approach as `apply-palette.ts`. A native
-// target has no page: nothing is hidden and the theme is simply selected.
-if (start !== "default") {
-  const theme = await paletteTheme(start);
-  const page = (view.parent?.document ?? view.document) as Page | undefined;
-  const app = page?.getElementById("app") ?? null;
-  if (app) app.style.visibility = "hidden";
-  selectTheme(theme);
-  if (app) {
-    requestAnimationFrame(() => {
-      selectTheme(null);
-      selectTheme(theme);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          app.style.visibility = "";
-        });
-      });
-    });
+/**
+ * Applies the palette and the appearance the app starts in, then shows the page. `Storage.getItem`
+ * answers a promise, so this runs while the app mounts; hiding `#app` is what keeps the build-time
+ * theme off screen until it is in (`apps/website/demos/apply-palette.ts` does the same).
+ */
+async function start() {
+  let themed = false;
+  try {
+    // The palette the app starts in: its own choice, else the website's, else the build-time theme.
+    const own = await Storage.getItem(PALETTE_KEY);
+    const start = paletteOf(own) ?? paletteOf(sitePalette()) ?? "default";
+    palette.set(start);
+
+    // An appearance kept from an earlier run (`"system"` when the entry is gone or unknown).
+    const kept = await Storage.getItem(APPEARANCE_KEY);
+    const chosen: Appearance = kept === "light" || kept === "dark" ? kept : "system";
+    appearance.set(chosen);
+    setColorScheme(chosen);
+
+    if (start !== "default") {
+      selectTheme(await paletteTheme(start));
+      themed = true;
+    }
+  } finally {
+    show(themed);
   }
+}
+
+/** Shows the page, once the theme has been drawn when one was chosen: `setTheme` reaches the views
+ * one render behind it, so two frames. */
+function show(themed: boolean) {
+  if (!app) return;
+  if (!themed) {
+    app.style.visibility = "";
+    return;
+  }
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      app.style.visibility = "";
+    });
+  });
 }
