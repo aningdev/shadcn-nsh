@@ -2,20 +2,42 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { colourSources } from "./extensions";
+import type { ColourProvenance } from "./sources";
 import { checkWhitelist, type WhitelistSemantics, type WhitelistTheme } from "./whitelist";
 
 const themes = join(import.meta.dir, "../../packages/theme");
 const read = <T>(file: string) => JSON.parse(readFileSync(join(themes, file), "utf8")) as T;
 
 const semantics = read<WhitelistSemantics>("semantics.json");
-const fixture = (): { theme: WhitelistTheme; semantics: WhitelistSemantics } => ({
+const noProvenance: ColourProvenance = { theme: {}, light: {}, dark: {} };
+const fixture = (): {
+  theme: WhitelistTheme;
+  semantics: WhitelistSemantics;
+  provenance: ColourProvenance;
+} => ({
   theme: structuredClone(read<WhitelistTheme>("themes/shadcn/theme.json")),
   semantics: structuredClone(read<WhitelistSemantics>("themes/shadcn/semantics.json")),
+  // A theme's colours carry the sources their own theme states (ADR 0012 §4).
+  provenance: structuredClone(colourSources("shadcn")),
 });
-const lint = (f: { theme: WhitelistTheme; semantics: WhitelistSemantics }) =>
-  checkWhitelist("fixture", f.theme, f.semantics, semantics);
+/** Drop the source a key would have had, so the test can state a value without one. */
+const unsourced = (
+  f: { provenance: ColourProvenance },
+  section: keyof ColourProvenance,
+  key: string,
+) => {
+  const copy = structuredClone(f.provenance);
+  delete copy[section][key];
+  return copy;
+};
+const lint = (f: {
+  theme: WhitelistTheme;
+  semantics: WhitelistSemantics;
+  provenance?: ColourProvenance;
+}) => checkWhitelist("fixture", f.theme, f.semantics, semantics, f.provenance ?? noProvenance);
 
-describe("the ADR 0007 whitelist", () => {
+describe("the whitelist", () => {
   test("the shipped themes pass", () => {
     for (const id of ["nsh-gallery", "shadcn", "solid-glass", "apple", "material", "winui"])
       expect(
@@ -26,6 +48,7 @@ describe("the ADR 0007 whitelist", () => {
             id === "nsh-gallery" ? "semantics.json" : `themes/${id}/semantics.json`,
           ),
           semantics,
+          colourSources(id),
         ),
       ).toEqual([]);
   });
@@ -39,18 +62,64 @@ describe("the ADR 0007 whitelist", () => {
   test("a literal tint fails", () => {
     const f = fixture();
     f.theme.cssVars.light["info-tint"] = "oklch(0.27 0 0)";
-    expect(lint(f).join("\n")).toContain("light.info-tint");
+    f.provenance = unsourced(f, "light", "info-tint");
+    const text = lint(f).join("\n");
+    expect(text).toContain("light.info-tint is `oklch(0.27 0 0)`");
+    expect(text).toContain("states no source for it");
   });
 
   test("a literal on a reference-only key fails", () => {
     const f = fixture();
-    f.theme.cssVars.dark["inset"] = "oklch(0.2 0 0)";
-    expect(lint(f).join("\n")).toContain("dark.inset writes");
+    f.theme.cssVars.light["popover"] = "oklch(0.2 0 0)";
+    f.provenance = unsourced(f, "light", "popover");
+    expect(lint(f).join("\n")).toContain("light.popover writes");
+  });
+
+  test("a reference that states its source passes (ADR 0012 §4)", () => {
+    const f = fixture();
+    f.theme.cssVars.light["popover"] = "oklch(0.2 0 0)";
+    expect(lint(f)).toEqual([]);
+  });
+
+  test("a tint at the spec's own strength passes, and sets no shared number (ADR 0012 §5)", () => {
+    const f = fixture();
+    const tints = [
+      "brand-tint",
+      "info-tint",
+      "warn-tint",
+      "destructive-tint",
+      "up-tint",
+      "down-tint",
+    ];
+    for (const key of tints) f.provenance.light[key] = `some spec: ${key}`;
+    f.theme.cssVars.light["info-tint"] = "color-mix(in srgb, var(--info) 30%, transparent)";
+    expect(lint(f)).toEqual([]);
+  });
+
+  test("a source nothing uses fails", () => {
+    const f = fixture();
+    f.provenance = {
+      ...structuredClone(colourSources("shadcn")),
+      dark: { ...colourSources("shadcn").dark, "brand-edge": "shadcn/ui default theme: --border" },
+    };
+    expect(lint(f).join("\n")).toContain(
+      "dark.brand-edge states a source nothing uses (the colour points at a source)",
+    );
   });
 
   test("tints with different strengths fail", () => {
     const f = fixture();
     f.theme.cssVars.light["warn-tint"] = "color-mix(in srgb, var(--warn) 30%, transparent)";
+    f.provenance = structuredClone(colourSources("shadcn"));
+    for (const key of [
+      "brand-tint",
+      "info-tint",
+      "warn-tint",
+      "destructive-tint",
+      "up-tint",
+      "down-tint",
+    ])
+      delete f.provenance.light[key];
     expect(lint(f).join("\n")).toContain("one number per theme");
   });
 

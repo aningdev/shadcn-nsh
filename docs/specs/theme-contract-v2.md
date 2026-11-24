@@ -60,7 +60,7 @@
 `background`、`foreground`、`card`、`card-foreground`、`popover`、`popover-foreground`、`primary`、`primary-foreground`、`secondary`、`secondary-foreground`、`muted`、`muted-foreground`、`accent`、`accent-foreground`、`destructive`、`border`、`input`、`ring`、`chart-1`…`chart-5`，以及 `sidebar`、`sidebar-foreground`、`sidebar-primary`、`sidebar-primary-foreground`、`sidebar-accent`、`sidebar-accent-foreground`、`sidebar-border`、`sidebar-ring`。
 
 - 缺一个槽，NSH 就会对这个槽退回 shadcn 的 neutral 灰（`theme.rs` 的 `DEFAULT_THEME`），所以 31 个槽都要写。
-- `sidebar-*` 在 DTCG 源码里一律写成指向本层角色的 alias（例如 `sidebar` → `{color.background}` 或 `{color.card}`，由主题决定），不再给自己的字面值。
+- `sidebar-*` 在 DTCG 源码里默认写成指向本层角色的 alias（例如 `sidebar` → `{color.background}` 或 `{color.card}`，由主题决定）；主题写自己的值时在 token 的 `$extensions` 里记出处（[决策 0012](../decisions/0012-derived-colours-are-defaults.md)），`nsh-gallery` 就照上游写了自己的值。
 - 本库组件不读 `sidebar-*`：`Sidebar` 读层角色。这 8 个槽只为使用本库主题的应用代码保留。
 
 ### B 层：本库的角色（按层分组）

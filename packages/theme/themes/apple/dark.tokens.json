@@ -883,12 +883,12 @@
         "$value": {
           "colorSpace": "oklch",
           "components": [
-            0.22728,
-            0.00382,
-            286.092
+            0.2939,
+            0.00358,
+            286.177
           ],
           "alpha": 0.72,
-          "hex": "#1c1c1e"
+          "hex": "#2c2c2e"
         },
         "$extensions": {
           "dev.aning.shadcn-nsh": {
@@ -969,12 +969,12 @@
         "$value": {
           "colorSpace": "oklch",
           "components": [
-            0.22728,
-            0.00382,
-            286.092
+            0.2939,
+            0.00358,
+            286.177
           ],
           "alpha": 0.72,
-          "hex": "#1c1c1e"
+          "hex": "#2c2c2e"
         },
         "$extensions": {
           "dev.aning.shadcn-nsh": {
@@ -1016,12 +1016,12 @@
         "$value": {
           "colorSpace": "oklch",
           "components": [
-            0.22728,
-            0.00382,
-            286.092
+            0.2939,
+            0.00358,
+            286.177
           ],
           "alpha": 0.72,
-          "hex": "#1c1c1e"
+          "hex": "#2c2c2e"
         },
         "$extensions": {
           "dev.aning.shadcn-nsh": {
@@ -1431,10 +1431,19 @@
       "$description": "Elevated list and card surface (UIKit systemBackground)."
     },
     "popover": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.2939,
+          0.00358,
+          286.177
+        ],
+        "hex": "#2c2c2e"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: tertiarySystemBackground"
         }
       },
       "$description": "Floating popover and sheet surface (UIKit secondarySystemBackground / popover)."
@@ -1508,13 +1517,22 @@
       "$description": "Secondary label ink (UIKit secondaryLabel composited over card)."
     },
     "accent": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.31868,
+          0.00703,
+          285.994
+        ],
+        "hex": "#323236"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: secondarySystemFill over the card (light) / tertiarySystemFill over the card (dark)"
         }
       },
-      "$description": "Subtle hover/selection fill (the muted fill)."
+      "$description": "Subtle hover/selection fill (UIKit secondarySystemFill over the card in light, tertiarySystemFill in dark: the step `muted` uses)."
     },
     "destructive": {
       "$value": {
@@ -1551,37 +1569,73 @@
       "$description": "Hairline separator (UIKit separator hairline composited over card)."
     },
     "input": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.36496,
+          0.00509,
+          286.145
+        ],
+        "hex": "#3e3e41"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "Apple HIG system colours: separator over the card"
         }
       },
       "$description": "Input control border (UIKit separator composited over card)."
     },
     "inset": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.29471,
+          0.00718,
+          285.951
+        ],
+        "hex": "#2c2c30"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: quaternarySystemFill over the card"
         }
       },
       "$description": "Inset surface (UIKit quaternarySystemFill composited over card)."
     },
     "raised": {
-      "$value": "{color.secondary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.31868,
+          0.00703,
+          285.994
+        ],
+        "hex": "#323236"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: tertiarySystemFill over the card"
         }
       },
       "$description": "Raised control surface (UIKit tertiarySystemFill composited over card)."
     },
     "field": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.31868,
+          0.00703,
+          285.994
+        ],
+        "hex": "#323236"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: tertiarySystemFill over the card"
         }
       },
       "$description": "Form input background (UIKit tertiarySystemFill composited over card)."
@@ -1604,10 +1658,27 @@
       "$description": "Inset divider hairline (UIKit hairline composited over card)."
     },
     "hover": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "alpha": 0.06,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: label at 6% over transparent",
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 6,
+            "b": "transparent"
+          }
         }
       },
       "$description": "Pointer hover tint (6% foreground ink over transparent)."
@@ -1630,10 +1701,19 @@
       "$description": "Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel)."
     },
     "brand": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.62425,
+          0.20558,
+          255.486
+        ],
+        "hex": "#0a84ff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "Apple HIG system colours: systemBlue"
         }
       },
       "$description": "Inline brand accent ink (UIKit systemBlue)."
@@ -1648,19 +1728,37 @@
       "$description": "Hairline border on primary accent-filled controls."
     },
     "track": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.34609,
+          0.00689,
+          286.034
+        ],
+        "hex": "#39393d"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: secondarySystemFill over the card"
         }
       },
       "$description": "Switch and slider track (UIKit secondarySystemFill composited over card)."
     },
     "knob": {
-      "$value": "{color.foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: white"
         }
       },
       "$description": "Switch knob and slider handle (pure white)."
@@ -1733,7 +1831,7 @@
           "colorOp": {
             "op": "mix",
             "space": "srgb",
-            "a": "{color.primary}",
+            "a": "{color.brand}",
             "percent": 12,
             "b": "transparent"
           }
@@ -1742,7 +1840,7 @@
       "$description": "Translucent brand wash (12% brand over transparent)."
     },
     "inverse": {
-      "$value": "{color.card}",
+      "$value": "{color.popover}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1947,64 +2045,127 @@
       "$description": "Text and icon ink on secondary control surfaces."
     },
     "chart-1": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.62425,
+          0.20558,
+          255.486
+        ],
+        "hex": "#0a84ff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Apple HIG system colours: systemBlue"
         }
       },
       "$description": "First chart series color (UIKit systemBlue)."
     },
     "chart-2": {
-      "$value": "{color.up}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.75555,
+          0.20825,
+          146.984
+        ],
+        "hex": "#30d158"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Apple HIG system colours: systemGreen"
         }
       },
       "$description": "Second chart series color (UIKit systemGreen)."
     },
     "chart-3": {
-      "$value": "{color.warn}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.78237,
+          0.17106,
+          67.223
+        ],
+        "hex": "#ff9f0a"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Apple HIG system colours: systemOrange"
         }
       },
       "$description": "Third chart series color (UIKit systemOrange)."
     },
     "chart-4": {
-      "$value": "{color.destructive}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65605,
+          0.22741,
+          312.416
+        ],
+        "hex": "#bf5af2"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Apple HIG system colours: systemPurple"
         }
       },
       "$description": "Fourth chart series color (UIKit systemPurple)."
     },
     "chart-5": {
-      "$value": "{color.muted-foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.6633,
+          0.22361,
+          28.292
+        ],
+        "hex": "#ff453a"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Apple HIG system colours: systemRed"
         }
       },
       "$description": "Fifth chart series color (UIKit systemRed)."
     },
     "ring": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.62425,
+          0.20558,
+          255.486
+        ],
+        "hex": "#0a84ff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "Apple HIG system colours: systemBlue"
         }
       },
       "$description": "Focus ring color matching UIKit systemBlue."
     },
     "sidebar": {
-      "$value": "{color.background}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.22728,
+          0.00382,
+          286.092
+        ],
+        "hex": "#1c1c1e"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Apple HIG system colours: secondarySystemBackground"
         }
       },
       "$description": "Sidebar surface matching Apple system sidebar/grouped background."
@@ -2019,7 +2180,7 @@
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-accent": {
-      "$value": "{color.muted}",
+      "$value": "{color.accent}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -2028,7 +2189,7 @@
       "$description": "Selected or active row fill in the sidebar."
     },
     "sidebar-accent-foreground": {
-      "$value": "{color.foreground}",
+      "$value": "{color.accent-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -2037,7 +2198,7 @@
       "$description": "Text and icon ink on active sidebar rows."
     },
     "sidebar-border": {
-      "$value": "{color.line}",
+      "$value": "{color.border}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
@@ -2064,7 +2225,7 @@
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-ring": {
-      "$value": "{color.primary}",
+      "$value": "{color.ring}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"

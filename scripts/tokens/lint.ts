@@ -403,8 +403,11 @@ function validateExtAtPath(
   }
 
   if (/^color\.[a-z0-9-]+$/.test(p)) {
-    checkUnknownKeys(where, ext, ["colorOp", "role"], problems);
+    checkUnknownKeys(where, ext, ["colorOp", "role", "source"], problems);
     if ("colorOp" in ext) validateColorOpShape(where, ext.colorOp, problems);
+    if ("source" in ext && (typeof ext.source !== "string" || ext.source.trim() === "")) {
+      problems.push(`${where}.source must be the specification and name the colour has in it`);
+    }
     if ("role" in ext) {
       if (!COLOR_ROLES.includes(ext.role as ColorRole)) {
         problems.push(

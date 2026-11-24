@@ -24,20 +24,20 @@ colors:
     destructive: "#e7000b"
     border: "#e5e5e5"
     input: "#e5e5e5"
-    ring: "#737373"
-    chart-1: "#222222"
-    chart-2: "#545454"
-    chart-3: "#787878"
-    chart-4: "#9d9d9d"
-    chart-5: "#c2c2c2"
-    sidebar: "#ffffff"
+    ring: "#a1a1a1"
+    chart-1: "#d4d4d4"
+    chart-2: "#737373"
+    chart-3: "#525252"
+    chart-4: "#404040"
+    chart-5: "#262626"
+    sidebar: "#fafafa"
     sidebar-foreground: "#0a0a0a"
     sidebar-primary: "#171717"
     sidebar-primary-foreground: "#fafafa"
     sidebar-accent: "#f5f5f5"
     sidebar-accent-foreground: "#0a0a0a"
     sidebar-border: "#e5e5e5"
-    sidebar-ring: "#737373"
+    sidebar-ring: "#a1a1a1"
     inset: "#f5f5f5"
     raised: "#f5f5f5"
     field: "#ffffff"
@@ -77,24 +77,24 @@ colors:
     accent-foreground: "#fafafa"
     destructive: "#ff6467"
     border: "#ffffff1a"
-    input: "#ffffff1a"
-    ring: "#a1a1a1"
-    chart-1: "#e2e2e2"
-    chart-2: "#b2b2b2"
-    chart-3: "#8e8e8e"
-    chart-4: "#6a6a6a"
-    chart-5: "#464646"
-    sidebar: "#0a0a0a"
+    input: "#ffffff26"
+    ring: "#737373"
+    chart-1: "#d4d4d4"
+    chart-2: "#737373"
+    chart-3: "#525252"
+    chart-4: "#404040"
+    chart-5: "#262626"
+    sidebar: "#171717"
     sidebar-foreground: "#fafafa"
     sidebar-primary: "#e5e5e5"
     sidebar-primary-foreground: "#171717"
     sidebar-accent: "#262626"
     sidebar-accent-foreground: "#fafafa"
     sidebar-border: "#ffffff1a"
-    sidebar-ring: "#a1a1a1"
+    sidebar-ring: "#737373"
     inset: "#262626"
     raised: "#262626"
-    field: "#171717"
+    field: "#ffffff0b"
     line: "#ffffff1a"
     hover: "#262626"
     faint: "#a1a1a1"
@@ -315,11 +315,11 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`secondary`** (light `#f5f5f5`, dark `#262626`): Secondary control surface fill.
 - **`muted`** (light `#f5f5f5`, dark `#262626`): Subdued container and subtle background surface.
 - **`accent`** (light `#f5f5f5`, dark `#262626`): Subtle highlight fill for hovered or active items.
-- **`sidebar`** (light `#ffffff`, dark `#0a0a0a`): Navigation sidebar panel background.
+- **`sidebar`** (light `#fafafa`, dark `#171717`): Navigation sidebar panel background.
 - **`sidebar-accent`** (light `#f5f5f5`, dark `#262626`): Selected or active row fill in the sidebar.
 - **`inset`** (light `#f5f5f5`, dark `#262626`): Recessed well surface nested inside a card.
 - **`raised`** (light `#f5f5f5`, dark `#262626`): Raised control surface resting on a card.
-- **`field`** (light `#ffffff`, dark `#171717`): Input well surface below card and inset layers.
+- **`field`** (light `#ffffff`, dark `#ffffff0b`): Input well surface below card and inset layers.
 - **`hover`** (light `#f5f5f5`, dark `#262626`): Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.
 - **`track`** (light `#f5f5f5`, dark `#262626`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#fafafa`): Switch thumb fill in the off state.
@@ -353,11 +353,11 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 ### Status
 
 - **`destructive`** (light `#e7000b`, dark `#ff6467`): Semantic danger color for destructive actions and errors.
-- **`chart-1`** (light `#222222`, dark `#e2e2e2`): Primary chart series color.
-- **`chart-2`** (light `#545454`, dark `#b2b2b2`): Second chart series color.
-- **`chart-3`** (light `#787878`, dark `#8e8e8e`): Third chart series color.
-- **`chart-4`** (light `#9d9d9d`, dark `#6a6a6a`): Fourth chart series color.
-- **`chart-5`** (light `#c2c2c2`, dark `#464646`): Fifth chart series color.
+- **`chart-1`** (`#d4d4d4`): Primary chart series color.
+- **`chart-2`** (`#737373`): Second chart series color.
+- **`chart-3`** (`#525252`): Third chart series color.
+- **`chart-4`** (`#404040`): Fourth chart series color.
+- **`chart-5`** (`#262626`): Fifth chart series color.
 - **`info`** (light `#737373`, dark `#a1a1a1`): Informational semantic status color mapped onto shadcn's neutral grey ramp.
 - **`warn`** (light `#525252`, dark `#d4d4d4`): Warning semantic status color mapped onto shadcn's neutral chart ramp.
 - **`up`** (light `#404040`, dark `#e5e5e5`): Positive trend color mapped onto shadcn's neutral ramp.
@@ -370,10 +370,10 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 ### Chrome
 
 - **`border`** (light `#e5e5e5`, dark `#ffffff1a`): Standard hairline border color for containers and controls.
-- **`input`** (light `#e5e5e5`, dark `#ffffff1a`): Border and stroke color for form fields and control edges.
-- **`ring`** (light `#737373`, dark `#a1a1a1`): Focus indicator ring stroke color.
+- **`input`** (light `#e5e5e5`, dark `#ffffff26`): Border and stroke color for form fields and control edges.
+- **`ring`** (light `#a1a1a1`, dark `#737373`): Focus indicator ring stroke color.
 - **`sidebar-border`** (light `#e5e5e5`, dark `#ffffff1a`): Sidebar divider and toolbar hairline border color.
-- **`sidebar-ring`** (light `#737373`, dark `#a1a1a1`): Focus indicator ring color inside the sidebar.
+- **`sidebar-ring`** (light `#a1a1a1`, dark `#737373`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline divider and grid rule inside recessed wells.
 
 ## Typography

@@ -1,89 +1,24 @@
 /**
- * The scope of a theme's customization (docs/decisions/0007-theme-customization-scope.md), as the
- * lint reads it: which colour keys a theme may state, which of them it writes a value for, and
- * which of them it can only point at; the control dimensions; and the type scale, which no theme
- * owns (docs/decisions/0009-no-theme-type-scale.md). `theme-lint` runs it on every compiled
- * theme; the fixtures in `whitelist.test.ts` show what it refuses.
+ * The scope of a theme's customization (docs/decisions/0007-theme-customization-scope.md,
+ * docs/decisions/0012-derived-colours-are-defaults.md), as the lint reads it: every colour a theme
+ * writes is a source or a reference, and a reference that states a value rather than pointing at a
+ * source carries that value's provenance; the control dimensions; and the type scale, which no theme
+ * owns (docs/decisions/0009-no-theme-type-scale.md). `theme-lint` runs it on every theme; the
+ * fixtures in `whitelist.test.ts` show what it refuses.
  */
-
-/** ADR 0007 §4: the colours a theme writes a value for (15). */
-export const sourceColours: readonly string[] = [
-  "primary",
-  "primary-foreground",
-  "secondary",
-  "foreground",
-  "muted-foreground",
-  "faint",
-  "background",
-  "card",
-  "muted",
-  "border",
-  "line",
-  "destructive",
-  "warn",
-  "info",
-  "up",
-];
-
-/** Colours that are fixed by what they sit on, not by the theme's palette: they stay literal. */
-export const constantColours: readonly string[] = ["scrim", "media", "on-media"];
-
-/** ADR 0007 §4: the `*-tint` colours share one formula, `color-mix(in srgb, <source> N%, transparent)`. */
-export const tintColours: readonly string[] = [
-  "brand-tint",
-  "info-tint",
-  "warn-tint",
-  "destructive-tint",
-  "up-tint",
-  "down-tint",
-];
-
-/** ADR 0007 §4: the `chart-*` series point at a source, or at a grey derived from `foreground`. */
-export const chartColours: readonly string[] = [
-  "chart-1",
-  "chart-2",
-  "chart-3",
-  "chart-4",
-  "chart-5",
-];
-
-/** The colours a theme only points at: shadcn / NSH slots and the library's own roles. */
-export const referenceColours: readonly string[] = [
-  "card-foreground",
-  "popover",
-  "popover-foreground",
-  "secondary-foreground",
-  "accent",
-  "accent-foreground",
-  "input",
-  "ring",
-  "sidebar",
-  "sidebar-foreground",
-  "sidebar-primary",
-  "sidebar-primary-foreground",
-  "sidebar-accent",
-  "sidebar-accent-foreground",
-  "sidebar-border",
-  "sidebar-ring",
-  "inset",
-  "raised",
-  "field",
-  "track",
-  "knob",
-  "hover",
-  "brand",
-  "brand-edge",
-  "inverse",
-  "inverse-foreground",
-  "inverse-brand",
-  ...tintColours,
-  ...chartColours,
-];
+import {
+  chartColours,
+  constantColours,
+  referenceColours,
+  sourceColours,
+  tintColours,
+  type ColourProvenance,
+} from "./sources";
 
 /** ADR 0007 §1: the control dimensions a theme chooses a form for. */
 export const controlDimensions: readonly string[] = ["field", "choice", "track", "handle"];
 
-/** A colour literal: anything that is a value of its own and not a pointer. */
+/** A colour that is a value of its own, not a pointer. */
 const literal = /oklch\(|#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklab|lab|lch|color)\(/i;
 
 const tintFormula = /^color-mix\(in srgb, var\(--[a-z-]+\) (\d+)%, transparent\)$/;
@@ -106,17 +41,20 @@ export interface WhitelistSemantics {
   dimension: { control: Record<string, unknown> };
 }
 
+const nothing: ColourProvenance = { theme: {}, light: {}, dark: {} };
+
 /** Every way `theme` steps outside the whitelist, each as one sentence naming `path`. */
 export function checkWhitelist(
   path: string,
   theme: WhitelistTheme,
   semantics: WhitelistSemantics,
   shared: WhitelistSemantics,
+  provenance: ColourProvenance = nothing,
 ): string[] {
   const problems: string[] = [];
-  const sources = new Set(sourceColours);
-  const references = new Set(referenceColours);
-  const constants = new Set(constantColours);
+  const sources: ReadonlySet<string> = new Set(sourceColours);
+  const references: ReadonlySet<string> = new Set(referenceColours);
+  const constants: ReadonlySet<string> = new Set(constantColours);
 
   for (const key of Object.keys(theme.cssVars.theme))
     if (key.startsWith("font-"))
@@ -134,18 +72,26 @@ export function checkWhitelist(
         continue;
       }
       if (sources.has(key) || constants.has(key)) continue;
+      const source = provenance[section][key];
+      // A value with provenance is the spec's, not the derivation's: the tint rule below is about
+      // the formula the derivation writes, so it reaches only a tint that states no source.
+      if (source !== undefined) continue;
       if (tintColours.includes(key)) {
         const match = tintFormula.exec(value);
-        if (!match)
+        if (match) tints.add(match[1]!);
+        else
           problems.push(
-            `${where} is \`${value}\`, not color-mix(in srgb, <source> N%, transparent)`,
+            `${where} is \`${value}\`, not color-mix(in srgb, <source> N%, transparent), and states no source for it (ADR 0012 §4)`,
           );
-        else tints.add(match[1]!);
       } else if (chartColours.includes(key)) {
         if (!chartForms.some((form) => form.test(value)))
-          problems.push(`${where} is \`${value}\`, not a source or a grey derived from foreground`);
+          problems.push(
+            `${where} is \`${value}\`, not a source or a foreground grey, and states no source for it (ADR 0012 §4)`,
+          );
       } else if (literal.test(value)) {
-        problems.push(`${where} writes \`${value}\`; it only points at a source (\`var(--…)\`)`);
+        problems.push(
+          `${where} writes \`${value}\`; it points at a source (\`var(--…)\`) or states where its value comes from (ADR 0012 §4)`,
+        );
       }
     }
   }
@@ -153,6 +99,15 @@ export function checkWhitelist(
     problems.push(
       `${path}: the *-tint colours use ${[...tints].join(", ")}%; one number per theme`,
     );
+
+  for (const section of ["theme", "light", "dark"] as const)
+    for (const key of Object.keys(provenance[section])) {
+      const value = theme.cssVars[section][key];
+      if (value === undefined || value.startsWith("var(--"))
+        problems.push(
+          `${path}: ${section}.${key} states a source nothing uses (the colour points at a source)`,
+        );
+    }
 
   for (const key of Object.keys(semantics.dimension.control))
     if (!controlDimensions.includes(key))

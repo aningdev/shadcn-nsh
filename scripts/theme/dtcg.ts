@@ -34,6 +34,7 @@ import {
 } from "../tokens/types";
 import type { ContrastWaiver } from "./extensions";
 import { toOklchText } from "./oklch";
+import type { ColourProvenance } from "./sources";
 import { BUILD_ROOT_THEME, type SplitFinishes } from "./tokens";
 
 /**
@@ -161,6 +162,11 @@ export interface ThemeGeneratorOutput {
   contrast?: { waivers: ContrastWaiver[] };
   /** The values this theme states off the scales, by token path and source (`check:theme`). */
   scales?: { citations: Record<string, string> };
+  /**
+   * Where each stated colour comes from, by appearance (ADR 0012 §4): `reduceColours`' provenance,
+   * written onto the token as `$extensions["dev.aning.shadcn-nsh"].source`.
+   */
+  colourSources?: Partial<ColourProvenance>;
   cssVars: {
     theme: Record<string, string>;
     light: Record<string, string>;
@@ -250,10 +256,12 @@ function encodeCssColorToken(
   value: string,
   colorMap: Record<string, string>,
   description: string,
+  source?: string,
 ): Record<string, unknown> {
   const role: ColorRole | undefined = COLOR_ROLE_BY_NAME[name];
   const extFields: Record<string, unknown> = {};
   if (role) extFields.role = role;
+  if (source) extFields.source = source;
 
   const varMatch = /^var\(--([a-z0-9-]+)\)$/.exec(value.trim());
   if (varMatch) {
@@ -1264,7 +1272,13 @@ export function themeSourceDocs(
   };
   for (const k of sharedColorKeys) {
     const desc = output.descriptions?.sharedColors?.[k] ?? meta.sharedColorDescriptions[k] ?? k;
-    themeColors[k] = encodeCssColorToken(k, output.cssVars.theme[k]!, themeColorLookup, desc);
+    themeColors[k] = encodeCssColorToken(
+      k,
+      output.cssVars.theme[k]!,
+      themeColorLookup,
+      desc,
+      output.colourSources?.theme?.[k],
+    );
   }
 
   const pressScale = output["press-scale"] ?? output.style?.state["press-scale"];
@@ -1344,6 +1358,7 @@ export function themeSourceDocs(
     overrideDescs: Record<string, string> | undefined,
     sparseFinishes: Record<string, Record<string, unknown>>,
     shadowScale: ShadowScale,
+    sources: Record<string, string>,
   ) => {
     const colorMap: Record<string, string> = { ...output.cssVars.theme, ...colors };
     const colorGroup: Record<string, unknown> = {
@@ -1356,7 +1371,7 @@ export function themeSourceDocs(
     ];
     for (const k of orderedKeys) {
       const desc = overrideDescs?.[k] ?? fallbackDescs[k] ?? meta.lightColorDescriptions[k] ?? k;
-      colorGroup[k] = encodeCssColorToken(k, colors[k]!, colorMap, desc);
+      colorGroup[k] = encodeCssColorToken(k, colors[k]!, colorMap, desc, sources[k]);
     }
 
     const encodedFinishes = encodeFinishSection(sparseFinishes, colorMap, meta.finishRoles);
@@ -1378,6 +1393,7 @@ export function themeSourceDocs(
     output.descriptions?.lightColors,
     split.light,
     output.shadows.light,
+    output.colourSources?.light ?? {},
   );
   const darkDoc = buildAppearanceDoc(
     "dark",
@@ -1388,6 +1404,7 @@ export function themeSourceDocs(
     output.descriptions?.darkColors,
     split.dark,
     output.shadows.dark,
+    output.colourSources?.dark ?? {},
   );
 
   writeFile("theme.resolver.json", resolverDoc);

@@ -11,7 +11,7 @@ colors:
     foreground: "#101319"
     card: "#ffffff"
     card-foreground: "#101319"
-    popover: "#ffffff"
+    popover: "#f8f8fb"
     popover-foreground: "#101319"
     primary: "#c6ef6a"
     primary-foreground: "#13160c"
@@ -19,44 +19,44 @@ colors:
     secondary-foreground: "#101319"
     muted: "#eeeff2"
     muted-foreground: "#5f636a"
-    accent: "#eeeff2"
+    accent: "#e8eaec"
     accent-foreground: "#101319"
     destructive: "#d43a4a"
     border: "#cacbcd"
-    input: "#cacbcd"
-    ring: "#5f636a"
-    chart-1: "#c6ef6a"
-    chart-2: "#3d63d1"
-    chart-3: "#138a5a"
-    chart-4: "#b26a00"
-    chart-5: "#d43a4a"
-    sidebar: "#f6f6f9"
+    input: "#c1c2c4"
+    ring: "#a3a8b2"
+    chart-1: "#8fc21f"
+    chart-2: "#3a3d43"
+    chart-3: "#7d828b"
+    chart-4: "#b4b8bf"
+    chart-5: "#dedfe2"
+    sidebar: "#ecedf0"
     sidebar-foreground: "#101319"
     sidebar-primary: "#c6ef6a"
     sidebar-primary-foreground: "#13160c"
-    sidebar-accent: "#eeeff2"
+    sidebar-accent: "#ffffff"
     sidebar-accent-foreground: "#101319"
-    sidebar-border: "#e4e4e7"
-    sidebar-ring: "#5f636a"
-    inset: "#eeeff2"
+    sidebar-border: "#dedee1"
+    sidebar-ring: "#a3a8b2"
+    inset: "#f1f2f5"
     raised: "#f3f4f7"
     field: "#ffffff"
     line: "#e4e4e7"
-    hover: "#eeeff2"
+    hover: "#1013190d"
     faint: "#9a9da3"
-    brand: "#c6ef6a"
+    brand: "#4a840a"
     brand-edge: "#cacbcd"
-    track: "#eeeff2"
+    track: "#e9eaed"
     knob: "#ffffff"
     info: "#3d63d1"
     warn: "#b26a00"
     up: "#138a5a"
-    brand-tint: "#c6ef6a1a"
+    brand-tint: "#8cc01d29"
     inverse: "#ffffff"
     inverse-foreground: "#101319"
     inverse-brand: "#13160c"
     info-tint: "#3d63d11a"
-    warn-tint: "#b26a001a"
+    warn-tint: "#b26a001c"
     destructive-tint: "#d43a4a1a"
     up-tint: "#138a5a1a"
     down-tint: "#d43a4a1a"
@@ -73,47 +73,47 @@ colors:
     secondary-foreground: "#eeeff1"
     muted: "#2a2d33"
     muted-foreground: "#9a9ea5"
-    accent: "#2a2d33"
+    accent: "#303339"
     accent-foreground: "#eeeff1"
     destructive: "#ff6170"
     border: "#31343a"
-    input: "#31343a"
-    ring: "#9a9ea5"
-    chart-1: "#c4ec6a"
-    chart-2: "#7ea8ff"
-    chart-3: "#45d49a"
-    chart-4: "#ffb547"
-    chart-5: "#ff6170"
-    sidebar: "#16191f"
+    input: "#393c42"
+    ring: "#5d636e"
+    chart-1: "#c8f26d"
+    chart-2: "#e5e6e9"
+    chart-3: "#9ea2aa"
+    chart-4: "#686c74"
+    chart-5: "#43464c"
+    sidebar: "#101319"
     sidebar-foreground: "#eeeff1"
     sidebar-primary: "#c4ec6a"
     sidebar-primary-foreground: "#13160c"
-    sidebar-accent: "#2a2d33"
+    sidebar-accent: "#25282e"
     sidebar-accent-foreground: "#eeeff1"
-    sidebar-border: "#2d3036"
-    sidebar-ring: "#9a9ea5"
-    inset: "#2a2d33"
+    sidebar-border: "#24272d"
+    sidebar-ring: "#5d636e"
+    inset: "#1a1d23"
     raised: "#33353b"
-    field: "#1f2228"
+    field: "#16191f"
     line: "#2d3036"
-    hover: "#2a2d33"
+    hover: "#eeeff10d"
     faint: "#6b6f76"
-    brand: "#c4ec6a"
+    brand: "#c8f26d"
     brand-edge: "#31343a"
-    track: "#2a2d33"
-    knob: "#eeeff1"
+    track: "#33363c"
+    knob: "#e4e5e8"
     info: "#7ea8ff"
     warn: "#ffb547"
     up: "#45d49a"
-    brand-tint: "#c4ec6a1a"
+    brand-tint: "#c8f26d24"
     inverse: "#1f2228"
     inverse-foreground: "#eeeff1"
     inverse-brand: "#13160c"
-    info-tint: "#7ea8ff1a"
-    warn-tint: "#ffb5471a"
-    destructive-tint: "#ff61701a"
-    up-tint: "#45d49a1a"
-    down-tint: "#ff61701a"
+    info-tint: "#7ea8ff29"
+    warn-tint: "#ffb54729"
+    destructive-tint: "#ff617029"
+    up-tint: "#45d49a29"
+    down-tint: "#ff617029"
 typography:
   caption:
     fontSize: 11px
@@ -286,7 +286,7 @@ components:
     textColor: "{colors.light.primary-foreground}"
     rounded: "{rounded.control}"
   glass-overlay:
-    backgroundColor: "#ffffffcc"
+    backgroundColor: "#f8f8fbcc"
     textColor: "{colors.light.popover-foreground}"
     rounded: "{rounded.container}"
 ---
@@ -310,18 +310,18 @@ NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`)
 - **`media`** (`#10131a`): Ground behind photographs and videos; invariant across appearances.
 - **`background`** (light `#f6f6f9`, dark `#16191f`): Primary application page canvas background.
 - **`card`** (light `#ffffff`, dark `#1f2228`): Elevated surface background for cards and panels.
-- **`popover`** (light `#ffffff`, dark `#1f2228`): Floating surface background for menus, popovers, and tooltips.
+- **`popover`** (light `#f8f8fb`, dark `#1f2228`): Floating surface background for menus, popovers, and tooltips.
 - **`secondary`** (light `#f3f4f7`, dark `#33353b`): Secondary control surface fill.
 - **`muted`** (light `#eeeff2`, dark `#2a2d33`): Subdued container and subtle background surface.
-- **`accent`** (light `#eeeff2`, dark `#2a2d33`): Subtle highlight fill for hovered or active items.
-- **`sidebar`** (light `#f6f6f9`, dark `#16191f`): Navigation sidebar panel background.
-- **`sidebar-accent`** (light `#eeeff2`, dark `#2a2d33`): Selected or active row fill in the sidebar.
-- **`inset`** (light `#eeeff2`, dark `#2a2d33`): Recessed well surface nested inside a card.
+- **`accent`** (light `#e8eaec`, dark `#303339`): Subtle highlight fill for hovered or active items.
+- **`sidebar`** (light `#ecedf0`, dark `#101319`): Navigation sidebar panel background.
+- **`sidebar-accent`** (light `#ffffff`, dark `#25282e`): Selected or active row fill in the sidebar.
+- **`inset`** (light `#f1f2f5`, dark `#1a1d23`): Recessed well surface nested inside a card.
 - **`raised`** (light `#f3f4f7`, dark `#33353b`): Raised control surface resting on a card.
-- **`field`** (light `#ffffff`, dark `#1f2228`): Input well surface below card and inset layers.
-- **`hover`** (light `#eeeff2`, dark `#2a2d33`): Pointer hover overlay fill on interactive items.
-- **`track`** (light `#eeeff2`, dark `#2a2d33`): Inactive track background for switches, sliders, and progress bars.
-- **`knob`** (light `#ffffff`, dark `#eeeff1`): Switch thumb fill in the off state.
+- **`field`** (light `#ffffff`, dark `#16191f`): Input well surface below card and inset layers.
+- **`hover`** (light `#1013190d`, dark `#eeeff10d`): Pointer hover overlay fill on interactive items.
+- **`track`** (light `#e9eaed`, dark `#33363c`): Inactive track background for switches, sliders, and progress bars.
+- **`knob`** (light `#ffffff`, dark `#e4e5e8`): Switch thumb fill in the off state.
 - **`inverse`** (light `#ffffff`, dark `#1f2228`): High-contrast surface for toasts and tooltips.
 
 ### Ink
@@ -344,35 +344,35 @@ NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`)
 - **`primary-foreground`** (`#13160c`): Text and icon ink on primary brand action fills.
 - **`sidebar-primary`** (light `#c6ef6a`, dark `#c4ec6a`): Primary action highlight color in the sidebar.
 - **`sidebar-primary-foreground`** (`#13160c`): Text and icon ink on sidebar-primary highlights.
-- **`brand`** (light `#c6ef6a`, dark `#c4ec6a`): Accent ink for text, icons, and active rules.
+- **`brand`** (light `#4a840a`, dark `#c8f26d`): Accent ink for text, icons, and active rules.
 - **`brand-edge`** (light `#cacbcd`, dark `#31343a`): Hairline border on primary accent-filled controls.
-- **`brand-tint`** (light `#c6ef6a1a`, dark `#c4ec6a1a`): Translucent brand-accent wash behind selected rows and tinted bubbles.
+- **`brand-tint`** (light `#8cc01d29`, dark `#c8f26d24`): Translucent brand-accent wash behind selected rows and tinted bubbles.
 - **`inverse-brand`** (`#13160c`): Accent action color on inverse surfaces.
 
 ### Status
 
 - **`destructive`** (light `#d43a4a`, dark `#ff6170`): Semantic danger color for destructive actions and errors.
-- **`chart-1`** (light `#c6ef6a`, dark `#c4ec6a`): Primary chart series color.
-- **`chart-2`** (light `#3d63d1`, dark `#7ea8ff`): Second chart series color.
-- **`chart-3`** (light `#138a5a`, dark `#45d49a`): Third chart series color.
-- **`chart-4`** (light `#b26a00`, dark `#ffb547`): Fourth chart series color.
-- **`chart-5`** (light `#d43a4a`, dark `#ff6170`): Fifth chart series color.
+- **`chart-1`** (light `#8fc21f`, dark `#c8f26d`): Primary chart series color.
+- **`chart-2`** (light `#3a3d43`, dark `#e5e6e9`): Second chart series color.
+- **`chart-3`** (light `#7d828b`, dark `#9ea2aa`): Third chart series color.
+- **`chart-4`** (light `#b4b8bf`, dark `#686c74`): Fourth chart series color.
+- **`chart-5`** (light `#dedfe2`, dark `#43464c`): Fifth chart series color.
 - **`info`** (light `#3d63d1`, dark `#7ea8ff`): Informational semantic status color.
 - **`warn`** (light `#b26a00`, dark `#ffb547`): Warning semantic status color.
 - **`up`** (light `#138a5a`, dark `#45d49a`): Positive trend and growth semantic color.
-- **`info-tint`** (light `#3d63d11a`, dark `#7ea8ff1a`): Translucent informational status background tint.
-- **`warn-tint`** (light `#b26a001a`, dark `#ffb5471a`): Translucent warning status background tint.
-- **`destructive-tint`** (light `#d43a4a1a`, dark `#ff61701a`): Translucent destructive status background tint.
-- **`up-tint`** (light `#138a5a1a`, dark `#45d49a1a`): Translucent positive trend background tint.
-- **`down-tint`** (light `#d43a4a1a`, dark `#ff61701a`): Translucent negative trend background tint.
+- **`info-tint`** (light `#3d63d11a`, dark `#7ea8ff29`): Translucent informational status background tint.
+- **`warn-tint`** (light `#b26a001c`, dark `#ffb54729`): Translucent warning status background tint.
+- **`destructive-tint`** (light `#d43a4a1a`, dark `#ff617029`): Translucent destructive status background tint.
+- **`up-tint`** (light `#138a5a1a`, dark `#45d49a29`): Translucent positive trend background tint.
+- **`down-tint`** (light `#d43a4a1a`, dark `#ff617029`): Translucent negative trend background tint.
 
 ### Chrome
 
 - **`border`** (light `#cacbcd`, dark `#31343a`): Standard hairline border color for containers and controls.
-- **`input`** (light `#cacbcd`, dark `#31343a`): Border and stroke color for form fields and control edges.
-- **`ring`** (light `#5f636a`, dark `#9a9ea5`): Focus indicator ring stroke color.
-- **`sidebar-border`** (light `#e4e4e7`, dark `#2d3036`): Sidebar divider and toolbar hairline border color.
-- **`sidebar-ring`** (light `#5f636a`, dark `#9a9ea5`): Focus indicator ring color inside the sidebar.
+- **`input`** (light `#c1c2c4`, dark `#393c42`): Border and stroke color for form fields and control edges.
+- **`ring`** (light `#a3a8b2`, dark `#5d636e`): Focus indicator ring stroke color.
+- **`sidebar-border`** (light `#dedee1`, dark `#24272d`): Sidebar divider and toolbar hairline border color.
+- **`sidebar-ring`** (light `#a3a8b2`, dark `#5d636e`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#e4e4e7`, dark `#2d3036`): Hairline divider and grid rule inside recessed wells.
 
 ## Typography

@@ -34,7 +34,7 @@ import {
   toOklchText,
   withAlpha,
 } from "./oklch";
-import { reduceColours, type ColourScheme } from "./sources";
+import { reduceColours, type ColourOrigin, type ColourScheme } from "./sources";
 
 export type Appearance = "light" | "dark";
 
@@ -357,7 +357,12 @@ function buildAppearance(
   const primaryForeground = onBase(w.TextOnAccentFillColorPrimary);
   const secondary = onBase(w.ControlFillColorDefault);
   const mutedForeground = onBase(w.TextFillColorSecondary);
-  const accent = onBase(w.SubtleFillColorSecondary);
+  // SubtleFillColorSecondary is WinUI's list-row fill; on a card in dark it is 0.006 deep, under the
+  // fill floor (`scripts/theme/contrast.ts`), so dark takes the next fill WinUI states for a
+  // control, ControlFillColorSecondary.
+  const accent = onBase(
+    appearance === "light" ? w.SubtleFillColorSecondary : w.ControlFillColorSecondary,
+  );
   const destructive = onBase(w.SystemFillColorCritical);
   const ring = onBase(w.FocusStrokeColorOuter);
   const divider = onBase(w.DividerStrokeColorDefault);
@@ -590,6 +595,48 @@ const colourScheme: ColourScheme = {
   chart: ["primary", "info", "up", "warn", "destructive"],
 };
 
+/**
+ * Where each colour the theme states comes from (ADR 0012 §4): the brush WinUI 3 paints it with,
+ * composited over the window base where the brush is translucent.
+ */
+const origin: ColourOrigin = {
+  spec: "WinUI 3 theme resources",
+  names: {
+    border: "ControlStrokeColorDefault",
+    accent:
+      "SubtleFillColorSecondary over base (light) / ControlFillColorSecondary over base (dark)",
+    inset: "ControlAltFillColorSecondary over base",
+    track: "ControlAltFillColorSecondary over base",
+    hover: "ControlFillColorSecondary over base",
+    popover: "AcrylicInAppFillColorDefault",
+    field: "ControlFillColorDefault over base",
+    raised: "ControlFillColorDefault over base",
+    knob: "TextFillColorSecondary",
+    input: "ControlStrongStrokeColorDefault",
+    ring: "FocusStrokeColorOuter",
+    brand: "AccentTextFillColorPrimary",
+    "brand-edge": "ControlStrokeColorOnAccentSecondary over the accent fill",
+    "inverse-brand": "TextOnAccentFillColorPrimary",
+    inverse: "SolidBackgroundFillColorTertiary over base",
+    "inverse-foreground": "TextFillColorPrimary",
+    "chart-1": "AccentFillColorDefault",
+    "chart-2": "SystemFillColorSuccess",
+    "chart-3": "SystemFillColorCaution",
+    "chart-4": "SystemFillColorCritical",
+    "chart-5": "ControlStrongFillColorDefault",
+    "card-foreground": "TextFillColorPrimary",
+    "popover-foreground": "TextFillColorPrimary",
+    "secondary-foreground": "TextFillColorPrimary",
+    "accent-foreground": "TextFillColorPrimary",
+    "brand-tint": "AccentFillColorDefault at 10% over base",
+    "info-tint": "SystemFillColorAttentionBackground over base",
+    "warn-tint": "SystemFillColorCautionBackground over base",
+    "destructive-tint": "SystemFillColorCriticalBackground over base",
+    "up-tint": "SystemFillColorSuccessBackground over base",
+    "down-tint": "SystemFillColorCriticalBackground over base",
+  },
+};
+
 /** WinUI 3 (Windows 11) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
 export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGeneratorOutput {
   const roles = winuiRoles(accent);
@@ -609,7 +656,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     muted:
       "Recessed neutral surface (WinUI SolidBackgroundFillColorSecondary composited over base).",
     "muted-foreground": "Secondary label ink (WinUI TextFillColorSecondary composited over base).",
-    accent: "Subtle list/menu hover fill (WinUI SubtleFillColorSecondary composited over base).",
+    accent:
+      "Subtle hover/selection fill (WinUI SubtleFillColorSecondary over the base in light; in dark, where that step sits under the fill floor, ControlFillColorSecondary).",
     "accent-foreground": "Ink on subtle accent fills (WinUI TextFillColorPrimary).",
     destructive: "Critical/error status ink (WinUI SystemFillColorCritical).",
     border:
@@ -659,6 +707,10 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "up-tint": "Success wash (WinUI SystemFillColorSuccessBackground composited over base).",
     "down-tint":
       "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base).",
+  };
+  const reduced = {
+    light: reduceColours(roles.light, origin, colourScheme, "light"),
+    dark: reduceColours(roles.dark, origin, colourScheme, "dark"),
   };
 
   return {
@@ -718,10 +770,14 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         },
       ],
     },
+    colourSources: {
+      light: reduced.light.provenance,
+      dark: reduced.dark.provenance,
+    },
     cssVars: {
       theme: themeLevel(roles),
-      light: reduceColours(roles.light, colourScheme, "light"),
-      dark: reduceColours(roles.dark, colourScheme, "dark"),
+      light: reduced.light.colours,
+      dark: reduced.dark.colours,
     },
     finishes,
     shadows,

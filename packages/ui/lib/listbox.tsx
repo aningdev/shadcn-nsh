@@ -79,13 +79,13 @@ export function listboxPopupStarting(): ViewStyle | undefined {
 /**
  * A row of the list, its look on the row (`itemClass`; its corners are
  * `listboxProps`'s `itemStyle`, concentric with the popup's): lit in the brand
- * tint while highlighted (`focus:`, the keys or the pointer on it), the fill
- * fading between rows as the highlight moves, dimmed while disabled. Every
- * state is the row's class (`group`), so the list draws a row's content once
- * per item and the highlight moves without drawing.
+ * tint while highlighted (`focus:`, the keys or the pointer on it) with a brand
+ * edge, the fill and edge fading between rows as the highlight moves, dimmed
+ * while disabled. Every state is the row's class (`group`), so the list draws a
+ * row's content once per item and the highlight moves without drawing.
  */
 export const optionClass =
-  "group transition-colors duration-100 motion-reduce:transition-none focus:bg-brand-tint active:opacity-70 disabled:opacity-50";
+  "group border border-transparent transition-colors duration-100 motion-reduce:transition-none focus:border-brand/30 focus:bg-brand-tint active:opacity-70 disabled:opacity-50";
 
 /**
  * What a select's or combobox's list takes besides its items (spread it):

@@ -91,7 +91,9 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["secondary", "#2d2d2d"],
     ["muted", "#1c1c1c"],
     ["muted-foreground", "#cccccc"],
-    ["accent", "#2d2d2d"],
+    // ControlFillColorSecondary, not SubtleFillColorSecondary: WinUI's list-row fill (#2d2d2d) is
+    // 0.006 deep on a card, under the fill floor `contrast.ts` holds every theme to.
+    ["accent", "#323232"],
     ["destructive", "#ff99a4"],
     ["border", "#303030"],
     ["input", "#9a9a9a"],

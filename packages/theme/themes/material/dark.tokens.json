@@ -1396,10 +1396,19 @@
       "$description": "Elevated card container background (M3 surfaceContainerLow)."
     },
     "popover": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.24451,
+          0.01344,
+          298.463
+        ],
+        "hex": "#211f26"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: surfaceContainer"
         }
       },
       "$description": "Floating popover and menu container background (M3 surfaceContainer)."
@@ -1473,10 +1482,19 @@
       "$description": "Secondary supporting text and icon ink (M3 onSurfaceVariant)."
     },
     "accent": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.40052,
+          0.034,
+          298.591
+        ],
+        "hex": "#4a4458"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: secondaryContainer"
         }
       },
       "$description": "Tonal accent fill (M3 secondaryContainer)."
@@ -1516,37 +1534,73 @@
       "$description": "Hairline container border color (M3 outlineVariant)."
     },
     "input": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65664,
+          0.01531,
+          304.011
+        ],
+        "hex": "#938f99"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "Material 3 sys.color: outline"
         }
       },
       "$description": "Input outline color (M3 outline)."
     },
     "inset": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.24451,
+          0.01344,
+          298.463
+        ],
+        "hex": "#211f26"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: surfaceContainer"
         }
       },
       "$description": "Inset container surface (M3 surfaceContainer)."
     },
     "raised": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.22652,
+          0.00999,
+          303.714
+        ],
+        "hex": "#1d1b20"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: surfaceContainerLow"
         }
       },
       "$description": "Raised control surface (M3 surfaceContainerLow)."
     },
     "field": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.32979,
+          0.01247,
+          298.761
+        ],
+        "hex": "#36343b"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: surfaceContainerHighest"
         }
       },
       "$description": "Filled text field background (M3 surfaceContainerHighest)."
@@ -1569,10 +1623,27 @@
       "$description": "Inset divider hairline (M3 outlineVariant)."
     },
     "hover": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.91401,
+          0.01366,
+          314.754
+        ],
+        "alpha": 0.08,
+        "hex": "#e6e0e9"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: onSurface at 8% over transparent",
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 8,
+            "b": "transparent"
+          }
         }
       },
       "$description": "M3 hover state-layer ink (8% foreground over transparent, StateTokens.kt)."
@@ -1604,28 +1675,55 @@
       "$description": "Inline brand accent ink, aliased to {color.primary}."
     },
     "brand-edge": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.39805,
+          0.01736,
+          303.721
+        ],
+        "hex": "#49454f"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "Material 3 sys.color: outlineVariant"
         }
       },
       "$description": "Brand container outline (M3 outlineVariant)."
     },
     "track": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.32979,
+          0.01247,
+          298.761
+        ],
+        "hex": "#36343b"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: surfaceContainerHighest"
         }
       },
       "$description": "Switch and slider track fill (M3 surfaceContainerHighest)."
     },
     "knob": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65664,
+          0.01531,
+          304.011
+        ],
+        "hex": "#938f99"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: outline"
         }
       },
       "$description": "Unchecked switch thumb fill (M3 outline)."
@@ -1685,50 +1783,70 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.83493,
-          0.09457,
-          298.018
+          0.40052,
+          0.034,
+          298.591
         ],
-        "alpha": 0.12,
-        "hex": "#d0bcff"
+        "hex": "#4a4458"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.primary}",
-            "percent": 12,
-            "b": "transparent"
-          }
+          "source": "Material 3 sys.color: secondaryContainer"
         }
       },
       "$description": "Opaque selected chip/tile fill (M3 secondaryContainer)."
     },
     "inverse": {
-      "$value": "{color.foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.91401,
+          0.01366,
+          314.754
+        ],
+        "hex": "#e6e0e9"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "Material 3 sys.color: inverseSurface"
         }
       },
       "$description": "Inverse surface for snackbars and tooltips (M3 inverseSurface)."
     },
     "inverse-foreground": {
-      "$value": "{color.background}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.31066,
+          0.01135,
+          308.056
+        ],
+        "hex": "#322f35"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "ink"
+          "role": "ink",
+          "source": "Material 3 sys.color: inverseOnSurface"
         }
       },
       "$description": "Ink on inverse surfaces (M3 inverseOnSurface)."
     },
     "inverse-brand": {
-      "$value": "{color.primary-foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.49552,
+          0.13046,
+          293.709
+        ],
+        "hex": "#6750a4"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "Material 3 sys.color: inversePrimary"
         }
       },
       "$description": "Brand action ink on inverse surfaces (M3 inversePrimary)."
@@ -1787,23 +1905,16 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.83449,
-          0.06771,
-          22.012
+          0.42005,
+          0.14731,
+          28.135
         ],
-        "alpha": 0.12,
-        "hex": "#f2b8b5"
+        "hex": "#8c1d18"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 12,
-            "b": "transparent"
-          }
+          "source": "Material 3 sys.color: errorContainer"
         }
       },
       "$description": "Tonal error container background (M3 errorContainer)."
@@ -1877,10 +1988,19 @@
       "$description": "Primary text and icon ink on popover surfaces."
     },
     "accent-foreground": {
-      "$value": "{color.foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.91633,
+          0.03651,
+          303.106
+        ],
+        "hex": "#e8def8"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "ink"
+          "role": "ink",
+          "source": "Material 3 sys.color: onSecondaryContainer"
         }
       },
       "$description": "Text and icon ink on accent fills (M3 Expressive onSecondaryContainer)."
@@ -1903,64 +2023,127 @@
       "$description": "Secondary tonal container fill (M3 secondaryContainer)."
     },
     "secondary-foreground": {
-      "$value": "{color.foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.91633,
+          0.03651,
+          303.106
+        ],
+        "hex": "#e8def8"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "ink"
+          "role": "ink",
+          "source": "Material 3 sys.color: onSecondaryContainer"
         }
       },
       "$description": "Text and icon ink on secondary containers (M3 Expressive onSecondaryContainer, Tone 30 in light)."
     },
     "chart-1": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.83493,
+          0.09457,
+          298.018
+        ],
+        "hex": "#d0bcff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Material 3 sys.color: primary"
         }
       },
       "$description": "First chart series color (M3 primary)."
     },
     "chart-2": {
-      "$value": "{color.up}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.8367,
+          0.06656,
+          359.427
+        ],
+        "hex": "#efb8c8"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Material 3 sys.color: tertiary"
         }
       },
       "$description": "Second chart series color (M3 tertiary)."
     },
     "chart-3": {
-      "$value": "{color.warn}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.83027,
+          0.03743,
+          303.029
+        ],
+        "hex": "#ccc2dc"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Material 3 sys.color: secondary"
         }
       },
       "$description": "Third chart series color (M3 secondary)."
     },
     "chart-4": {
-      "$value": "{color.destructive}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.65664,
+          0.01531,
+          304.011
+        ],
+        "hex": "#938f99"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Material 3 sys.color: outline"
         }
       },
       "$description": "Fourth chart series color (M3 outline)."
     },
     "chart-5": {
-      "$value": "{color.muted-foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.39805,
+          0.01736,
+          303.721
+        ],
+        "hex": "#49454f"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "Material 3 sys.color: outlineVariant"
         }
       },
       "$description": "Fifth chart series color (M3 outlineVariant)."
     },
     "ring": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.83027,
+          0.03743,
+          303.029
+        ],
+        "hex": "#ccc2dc"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "Material 3 sys.color: secondary"
         }
       },
       "$description": "Focus indicator ring color (M3 secondary)."
@@ -1984,7 +2167,7 @@
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-accent": {
-      "$value": "{color.muted}",
+      "$value": "{color.accent}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1993,7 +2176,7 @@
       "$description": "Sidebar active item fill (M3 secondaryContainer)."
     },
     "sidebar-accent-foreground": {
-      "$value": "{color.foreground}",
+      "$value": "{color.accent-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -2002,7 +2185,7 @@
       "$description": "Sidebar active item text ink (M3 Expressive onSecondaryContainer)."
     },
     "sidebar-border": {
-      "$value": "{color.line}",
+      "$value": "{color.border}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
@@ -2029,7 +2212,7 @@
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-ring": {
-      "$value": "{color.primary}",
+      "$value": "{color.ring}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"

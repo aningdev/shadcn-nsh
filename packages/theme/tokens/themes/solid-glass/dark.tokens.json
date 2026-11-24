@@ -44,10 +44,15 @@
       "$description": "Opaque composite of Solid Glass card pane over background canvas (no blur on card role)."
     },
     "popover": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: the popover pane laid over the background"
         }
       },
       "$description": "Opaque composite of Solid Glass popover pane over background canvas."
@@ -106,10 +111,16 @@
       "$description": "Secondary and supporting text and icon ink."
     },
     "accent": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.08,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: --accent"
         }
       },
       "$description": "Subtle highlight fill for hovered or active items."
@@ -142,37 +153,60 @@
       "$description": "Standard hairline border color for containers and controls."
     },
     "input": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.08,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "solid-glass stylesheet: --field-edge"
         }
       },
       "$description": "Border and stroke color for form fields and control edges."
     },
     "inset": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.27274, 0, 0],
+        "hex": "#272727"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: the panel pane laid over the card"
         }
       },
       "$description": "Opaque composite of Solid Glass thinnest panel pane laid over card."
     },
     "raised": {
-      "$value": "{color.secondary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.07,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: --glass-control"
         }
       },
       "$description": "Raised control surface resting on a card."
     },
     "field": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.06,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: --field"
         }
       },
       "$description": "Input well surface below card and inset layers."
@@ -187,10 +221,16 @@
       "$description": "Hairline divider and grid rule inside recessed wells."
     },
     "hover": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.08,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: --hover"
         }
       },
       "$description": "Pointer hover overlay fill on interactive items."
@@ -209,37 +249,59 @@
       "$description": "Low-emphasis text for placeholders, units, and tertiary labels."
     },
     "brand": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.78, 0.13, 166],
+        "hex": "#54d2a4"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "solid-glass stylesheet: --brand"
         }
       },
       "$description": "Accent ink for text, icons, and active rules."
     },
     "brand-edge": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.967, 0, 0],
+        "alpha": 0.667,
+        "hex": "#f4f4f4"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "solid-glass stylesheet: --primary at 55% over --primary-edge"
         }
       },
       "$description": "Primary button hairline mixed from --primary and --primary-edge."
     },
     "track": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.13,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: --input"
         }
       },
       "$description": "Inactive track background for switches, sliders, and progress bars."
     },
     "knob": {
-      "$value": "{color.foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.97, 0, 0],
+        "hex": "#f5f5f5"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: --knob"
         }
       },
       "$description": "Switch thumb fill in the off state."
@@ -286,26 +348,20 @@
     "brand-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.94, 0, 0],
-        "alpha": 0.12,
-        "hex": "#ebebeb"
+        "components": [0.78, 0.13, 166],
+        "alpha": 0.15,
+        "hex": "#54d2a4"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.primary}",
-            "percent": 12,
-            "b": "transparent"
-          }
+          "source": "solid-glass stylesheet: --brand-muted"
         }
       },
       "$description": "Static translucent teal brand wash (--brand-muted)."
     },
     "inverse": {
-      "$value": "{color.card}",
+      "$value": "{color.popover}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -335,7 +391,7 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [0.68, 0.15, 250],
-        "alpha": 0.12,
+        "alpha": 0.1,
         "hex": "#449df0"
       },
       "$extensions": {
@@ -345,7 +401,7 @@
             "op": "mix",
             "space": "srgb",
             "a": "{color.info}",
-            "percent": 12,
+            "percent": 10,
             "b": "transparent"
           }
         }
@@ -356,7 +412,7 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [0.77, 0.15, 62],
-        "alpha": 0.12,
+        "alpha": 0.1,
         "hex": "#f79c40"
       },
       "$extensions": {
@@ -366,7 +422,7 @@
             "op": "mix",
             "space": "srgb",
             "a": "{color.warn}",
-            "percent": 12,
+            "percent": 10,
             "b": "transparent"
           }
         }
@@ -377,7 +433,7 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [0.704, 0.191, 22.216],
-        "alpha": 0.12,
+        "alpha": 0.1,
         "hex": "#ff6467"
       },
       "$extensions": {
@@ -387,7 +443,7 @@
             "op": "mix",
             "space": "srgb",
             "a": "{color.destructive}",
-            "percent": 12,
+            "percent": 10,
             "b": "transparent"
           }
         }
@@ -398,7 +454,7 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [0.74, 0.16, 152],
-        "alpha": 0.12,
+        "alpha": 0.1,
         "hex": "#4ac777"
       },
       "$extensions": {
@@ -408,7 +464,7 @@
             "op": "mix",
             "space": "srgb",
             "a": "{color.up}",
-            "percent": 12,
+            "percent": 10,
             "b": "transparent"
           }
         }
@@ -419,7 +475,7 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [0.704, 0.191, 22.216],
-        "alpha": 0.12,
+        "alpha": 0.1,
         "hex": "#ff6467"
       },
       "$extensions": {
@@ -429,7 +485,7 @@
             "op": "mix",
             "space": "srgb",
             "a": "{color.destructive}",
-            "percent": 12,
+            "percent": 10,
             "b": "transparent"
           }
         }
@@ -489,19 +545,13 @@
     "chart-1": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.9137, 0, 0],
-        "hex": "#e2e2e2"
+        "components": [0.94, 0, 0],
+        "hex": "#ebebeb"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 90,
-            "b": "{color.background}"
-          }
+          "source": "solid-glass stylesheet: --chart-1"
         }
       },
       "$description": "Primary chart series color."
@@ -509,19 +559,13 @@
     "chart-2": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.76644, 0, 0],
-        "hex": "#b3b3b3"
+        "components": [0.83, 0, 0],
+        "hex": "#c7c7c7"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 70,
-            "b": "{color.background}"
-          }
+          "source": "solid-glass stylesheet: --chart-2"
         }
       },
       "$description": "Second chart series color."
@@ -529,19 +573,13 @@
     "chart-3": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.6512, 0, 0],
-        "hex": "#8f8f8f"
+        "components": [0.69, 0, 0],
+        "hex": "#9b9b9b"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 55,
-            "b": "{color.background}"
-          }
+          "source": "solid-glass stylesheet: --chart-3"
         }
       },
       "$description": "Third chart series color."
@@ -549,19 +587,13 @@
     "chart-4": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.53059, 0, 0],
-        "hex": "#6c6c6c"
+        "components": [0.56, 0, 0],
+        "hex": "#747474"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 40,
-            "b": "{color.background}"
-          }
+          "source": "solid-glass stylesheet: --chart-4"
         }
       },
       "$description": "Fourth chart series color."
@@ -569,52 +601,62 @@
     "chart-5": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.4026, 0, 0],
-        "hex": "#484848"
+        "components": [0.44, 0, 0],
+        "hex": "#525252"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 25,
-            "b": "{color.background}"
-          }
+          "source": "solid-glass stylesheet: --chart-5"
         }
       },
       "$description": "Fifth chart series color."
     },
     "ring": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.4,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "solid-glass stylesheet: --focus-line"
         }
       },
       "$description": "Focus indicator ring stroke color."
     },
     "sidebar": {
-      "$value": "{color.background}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.13979, 0, 0],
+        "hex": "#090909"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "solid-glass stylesheet: the sidebar pane laid over the background"
         }
       },
       "$description": "Opaque composite of Solid Glass panel pane over background canvas."
     },
     "sidebar-foreground": {
-      "$value": "{color.foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.9, 0, 0],
+        "hex": "#dedede"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "ink"
+          "role": "ink",
+          "source": "solid-glass stylesheet: --sidebar-foreground"
         }
       },
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-accent": {
-      "$value": "{color.muted}",
+      "$value": "{color.accent}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -623,7 +665,7 @@
       "$description": "Selected or active row fill in the sidebar."
     },
     "sidebar-accent-foreground": {
-      "$value": "{color.foreground}",
+      "$value": "{color.accent-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -632,10 +674,16 @@
       "$description": "Text and icon ink on active sidebar rows."
     },
     "sidebar-border": {
-      "$value": "{color.line}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.1,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "solid-glass stylesheet: --sidebar-border"
         }
       },
       "$description": "Sidebar divider and toolbar hairline border color."
@@ -659,7 +707,7 @@
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-ring": {
-      "$value": "{color.primary}",
+      "$value": "{color.ring}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"

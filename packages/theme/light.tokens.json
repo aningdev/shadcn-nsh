@@ -824,11 +824,11 @@
         "$value": {
           "colorSpace": "oklch",
           "components": [
-            1,
-            0,
-            0
+            0.97997,
+            0.00397,
+            286.326
           ],
-          "hex": "#ffffff",
+          "hex": "#f8f8fb",
           "alpha": 0.8
         },
         "$extensions": {
@@ -1182,7 +1182,8 @@
       "$description": "Primary application page canvas background.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: background"
         }
       }
     },
@@ -1199,7 +1200,8 @@
       "$description": "Default high-contrast text and icon ink on page surfaces.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "ink"
+          "role": "ink",
+          "source": "nsh-gallery-ui theme.json: foreground"
         }
       }
     },
@@ -1216,7 +1218,8 @@
       "$description": "Elevated surface background for cards and panels.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: card"
         }
       }
     },
@@ -1230,10 +1233,19 @@
       "$description": "Primary text and icon ink on card surfaces."
     },
     "popover": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.97997,
+          0.00397,
+          286.326
+        ],
+        "hex": "#f8f8fb"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: popover"
         }
       },
       "$description": "Floating surface background for menus, popovers, and tooltips."
@@ -1260,7 +1272,8 @@
       "$description": "Primary brand action fill.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "nsh-gallery-ui theme.json: primary"
         }
       }
     },
@@ -1277,20 +1290,13 @@
       "$description": "Text and icon ink on primary brand action fills.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "nsh-gallery-ui theme.json: primary-foreground"
         }
       }
     },
     "secondary": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.96724,
-          0.00414,
-          271.369
-        ],
-        "hex": "#f3f4f7"
-      },
+      "$value": "{color.raised}",
       "$description": "Secondary control surface fill.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -1320,7 +1326,8 @@
       "$description": "Subdued container and subtle background surface.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: muted"
         }
       }
     },
@@ -1337,15 +1344,25 @@
       "$description": "Secondary and supporting text and icon ink.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "ink"
+          "role": "ink",
+          "source": "nsh-gallery-ui theme.json: muted-foreground"
         }
       }
     },
     "accent": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.93609,
+          0.00346,
+          247.86
+        ],
+        "hex": "#e8eaec"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: accent"
         }
       },
       "$description": "Subtle highlight fill for hovered or active items."
@@ -1372,7 +1389,8 @@
       "$description": "Semantic danger color for destructive actions and errors.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: destructive"
         }
       }
     },
@@ -1389,78 +1407,151 @@
       "$description": "Standard hairline border color for containers and controls.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "nsh-gallery-ui theme.json: border"
         }
       }
     },
     "input": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.81386,
+          0.003,
+          264.54
+        ],
+        "hex": "#c1c2c4"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "nsh-gallery-ui theme.json: input"
         }
       },
       "$description": "Border and stroke color for form fields and control edges."
     },
     "ring": {
-      "$value": "{color.muted-foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.7307,
+          0.01549,
+          264.473
+        ],
+        "hex": "#a3a8b2"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "nsh-gallery-ui theme.json: ring"
         }
       },
       "$description": "Focus indicator ring stroke color."
     },
     "chart-1": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.75073,
+          0.18465,
+          126.794
+        ],
+        "hex": "#8fc21f"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: chart-1"
         }
       },
       "$description": "Primary chart series color."
     },
     "chart-2": {
-      "$value": "{color.info}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.35944,
+          0.01112,
+          264.426
+        ],
+        "hex": "#3a3d43"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: chart-2"
         }
       },
       "$description": "Second chart series color."
     },
     "chart-3": {
-      "$value": "{color.up}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.60539,
+          0.01485,
+          262.354
+        ],
+        "hex": "#7d828b"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: chart-3"
         }
       },
       "$description": "Third chart series color."
     },
     "chart-4": {
-      "$value": "{color.warn}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.78155,
+          0.01087,
+          261.785
+        ],
+        "hex": "#b4b8bf"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: chart-4"
         }
       },
       "$description": "Fourth chart series color."
     },
     "chart-5": {
-      "$value": "{color.destructive}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.90374,
+          0.00421,
+          271.366
+        ],
+        "hex": "#dedfe2"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: chart-5"
         }
       },
       "$description": "Fifth chart series color."
     },
     "sidebar": {
-      "$value": "{color.background}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.94619,
+          0.00416,
+          271.368
+        ],
+        "hex": "#ecedf0"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: sidebar"
         }
       },
       "$description": "Navigation sidebar panel background."
@@ -1493,7 +1584,7 @@
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-accent": {
-      "$value": "{color.muted}",
+      "$value": "{color.field}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1511,16 +1602,25 @@
       "$description": "Text and icon ink on active sidebar rows."
     },
     "sidebar-border": {
-      "$value": "{color.line}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.90146,
+          0.00405,
+          286.318
+        ],
+        "hex": "#dedee1"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "nsh-gallery-ui theme.json: sidebar-border"
         }
       },
       "$description": "Sidebar divider and toolbar hairline border color."
     },
     "sidebar-ring": {
-      "$value": "{color.muted-foreground}",
+      "$value": "{color.ring}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
@@ -1529,28 +1629,55 @@
       "$description": "Focus indicator ring color inside the sidebar."
     },
     "inset": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.96124,
+          0.00414,
+          271.369
+        ],
+        "hex": "#f1f2f5"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: inset"
         }
       },
       "$description": "Recessed well surface nested inside a card."
     },
     "raised": {
-      "$value": "{color.secondary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.96724,
+          0.00414,
+          271.369
+        ],
+        "hex": "#f3f4f7"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: raised"
         }
       },
       "$description": "Raised control surface resting on a card."
     },
     "field": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: field"
         }
       },
       "$description": "Input well surface below card and inset layers."
@@ -1568,15 +1695,33 @@
       "$description": "Hairline divider and grid rule inside recessed wells.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "nsh-gallery-ui theme.json: line"
         }
       }
     },
     "hover": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.18636,
+          0.01318,
+          264.182
+        ],
+        "alpha": 0.05,
+        "hex": "#101319"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 5,
+            "b": "transparent"
+          },
+          "source": "nsh-gallery-ui theme.json: hover"
         }
       },
       "$description": "Pointer hover overlay fill on interactive items."
@@ -1594,15 +1739,25 @@
       "$description": "Low-emphasis text for placeholders, units, and tertiary labels.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "ink"
+          "role": "ink",
+          "source": "nsh-gallery-ui theme.json: faint"
         }
       }
     },
     "brand": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.55192,
+          0.15368,
+          133.676
+        ],
+        "hex": "#4a840a"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "nsh-gallery-ui theme.json: brand"
         }
       },
       "$description": "Accent ink for text, icons, and active rules."
@@ -1617,19 +1772,37 @@
       "$description": "Hairline border on primary accent-filled controls."
     },
     "track": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.93714,
+          0.00417,
+          271.368
+        ],
+        "hex": "#e9eaed"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: track"
         }
       },
       "$description": "Inactive track background for switches, sliders, and progress bars."
     },
     "knob": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "nsh-gallery-ui theme.json: knob"
         }
       },
       "$description": "Switch thumb fill in the off state."
@@ -1647,7 +1820,8 @@
       "$description": "Informational semantic status color.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: info"
         }
       }
     },
@@ -1664,7 +1838,8 @@
       "$description": "Warning semantic status color.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: warn"
         }
       }
     },
@@ -1681,7 +1856,8 @@
       "$description": "Positive trend and growth semantic color.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: up"
         }
       }
     },
@@ -1689,23 +1865,17 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.89637,
-          0.16627,
-          124.031
+          0.74395,
+          0.18452,
+          127.154
         ],
-        "hex": "#c6ef6a",
-        "alpha": 0.1
+        "alpha": 0.16,
+        "hex": "#8cc01d"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.primary}",
-            "percent": 10,
-            "b": "transparent"
-          },
-          "role": "brand"
+          "role": "brand",
+          "source": "nsh-gallery-ui theme.json: brand-tint"
         }
       },
       "$description": "Translucent brand-accent wash behind selected rows and tinted bubbles."
@@ -1745,11 +1915,12 @@
           0.17531,
           266.181
         ],
-        "hex": "#3d63d1",
-        "alpha": 0.1
+        "alpha": 0.1,
+        "hex": "#3d63d1"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1757,7 +1928,7 @@
             "percent": 10,
             "b": "transparent"
           },
-          "role": "status"
+          "source": "nsh-gallery-ui theme.json: info-tint"
         }
       },
       "$description": "Translucent informational status background tint."
@@ -1770,19 +1941,20 @@
           0.13245,
           65.117
         ],
-        "hex": "#b26a00",
-        "alpha": 0.1
+        "alpha": 0.11,
+        "hex": "#b26a00"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
             "a": "{color.warn}",
-            "percent": 10,
+            "percent": 11,
             "b": "transparent"
           },
-          "role": "status"
+          "source": "nsh-gallery-ui theme.json: warn-tint"
         }
       },
       "$description": "Translucent warning status background tint."
@@ -1795,11 +1967,12 @@
           0.18974,
           19.874
         ],
-        "hex": "#d43a4a",
-        "alpha": 0.1
+        "alpha": 0.1,
+        "hex": "#d43a4a"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1807,7 +1980,7 @@
             "percent": 10,
             "b": "transparent"
           },
-          "role": "status"
+          "source": "nsh-gallery-ui theme.json: destructive-tint"
         }
       },
       "$description": "Translucent destructive status background tint."
@@ -1820,11 +1993,12 @@
           0.1232,
           159.355
         ],
-        "hex": "#138a5a",
-        "alpha": 0.1
+        "alpha": 0.1,
+        "hex": "#138a5a"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1832,7 +2006,7 @@
             "percent": 10,
             "b": "transparent"
           },
-          "role": "status"
+          "source": "nsh-gallery-ui theme.json: up-tint"
         }
       },
       "$description": "Translucent positive trend background tint."
@@ -1845,19 +2019,13 @@
           0.18974,
           19.874
         ],
-        "hex": "#d43a4a",
-        "alpha": 0.1
+        "alpha": 0.1,
+        "hex": "#d43a4a"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 10,
-            "b": "transparent"
-          },
-          "role": "status"
+          "role": "status",
+          "source": "nsh-gallery-ui theme.json: down-tint"
         }
       },
       "$description": "Translucent negative trend background tint."

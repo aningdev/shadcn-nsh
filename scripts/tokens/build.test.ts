@@ -389,7 +389,9 @@ describe("DTCG source lint", () => {
     const problems = withMutatedDefault((tmp) => {
       const p = path.join(tmp, "packages/theme/tokens/themes/nsh-gallery/light.tokens.json");
       const doc = JSON.parse(fs.readFileSync(p, "utf8"));
-      doc.color["brand-tint"].$value.components = [0.5, 0.2, 120];
+      // nsh-gallery states its brand-tint as a value (ADR 0012), so the mix a token carries is the
+      // info wash's.
+      doc.color["info-tint"].$value.components = [0.5, 0.2, 120];
       fs.writeFileSync(p, JSON.stringify(doc, null, 2));
     });
     expect(problems.join("\n")).toContain("differs from live colorOp evaluation");

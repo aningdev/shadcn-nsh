@@ -23,7 +23,7 @@
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { finishes, shadows } from "./finishes/shadcn";
 import { oklch, oklchColor, over, parseColor, toOklchText, withAlpha } from "./oklch";
-import { reduceColours, type ColourScheme } from "./sources";
+import { reduceColours, type ColourOrigin, type ColourScheme } from "./sources";
 import { scaledRadii } from "./style";
 
 /** shadcn's neutrals, quoted from `registry/themes.ts` (theme `neutral`). */
@@ -82,6 +82,34 @@ const CONTROL = "second" + "ary";
 
 /** shadcn's neutral corner radius roles by layer: 8 px control, 12 px container, 14 px modal. */
 const RADII = { control: 8, container: 12, modal: 14 } as const;
+
+/**
+ * Where each colour the theme states comes from (ADR 0012 §4): shadcn/ui's own CSS variable for it.
+ * A value that steps off one of them says which step it takes.
+ */
+const origin: ColourOrigin = {
+  spec: "shadcn/ui default theme",
+  names: {
+    accent: "--accent",
+    inset: "--muted",
+    track: "--muted",
+    popover: "--card",
+    sidebar: "--sidebar",
+    "sidebar-accent": "--accent",
+    field: "--background (light) / --input at 30% (dark)",
+    raised: "--secondary (a control's fill)",
+    knob: "--background (light) / --foreground (dark)",
+    input: "--input",
+    "sidebar-border": "--border",
+    ring: "--ring",
+    brand: "--primary",
+    "chart-1": "--chart-1",
+    "chart-2": "--chart-2",
+    "chart-3": "--chart-3",
+    "chart-4": "--chart-4",
+    "chart-5": "--chart-5",
+  },
+};
 
 /** One appearance's neutrals, canonical `oklch()`; `inputOnCard` is `--input` laid on the card. */
 function palette(appearance: Appearance) {
@@ -244,6 +272,10 @@ export function themeFiles(): ThemeGeneratorOutput {
     up: "Positive trend color mapped onto shadcn's neutral ramp.",
   };
 
+  const reduced = {
+    light: reduceColours(section(light, ownLight), origin, scheme, "light"),
+    dark: reduceColours(section(dark, ownDark), origin, scheme, "dark"),
+  };
   return {
     id: "shadcn",
     name: "shadcn neutral",
@@ -278,10 +310,14 @@ export function themeFiles(): ThemeGeneratorOutput {
         source: "shadcn neutral muted-foreground on muted",
       })),
     },
+    colourSources: {
+      light: reduced.light.provenance,
+      dark: reduced.dark.provenance,
+    },
     cssVars: {
       theme: themeLevel(),
-      light: reduceColours(section(light, ownLight), scheme, "light"),
-      dark: reduceColours(section(dark, ownDark), scheme, "dark"),
+      light: reduced.light.colours,
+      dark: reduced.dark.colours,
     },
     finishes,
     shadows,

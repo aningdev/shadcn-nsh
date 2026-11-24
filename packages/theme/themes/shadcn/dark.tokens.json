@@ -1292,10 +1292,19 @@
       "$description": "Elevated surface background for cards and panels."
     },
     "popover": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.205,
+          0,
+          0
+        ],
+        "hex": "#171717"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --card"
         }
       },
       "$description": "Floating surface background for menus, popovers, and tooltips."
@@ -1369,10 +1378,19 @@
       "$description": "Secondary and supporting text and icon ink."
     },
     "accent": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.269,
+          0,
+          0
+        ],
+        "hex": "#262626"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --accent"
         }
       },
       "$description": "Subtle highlight fill for hovered or active items."
@@ -1413,37 +1431,75 @@
       "$description": "Standard hairline border color for containers and controls."
     },
     "input": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "alpha": 0.15,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "shadcn/ui default theme: --input"
         }
       },
       "$description": "Border and stroke color for form fields and control edges."
     },
     "inset": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.269,
+          0,
+          0
+        ],
+        "hex": "#262626"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --muted"
         }
       },
       "$description": "Recessed well surface nested inside a card."
     },
     "raised": {
-      "$value": "{color.secondary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.269,
+          0,
+          0
+        ],
+        "hex": "#262626"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --secondary (a control's fill)"
         }
       },
       "$description": "Raised control surface resting on a card."
     },
     "field": {
-      "$value": "{color.card}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "alpha": 0.045,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --background (light) / --input at 30% (dark)"
         }
       },
       "$description": "Input well surface below card and inset layers."
@@ -1467,7 +1523,7 @@
       "$description": "Hairline divider and grid rule inside recessed wells."
     },
     "hover": {
-      "$value": "{color.muted}",
+      "$value": "{color.accent}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1493,10 +1549,19 @@
       "$description": "Low-emphasis text for placeholders, units, and tertiary labels."
     },
     "brand": {
-      "$value": "{color.primary}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.922,
+          0,
+          0
+        ],
+        "hex": "#e5e5e5"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "source": "shadcn/ui default theme: --primary"
         }
       },
       "$description": "Accent ink for text, icons, and active rules."
@@ -1511,19 +1576,37 @@
       "$description": "Hairline border aliased to {color.border} (shadcn draws no separate brand edge)."
     },
     "track": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.269,
+          0,
+          0
+        ],
+        "hex": "#262626"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --muted"
         }
       },
       "$description": "Inactive track background for switches, sliders, and progress bars."
     },
     "knob": {
-      "$value": "{color.foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.985,
+          0,
+          0
+        ],
+        "hex": "#fafafa"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --background (light) / --foreground (dark)"
         }
       },
       "$description": "Switch thumb fill in the off state."
@@ -1596,7 +1679,7 @@
           "colorOp": {
             "op": "mix",
             "space": "srgb",
-            "a": "{color.primary}",
+            "a": "{color.brand}",
             "percent": 10,
             "b": "transparent"
           }
@@ -1813,22 +1896,16 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.91279,
+          0.87,
           0,
           0
         ],
-        "hex": "#e2e2e2"
+        "hex": "#d4d4d4"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 90,
-            "b": "{color.background}"
-          }
+          "source": "shadcn/ui default theme: --chart-1"
         }
       },
       "$description": "Primary chart series color."
@@ -1837,22 +1914,16 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.76358,
+          0.556,
           0,
           0
         ],
-        "hex": "#b2b2b2"
+        "hex": "#737373"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 70,
-            "b": "{color.background}"
-          }
+          "source": "shadcn/ui default theme: --chart-2"
         }
       },
       "$description": "Second chart series color."
@@ -1861,22 +1932,16 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.64673,
+          0.439,
           0,
           0
         ],
-        "hex": "#8e8e8e"
+        "hex": "#525252"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 55,
-            "b": "{color.background}"
-          }
+          "source": "shadcn/ui default theme: --chart-3"
         }
       },
       "$description": "Third chart series color."
@@ -1885,22 +1950,16 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.5243,
+          0.371,
           0,
           0
         ],
-        "hex": "#6a6a6a"
+        "hex": "#404040"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 40,
-            "b": "{color.background}"
-          }
+          "source": "shadcn/ui default theme: --chart-4"
         }
       },
       "$description": "Fourth chart series color."
@@ -1909,40 +1968,52 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.39418,
+          0.269,
           0,
           0
         ],
-        "hex": "#464646"
+        "hex": "#262626"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.foreground}",
-            "percent": 25,
-            "b": "{color.background}"
-          }
+          "source": "shadcn/ui default theme: --chart-5"
         }
       },
       "$description": "Fifth chart series color."
     },
     "ring": {
-      "$value": "{color.muted-foreground}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.556,
+          0,
+          0
+        ],
+        "hex": "#737373"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "shadcn/ui default theme: --ring"
         }
       },
       "$description": "Focus indicator ring stroke color."
     },
     "sidebar": {
-      "$value": "{color.background}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.205,
+          0,
+          0
+        ],
+        "hex": "#171717"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --sidebar"
         }
       },
       "$description": "Navigation sidebar panel background."
@@ -1957,10 +2028,19 @@
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-accent": {
-      "$value": "{color.muted}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.269,
+          0,
+          0
+        ],
+        "hex": "#262626"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "surface"
+          "role": "surface",
+          "source": "shadcn/ui default theme: --accent"
         }
       },
       "$description": "Selected or active row fill in the sidebar."
@@ -1975,10 +2055,20 @@
       "$description": "Text and icon ink on active sidebar rows."
     },
     "sidebar-border": {
-      "$value": "{color.line}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "alpha": 0.1,
+        "hex": "#ffffff"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "chrome"
+          "role": "chrome",
+          "source": "shadcn/ui default theme: --border"
         }
       },
       "$description": "Sidebar divider and toolbar hairline border color."
@@ -2002,7 +2092,7 @@
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-ring": {
-      "$value": "{color.muted-foreground}",
+      "$value": "{color.ring}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"

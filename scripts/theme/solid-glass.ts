@@ -25,7 +25,7 @@ import { finishes, shadows } from "./finishes/solid-glass";
  * compiles `packages/theme/themes/solid-glass/{theme,semantics}.json`.
  */
 import { over } from "./oklch";
-import { reduceColours, type ColourScheme } from "./sources";
+import { reduceColours, type ColourOrigin, type ColourScheme } from "./sources";
 import { scaledRadii } from "./style";
 
 /** One appearance of the stylesheet's variables, by name (without the `--`). */
@@ -267,6 +267,34 @@ const scheme: ColourScheme = {
   chart: "ramp",
 };
 
+/** Where each colour the theme states comes from (ADR 0012 §4): the stylesheet's own name for it. */
+const origin: ColourOrigin = {
+  spec: "solid-glass stylesheet",
+  names: {
+    accent: "--accent",
+    inset: "the panel pane laid over the card",
+    track: "--input",
+    hover: "--hover",
+    popover: "the popover pane laid over the background",
+    sidebar: "the sidebar pane laid over the background",
+    field: "--field",
+    raised: "--glass-control",
+    knob: "--knob",
+    input: "--field-edge",
+    "sidebar-border": "--sidebar-border",
+    ring: "--focus-line",
+    brand: "--brand",
+    "brand-edge": "--primary at 55% over --primary-edge",
+    "chart-1": "--chart-1",
+    "chart-2": "--chart-2",
+    "chart-3": "--chart-3",
+    "chart-4": "--chart-4",
+    "chart-5": "--chart-5",
+    "sidebar-foreground": "--sidebar-foreground",
+    "brand-tint": "--brand-muted",
+  },
+};
+
 function section(appearance: Appearance): Record<string, string> {
   const s = source(appearance);
   const panes = laid(appearance);
@@ -370,6 +398,10 @@ export function themeFiles(): ThemeGeneratorOutput {
     "brand-tint": "Static translucent teal brand wash (--brand-muted).",
   };
 
+  const reduced = {
+    light: reduceColours(section("light"), origin, scheme, "light"),
+    dark: reduceColours(section("dark"), origin, scheme, "dark"),
+  };
   return {
     id: "solid-glass",
     name: "Solid Glass",
@@ -397,10 +429,14 @@ export function themeFiles(): ThemeGeneratorOutput {
         "Do not stack opaque fills behind translucent glass gradients; keep the `background` layer `transparent` when the gradient carries the fill.",
       ],
     },
+    colourSources: {
+      light: reduced.light.provenance,
+      dark: reduced.dark.provenance,
+    },
     cssVars: {
       theme: themeLevel(),
-      light: reduceColours(section("light"), scheme, "light"),
-      dark: reduceColours(section("dark"), scheme, "dark"),
+      light: reduced.light.colours,
+      dark: reduced.dark.colours,
     },
     finishes,
     shadows,

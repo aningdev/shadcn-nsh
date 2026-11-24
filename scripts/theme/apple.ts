@@ -13,7 +13,7 @@
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { finishes, shadows } from "./finishes/apple";
 import { oklchColor, over, toOklchText } from "./oklch";
-import { reduceColours, type ColourScheme } from "./sources";
+import { reduceColours, type ColourOrigin, type ColourScheme } from "./sources";
 
 /** Apple's system colours, per appearance (sRGB, as UIKit documents them). */
 const SYSTEM = {
@@ -78,7 +78,10 @@ function palette(appearance: Appearance) {
     // already separates.
     muted: onCard(appearance === "light" ? s.secondaryFill : s.tertiaryFill),
     mutedForeground: onCard(s.secondaryLabel),
-    accent: onCard(s.quaternaryFill),
+    // Quaternary fill is 0.006 lighter than the grouped page in light, under the fill floor
+    // (`scripts/theme/contrast.ts`): it vanished there once already (#349), so `accent` takes the
+    // step `muted` uses — secondary fill in light, tertiary in dark.
+    accent: onCard(appearance === "light" ? s.secondaryFill : s.tertiaryFill),
     destructive: t(s.red),
     border: onCard(s.hairline),
     input: onCard(s.separator),
@@ -128,6 +131,33 @@ const scheme: ColourScheme = {
   raised: "secondary",
   inverse: ["card", "foreground"],
   chart: ["primary", "up", "warn", "destructive", "muted-foreground"],
+};
+
+/**
+ * Where each colour the theme states comes from (ADR 0012 §4): Apple's own name for it, over the
+ * surface a translucent fill is composited on.
+ */
+const origin: ColourOrigin = {
+  spec: "Apple HIG system colours",
+  names: {
+    accent: "secondarySystemFill over the card (light) / tertiarySystemFill over the card (dark)",
+    inset: "quaternarySystemFill over the card",
+    track: "secondarySystemFill over the card",
+    hover: "label at 6% over transparent",
+    popover: "tertiarySystemBackground",
+    sidebar: "secondarySystemBackground",
+    field: "tertiarySystemFill over the card",
+    raised: "tertiarySystemFill over the card",
+    knob: "white",
+    input: "separator over the card",
+    ring: "systemBlue",
+    brand: "systemBlue",
+    "chart-1": "systemBlue",
+    "chart-2": "systemGreen",
+    "chart-3": "systemOrange",
+    "chart-4": "systemPurple",
+    "chart-5": "systemRed",
+  },
 };
 
 /** One appearance's colour tokens. */
@@ -288,7 +318,8 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     muted:
       "Subdued container fill (UIKit tertiarySystemFill composited over card; light uses secondarySystemFill so it reads on the grouped page).",
     "muted-foreground": "Secondary label ink (UIKit secondaryLabel composited over card).",
-    accent: "Subtle hover/selection fill (the muted fill).",
+    accent:
+      "Subtle hover/selection fill (UIKit secondarySystemFill over the card in light, tertiarySystemFill in dark: the step `muted` uses).",
     destructive: "System destructive red (UIKit systemRed).",
     border: "Hairline separator (UIKit separator hairline composited over card).",
     input: "Input control border (UIKit separator composited over card).",
@@ -319,6 +350,10 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     "down-tint": "Translucent negative wash (12% destructive over transparent).",
   };
 
+  const reduced = {
+    light: reduceColours(section(palette("light")), origin, scheme, "light"),
+    dark: reduceColours(section(palette("dark")), origin, scheme, "dark"),
+  };
   return {
     id: "apple",
     name: "Apple",
@@ -371,10 +406,14 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
         { fg: "brand", bg: "background", source: "Apple systemBlue links" },
       ],
     },
+    colourSources: {
+      light: reduced.light.provenance,
+      dark: reduced.dark.provenance,
+    },
     cssVars: {
       theme: themeLevel(),
-      light: reduceColours(section(palette("light")), scheme, "light"),
-      dark: reduceColours(section(palette("dark")), scheme, "dark"),
+      light: reduced.light.colours,
+      dark: reduced.dark.colours,
     },
     finishes,
     shadows,

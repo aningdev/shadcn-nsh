@@ -35,7 +35,7 @@ import {
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { finishes, shadows } from "./finishes/material";
 import { oklchColor, toOklchText } from "./oklch";
-import { reduceColours, type ColourScheme } from "./sources";
+import { reduceColours, type ColourOrigin, type ColourScheme } from "./sources";
 
 export const M3_BASELINE_SEED = "#6750A4";
 
@@ -353,6 +353,37 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
   };
 }
 
+/** Where each colour the theme states comes from (ADR 0012 §4): its M3 system colour. */
+const origin: ColourOrigin = {
+  spec: "Material 3 sys.color",
+  names: {
+    border: "outline",
+    accent: "secondaryContainer",
+    inset: "surfaceContainer",
+    track: "surfaceContainerHighest",
+    popover: "surfaceContainer",
+    field: "surfaceContainerHighest",
+    raised: "surfaceContainerLow",
+    knob: "outline",
+    input: "outline",
+    ring: "secondary",
+    "brand-edge": "outlineVariant",
+    "inverse-brand": "inversePrimary",
+    inverse: "inverseSurface",
+    "inverse-foreground": "inverseOnSurface",
+    "chart-1": "primary",
+    "chart-2": "tertiary",
+    "chart-3": "secondary",
+    "chart-4": "outline",
+    "chart-5": "outlineVariant",
+    "secondary-foreground": "onSecondaryContainer",
+    "accent-foreground": "onSecondaryContainer",
+    "brand-tint": "secondaryContainer",
+    "destructive-tint": "errorContainer",
+    hover: "onSurface at 8% over transparent",
+  },
+};
+
 /**
  * Maps an `M3Scheme` onto every colour key of `.handoff/theme.json` (`theme`, `light`, `dark`)
  * as canonical `oklch()` strings (keeping `var(--x)` aliases and `color-mix()` expressions where
@@ -495,6 +526,10 @@ export const m3Style = {
 export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
   const scheme = m3Scheme(seed);
   const roles = m3Roles(scheme);
+  const reduced = {
+    light: reduceColours(roles.light, origin, colourScheme, "light"),
+    dark: reduceColours(roles.dark, origin, colourScheme, "dark"),
+  };
   const colorDescs = {
     background: "Primary page surface (M3 surface role, material-web v34.0.21).",
     foreground: "Default text and icon ink on surfaces (M3 onSurface).",
@@ -577,10 +612,14 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "Do not replace `outline` focus rings (`3px` width, `2px` offset) with halo rings.",
       ],
     },
+    colourSources: {
+      light: reduced.light.provenance,
+      dark: reduced.dark.provenance,
+    },
     cssVars: {
       theme: themeLevel(roles),
-      light: reduceColours(roles.light, colourScheme, "light"),
-      dark: reduceColours(roles.dark, colourScheme, "dark"),
+      light: reduced.light.colours,
+      dark: reduced.dark.colours,
     },
     finishes,
     shadows,

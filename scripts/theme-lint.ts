@@ -16,7 +16,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 import { finishFields, type FinishRole } from "../packages/theme/finish-fields";
-import { scaleCitationsOf } from "./theme/extensions";
+import { colourSources, scaleCitationsOf } from "./theme/extensions";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkMaterial, checkMaterialFill } from "./theme/material";
 import { checkRecipeNumbers, lookNumbers } from "./theme/recipe-numbers";
@@ -530,9 +530,10 @@ for (const name of Object.keys(themeBlock)) {
     fail(`packages/theme/theme.json: token \`${name}\` is read nowhere and not left to the app`);
 }
 
-// 5b. The scope of a theme's customization (ADR 0007, ADR 0009): colour keys are sources and
-// references, a reference never carries a literal, the control dimensions are four, no theme owns
-// a font family or a type size.
+// 5b. The scope of a theme's customization (ADR 0007, ADR 0012, ADR 0009): colour keys are sources
+// and references, a reference that states a value rather than pointing at a source carries its
+// provenance, the tints share one strength, the control dimensions are four, and no theme owns a
+// font family or a type size.
 for (const theme of themes) {
   const own = readJson<WhitelistSemantics>(`packages/theme/themes/${theme}/semantics.json`);
   for (const problem of checkWhitelist(
@@ -540,6 +541,7 @@ for (const theme of themes) {
     tokensOf.get(theme)!,
     own,
     defaultSemantics as unknown as WhitelistSemantics,
+    colourSources(theme),
   ))
     fail(problem);
 }
