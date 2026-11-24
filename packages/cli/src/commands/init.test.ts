@@ -10,11 +10,11 @@ import { runInit } from "./init";
 
 const repo = path.resolve(import.meta.dir, "../../../..");
 const source = (relative: string) => fs.readFileSync(path.join(repo, relative), "utf8");
-const defaultTheme = source("packages/theme/theme.json");
-const defaultFinishes = source("packages/theme/semantics.json");
-const defaultLightTokens = source("packages/theme/light.tokens.json");
-const defaultDarkTokens = source("packages/theme/dark.tokens.json");
-const defaultDesignMd = source("packages/theme/DESIGN.md");
+const rootTheme = source("packages/theme/theme.json");
+const rootFinishes = source("packages/theme/semantics.json");
+const rootLightTokens = source("packages/theme/light.tokens.json");
+const rootDarkTokens = source("packages/theme/dark.tokens.json");
+const rootDesignMd = source("packages/theme/DESIGN.md");
 const neutralTheme = source("packages/theme/themes/shadcn/theme.json");
 const neutralFinishes = source("packages/theme/themes/shadcn/semantics.json");
 const neutralLightTokens = source("packages/theme/themes/shadcn/light.tokens.json");
@@ -45,7 +45,7 @@ const fixture = (): Fixture =>
   makeFixture({
     items: [
       "theme",
-      "theme-default",
+      "theme-nsh-gallery",
       "theme-shadcn",
       "theme-solid-glass",
       "theme-apple",
@@ -179,16 +179,16 @@ describe("init --theme", () => {
     expect(recordedTheme(current)).toBe("theme-winui");
   });
 
-  test("init --theme native builds the app on the default theme, with Apple's, Material's, WinUI 3's and the chooser beside it", async () => {
+  test("init --theme native builds the app on the NSH Gallery theme, with Apple's, Material's, WinUI 3's and the chooser beside it", async () => {
     current = fixture();
     await captured(() => runInit({ cwd: current!.app, registry: current!.url, theme: "native" }));
 
-    // One build-time theme: the default's. The platform's own is chosen at run time.
-    expect(current.read("theme.json")).toBe(defaultTheme);
-    expect(current.read("light.tokens.json")).toBe(defaultLightTokens);
-    expect(current.read("dark.tokens.json")).toBe(defaultDarkTokens);
-    expect(current.read("DESIGN.md")).toBe(defaultDesignMd);
-    expect(current.read("lib/ui/semantics.json")).toBe(defaultFinishes);
+    // One build-time theme: NSH Gallery's. The platform's own is chosen at run time.
+    expect(current.read("theme.json")).toBe(rootTheme);
+    expect(current.read("light.tokens.json")).toBe(rootLightTokens);
+    expect(current.read("dark.tokens.json")).toBe(rootDarkTokens);
+    expect(current.read("DESIGN.md")).toBe(rootDesignMd);
+    expect(current.read("lib/ui/semantics.json")).toBe(rootFinishes);
     expect(current.read("themes/apple/theme.json")).toBe(appleTheme);
     expect(current.read("themes/apple/light.tokens.json")).toBe(appleLightTokens);
     expect(current.read("themes/apple/DESIGN.md")).toBe(appleDesignMd);
@@ -198,10 +198,10 @@ describe("init --theme", () => {
     expect(current.read("themes/winui/theme.json")).toBe(winuiTheme);
     expect(current.read("themes/winui/light.tokens.json")).toBe(winuiLightTokens);
     expect(current.read("themes/winui/DESIGN.md")).toBe(winuiDesignMd);
-    expect(current.exists("themes/default/theme.json")).toBe(true);
-    expect(current.exists("themes/default/light.tokens.json")).toBe(true);
-    expect(current.exists("themes/default/dark.tokens.json")).toBe(true);
-    expect(current.exists("themes/default/DESIGN.md")).toBe(true);
+    expect(current.exists("themes/nsh-gallery/theme.json")).toBe(true);
+    expect(current.exists("themes/nsh-gallery/light.tokens.json")).toBe(true);
+    expect(current.exists("themes/nsh-gallery/dark.tokens.json")).toBe(true);
+    expect(current.exists("themes/nsh-gallery/DESIGN.md")).toBe(true);
     expect(current.read("themes/native/index.ts")).toContain("nativeTheme");
     expect(current.exists("lib/ui/theme.ts")).toBe(true);
     expect(recordedTheme(current)).toBe("theme-native");
@@ -210,7 +210,7 @@ describe("init --theme", () => {
   test("--overwrite replaces colors the app has changed, and nothing else", async () => {
     current = fixture();
     await captured(() => runInit({ cwd: current!.app, registry: current!.url }));
-    const own = defaultTheme.replace(/oklch\([^)]*\)/, "oklch(0.5 0.2 30)");
+    const own = rootTheme.replace(/oklch\([^)]*\)/, "oklch(0.5 0.2 30)");
     current.write("theme.json", own);
 
     const kept = await captured(() =>
@@ -254,14 +254,14 @@ describe("init --theme", () => {
     expect(merged.finishes.shared.modal).toBeDefined();
   });
 
-  test("defaults to the library's own theme, and records that", async () => {
+  test("defaults to NSH Gallery, and records that", async () => {
     current = fixture();
     await captured(() => runInit({ cwd: current!.app, registry: current!.url }));
 
-    expect(current.read("theme.json")).toBe(defaultTheme);
-    expect(current.read("light.tokens.json")).toBe(defaultLightTokens);
-    expect(current.read("dark.tokens.json")).toBe(defaultDarkTokens);
-    expect(current.read("DESIGN.md")).toBe(defaultDesignMd);
+    expect(current.read("theme.json")).toBe(rootTheme);
+    expect(current.read("light.tokens.json")).toBe(rootLightTokens);
+    expect(current.read("dark.tokens.json")).toBe(rootDarkTokens);
+    expect(current.read("DESIGN.md")).toBe(rootDesignMd);
     expect(recordedTheme(current)).toBe("theme");
   });
 
@@ -275,10 +275,25 @@ describe("init --theme", () => {
     }
 
     expect(String(error)).toContain(
-      'Unknown theme "solarized". Choose one of: default, shadcn, solid-glass, apple, material, winui, native.',
+      'Unknown theme "solarized". Choose one of: nsh-gallery, shadcn, solid-glass, apple, material, winui, native.',
     );
     expect(current.exists("nsh-ui.json")).toBe(false);
     expect(current.exists("theme.json")).toBe(false);
+  });
+
+  test("the old name `default` is an error too, listing the ids there are", async () => {
+    current = fixture();
+    let error: unknown;
+    try {
+      await runInit({ cwd: current.app, registry: current.url, theme: "default" });
+    } catch (caught) {
+      error = caught;
+    }
+
+    expect(String(error)).toContain(
+      'Unknown theme "default". Choose one of: nsh-gallery, shadcn, solid-glass, apple, material, winui, native.',
+    );
+    expect(current.exists("nsh-ui.json")).toBe(false);
   });
 });
 
@@ -291,14 +306,14 @@ describe("the app's theme", () => {
     return app;
   }
 
-  test("an nsh-ui.json without the field is the default theme, and stays as it is", async () => {
+  test("an nsh-ui.json without the field is the build-time theme, and stays as it is", async () => {
     current = fixture();
     writeOldConfig(current);
 
     const out = await captured(() => runAdd(["button"], { cwd: current!.app }));
 
     expect(out.result).toBe(0);
-    expect(current.read("theme.json")).toBe(defaultTheme);
+    expect(current.read("theme.json")).toBe(rootTheme);
     expect(current.exists("components/ui/button.tsx")).toBe(true);
     // Nothing rewrites the file the app already had, so an older app gains no field.
     expect(recordedTheme(current)).toBeUndefined();
@@ -317,7 +332,7 @@ describe("the app's theme", () => {
     expect(current.read("theme.json")).toBe(neutralTheme);
     expect(current.read("lib/ui/semantics.json")).toBe(neutralFinishes);
     expect(recordedTheme(current)).toBe("theme-shadcn");
-    // The `theme` dependency resolved to the item `nsh-ui.json` names, not the default one.
+    // The `theme` dependency resolved to the item `nsh-ui.json` names, not the build-time one.
     expect(out.lines).toContain("skip themes/shadcn/theme.json (identical)");
   });
 
@@ -342,7 +357,7 @@ describe("the app's theme", () => {
     expect(recordedTheme(current)).toBe("theme-shadcn");
 
     // `theme` named is the app's build-time theme, as the dependency is: `--overwrite` restores
-    // the shadcn colors, never the library's default ones.
+    // the shadcn colors, never NSH Gallery's.
     current.write("theme.json", neutralTheme.replace(/oklch\([^)]*\)/, "oklch(0.5 0.2 30)"));
     await captured(() =>
       runAdd(["theme"], { cwd: current!.app, registry: current!.url, overwrite: true }),
@@ -352,11 +367,11 @@ describe("the app's theme", () => {
     expect(current.exists("lib/ui/theme.ts")).toBe(true);
 
     await captured(() =>
-      runInit({ cwd: current!.app, registry: current!.url, theme: "default", overwrite: true }),
+      runInit({ cwd: current!.app, registry: current!.url, theme: "nsh-gallery", overwrite: true }),
     );
 
-    expect(current.read("theme.json")).toBe(defaultTheme);
-    expect(current.read("lib/ui/semantics.json")).toBe(defaultFinishes);
+    expect(current.read("theme.json")).toBe(rootTheme);
+    expect(current.read("lib/ui/semantics.json")).toBe(rootFinishes);
     expect(recordedTheme(current)).toBe("theme");
   });
 
@@ -376,11 +391,11 @@ describe("the app's theme", () => {
     expect(current.read("themes/shadcn/DESIGN.md")).toBe(neutralDesignMd);
     // The roles module it imports is the app's, two directories up from `themes/shadcn/`.
     expect(current.read("themes/shadcn/index.ts")).toContain('from "../../lib/ui/theme"');
-    expect(current.read("theme.json")).toBe(defaultTheme);
-    expect(current.read("light.tokens.json")).toBe(defaultLightTokens);
-    expect(current.read("dark.tokens.json")).toBe(defaultDarkTokens);
-    expect(current.read("DESIGN.md")).toBe(defaultDesignMd);
-    expect(current.read("lib/ui/semantics.json")).toBe(defaultFinishes);
+    expect(current.read("theme.json")).toBe(rootTheme);
+    expect(current.read("light.tokens.json")).toBe(rootLightTokens);
+    expect(current.read("dark.tokens.json")).toBe(rootDarkTokens);
+    expect(current.read("DESIGN.md")).toBe(rootDesignMd);
+    expect(current.read("lib/ui/semantics.json")).toBe(rootFinishes);
     expect(recordedTheme(current)).toBe("theme");
 
     // Taking it again changes nothing: it is one more theme, not the app's.
@@ -393,7 +408,7 @@ describe("the app's theme", () => {
     expect(again.lines).toContain("skip themes/shadcn/DESIGN.md (identical)");
   });
 
-  test("add theme-default installs the library's own theme as one more theme", async () => {
+  test("add theme-nsh-gallery installs the library's own theme as one more theme", async () => {
     // An app built on another theme: the one it was built with is not on disk as a theme yet.
     current = await neutral();
     const before = current.read("theme.json");
@@ -402,17 +417,17 @@ describe("the app's theme", () => {
     const beforeDesignMd = current.read("DESIGN.md");
 
     const out = await captured(() =>
-      runAdd(["theme-default"], { cwd: current!.app, registry: current!.url }),
+      runAdd(["theme-nsh-gallery"], { cwd: current!.app, registry: current!.url }),
     );
 
-    expect(out.lines).toContain("write themes/default/index.ts");
-    expect(current.read("themes/default/theme.json")).toBe(defaultTheme);
-    expect(current.read("themes/default/semantics.json")).toBe(defaultFinishes);
-    expect(current.read("themes/default/light.tokens.json")).toBe(defaultLightTokens);
-    expect(current.read("themes/default/dark.tokens.json")).toBe(defaultDarkTokens);
-    expect(current.read("themes/default/DESIGN.md")).toBe(defaultDesignMd);
-    // The roles module it imports is the app's, two directories up from `themes/default/`.
-    expect(current.read("themes/default/index.ts")).toContain('from "../../lib/ui/theme"');
+    expect(out.lines).toContain("write themes/nsh-gallery/index.ts");
+    expect(current.read("themes/nsh-gallery/theme.json")).toBe(rootTheme);
+    expect(current.read("themes/nsh-gallery/semantics.json")).toBe(rootFinishes);
+    expect(current.read("themes/nsh-gallery/light.tokens.json")).toBe(rootLightTokens);
+    expect(current.read("themes/nsh-gallery/dark.tokens.json")).toBe(rootDarkTokens);
+    expect(current.read("themes/nsh-gallery/DESIGN.md")).toBe(rootDesignMd);
+    // The roles module it imports is the app's, two directories up from `themes/nsh-gallery/`.
+    expect(current.read("themes/nsh-gallery/index.ts")).toContain('from "../../lib/ui/theme"');
     // The build-time theme is the app's, and adding one more does not touch it.
     expect(current.read("theme.json")).toBe(before);
     expect(current.read("light.tokens.json")).toBe(beforeLight);
@@ -421,10 +436,10 @@ describe("the app's theme", () => {
     expect(recordedTheme(current)).toBe("theme-shadcn");
   });
 
-  test("add theme in a default app keeps the app's own colors", async () => {
+  test("add theme in an app on the build-time theme keeps the app's own colors", async () => {
     current = fixture();
     await captured(() => runInit({ cwd: current!.app, registry: current!.url }));
-    const own = defaultTheme.replace(/oklch\([^)]*\)/, "oklch(0.5 0.2 30)");
+    const own = rootTheme.replace(/oklch\([^)]*\)/, "oklch(0.5 0.2 30)");
     current.write("theme.json", own);
 
     await captured(() => runAdd(["theme"], { cwd: current!.app, registry: current!.url }));
@@ -443,10 +458,10 @@ describe("the app's theme", () => {
 
     expect(out.lines).toContain("would write themes/shadcn/theme.json");
     expect(current.exists("themes/shadcn/theme.json")).toBe(false);
-    expect(current.read("theme.json")).toBe(defaultTheme);
-    expect(current.read("light.tokens.json")).toBe(defaultLightTokens);
-    expect(current.read("dark.tokens.json")).toBe(defaultDarkTokens);
-    expect(current.read("DESIGN.md")).toBe(defaultDesignMd);
+    expect(current.read("theme.json")).toBe(rootTheme);
+    expect(current.read("light.tokens.json")).toBe(rootLightTokens);
+    expect(current.read("dark.tokens.json")).toBe(rootDarkTokens);
+    expect(current.read("DESIGN.md")).toBe(rootDesignMd);
     expect(recordedTheme(current)).toBe("theme");
   });
 });

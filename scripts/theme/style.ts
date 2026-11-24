@@ -359,8 +359,8 @@ export function scaledRadii(radii: {
 }
 
 /**
- * A generated theme's `semantics.json`: the default theme's style (with the theme's own
- * `state["press-scale"]`), then its split finishes (`{ shared, light, dark }`). The default theme is
+ * A generated theme's `semantics.json`: the build-time theme's style (with the theme's own
+ * `state["press-scale"]`), then its split finishes (`{ shared, light, dark }`). The build-time theme is
  * the one place the style numbers and `{radius-…}` references are written.
  */
 export function semanticsWithStyle(
@@ -377,7 +377,7 @@ export function semanticsWithStyle(
 
 /**
  * What is wrong with one theme's style data, each as a line naming the key:
- * - a key the reference (the default theme) states and this one lacks, or vice versa;
+ * - a key the reference (the build-time theme) states and this one lacks, or vice versa;
  * - a leaf of another type, or a negative number;
  * - an enum outside its whitelist;
  * - a `dimension.shape.<role>` corner that is not a `{token}` reference to a `dimension` token in `theme.json`;
@@ -388,7 +388,7 @@ export function checkStyle(
   file: Record<string, unknown>,
   reference: Record<string, unknown>,
   kinds: Map<string, TokenKind>,
-  referenceName = "the default theme",
+  referenceName = "the build-time theme",
 ): string[] {
   const problems: string[] = [];
   const have = leaves(styleOf(file));

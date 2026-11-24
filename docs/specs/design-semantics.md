@@ -5,7 +5,7 @@
 - **`theme.json`（基础 token 层）**：NSH 原生识别的扁平设计 token（颜色、长度/数值），每个值只定义一次，同时面向 Tailwind、TSX 的 `token()`、Rust 的 `theme()` 与宿主覆写（`setThemeOverrides`）。
 - **`semantics.json`（跨平台语义层）**：以 Apple HIG、Material 3 Expressive、WinUI 3与 shadcn/ui 的**跨平台超集**建出的设计语义——存放 NSH 原生 token 表达不了的结构（表面配方 finish、枚举、`pointer`/`touch` 两档尺寸与字阶、弹簧与动效、平台材质），凡是基础层已有的颜色或圆角，一律通过 `{token}` 引用，不再重复写字面量。
 
-各平台主题（`default`、`shadcn`、`solid-glass`、`apple`，以及后续的 `material`、`winui`）都按同一份标准填满这两个文件。人类与编码代理阅读的 `DESIGN.md`（参照 [`references/design.md`](../../references/design.md)）由 `bun run tokens:build`（`scripts/tokens/design-md.ts`）从 DTCG 源码与按外观编译的 pointer 档解析结果生成，分别落盘于 `packages/theme/DESIGN.md` 与 `packages/theme/themes/<id>/DESIGN.md`。
+各平台主题（`nsh-gallery`、`shadcn`、`solid-glass`、`apple`，以及后续的 `material`、`winui`）都按同一份标准填满这两个文件。人类与编码代理阅读的 `DESIGN.md`（参照 [`references/design.md`](../../references/design.md)）由 `bun run tokens:build`（`scripts/tokens/design-md.ts`）从 DTCG 源码与按外观编译的 pointer 档解析结果生成，分别落盘于 `packages/theme/DESIGN.md` 与 `packages/theme/themes/<id>/DESIGN.md`。
 
 具体的 token 分层清单与 finish 字段规则见 [`theme-roles.md`](theme-roles.md)；三套原生平台的设计调研与分期路线见 [`native-themes.md`](native-themes.md)。
 

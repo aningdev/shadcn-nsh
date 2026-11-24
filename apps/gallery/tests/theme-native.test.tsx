@@ -50,7 +50,7 @@ test("nativeTheme() is winui on Windows", async () => {
   expect(find(app.texts(), "native=")).toBe("winui");
 });
 
-test("nativeTheme() is the default theme on the other platforms", async () => {
+test("nativeTheme() is the NSH Gallery theme on the other platforms", async () => {
   for (const platform of ["linux"] as const) {
     const app = await open("./theme-native.fixture.tsx", { platform, colorScheme: "light" });
     expect(find(app.texts(), "native=")).not.toBe("apple");

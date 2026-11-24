@@ -138,10 +138,10 @@ describe("themeScope", () => {
   });
 
   test("a value in a theme the pass does not draw moves nothing", () => {
-    const scope = themeScope({ default: ["value"] }, [], pool);
+    const scope = themeScope({ "nsh-gallery": ["value"] }, [], pool);
     expect(scope.ids).toBe("none");
     expect(scope.themes).toEqual([]);
-    expect(scope.why.join(" ")).toContain("default");
+    expect(scope.why.join(" ")).toContain("nsh-gallery");
   });
 
   test("an added or removed key moves every page in every theme", () => {
@@ -170,7 +170,7 @@ describe("contractMoves", () => {
 
   test("a shared source and an added key, named by theme and mode", () => {
     const theme: ThemeChange = {
-      id: "default",
+      id: "nsh-gallery",
       kinds: ["contract"],
       modes: {
         light: [{ key: "color.fill", kind: "contract", after: "oklch(1 0 0)" }],
@@ -179,14 +179,14 @@ describe("contractMoves", () => {
     };
     expect(
       contractMoves(
-        diffOf({ default: theme }, [
+        diffOf({ "nsh-gallery": theme }, [
           { file: "packages/theme/theme.ts", why: "the theme's reader" },
         ]),
       ),
     ).toEqual([
       { where: "packages/theme/theme.ts", what: "the theme's reader" },
-      { where: "default light", what: "+ color.fill" },
-      { where: "default dark", what: "- color.mark" },
+      { where: "nsh-gallery light", what: "+ color.fill" },
+      { where: "nsh-gallery dark", what: "- color.mark" },
     ]);
   });
 
@@ -212,7 +212,7 @@ describe("gateVerdict", () => {
     themes,
   });
   const added: ThemeChange = {
-    id: "default",
+    id: "nsh-gallery",
     kinds: ["contract"],
     modes: { light: [{ key: "color.fill", kind: "contract" }], dark: [] },
   };
@@ -233,10 +233,11 @@ describe("gateVerdict", () => {
   });
 
   test("a key without a record fails, with the record passes", () => {
-    expect(gateVerdict(diffOf({ default: added }), []).passed).toBe(false);
+    expect(gateVerdict(diffOf({ "nsh-gallery": added }), []).passed).toBe(false);
     expect(
-      gateVerdict(diffOf({ default: added }), ["docs/decisions/0004-theme-contract-freeze.md"])
-        .passed,
+      gateVerdict(diffOf({ "nsh-gallery": added }), [
+        "docs/decisions/0004-theme-contract-freeze.md",
+      ]).passed,
     ).toBe(true);
   });
 });

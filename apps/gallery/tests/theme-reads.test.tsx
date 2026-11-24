@@ -14,7 +14,7 @@ test("a palette row, an item tile, kbd and a drawer's grabber redraw on a theme 
 
   await app.press("text:Apply Material");
   await app.waitFor("text:row-min=40");
-  // Material's desktop icons are the base scale again (ADR 0003), so the tile (icon + 12) matches default's.
+  // Material's desktop icons are the base scale again (ADR 0003), so the tile (icon + 12) matches the build-time theme's.
   expect(app.texts()).toContain("tile=28");
   expect(app.texts()).toContain("kbd-curve=circular");
   expect(app.texts()).toContain("grabber-curve=circular");
@@ -23,7 +23,7 @@ test("a palette row, an item tile, kbd and a drawer's grabber redraw on a theme 
   await app.waitFor("text:row-min=40");
   expect(app.texts()).toContain("title-weight=400");
 
-  await app.press("text:Apply Default");
+  await app.press("text:Apply NSH Gallery");
   await app.waitFor("text:row-min=32");
   expect(app.texts()).toContain("tile=28");
   expect(app.texts()).toContain("kbd-curve=continuous");
@@ -40,7 +40,7 @@ test("a refresh indicator's chip takes a touch theme's mid control height", asyn
   expect(app.texts()).toContain("row-min=56");
   expect(app.texts()).toContain("row=56");
 
-  await app.press("text:Apply Default");
+  await app.press("text:Apply NSH Gallery");
   await app.waitFor("text:chip=40");
   expect(app.texts()).toContain("row-min=48");
 });

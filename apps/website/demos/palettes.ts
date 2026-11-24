@@ -18,11 +18,11 @@ export const PALETTE_KEY = "palette";
  * Nothing on the site reads it. */
 export const PALETTE_DRAWN_KEY = "palette-drawn";
 
-/** The palettes, in the switch's order. `default` is the theme the demos are built with
+/** The palettes, in the switch's order. `nsh-gallery` is the theme the demos are built with
  * (`packages/theme/theme.json`), which an app needs no theme file for. */
 export const PALETTES = [
   {
-    id: "default",
+    id: "nsh-gallery",
     label: "NSH Gallery",
     description:
       "The library's own: graphite surfaces, one citrus accent, 8-point controls and 14-point cards.",

@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
-  "name": "NSH Gallery UI",
+  "name": "NSH Gallery",
   "version": "2025.10",
-  "description": "Default NSH Gallery UI theme.",
+  "description": "NSH Gallery: the official NSH look, as nsh.dev's demos draw it.",
   "sets": {
     "base": {
       "description": "Cross-theme semantic defaults and shared typography/motion structure.",
@@ -13,7 +13,7 @@
       ]
     },
     "theme": {
-      "description": "Default theme appearance-invariant base tokens and shared finishes.",
+      "description": "NSH Gallery's appearance-invariant base tokens and shared finishes.",
       "sources": [
         {
           "$ref": "./theme.tokens.json"

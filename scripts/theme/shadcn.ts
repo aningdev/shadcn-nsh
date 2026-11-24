@@ -77,7 +77,7 @@ const NEUTRAL = {
 } as const;
 type Appearance = keyof typeof NEUTRAL;
 
-/** The default theme's key for a control's fill (spelled in two halves: it is not a word here). */
+/** The build-time theme's key for a control's fill (spelled in two halves: it is not a word here). */
 const CONTROL = "second" + "ary";
 
 /** shadcn's neutral corner radius roles by layer: 8 px control, 12 px container, 14 px modal. */

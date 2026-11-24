@@ -12,8 +12,8 @@
  * and the like), frame by frame. The first frame with content must already carry the chosen theme's
  * own colors, and no frame may paint a color only another theme has.
  *
- * Each palette in `demos/palettes.ts` is a run, so `default` is the control: its run has to show
- * the default theme's colors, and a check that stopped seeing a theme fails instead of passing.
+ * Each palette in `demos/palettes.ts` is a run, so `nsh-gallery` is the control: its run has to show
+ * the NSH Gallery theme's colors, and a check that stopped seeing a theme fails instead of passing.
  *
  * `--shots <dir>` also keeps the compositor's frames (a screencast) as `palette-<id>-<scheme>/
  * frame-<n>.png`, for a look by eye beside it.

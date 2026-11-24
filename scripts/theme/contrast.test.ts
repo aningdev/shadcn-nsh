@@ -241,7 +241,7 @@ describe("the shipped themes", () => {
     expect(exception({ theme: "apple", fg: "muted-foreground", bg: "background" })).toContain(
       "secondaryLabel",
     );
-    expect(exception({ theme: "default", fg: "muted-foreground", bg: "background" })).toBe(
+    expect(exception({ theme: "nsh-gallery", fg: "muted-foreground", bg: "background" })).toBe(
       undefined,
     );
   });

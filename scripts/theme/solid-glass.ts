@@ -17,7 +17,7 @@ import { finishes, shadows } from "./finishes/solid-glass";
  *
  * Where this library's theme and the stylesheet do not line up one to one, the reason is written at
  * the mapping. What NSH cannot draw at all is in the port's report: NSH takes a theme's finishes by
- * role (`theme.ts`'s `themed`), so a role carries the keys the default theme declares for it — a
+ * role (`theme.ts`'s `themed`), so a role carries the keys the build-time theme declares for it — a
  * `backdropFilter` outside `glass` is one of those, and a gradient across a face is one this
  * material never wanted.
  *
@@ -31,7 +31,7 @@ import { scaledRadii } from "./style";
 /** One appearance of the stylesheet's variables, by name (without the `--`). */
 type Source = Record<string, string>;
 
-/** A finish role, as `semantics.json` writes it: the keys the default theme declares for the role. */
+/** A finish role, as `semantics.json` writes it: the keys the build-time theme declares for the role. */
 
 /** `:root`: the panes in daylight, on a cool grey page. */
 const LIGHT: Source = {

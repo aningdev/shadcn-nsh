@@ -7,7 +7,7 @@ import { expect, open, test } from "nsh/test";
 test("a label's text follows the theme's type roles when the theme is switched", async () => {
   const app = await open("./theme-type.fixture.tsx", { platform: "macos", colorScheme: "light" });
 
-  // The default theme: `label` is 14 points, weight 500, with a pointer.
+  // The build-time theme: `label` is 14 points, weight 500, with a pointer.
   expect(app.spanStyle("text:Name")).toMatchObject({ fontSize: 14, fontWeight: 500 });
   const badge = app.spanStyle("text:Tag");
 

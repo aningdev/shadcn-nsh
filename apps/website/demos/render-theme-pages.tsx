@@ -4,7 +4,7 @@
 //
 // Each page opens with the palette in its storage, exactly as the site's switch leaves it, and
 // reads it before it mounts (`apply-palette.ts`): the theme arrives the way an app gets it, not
-// through a copy of the demo with a `selectTheme` added. `default` is the build-time theme, whose
+// through a copy of the demo with a `selectTheme` added. `nsh-gallery` is the build-time theme, whose
 // check is `render.test.tsx`.
 import { open, test } from "nsh/test";
 
@@ -16,7 +16,7 @@ import { cases, clock, networkOf, same, schemes, settle } from "./render-cases";
 const platform = { platform: "macos" } as const;
 
 /** The themes to check: the build-time one is `render.test.tsx`'s. */
-const palettes = PALETTES.filter((palette) => palette.id !== "default");
+const palettes = PALETTES.filter((palette) => palette.id !== "nsh-gallery");
 
 /**
  * Register the theme check's tests. `reference: false` draws each page alone and takes only its

@@ -154,7 +154,7 @@ export interface ChipLookOptions {
 
 /**
  * A chip's look (the gallery's `Chip`): one chosen value as a label of its own, on the theme's
- * `chip` finish (its fill, edge and shadow — a raised label in the default theme, a flat grey one
+ * `chip` finish (its fill, edge and shadow — a raised label in the NSH Gallery theme, a flat grey one
  * in shadcn, glass in Solid Glass), its corners half its height. `lead` goes at the start, the
  * remove button at the end: a round target lit under the pointer, `removeGlyph`'s muted mark at its
  * middle (a terminal's mark is text, so that part draws it). A disabled chip dims to half.

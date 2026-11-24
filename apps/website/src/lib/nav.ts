@@ -42,7 +42,7 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     group: "start",
   },
   {
-    route: "/docs/themes/default",
+    route: "/docs/themes/nsh-gallery",
     title: "NSH Gallery",
     group: "start",
     parent: "/docs/themes",

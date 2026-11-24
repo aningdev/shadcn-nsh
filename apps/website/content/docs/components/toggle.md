@@ -53,7 +53,7 @@ ToggleGroup
 
 A size is a step of the theme's own scales: its `side` the three heights (`dimension.size.height`),
 its `icon` the three icons (`dimension.icon`), its label the `detail`, `body` and `label` type roles.
-The default theme's heights are 24 / 28 / 32 points with a pointer and 32 / 40 / 48 on a touch
+The NSH Gallery theme's heights are 24 / 28 / 32 points with a pointer and 32 / 40 / 48 on a touch
 screen, where a hit slop makes the target 44 points.
 
 ### Disabled

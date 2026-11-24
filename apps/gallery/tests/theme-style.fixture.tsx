@@ -8,37 +8,37 @@ import {
 } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { defaultTheme } from "../../../packages/theme/themes/default/index";
+import { nshGallery } from "../../../packages/theme/themes/nsh-gallery/index";
 import { Button, controlSize, density, plainRow } from "../../../packages/ui";
 
 /** The build-time theme with other style data: a taller large step, roomier padding, a faster
- * timing, a wider focus ring and circular corners. Its colors and finishes are the default's. */
+ * timing, a wider focus ring and circular corners. Its colors and finishes are the build-time theme's. */
 const roomy: AppTheme = {
-  ...defaultTheme,
+  ...nshGallery,
   id: "roomy",
   label: "roomy",
   semantics: {
-    ...defaultTheme.semantics,
+    ...nshGallery.semantics,
     dimension: {
-      ...defaultTheme.semantics.dimension,
+      ...nshGallery.semantics.dimension,
       size: {
-        ...defaultTheme.semantics.dimension.size,
+        ...nshGallery.semantics.dimension.size,
         height: {
-          pointer: { ...defaultTheme.semantics.dimension.size.height.pointer, lg: 60 },
-          touch: { ...defaultTheme.semantics.dimension.size.height.touch, lg: 60 },
+          pointer: { ...nshGallery.semantics.dimension.size.height.pointer, lg: 60 },
+          touch: { ...nshGallery.semantics.dimension.size.height.touch, lg: 60 },
         },
         control: {
-          pointer: { ...defaultTheme.semantics.dimension.size.control.pointer, padding: 13 },
-          touch: { ...defaultTheme.semantics.dimension.size.control.touch, padding: 13 },
+          pointer: { ...nshGallery.semantics.dimension.size.control.pointer, padding: 13 },
+          touch: { ...nshGallery.semantics.dimension.size.control.touch, padding: 13 },
         },
       },
-      focus: { ...defaultTheme.semantics.dimension.focus, width: 5 },
+      focus: { ...nshGallery.semantics.dimension.focus, width: 5 },
     },
     motion: {
-      ...defaultTheme.semantics.motion,
+      ...nshGallery.semantics.motion,
       fast: { duration: 90, timingFunction: "decelerate" },
     },
-    shape: { ...defaultTheme.semantics.shape, curve: "circular" },
+    shape: { ...nshGallery.semantics.shape, curve: "circular" },
   },
 };
 

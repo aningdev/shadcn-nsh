@@ -15,7 +15,7 @@ geometry) are re-expressed as copy-into-app components over `nsh/base`, with thi
 library's own theme in place of the original colours — the theme's data is the
 library's (`packages/theme/theme.json` and `semantics.json`, stored in `oklch()`),
 and shadcn's neutral palette is an alternative theme installed by
-`init --theme shadcn`, not the default one. The Terminal idiom, the sounds and the
+`init --theme shadcn`, not the build-time one. The Terminal idiom, the sounds and the
 website playground adapters are left out, and the API is named and composed the way
 shadcn/ui names and composes its own: a family keeps shadcn's part roles
 (`Trigger`, `Content`, `Item`, …) and the axes it writes (`variant`, `size`,

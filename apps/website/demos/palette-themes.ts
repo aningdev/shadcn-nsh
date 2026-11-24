@@ -13,7 +13,7 @@ type ThemeModule = { default: AppTheme };
 
 /** The theme of each palette, fetched only when that palette is the one chosen. */
 const themes: Record<PaletteId, () => Promise<ThemeModule>> = {
-  default: () => import("@shadcn-nsh/theme-default"),
+  "nsh-gallery": () => import("@shadcn-nsh/theme-nsh-gallery"),
   shadcn: () => import("@shadcn-nsh/theme-shadcn"),
   "solid-glass": () => import("@shadcn-nsh/theme-solid-glass"),
   apple: () => import("@shadcn-nsh/theme-apple"),
@@ -23,7 +23,7 @@ const themes: Record<PaletteId, () => Promise<ThemeModule>> = {
 
 /**
  * The theme a palette is, fetched on demand: a page that is not switched to it loads no theme
- * file. `default` is the theme the app is built with, so its module is read the same way and the
+ * file. `nsh-gallery` is the theme the app is built with, so its module is read the same way and the
  * caller passes the result to `selectTheme` (which takes `null` for the build-time theme).
  */
 export function paletteTheme(id: PaletteId): Promise<AppTheme> {

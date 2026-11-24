@@ -13,22 +13,22 @@ import {
 } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
-import defaultTheme from "../../../packages/theme/themes/default/index";
+import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
 import { Button, buttonLabel, buttonLook, dialogCard, inputLook } from "../../../packages/ui";
 
-const { dimension, state } = defaultTheme.semantics;
+const { dimension, state } = nshGallery.semantics;
 
 /** A temporary theme with other corner roles, control heights, line widths and fades. */
 const reshaped: AppTheme = {
-  ...defaultTheme,
+  ...nshGallery,
   id: "reshaped",
   label: "Reshaped",
   theme: {
-    ...defaultTheme.theme,
+    ...nshGallery.theme,
     cssVars: {
-      ...defaultTheme.theme.cssVars,
+      ...nshGallery.theme.cssVars,
       theme: {
-        ...defaultTheme.theme.cssVars?.theme,
+        ...nshGallery.theme.cssVars?.theme,
         "radius-control": "20px",
         "radius-container": "28px",
         "radius-modal": "30px",
@@ -36,7 +36,7 @@ const reshaped: AppTheme = {
     },
   },
   semantics: {
-    ...defaultTheme.semantics,
+    ...nshGallery.semantics,
     dimension: {
       ...dimension,
       size: {

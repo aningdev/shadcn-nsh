@@ -46,7 +46,7 @@ function App() {
       <Button onPress={() => selectTheme(materialTheme)}>Apply Material</Button>
       <Button onPress={() => selectTheme(winuiTheme)}>Apply WinUI</Button>
       <Button onPress={() => selectTheme(appleTheme)}>Apply Apple</Button>
-      <Button onPress={() => selectTheme(null)}>Apply Default</Button>
+      <Button onPress={() => selectTheme(null)}>Apply NSH Gallery</Button>
 
       <View style={{ flexShrink: 0 }} onLayout={watch(row, "height")}>
         <CommandRow

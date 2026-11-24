@@ -1,18 +1,18 @@
 import { finish, platformMaterial, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
-import defaultTheme from "../../../packages/theme/themes/default/index";
+import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
 import { Button } from "../../../packages/ui";
 
-const { finishes } = defaultTheme.semantics;
+const { finishes } = nshGallery.semantics;
 
 /** A temporary theme whose finishes ask for the platform's own materials, and for an elevation. */
 const glassy: AppTheme = {
-  ...defaultTheme,
+  ...nshGallery,
   id: "glassy",
   label: "Glassy",
   semantics: {
-    ...defaultTheme.semantics,
+    ...nshGallery.semantics,
     finishes: {
       ...finishes,
       light: {

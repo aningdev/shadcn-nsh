@@ -7,23 +7,23 @@ import { checkStyle } from "./style";
 import { tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
 import { compositeWinui, WINUI, winuiAccent, winuiRoles, type Appearance } from "./winui";
 
-type DefaultThemeFile = {
+type RootThemeFile = {
   cssVars: ThemeCssVars;
 };
 
-type DefaultSemanticsFile = Record<string, unknown> & {
+type RootSemanticsFile = Record<string, unknown> & {
   finishes: SplitFinishes<Record<string, unknown>>;
 };
 
-const defaultTheme = JSON.parse(
+const rootTheme = JSON.parse(
   readFileSync(join(import.meta.dir, "../../packages/theme/theme.json"), "utf8"),
-) as DefaultThemeFile;
-const defaultSemantics = JSON.parse(
+) as RootThemeFile;
+const rootSemantics = JSON.parse(
   readFileSync(join(import.meta.dir, "../../packages/theme/semantics.json"), "utf8"),
-) as DefaultSemanticsFile;
+) as RootSemanticsFile;
 
 const NON_COLOUR_THEME_KEYS = new Set(
-  Object.keys(defaultTheme.cssVars.theme).filter(
+  Object.keys(rootTheme.cssVars.theme).filter(
     (key) => key === "radius" || key.startsWith("radius-"),
   ),
 );
@@ -140,11 +140,11 @@ describe("WinUI resource compositing", () => {
 
 describe("winuiRoles() key coverage and format", () => {
   const roles = winuiRoles();
-  const expectedThemeKeys = Object.keys(defaultTheme.cssVars.theme)
+  const expectedThemeKeys = Object.keys(rootTheme.cssVars.theme)
     .filter((key) => !NON_COLOUR_THEME_KEYS.has(key))
     .sort();
-  const expectedLightKeys = Object.keys(defaultTheme.cssVars.light).sort();
-  const expectedDarkKeys = Object.keys(defaultTheme.cssVars.dark).sort();
+  const expectedLightKeys = Object.keys(rootTheme.cssVars.light).sort();
+  const expectedDarkKeys = Object.keys(rootTheme.cssVars.dark).sort();
 
   test("produces every colour key of packages/theme/theme.json and no extra key", () => {
     expect(Object.keys(roles.theme).sort()).toEqual(expectedThemeKeys);
@@ -316,12 +316,12 @@ describe("compiled winui theme files", () => {
   test("match the default keys, the style schema and the WinUI 3 values", () => {
     const files = shipped;
     expect(files.theme.name).toBe("WinUI 3");
-    expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(defaultTheme.cssVars.theme));
+    expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(rootTheme.cssVars.theme));
     expect(Object.keys(files.theme.cssVars.theme).some((key) => key.startsWith("font-"))).toBe(
       false,
     );
-    expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));
-    expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(defaultTheme.cssVars.dark));
+    expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(rootTheme.cssVars.light));
+    expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(rootTheme.cssVars.dark));
 
     expect(files.semantics.motion.fast).toEqual({ duration: 83, timingFunction: "decelerate" });
     expect(files.semantics.dimension.size.height.pointer).toEqual({ sm: 24, md: 32, lg: 40 });
@@ -408,7 +408,7 @@ describe("compiled winui theme files", () => {
       checkStyle(
         "packages/theme/themes/winui/semantics.json",
         files.semantics,
-        defaultSemantics,
+        rootSemantics,
         kinds,
       ),
     ).toEqual([]);

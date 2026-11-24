@@ -1,6 +1,6 @@
 import { expect, open, test } from "nsh/test";
 
-import defaults from "../../../packages/theme/semantics.json";
+import builtIn from "../../../packages/theme/semantics.json";
 
 const read = (texts: string[], key: string) =>
   texts.find((text) => text.startsWith(`${key}:`))?.slice(key.length + 1);
@@ -16,15 +16,15 @@ const look = (texts: string[]) =>
 
 test("a rendered page follows the style of the theme selected, and of the build-time one again", async () => {
   const app = await open("./theme-style.fixture.tsx", { platform: "macos" });
-  const pointer = defaults.dimension.size;
+  const pointer = builtIn.dimension.size;
 
   const before = look(app.texts());
   expect(before).toEqual({
     density: String(pointer.height.pointer.lg),
     control: String(pointer.control.pointer.padding),
     plain: String(pointer.height.pointer.lg),
-    press: String(defaults.motion.fast.duration),
-    focus: String(defaults.dimension.focus.width),
+    press: String(builtIn.motion.fast.duration),
+    focus: String(builtIn.dimension.focus.width),
     curve: "continuous",
   });
 

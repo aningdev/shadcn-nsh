@@ -127,7 +127,7 @@ export async function resolveTree(
     seen.add(name);
     const item = await fetchItem(config, name, registryOverride);
     if (name === DEFAULT_THEME && config.theme === NATIVE_THEME) {
-      // Built on the default theme (the build-time one is one theme), with the others beside it.
+      // Built on the theme `nsh-ui.json` records as a single theme, with the others beside it.
       for (const dep of item.registryDependencies ?? []) await walk(dep);
       out.push(item);
       await walk(config.theme);

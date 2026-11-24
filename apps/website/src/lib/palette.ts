@@ -14,22 +14,22 @@ import { PALETTES, PALETTE_KEY, type PaletteId } from "../../demos/palettes";
 /** Where the demo app's `Storage` keeps the palette: `nsh:<its id>:palette`. */
 export const PALETTE_STORAGE_KEY = `nsh:${demos.id}:${PALETTE_KEY}`;
 
-/** The palette the next page load draws in: the one stored, `default` when there is none or the
+/** The palette the next page load draws in: the one stored, `nsh-gallery` when there is none or the
  * value is no palette this site offers. */
 export function storedPalette(): PaletteId {
   try {
     const value = localStorage.getItem(PALETTE_STORAGE_KEY);
-    return PALETTES.find((palette) => palette.id === value)?.id ?? "default";
+    return PALETTES.find((palette) => palette.id === value)?.id ?? "nsh-gallery";
   } catch {
-    return "default";
+    return "nsh-gallery";
   }
 }
 
-/** Keeps `id` for the demos, `default` taking the key out: an app with no palette draws the
+/** Keeps `id` for the demos, `nsh-gallery` taking the key out: an app with no palette draws the
  * build-time theme without loading a theme file. */
 export function storePalette(id: PaletteId) {
   try {
-    if (id === "default") localStorage.removeItem(PALETTE_STORAGE_KEY);
+    if (id === "nsh-gallery") localStorage.removeItem(PALETTE_STORAGE_KEY);
     else localStorage.setItem(PALETTE_STORAGE_KEY, id);
   } catch {}
 }

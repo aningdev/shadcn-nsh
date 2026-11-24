@@ -6,7 +6,7 @@
  * (shared and pointer/touch tiers, diffed sparsely against `packages/theme/tokens/base/*`), and
  * light/dark `finishes` into the sparse DTCG 2025.10 source tree under
  * `packages/theme/tokens/themes/<id>/` (reading role order and baseline `$description`s from
- * `packages/theme/tokens/themes/default/` and `packages/theme/tokens/base/*`), then runs
+ * `packages/theme/tokens/themes/<build root>/` and `packages/theme/tokens/base/*`), then runs
  * `tokens:build` for that theme so one generator command updates both the DTCG source and the
  * compiled runtime files.
  */
@@ -34,7 +34,7 @@ import {
 } from "../tokens/types";
 import type { ContrastWaiver } from "./extensions";
 import { toOklchText } from "./oklch";
-import type { SplitFinishes } from "./tokens";
+import { BUILD_ROOT_THEME, type SplitFinishes } from "./tokens";
 
 /**
  * A theme states a type role's weight and tracking only: the size and line height come from the
@@ -651,7 +651,7 @@ function encodeFinishSection(
 }
 
 function readDefaultMetadata(repoRoot: string) {
-  const defDir = path.join(repoRoot, "packages/theme/tokens/themes/default");
+  const defDir = path.join(repoRoot, "packages/theme/tokens/themes", BUILD_ROOT_THEME);
   const baseDir = path.join(repoRoot, "packages/theme/tokens/base");
   const defTheme = readJson(path.join(defDir, "theme.tokens.json"));
   const defFinishes = readJson(path.join(defDir, "finishes.shared.tokens.json"));

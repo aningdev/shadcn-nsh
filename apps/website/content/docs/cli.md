@@ -15,19 +15,19 @@ Writes `nsh-ui.json`, installs the theme, points every `nsh.json` at it, and set
 shadcn-nsh@latest init [options]
 ```
 
-| Flag               | What it does                                                                                    | Default               |
-| ------------------ | ----------------------------------------------------------------------------------------------- | --------------------- |
-| `-c, --cwd <cwd>`  | App or monorepo directory.                                                                      | The current directory |
-| `-y, --yes`        | Accepted for scripts; nothing prompts today.                                                    | `false`               |
-| `--overwrite`      | Overwrite files that already exist.                                                             | `false`               |
-| `--theme <name>`   | Theme to install: `default`, `shadcn`, `solid-glass`, `apple`, `material`, `winui` or `native`. | `default`             |
-| `--registry <url>` | Registry URL template containing `{name}`.                                                      | The public registry   |
+| Flag               | What it does                                                                                        | Default               |
+| ------------------ | --------------------------------------------------------------------------------------------------- | --------------------- |
+| `-c, --cwd <cwd>`  | App or monorepo directory.                                                                          | The current directory |
+| `-y, --yes`        | Accepted for scripts; nothing prompts today.                                                        | `false`               |
+| `--overwrite`      | Overwrite files that already exist.                                                                 | `false`               |
+| `--theme <name>`   | Theme to install: `nsh-gallery`, `shadcn`, `solid-glass`, `apple`, `material`, `winui` or `native`. | `nsh-gallery`         |
+| `--registry <url>` | Registry URL template containing `{name}`.                                                          | The public registry   |
 
 ```npm
 npx shadcn-nsh@latest init -c apps/web
 ```
 
-It writes `theme.json`, `light.tokens.json`, `dark.tokens.json`, `DESIGN.md`, `lib/ui/semantics.json` and `lib/ui/theme.ts` into the app (under `packages/ui` in a monorepo), and a `tsconfig.json` when the app has none. `theme.json` and `lib/ui/semantics.json` are the theme the app is **built** with; which one they hold is recorded in `nsh-ui.json` (`"theme": "theme"`, or `"theme-shadcn"` for `--theme shadcn`), and `add` resolves a component's `theme` dependency to it, so taking a component later — `--overwrite` included — never writes the default theme back. `light.tokens.json` and `dark.tokens.json` are standalone DTCG 2025.10 files describing the shipped theme for design tools (Figma Variables Light/Dark modes, Tokens Studio, Style Dictionary v4), `DESIGN.md` gives coding agents the theme's tokens and design rationale, and none of these generated snapshots follow later edits to `theme.json`. `--theme shadcn` also writes `themes/shadcn/`, the same palette as a theme the app can switch to while it runs.
+It writes `theme.json`, `light.tokens.json`, `dark.tokens.json`, `DESIGN.md`, `lib/ui/semantics.json` and `lib/ui/theme.ts` into the app (under `packages/ui` in a monorepo), and a `tsconfig.json` when the app has none. `theme.json` and `lib/ui/semantics.json` are the theme the app is **built** with; which one they hold is recorded in `nsh-ui.json` (`"theme": "theme"`, or `"theme-shadcn"` for `--theme shadcn`), and `add` resolves a component's `theme` dependency to it, so taking a component later — `--overwrite` included — never writes the build-time theme back. `light.tokens.json` and `dark.tokens.json` are standalone DTCG 2025.10 files describing the shipped theme for design tools (Figma Variables Light/Dark modes, Tokens Studio, Style Dictionary v4), `DESIGN.md` gives coding agents the theme's tokens and design rationale, and none of these generated snapshots follow later edits to `theme.json`. `--theme shadcn` also writes `themes/shadcn/`, the same palette as a theme the app can switch to while it runs.
 
 In an app, `init` also sets up the `@/` import alias the docs' snippets use (`@/components/ui/<name>`, `@/lib/ui/theme`): `tsconfig.json` gains `"@/*": ["./*"]` under `compilerOptions.paths` — restating the NSH mappings `.nsh/tsconfig.json` declares, because a child's `paths` replace the base's — and `nsh.json` gains `"resolve": { "alias": { "@": "./" } }` for `nsh run`/`build`/`test`, which read `nsh.json`, not tsconfig. Values it finds already there are left alone with a warning. A monorepo imports from `@workspace/ui` instead, so it is not touched.
 

@@ -30,7 +30,7 @@ export type AddOptions = {
  * `themes/<name>/` for `selectTheme` to switch to while the app runs, and the app's build-time
  * theme (`nsh-ui.json`'s `theme`, what `nsh.json` points at) stays what it is — that is
  * `init --theme <name> --overwrite`. A component's `theme` dependency still resolves to the
- * app's build-time theme item, so `add` never writes the default theme back. The packages the
+ * app's build-time theme item, so `add` never writes another theme back. The packages the
  * items declare are installed with the app's own package manager (`utils/deps.ts`). With
  * `--dry-run` nothing is written, not even `nsh-ui.json` or the theme, and the install is printed
  * instead of run.

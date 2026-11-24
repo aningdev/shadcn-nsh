@@ -11,7 +11,7 @@ const find = (texts: string[], prefix: string) =>
 test("corners, strokes, heights and fades follow the theme's roles when the theme is switched", async () => {
   const app = await open("./theme-shape.fixture.tsx", { platform: "macos", colorScheme: "light" });
 
-  // The default theme: control 8, container 12, modal 14, button follows control (corners.button: "radius").
+  // The build-time theme: control 8, container 12, modal 14, button follows control (corners.button: "radius").
   expect(find(app.texts(), "roles=")).toBe("8|12|14|8");
   expect(find(app.texts(), "dialog=")).toBe("14|1");
   expect(find(app.texts(), "field=")).toBe("8|1");

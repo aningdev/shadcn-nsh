@@ -5,7 +5,7 @@ import path from "node:path";
 
 import { lint } from "@google/design.md/linter";
 
-import { mergeFinishes } from "../theme/tokens";
+import { BUILD_ROOT_THEME, mergeFinishes } from "../theme/tokens";
 import { buildAllTokens, checkAllTokens, discoverDtcgThemes } from "./build";
 import { formatColorOpToCss, formatDtcgColor } from "./color";
 import { compileFinishGroup, compileShadowGroup } from "./compile";
@@ -40,10 +40,10 @@ const TOKEN_FILES = [
   "packages/theme/tokens/themes/apple/dark.tokens.json",
   "packages/theme/tokens/themes/apple/pointer.tokens.json",
   "packages/theme/tokens/themes/apple/touch.tokens.json",
-  "packages/theme/tokens/themes/default/theme.tokens.json",
-  "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
-  "packages/theme/tokens/themes/default/light.tokens.json",
-  "packages/theme/tokens/themes/default/dark.tokens.json",
+  "packages/theme/tokens/themes/nsh-gallery/theme.tokens.json",
+  "packages/theme/tokens/themes/nsh-gallery/finishes.shared.tokens.json",
+  "packages/theme/tokens/themes/nsh-gallery/light.tokens.json",
+  "packages/theme/tokens/themes/nsh-gallery/dark.tokens.json",
   "packages/theme/tokens/themes/material/theme.tokens.json",
   "packages/theme/tokens/themes/material/finishes.shared.tokens.json",
   "packages/theme/tokens/themes/material/light.tokens.json",
@@ -66,8 +66,8 @@ const TOKEN_FILES = [
   "packages/theme/tokens/themes/winui/touch.tokens.json",
 ];
 
-const RESOLVER_PATH = "packages/theme/tokens/themes/default/theme.resolver.json";
-const THEME_IDS = ["apple", "default", "material", "shadcn", "solid-glass", "winui"] as const;
+const RESOLVER_PATH = "packages/theme/tokens/themes/nsh-gallery/theme.resolver.json";
+const THEME_IDS = ["apple", "material", "nsh-gallery", "shadcn", "solid-glass", "winui"] as const;
 
 describe("DTCG 2025.10 schema validation", () => {
   for (const file of TOKEN_FILES) {
@@ -156,7 +156,7 @@ describe("DTCG 2025.10 build (all six themes)", () => {
 
       expect(builtTheme).toBe(readText(`packages/theme/themes/${themeId}/theme.json`));
       expect(builtSemantics).toBe(readText(`packages/theme/themes/${themeId}/semantics.json`));
-      if (themeId === "default") {
+      if (themeId === BUILD_ROOT_THEME) {
         expect(builtTheme).toBe(readText("packages/theme/theme.json"));
         expect(builtSemantics).toBe(readText("packages/theme/semantics.json"));
       }
@@ -193,7 +193,7 @@ describe("DTCG 2025.10 build (all six themes)", () => {
     }
   });
 
-  test("compiles an isolated theme without sibling default and supports sparse sets.base radii", () => {
+  test("compiles an isolated theme with no sibling build root and supports sparse sets.base radii", () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tokens-isolated-test-"));
     try {
       fs.cpSync(path.join(root, "packages/theme/tokens/base"), path.join(tmp, "base"), {
@@ -296,7 +296,7 @@ describe("DTCG source lint", () => {
 
       const finPath = path.join(
         tmp,
-        "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
+        "packages/theme/tokens/themes/nsh-gallery/finishes.shared.tokens.json",
       );
       const fin = JSON.parse(fs.readFileSync(finPath, "utf8"));
       fin.finish.overlay.$extensions = {
@@ -322,7 +322,10 @@ describe("DTCG source lint", () => {
 
   test("rejects missing or extra radius and shape roles", () => {
     const extra = withMutatedDefault((tmp) => {
-      const themePath = path.join(tmp, "packages/theme/tokens/themes/default/theme.tokens.json");
+      const themePath = path.join(
+        tmp,
+        "packages/theme/tokens/themes/nsh-gallery/theme.tokens.json",
+      );
       const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
       themeDoc.dimension.radius.extra = { $value: { value: 14, unit: "px" } };
       fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
@@ -336,7 +339,10 @@ describe("DTCG source lint", () => {
     expect(extra.join("\n")).toContain('dimension.shape has unexpected key "extra"');
 
     const missing = withMutatedDefault((tmp) => {
-      const themePath = path.join(tmp, "packages/theme/tokens/themes/default/theme.tokens.json");
+      const themePath = path.join(
+        tmp,
+        "packages/theme/tokens/themes/nsh-gallery/theme.tokens.json",
+      );
       const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
       delete themeDoc.dimension.radius.modal;
       fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
@@ -362,7 +368,7 @@ describe("DTCG source lint", () => {
 
   test("rejects dangling and circular aliases", () => {
     const dangling = withMutatedDefault((tmp) => {
-      const p = path.join(tmp, "packages/theme/tokens/themes/default/light.tokens.json");
+      const p = path.join(tmp, "packages/theme/tokens/themes/nsh-gallery/light.tokens.json");
       const doc = JSON.parse(fs.readFileSync(p, "utf8"));
       doc.color["card-foreground"].$value = "{color.does-not-exist}";
       fs.writeFileSync(p, JSON.stringify(doc, null, 2));
@@ -370,7 +376,7 @@ describe("DTCG source lint", () => {
     expect(dangling.join("\n")).toContain("Unresolved DTCG alias");
 
     const circular = withMutatedDefault((tmp) => {
-      const p = path.join(tmp, "packages/theme/tokens/themes/default/light.tokens.json");
+      const p = path.join(tmp, "packages/theme/tokens/themes/nsh-gallery/light.tokens.json");
       const doc = JSON.parse(fs.readFileSync(p, "utf8"));
       doc.color.card.$value = "{color.card-foreground}";
       doc.color["card-foreground"].$value = "{color.card}";
@@ -381,7 +387,7 @@ describe("DTCG source lint", () => {
 
   test("rejects drifted static $value on colorOp tokens", () => {
     const problems = withMutatedDefault((tmp) => {
-      const p = path.join(tmp, "packages/theme/tokens/themes/default/light.tokens.json");
+      const p = path.join(tmp, "packages/theme/tokens/themes/nsh-gallery/light.tokens.json");
       const doc = JSON.parse(fs.readFileSync(p, "utf8"));
       doc.color["brand-tint"].$value.components = [0.5, 0.2, 120];
       fs.writeFileSync(p, JSON.stringify(doc, null, 2));
@@ -391,7 +397,7 @@ describe("DTCG source lint", () => {
 
   test("rejects missing $description on colour roles", () => {
     const problems = withMutatedDefault((tmp) => {
-      const p = path.join(tmp, "packages/theme/tokens/themes/default/light.tokens.json");
+      const p = path.join(tmp, "packages/theme/tokens/themes/nsh-gallery/light.tokens.json");
       const doc = JSON.parse(fs.readFileSync(p, "utf8"));
       delete doc.color.background.$description;
       fs.writeFileSync(p, JSON.stringify(doc, null, 2));
@@ -401,12 +407,15 @@ describe("DTCG source lint", () => {
 
   test("rejects negative radius and non-boolean shadow none flag", () => {
     const problems = withMutatedDefault((tmp) => {
-      const themePath = path.join(tmp, "packages/theme/tokens/themes/default/theme.tokens.json");
+      const themePath = path.join(
+        tmp,
+        "packages/theme/tokens/themes/nsh-gallery/theme.tokens.json",
+      );
       const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
       themeDoc.dimension.radius.container.$value.value = -4;
       fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
 
-      const finPath = path.join(tmp, "packages/theme/tokens/themes/default/light.tokens.json");
+      const finPath = path.join(tmp, "packages/theme/tokens/themes/nsh-gallery/light.tokens.json");
       const finDoc = JSON.parse(fs.readFileSync(finPath, "utf8"));
       finDoc.shadow.sm.$extensions = { "dev.aning.shadcn-nsh": { none: false } };
       fs.writeFileSync(finPath, JSON.stringify(finDoc, null, 2));
@@ -563,9 +572,9 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           any
         >;
 
-        if (themeId === "default") {
+        if (themeId === BUILD_ROOT_THEME) {
           expect(readText(`packages/theme/${appearance}.tokens.json`)).toBe(
-            readText(`packages/theme/themes/default/${appearance}.tokens.json`),
+            readText(`packages/theme/themes/nsh-gallery/${appearance}.tokens.json`),
           );
         }
 
@@ -728,9 +737,9 @@ function extractFrontmatterYaml(markdown: string): Record<string, any> {
 }
 
 describe("generated DESIGN.md validation and compiled equality", () => {
-  test("packages/theme/DESIGN.md matches packages/theme/themes/default/DESIGN.md byte for byte", () => {
+  test("packages/theme/DESIGN.md matches packages/theme/themes/nsh-gallery/DESIGN.md byte for byte", () => {
     expect(readText("packages/theme/DESIGN.md")).toBe(
-      readText("packages/theme/themes/default/DESIGN.md"),
+      readText("packages/theme/themes/nsh-gallery/DESIGN.md"),
     );
   });
 

@@ -19,7 +19,7 @@ test("a class-rounded control's corners follow the theme, like a style-rounded o
     theme: read(app.texts(), "theme"),
   };
   expect(before.theme).toBe("build-time");
-  // The default theme's control tier is 8 points, read by both sides.
+  // The build-time theme's control tier is 8 points, read by both sides.
   expect(before.token).toBe("8");
   expect(before.style).toBe("8");
   expect(read(app.texts(), "class")).toContain("rounded-(--radius-control)");

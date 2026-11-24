@@ -39,6 +39,7 @@ import {
   whitelists,
 } from "./theme/style";
 import {
+  BUILD_ROOT_THEME,
   findTokenRefs,
   mergeFinishes,
   tokenKinds,
@@ -228,13 +229,13 @@ function readsRole(role: string): boolean {
   );
 }
 
-// 1. The default theme is the one under `themes/default/`, byte for byte.
+// 1. The build-root theme is the one under `themes/<build root>/`, byte for byte.
 for (const name of ["theme.json", "semantics.json"]) {
   const shipped = read(`packages/theme/${name}`);
-  const copy = read(`packages/theme/themes/default/${name}`);
+  const copy = read(`packages/theme/themes/${BUILD_ROOT_THEME}/${name}`);
   if (shipped !== copy)
     fail(
-      `packages/theme/themes/default/${name} is not packages/theme/${name}: cp packages/theme/${name} over it`,
+      `packages/theme/themes/${BUILD_ROOT_THEME}/${name} is not packages/theme/${name}: cp packages/theme/${name} over it`,
     );
 }
 
@@ -341,10 +342,12 @@ for (const theme of themes) {
     const wanted = Object.keys(defaultMerged[appearance]).sort();
     for (const role of wanted)
       if (!roles.includes(role))
-        fail(`${path}: ${appearance} states no finish \`${role}\`, which the default theme does`);
+        fail(
+          `${path}: ${appearance} states no finish \`${role}\`, which the build-time theme does`,
+        );
     for (const role of roles)
       if (!wanted.includes(role))
-        fail(`${path}: ${appearance} states \`${role}\`, which the default theme does not`);
+        fail(`${path}: ${appearance} states \`${role}\`, which the build-time theme does not`);
 
     for (const [role, finish] of Object.entries(merged)) {
       const fields: readonly string[] = finishFields[role as keyof typeof finishFields] ?? [];
@@ -369,8 +372,8 @@ for (const theme of themes) {
       if (base !== undefined && paints(finish) !== paints(base))
         fail(
           paints(base)
-            ? `${path}: ${role} paints no fill (background and gradient both clear), and the default theme's does`
-            : `${path}: ${role} paints a fill, and the default theme's is clear`,
+            ? `${path}: ${role} paints no fill (background and gradient both clear), and the build-time theme's does`
+            : `${path}: ${role} paints a fill, and the build-time theme's is clear`,
         );
 
       // 4. A finish's colours are `{token}` references of DTCG `$type` `"color"`, ink, or pending;

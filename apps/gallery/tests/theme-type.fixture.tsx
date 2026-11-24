@@ -1,18 +1,18 @@
 import { currentTheme, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
-import defaultTheme from "../../../packages/theme/themes/default/index";
+import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
 import { Badge, Button, Label } from "../../../packages/ui";
 
-const { typography } = defaultTheme.semantics;
+const { typography } = nshGallery.semantics;
 
 /** A temporary theme with another type scale: a larger, bolder label and a larger body. */
 const scaled: AppTheme = {
-  ...defaultTheme,
+  ...nshGallery,
   id: "scaled",
   label: "Scaled",
   semantics: {
-    ...defaultTheme.semantics,
+    ...nshGallery.semantics,
     typography: {
       ...typography,
       label: {

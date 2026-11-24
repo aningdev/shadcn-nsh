@@ -16,12 +16,12 @@ import {
 } from "../../../packages/ui";
 
 const PALETTES = [
-  { value: "default", label: "Default" },
+  { value: "nsh-gallery", label: "NSH Gallery" },
   { value: "material", label: "Material" },
 ];
 
 function App() {
-  const palette = signal<string | null>("default");
+  const palette = signal<string | null>("nsh-gallery");
   const pickedDate = signal<string | null>(null);
   const fruit = signal<string | null>(null);
   const due = signal<string | null>(null);
@@ -40,7 +40,7 @@ function App() {
     <View style={{ gap: 8, padding: 12 }}>
       <Text>{`height=${selectHeight()}`}</Text>
       <Button onPress={() => selectTheme(materialTheme)}>Apply Material</Button>
-      <Button onPress={() => selectTheme(null)}>Apply Default</Button>
+      <Button onPress={() => selectTheme(null)}>Apply NSH Gallery</Button>
 
       <Select value={palette()} onChange={({ value }) => choose(value)}>
         <SelectTrigger>

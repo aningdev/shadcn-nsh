@@ -11,7 +11,7 @@ test("Select and DatePicker triggers keep hearing presses, label lookup and keyb
   await app.waitFor("text:height=40");
 
   // Keyboard activation before pressing triggers directly:
-  // Start from top: Apply Material (1) -> Apply Default (2) -> Theme picker (3) -> Switch via date (4) -> Fruit (5)
+  // Start from top: Apply Material (1) -> Apply NSH Gallery (2) -> Theme picker (3) -> Switch via date (4) -> Fruit (5)
   for (let i = 0; i < 5; i++) await app.keyboard.press("tab");
   await app.keyboard.press("down");
   await app.waitFor("text:Newest");
@@ -40,7 +40,7 @@ test("Select and DatePicker triggers keep hearing presses, label lookup and keyb
   await app.wait(50);
 
   // Switch back to build-time theme (line 28 -> 32)
-  await app.press("text:Apply Default");
+  await app.press("text:Apply NSH Gallery");
   await app.waitFor("text:height=32");
   await app.press("label:Fruit");
   await app.waitFor("text:Newest");
@@ -58,7 +58,7 @@ test("a Select that switches the row height inside onChange opens again on the n
   await app.waitFor("text:height=40");
 
   await app.press("label:Theme picker");
-  await app.waitFor("text:Default");
+  await app.waitFor("text:NSH Gallery");
 });
 
 test("a DatePicker that switches the row height inside onChange opens again on the next press", async () => {

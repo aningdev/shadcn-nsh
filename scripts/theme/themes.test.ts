@@ -16,11 +16,11 @@ type SemanticsFile = {
   finishes: SplitFinishes<Finish>;
 };
 
-const defaults = read("theme.json") as ThemeFile;
-const defaultSemantics = read("semantics.json") as SemanticsFile;
-const defaultMerged = {
-  light: mergeFinishes(defaultSemantics.finishes, "light"),
-  dark: mergeFinishes(defaultSemantics.finishes, "dark"),
+const root = read("theme.json") as ThemeFile;
+const rootSemantics = read("semantics.json") as SemanticsFile;
+const rootMerged = {
+  light: mergeFinishes(rootSemantics.finishes, "light"),
+  dark: mergeFinishes(rootSemantics.finishes, "dark"),
 };
 
 /** The alternative themes: a directory each, holding the two files of the same shape. */
@@ -61,22 +61,22 @@ describe("themes/", () => {
       const themeFile = read(`themes/${name}/theme.json`) as ThemeFile;
       const semantics = read(`themes/${name}/semantics.json`) as SemanticsFile;
 
-      test("declares the default theme's keys, and no others", () => {
+      test("declares the build-time theme's keys, and no others", () => {
         expect(requiredThemeKeys(themeFile.cssVars.theme), "theme").toEqual(
-          requiredThemeKeys(defaults.cssVars.theme),
+          requiredThemeKeys(root.cssVars.theme),
         );
         for (const section of ["light", "dark"] as const) {
           expect(sorted(themeFile.cssVars[section]), section).toEqual(
-            sorted(defaults.cssVars[section]),
+            sorted(root.cssVars[section]),
           );
         }
       });
 
-      test("resolves to the default finishes' roles and field sets after merging", () => {
+      test("resolves to the build-time finishes' roles and field sets after merging", () => {
         // A flat theme leaves out the gradient, a theme of no platform material the material,
         // an opaque one the backdropFilter, only the platform's own layers an elevation, only a theme
         // that paints its own pressed accent the pressed fill and ink, and only a knob the checked
-        // state it states: every other field of a role is the set default states.
+        // state it states: every other field of a role is the set the build-time theme states.
         const optional = new Set([
           "gradient",
           "material",
@@ -92,10 +92,10 @@ describe("themes/", () => {
           sorted(Object.keys(finish).filter((field) => !optional.has(field)));
         for (const appearance of ["light", "dark"] as const) {
           const merged = mergeFinishes(semantics.finishes, appearance);
-          expect(sorted(merged), appearance).toEqual(sorted(defaultMerged[appearance]));
+          expect(sorted(merged), appearance).toEqual(sorted(rootMerged[appearance]));
           for (const [role, finish] of Object.entries(merged)) {
             expect(requiredFields(finish), `${appearance}.${role}`).toEqual(
-              requiredFields(defaultMerged[appearance][role]!),
+              requiredFields(rootMerged[appearance][role]!),
             );
           }
         }
@@ -127,14 +127,14 @@ describe("themes/", () => {
   }
 });
 
-describe("the default theme", () => {
+describe("the NSH Gallery theme", () => {
   test("says how far a press sinks, and says it as the scale a control lands on", () => {
-    expect(defaultSemantics.state["press-scale"]).toBe(0.97);
+    expect(rootSemantics.state["press-scale"]).toBe(0.97);
   });
 
-  test("its files under themes/default/ are the build-time ones, byte for byte", () => {
+  test("its files under themes/nsh-gallery/ are the build-time ones, byte for byte", () => {
     for (const name of ["theme.json", "semantics.json", "light.tokens.json", "dark.tokens.json"]) {
-      expect(readFileSync(join(theme, `themes/default/${name}`), "utf8"), name).toBe(
+      expect(readFileSync(join(theme, `themes/nsh-gallery/${name}`), "utf8"), name).toBe(
         readFileSync(join(theme, name), "utf8"),
       );
     }

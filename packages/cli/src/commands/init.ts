@@ -19,7 +19,7 @@ export async function runInit(opts: {
   cwd: string;
   overwrite?: boolean;
   registry?: string;
-  /** The theme to install: `default` (the library's own), `shadcn`, `solid-glass`, `apple`, `material`, `winui` or `native`; an unknown name throws. */
+  /** The theme to install: `nsh-gallery` (the official look), `shadcn`, `solid-glass`, `apple`, `material`, `winui` or `native`; an unknown name throws. */
   theme?: string;
 }): Promise<NshUiConfig> {
   const cwd = path.resolve(opts.cwd);
@@ -41,12 +41,12 @@ export async function runInit(opts: {
   const config: NshUiConfig = DEFAULT_CONFIG();
   if (opts.registry) config.registry = opts.registry;
   // Before anything is written: an unknown theme is the command's error, not a half-made app.
-  config.theme = themeItem(opts.theme ?? "default");
+  config.theme = themeItem(opts.theme ?? "nsh-gallery");
 
   await writeConfig(ws.uiRoot, config);
   console.log(`write ${path.relative(cwd, path.join(ws.uiRoot, "nsh-ui.json")) || "nsh-ui.json"}`);
 
-  // The theme: the default item, or another theme's roles, run-time copy and build-time data.
+  // The theme: the build-time item, or another theme's roles, run-time copy and build-time data.
   const items = await resolveTree(config, [DEFAULT_THEME], opts.registry);
   await cacheIndex(config, opts.registry);
   await installItems(ws.uiRoot, config, items, { overwrite: opts.overwrite });
@@ -120,8 +120,8 @@ export const init = new Command()
   .option("--overwrite", "overwrite existing files", false)
   .option(
     "--theme <name>",
-    "theme to install: default (the library's own), shadcn, solid-glass, apple, material, winui, or native (Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, the default elsewhere)",
-    "default",
+    "theme to install: nsh-gallery (the official look), shadcn, solid-glass, apple, material, winui, or native (Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, NSH Gallery elsewhere)",
+    "nsh-gallery",
   )
   .option("--registry <url>", "registry URL template containing {name}")
   .action(

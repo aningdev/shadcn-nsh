@@ -7,7 +7,7 @@ const find = (texts: string[], prefix: string) =>
  * A finish's `material` reaches the view on the next frame: its recipe's `glassEffect` and the
  * layer's own fill as `glassTintColor` ride in the finish's style, the platform props come from
  * `platformMaterial`, and a finish that asks for nothing (`material: "none"`, every shipped layer of
- * the default theme) keeps exactly the keys it had.
+ * the build-time theme) keeps exactly the keys it had.
  */
 test("a theme's material shows in the style and the platform props, and goes with the theme", async () => {
   const app = await open("./theme-material.fixture.tsx", {

@@ -12,11 +12,11 @@
  * - **themes at run time**: `init`, `add theme-shadcn`, then a page that lists the themes, stores
  *   the one chosen and calls `selectTheme`: one more theme must not change the app's build-time
  *   one, and what it imports must type check;
- * - **the default theme as one more**: `init --theme shadcn`, `add theme-default`, then a page
+ * - **the NSH Gallery theme as one more**: `init --theme shadcn`, `add theme-nsh-gallery`, then a page
  *   that lists both and switches between them: the library's own theme installs into
- *   `themes/default/` without touching the build-time one;
+ *   `themes/nsh-gallery/` without touching the build-time one;
  * - **the platform's own theme**: `init --theme native` (themes/apple, themes/material,
- *   `themes/winui`, `themes/default` and `themes/native` installed, a page calling
+ *   `themes/winui`, `themes/nsh-gallery` and `themes/native` installed, a page calling
  *   `selectTheme(nativeTheme())` type checks) and `init --theme apple` / `material` / `winui`
  *   (`theme.json` is that theme's, `add --all` type checks);
  * - **one at a time**: a fresh app per `registry:ui` item, `add <item>` and `nsh check`: an
@@ -456,7 +456,7 @@ async function installEveryItem(template: string, dir: string, items: Item[], ns
 
 /**
  * The neutral theme, from the app's side: `init --theme shadcn`, every item, and the theme the app
- * ends up with — `add`, even with `--overwrite`, must keep it rather than write the default back.
+ * ends up with — `add`, even with `--overwrite`, must keep it rather than write the build-time theme back.
  */
 async function installNeutralTheme(template: string, dir: string, items: Item[], nsh: string) {
   await copyApp(template, dir);
@@ -532,10 +532,10 @@ const TWO_THEMES_PAGE = `// Written by scripts/install-test.ts; this app is temp
 import { mount, Storage, Text, View } from "nsh";
 
 import { currentTheme, selectTheme, type AppTheme } from "@/lib/ui/theme";
-import { defaultTheme } from "./themes/default";
+import { nshGallery } from "./themes/nsh-gallery";
 import { shadcn } from "./themes/shadcn";
 
-const themes: AppTheme[] = [defaultTheme, shadcn];
+const themes: AppTheme[] = [nshGallery, shadcn];
 
 async function stored() {
   const id = await Storage.getItem("theme");
@@ -561,7 +561,7 @@ mount(Page);
 
 /**
  * The library's own theme as one more, from the app's side: on an app built with shadcn's,
- * `add theme-default` must leave the build-time theme alone, write `themes/default/`, and a page
+ * `add theme-nsh-gallery` must leave the build-time theme alone, write `themes/nsh-gallery/`, and a page
  * that lists both and switches between them must type check.
  */
 async function installSecondTheme(template: string, dir: string, nsh: string) {
@@ -570,7 +570,7 @@ async function installSecondTheme(template: string, dir: string, nsh: string) {
   const beforeLight = await fs.readFile(path.join(dir, "light.tokens.json"), "utf8");
   const beforeDark = await fs.readFile(path.join(dir, "dark.tokens.json"), "utf8");
   const beforeDesign = await fs.readFile(path.join(dir, "DESIGN.md"), "utf8");
-  await step("add theme-default", "bun", [cli, "add", "theme-default"], dir);
+  await step("add theme-nsh-gallery", "bun", [cli, "add", "theme-nsh-gallery"], dir);
   for (const [name, want] of [
     ["theme.json", before],
     ["light.tokens.json", beforeLight],
@@ -579,33 +579,36 @@ async function installSecondTheme(template: string, dir: string, nsh: string) {
   ] as const) {
     const after = await fs.readFile(path.join(dir, name), "utf8");
     if (after !== want) {
-      throw new StepFailure("theme", `      add theme-default rewrote the build-time ${name}`);
+      throw new StepFailure("theme", `      add theme-nsh-gallery rewrote the build-time ${name}`);
     }
   }
   const source = await fs.readFile(
-    path.join(repo, "packages/theme/themes/default/theme.json"),
+    path.join(repo, "packages/theme/themes/nsh-gallery/theme.json"),
     "utf8",
   );
   const installed = await fs
-    .readFile(path.join(dir, "themes/default/theme.json"), "utf8")
+    .readFile(path.join(dir, "themes/nsh-gallery/theme.json"), "utf8")
     .catch(() => null);
   if (installed !== source) {
-    throw new StepFailure("theme", "      add theme-default wrote no themes/default/theme.json");
+    throw new StepFailure(
+      "theme",
+      "      add theme-nsh-gallery wrote no themes/nsh-gallery/theme.json",
+    );
   }
   const sourceSemantics = await fs.readFile(
-    path.join(repo, "packages/theme/themes/default/semantics.json"),
+    path.join(repo, "packages/theme/themes/nsh-gallery/semantics.json"),
     "utf8",
   );
   const installedSemantics = await fs
-    .readFile(path.join(dir, "themes/default/semantics.json"), "utf8")
+    .readFile(path.join(dir, "themes/nsh-gallery/semantics.json"), "utf8")
     .catch(() => null);
   if (installedSemantics !== sourceSemantics) {
     throw new StepFailure(
       "theme",
-      "      add theme-default wrote no themes/default/semantics.json",
+      "      add theme-nsh-gallery wrote no themes/nsh-gallery/semantics.json",
     );
   }
-  await assertTokensJsonPair(dir, "themes/default", "packages/theme/themes/default");
+  await assertTokensJsonPair(dir, "themes/nsh-gallery", "packages/theme/themes/nsh-gallery");
   await fs.writeFile(path.join(dir, "Themes.tsx"), TWO_THEMES_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -681,7 +684,7 @@ mount(Page);
 
 /**
  * The platform's own theme, from the app's side: `init --theme native` builds the app on the
- * default theme and installs `themes/apple`, `themes/material`, `themes/winui`, `themes/default`
+ * NSH Gallery theme and installs `themes/apple`, `themes/material`, `themes/winui`, `themes/nsh-gallery`
  * and `themes/native`; a page that calls `selectTheme(nativeTheme())` must type check.
  * `init --theme apple` builds on Apple's; `material` on Material's; `winui` on WinUI 3's.
  */
@@ -703,7 +706,7 @@ async function installNativeTheme(template: string, dir: string, nsh: string) {
     ["themes/apple/theme.json", apple],
     ["themes/material/theme.json", material],
     ["themes/winui/theme.json", winui],
-    ["themes/default/theme.json", null],
+    ["themes/nsh-gallery/theme.json", null],
     ["themes/native/index.ts", null],
   ] as const) {
     const now = await fs.readFile(path.join(dir, name), "utf8").catch(() => null);
@@ -712,7 +715,7 @@ async function installNativeTheme(template: string, dir: string, nsh: string) {
     }
   }
   await assertTokensJsonPair(dir, ".", "packages/theme");
-  for (const id of ["apple", "material", "winui", "default"]) {
+  for (const id of ["apple", "material", "winui", "nsh-gallery"]) {
     await assertTokensJsonPair(dir, `themes/${id}`, `packages/theme/themes/${id}`);
   }
   await fs.writeFile(path.join(dir, "Native.tsx"), NATIVE_PAGE);
@@ -1053,7 +1056,7 @@ async function main(): Promise<number> {
       console.log("one more theme, at run time");
       const startedTheme = performance.now();
       try {
-        const themeTemplate = path.join(tmp, "template-default");
+        const themeTemplate = path.join(tmp, "template-nsh-gallery");
         await scaffold(themeTemplate, registry, nsh);
         await installAnotherTheme(themeTemplate, path.join(tmp, "themes"), nsh);
       } catch (thrown) {
@@ -1070,10 +1073,10 @@ async function main(): Promise<number> {
     }
 
     if (opts.filter == null) {
-      console.log("the default theme, on top of another build-time theme");
+      console.log("the NSH Gallery theme, on top of another build-time theme");
       const startedSecond = performance.now();
       try {
-        const secondTemplate = path.join(tmp, "template-shadcn-default");
+        const secondTemplate = path.join(tmp, "template-shadcn-nsh-gallery");
         await scaffold(secondTemplate, registry, nsh, "shadcn");
         await installSecondTheme(secondTemplate, path.join(tmp, "second"), nsh);
       } catch (thrown) {
@@ -1085,7 +1088,7 @@ async function main(): Promise<number> {
         );
         return 1;
       }
-      const label = "init --theme shadcn, add theme-default, nsh check";
+      const label = "init --theme shadcn, add theme-nsh-gallery, nsh check";
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedSecond)}\n`);
     }
 

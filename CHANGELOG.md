@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+### Changed
+
+- **BREAKING: the `default` theme is now NSH Gallery, id `nsh-gallery` (#360).** It is the official NSH look, the one nsh.dev's demos draw, and the name now says so. The registry item `theme-default` is `theme-nsh-gallery`, `init --theme nsh-gallery` installs it (as `init` with no flag still does), and its page moved to `/docs/themes/nsh-gallery`. There is no alias: `--theme default` is an error that lists the ids. An app that installed `theme-default` re-runs `shadcn-nsh add theme-nsh-gallery`; no value changed. Why: [ADR 0011](docs/decisions/0011-nsh-gallery-theme.md).
+
 ### Removed
 
-- **BREAKING: the press ripple and motion springs are gone (#340).** `state.ripple`, `pressRipple` and `pressHostProps` are removed. A Material press draws the same state layer as every other theme, with no Android ripple. `Spring`, `isTiming` and `animate()`'s `springExtra` are removed too. `motion.fast` / `default` / `slow` are `{ duration, timingFunction }` only: default, shadcn, solid-glass and apple use 150 / 250 / 350 ms `out-cubic`; Material uses M3's durations and easings (150 / 250 ms `standard`, 400 ms `emphasized-decelerate`). A custom theme that set `stiffness` / `damping` should state a duration and an easing instead. Why: [ADR 0010](docs/decisions/0010-drop-ripple-springs.md).
+- **BREAKING: the press ripple and motion springs are gone (#340).** `state.ripple`, `pressRipple` and `pressHostProps` are removed. A Material press draws the same state layer as every other theme, with no Android ripple. `Spring`, `isTiming` and `animate()`'s `springExtra` are removed too. `motion.fast` / `default` / `slow` are `{ duration, timingFunction }` only: NSH Gallery, shadcn, solid-glass and apple use 150 / 250 / 350 ms `out-cubic`; Material uses M3's durations and easings (150 / 250 ms `standard`, 400 ms `emphasized-decelerate`). A custom theme that set `stiffness` / `damping` should state a duration and an easing instead. Why: [ADR 0010](docs/decisions/0010-drop-ripple-springs.md).
 
 ### Fixed
 

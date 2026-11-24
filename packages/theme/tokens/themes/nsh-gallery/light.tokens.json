@@ -1,12 +1,12 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "Dark appearance colors and finish overrides for the default theme.",
+  "$description": "Light appearance colors and finish overrides for the NSH Gallery theme.",
   "color": {
     "background": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.21297, 0.01273, 264.257],
-        "hex": "#16191f"
+        "components": [0.97399, 0.00397, 286.326],
+        "hex": "#f6f6f9"
       },
       "$description": "Primary application page canvas background.",
       "$extensions": {
@@ -18,8 +18,8 @@
     "foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.95193, 0.00289, 264.542],
-        "hex": "#eeeff1"
+        "components": [0.18636, 0.01318, 264.182],
+        "hex": "#101319"
       },
       "$description": "Default high-contrast text and icon ink on page surfaces.",
       "$extensions": {
@@ -31,8 +31,8 @@
     "card": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.25145, 0.01219, 264.328],
-        "hex": "#1f2228"
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
       },
       "$description": "Elevated surface background for cards and panels.",
       "$extensions": {
@@ -40,6 +40,15 @@
           "role": "surface"
         }
       }
+    },
+    "card-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Primary text and icon ink on card surfaces."
     },
     "popover": {
       "$value": "{color.card}",
@@ -50,11 +59,20 @@
       },
       "$description": "Floating surface background for menus, popovers, and tooltips."
     },
+    "popover-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Primary text and icon ink on popover surfaces."
+    },
     "primary": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.88837, 0.16324, 123.959],
-        "hex": "#c4ec6a"
+        "components": [0.89637, 0.16627, 124.031],
+        "hex": "#c6ef6a"
       },
       "$description": "Primary brand action fill.",
       "$extensions": {
@@ -76,11 +94,33 @@
         }
       }
     },
+    "secondary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.96724, 0.00414, 271.369],
+        "hex": "#f3f4f7"
+      },
+      "$description": "Secondary control surface fill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
+    },
+    "secondary-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Text and icon ink on secondary control surfaces."
+    },
     "muted": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.29661, 0.01168, 264.381],
-        "hex": "#2a2d33"
+        "components": [0.95222, 0.00415, 271.369],
+        "hex": "#eeeff2"
       },
       "$description": "Subdued container and subtle background surface.",
       "$extensions": {
@@ -92,8 +132,8 @@
     "muted-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.69819, 0.01118, 261.782],
-        "hex": "#9a9ea5"
+        "components": [0.49859, 0.01219, 261.766],
+        "hex": "#5f636a"
       },
       "$description": "Secondary and supporting text and icon ink.",
       "$extensions": {
@@ -111,11 +151,20 @@
       },
       "$description": "Subtle highlight fill for hovered or active items."
     },
+    "accent-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Text and icon ink on accent surfaces."
+    },
     "destructive": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.70034, 0.19197, 18.007],
-        "hex": "#ff6170"
+        "components": [0.58301, 0.18974, 19.874],
+        "hex": "#d43a4a"
       },
       "$description": "Semantic danger color for destructive actions and errors.",
       "$extensions": {
@@ -127,8 +176,8 @@
     "border": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.32447, 0.01141, 264.404],
-        "hex": "#31343a"
+        "components": [0.84192, 0.00298, 264.54],
+        "hex": "#cacbcd"
       },
       "$description": "Standard hairline border color for containers and controls.",
       "$extensions": {
@@ -146,344 +195,14 @@
       },
       "$description": "Border and stroke color for form fields and control edges."
     },
-    "inset": {
-      "$value": "{color.muted}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Recessed well surface nested inside a card."
-    },
-    "raised": {
-      "$value": "{color.secondary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Raised control surface resting on a card."
-    },
-    "field": {
-      "$value": "{color.card}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Input well surface below card and inset layers."
-    },
-    "line": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.30863, 0.01156, 264.391],
-        "hex": "#2d3036"
-      },
-      "$description": "Hairline divider and grid rule inside recessed wells.",
+    "ring": {
+      "$value": "{color.muted-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
         }
-      }
-    },
-    "hover": {
-      "$value": "{color.muted}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
       },
-      "$description": "Pointer hover overlay fill on interactive items."
-    },
-    "faint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.54061, 0.01194, 261.771],
-        "hex": "#6b6f76"
-      },
-      "$description": "Low-emphasis text for placeholders, units, and tertiary labels.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      }
-    },
-    "brand": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Accent ink for text, icons, and active rules."
-    },
-    "brand-edge": {
-      "$value": "{color.border}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Hairline border on primary accent-filled controls."
-    },
-    "track": {
-      "$value": "{color.muted}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Inactive track background for switches, sliders, and progress bars."
-    },
-    "knob": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Switch thumb fill in the off state."
-    },
-    "info": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.7377, 0.13479, 263.817],
-        "hex": "#7ea8ff"
-      },
-      "$description": "Informational semantic status color.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      }
-    },
-    "warn": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.82449, 0.14865, 73.346],
-        "hex": "#ffb547"
-      },
-      "$description": "Warning semantic status color.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      }
-    },
-    "up": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.77932, 0.14805, 162.141],
-        "hex": "#45d49a"
-      },
-      "$description": "Positive trend and growth semantic color.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      }
-    },
-    "brand-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.88837, 0.16324, 123.959],
-        "hex": "#c4ec6a",
-        "alpha": 0.1
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.primary}",
-            "percent": 10,
-            "b": "transparent"
-          },
-          "role": "brand"
-        }
-      },
-      "$description": "Translucent brand-accent wash behind selected rows and tinted bubbles."
-    },
-    "inverse": {
-      "$value": "{color.card}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "High-contrast surface for toasts and tooltips."
-    },
-    "inverse-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Primary text ink on inverse surfaces."
-    },
-    "inverse-brand": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Accent action color on inverse surfaces."
-    },
-    "info-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.7377, 0.13479, 263.817],
-        "hex": "#7ea8ff",
-        "alpha": 0.1
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.info}",
-            "percent": 10,
-            "b": "transparent"
-          },
-          "role": "status"
-        }
-      },
-      "$description": "Translucent informational status background tint."
-    },
-    "warn-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.82449, 0.14865, 73.346],
-        "hex": "#ffb547",
-        "alpha": 0.1
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.warn}",
-            "percent": 10,
-            "b": "transparent"
-          },
-          "role": "status"
-        }
-      },
-      "$description": "Translucent warning status background tint."
-    },
-    "destructive-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.70034, 0.19197, 18.007],
-        "hex": "#ff6170",
-        "alpha": 0.1
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 10,
-            "b": "transparent"
-          },
-          "role": "status"
-        }
-      },
-      "$description": "Translucent destructive status background tint."
-    },
-    "up-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.77932, 0.14805, 162.141],
-        "hex": "#45d49a",
-        "alpha": 0.1
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.up}",
-            "percent": 10,
-            "b": "transparent"
-          },
-          "role": "status"
-        }
-      },
-      "$description": "Translucent positive trend background tint."
-    },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.70034, 0.19197, 18.007],
-        "hex": "#ff6170",
-        "alpha": 0.1
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 10,
-            "b": "transparent"
-          },
-          "role": "status"
-        }
-      },
-      "$description": "Translucent negative trend background tint."
-    },
-    "card-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Primary text and icon ink on card surfaces."
-    },
-    "popover-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Primary text and icon ink on popover surfaces."
-    },
-    "accent-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Text and icon ink on accent surfaces."
-    },
-    "secondary": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.32935, 0.01092, 271.072],
-        "hex": "#33353b"
-      },
-      "$description": "Secondary control surface fill.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      }
-    },
-    "secondary-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Text and icon ink on secondary control surfaces."
+      "$description": "Focus indicator ring stroke color."
     },
     "chart-1": {
       "$value": "{color.primary}",
@@ -530,15 +249,6 @@
       },
       "$description": "Fifth chart series color."
     },
-    "ring": {
-      "$value": "{color.muted-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Focus indicator ring stroke color."
-    },
     "sidebar": {
       "$value": "{color.background}",
       "$extensions": {
@@ -556,6 +266,24 @@
         }
       },
       "$description": "Primary text and icon ink inside the sidebar."
+    },
+    "sidebar-primary": {
+      "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Primary action highlight color in the sidebar."
+    },
+    "sidebar-primary-foreground": {
+      "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-accent": {
       "$value": "{color.muted}",
@@ -584,24 +312,6 @@
       },
       "$description": "Sidebar divider and toolbar hairline border color."
     },
-    "sidebar-primary": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Primary action highlight color in the sidebar."
-    },
-    "sidebar-primary-foreground": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Text and icon ink on sidebar-primary highlights."
-    },
     "sidebar-ring": {
       "$value": "{color.muted-foreground}",
       "$extensions": {
@@ -610,6 +320,296 @@
         }
       },
       "$description": "Focus indicator ring color inside the sidebar."
+    },
+    "inset": {
+      "$value": "{color.muted}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Recessed well surface nested inside a card."
+    },
+    "raised": {
+      "$value": "{color.secondary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Raised control surface resting on a card."
+    },
+    "field": {
+      "$value": "{color.card}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Input well surface below card and inset layers."
+    },
+    "line": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91973, 0.00403, 286.32],
+        "hex": "#e4e4e7"
+      },
+      "$description": "Hairline divider and grid rule inside recessed wells.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
+    },
+    "hover": {
+      "$value": "{color.muted}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Pointer hover overlay fill on interactive items."
+    },
+    "faint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.69542, 0.00939, 264.505],
+        "hex": "#9a9da3"
+      },
+      "$description": "Low-emphasis text for placeholders, units, and tertiary labels.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
+    },
+    "brand": {
+      "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Accent ink for text, icons, and active rules."
+    },
+    "brand-edge": {
+      "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Hairline border on primary accent-filled controls."
+    },
+    "track": {
+      "$value": "{color.muted}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Inactive track background for switches, sliders, and progress bars."
+    },
+    "knob": {
+      "$value": "{color.card}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Switch thumb fill in the off state."
+    },
+    "info": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.53418, 0.17531, 266.181],
+        "hex": "#3d63d1"
+      },
+      "$description": "Informational semantic status color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
+    },
+    "warn": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.5909, 0.13245, 65.117],
+        "hex": "#b26a00"
+      },
+      "$description": "Warning semantic status color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
+    },
+    "up": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.56078, 0.1232, 159.355],
+        "hex": "#138a5a"
+      },
+      "$description": "Positive trend and growth semantic color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
+    },
+    "brand-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.89637, 0.16627, 124.031],
+        "hex": "#c6ef6a",
+        "alpha": 0.1
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.primary}",
+            "percent": 10,
+            "b": "transparent"
+          },
+          "role": "brand"
+        }
+      },
+      "$description": "Translucent brand-accent wash behind selected rows and tinted bubbles."
+    },
+    "inverse": {
+      "$value": "{color.card}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "High-contrast surface for toasts and tooltips."
+    },
+    "inverse-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Primary text ink on inverse surfaces."
+    },
+    "inverse-brand": {
+      "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Accent action color on inverse surfaces."
+    },
+    "info-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.53418, 0.17531, 266.181],
+        "hex": "#3d63d1",
+        "alpha": 0.1
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.info}",
+            "percent": 10,
+            "b": "transparent"
+          },
+          "role": "status"
+        }
+      },
+      "$description": "Translucent informational status background tint."
+    },
+    "warn-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.5909, 0.13245, 65.117],
+        "hex": "#b26a00",
+        "alpha": 0.1
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.warn}",
+            "percent": 10,
+            "b": "transparent"
+          },
+          "role": "status"
+        }
+      },
+      "$description": "Translucent warning status background tint."
+    },
+    "destructive-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.58301, 0.18974, 19.874],
+        "hex": "#d43a4a",
+        "alpha": 0.1
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.destructive}",
+            "percent": 10,
+            "b": "transparent"
+          },
+          "role": "status"
+        }
+      },
+      "$description": "Translucent destructive status background tint."
+    },
+    "up-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.56078, 0.1232, 159.355],
+        "hex": "#138a5a",
+        "alpha": 0.1
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.up}",
+            "percent": 10,
+            "b": "transparent"
+          },
+          "role": "status"
+        }
+      },
+      "$description": "Translucent positive trend background tint."
+    },
+    "down-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.58301, 0.18974, 19.874],
+        "hex": "#d43a4a",
+        "alpha": 0.1
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.destructive}",
+            "percent": 10,
+            "b": "transparent"
+          },
+          "role": "status"
+        }
+      },
+      "$description": "Translucent negative trend background tint."
     }
   },
   "shadow": {
@@ -620,9 +620,9 @@
         {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
-            "alpha": 0.12,
-            "hex": "#000000"
+            "components": [0.1686, 0.02256, 263.693],
+            "alpha": 0.05,
+            "hex": "#0a0f19"
           },
           "offsetX": {
             "value": 0,
@@ -633,7 +633,7 @@
             "unit": "px"
           },
           "blur": {
-            "value": 1,
+            "value": 0,
             "unit": "px"
           },
           "spread": {
@@ -650,9 +650,9 @@
         {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
-            "alpha": 0.35,
-            "hex": "#000000"
+            "components": [0.1686, 0.02256, 263.693],
+            "alpha": 0.04,
+            "hex": "#0a0f19"
           },
           "offsetX": {
             "value": 0,
@@ -680,9 +680,9 @@
         {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
-            "alpha": 0.4,
-            "hex": "#000000"
+            "components": [0.1686, 0.02256, 263.693],
+            "alpha": 0.04,
+            "hex": "#0a0f19"
           },
           "offsetX": {
             "value": 0,
@@ -704,20 +704,20 @@
         {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
-            "alpha": 0.6,
-            "hex": "#000000"
+            "components": [0.1686, 0.02256, 263.693],
+            "alpha": 0.22,
+            "hex": "#0a0f19"
           },
           "offsetX": {
             "value": 0,
             "unit": "px"
           },
           "offsetY": {
-            "value": 16,
+            "value": 12,
             "unit": "px"
           },
           "blur": {
-            "value": 32,
+            "value": 28,
             "unit": "px"
           },
           "spread": {
@@ -734,9 +734,9 @@
         {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
-            "alpha": 0.4,
-            "hex": "#000000"
+            "components": [0.1686, 0.02256, 263.693],
+            "alpha": 0.04,
+            "hex": "#0a0f19"
           },
           "offsetX": {
             "value": 0,
@@ -758,20 +758,20 @@
         {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
-            "alpha": 0.6,
-            "hex": "#000000"
+            "components": [0.1686, 0.02256, 263.693],
+            "alpha": 0.22,
+            "hex": "#0a0f19"
           },
           "offsetX": {
             "value": 0,
             "unit": "px"
           },
           "offsetY": {
-            "value": 16,
+            "value": 12,
             "unit": "px"
           },
           "blur": {
-            "value": 32,
+            "value": 28,
             "unit": "px"
           },
           "spread": {
@@ -788,9 +788,9 @@
         {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
-            "alpha": 0.2,
-            "hex": "#000000"
+            "components": [0.1686, 0.02256, 263.693],
+            "alpha": 0.06,
+            "hex": "#0a0f19"
           },
           "offsetX": {
             "value": 0,
@@ -821,7 +821,6 @@
             "color": {
               "colorSpace": "oklch",
               "components": [1, 0, 0],
-              "alpha": 0.06,
               "hex": "#ffffff"
             },
             "offsetX": {
@@ -829,7 +828,7 @@
               "unit": "px"
             },
             "offsetY": {
-              "value": 0,
+              "value": 1,
               "unit": "px"
             },
             "blur": {
@@ -837,7 +836,7 @@
               "unit": "px"
             },
             "spread": {
-              "value": 1,
+              "value": 0,
               "unit": "px"
             },
             "inset": true
@@ -846,7 +845,7 @@
             "color": {
               "colorSpace": "oklch",
               "components": [1, 0, 0],
-              "alpha": 0.08,
+              "alpha": 0.6,
               "hex": "#ffffff"
             },
             "offsetX": {
@@ -854,11 +853,11 @@
               "unit": "px"
             },
             "offsetY": {
-              "value": 1,
+              "value": 2,
               "unit": "px"
             },
             "blur": {
-              "value": 1,
+              "value": 0,
               "unit": "px"
             },
             "spread": {
@@ -877,32 +876,7 @@
             "color": {
               "colorSpace": "oklch",
               "components": [1, 0, 0],
-              "alpha": 0.22,
-              "hex": "#ffffff"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 0,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 0,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 1,
-              "unit": "px"
-            },
-            "inset": true
-          },
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [1, 0, 0],
-              "alpha": 0.35,
+              "alpha": 0.55,
               "hex": "#ffffff"
             },
             "offsetX": {
@@ -914,7 +888,7 @@
               "unit": "px"
             },
             "blur": {
-              "value": 1,
+              "value": 0,
               "unit": "px"
             },
             "spread": {
@@ -926,9 +900,34 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [0.42761, 0.11265, 128.534],
               "alpha": 0.12,
-              "hex": "#000000"
+              "hex": "#3c5a00"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.42761, 0.11265, 128.534],
+              "alpha": 0.14,
+              "hex": "#3c5a00"
             },
             "offsetX": {
               "value": 0,
@@ -939,7 +938,7 @@
               "unit": "px"
             },
             "blur": {
-              "value": 1,
+              "value": 0,
               "unit": "px"
             },
             "spread": {
@@ -957,8 +956,8 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.83973, 0.16469, 124.137],
-          "hex": "#b4dc58"
+          "components": [0.75073, 0.18465, 126.794],
+          "hex": "#8fc21f"
         }
       },
       "gradient": {
@@ -967,16 +966,16 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0.88348, 0.15928, 123.937],
-              "hex": "#c3ea6c"
+              "components": [0.80472, 0.1815, 126.061],
+              "hex": "#a2d33c"
             },
             "position": 0
           },
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0.83973, 0.16469, 124.137],
-              "hex": "#b4dc58"
+              "components": [0.75073, 0.18465, 126.794],
+              "hex": "#8fc21f"
             },
             "position": 1
           }
@@ -991,53 +990,29 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.71963, 0.15821, 125.456],
-          "hex": "#8db536"
+          "components": [0.69169, 0.17204, 126.956],
+          "hex": "#7fae17"
         }
       }
     },
     "raised": {
       "border-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
+        "$value": "{color.border}"
       },
       "border-top-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
+        "$value": "{color.border}"
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
+        "$value": "{color.border}"
       }
     },
     "plate": {
-      "background": {
-        "$type": "color",
-        "$value": "{color.raised}"
-      },
       "border-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
+        "$value": "{color.border}"
       }
     },
     "glass": {
@@ -1045,16 +1020,16 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.25145, 0.01219, 264.328],
-          "hex": "#1f2228",
-          "alpha": 0.78
+          "components": [1, 0, 0],
+          "hex": "#ffffff",
+          "alpha": 0.8
         },
         "$extensions": {
           "dev.aning.shadcn-nsh": {
             "colorOp": {
               "op": "alpha",
-              "color": "{color.card}",
-              "alpha": 0.78
+              "color": "{color.popover}",
+              "alpha": 0.8
             }
           }
         }
@@ -1063,21 +1038,25 @@
     "knob": {
       "background": {
         "$type": "color",
-        "$value": "{color.knob}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "hex": "#ffffff"
+        }
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.foreground}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "hex": "#ffffff"
+            },
             "position": 0
           },
           {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [0.88185, 0.00589, 264.53],
-              "hex": "#d6d8dc"
-            },
+            "color": "{color.raised}",
             "position": 1
           }
         ],
@@ -1089,75 +1068,43 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0.8324, 0.00597, 264.528],
-          "hex": "#c6c8cc"
-        }
-      },
-      "checked-background": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [1, 0, 0],
-          "hex": "#ffffff"
-        }
+        "$value": "{color.input}"
       },
       "checked-border-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.71963, 0.15821, 125.456],
-          "hex": "#8db536"
+          "components": [0.72099, 0.15728, 124.776],
+          "hex": "#8fb536"
         }
       }
     },
     "hover": {
       "background": {
         "$type": "color",
-        "$value": "{color.input}"
+        "$value": "{color.popover}"
       },
       "border-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
+        "$value": "{color.border}"
       },
       "border-top-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
+        "$value": "{color.border}"
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
+        "$value": "{color.border}"
       }
     },
     "pressed": {
       "background": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": "{color.muted}"
       },
       "border-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
+        "$value": "{color.input}"
       }
     }
   }

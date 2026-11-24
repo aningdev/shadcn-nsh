@@ -35,7 +35,7 @@ const layers = [
 const roles = ["inverse", "inverse-foreground", "inverse-brand"];
 
 describe("the finishes a theme states, and the surfaces they paint", () => {
-  test("the default theme states every layer in both appearances", () => {
+  test("the NSH Gallery theme states every layer in both appearances", () => {
     for (const appearance of ["light", "dark"] as const) {
       const merged = appearance === "light" ? mergedLight : mergedDark;
       for (const role of roles) expect(cssVars[appearance][role], role).toBeString();

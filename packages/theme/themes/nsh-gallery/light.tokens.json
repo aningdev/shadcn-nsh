@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "NSH Gallery UI (light appearance, pointer tier) — standalone W3C DTCG 2025.10 tokens.",
+  "$description": "NSH Gallery (light appearance, pointer tier) — standalone W3C DTCG 2025.10 tokens.",
   "$extensions": {
     "dev.aning.shadcn-nsh": {
       "designMd": {
@@ -15,7 +15,7 @@
           "Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way."
         ],
         "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
-        "overview": "NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, ease-out timing motion, and layered surface finishes.",
+        "overview": "NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, ease-out timing motion, and layered surface finishes.",
         "elevation": "Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline borders, contact + cast drop shadows (`card`, `menu`, `modal`, `inverse`), and translucent frosted glass (`glass` with 80% popover alpha).",
         "dos": [
           "Preserve the citrus accent (`primary` / `primary-foreground`) for primary actions, active runs, and focus highlights.",

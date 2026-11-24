@@ -52,7 +52,7 @@ flowchart LR
 
 **定义项**
 
-- 主题类型：自有主题（`default`、`shadcn`、`solid-glass`）照自己的设计语言；原生主题（`apple`、`material`、`winui`）照平台官方外观。
+- 主题类型：自有主题（`nsh-gallery`、`shadcn`、`solid-glass`）照自己的设计语言；原生主题（`apple`、`material`、`winui`）照平台官方外观。
 - 出处：原生主题的每个值都能指到官方资源名（M3 的 `SurfaceContainerHigh`、WinUI 的 `ControlFillColorDefault`），写在生成器注释和主题 README 里。
 - 裁剪：某个控件的官方外观个性化太强、放进契约代价太大时，原生主题可以裁剪，写进主题 README 与 [`native-themes.md`](specs/native-themes.md) 的差异表（契约原则 6）。契约冻结在 contract v3，降级并记账是它的出路：表达不了的外观改值、写进差异表，不加键、不加层。
 
@@ -189,13 +189,13 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **参照**
 
-| 主题                 | control / container / modal | 按钮   | 曲线       |
-| -------------------- | --------------------------- | ------ | ---------- |
-| `default` / `shadcn` | 8 / 12 / 14                 | radius | continuous |
-| `solid-glass`        | 11 / 14 / 20                | radius | continuous |
-| `apple`              | 8 / 12 / 26                 | full   | continuous |
-| `material`           | 4 / 12 / 28                 | full   | circular   |
-| `winui`              | 4 / 8 / 8                   | radius | circular   |
+| 主题          | control / container / modal | 按钮        | 曲线       |
+| ------------- | --------------------------- | ----------- | ---------- |
+| m             | `nsh-gallery` / `shadcn`    | 8 / 12 / 14 | radius     | continuous |
+| `solid-glass` | 11 / 14 / 20                | radius      | continuous |
+| `apple`       | 8 / 12 / 26                 | full        | continuous |
+| `material`    | 4 / 12 / 28                 | full        | circular   |
+| `winui`       | 4 / 8 / 8                   | radius      | circular   |
 
 ### 2.7 尺度与密度
 
@@ -221,12 +221,12 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **参照**
 
-| 主题       | 高度 pointer / touch                                                                        | hit（touch） | 例外                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------- | ------------ | -------------------------------------------------------------------- |
-| `default`  | 24/28/32、32/40/48                                                                          | 44           | —                                                                    |
-| `apple`    | 24/28/32、32/44/56                                                                          | 44           | —                                                                    |
-| `material` | 24/32/40（桌面档低一步，见 [`0003`](../decisions/0003-material-desktop-tier.md)）、32/40/56 | 48           | —                                                                    |
-| `winui`    | 24/32/40、32/40/48                                                                          | 40           | 控件内边距 6、触控 40（WinUI 官方值，出处写在它的 `$extensions` 里） |
+| 主题       | 高度 pointer / touch                                                                        | hit（touch）       | 例外                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------- |
+| m          | `nsh-gallery`                                                                               | 24/28/32、32/40/48 | 44                                                                   | —   |
+| `apple`    | 24/28/32、32/44/56                                                                          | 44                 | —                                                                    |
+| `material` | 24/32/40（桌面档低一步，见 [`0003`](../decisions/0003-material-desktop-tier.md)）、32/40/56 | 48                 | —                                                                    |
+| `winui`    | 24/32/40、32/40/48                                                                          | 40                 | 控件内边距 6、触控 40（WinUI 官方值，出处写在它的 `$extensions` 里） |
 
 ### 2.8 排版
 
@@ -282,7 +282,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 | 主题                               | 按下                                                                | 禁用                                  |
 | ---------------------------------- | ------------------------------------------------------------------- | ------------------------------------- |
-| `default`                          | 缩到 0.97；强调填充变淡到 0.88                                      | 整体 0.5                              |
+| m                                  | `nsh-gallery`                                                       | 缩到 0.97；强调填充变淡到 0.88        | 整体 0.5 |
 | `shadcn` / `solid-glass` / `apple` | 不缩；强调填充变淡到 0.88                                           | 整体 0.5（`apple` 0.3）               |
 | `material`                         | 状态层 8 / 10 / 10 / 16%，加涟漪                                    | `disabled` finish，内容 0.38          |
 | `winui`                            | 换面：`AccentFillColorTertiary` 与 `TextOnAccentFillColorSecondary` | `disabled` finish（`*Disabled` 资源） |
@@ -299,7 +299,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **约束**：弹簧只有三档，状态过渡只有一条。动效解释变化，不做装饰；要能中断；尊重系统的减弱动态效果设置（组件负责）。主题只给档位，不规定哪个组件要动。
 
-**参照**：`default` / `apple` 的弹簧是 1218/70、520/34、320/30；`material` 用 M3 的 `FastSpatial` / `DefaultSpatial` / `SlowSpatial`，进场 500 ms `emphasized-decelerate`；`winui` 用 83 / 167 / 250 ms `decelerate`。`motion.state` 在 `default` / `shadcn` / `solid-glass` / `apple` 取上游悬停层的 120 ms `out-cubic`，`material` 取 M3 `DurationShort2` + `Easing.StandardCubicBezier`（100 ms `standard`），`winui` 取 `ControlFasterAnimationDuration`（83 ms `decelerate`）。
+**参照**：`nsh-gallery` / `apple` 的弹簧是 1218/70、520/34、320/30；`material` 用 M3 的 `FastSpatial` / `DefaultSpatial` / `SlowSpatial`，进场 500 ms `emphasized-decelerate`；`winui` 用 83 / 167 / 250 ms `decelerate`。`motion.state` 在 `nsh-gallery` / `shadcn` / `solid-glass` / `apple` 取上游悬停层的 120 ms `out-cubic`，`material` 取 M3 `DurationShort2` + `Easing.StandardCubicBezier`（100 ms `standard`），`winui` 取 `ControlFasterAnimationDuration`（83 ms `decelerate`）。
 
 ### 2.12 控件维度
 
@@ -318,7 +318,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **约束**：主题只选维度，不在主题里细调某个控件的几何；以组件命名的值（开关多宽、日历格多大）不进主题——同样大小的开关和复选框，几何由各自组件决定，维度只决定“画成哪一类”。要新增一种形态，先在本表登记一个新取值，再改组件怎么画它。
 
-**参照**：`default` / `shadcn` / `solid-glass` / `apple` 用中性一套（盒子、沟槽底、内凹槽、圆点）；`material` 照 M3 的 text field / outlined 选择控件 / tinted track，取 `underline`、`outline`、`tint`、`circle`；`winui` 照 WinUI 的 TextBox 边框、控件描边与 ToggleSwitch，取 `box-underline`、`inset`、`hairline`、`ring`。标签页、分段控件与侧边栏在六套主题里画同一种形态，与 material / winui 原生的差别记在 [`specs/native-themes.md`](specs/native-themes.md) 第 3.6 节。
+**参照**：`nsh-gallery` / `shadcn` / `solid-glass` / `apple` 用中性一套（盒子、沟槽底、内凹槽、圆点）；`material` 照 M3 的 text field / outlined 选择控件 / tinted track，取 `underline`、`outline`、`tint`、`circle`；`winui` 照 WinUI 的 TextBox 边框、控件描边与 ToggleSwitch，取 `box-underline`、`inset`、`hairline`、`ring`。标签页、分段控件与侧边栏在六套主题里画同一种形态，与 material / winui 原生的差别记在 [`specs/native-themes.md`](specs/native-themes.md) 第 3.6 节。
 
 ## 3 不属于主题的东西
 
@@ -345,7 +345,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | `tokens/themes/<id>/finishes.shared.tokens.json`       | 15 个 finish                         |
 | `tokens/themes/<id>/theme.resolver.json`               | 把上面几个文件按外观与档位组合起来   |
 
-除 `default` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 15 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。`default` 是唯一手写的主题：它同时是构建时的根主题，编译产物除了 `themes/default/` 还有 `packages/theme/` 顶层那对 `theme.json` / `semantics.json`（`BUILD_ROOT_THEME`，`scripts/theme/tokens.ts`），这是它唯一特殊的地方——没有一条规则因为它是 `default` 而不同。
+除 `nsh-gallery` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 15 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。`nsh-gallery`（NSH Gallery）是唯一手写的主题：它同时是构建时的根主题，编译产物除了 `themes/nsh-gallery/` 还有 `packages/theme/` 顶层那对 `theme.json` / `semantics.json`（`BUILD_ROOT_THEME`，`scripts/theme/tokens.ts`），这是它唯一特殊的地方——没有一条规则因为它是 `nsh-gallery` 而不同。
 
 **加一套分档值**（`pointer` / `touch`）：加文件，不改代码。主题目录下写 `pointer.tokens.json` 与 `touch.tokens.json`（结构同 `tokens/base/style.{pointer,touch}.tokens.json`，只写这套主题与 base 不同的键），`theme.resolver.json` 的 `modifiers.input` 在 base 的档位文件之后按同名读它，后写者赢。只写其中一个档＝一个错（`check:theme` 的 `checkTiers`）：两档的键必须相同，缺的那档继续用 base 的值。主题不写这两个文件就完全继承 base 的两档。
 

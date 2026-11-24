@@ -68,7 +68,7 @@ const pairsOf = (id: string, self?: string): Pair[] => {
   }
   // Any theme passes that have run (`port:render:theme`): extra cells after the build-time ones.
   for (const palette of PALETTES) {
-    if (palette.id === "default") continue;
+    if (palette.id === "nsh-gallery") continue;
     for (const scheme of schemes) {
       const ours = `${id}-${palette.id}-${scheme}.png`;
       if (fs.existsSync(path.join(themeShots, ours))) {

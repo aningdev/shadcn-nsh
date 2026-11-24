@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "Appearance-invariant base tokens for the default NSH Gallery UI theme.",
+  "$description": "Appearance-invariant base tokens for the NSH Gallery theme.",
   "dimension": {
     "$type": "dimension",
     "$description": "Appearance-invariant base dimensional tokens.",
@@ -77,7 +77,7 @@
   "$extensions": {
     "dev.aning.shadcn-nsh": {
       "designMd": {
-        "overview": "NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, ease-out timing motion, and layered surface finishes.",
+        "overview": "NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, ease-out timing motion, and layered surface finishes.",
         "elevation": "Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline borders, contact + cast drop shadows (`card`, `menu`, `modal`, `inverse`), and translucent frosted glass (`glass` with 80% popover alpha).",
         "dos": [
           "Preserve the citrus accent (`primary` / `primary-foreground`) for primary actions, active runs, and focus highlights.",

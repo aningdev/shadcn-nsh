@@ -16,7 +16,7 @@ import { PALETTES, type PaletteId } from "../../../demos/palettes";
 
 export function PaletteSwitch({ label = "Demo theme" }: { label?: string }) {
   // The stored choice is read after mount: it is the visitor's, not the build's.
-  const [current, setCurrent] = useState<PaletteId>("default");
+  const [current, setCurrent] = useState<PaletteId>("nsh-gallery");
   // Chrome counts a click on a `<select>` as a focus to show, so the ring would stay on after a
   // choice made with the pointer until the next click elsewhere. A choice made with the pointer
   // lets the focus go; one made with the keys keeps it, ring and all.

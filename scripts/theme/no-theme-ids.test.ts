@@ -52,7 +52,7 @@ function filesUnder(target: string): string[] {
 describe("no script branches on a theme id", () => {
   test("every theme is a test subject, so a new one is covered", () => {
     expect(THEME_IDS.length).toBeGreaterThan(1);
-    expect(THEME_IDS).toContain("default");
+    expect(THEME_IDS).toContain("nsh-gallery");
   });
 
   test("no compiler, linter or generator compares one", () => {

@@ -9,7 +9,7 @@
  *
  * The test opens each page with the palette in its storage, as the site's switch leaves it, and the
  * page reads it before it mounts (`apply-palette.ts`): the theme arrives the way an app gets it,
- * not from a second `nsh.json` or a copy of the demos with a `selectTheme` added. `default` is the
+ * not from a second `nsh.json` or a copy of the demos with a `selectTheme` added. `nsh-gallery` is the
  * build-time theme, whose check is `render.ts`.
  *
  * `--only`, `--changed` and `--shard` narrow the ids exactly as they do there, `--changed` also
@@ -50,7 +50,9 @@ import {
 const demos = catalog().paths.demos;
 const shots = path.join(demos, "shots-theme");
 /** The themes to check: the build-time one is `render.ts`'s. */
-const pool: string[] = PALETTES.filter((palette) => palette.id !== "default").map(({ id }) => id);
+const pool: string[] = PALETTES.filter((palette) => palette.id !== "nsh-gallery").map(
+  ({ id }) => id,
+);
 const only = onlyIds();
 
 /** The themes `--theme` names, validated against the pool; nothing when the flag is absent. */

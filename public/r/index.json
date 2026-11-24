@@ -127,40 +127,40 @@
       ]
     },
     {
-      "name": "theme-default",
+      "name": "theme-nsh-gallery",
       "type": "registry:theme",
-      "title": "Theme: NSH Gallery UI",
-      "description": "The library's own theme (the build-time one) as one more theme, installed into themes/default/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) — what an app built on another theme switches back to with `selectTheme` while it runs.",
+      "title": "Theme: NSH Gallery",
+      "description": "The library's own theme (the build-time one) as one more theme, installed into themes/nsh-gallery/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) — what an app built on another theme switches back to with `selectTheme` while it runs.",
       "files": [
         {
-          "path": "packages/theme/themes/default/theme.json",
+          "path": "packages/theme/themes/nsh-gallery/theme.json",
           "type": "registry:file",
-          "target": "themes/default/theme.json"
+          "target": "themes/nsh-gallery/theme.json"
         },
         {
-          "path": "packages/theme/themes/default/semantics.json",
+          "path": "packages/theme/themes/nsh-gallery/semantics.json",
           "type": "registry:file",
-          "target": "themes/default/semantics.json"
+          "target": "themes/nsh-gallery/semantics.json"
         },
         {
-          "path": "packages/theme/themes/default/light.tokens.json",
+          "path": "packages/theme/themes/nsh-gallery/light.tokens.json",
           "type": "registry:file",
-          "target": "themes/default/light.tokens.json"
+          "target": "themes/nsh-gallery/light.tokens.json"
         },
         {
-          "path": "packages/theme/themes/default/dark.tokens.json",
+          "path": "packages/theme/themes/nsh-gallery/dark.tokens.json",
           "type": "registry:file",
-          "target": "themes/default/dark.tokens.json"
+          "target": "themes/nsh-gallery/dark.tokens.json"
         },
         {
-          "path": "packages/theme/themes/default/DESIGN.md",
+          "path": "packages/theme/themes/nsh-gallery/DESIGN.md",
           "type": "registry:file",
-          "target": "themes/default/DESIGN.md"
+          "target": "themes/nsh-gallery/DESIGN.md"
         },
         {
-          "path": "packages/theme/themes/default/index.ts",
+          "path": "packages/theme/themes/nsh-gallery/index.ts",
           "type": "registry:lib",
-          "target": "themes/default/index.ts"
+          "target": "themes/nsh-gallery/index.ts"
         }
       ]
     },
@@ -282,7 +282,7 @@
       "name": "theme-native",
       "type": "registry:theme",
       "title": "Theme: native (per platform)",
-      "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the default theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the themes it names (themes/apple/, themes/material/, themes/winui/, themes/default/).",
+      "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the NSH Gallery theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the themes it names (themes/apple/, themes/material/, themes/winui/, themes/nsh-gallery/).",
       "files": [
         {
           "path": "packages/theme/themes/native/index.ts",

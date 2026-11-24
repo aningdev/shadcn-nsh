@@ -35,7 +35,7 @@ const picker = {
   files: [{ path: "picker.tsx", type: "registry:ui" }],
 };
 
-const defaultTheme = {
+const libraryTheme = {
   name: "theme",
   type: "registry:theme",
   files: [
@@ -146,16 +146,16 @@ describe("checkRegistryDependencies", () => {
     const registry: Registry = {
       name: "t",
       homepage: "",
-      items: [defaultTheme, neutralTheme],
+      items: [libraryTheme, neutralTheme],
     };
     expect(await checkRegistryDependencies(registry, dir)).toEqual([]);
   });
 
-  test("a component's theme package import is the default theme's", async () => {
+  test("a component's theme package import is the build-time theme's", async () => {
     const registry: Registry = {
       name: "t",
       homepage: "",
-      items: [defaultTheme, neutralTheme, themed],
+      items: [libraryTheme, neutralTheme, themed],
     };
     expect(await checkRegistryDependencies(registry, dir)).toEqual([
       'themed: imports "theme" but does not declare it',
@@ -163,7 +163,7 @@ describe("checkRegistryDependencies", () => {
 
     const declared: Registry = {
       ...registry,
-      items: [defaultTheme, neutralTheme, { ...themed, registryDependencies: ["theme"] }],
+      items: [libraryTheme, neutralTheme, { ...themed, registryDependencies: ["theme"] }],
     };
     expect(await checkRegistryDependencies(declared, dir)).toEqual([]);
   });

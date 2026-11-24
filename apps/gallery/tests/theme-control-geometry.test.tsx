@@ -75,8 +75,8 @@ test("control dimensions and component looks follow the active theme", async () 
   expect(find(app.texts(), "grabber=")).toBe("36x5");
   expect(find(app.texts(), "calendar=")).toBe("32");
 
-  // Revert to build-time default ("base")
-  await app.press("text:Default");
+  // Revert to the build-time theme ("base")
+  await app.press("text:NSH Gallery");
   expect(app.texts()).toContain("theme:build-time");
   assertBase();
 });

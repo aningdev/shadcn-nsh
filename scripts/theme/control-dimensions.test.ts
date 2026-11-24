@@ -54,7 +54,7 @@ describe("the spec's control dimensions", () => {
 
   test("is read from semantics.json, never from theme.json", () => {
     for (const name of themes) {
-      const file = name === "default" ? read("theme.json") : read(`themes/${name}/theme.json`);
+      const file = name === "nsh-gallery" ? read("theme.json") : read(`themes/${name}/theme.json`);
       expect(JSON.stringify(file)).not.toContain("dimension.control");
       expect(semantics(name).dimension.control).toBeDefined();
     }
@@ -67,7 +67,7 @@ describe("the spec's control dimensions", () => {
       track: "sunk",
       handle: "circle",
     };
-    expect(semantics("default").dimension.control).toEqual(base);
+    expect(semantics("nsh-gallery").dimension.control).toEqual(base);
     // shadcn, solid glass and Apple draw the library's controls: no axis differs from the base, so
     // their tokens state no `dimension.control` at all and the base's values compile in.
     for (const name of ["shadcn", "solid-glass", "apple"])
@@ -120,7 +120,7 @@ describe("the spec's recipe numbers", () => {
 describe("motion.state", () => {
   test("is timed on every theme, at the platform's own duration", () => {
     const durations: Record<string, [number, string]> = {
-      default: [120, "out-cubic"],
+      "nsh-gallery": [120, "out-cubic"],
       shadcn: [120, "out-cubic"],
       "solid-glass": [120, "out-cubic"],
       apple: [120, "out-cubic"],
@@ -133,8 +133,8 @@ describe("motion.state", () => {
     }
   });
 
-  test("the default theme paces the other three roles at out-cubic", () => {
-    const { motion } = semantics("default");
+  test("the NSH Gallery theme paces the other three roles at out-cubic", () => {
+    const { motion } = semantics("nsh-gallery");
     expect(motion.fast).toEqual({ duration: 150, timingFunction: "out-cubic" });
     expect(motion.default).toEqual({ duration: 250, timingFunction: "out-cubic" });
     expect(motion.slow).toEqual({ duration: 350, timingFunction: "out-cubic" });

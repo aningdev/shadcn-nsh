@@ -1,7 +1,7 @@
 ---
 version: alpha
-name: "NSH Gallery UI"
-description: "Default NSH Gallery UI theme."
+name: "NSH Gallery"
+description: "NSH Gallery: the official NSH look, as nsh.dev's demos draw it."
 colors:
   scrim: "#00000073"
   media: "#10131a"
@@ -291,13 +291,13 @@ components:
     rounded: "{rounded.container}"
 ---
 
-# NSH Gallery UI
+# NSH Gallery
 
 ## Overview
 
-Default NSH Gallery UI theme.
+NSH Gallery: the official NSH look, as nsh.dev's demos draw it.
 
-NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, ease-out timing motion, and layered surface finishes.
+NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, ease-out timing motion, and layered surface finishes.
 
 ## Colors
 

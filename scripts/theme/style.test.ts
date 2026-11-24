@@ -22,13 +22,13 @@ const reference = read("semantics.json") as Record<string, unknown>;
 const cssVars = read("theme.json").cssVars as ThemeCssVars;
 const kinds = tokenKinds(cssVars);
 
-/** A deep copy of the default theme's semantics, for a test to damage. */
+/** A deep copy of the NSH Gallery theme's semantics, for a test to damage. */
 const copy = () => structuredClone(reference) as Record<string, any>;
 const check = (file: Record<string, unknown>, tokenMap = kinds) =>
   checkStyle("fixture/semantics.json", file, reference, tokenMap);
 
 describe("checkStyle", () => {
-  test("the default theme is clean", () => {
+  test("the build-time theme is clean", () => {
     expect(check(copy())).toEqual([]);
   });
 
@@ -52,7 +52,7 @@ describe("checkStyle", () => {
     ).toEqual(["transition.enter.duration", "transition.enter.timingFunction"]);
   });
 
-  test("names a key the default theme does not state", () => {
+  test("names a key the build-time theme does not state", () => {
     const file = copy();
     file.state.glow = 1;
     expect(check(file).join("\n")).toContain("state.glow");
@@ -76,7 +76,7 @@ describe("checkStyle", () => {
     expect(problems).toContain('dimension.control.track` is "row"');
   });
 
-  test("holds every whitelist to the value the default theme states", () => {
+  test("holds every whitelist to the value the build-time theme states", () => {
     const file = copy();
     const have = leaves(styleOf(file));
     for (const [pattern, allowed] of Object.entries(whitelists)) {
@@ -174,7 +174,7 @@ describe("scaledRadii", () => {
 });
 
 describe("checkTiers", () => {
-  test("the default theme states both tiers everywhere", () => {
+  test("the build-time theme states both tiers everywhere", () => {
     expect(checkTiers("semantics.json", copy())).toEqual([]);
   });
 

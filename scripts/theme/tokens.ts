@@ -6,12 +6,12 @@
  */
 
 /**
- * The theme the runtime artifacts at the top of `packages/theme` are compiled from. `default` is a
- * theme like the others and also the build-time root an app installs, so its pair is written twice
- * (under `themes/default/` and at `packages/theme/`). Nothing else about it is privileged: no rule
- * reads a theme's id, and this constant is the one name a build says out loud.
+ * The theme the runtime artifacts at the top of `packages/theme` are compiled from. `nsh-gallery` is
+ * a theme like the others and also the build-time root an app installs, so its pair is written twice
+ * (under `themes/nsh-gallery/` and at `packages/theme/`). Nothing else about it is privileged: no
+ * rule reads a theme's id, and this constant is the one name a build says out loud.
  */
-export const BUILD_ROOT_THEME = "default";
+export const BUILD_ROOT_THEME = "nsh-gallery";
 
 /** Token kinds named after W3C Design Tokens Format Module 2025.10 (`$type`). */
 export type TokenKind = "color" | "dimension";

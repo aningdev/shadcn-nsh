@@ -39,12 +39,12 @@ export function setAppearance(next: Appearance) {
 }
 
 /** The palette chosen, as `palettes.ts` names it. */
-export const palette = signal<PaletteId>("default");
+export const palette = signal<PaletteId>("nsh-gallery");
 
-/** Draws the app in `id` while it runs and keeps the choice; `default` needs no theme file. */
+/** Draws the app in `id` while it runs and keeps the choice; `nsh-gallery` needs no theme file. */
 export function choosePalette(id: PaletteId) {
   palette.set(id);
-  if (id === "default") {
+  if (id === "nsh-gallery") {
     selectTheme(null);
     void Storage.removeItem(PALETTE_KEY);
     return;
@@ -109,7 +109,7 @@ async function start() {
   try {
     // The palette the app starts in: its own choice, else the website's, else the build-time theme.
     const own = await Storage.getItem(PALETTE_KEY);
-    const start = paletteOf(own) ?? paletteOf(sitePalette()) ?? "default";
+    const start = paletteOf(own) ?? paletteOf(sitePalette()) ?? "nsh-gallery";
     palette.set(start);
 
     // An appearance kept from an earlier run (`"system"` when the entry is gone or unknown).
@@ -118,7 +118,7 @@ async function start() {
     appearance.set(chosen);
     setColorScheme(chosen);
 
-    if (start !== "default") {
+    if (start !== "nsh-gallery") {
       selectTheme(await paletteTheme(start));
       themed = true;
     }

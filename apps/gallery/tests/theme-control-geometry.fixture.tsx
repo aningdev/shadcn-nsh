@@ -48,7 +48,7 @@ function App() {
       <Spinner side={40} tint={colors.brand} />
       <Button onPress={() => selectTheme(materialTheme)}>Material</Button>
       <Button onPress={() => selectTheme(winuiTheme)}>WinUI</Button>
-      <Button onPress={() => selectTheme(null)}>Default</Button>
+      <Button onPress={() => selectTheme(null)}>NSH Gallery</Button>
     </View>
   );
 }

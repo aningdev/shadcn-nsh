@@ -41,7 +41,7 @@ export type NshUiConfig = {
   /**
    * The `registry:theme` item this app installs: `theme` (the library's own) or another theme's
    * item such as `theme-shadcn`. A component's `theme` dependency resolves to it, so `add` after
-   * `init --theme shadcn` keeps the app's theme instead of writing the default one back.
+   * `init --theme shadcn` keeps the app's theme instead of writing the build-time one back.
    */
   theme: string;
   aliases: {
@@ -63,14 +63,14 @@ export const DEFAULT_THEME = "theme";
 
 /**
  * The item that picks a theme per platform at run time (`nativeTheme()`). It ships no data of its
- * own: an app on it is built on the default theme, and gets Apple's, Material's, WinUI 3's and the
- * default's under `themes/` for `selectTheme(nativeTheme())`.
+ * own: an app on it is built on the NSH Gallery theme, and gets Apple's, Material's, WinUI 3's and
+ * NSH Gallery's under `themes/` for `selectTheme(nativeTheme())`.
  */
 export const NATIVE_THEME = "theme-native";
 
 /** The themes `init --theme` takes, by the name on the command line: the item each one installs. */
 export const THEMES = {
-  default: DEFAULT_THEME,
+  "nsh-gallery": DEFAULT_THEME,
   shadcn: "theme-shadcn",
   "solid-glass": "theme-solid-glass",
   apple: "theme-apple",

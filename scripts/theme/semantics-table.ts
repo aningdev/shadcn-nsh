@@ -38,7 +38,7 @@ export const MISSING = "—";
  * example theme, not one of the platforms this library answers to.
  */
 export const COLUMNS = [
-  { id: "default", label: "NSH Gallery" },
+  { id: "nsh-gallery", label: "NSH Gallery" },
   { id: "shadcn", label: "shadcn/ui" },
   { id: "apple", label: "Apple" },
   { id: "material", label: "Material" },
@@ -494,7 +494,7 @@ const INTRO = `# 每套主题解析后的值
 本页列五套主题编译后的每一个字段：\`theme.json\` 的颜色角色，以及 \`semantics.json\` 的八组语义值。它是**值**的表，不是规则：每个角色、每个 finish 的含义与读者见 [\`theme-roles.md\`](theme-roles.md)，要决定什么见 [\`../theme-design.md\`](../theme-design.md)，一套值为什么这么定见 [\`native-themes.md\`](native-themes.md)。
 
 - 一行是一个字段：\`字段\` 列是编译产物里的路径（\`theme.json\` 的 \`cssVars.light\` / \`cssVars.dark\` / \`cssVars.theme\`，或 \`semantics.json\` 的同名路径）。行取五套主题的并集：只有一套主题写了的字段照样一行，其余四格是 \`—\`。
-- 五列是五套主题，\`default\` 一列写 NSH Gallery，其余按平台名。\`solid-glass\` 不在本页：它是玻璃的示例主题，不是本库要对齐的五套基线。
+- 五列是五套主题，\`nsh-gallery\` 一列写 NSH Gallery，其余按平台名。\`solid-glass\` 不在本页：它是玻璃的示例主题，不是本库要对齐的五套基线。
 - 行序取五套主题第一次写出这个字段的顺序：某套主题独有的字段排在后面。
 - 一格写 \`a / b\`，表示两种取值不同：颜色表与 \`elevation\` 是 light / dark，\`typography\`、\`dimension\` 是指针 / 触屏两档。只有一种取值时写一个。
 - 写 \`—\` 是这套主题不用这个字段（没有这个字段，或值为 \`null\`）；五套主题都不用的字段不列。反引号里的 \`none\` 是真正的 CSS 值。数字与布尔照写，字符串在反引号里，数组与对象写成紧凑 JSON。

@@ -4,15 +4,15 @@
 
 copy-into-app 层的品牌外观：本库所有，起点是上游 gallery UI 主题。**颜色一律 `oklch()`** —— token、渐变的每一站、阴影里的颜色 —— 透明度写成 `oklch(… / a)`。NSH 在颜色是字符串的地方都认 `oklch()`（`references/nsh/website/docs/styling.md#colors`），所以一个文件里只有一种颜色形式，读一个值就是读它的亮度与色相。
 
-| 文件                                    | 作用                                                                                                                                                                                                                                                                                                                                                |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tokens/`                               | 全部 6 套主题的 W3C DTCG 2025.10 源码真源（`tokens/base/*` 与 `tokens/themes/<id>/*`），经 `bun run tokens:build` 编译为 `theme.json`、`semantics.json`、`{light,dark}.tokens.json`、`DESIGN.md` 与 `themes/<id>/`                                                                                                                                  |
-| `theme.json`                            | 编译后的基础 token：颜色（明暗与共用）、3 个层圆角（`radius-control`、`radius-container`、`radius-modal`）及由 `radius-control` 派生的 A 层 `radius` 槽（`cssVars`）                                                                                                                                                                                |
-| `semantics.json`                        | 编译后的跨平台语义层：DTCG 命名的风格组（`typography`、`dimension`、`shape`、`state`、`transition`、`motion`），其中 `dimension.control` 写四个按行为命名的控件维度，`motion.state` 写状态过渡、影子刻度 `elevation`（每个外观一份）与 `finishes`（`shared` + 稀疏 `light`/`dark` 覆写），以 `{token}` 引用基础 token                               |
-| `light.tokens.json`, `dark.tokens.json` | 按明暗外观在 `pointer` 档预解析的独立 W3C DTCG 2025.10 Format 文件（保留组内 `{...}` 别名与 6 位 `hex` 回退），供导入 Figma Variables（Light/Dark 模式）、Tokens Studio 与 Style Dictionary v4；仅作随库分发主题的静态快照（运行时不读，也不会随之后对 `theme.json` 的修改更新）                                                                    |
-| `DESIGN.md`                             | 生成的 Google Labs DESIGN.md（`alpha`）设计语言规范，供编码代理读取，由 DTCG 源码与 pointer 档明暗解析结果投影生成（`#RRGGBB`/`#RRGGBBAA` 颜色、字阶、圆角、间距、动效、组件与设计说明；不手改）                                                                                                                                                    |
-| `theme.ts`                              | `colors` / `finish` / `shape` / `font` / `style` / `focusRing` / `selectTheme` / `fillStyle` 等读取器                                                                                                                                                                                                                                               |
-| `themes/<name>/`                        | 其它主题，各一个 `AppTheme`：`shadcn/`（shadcn 的 `neutral`）、`solid-glass/`（Solid Glass）、`apple/`（Apple 系统色与 Liquid Glass）、`material/`（Material 3 Expressive）、`winui/`（Windows 11 WinUI 3）、`native/`（`nativeTheme()`：iOS 与 macOS 用 apple，Android 用 material，Windows 用 winui，其余用默认）、`default/`（本库这套，供多装） |
+| 文件                                    | 作用                                                                                                                                                                                                                                                                                                                                                                         |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tokens/`                               | 全部 6 套主题的 W3C DTCG 2025.10 源码真源（`tokens/base/*` 与 `tokens/themes/<id>/*`），经 `bun run tokens:build` 编译为 `theme.json`、`semantics.json`、`{light,dark}.tokens.json`、`DESIGN.md` 与 `themes/<id>/`                                                                                                                                                           |
+| `theme.json`                            | 编译后的基础 token：颜色（明暗与共用）、3 个层圆角（`radius-control`、`radius-container`、`radius-modal`）及由 `radius-control` 派生的 A 层 `radius` 槽（`cssVars`）                                                                                                                                                                                                         |
+| `semantics.json`                        | 编译后的跨平台语义层：DTCG 命名的风格组（`typography`、`dimension`、`shape`、`state`、`transition`、`motion`），其中 `dimension.control` 写四个按行为命名的控件维度，`motion.state` 写状态过渡、影子刻度 `elevation`（每个外观一份）与 `finishes`（`shared` + 稀疏 `light`/`dark` 覆写），以 `{token}` 引用基础 token                                                        |
+| `light.tokens.json`, `dark.tokens.json` | 按明暗外观在 `pointer` 档预解析的独立 W3C DTCG 2025.10 Format 文件（保留组内 `{...}` 别名与 6 位 `hex` 回退），供导入 Figma Variables（Light/Dark 模式）、Tokens Studio 与 Style Dictionary v4；仅作随库分发主题的静态快照（运行时不读，也不会随之后对 `theme.json` 的修改更新）                                                                                             |
+| `DESIGN.md`                             | 生成的 Google Labs DESIGN.md（`alpha`）设计语言规范，供编码代理读取，由 DTCG 源码与 pointer 档明暗解析结果投影生成（`#RRGGBB`/`#RRGGBBAA` 颜色、字阶、圆角、间距、动效、组件与设计说明；不手改）                                                                                                                                                                             |
+| `theme.ts`                              | `colors` / `finish` / `shape` / `font` / `style` / `focusRing` / `selectTheme` / `fillStyle` 等读取器                                                                                                                                                                                                                                                                        |
+| `themes/<name>/`                        | 其它主题，各一个 `AppTheme`：`shadcn/`（shadcn 的 `neutral`）、`solid-glass/`（Solid Glass）、`apple/`（Apple 系统色与 Liquid Glass）、`material/`（Material 3 Expressive）、`winui/`（Windows 11 WinUI 3）、`native/`（`nativeTheme()`：iOS 与 macOS 用 apple，Android 用 material，Windows 用 winui，其余用 NSH Gallery）、`nsh-gallery/`（NSH Gallery，本库这套，供多装） |
 
 ## 规范
 
@@ -24,9 +24,9 @@ copy-into-app 层的品牌外观：本库所有，起点是上游 gallery UI 主
 
 由 [`@shadcn-nsh/ui`](../ui) 使用，并以 registry 的 `theme` 项（应用的**构建时主题**）与 `theme-<name>` 项（其它主题）分发。改任何主题时编辑 `packages/theme/tokens/` 下的 DTCG 源码，再运行 `bun run tokens:build` 编译、`bun run registry:build` 提交 `public/r`。五套生成的主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）改的是 `scripts/theme/generate-<name>.ts`（颜色、风格与控件预置）与 `scripts/theme/finishes/<name>.ts`（十二个层与影子刻度：`finishes`、`shadows`，`shared` 加稀疏 `light` / `dark`），由 `scripts/theme/dtcg.ts` 编码成 DTCG 源码并自动编译；`scripts/theme/generators.test.ts` 逐套断言生成结果与提交的源码逐字节相同。
 
-`default` 的 DTCG 源码（`tokens/`）与编译产物已归本库所有（[`port-map.json`](../../port-map.json) 里的 `"owned"`）：`port:vendor` 不再重填、`port:check` 不再与上游比对，所以像其它源码一样在这里改（[`docs/port.md`](../../docs/port.md#主题文件)）。外观仍以上游 gallery UI 主题为准；变的是数据归谁。
+`nsh-gallery`（NSH Gallery）的 DTCG 源码（`tokens/`）与编译产物已归本库所有（[`port-map.json`](../../port-map.json) 里的 `"owned"`）：`port:vendor` 不再重填、`port:check` 不再与上游比对，所以像其它源码一样在这里改（[`docs/port.md`](../../docs/port.md#主题文件)）。外观仍以上游 gallery UI 主题为准；变的是数据归谁。
 
-全部 6 套主题的 `themes/<id>/{theme,semantics}.json`、`{light,dark}.tokens.json` 与 `DESIGN.md`（以及 `default` 根目录的对应文件）均由 `bun run tokens:build` 从 `packages/theme/tokens/` 编译生成，不手改（`tokens:build --check` 与 `scripts/theme/themes.test.ts` 保证与源码一致）；旁边的 `index.ts` 是手写的一次性声明，给这套主题一个名字。构建时主题本身也能当"多装的一套"，因为 registry 条目分发的是文件，不是本包里的一个路径。
+全部 6 套主题的 `themes/<id>/{theme,semantics}.json`、`{light,dark}.tokens.json` 与 `DESIGN.md`（以及 `nsh-gallery` 在根目录的对应文件）均由 `bun run tokens:build` 从 `packages/theme/tokens/` 编译生成，不手改（`tokens:build --check` 与 `scripts/theme/themes.test.ts` 保证与源码一致）；旁边的 `index.ts` 是手写的一次性声明，给这套主题一个名字。构建时主题本身也能当"多装的一套"，因为 registry 条目分发的是文件，不是本包里的一个路径。
 
 数值按固定精度写（L、C 五位小数，H 三位，alpha 三位），这是换算无损的原因：每个 sRGB 颜色都能落回自己的 8-bit 通道，所以主题改存 `oklch()` 不动一个像素。
 
@@ -78,7 +78,7 @@ export async function chooseTheme(theme: AppTheme | null) {
 }
 ```
 
-**本库这套主题也是其中一员。** 构建时用别的主题的应用（`init --theme shadcn`）可以用 `shadcn-nsh add theme-default` 把构建时那套装在旁边：`themes/default/` 里就是应用"本来会构建成"的那份 `theme.json` 与 `semantics.json`，外加导出 `defaultTheme` 的 `index.ts`。两项都列进清单就能来回切；`selectTheme(null)` 仍是"回到这个应用构建时的那套"，不管是哪一套。
+**本库这套主题也是其中一员。** 构建时用别的主题的应用（`init --theme shadcn`）可以用 `shadcn-nsh add theme-nsh-gallery` 把构建时那套装在旁边：`themes/nsh-gallery/` 里就是应用"本来会构建成"的那份 `theme.json` 与 `semantics.json`，外加导出 `nshGallery` 的 `index.ts`。两项都列进清单就能来回切；`selectTheme(null)` 仍是"回到这个应用构建时的那套"，不管是哪一套。
 
 约定见 [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md)，工具链与基线见 [`docs/toolchain.md`](../../docs/toolchain.md)。
 
@@ -86,4 +86,4 @@ export async function chooseTheme(theme: AppTheme | null) {
 bun run test:unit   # oklch 往返、主题契约，以及其它单测
 ```
 
-换肤时成对替换 `theme.json` 与 `semantics.json`，保留上游声明的键，finish 才能解析。要给应用多一套主题，把一个 `themes/<name>/` 目录原样放进本包（两个 JSON 与命名它的 `index.ts`），并在 `registry.json` 里加一个 `theme-<name>` 项 —— `themes/default/` 对应的就是 `theme-default`。
+换肤时成对替换 `theme.json` 与 `semantics.json`，保留上游声明的键，finish 才能解析。要给应用多一套主题，把一个 `themes/<name>/` 目录原样放进本包（两个 JSON 与命名它的 `index.ts`），并在 `registry.json` 里加一个 `theme-<name>` 项 —— `themes/nsh-gallery/` 对应的就是 `theme-nsh-gallery`。

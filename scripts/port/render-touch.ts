@@ -7,7 +7,7 @@
  *
  * `--only` runs the pages of the ids named (matched whole: the test names carry `id=`), the way
  * the pointer pass does. `--changed` narrows the same list to the pages the diff reaches, and a
- * theme change that moves no page in the default theme moves none here either
+ * theme change that moves no page in the NSH Gallery theme moves none here either
  * (`scripts/port/affected.ts`); `--list` prints what the flags selected and why.
  *
  * The screenshots land in the same `shots/` as the pointer pass, as `<id>-touch-<scheme>.png`.
@@ -44,13 +44,13 @@ if (unknown.length > 0) {
   console.error(`render-touch: no component is called ${unknown.join(", ")}`);
   process.exit(1);
 }
-const scope = changedScope("render-touch", ["default"]);
+const scope = changedScope("render-touch", ["nsh-gallery"]);
 /** The pages to draw: `--only` and `--changed` both narrow, and together they intersect. */
 const ids = narrowed(only, scope.ids);
-/** The touch pass draws the default theme: another one's change moves no page here. */
-const themes = scope.themes ?? ["default"];
+/** The touch pass draws the NSH Gallery theme: another one's change moves no page here. */
+const themes = scope.themes ?? ["nsh-gallery"];
 if (process.argv.includes("--list")) {
-  listScope("render-touch", ids, themes, ["default"]);
+  listScope("render-touch", ids, themes, ["nsh-gallery"]);
   process.exit(0);
 }
 if (themes.length === 0 || ids?.length === 0) {

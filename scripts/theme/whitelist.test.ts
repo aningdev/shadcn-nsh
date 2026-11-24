@@ -17,13 +17,13 @@ const lint = (f: { theme: WhitelistTheme; semantics: WhitelistSemantics }) =>
 
 describe("the ADR 0007 whitelist", () => {
   test("the shipped themes pass", () => {
-    for (const id of ["default", "shadcn", "solid-glass", "apple", "material", "winui"])
+    for (const id of ["nsh-gallery", "shadcn", "solid-glass", "apple", "material", "winui"])
       expect(
         checkWhitelist(
           id,
-          read<WhitelistTheme>(id === "default" ? "theme.json" : `themes/${id}/theme.json`),
+          read<WhitelistTheme>(id === "nsh-gallery" ? "theme.json" : `themes/${id}/theme.json`),
           read<WhitelistSemantics>(
-            id === "default" ? "semantics.json" : `themes/${id}/semantics.json`,
+            id === "nsh-gallery" ? "semantics.json" : `themes/${id}/semantics.json`,
           ),
           semantics,
         ),

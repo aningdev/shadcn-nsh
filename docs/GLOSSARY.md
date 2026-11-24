@@ -76,7 +76,7 @@ _Avoid_: 把 `Label` 组件当作无障碍名、把控件的文字抄进 `access
 _Avoid_: 重写行为, 缩减 props
 
 **Theme Source**:
-`default` 主题的真源是 `packages/theme/tokens/`（W3C DTCG 2025.10：`base/` 与 `themes/default/`），经 `bun run tokens:build` 编译为运行时产物 `theme.json`（基础 token 层：颜色、3 个层圆角 `radius-{control,container,modal}` 及 A 层 `radius` 槽，oklch 存储）、`semantics.json`（跨平台语义层：风格数据与 `finishes` 的 `shared` + 稀疏 `light`/`dark`，以 `{token}` 引用基础层）与 `themes/default/{theme,semantics}.json`；其余主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）同样由 DTCG 源码编译；`theme.ts` 读取编译产物。分层规则见 [`specs/design-semantics.md`](specs/design-semantics.md)，角色清单见 [`specs/theme-roles.md`](specs/theme-roles.md)，DTCG 2025.10 标准见 [`specs/design-tokens.md`](specs/design-tokens.md)。
+`nsh-gallery`（NSH Gallery，本库这套，也是构建时根主题）的真源是 `packages/theme/tokens/`（W3C DTCG 2025.10：`base/` 与 `themes/nsh-gallery/`），经 `bun run tokens:build` 编译为运行时产物 `theme.json`（基础 token 层：颜色、3 个层圆角 `radius-{control,container,modal}` 及 A 层 `radius` 槽，oklch 存储）、`semantics.json`（跨平台语义层：风格数据与 `finishes` 的 `shared` + 稀疏 `light`/`dark`，以 `{token}` 引用基础层）与 `themes/nsh-gallery/{theme,semantics}.json`；其余主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）同样由 DTCG 源码编译；`theme.ts` 读取编译产物。分层规则见 [`specs/design-semantics.md`](specs/design-semantics.md)，角色清单见 [`specs/theme-roles.md`](specs/theme-roles.md)，DTCG 2025.10 标准见 [`specs/design-tokens.md`](specs/design-tokens.md)。
 _Avoid_: neutral 映射, `custom-*` 键
 
 **Design Semantics（语义层 / `semantics.json`）**:

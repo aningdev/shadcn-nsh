@@ -91,7 +91,7 @@ The `material` says what the platform's own glass should be: `null` (every theme
 
 Both follow `selectTheme` and the appearance, and with `material: null` the view is drawn as before. The library's own popovers, hover cards, toasts, the editor's find bar and a glass carousel arrow spread it; the popups of `Menu`, `Select` and `Popover` on `nsh/base` take only `popupStyle`, so there the glass keys apply and the platform props do not.
 
-The `apple` theme fills in `material.apple`: `glass`, `overlay` and `raised` carry `{ glass: "regular" }` (Liquid Glass on iOS and macOS 26+), and every other finish is a flat fill with a hairline edge. The `material` theme uses Material 3 Expressive tonal surfaces, circular corners, 8/10/10% state layers, press ripple (`state.ripple: true`), and `material.android.elevation` on elevated surfaces. The `winui` theme uses WinUI 3 (Windows 11) fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, timing motion, underline tab and box-underline field indicators, and `material.windows` blur on `glass`, `overlay` and `inverse`. `nativeTheme()` from `theme-native` picks the theme of the platform the app runs on — Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the default theme everywhere else:
+The `apple` theme fills in `material.apple`: `glass`, `overlay` and `raised` carry `{ glass: "regular" }` (Liquid Glass on iOS and macOS 26+), and every other finish is a flat fill with a hairline edge. The `material` theme uses Material 3 Expressive tonal surfaces, circular corners, 8/10/10% state layers, press ripple (`state.ripple: true`), and `material.android.elevation` on elevated surfaces. The `winui` theme uses WinUI 3 (Windows 11) fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, timing motion, underline tab and box-underline field indicators, and `material.windows` blur on `glass`, `overlay` and `inverse`. `nativeTheme()` from `theme-native` picks the theme of the platform the app runs on — Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the NSH Gallery theme everywhere else:
 
 ```npm
 npx shadcn-nsh@latest init --theme native
@@ -104,7 +104,7 @@ import { nativeTheme } from "./themes/native";
 selectTheme(nativeTheme());
 ```
 
-`init --theme apple` builds the app on Apple's palette; `--theme native` builds it on the default theme and installs both, for `nativeTheme()` to choose between at run time. On macOS 26+ an explicit `macos.backdrop` wins over `glassEffect`, so `apple` states none; it states `ios.backdrop` as the blur for iOS before 26.
+`init --theme apple` builds the app on Apple's palette; `--theme native` builds it on the NSH Gallery theme and installs both, for `nativeTheme()` to choose between at run time. On macOS 26+ an explicit `macos.backdrop` wins over `glassEffect`, so `apple` states none; it states `ios.backdrop` as the blur for iOS before 26.
 
 Windows' Mica is not a finish: it is the window's own `backdrop` in `nsh-desktop` (Windows 11 maps it to Mica or Acrylic, macOS to a visual effect material), set once by the app in `nsh.json` and shown through surfaces whose fill is translucent:
 

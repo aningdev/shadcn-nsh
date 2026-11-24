@@ -73,7 +73,7 @@ function ShowInPreview({ id }: { id: PaletteId }) {
 }
 
 /** The page's opening: the theme's own name when it differs from the title, the registry item, and
- * the build-time note the default theme carries. */
+ * the build-time note the NSH Gallery theme carries. */
 export function ThemeIntro({ id }: { id: PaletteId }) {
   const theme = themeOf(id);
   return (
@@ -104,7 +104,7 @@ export function ThemeIntro({ id }: { id: PaletteId }) {
         The switch calls it <strong>{theme.palette.label}</strong>; the registry item is{" "}
         <code>{theme.item}</code>. <ShowInPreview id={theme.palette.id} />
       </p>
-      {theme.palette.id === "default" ? (
+      {theme.palette.id === "nsh-gallery" ? (
         <p>
           The build-time theme is the <code>theme</code> item that <code>init</code> writes without
           a flag; this item is the same data, for an app built on another theme to switch back to.

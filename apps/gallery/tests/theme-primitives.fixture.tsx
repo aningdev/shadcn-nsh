@@ -12,7 +12,7 @@ import {
 } from "@shadcn-nsh/theme";
 import { createAnimatedValue, mount, signal, Text, token, View } from "nsh";
 
-import defaultTheme from "../../../packages/theme/themes/default/index";
+import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
 import {
   Button,
   buttonLook,
@@ -25,7 +25,7 @@ import {
 } from "../../../packages/ui";
 import { Roll } from "../../../packages/ui/lib/motion";
 
-const { finishes } = defaultTheme.semantics;
+const { finishes } = nshGallery.semantics;
 
 /**
  * A synthetic theme exercising the Phase 3 cross-platform primitives:
@@ -33,25 +33,25 @@ const { finishes } = defaultTheme.semantics;
  * surface-matched ink, and a layer's `material` and `elevation`.
  */
 const expressive: AppTheme = {
-  ...defaultTheme,
+  ...nshGallery,
   id: "expressive",
   label: "Expressive",
   semantics: {
-    ...defaultTheme.semantics,
+    ...nshGallery.semantics,
     dimension: {
-      ...defaultTheme.semantics.dimension,
+      ...nshGallery.semantics.dimension,
       focus: { style: "double", width: 2, offset: 2 },
     },
     state: {
-      ...defaultTheme.semantics.state,
+      ...nshGallery.semantics.state,
       overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
     },
     transition: {
-      ...defaultTheme.semantics.transition,
+      ...nshGallery.semantics.transition,
       enter: { duration: 200, timingFunction: "point-to-point" },
     },
     motion: {
-      ...defaultTheme.semantics.motion,
+      ...nshGallery.semantics.motion,
       fast: { duration: 150, timingFunction: "emphasized-decelerate" },
       default: { duration: 250, timingFunction: "decelerate" },
       slow: { duration: 167, timingFunction: "accelerate" },

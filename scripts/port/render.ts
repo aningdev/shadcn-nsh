@@ -10,7 +10,7 @@
  * test names carry `id=` so `nsh test`'s substring `--filter` can name one alone.
  * `--changed` narrows the same list to the pages the diff since `<ref>` (default `origin/main`)
  * reaches (`scripts/port/affected.ts`); with `--only` it keeps the pages both name. Neither flag
- * runs the whole table. A theme whose change moves these pages is drawn in the default theme,
+ * runs the whole table. A theme whose change moves these pages is drawn in the NSH Gallery theme,
  * which is all this pass knows: a changed dimension in one of the other themes moves no page here
  * (`--changed` says so), and `port:render:theme` draws it. `--shard i/n` then keeps every n-th of
  * those pages (CI's runners split the table this way, `.github/workflows/check.yml`). `--list`
@@ -47,13 +47,13 @@ import {
 const demos = catalog().paths.demos;
 
 const only = onlyIds();
-const scope = changedScope("render", ["default"]);
+const scope = changedScope("render", ["nsh-gallery"]);
 /** The pages to draw: `--only` and `--changed` both narrow, and together they intersect. */
 const ids = shardIds(narrowed(only, scope.ids));
-/** This pass draws the default theme: another one's change moves no page here. */
-const themes = scope.themes ?? ["default"];
+/** This pass draws the NSH Gallery theme: another one's change moves no page here. */
+const themes = scope.themes ?? ["nsh-gallery"];
 if (process.argv.includes("--list")) {
-  listScope("render", ids, themes, ["default"]);
+  listScope("render", ids, themes, ["nsh-gallery"]);
   process.exit(0);
 }
 if (themes.length === 0 || ids?.length === 0) {

@@ -102,7 +102,7 @@ export function toastActionLabel(): TextStyle {
 }
 
 /** A toast's close button (its cross): a circle 24 points across (the theme's
- * `radius-container` corners, half its side in the default theme), bare until the
+ * `radius-container` corners, half its side in the NSH Gallery theme), bare until the
  * pointer is over it, sinking to 90% while pressed (none with reduced
  * motion); keyboard focus `focusRing()`. */
 export function toastCloseLook() {

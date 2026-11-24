@@ -9,7 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { splitFinishes } from "../theme/tokens";
+import { BUILD_ROOT_THEME, splitFinishes } from "../theme/tokens";
 import { formatColorOpToCss, formatDtcgColor, oklchToHex6, srgbToHex6 } from "./color";
 import { loadSourceItem, mergeTokenTrees, resolvePermutation, type ResolverDoc } from "./resolver";
 import {
@@ -339,12 +339,12 @@ export function compileFinishGroup(
 }
 
 /**
- * Derive each finish role's canonical merged field order from the sibling `default` theme's
- * DTCG source so non-default themes emit fields in the exact same order (`scripts/theme/order.ts`).
+ * Derive each finish role's canonical merged field order from the sibling build-root theme's
+ * DTCG source so the other themes emit fields in the exact same order (`scripts/theme/order.ts`).
  */
-function readDefaultFinishFieldOrder(defaultResolverPath: string): Map<string, string[]> {
-  const dir = path.dirname(defaultResolverPath);
-  const doc = JSON.parse(fs.readFileSync(defaultResolverPath, "utf8")) as ResolverDoc;
+function readRootFinishFieldOrder(rootResolverPath: string): Map<string, string[]> {
+  const dir = path.dirname(rootResolverPath);
+  const doc = JSON.parse(fs.readFileSync(rootResolverPath, "utf8")) as ResolverDoc;
   const sharedTree = (doc.sets?.theme?.sources ?? []).reduce<Record<string, unknown>>(
     (acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)),
     {},
@@ -373,7 +373,7 @@ function readDefaultFinishFieldOrder(defaultResolverPath: string): Map<string, s
   return order;
 }
 
-function orderFinishesByDefault(
+function orderFinishesByRoot(
   finishes: Record<string, Record<string, unknown>>,
   fieldOrderByRole: Map<string, string[]>,
 ): Record<string, Record<string, unknown>> {
@@ -575,14 +575,14 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   const mergedLight = finishesFor(lightFinishesTree, shadowsLight);
   const mergedDark = finishesFor(darkFinishesTree, shadowsDark);
 
-  const defaultResolver = path.resolve(dir, "..", "default", "theme.resolver.json");
+  const rootResolver = path.resolve(dir, "..", BUILD_ROOT_THEME, "theme.resolver.json");
   const finishesOut =
-    absPath !== defaultResolver && fs.existsSync(defaultResolver)
+    absPath !== rootResolver && fs.existsSync(rootResolver)
       ? (() => {
-          const order = readDefaultFinishFieldOrder(defaultResolver);
+          const order = readRootFinishFieldOrder(rootResolver);
           return splitFinishes(
-            orderFinishesByDefault(mergedLight, order),
-            orderFinishesByDefault(mergedDark, order),
+            orderFinishesByRoot(mergedLight, order),
+            orderFinishesByRoot(mergedDark, order),
           );
         })()
       : splitFinishes(mergedLight, mergedDark);

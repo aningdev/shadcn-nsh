@@ -18,7 +18,7 @@ test("double focus, timing motion, state-layer inks and platform material follow
   };
   const readJson = <T,>(key: string): T => JSON.parse(read(key));
 
-  // Built-in default theme before switching: halo focus, timing motion, overlay=0, no material.
+  // Built-in theme before switching: halo focus, timing motion, overlay=0, no material.
   const initialFocus = readJson<Record<string, unknown>>("focus");
   expect(initialFocus.borderColor).toBeDefined();
   expect(initialFocus.boxShadow).toBeUndefined();
@@ -91,7 +91,7 @@ test("double focus, timing motion, state-layer inks and platform material follow
     android: { elevation: 6 },
   });
 
-  // Switch back to build-time default cleanly.
+  // Switch back to the build-time theme cleanly.
   await app.press("text:Reset");
   expect(readJson("focus")).toEqual(initialFocus);
   expect(read("motionFast")).toMatch(/^timing:150:/);

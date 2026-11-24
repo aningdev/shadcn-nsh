@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "Appearance-invariant surface finish recipes for the default theme.",
+  "$description": "Appearance-invariant surface finish recipes for the NSH Gallery theme.",
   "finish": {
     "card": {
       "$description": "A surface that holds content: a card, a section.",

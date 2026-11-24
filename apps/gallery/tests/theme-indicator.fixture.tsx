@@ -1,8 +1,8 @@
 import { colors, control, finish, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
-import { defaultTheme } from "../../../packages/theme/themes/default/index";
 import materialTheme from "../../../packages/theme/themes/material/index";
+import { nshGallery } from "../../../packages/theme/themes/nsh-gallery/index";
 import winuiTheme from "../../../packages/theme/themes/winui/index";
 import { Button, fieldCorners, inputLook } from "../../../packages/ui";
 import { fieldLook } from "../../../packages/ui/lib/look";
@@ -18,17 +18,17 @@ const marked: AppTheme = {
       ...winuiTheme.semantics.finishes,
       shared: {
         ...winuiTheme.semantics.finishes.shared,
-        modal: { ...defaultTheme.semantics.finishes.shared.modal, "border-color": "{brand}" },
-        inverse: { ...defaultTheme.semantics.finishes.shared.inverse, background: "{brand}" },
+        modal: { ...nshGallery.semantics.finishes.shared.modal, "border-color": "{brand}" },
+        inverse: { ...nshGallery.semantics.finishes.shared.inverse, background: "{brand}" },
       },
     },
   },
   theme: {
-    ...defaultTheme.theme,
+    ...nshGallery.theme,
     cssVars: {
-      ...defaultTheme.theme.cssVars,
-      light: { ...defaultTheme.theme.cssVars.light, "inverse-foreground": "oklch(0.5 0.1 120)" },
-      dark: { ...defaultTheme.theme.cssVars.dark, "inverse-foreground": "oklch(0.5 0.1 120)" },
+      ...nshGallery.theme.cssVars,
+      light: { ...nshGallery.theme.cssVars.light, "inverse-foreground": "oklch(0.5 0.1 120)" },
+      dark: { ...nshGallery.theme.cssVars.dark, "inverse-foreground": "oklch(0.5 0.1 120)" },
     },
   },
 };

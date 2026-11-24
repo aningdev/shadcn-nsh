@@ -7,32 +7,32 @@ import { css, parseColor, toOklchText, type Rgb } from "./oklch";
 import { checkStyle } from "./style";
 import { tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
 
-type DefaultThemeFile = {
+type RootThemeFile = {
   cssVars: ThemeCssVars;
 };
 
-type DefaultSemanticsFile = Record<string, unknown> & {
+type RootSemanticsFile = Record<string, unknown> & {
   finishes: SplitFinishes<Record<string, unknown>>;
 };
 
-const defaultTheme = JSON.parse(
+const rootTheme = JSON.parse(
   readFileSync(join(import.meta.dir, "../../packages/theme/theme.json"), "utf8"),
-) as DefaultThemeFile;
-const defaultSemantics = JSON.parse(
+) as RootThemeFile;
+const rootSemantics = JSON.parse(
   readFileSync(join(import.meta.dir, "../../packages/theme/semantics.json"), "utf8"),
-) as DefaultSemanticsFile;
+) as RootSemanticsFile;
 
 const NON_COLOUR_THEME_KEYS = new Set(
-  Object.keys(defaultTheme.cssVars.theme).filter(
+  Object.keys(rootTheme.cssVars.theme).filter(
     (key) => key === "radius" || key.startsWith("radius-"),
   ),
 );
 
-const expectedThemeColourKeys = Object.keys(defaultTheme.cssVars.theme)
+const expectedThemeColourKeys = Object.keys(rootTheme.cssVars.theme)
   .filter((key) => !NON_COLOUR_THEME_KEYS.has(key))
   .sort();
-const expectedLightKeys = Object.keys(defaultTheme.cssVars.light).sort();
-const expectedDarkKeys = Object.keys(defaultTheme.cssVars.dark).sort();
+const expectedLightKeys = Object.keys(rootTheme.cssVars.light).sort();
+const expectedDarkKeys = Object.keys(rootTheme.cssVars.dark).sort();
 
 /** Published Material 3 Expressive baseline hexes (`material-web` v34.0.21 / Compose tokens). */
 const PUBLISHED_LIGHT: Partial<Record<keyof M3Palette, string>> = {
@@ -290,19 +290,19 @@ const shipped = {
 };
 
 describe("compiled material theme files", () => {
-  test("match the default keys and the style schema", () => {
+  test("match the build-time theme's keys and the style schema", () => {
     const files = shipped;
     expect(files.theme.name).toBe("Material");
-    expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(defaultTheme.cssVars.theme));
-    expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));
-    expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(defaultTheme.cssVars.dark));
+    expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(rootTheme.cssVars.theme));
+    expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(rootTheme.cssVars.light));
+    expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(rootTheme.cssVars.dark));
 
     const kinds = tokenKinds(files.theme.cssVars);
     expect(
       checkStyle(
         "packages/theme/themes/material/semantics.json",
         files.semantics,
-        defaultSemantics,
+        rootSemantics,
         kinds,
       ),
     ).toEqual([]);

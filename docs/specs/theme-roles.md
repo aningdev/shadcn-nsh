@@ -143,11 +143,11 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 **组件怎么读 `typography`。** 组件取字号、字重、行高、字距用 `font.size(role)`、`font.weight(role)`、`font.lineHeight(role)`、`font.letterSpacing(role)`（`theme.ts`，响应式，`size` 与 `lineHeight` 按 `tier` 取 pointer / touch 档；`lineHeight()` 返回整数点数，源码里的 DTCG 倍率已在 `tokens:build` 时乘回点数）：只取组件原来写了的那几项，所以没写字重的文字仍继承周围的字重。对应关系：控件上的字（按钮、标签、表单、菜单、标签页）取 `label` 的字重（500）、卡片与区块标题取 `title` 的字重（600）、正文类取 `body`；`body` 的字号（13 / 15）给面包屑、导航菜单、树、命令面板的行与对话框正文，`detail`（12 / 13）给侧栏的分组与计数，`caption`（11 / 12）给分段控件的数量，`label`（14 / 15）给输入框（`fieldSize.font`）。`body` 的行高（20 / 20）给对话框正文。**没有角色对得上的字号留在代码里**，各处有一行注释：按钮、徽标、侧栏档位的 12 / 13 / 14，对话框与卡片标题的 17 / 20、`body + 2`，日历格的 12.8 / 14 / 16，图表轴的 10 / 10.5，命令面板分组名的 11 加 0.6 字距，气泡与空状态说明的 1.5 倍行高（取整后 20 / 20，与 `body` 的 20 同值），以及写在 Tailwind 类里的 `text-sm` / `text-base` / `text-xs`、`font-semibold`（类名读不了 getter）。
 
-**组件怎么读 `shape`、`stroke`、`state`、`size`。** 圆角按层读 `shape.{control,container,modal,button}`（`theme.ts`，响应式）：页内元素（输入框、行、徽标、标签、井、色区、kbd）读 `shape.control`，按钮类控件（`Button`、`IconButton`、`SplitButton`、`Toggle`、`ButtonGroup`、分页按钮、日历头部按钮）读 `shape.button`（`shape.corners.button` 为 `"full"` 时取 `999` 胶囊，否则取 `shape.control`），容器与浮层（卡片、菜单、弹出层、富提示、列表面板、toast）读 `shape.container`，模态面（对话框、抽屉、底部面板）读 `shape.modal`；嵌套表面不再单设 `inset` 圆角角色，改用 `rounded(outer, inset)` 按同心推出（内 = 外 − inset，不小于 0）：复选框的钩、分段控件的滑块与轨道、组合框的箭头钮、附件缩略图与颜色选择器的色块；复选框小角在组件预设 `checkboxPresets.corner`。线宽读 `stroke`（`dimension.stroke`），只有两条：控件的描边 `stroke.control`（按钮、输入框、选择器、复选框、分段、标签页、徽标…）与发丝线 `stroke.hairline`（分隔线、描边变体，以及卡片、面板、浮层与弹窗等表面的边 —— Material 不要这道边，由它的 finish 把 `border-color` 写成 `transparent`，而不是把线宽设成 0）；焦点环宽只有 `dimension.focus.width`，由 `focusRing()` 读。按下的透明度 `dimmed.pressed`（`state["pressed-opacity"]`），静止的指示器（滚动条滑块）读 `dimmed.rest`（`state["rest-opacity"]`，默认 `0.5`），在指针下或被拖动时升到 `dimmed.pressed`（写进滑块的 class 字符串：悬停是 class 的事），强调色控件按下时读 `finish.accent.pressedOpacity`（`accent` 的 `pressed-opacity`），按下时换强调色的主题再读 `finish.accent` 的 `pressedBackground` / `pressedForeground`；禁用时若 `state.disabled.fill` 为 `false` 则沿用统一视图 `opacity: dimmed.disabled`，为 `true`（Material / WinUI）则由 `finish.disabled`（无边/关态另按变体设边）绘容器、由 `finish.disabled.foreground` 绘字与图标；`state.overlay` 经 `stateLayer(kind)` 变成一层前景色的渐变，`hovered()` 已带上悬停的那一层（default 的叠色是 0，不画）。尺寸：高度只有一把尺子 `dimension.size.height`（`controlHeight.sm / md / lg` 与 `controlSize.row`、`controlSize.line`、`controlSize.tabs` 都取它，`row`/`line`/`tabs` 取 `lg`），图标一把 `dimension.icon`（`iconSize` 与 `controlSize.control`、`controlSize.clear` 取 `md`，`controlSize.check` 取 `sm`），触控目标 `hitTarget()`（`dimension.size.hit`；`touchSlop`、`switchHitSlop` 按它补点按范围；0 不补）。各控件家族随平台切换的几何、指示条样式与粗细（`checkbox`、`switch`、`slider`、`radio-group`、`progress`、`spinner`、`tabs`、`calendar`、`sheet` 抓取条、`sidebar` 选中条与字段指示器）归属各自组件及共享 `lib/indicator`；控件维度的四档由 `control()` 读，换主题后下一帧重画；标签页、分段控件与侧边栏的选中项不读维度，四套基础主题下同一形态。
+**组件怎么读 `shape`、`stroke`、`state`、`size`。** 圆角按层读 `shape.{control,container,modal,button}`（`theme.ts`，响应式）：页内元素（输入框、行、徽标、标签、井、色区、kbd）读 `shape.control`，按钮类控件（`Button`、`IconButton`、`SplitButton`、`Toggle`、`ButtonGroup`、分页按钮、日历头部按钮）读 `shape.button`（`shape.corners.button` 为 `"full"` 时取 `999` 胶囊，否则取 `shape.control`），容器与浮层（卡片、菜单、弹出层、富提示、列表面板、toast）读 `shape.container`，模态面（对话框、抽屉、底部面板）读 `shape.modal`；嵌套表面不再单设 `inset` 圆角角色，改用 `rounded(outer, inset)` 按同心推出（内 = 外 − inset，不小于 0）：复选框的钩、分段控件的滑块与轨道、组合框的箭头钮、附件缩略图与颜色选择器的色块；复选框小角在组件预设 `checkboxPresets.corner`。线宽读 `stroke`（`dimension.stroke`），只有两条：控件的描边 `stroke.control`（按钮、输入框、选择器、复选框、分段、标签页、徽标…）与发丝线 `stroke.hairline`（分隔线、描边变体，以及卡片、面板、浮层与弹窗等表面的边 —— Material 不要这道边，由它的 finish 把 `border-color` 写成 `transparent`，而不是把线宽设成 0）；焦点环宽只有 `dimension.focus.width`，由 `focusRing()` 读。按下的透明度 `dimmed.pressed`（`state["pressed-opacity"]`），静止的指示器（滚动条滑块）读 `dimmed.rest`（`state["rest-opacity"]`，默认 `0.5`），在指针下或被拖动时升到 `dimmed.pressed`（写进滑块的 class 字符串：悬停是 class 的事），强调色控件按下时读 `finish.accent.pressedOpacity`（`accent` 的 `pressed-opacity`），按下时换强调色的主题再读 `finish.accent` 的 `pressedBackground` / `pressedForeground`；禁用时若 `state.disabled.fill` 为 `false` 则沿用统一视图 `opacity: dimmed.disabled`，为 `true`（Material / WinUI）则由 `finish.disabled`（无边/关态另按变体设边）绘容器、由 `finish.disabled.foreground` 绘字与图标；`state.overlay` 经 `stateLayer(kind)` 变成一层前景色的渐变，`hovered()` 已带上悬停的那一层（nsh-gallery 的叠色是 0，不画）。尺寸：高度只有一把尺子 `dimension.size.height`（`controlHeight.sm / md / lg` 与 `controlSize.row`、`controlSize.line`、`controlSize.tabs` 都取它，`row`/`line`/`tabs` 取 `lg`），图标一把 `dimension.icon`（`iconSize` 与 `controlSize.control`、`controlSize.clear` 取 `md`，`controlSize.check` 取 `sm`），触控目标 `hitTarget()`（`dimension.size.hit`；`touchSlop`、`switchHitSlop` 按它补点按范围；0 不补）。各控件家族随平台切换的几何、指示条样式与粗细（`checkbox`、`switch`、`slider`、`radio-group`、`progress`、`spinner`、`tabs`、`calendar`、`sheet` 抓取条、`sidebar` 选中条与字段指示器）归属各自组件及共享 `lib/indicator`；控件维度的四档由 `control()` 读，换主题后下一帧重画；标签页、分段控件与侧边栏的选中项不读维度，四套基础主题下同一形态。
 
 **留在代码里的值**，各处有注释：Tailwind 类里的 `rounded-(--radius-control)` / `rounded-(--radius-container)` / `rounded-(--radius-modal)` / `rounded-[4px]`、`active:opacity-70`、`disabled:opacity-50`、`border`（类名读不了 getter，前三者读 `theme.json` 的 token，与 `shape` 同值）；半高或半径推出的圆（`height / 2`、`side / 2`：胶囊、圆点、开关、进度条）；选择器的 2 点焦点边（`select.tsx` 的 `outlineWidth: 2`，它是边的渐显，不是焦点环）；实心按钮悬停与选中的 0.94 / 0.88 不透明度，附件失败时的 0.6，子菜单禁用的 0.35（没有对应的 state 角色）；toast 的 2 点色条、进度的 2 点限位、头像 2 点的环（装饰，不是 stroke 角色）；圆角 1 / 2 / 3 / 4 / 5 的小件（拇指、插入符、进度条端点、日历格的 17 等）。
 
-家族不经本库读取：复合 token 的 `fontFamily` 只是 DTCG 的必填占位（`system-ui`），NSH 用应用的 `font-sans` 画所有没写字体的文字，等宽处用 `font-mono`；所以 `typography` 组上没有字体家族的扩展，语义层里没有顶层的字体家族键，`theme.ts` 里也没有解析家族的 getter。字号与行高是**一套**（`default` 的值），所有主题共用；Apple、Material、WinUI 的平台字阶不再进主题（记在 [`native-themes.md`](native-themes.md) 第 3.6 节）；只有字重与字距按主题。
+家族不经本库读取：复合 token 的 `fontFamily` 只是 DTCG 的必填占位（`system-ui`），NSH 用应用的 `font-sans` 画所有没写字体的文字，等宽处用 `font-mono`；所以 `typography` 组上没有字体家族的扩展，语义层里没有顶层的字体家族键，`theme.ts` 里也没有解析家族的 getter。字号与行高是**一套**（`nsh-gallery` 的值），所有主题共用；Apple、Material、WinUI 的平台字阶不再进主题（记在 [`native-themes.md`](native-themes.md) 第 3.6 节）；只有字重与字距按主题。
 
 ### 枚举与取值
 
@@ -174,16 +174,16 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 **四个控件维度各主题取什么。** 取同一档的主题合成一列（表头在反引号里列出这一列的主题），其余主题只写与 base 不同的键，编译后四个键都齐全；`check:theme` 拿这张表与六套 `semantics.json` 逐格对账。维度名、取值名之外，其余不建主题键：控件的兜底写在控件里。
 
-基础主题（`default`、`shadcn`、`solid-glass`、`apple`）四个维度上取同一档，把控件的外观交给全局角色：标签页、分段控件与侧边栏的选中项由组件自己画，不随主题换形态（[决策 0007](../decisions/0007-drop-theme-downgrades.md) 第 3 节、[决策 0008](../decisions/0008-drop-selection-group.md)）。
+基础主题（`nsh-gallery`、`shadcn`、`solid-glass`、`apple`）四个维度上取同一档，把控件的外观交给全局角色：标签页、分段控件与侧边栏的选中项由组件自己画，不随主题换形态（[决策 0007](../decisions/0007-drop-theme-downgrades.md) 第 3 节、[决策 0008](../decisions/0008-drop-selection-group.md)）。
 
 <!-- theme-lint: controls -->
 
-| 维度     | `default` `shadcn` `solid-glass` `apple` | `material`  | `winui`         |
-| -------- | ---------------------------------------- | ----------- | --------------- |
-| `field`  | `box`                                    | `underline` | `box-underline` |
-| `choice` | `well`                                   | `outline`   | `inset`         |
-| `track`  | `sunk`                                   | `tint`      | `hairline`      |
-| `handle` | `circle`                                 | `circle`    | `ring`          |
+| 维度     | `nsh-gallery` `shadcn` `solid-glass` `apple` | `material`  | `winui`         |
+| -------- | -------------------------------------------- | ----------- | --------------- |
+| `field`  | `box`                                        | `underline` | `box-underline` |
+| `choice` | `well`                                       | `outline`   | `inset`         |
+| `track`  | `sunk`                                       | `tint`      | `hairline`      |
+| `handle` | `circle`                                     | `circle`    | `ring`          |
 
 <!-- /theme-lint: controls -->
 
@@ -237,7 +237,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 规则（`check:theme` 与 DTCG lint 各查一遍）：每个外观最多 4 档 `elevation`、最多 7 个部分；一个 finish 的 `shadow` 只能是这些部分的引用；一个主题没写某部分，就写 `none`（`$extensions` 里的 `none: true`），引用它的 finish 里那部分整段消失——所以 `apple` 的 `inset` 是空的，`shadcn` 的 `edge.*` 是空的，同一个 finish 在主题之间仍然说得通。
 
-**折掉的档位**（有意为之，记在这里）：`solid-glass` 的旋钮投影（0.3）与控件影（0.06）落进同一档 `sm`；`default` 的卡片影（0.04）与控件影（0.05）落进同一档 `md`；`apple` 的浮层与模态面本来就没有更深的档，`lg` 与 `xl` 同值。
+**折掉的档位**（有意为之，记在这里）：`solid-glass` 的旋钮投影（0.3）与控件影（0.06）落进同一档 `sm`；`nsh-gallery` 的卡片影（0.04）与控件影（0.05）落进同一档 `md`；`apple` 的浮层与模态面本来就没有更深的档，`lg` 与 `xl` 同值。
 
 **`material`**（#267）是一个 finish 向平台要的原生材质，**只有 `raised`、`overlay`、`inverse`、`glass` 写**（这张表里它们有 `material`）；要平台材质就点名，不要就写 `"none"`，编出 `null`。源码里的取值只有三个：`"none"`、`"glass"`、`"acrylic"`，编译进 `semantics.json` 时是 `"glass"`、`"acrylic"` 或 `null`（`"none"` 与平涂不写 `gradient` 一样，编译后什么都不写）。
 
@@ -300,13 +300,13 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 十二个层不是十二个恰好画得一样的面：一个面属于哪一层，由它是什么决定。折叠、分出与“状态不另立层”需要理由，记在这里：
 
-| 折起来的东西                              | 为什么是一层                                                                                                                                                                                                                                                                              |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `accentPressed` → `pressed`               | 按下是控件的事，不是面的事。填充色按下不是另一个面：`accent` 按自己的 `pressed-opacity` 变淡，按下时换强调色的主题在 `accent` 上写 `pressed-background` / `pressed-foreground`——一个面的按下态只该暗一点，不该换一整套边和阴影                                                            |
-| `handle` → `knob`；`thumb` → `raised`     | 开关圆点与滑杆把手都是“一个能拨动、不带字的小块”；分段与胶囊标签页选中的那块上面有字，是井里被选中的一块，读 `plate`——`knob` 在暗色下是白色圆点（iOS、shadcn），字写不上去                                                                                                                |
-| `knobOn` → `knob` 的选中态（`checked-*`） | 上游给开着的开关圆点另写一套值：白盘 + 跑动填充的边（`finish.knobOn`）。那是旋钮在选中时画的样子，不是另一个面：一个面换不了状态，一个状态也不该新立一个面。default 上它改三处（暗色白底、平涂、橄榄边），五套主题只改底色（强调色的字色）；主题没写的字段沿用 `knob`，两边永远成套       |
-| `grabber` → `sheet` 的控件预设            | 抓取条是抽屉这个控件的一部分，不是一个层；`sheetGrabber()` 画它（`alpha(colors.mutedForeground, 0.4)`）                                                                                                                                                                                   |
-| `fill` 从 `accent` 分出来                 | 两者在五套主题里画同一个面（`fill` 取 `accent` 的底与边），但 default 的按钮是浅青柠、跑起来的填充是更深的一档绿：上游给它们两套值（`finish.accent` 与 `finish.fill`），放在一个层里只能二选一。分出 `fill` 后，`progress` 与 `slider` 读它、`switch` 打开的轨道也读它，按钮仍读 `accent` |
+| 折起来的东西                              | 为什么是一层                                                                                                                                                                                                                                                                                  |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `accentPressed` → `pressed`               | 按下是控件的事，不是面的事。填充色按下不是另一个面：`accent` 按自己的 `pressed-opacity` 变淡，按下时换强调色的主题在 `accent` 上写 `pressed-background` / `pressed-foreground`——一个面的按下态只该暗一点，不该换一整套边和阴影                                                                |
+| `handle` → `knob`；`thumb` → `raised`     | 开关圆点与滑杆把手都是“一个能拨动、不带字的小块”；分段与胶囊标签页选中的那块上面有字，是井里被选中的一块，读 `plate`——`knob` 在暗色下是白色圆点（iOS、shadcn），字写不上去                                                                                                                    |
+| `knobOn` → `knob` 的选中态（`checked-*`） | 上游给开着的开关圆点另写一套值：白盘 + 跑动填充的边（`finish.knobOn`）。那是旋钮在选中时画的样子，不是另一个面：一个面换不了状态，一个状态也不该新立一个面。nsh-gallery 上它改三处（暗色白底、平涂、橄榄边），五套主题只改底色（强调色的字色）；主题没写的字段沿用 `knob`，两边永远成套       |
+| `grabber` → `sheet` 的控件预设            | 抓取条是抽屉这个控件的一部分，不是一个层；`sheetGrabber()` 画它（`alpha(colors.mutedForeground, 0.4)`）                                                                                                                                                                                       |
+| `fill` 从 `accent` 分出来                 | 两者在五套主题里画同一个面（`fill` 取 `accent` 的底与边），但 nsh-gallery 的按钮是浅青柠、跑起来的填充是更深的一档绿：上游给它们两套值（`finish.accent` 与 `finish.fill`），放在一个层里只能二选一。分出 `fill` 后，`progress` 与 `slider` 读它、`switch` 打开的轨道也读它，按钮仍读 `accent` |
 
 `light` 与 `accent` 本来就是同一个面（在五套主题里逐字节相同），`on` 是强调色的字色，`field`/`track`/`groove` 是井的不同深度，`chip`/`pill` 是控件面，`tooltip` 是反色面——它们不是“值相同但决定不同”，是同一层上的不同控件。
 
@@ -316,7 +316,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 1. **一个 token 的颜色，带别的 alpha**：写 `oklch(from {token} l c h / a)`。像素不变：`alias()` 从当前主题里取出那个 token 的值，替换其 alpha。`theme-lint` 只认这一种写法，`from` 后面的 `{token}` 必须是这个主题真有的 `color` 类型 token；别的相对形式（把 alpha 写成 `{token}`、在 L/C/H 里用 `calc()`）仍然算“没有 token 的颜色”。
 2. **与某个 token 肉眼无差**：ΔL ≤ 0.015、ΔC ≤ 0.003、色相在同一段灰里，就写 `{token}`。像素会有一两个单位的差别，受影响的基线重拍。数值够近但语义不对的不换：`chart-*` 是数据色，`track` 是槽的底，一个选中的行不该跟着图表的颜色走。
-3. **材质自己的设计色**：同一个主题的两个外观里值相同、语义相同，又出现在两处以上，就进 `theme.json` 的 B 层（第 1 节）。default 用原来的值，另外两个主题取自己同一位置的颜色或最近的 token，零像素变化。只在一处出现的，留在表里。
+3. **材质自己的设计色**：同一个主题的两个外观里值相同、语义相同，又出现在两处以上，就进 `theme.json` 的 B 层（第 1 节）。nsh-gallery 用原来的值，另外两个主题取自己同一位置的颜色或最近的 token，零像素变化。只在一处出现的，留在表里。
 
 表里剩下的二十二行都是第 3 条没走的、只在一两处出现的材质色：`modal` 的底色比 `field`/`popover` 高一档（Material 的 `SurfaceContainerHigh`）、WinUI 的四道描边在基色上合成、开关圆点比 `knob` 深两档、WinUI 按下时换的强调色与它的字（`AccentFillColorTertiary` / `TextOnAccentFillColorSecondary`）。
 
@@ -326,8 +326,8 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 | 主题        | 外观  | 色值                             | 位置                                                                                       | 最接近的 token                              |
 | ----------- | ----- | -------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------- |
-| default     | dark  | `oklch(0.88185 0.00589 264.53)`  | `knob.gradient`                                                                            | `knob`（ΔL +0.040，ΔC -0.002）              |
-| default     | dark  | `oklch(0.8324 0.00597 264.528)`  | `knob.border-color`                                                                        | `knob`（ΔL +0.090，ΔC -0.002）              |
+| nsh-gallery | dark  | `oklch(0.88185 0.00589 264.53)`  | `knob.gradient`                                                                            | `knob`（ΔL +0.040，ΔC -0.002）              |
+| nsh-gallery | dark  | `oklch(0.8324 0.00597 264.528)`  | `knob.border-color`                                                                        | `knob`（ΔL +0.090，ΔC -0.002）              |
 | material    | light | `oklch(0.93251 0.01479 312.24)`  | `modal.background`（`SurfaceContainerHigh`，本库没有同名角色）                             | `field`（ΔL -0.019，ΔC -0.001）             |
 | material    | dark  | `oklch(0.2859 0.01293 298.633)`  | `modal.background`（同上）                                                                 | `popover`（ΔL -0.041，ΔC +0.001）           |
 | shadcn      | dark  | `oklch(0.34846 0 0)`             | `pressed.background`                                                                       | `chart-4`（ΔL -0.023，ΔC -0.000，语义不同） |
@@ -348,13 +348,13 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | winui       | light | `oklch(0.87245 0.03754 247.003)` | `accent.pressed-foreground`（`TextOnAccentFillColorSecondary` 在按下底色上合成）           | `brand-tint`（ΔL -0.042，ΔC +0.022）        |
 | winui       | dark  | `oklch(0.70029 0.10192 230.522)` | `accent.pressed-background`（同上）                                                        | `brand-edge`（ΔL -0.021，ΔC -0.006）        |
 | winui       | dark  | `oklch(0.42706 0.05878 229.834)` | `accent.pressed-foreground`（同上）                                                        | `brand-tint`（ΔL +0.122，ΔC +0.041）        |
-| default     | light | `oklch(0.75073 0.18465 126.794)` | `fill.background`、`fill.gradient`（上游 `finish.fill` 的第二档绿）                        | `chart-1`（ΔL 0，ΔC 0，数据色，语义不同）   |
-| default     | light | `oklch(0.80472 0.1815 126.061)`  | `fill.gradient`（同上，第一档）                                                            | `brand-edge`（ΔL -0.039，ΔC -0.014）        |
-| default     | light | `oklch(0.69169 0.17204 126.956)` | `fill.border-color`（同上，跑起来那段的边）                                                | `brand-tint`（ΔL +0.052，ΔC +0.012）        |
-| default     | dark  | `oklch(0.83973 0.16469 124.137)` | `fill.background`、`fill.gradient`（同上）                                                 | `primary`（ΔL +0.049，ΔC -0.001）           |
-| default     | dark  | `oklch(0.88348 0.15928 123.937)` | `fill.gradient`（同上，第一档）                                                            | `primary`（ΔL +0.005，ΔC +0.004）           |
-| default     | dark  | `oklch(0.71963 0.15821 125.456)` | `fill.border-color`（同上）                                                                | `up`（ΔL +0.060，ΔC -0.010）                |
-| default     | light | `oklch(0.72099 0.15728 124.776)` | `knob.checked-border-color`（上游 `finish.knobOn` 的橄榄边）                               | `brand-tint`（ΔL +0.081，ΔC -0.004）        |
+| nsh-gallery | light | `oklch(0.75073 0.18465 126.794)` | `fill.background`、`fill.gradient`（上游 `finish.fill` 的第二档绿）                        | `chart-1`（ΔL 0，ΔC 0，数据色，语义不同）   |
+| nsh-gallery | light | `oklch(0.80472 0.1815 126.061)`  | `fill.gradient`（同上，第一档）                                                            | `brand-edge`（ΔL -0.039，ΔC -0.014）        |
+| nsh-gallery | light | `oklch(0.69169 0.17204 126.956)` | `fill.border-color`（同上，跑起来那段的边）                                                | `brand-tint`（ΔL +0.052，ΔC +0.012）        |
+| nsh-gallery | dark  | `oklch(0.83973 0.16469 124.137)` | `fill.background`、`fill.gradient`（同上）                                                 | `primary`（ΔL +0.049，ΔC -0.001）           |
+| nsh-gallery | dark  | `oklch(0.88348 0.15928 123.937)` | `fill.gradient`（同上，第一档）                                                            | `primary`（ΔL +0.005，ΔC +0.004）           |
+| nsh-gallery | dark  | `oklch(0.71963 0.15821 125.456)` | `fill.border-color`（同上）                                                                | `up`（ΔL +0.060，ΔC -0.010）                |
+| nsh-gallery | light | `oklch(0.72099 0.15728 124.776)` | `knob.checked-border-color`（上游 `finish.knobOn` 的橄榄边）                               | `brand-tint`（ΔL +0.081，ΔC -0.004）        |
 
 <!-- /theme-lint: pending -->
 

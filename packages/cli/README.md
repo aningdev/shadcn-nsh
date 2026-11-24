@@ -27,7 +27,7 @@ Every command takes `-c, --cwd <dir>` (default: the current directory). `init`, 
 `view` and `diff` also take `--registry <url>`, a template with `{name}` in it; without it, `add`,
 `list`, `view` and `diff` use the one in `nsh-ui.json`, and `init` uses the public registry.
 `init` also takes `--overwrite`, `-y` (accepted; nothing prompts today) and `--theme <name>`,
-`default`, `shadcn`, `solid-glass`, `apple`, `material`, `winui`, or `native` — the theme the app is **built** with:
+`nsh-gallery`, `shadcn`, `solid-glass`, `apple`, `material`, `winui`, or `native` — the theme the app is **built** with:
 `theme.json`, `lib/ui/semantics.json`, and what `nsh.json` points at.
 
 ## add
@@ -52,14 +52,13 @@ shadcn-nsh add button --overwrite
   [`packages/theme/README.md`](../theme/README.md#more-than-one-theme)). It does not touch the
   app's build-time theme, and `nsh-ui.json` stays as it is. To make a theme the build-time one,
   re-run `init --theme <name> --overwrite`.
-- **This library's own theme is one of them**: `add theme-default` installs it into
-  `themes/default/` (its `theme.json` and `semantics.json` are the ones an app is built with, and
-  an `index.ts` exports `defaultTheme`). An app built with `init --theme shadcn` lists both and
+- **This library's own theme is one of them**: `add theme-nsh-gallery` installs NSH Gallery into
+  `themes/nsh-gallery/` (its `theme.json` and `semantics.json` are the ones an app is built with, and
+  an `index.ts` exports `nshGallery`). An app built with `init --theme shadcn` lists both and
   switches between them; `selectTheme(null)` still means its build-time theme.
 - `theme`, named or as a dependency, is the theme in `nsh-ui.json`: in an app on `theme-shadcn`
   it writes shadcn's data at the build-time paths, the roles module and `themes/shadcn/`, so
-  `add theme --overwrite`, `add button --overwrite` and `add --all --overwrite` never write the
-  default theme back.
+  `add theme --overwrite`, `add button --overwrite` and `add --all --overwrite` never write another theme back.
 - The packages the items import (`lucide`) are installed with the app's package manager, except
   one `package.json` already declares in range: an exact `"lucide": "1.66.0"` stays as written
   (`keep lucide (package.json has it in range)`), and only an older one is raised.
