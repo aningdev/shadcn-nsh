@@ -48,7 +48,9 @@ export const dockClasses = {
  * A dock's tab (what `renderTab` returns, in a `dockClasses` tab): its
  * title sized to it, as wide on either side, muted until the pointer is on
  * it; the shown tab's title in the text color, underlined in the brand
- * color. `children` follow the title (a close button, `dockTabCloseClass`).
+ * color. `children` follow the title in the tab's width — a close button
+ * (`dockTabCloseClass`) keeps its own — and a title wider than the tab's cap
+ * (`max-w-40`) truncates before them, never under them.
  */
 export function DockTab(props: {
   title: string;
@@ -60,7 +62,7 @@ export function DockTab(props: {
     <View testID={props.testID} class="h-9 flex-row items-center gap-1 px-3">
       <Text
         style={{ numberOfLines: 1 }}
-        class={`max-w-40 text-[13px] font-medium transition-colors ${props.active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}
+        class={`max-w-40 shrink text-[13px] font-medium transition-colors ${props.active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}
       >
         {props.title}
       </Text>
@@ -77,16 +79,17 @@ export function DockTab(props: {
 
 /**
  * A dock tab's close button (`class`), its glyph `×` muted text: with a
- * pointer it fades in over the tab's end while the pointer is on the tab;
- * a touch screen keeps it beside the title (show it on the shown tab); a
- * terminal's tab, with no room at its end, sets it beside the title, shown
- * while the pointer is on the tab.
+ * pointer it fades in after the title while the pointer is on the tab,
+ * keeping its room so the title never runs under it; a touch screen keeps
+ * it beside the title (show it on the shown tab); a terminal's tab, with no
+ * room at its end, sets it beside the title, shown while the pointer is on
+ * the tab.
  */
 export const dockTabCloseClass = terminal
-  ? "size-5 items-center justify-center opacity-0 group-hover:opacity-100"
+  ? "size-5 shrink-0 items-center justify-center opacity-0 group-hover:opacity-100"
   : platform.desktop
-    ? "absolute right-1 top-2 size-5 items-center justify-center rounded-(--radius-control) bg-inset opacity-0 transition-opacity group-hover:opacity-100 hover:bg-raised"
-    : "-mr-1.5 size-5 items-center justify-center rounded-(--radius-control) active:opacity-70";
+    ? "-mr-2 size-5 shrink-0 items-center justify-center rounded-(--radius-control) opacity-0 transition-opacity group-hover:opacity-100 hover:bg-raised"
+    : "-mr-1.5 size-5 shrink-0 items-center justify-center rounded-(--radius-control) active:opacity-70";
 
 /** A dragged tab's preview (what `renderDragPreview` returns): its title on a raised chip. */
 export function DockDragPreview(props: { title: string }) {
