@@ -7,14 +7,15 @@
 
 本篇是总览和入口，只讲“要决定什么”和“决定落在哪”，细节都链到下面这些文档，这里不重复：
 
-| 文档                                                       | 管什么                                                                           |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| [`specs/theme-roles.md`](specs/theme-roles.md)             | 每个颜色角色、每个 finish 的含义与读者；刻度例外的出处表（`theme-lint: scales`） |
-| [`specs/theme-contract-v2.md`](specs/theme-contract-v2.md) | 当前契约的由来：原则、删除与去向、实施顺序、冻结（第 20 节）                     |
-| [`specs/design-semantics.md`](specs/design-semantics.md)   | 一个值进 `theme.json` 还是 `semantics.json` 的判定规则                           |
-| [`specs/design-tokens.md`](specs/design-tokens.md)         | DTCG 2025.10 源码的文件布局、组结构与编译                                        |
-| [`specs/native-themes.md`](specs/native-themes.md)         | Apple、Material、WinUI 三套原生主题的出处与差异                                  |
-| [`GLOSSARY.md`](GLOSSARY.md)                               | 词汇                                                                             |
+| 文档                                                       | 管什么                                                                                            |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| [`specs/theme-roles.md`](specs/theme-roles.md)             | 每个颜色角色、每个 finish 的含义与读者；刻度例外的出处表（`theme-lint: scales`）                  |
+| [`specs/theme-contract-v2.md`](specs/theme-contract-v2.md) | 当前契约的由来：原则、删除与去向、实施顺序、冻结（第 20 节）                                      |
+| [`specs/design-semantics.md`](specs/design-semantics.md)   | 一个值进 `theme.json` 还是 `semantics.json` 的判定规则                                            |
+| [`specs/design-tokens.md`](specs/design-tokens.md)         | DTCG 2025.10 源码的文件布局、组结构与编译                                                         |
+| [`specs/native-themes.md`](specs/native-themes.md)         | Apple、Material、WinUI 三套原生主题的出处与差异                                                   |
+| [`specs/semantics-values.md`](specs/semantics-values.md)   | 五套主题解析后的每一个值（颜色角色、风格组、finish、elevation）；生成表，查“这个字段各主题是什么” |
+| [`GLOSSARY.md`](GLOSSARY.md)                               | 词汇                                                                                              |
 
 - **新写一套主题**：按第 2 节从上往下决定，用第 5 节的清单逐项核对。
 - **改现有主题**：先在第 5 节找到要改的那一行，看它的定义项和检查，再到第 4 节看怎么验收。

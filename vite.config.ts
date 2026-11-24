@@ -8,7 +8,9 @@ const ignoreVendored = ["references/**", ".agents/**"];
 // be left out of formatters; formatting it would dirty the tree after a build.
 // The compiled per-appearance DTCG files and per-theme DESIGN.md docs are
 // tokens:build output in their own style (tokens:build --check owns them);
-// the DTCG sources under tokens/ stay formatted.
+// the DTCG sources under tokens/ stay formatted. The values page is
+// scripts/theme/semantics-table.ts output, in the same position (docs:semantics
+// --check owns it): one cell per field, wrapping it would undo the table.
 const ignoreFmt = [
   ...ignoreVendored,
   "apps/website/src/routeTree.gen.ts",
@@ -16,6 +18,7 @@ const ignoreFmt = [
   "packages/theme/themes/*/*.tokens.json",
   "packages/theme/DESIGN.md",
   "packages/theme/themes/*/DESIGN.md",
+  "docs/specs/semantics-values.md",
 ];
 // Docs types authority is `check:docs` (the site's own tsconfig + tsc), which
 // knows Vite's `import.meta.env` and the Fumadocs MDX collections.

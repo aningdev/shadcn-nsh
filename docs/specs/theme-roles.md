@@ -9,6 +9,8 @@
 | `packages/theme/theme.ts`       | 读时把 `{token}` 换成当前主题、外观与宿主覆写的值（`themed()`、`shape.*`、`elevation()`、`mono()`）                                                 | 具体颜色或圆角值       |
 | `packages/ui/*.tsx`             | 只经 `finish.*`、`colors.*`、`shape.*` 取外观                                                                                                       | 内联颜色               |
 
+每套主题解析之后的具体值——每个颜色角色的 oklch、每个风格组的数字、每个 finish 的字段、每一步影子——列在生成页 [`semantics-values.md`](semantics-values.md)：查值看那里，规则与含义看本文。
+
 这样定，是为了三件事：
 
 - **改一个值只改一处。** 组件里没有颜色字面量，`semantics.json` 里通过 `{token}` 引用 `theme.json`，改 token（含宿主 `setThemeOverrides`）同时改到所有用到它的面与组件。
