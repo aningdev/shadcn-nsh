@@ -164,7 +164,7 @@ function App() {
               }}
               onOpenChange={opened("Assignee", (next) => assigneeOpen.set(next))}
             >
-              <ComboboxTrigger />
+              <ComboboxTrigger testID="assignee-toggle" />
               <ComboboxContent
                 accessibilityLabel="Assignee"
                 renderItem={(item) => <OptionRow item={item} detail={teamOf(item.value)} />}

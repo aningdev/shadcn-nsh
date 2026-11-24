@@ -218,6 +218,21 @@ const overrides: Record<string, Override> = {
       await app.keyboard.press("shift+left");
     },
   },
+  // Its list open: the field's own trigger, pressed. A press on the input opens the list on a
+  // phone (a tap's focus) and on a native desktop, but not in a browser, where the field takes the
+  // click; the trigger opens it in every idiom.
+  combobox: {
+    steps: (app) => app.press("id:assignee-toggle"),
+    // Opening from the trigger focuses the field on a desktop (`combobox.rs`'s `press`), and a
+    // focused field's caret blinks on the browser's clock, which the manual one does not hold: the
+    // pointer pass types a letter and selects it, as `select` does, so the still draws no caret.
+    // The letter is one every person matches (Ada, Grace, Linus Torvalds, Margaret Hamilton), so
+    // no row drops out of the list.
+    pointerSteps: async (app) => {
+      await app.keyboard.press("a");
+      await app.keyboard.press("shift+left");
+    },
+  },
   "date-picker": { steps: (app) => app.press("No due date") },
   // The pages whose photos come over the network mark themselves once every image is there.
   carousel: {
