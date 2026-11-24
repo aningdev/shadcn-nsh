@@ -1,6 +1,16 @@
 import { describe, expect, test } from "bun:test";
 
-import { contrastRatio, exception, luminance, readResults, themePairs } from "./contrast";
+import {
+  contrastRatio,
+  exception,
+  fillFloor,
+  lightness,
+  luminance,
+  readFills,
+  readResults,
+  themeFills,
+  themePairs,
+} from "./contrast";
 import { parseColor } from "./oklch";
 
 const ratio = (a: string, b: string) => contrastRatio(parseColor(a), parseColor(b));
@@ -132,7 +142,86 @@ describe("themePairs", () => {
   });
 });
 
+describe("themeFills", () => {
+  const theme = {
+    cssVars: {
+      theme: { background: "#f2f2f7", card: "#ffffff", popover: "#ffffff", sidebar: "#f2f2f7" },
+      light: { accent: "rgba(118, 118, 128, 0.12)", "sidebar-accent": "var(--accent)" },
+      dark: {},
+    },
+  };
+
+  test("a translucent fill is composited over each ground it is painted on", () => {
+    const fills = themeFills(theme, "fixture", "light");
+    expect(fills.map(({ fill, ground }) => `${fill}/${ground}`)).toEqual([
+      "accent/background",
+      "accent/card",
+      "accent/popover",
+      "sidebar-accent/sidebar",
+    ]);
+    // Apple's tertiarySystemFill over the grouped page is #e3e3e6-ish: well below the page's
+    // lightness, and farther still below a white card's.
+    for (const fill of fills) {
+      expect(fill.pass).toBe(true);
+      expect(Math.abs(fill.deltaL)).toBeGreaterThanOrEqual(fillFloor);
+    }
+    const page = fills.find(({ ground }) => ground === "background")!;
+    const card = fills.find(({ ground }) => ground === "card")!;
+    expect(Math.abs(card.deltaL)).toBeGreaterThan(Math.abs(page.deltaL));
+  });
+
+  test("the fill Apple shipped before #349 is invisible on the grouped page", () => {
+    const before = {
+      cssVars: {
+        theme: { background: "#f2f2f7", card: "#ffffff", popover: "#ffffff" },
+        light: { accent: "#f4f4f5", "sidebar-accent": "var(--accent)", sidebar: "#f2f2f7" },
+        dark: {},
+      },
+    };
+    const failing = themeFills(before, "apple", "light").filter(({ pass }) => !pass);
+    expect(failing.map(({ fill, ground }) => `${fill}/${ground}`)).toEqual([
+      "accent/background",
+      "sidebar-accent/sidebar",
+    ]);
+    expect(failing[0]!.deltaL).toBeCloseTo(0.005, 3);
+  });
+
+  test("the floor is shadcn's own sidebar gap, read to three decimals", () => {
+    const shadcn = {
+      cssVars: {
+        theme: { sidebar: "oklch(0.985 0 0)" },
+        light: { "sidebar-accent": "oklch(0.97 0 0)" },
+        dark: {},
+      },
+    };
+    const [fill] = themeFills(shadcn, "shadcn", "light");
+    // The fill is darker than the sidebar: the gap is read as a distance.
+    expect(Math.abs(fill!.deltaL)).toBe(fillFloor);
+    expect(fill!.pass).toBe(true);
+  });
+
+  test("lightness reads the OKLCH L of an opaque colour", () => {
+    expect(lightness(parseColor("#000000"))).toBeCloseTo(0, 5);
+    expect(lightness(parseColor("#ffffff"))).toBeCloseTo(1, 5);
+  });
+});
+
 describe("the shipped themes", () => {
+  const fills = readFills();
+
+  test("every fill separates", () => {
+    const failing = fills.filter((fill) => !fill.pass);
+    expect(
+      failing.map(({ theme, mode, fill, ground }) => `${theme} ${mode} ${fill}/${ground}`),
+    ).toEqual([]);
+  });
+
+  test("apple's selection fill reads on the page, cards, popovers and the sidebar", () => {
+    const apple = fills.filter((fill) => fill.theme === "apple");
+    expect(apple).toHaveLength(8);
+    for (const fill of apple) expect(fill.pass).toBe(true);
+  });
+
   const results = readResults();
 
   test("every pair passes or is a platform's own value", () => {

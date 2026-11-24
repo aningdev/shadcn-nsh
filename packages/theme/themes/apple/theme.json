@@ -21,7 +21,7 @@
       "primary-foreground": "oklch(1 0 0)",
       "secondary": "oklch(0.95241 0.00133 286.375)",
       "secondary-foreground": "var(--foreground)",
-      "muted": "oklch(0.95241 0.00133 286.375)",
+      "muted": "oklch(0.93459 0.00268 286.348)",
       "muted-foreground": "oklch(0.6347 0.0059 286.23)",
       "accent": "var(--muted)",
       "accent-foreground": "var(--foreground)",

@@ -121,15 +121,15 @@
     "muted": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.95241, 0.00133, 286.375],
-        "hex": "#efeff0"
+        "components": [0.93459, 0.00268, 286.348],
+        "hex": "#e9e9eb"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
         }
       },
-      "$description": "Subdued container fill (UIKit tertiarySystemFill composited over card)."
+      "$description": "Subdued container fill (UIKit tertiarySystemFill composited over card; light uses secondarySystemFill so it reads on the grouped page)."
     },
     "muted-foreground": {
       "$value": {
@@ -151,7 +151,7 @@
           "role": "surface"
         }
       },
-      "$description": "Subtle hover/selection fill (UIKit quaternarySystemFill composited over card)."
+      "$description": "Subtle hover/selection fill (the muted fill)."
     },
     "accent-foreground": {
       "$value": "{color.foreground}",

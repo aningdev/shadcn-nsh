@@ -161,7 +161,7 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 | ③ 全量         | 没有漏掉的页                                                                                                                                                                                     | 开 PR 前跑一次 `bun run port:render` 与 `bun run port:render:theme`                                                                                                      | 一次   |
 
 - `<ids>` 是读到被改角色、finish 或预设的组件，以及引用它们的演示。`--only <ids>` 精确选页；`--changed [<ref>]` 按分类自动选页与主题；`--theme <id,...>` 收窄到指定主题；三者取交集。
-- 只改颜色值时没有截图可看：`bun run theme:contrast` 列出每套主题、亮暗两种外观下 WCAG 2 AA 不达标的角色对与 finish（阈值与理由写在 `scripts/theme/contrast.ts`）。它在 `bun run check` 里：不达标即失败；原生主题照平台保留的不达标对（如 apple 的 secondaryLabel、白字在 systemBlue 上）列在脚本的 `platform` 里并注明出处，某对不再不达标时也会报错，提醒删掉这条例外。`disabled-foreground`（WCAG 豁免不可用控件）与 `chart-foreground`（数据色上的标签）不查。
+- 只改颜色值时没有截图可看：`bun run theme:contrast` 列出每套主题、亮暗两种外观下 WCAG 2 AA 不达标的角色对与 finish（阈值与理由写在 `scripts/theme/contrast.ts`），并检查填充与它落下的底分不分得开（`accent` 在 `background` / `card` / `popover` 上、`sidebar-accent` 在 `sidebar` 上，OKLCH 亮度差 ≥ 0.015，半透明填充先合成到底上，没有豁免）。它在 `bun run check` 里：不达标即失败；原生主题照平台保留的不达标对（如 apple 的 secondaryLabel、白字在 systemBlue 上）列在脚本的 `platform` 里并注明出处，某对不再不达标时也会报错，提醒删掉这条例外。`disabled-foreground`（WCAG 豁免不可用控件）与 `chart-foreground`（数据色上的标签）不查。
 - 预期不变像素的重构（例如删除纯 alias 角色）要求 ① 用 `--same` 通过，② 没有差异。预期有可见变化的改动用 ② 的截图逐页审阅，变化写进 PR。
 - 第 ③ 层只用来兜底：在 ② 没覆盖的页上出现差异，说明 `<ids>` 选漏了，要补进 ② 再查。
 

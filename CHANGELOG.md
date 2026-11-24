@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- **Apple light: a selected or hovered row shows on the grouped background (#349).** The light `muted` fill is now `secondarySystemFill` over the card (was the tertiary step), so `accent`, `sidebar-accent`, hover, field, track and inset fills, which reference it, separate from the grouped page and from cards. `bun run theme:contrast` gains a fill-separation check (lightness gap of at least 0.015 between a fill and the surface it sits on, translucent fills composited), which all six themes pass in light and dark.
+
 ## 0.10.0 — themes state their sources; components draw the rest
 
 ### Added

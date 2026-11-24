@@ -99,6 +99,10 @@ _Avoid_: 在某套主题里删字段表示“没有”；把 `transparent` 当�
 一套主题按平台官方画法保留在 WCAG AA 之下的颜色对，写在它自己 `theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].contrast.waivers[]`（`{ fg, bg, source }`）。`bun run theme:contrast` 读它：先算，再按豁免放行；一条豁免不再失败，或者某套主题引用了不存在的角色，都是错误——所以清单跟着主题走，脚本里没有按主题 id 的列表。
 _Avoid_: 在脚本里写 `if (theme === "apple")`
 
+**Fill Separation（填充与底的分开）**:
+一个填充（`accent`、`sidebar-accent`）与它被画上去的每一种底（`background`、`card`、`popover`、`sidebar`）在 OKLCH 亮度上至少差 0.015，半透明填充先合成到底上再比；`bun run theme:contrast` 检查，没有豁免。一个 token 只有一种颜色却要落在四种面上，只比卡片亮一点的填充会在成组的页面上消失（#349）。
+_Avoid_: 为某套主题放宽下限
+
 **Citation（刻度出处）**:
 一套主题按平台官方尺寸留下的、不在尺子上的值，写在它自己 `theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].scales.citations`（键是 token 路径，值是出处：页面链接或资源文件名）。`check:theme` 拿它对照编译后的 `semantics.json`：键必须存在且确实还是那个不上格的值，值回了格子就报“出处不再需要”。
 _Avoid_: 在 lint 脚本里给某个主题开白名单

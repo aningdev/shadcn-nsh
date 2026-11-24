@@ -17,9 +17,9 @@ colors:
     primary-foreground: "#ffffff"
     secondary: "#efeff0"
     secondary-foreground: "#000000"
-    muted: "#efeff0"
+    muted: "#e9e9eb"
     muted-foreground: "#8a8a8e"
-    accent: "#efeff0"
+    accent: "#e9e9eb"
     accent-foreground: "#000000"
     destructive: "#ff3b30"
     border: "#dcdcdd"
@@ -34,19 +34,19 @@ colors:
     sidebar-foreground: "#000000"
     sidebar-primary: "#007aff"
     sidebar-primary-foreground: "#ffffff"
-    sidebar-accent: "#efeff0"
+    sidebar-accent: "#e9e9eb"
     sidebar-accent-foreground: "#000000"
     sidebar-border: "#dcdcdd"
     sidebar-ring: "#007aff"
-    inset: "#efeff0"
+    inset: "#e9e9eb"
     raised: "#efeff0"
-    field: "#efeff0"
+    field: "#e9e9eb"
     line: "#dcdcdd"
-    hover: "#efeff0"
+    hover: "#e9e9eb"
     faint: "#c5c5c7"
     brand: "#007aff"
     brand-edge: "#dcdcdd"
-    track: "#efeff0"
+    track: "#e9e9eb"
     knob: "#ffffff"
     info: "#007aff"
     warn: "#ff9500"
@@ -301,15 +301,15 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`card`** (light `#ffffff`, dark `#1c1c1e`): Elevated list and card surface (UIKit systemBackground).
 - **`popover`** (light `#ffffff`, dark `#1c1c1e`): Floating popover and sheet surface (UIKit secondarySystemBackground / popover).
 - **`secondary`** (light `#efeff0`, dark `#323236`): Secondary control surface fill.
-- **`muted`** (light `#efeff0`, dark `#323236`): Subdued container fill (UIKit tertiarySystemFill composited over card).
-- **`accent`** (light `#efeff0`, dark `#323236`): Subtle hover/selection fill (UIKit quaternarySystemFill composited over card).
+- **`muted`** (light `#e9e9eb`, dark `#323236`): Subdued container fill (UIKit tertiarySystemFill composited over card; light uses secondarySystemFill so it reads on the grouped page).
+- **`accent`** (light `#e9e9eb`, dark `#323236`): Subtle hover/selection fill (the muted fill).
 - **`sidebar`** (light `#f2f2f7`, dark `#000000`): Sidebar surface matching Apple system sidebar/grouped background.
-- **`sidebar-accent`** (light `#efeff0`, dark `#323236`): Selected or active row fill in the sidebar.
-- **`inset`** (light `#efeff0`, dark `#323236`): Inset surface (UIKit quaternarySystemFill composited over card).
+- **`sidebar-accent`** (light `#e9e9eb`, dark `#323236`): Selected or active row fill in the sidebar.
+- **`inset`** (light `#e9e9eb`, dark `#323236`): Inset surface (UIKit quaternarySystemFill composited over card).
 - **`raised`** (light `#efeff0`, dark `#323236`): Raised control surface (UIKit tertiarySystemFill composited over card).
-- **`field`** (light `#efeff0`, dark `#323236`): Form input background (UIKit tertiarySystemFill composited over card).
-- **`hover`** (light `#efeff0`, dark `#323236`): Pointer hover tint (6% foreground ink over transparent).
-- **`track`** (light `#efeff0`, dark `#323236`): Switch and slider track (UIKit secondarySystemFill composited over card).
+- **`field`** (light `#e9e9eb`, dark `#323236`): Form input background (UIKit tertiarySystemFill composited over card).
+- **`hover`** (light `#e9e9eb`, dark `#323236`): Pointer hover tint (6% foreground ink over transparent).
+- **`track`** (light `#e9e9eb`, dark `#323236`): Switch and slider track (UIKit secondarySystemFill composited over card).
 - **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
 - **`inverse`** (light `#ffffff`, dark `#1c1c1e`): High-contrast surface for toasts and tooltips.
 

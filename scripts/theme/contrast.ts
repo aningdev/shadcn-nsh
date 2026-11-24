@@ -1,26 +1,33 @@
 /**
- * WCAG 2 AA contrast for the colours the themes resolve to: every text role on the surface it is
- * written on, and every finish's ink on the surface it fills, in light and dark, for all six themes.
+ * The two checks on the colours the themes resolve to, in light and dark, for all six themes:
+ *
+ * - Contrast: every text role on the surface it is written on, and every finish's ink on the
+ *   surface it fills. Text needs 4.5:1 and large text (3:1), per WCAG 2.2 SC 1.4.3, which exempts
+ *   text in an inactive control, so `disabled-foreground` is not checked.
+ * - Fill separation: `accent` on `background`, `card` and `popover`, and `sidebar-accent` on
+ *   `sidebar`, need a gap of at least `fillFloor` in OKLCH lightness, so a selection or hover fill
+ *   reads on every ground it is painted on. A token is one colour on four surfaces, and a fill that
+ *   is only lighter than a card can vanish on the grouped page.
  *
  *   bun scripts/theme/contrast.ts [--themes <id,...>]
  *
- * Text needs 4.5:1 and large text (3:1), per WCAG 2.2 SC 1.4.3, which exempts text in an inactive
- * control, so `disabled-foreground` is not checked. A theme waives the pairs its platform keeps below
- * AA in its own `$extensions`, each with its source (`./extensions`); a waiver its theme no longer
- * needs is an error. The pairs are
+ * A theme waives the pairs its platform keeps below AA in its own `$extensions`, each with its
+ * source (`./extensions`); a waiver its theme no longer needs is an error. A fill has no waiver:
+ * every theme meets the floor. The pairs are
  * semantic (`foreground` on `background`, `primary-foreground` on `primary`, each finish's
  * own `foreground` on its fill, and the accent's pressed pair where a theme states one), not literal: a component that paints a role pair is what this checks, and a value
  * that fails is a theme decision (`docs/specs/theme-roles.md`), not a component's.
  *
  * Each colour is resolved the way `theme.ts` resolves it: `var(--x)`, `{x}`, `oklch(from {x} …)`
  * and `color-mix(… transparent)` all become the sRGB channels they draw, and a translucent surface
- * is composited over the page before the ratio is taken. `--themes` narrows the run to ids.
+ * is composited over the page (and a translucent fill over its ground) before the ratio or the
+ * lightness is taken. `--themes` narrows the run to ids.
  */
 import fs from "node:fs";
 import path from "node:path";
 
 import { themeExtensions, waiverSource, type ContrastWaiver } from "./extensions";
-import { css, over, parseColor, type Rgb } from "./oklch";
+import { css, over, parseColor, rgbToOklch, type Rgb } from "./oklch";
 import { tokenKind, type ThemeCssVars } from "./tokens";
 
 export type Mode = "light" | "dark";
@@ -221,6 +228,85 @@ export function themePairs(
   return results;
 }
 
+/**
+ * The smallest gap in OKLCH lightness a fill needs from the ground it is painted on: below it the
+ * fill is there but a reader cannot pick it out. 0.015 is shadcn's light sidebar selection
+ * (`sidebar` 0.985, `sidebar-accent` 0.97), the closest a shipped theme comes on purpose.
+ */
+export const fillFloor = 0.015;
+
+/**
+ * The fill roles checked against the ground they are painted on, one token on four surfaces.
+ * `accent` is the selection/hover fill (rows, menu items, ghost buttons, toggles); `sidebar-accent`
+ * is the same fill in the sidebar.
+ */
+const fillPairs: [string, string][] = [
+  ["accent", "background"],
+  ["accent", "card"],
+  ["accent", "popover"],
+  ["sidebar-accent", "sidebar"],
+];
+
+/** One fill check: the fill role, the ground it is painted on, and the gap it must keep. */
+export type FillPair = { fill: string; ground: string; floor: number; why: string };
+
+/** A resolved fill check: the lightness of each side, their difference, and the verdict. */
+export type FillResult = FillPair & {
+  theme: string;
+  mode: Mode;
+  groundL: number;
+  fillL: number;
+  deltaL: number;
+  pass: boolean;
+};
+
+/**
+ * A lightness difference read to three decimals. A theme states its L values to about that
+ * (`shadcn`'s 0.985 and 0.97 are 0.015 apart), so the floor is met at the precision the theme
+ * writes, not only above a round-trip's rounding error.
+ */
+const readDelta = (value: number) => Math.round(value * 1000) / 1000;
+
+/** An opaque colour's OKLCH lightness, from the 8-bit channels it draws. */
+export function lightness(color: Rgb): number {
+  return rgbToOklch(color).l;
+}
+
+/** The fills one theme's appearance resolves, each composited over its ground, with its gap. */
+export function themeFills(
+  theme: { cssVars?: ThemeCssVars },
+  id: string,
+  mode: Mode,
+): FillResult[] {
+  const vars = varsOf(theme, mode);
+  const page = colourOf(resolve(vars.background ?? "#ffffff", vars));
+  if (!page) return [];
+  const results: FillResult[] = [];
+  for (const [fillRole, groundRole] of fillPairs) {
+    if (!(fillRole in vars) || !(groundRole in vars)) continue;
+    const fill = surface(vars[fillRole], vars);
+    const ground = surface(vars[groundRole], vars);
+    if (!fill || !ground) continue;
+    const base = colourOf(over(css(ground), css(page))) ?? ground;
+    const painted = colourOf(over(css(fill), css(base))) ?? fill;
+    const [groundL, fillL] = [lightness(base), lightness(painted)];
+    const deltaL = readDelta(fillL - groundL);
+    results.push({
+      fill: fillRole,
+      ground: groundRole,
+      floor: fillFloor,
+      why: "a fill on the surface it is painted on",
+      theme: id,
+      mode,
+      groundL,
+      fillL,
+      deltaL,
+      pass: Math.abs(deltaL) >= fillFloor,
+    });
+  }
+  return results;
+}
+
 const themesDir = "packages/theme/themes";
 
 /** Every theme's results, read from the built files; `--themes` narrows the ids. */
@@ -239,6 +325,19 @@ export function readResults(themes?: string[]): Result[] {
     for (const mode of modes) results.push(...themePairs(theme, semantics, id, mode));
   }
   return results;
+}
+
+/** Every theme's fill checks, read from the built files; `--themes` narrows the ids. */
+export function readFills(themes?: string[]): FillResult[] {
+  const ids = themes ?? fs.readdirSync(path.join(process.cwd(), themesDir)).sort();
+  const fills: FillResult[] = [];
+  for (const id of ids) {
+    const themeFile = path.join(process.cwd(), themesDir, id, "theme.json");
+    if (!fs.existsSync(themeFile)) continue;
+    const theme = JSON.parse(fs.readFileSync(themeFile, "utf8"));
+    for (const mode of modes) fills.push(...themeFills(theme, id, mode));
+  }
+  return fills;
 }
 
 if (import.meta.main) {
@@ -273,15 +372,34 @@ if (import.meta.main) {
       `theme:contrast: ${result.theme} ${result.mode}: ${result.fg} on ${result.bg} is ${result.ratio.toFixed(2)}, needs ${result.required} (${result.why})`,
     );
   }
-  const byTheme = new Map<string, { pass: number; total: number }>();
+  const fills = readFills(themes);
+  let fillFailed = 0;
+  for (const fill of fills.filter(({ pass }) => !pass)) {
+    fillFailed += 1;
+    console.error(
+      `theme:contrast: ${fill.theme} ${fill.mode}: ${fill.fill} on ${fill.ground} is ΔL ${fill.deltaL.toFixed(3)}, needs ${fill.floor} (${fill.why})`,
+    );
+  }
+  const byTheme = new Map<
+    string,
+    { pass: number; total: number; fills: number; fillTotal: number }
+  >();
   for (const result of results) {
-    const entry = byTheme.get(result.theme) ?? { pass: 0, total: 0 };
+    const entry = byTheme.get(result.theme) ?? { pass: 0, total: 0, fills: 0, fillTotal: 0 };
     entry.total += 1;
     if (result.pass) entry.pass += 1;
     byTheme.set(result.theme, entry);
   }
-  for (const [id, { pass, total }] of byTheme) {
-    console.log(`theme:contrast: ${id}: ${pass} of ${total} pairs pass`);
+  for (const fill of fills) {
+    const entry = byTheme.get(fill.theme) ?? { pass: 0, total: 0, fills: 0, fillTotal: 0 };
+    entry.fillTotal += 1;
+    if (fill.pass) entry.fills += 1;
+    byTheme.set(fill.theme, entry);
+  }
+  for (const [id, { pass, total, fills: fillPass, fillTotal }] of byTheme) {
+    console.log(
+      `theme:contrast: ${id}: ${pass} of ${total} pairs pass, ${fillPass} of ${fillTotal} fills separate`,
+    );
   }
   const stale = waivers(themes ?? fs.readdirSync(path.join(process.cwd(), themesDir))).filter(
     (entry) =>
@@ -297,13 +415,14 @@ if (import.meta.main) {
     console.error(
       `theme:contrast: ${entry.theme}: ${entry.fg} on ${entry.bg} passes now; drop its exception (${entry.source})`,
     );
-  if (failed > 0 || stale.length > 0) {
+  if (failed > 0 || stale.length > 0 || fillFailed > 0) {
     console.error(
-      `theme:contrast: ${failed} of ${results.length} pairs below AA, ${stale.length} stale exceptions`,
+      `theme:contrast: ${failed} of ${results.length} pairs below AA, ${fillFailed} of ${fills.length} fills too close, ${stale.length} stale exceptions`,
     );
     process.exit(1);
   }
   console.log(
     `theme:contrast: every pair passes (${results.length}; ${excused} kept below AA by their platform)`,
   );
+  console.log(`theme:contrast: every fill separates (${fills.length})`);
 }

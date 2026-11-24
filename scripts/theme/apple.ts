@@ -73,7 +73,10 @@ function palette(appearance: Appearance) {
     popover: t(s.popover),
     primary: t(s.blue),
     primaryForeground: t("#FFFFFF"),
-    muted: onCard(s.tertiaryFill),
+    // Light steps up to secondarySystemFill: tertiarySystemFill on white is only 0.010 darker than
+    // the grouped page, so the selection fill (`accent` is `muted`) vanished there (#349). Dark
+    // already separates.
+    muted: onCard(appearance === "light" ? s.secondaryFill : s.tertiaryFill),
     mutedForeground: onCard(s.secondaryLabel),
     accent: onCard(s.quaternaryFill),
     destructive: t(s.red),
@@ -283,9 +286,10 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     card: "Elevated list and card surface (UIKit systemBackground).",
     popover: "Floating popover and sheet surface (UIKit secondarySystemBackground / popover).",
     primary: "System accent blue (UIKit systemBlue).",
-    muted: "Subdued container fill (UIKit tertiarySystemFill composited over card).",
+    muted:
+      "Subdued container fill (UIKit tertiarySystemFill composited over card; light uses secondarySystemFill so it reads on the grouped page).",
     "muted-foreground": "Secondary label ink (UIKit secondaryLabel composited over card).",
-    accent: "Subtle hover/selection fill (UIKit quaternarySystemFill composited over card).",
+    accent: "Subtle hover/selection fill (the muted fill).",
     destructive: "System destructive red (UIKit systemRed).",
     border: "Hairline separator (UIKit separator hairline composited over card).",
     input: "Input control border (UIKit separator composited over card).",
