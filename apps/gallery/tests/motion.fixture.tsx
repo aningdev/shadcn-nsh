@@ -1,7 +1,7 @@
 import { mount, reduceMotion, Text, View, type ViewStyle } from "nsh";
 
-// Motion contract: durations, press sink, popup enter, springs, progress sweep.
-import { isTiming, motion } from "../../../packages/theme";
+// Motion contract: durations, press sink, popup enter, progress sweep.
+import { motion } from "../../../packages/theme";
 import {
   buttonLook,
   commandClasses,
@@ -29,8 +29,7 @@ function moved(style: { transform?: unknown } | undefined) {
   return style?.transform ? "sink" : "still";
 }
 
-const describeMotion = (m: typeof motion.fast) =>
-  isTiming(m) ? `${m.duration}|${JSON.stringify(m.timingFunction)}` : `${m.stiffness}|${m.damping}`;
+const describeMotion = (m: typeof motion.fast) => `${m.duration}|${typeof m.timingFunction}`;
 
 function App() {
   const button = buttonLook("secondary");

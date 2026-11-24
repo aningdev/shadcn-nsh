@@ -92,9 +92,9 @@ describe("a value split by input tier", () => {
   test("a value with no tier is a row as it is", () => {
     const read = styleCells(
       "state",
-      theme({}, { state: { ripple: false, overlay: { hover: 0 } } }),
+      theme({}, { state: { "press-scale": 1, overlay: { hover: 0 } } }),
     );
-    expect(cells(read)).toEqual({ "state.ripple": "false", "state.overlay.hover": "0" });
+    expect(cells(read)).toEqual({ "state.press-scale": "1", "state.overlay.hover": "0" });
   });
 });
 

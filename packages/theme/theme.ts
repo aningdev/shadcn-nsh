@@ -200,12 +200,6 @@ export interface Steps {
   lg: number;
 }
 
-/** A spring of `motion`: a unit mass's stiffness and damping. */
-export interface Spring {
-  stiffness: number;
-  damping: number;
-}
-
 /** A timing specification as written in `semantics.json`: duration in ms and a named timing curve. */
 export interface TimingSpec {
   duration: number;
@@ -287,7 +281,6 @@ export interface Style {
   state: {
     "press-scale": number;
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
-    ripple: boolean;
     /** Opacity of a passive indicator at rest (a scrollbar's thumb), `rest-opacity`. */
     "rest-opacity": number;
     "pressed-opacity": number;
@@ -297,10 +290,10 @@ export interface Style {
     enter: TimingSpec;
   };
   motion: {
-    fast: Spring | TimingSpec;
-    default: Spring | TimingSpec;
-    slow: Spring | TimingSpec;
-    /** How fast a hover, a press or a choice comes and goes: always timed. */
+    fast: TimingSpec;
+    default: TimingSpec;
+    slow: TimingSpec;
+    /** How fast a hover, a press or a choice comes and goes. */
     state: TimingSpec;
   };
 }
@@ -1012,9 +1005,6 @@ export const header = {
   },
 };
 
-/** Whether a resolved motion role is a `Timing` (`{ duration, timingFunction }`) rather than a `Spring`. */
-export const isTiming = (m: Spring | Timing): m is Timing => "duration" in m;
-
 /** The easings a theme names (`transition.enter.timingFunction` and timing roles): the curve is code, the name is data. */
 const easings: Record<string, EasingCurve> = {
   "out-cubic": Easing.out(Easing.cubic),
@@ -1034,16 +1024,18 @@ const easings: Record<string, EasingCurve> = {
   "point-to-point": Easing.bezier(0.55, 0.55, 0, 1),
 };
 
-const resolveMotion = (raw: Spring | TimingSpec): Spring | Timing =>
-  "duration" in raw ? { duration: raw.duration, timingFunction: easings[raw.timingFunction] } : raw;
+const resolveMotion = (raw: TimingSpec): Timing => ({
+  duration: raw.duration,
+  timingFunction: easings[raw.timingFunction],
+});
 
 /**
- * A reactive proxy over a `Spring | Timing` motion role so controls created before `selectTheme`
- * dynamically pick up shape switches between `Spring` and `Timing` when they animate or render.
+ * A reactive proxy over a `Timing` motion role so controls created before `selectTheme`
+ * dynamically pick up the new theme's duration and curve when they animate or render.
  */
-const motionRole = (read: () => Spring | TimingSpec): Spring | Timing => {
+const motionRole = (read: () => TimingSpec): Timing => {
   const current = computed(() => resolveMotion(read()));
-  return new Proxy({} as Spring | Timing, {
+  return new Proxy({} as Timing, {
     get: (_, key) => Reflect.get(current(), key),
     has: (_, key) => key in current(),
     ownKeys: () => Reflect.ownKeys(current()),
@@ -1058,9 +1050,8 @@ const motionRole = (read: () => Spring | TimingSpec): Spring | Timing => {
 /**
  * The theme's motion roles: `fast` (a small control's state coming and going), `default` (the one
  * most feedback uses: a press, a release, a modest move), `slow` (a large surface or a
- * long-travel movement) and `state` (a hover, a press or a choice fading in and out, which is
- * always timed). A spring, unless a theme times the role with `{ duration, timingFunction }`.
- * `enter` is a surface's entrance, which is always timed.
+ * long-travel movement) and `state` (a hover, a press or a choice fading in and out). Each is a
+ * duration and an easing, `{ duration, timingFunction }`. `enter` is a surface's entrance.
  */
 export const motion = {
   fast: motionRole(() => style().motion.fast),
@@ -1074,39 +1065,29 @@ export const motion = {
 };
 
 /**
- * Drive `value` to `to` using `config` (a theme `Spring` or `Timing`, `motion.default` by
- * default). Lands immediately when `reduceMotion()` is active. Optional `springExtra` (such as an
- * initial `velocity`) applies only when `config` is a spring.
+ * Drive `value` to `to` over `config` (a theme `Timing`, `motion.default` by default). Lands
+ * immediately when `reduceMotion()` is active.
  */
 export function animate(
   value: AnimatedValue,
   to: number,
-  config: Spring | Timing = motion.default,
-  springExtra?: { velocity?: number; mass?: number },
+  config: Timing = motion.default,
 ): Promise<{ finished: boolean }> {
   if (reduceMotion()) {
     value.set(to);
     return Promise.resolve({ finished: true });
   }
-  if (isTiming(config)) {
-    return value.timing(to, { duration: config.duration, easing: config.timingFunction });
-  }
-  return value.spring(to, {
-    stiffness: config.stiffness,
-    damping: config.damping,
-    ...springExtra,
-  });
+  return value.timing(to, { duration: config.duration, easing: config.timingFunction });
 }
 
 /**
- * An animated value that springs or times to `target` each time it changes (a
+ * An animated value that times to `target` each time it changes (a
  * control's state: 1 while on, 0 while off), natively: JS only starts each
- * animation. A change mid-way turns it from where it is, with its velocity when
- * springing; with reduced motion it lands at once. For discrete changes only: what
+ * animation. A change mid-way turns it from where it is; with reduced motion it lands at once. For discrete changes only: what
  * the pointer drives (a dragged thumb, a hover's place) is set in the same
  * frame, never animated toward the pointer.
  */
-export function follow(target: () => number, config: Spring | Timing = motion.fast): AnimatedValue {
+export function follow(target: () => number, config: Timing = motion.fast): AnimatedValue {
   const v = createAnimatedValue(target());
   let shown = target();
   effect(() => {

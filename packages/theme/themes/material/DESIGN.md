@@ -185,6 +185,18 @@ motion:
     duration: 500ms
     delay: 0ms
     timingFunction: "cubic-bezier(0.05, 0.7, 0.1, 1)"
+  fast:
+    duration: 150ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.2, 0, 0, 1)"
+  default:
+    duration: 250ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.2, 0, 0, 1)"
+  slow:
+    duration: 400ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.05, 0.7, 0.1, 1)"
   state:
     duration: 100ms
     delay: 0ms
@@ -285,7 +297,7 @@ components:
 
 Material 3 Expressive theme (material-web v34.0.21 / Compose M3 1.5.0).
 
-Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and Expressive spatial/effects springs.
+Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and M3 duration and easing motion.
 
 ## Colors
 
@@ -425,14 +437,14 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles: fast, default, slow, and the state fade.
+Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
 - **`enter`** (500ms, `cubic-bezier(0.05, 0.7, 0.1, 1)`): M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).
-- **`fast`** (spring: stiffness=800, damping=33.94 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive FastSpatial spring for control state (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt).
-- **`default`** (spring: stiffness=380, damping=31.19 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive DefaultSpatial spring for presses and movement (stiffness 380, damping ratio 0.8).
-- **`slow`** (spring: stiffness=200, damping=22.63 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8).
+- **`fast`** (150ms, `cubic-bezier(0.2, 0, 0, 1)`): M3 DurationShort3 (150ms) with the standard curve for control state (_md-sys-motion.scss).
+- **`default`** (250ms, `cubic-bezier(0.2, 0, 0, 1)`): M3 DurationMedium1 (250ms) with the standard curve for presses and movement.
+- **`slow`** (400ms, `cubic-bezier(0.05, 0.7, 0.1, 1)`): M3 DurationMedium4 (400ms) with the emphasized-decelerate curve for settling and panels.
 - **`state`** (100ms, `cubic-bezier(0.2, 0, 0, 1)`): M3 DurationShort2 (100ms) with the standard curve (MotionTokens.DurationShort2, Easing.StandardCubicBezier; ExpressiveMotionTokens.kt).
-- **Press & ripple** (`press-scale: 1`, `pressed-opacity: 1`, `ripple: true`): Interaction state opacities, press scale, and ripple switch.
+- **Press** (`press-scale: 1`, `pressed-opacity: 1`): Interaction state opacities and press scale.
 - **Timing curves:** Named timing curves shared across themes.
 
 ## Voice & Content Strategy
@@ -465,7 +477,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **Do:** Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.
 - **Do:** Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
-- **Do:** Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.
+- **Do:** Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) with `state.press-scale: 1`.
 - **Do:** Use `shape.curve: "circular"` with top-rounded underlined fields and underlined tabs.
 - **Do:** Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.

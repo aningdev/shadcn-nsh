@@ -16,7 +16,7 @@ import {
   terminal,
 } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
-import type { AndroidProps, JSX, StyleProp, ViewStyle } from "nsh";
+import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
   Carousel as BaseCarousel,
@@ -37,21 +37,7 @@ import {
 
 import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
-import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
-
-/** The glass slides' `android` props: the material's ripple, with the look's own over it (`over` wins). */
-function mergeAndroid(
-  base: AndroidProps | undefined,
-  over?: AndroidProps,
-): AndroidProps | undefined {
-  if (!base) return over;
-  if (!over) return base;
-  return {
-    ...base,
-    ...over,
-    ripple: base.ripple || over.ripple ? { ...base.ripple, ...over.ripple } : undefined,
-  };
-}
+import { pressSink, pressTransition } from "./lib/press";
 
 /** A pointer, where a carousel's controls are compact; a touch screen gets roomier ones. */
 const pointer = platform.desktop;
@@ -129,9 +115,6 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple("foreground");
     },
   };
 }
@@ -308,9 +291,6 @@ export function CarouselPrevious(props: CarouselPreviousProps) {
     <BasePrevious
       {...(props.glass ? platformMaterial("glass") : {})}
       {...rest}
-      {...pressHostProps(() =>
-        mergeAndroid(props.glass ? platformMaterial("glass").android : undefined, look.android),
-      )}
       accessibilityLabel={props.accessibilityLabel ?? "Previous slide"}
       class={props.class}
       style={over(look.style, props.style)}
@@ -344,9 +324,6 @@ export function CarouselNext(props: CarouselNextProps) {
     <BaseNext
       {...(props.glass ? platformMaterial("glass") : {})}
       {...rest}
-      {...pressHostProps(() =>
-        mergeAndroid(props.glass ? platformMaterial("glass").android : undefined, look.android),
-      )}
       accessibilityLabel={props.accessibilityLabel ?? "Next slide"}
       class={props.class}
       style={over(look.style, props.style)}

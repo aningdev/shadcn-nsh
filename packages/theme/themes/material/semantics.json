@@ -185,7 +185,6 @@
       "pressed": 0.1,
       "dragged": 0.16
     },
-    "ripple": true,
     "pressed-opacity": 1,
     "rest-opacity": 0.38,
     "disabled": {
@@ -201,16 +200,16 @@
   },
   "motion": {
     "fast": {
-      "stiffness": 800,
-      "damping": 33.94
+      "duration": 150,
+      "timingFunction": "standard"
     },
     "default": {
-      "stiffness": 380,
-      "damping": 31.19
+      "duration": 250,
+      "timingFunction": "standard"
     },
     "slow": {
-      "stiffness": 200,
-      "damping": 22.63
+      "duration": 400,
+      "timingFunction": "emphasized-decelerate"
     },
     "state": {
       "duration": 100,

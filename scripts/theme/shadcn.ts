@@ -267,7 +267,7 @@ export function themeFiles(): ThemeGeneratorOutput {
         "Preserve the 31 shadcn A-layer color slots (`background`, `foreground`, `card`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1..5`, `sidebar*`).",
       ],
       donts: [
-        "Do not add backdrop blur, specular rim highlights, or spring press shrink to flat shadcn finishes.",
+        "Do not add backdrop blur, specular rim highlights, or press shrink to flat shadcn finishes.",
       ],
     },
     // shadcn's neutral muted text is 4.4:1 on its muted surfaces, as shipped upstream.

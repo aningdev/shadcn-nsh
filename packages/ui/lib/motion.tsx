@@ -1,7 +1,7 @@
 // Shared motion: a control shakes when a value is rejected, a figure rolls to its next one, and a
 // theme's motion role becomes the transition a state's transform rides.
 
-import { isTiming, motion as themeMotion, type Spring, type Timing } from "@shadcn-nsh/theme";
+import { motion as themeMotion, type Timing } from "@shadcn-nsh/theme";
 import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 import { createMotion, effect, reduceMotion, signal, Text } from "nsh";
 
@@ -10,15 +10,13 @@ import { createMotion, effect, reduceMotion, signal, Text } from "nsh";
  * the feedback the CSS states own — a knob's `scale` under `hover:` and `active:` — because an
  * animated value and a CSS transition cannot both drive one view's transform.
  *
- * A spring times itself, so a spring role gives no duration; a timing role gives its own duration
- * and its curve as `cubic-bezier`. A named curve (`Easing.out(Easing.cubic)`) has no CSS spelling,
- * so it falls back to `ease-out`: every theme names a spring or a bezier.
+ * A role gives its own duration and its curve as `cubic-bezier`. A named curve
+ * (`Easing.out(Easing.cubic)`) has no CSS spelling, so it falls back to `ease-out`.
  */
-export function cssMotion(m: Spring | Timing): {
-  transitionDuration?: number;
+export function cssMotion(m: Timing): {
+  transitionDuration: number;
   transitionTimingFunction: ViewStyle["transitionTimingFunction"];
 } {
-  if (!isTiming(m)) return { transitionTimingFunction: `spring(${m.stiffness}, ${m.damping})` };
   const curve = m.timingFunction;
   return {
     transitionDuration: m.duration,
@@ -73,8 +71,8 @@ export function createRejectShake(tick: () => number | undefined): {
 }
 
 /**
- * A figure that rolls to its next value: up when `value` grows, down when it shrinks, on the
- * theme's `motion.fast` spring. The native number field keeps its own glyphs and caret, so the
+ * A figure that rolls to its next value: up when `value` grows, down when it shrinks, over the
+ * theme's `motion.fast`. The native number field keeps its own glyphs and caret, so the
  * roll is the text beside it (upstream's ticker), not the field. The first value is already there.
  * With reduced motion the next value replaces this one in place.
  */
@@ -96,14 +94,8 @@ export function Roll(props: { value: number; style?: StyleProp<TextStyle>; child
     motion.opacity.set(0);
     void motion.play({
       keyframes: { translateY: [away, 0], opacity: [0, 1] },
-      ...(isTiming(themeMotion.fast)
-        ? { duration: themeMotion.fast.duration, easing: themeMotion.fast.timingFunction }
-        : {
-            spring: {
-              stiffness: themeMotion.fast.stiffness,
-              damping: themeMotion.fast.damping,
-            },
-          }),
+      duration: themeMotion.fast.duration,
+      easing: themeMotion.fast.timingFunction,
     });
   });
   return (

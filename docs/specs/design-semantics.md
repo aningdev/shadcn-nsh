@@ -16,7 +16,7 @@
 1. **NSH 标量类型**：它是 **Color**（单色或明暗自适应 `AdaptiveColor`）或 **Length / Number**（`px`、`rem` 或无单位 `f32`）——即 `nsh_core::element::Tokens` 原生解析的类型；字体族不是主题的 token（[决策 0009](../decisions/0009-no-theme-type-scale.md)）。
 2. **与输入档位无关（Tier-Invariant）**：在 `pointer`（桌面）与 `touch`（触屏）下取值相同；NSH `Tokens` 没有 `pointer`/`touch` 维度。
 3. **与明暗模式兼容（Mode-Compatible）**：如果是数值，明暗外观下取值相同；NSH 只有 `Color` 携带 `light`/`dark`，`Number` 不区分明暗。
-4. **原子值，非复合配方**：它是独立的基础量，而非复合配方（渐变、阴影、模糊、原生材质 `material`）、动效物理量（弹簧 / 时序）或外观枚举（`shape.curve`、`focus.style`、`dimension.control.*`、`controls`）。
+4. **原子值，非复合配方**：它是独立的基础量，而非复合配方（渐变、阴影、模糊、原生材质 `material`）、动效时序或外观枚举（`shape.curve`、`focus.style`、`dimension.control.*`、`controls`）。
 
 凡是不满足上述任一条的设计值，一律进入 **`semantics.json`（语义层）**，并且在消费基础层已存在的颜色、圆角或字体时，**必须引用基础 token**，禁止重复写字面量。
 
@@ -39,11 +39,11 @@
 
 `bun run check:theme`（`scripts/theme-lint.ts`）对每一处 `{token}` 执行严格的类型与防重复检查，token 种类按 DTCG `$type` 命名：
 
-| 语义层位置                                                                                                                                                                             | 要求的 `$type` | 不允许的写法                                                 |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
-| `finishes` 颜色字段（`background`、`gradient`、`border-color`、`border-top-color`、`border-bottom-color`、`shadow` 中的引用）与 `material.apple.tint`、`material.android.ripple.color` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token |
-| `dimension.shape.{control,container,modal}`                                                                                                                                            | `dimension`    | 裸数字字面量、引用非 `dimension` token                       |
-| 每个 typography 复合 token 的 `fontFamily`                                                                                                                                             | `fontFamily`   | 不是占位值 `system-ui`（主题不拥有字体族）                   |
+| 语义层位置                                                                                                                                            | 要求的 `$type` | 不允许的写法                                                 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------ |
+| `finishes` 颜色字段（`background`、`gradient`、`border-color`、`border-top-color`、`border-bottom-color`、`shadow` 中的引用）与 `material.apple.tint` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token |
+| `dimension.shape.{control,container,modal}`                                                                                                           | `dimension`    | 裸数字字面量、引用非 `dimension` token                       |
+| 每个 typography 复合 token 的 `fontFamily`                                                                                                            | `fontFamily`   | 不是占位值 `system-ui`（主题不拥有字体族）                   |
 
 ## 3 两档与明暗稀疏覆盖
 
@@ -80,12 +80,12 @@
 
 本标准在概念与命名上对齐 W3C **Design Tokens Format Module 2025.10**（DTCG，[`designtokens.org/tr/2025.10/format/`](https://www.designtokens.org/tr/2025.10/format/)，含其 Color 与 Resolver 模块）：
 
-| 本标准概念                                                                                                                                                   | DTCG 2025.10 对应                         | 说明                                                                                                                                                                |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `{token}` 引用                                                                                                                                               | 花括号别名（Curly-brace alias）           | NSH 的 token 命名空间是扁平的，因此语义层写 `{card}` / `{radius-modal}`；导出 DTCG 时映射到分组路径（如 `{color.card}`、`{dimension.radius.modal}`）                |
-| token 种类                                                                                                                                                   | `$type`                                   | 直接沿用 DTCG `$type` 词汇：`color`、`dimension`、`fontFamily`、`fontWeight`、`number`、`duration`、`cubicBezier`、`shadow`、`typography`                           |
-| `shared` + `light`/`dark`、`pointer`/`touch` 两档及未来的平台主题                                                                                            | Resolver `sets` 与 `modifiers` / contexts | `shared` 为基础 set，`light`/`dark` 与 `pointer`/`touch`（及后续平台维度）对应 Resolver 的 modifier contexts                                                        |
-| 动效时序（`{ duration, timingFunction }`）                                                                                                                   | `duration` + `cubicBezier`                | 以 `{ duration }`（ms）与命名 `cubicBezier` 曲线表达时序动效（如 WinUI 3 动效与 `transition.enter`）；导出 DTCG 源码时拆成标准 `$type`，运行时再编译回 `TimingSpec` |
-| 弹簧物理量（`stiffness`/`damping`）、外观枚举（`dimension.control.*`、`controls`、`dimension.focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                                      |
+| 本标准概念                                                                                                              | DTCG 2025.10 对应                         | 说明                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `{token}` 引用                                                                                                          | 花括号别名（Curly-brace alias）           | NSH 的 token 命名空间是扁平的，因此语义层写 `{card}` / `{radius-modal}`；导出 DTCG 时映射到分组路径（如 `{color.card}`、`{dimension.radius.modal}`）                |
+| token 种类                                                                                                              | `$type`                                   | 直接沿用 DTCG `$type` 词汇：`color`、`dimension`、`fontFamily`、`fontWeight`、`number`、`duration`、`cubicBezier`、`shadow`、`typography`                           |
+| `shared` + `light`/`dark`、`pointer`/`touch` 两档及未来的平台主题                                                       | Resolver `sets` 与 `modifiers` / contexts | `shared` 为基础 set，`light`/`dark` 与 `pointer`/`touch`（及后续平台维度）对应 Resolver 的 modifier contexts                                                        |
+| 动效时序（`{ duration, timingFunction }`）                                                                              | `duration` + `cubicBezier`                | 以 `{ duration }`（ms）与命名 `cubicBezier` 曲线表达时序动效（如 WinUI 3 动效与 `transition.enter`）；导出 DTCG 源码时拆成标准 `$type`，运行时再编译回 `TimingSpec` |
+| 外观枚举（`dimension.control.*`、`controls`、`dimension.focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                                      |
 
 DTCG 2025.10 源码真源（`packages/theme/tokens/`）、编译器（`bun run tokens:build`）与 Option (b) DTCG 命名运行时（`semantics.json` 与 `theme.ts`）已为全部 6 套主题落地（Batch 2–5）；按外观展开的 `.tokens.json` 分发（Batch 6）与每套主题的 `DESIGN.md` 生成及分发（#246，Batch 7）亦已完成。完整的 DTCG 2025.10 Token 源架构、键名映射与分批计划见 [`design-tokens.md`](design-tokens.md)。

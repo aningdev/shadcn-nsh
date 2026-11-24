@@ -47,11 +47,6 @@ export default defineConfig({
     // findings are upstream's own patterns, kept as they are. Each entry names the upstream file
     // the text came from, so a change is made against that look, not around a lint rule.
     overrides: [
-      // theme.ts: `v.spring(next, spring)` returns the animation's promise, dropped on purpose.
-      {
-        files: ["packages/theme/theme.ts"],
-        rules: { "typescript/no-floating-promises": "off" },
-      },
       // progress.tsx's sweep (look/meter.ts upstream): `sweep.keyframes(…)` returns the animation's
       // promise, dropped on purpose.
       {

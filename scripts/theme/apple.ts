@@ -261,7 +261,6 @@ export const style = {
     // Apple presses by dimming (`state["pressed-opacity"]`), not by sinking.
     "press-scale": 1,
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
-    ripple: false,
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
     disabled: { content: 0.3, fill: false },
@@ -270,11 +269,11 @@ export const style = {
     enter: { duration: 420, timingFunction: "out-cubic" },
   },
   motion: {
-    // The springs the system's own controls settle with: a toggle's snap, a
-    // press, and a release.
-    fast: { stiffness: 1218, damping: 70 },
-    default: { stiffness: 520, damping: 34 },
-    slow: { stiffness: 320, damping: 30 },
+    // UIKit's own animations run a quarter second (`CATransaction`'s default 0.25 s) and ease out:
+    // a toggle's snap is quicker, a panel's settle slower.
+    fast: { duration: 150, timingFunction: "out-cubic" },
+    default: { duration: 250, timingFunction: "out-cubic" },
+    slow: { duration: 350, timingFunction: "out-cubic" },
   },
 };
 

@@ -264,12 +264,12 @@ export const SECTIONS: Section[] = [
     "`shape` 的 3 个层圆角以 `{radius-…}` 引用 `theme.json` 的圆角 token；`size.hit`、`size.density`、`size.item`、`size.control`、`size.height`、`icon` 分指针与触屏两档；`stroke`、`focus` 与 `control` 的六个控件维度不随档位变。",
   ),
   styleSection("shape", "字段", "非尺寸的圆角决定：曲率，以及按钮的角取圆角刻度还是胶囊。"),
-  styleSection("state", "字段", "交互状态的透明度、按下缩放、叠色与水波开关。"),
+  styleSection("state", "字段", "交互状态的透明度、按下缩放与叠色。"),
   styleSection("transition", "字段", "表面进场动画的时长与曲线（曲线名引用 `cubicBezier` 组）。"),
   styleSection(
     "motion",
     "字段",
-    "三档弹簧与状态淡变。一套主题对一档要么写弹簧（`stiffness` / `damping`），要么写时间（`duration` / `timingFunction`），另一种参数化的那一格是 `—`。",
+    "三档时间与状态淡变：每档是一个时长（`duration`）和一条曲线（`timingFunction`）。",
   ),
   {
     id: "finishes",
@@ -388,7 +388,6 @@ const DESCRIPTIONS: Record<string, string> = {
   "state.overlay.focus": "获得焦点的叠色透明度",
   "state.overlay.pressed": "按下的叠色透明度",
   "state.overlay.dragged": "拖动的叠色透明度",
-  "state.ripple": "按下时是否画水波",
   "state.pressed-opacity": "按下时内容的透明度",
   "state.rest-opacity": "指示器静止时的透明度（滚动条滑块）",
   "state.disabled.content": "禁用时内容的透明度",
@@ -442,8 +441,6 @@ const NOUNS: Record<string, string> = {
 const FIELD_NOUNS: Record<string, Record<string, string>> = {
   typography: { fontSize: "字号", lineHeight: "行高", fontWeight: "字重", letterSpacing: "字距" },
   motion: {
-    stiffness: "弹簧刚度",
-    damping: "阻尼",
     duration: "时长（ms）",
     timingFunction: "曲线",
   },
@@ -478,7 +475,7 @@ export function meaning(at: string): string {
 
 /**
  * `<group>.<noun>.<field>`, for the three groups whose rows all read that way
- * (`typography.body.fontSize`, `motion.default.damping`, `finishes.card.background`).
+ * (`typography.body.fontSize`, `motion.default.duration`, `finishes.card.background`).
  */
 function composed(at: string): string | undefined {
   const [group, noun, field] = at.split(".");

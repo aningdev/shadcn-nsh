@@ -15,12 +15,12 @@
           "Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way."
         ],
         "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
-        "overview": "NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, spring motion physics, and layered surface finishes.",
+        "overview": "NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, ease-out timing motion, and layered surface finishes.",
         "elevation": "Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline borders, contact + cast drop shadows (`card`, `menu`, `modal`, `inverse`), and translucent frosted glass (`glass` with 80% popover alpha).",
         "dos": [
           "Preserve the citrus accent (`primary` / `primary-foreground`) for primary actions, active runs, and focus highlights.",
           "Use `inset` wells inside cards and `raised` surfaces for controls sitting on cards, paired with continuous squircle corners (`shape.curve: \"continuous\"`).",
-          "Apply tactile spring press feedback (`state.press-scale: 0.97`, `motion.default` / `motion.slow`)."
+          "Apply tactile press feedback (`state.press-scale: 0.97` eased by `motion.default`)."
         ],
         "donts": [
           "Do not flatten shadows or remove inner highlights on `card`, `raised`, `inset`, or `pill` finishes.",
@@ -449,12 +449,7 @@
   },
   "state": {
     "$type": "number",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "ripple": false
-      }
-    },
-    "$description": "Interaction state opacities, press scale, and ripple switch.",
+    "$description": "Interaction state opacities and press scale.",
     "press-scale": {
       "$value": 0.97,
       "$description": "Scale factor applied while a pressable control is pressed."
@@ -513,39 +508,60 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles: fast, default, slow, and the state fade.",
+    "$description": "Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.",
     "fast": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "spring": {
-            "stiffness": 1218,
-            "damping": 70
-          }
-        }
-      },
-      "$description": "Quickest response: small control toggles and thumbs."
+      "$description": "Quickest response: small control toggles and thumbs.",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 150,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.out-cubic}"
+        },
+        "$description": "150 ms out-cubic."
+      }
     },
     "default": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "spring": {
-            "stiffness": 520,
-            "damping": 34
-          }
-        }
-      },
-      "$description": "Everyday feedback: presses, releases and modest movement."
+      "$description": "Everyday feedback: presses, releases and modest movement.",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 250,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.out-cubic}"
+        },
+        "$description": "250 ms out-cubic."
+      }
     },
     "slow": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "spring": {
-            "stiffness": 320,
-            "damping": 30
-          }
-        }
-      },
-      "$description": "Slowest: large surfaces and long-travel layout movement."
+      "$description": "Slowest: large surfaces and long-travel layout movement.",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 350,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.out-cubic}"
+        },
+        "$description": "350 ms out-cubic."
+      }
     },
     "state": {
       "$description": "State fade: how fast hover, press and choice states come and go (upstream nsh-gallery-ui's hover wash, 120 ms ease-out).",

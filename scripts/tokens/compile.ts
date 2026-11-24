@@ -483,7 +483,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     controlOut[key] = value;
   }
   const stateGroup = lp.state as Record<string, unknown>;
-  const stateExt = getExt(stateGroup)!;
 
   const readNumMap = (group: Record<string, Record<string, unknown>>) =>
     Object.fromEntries(
@@ -498,10 +497,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   for (const role of MOTION_ROLES) {
     const m = motionResolved[role];
     if (m === undefined) continue;
-    const ext = getExt(m);
-    if (ext?.spring) {
-      motionOut[role] = ext.spring;
-    } else if (isRecord(m.timing)) {
+    if (isRecord(m.timing)) {
       const val = m.timing.$value as DtcgTransition;
       const tf = val.timingFunction as [number, number, number, number];
       const timingRaw = motionMerged[role]!.timing as Record<string, unknown>;
@@ -650,7 +646,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     state: {
       "press-scale": (stateGroup["press-scale"] as Record<string, unknown>).$value as number,
       overlay: readNumMap(stateGroup.overlay as Record<string, Record<string, unknown>>),
-      ripple: stateExt.ripple as boolean,
       "pressed-opacity": (stateGroup["pressed-opacity"] as Record<string, unknown>)
         .$value as number,
       "rest-opacity": (stateGroup["rest-opacity"] as Record<string, unknown>).$value as number,

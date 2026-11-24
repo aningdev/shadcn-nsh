@@ -5,7 +5,7 @@ const atAlpha = (hex: string, a: number) =>
     .toString(16)
     .padStart(2, "0")}`;
 
-test("double focus, timing motion, state-layer inks, ripple and android material follow selectTheme", async () => {
+test("double focus, timing motion, state-layer inks and platform material follow selectTheme", async () => {
   const app = await open("./theme-primitives.fixture.tsx", {
     platform: "macos",
     colorScheme: "light",
@@ -18,21 +18,19 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   };
   const readJson = <T,>(key: string): T => JSON.parse(read(key));
 
-  // Built-in default theme before switching: halo focus, springs, overlay=0, no ripple, no material.
+  // Built-in default theme before switching: halo focus, timing motion, overlay=0, no material.
   const initialFocus = readJson<Record<string, unknown>>("focus");
   expect(initialFocus.borderColor).toBeDefined();
   expect(initialFocus.boxShadow).toBeUndefined();
-  expect(read("motionFast")).toMatch(/^spring:\d+:\d+$/);
-  expect(read("motionDefault")).toMatch(/^spring:\d+:\d+$/);
+  expect(read("motionFast")).toMatch(/^timing:150:/);
+  expect(read("motionDefault")).toMatch(/^timing:250:/);
   expect(readJson<Record<string, unknown>>("btnHover")).toEqual({ opacity: 0.94 });
   expect(readJson<unknown>("toggleOnHover")).toBeNull();
   expect(readJson<Record<string, unknown>>("bareHover").backgroundColor).toBeDefined();
   expect(readJson<Record<string, unknown>>("bareHover").backgroundImage).toBeUndefined();
-  expect(readJson<unknown>("btnAndroid")).toBeNull();
-  expect(readJson<unknown>("toastAndroid")).toBeNull();
   expect(readJson<Record<string, unknown>>("menuMaterial")).toEqual({});
 
-  // Drive animations once under spring config before switching.
+  // Drive animations once under the default timing before switching.
   await app.press("text:Step");
   expect(read("roll")).toBe("1");
 
@@ -87,18 +85,6 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   expect(bareHover.backgroundColor).toBeUndefined();
   expect(bareHover.backgroundImage).toBeDefined();
 
-  // state.ripple: true wires surface-appropriate ripple colors on pressables.
-  expect(readJson("btnAndroid")).toEqual({
-    ripple: { color: atAlpha(primaryForeground, 0.1) },
-  });
-  expect(readJson("roundAndroid")).toEqual({
-    ripple: { color: atAlpha(primaryForeground, 0.1) },
-  });
-  expect(readJson("toggleOnAndroid")).toEqual({
-    ripple: { color: atAlpha(selectedInk, 0.1) },
-  });
-  expect(readJson("toastAndroid")).toEqual({ ripple: { color: atAlpha(inverseForeground, 0.1) } });
-
   // A layer's material reaches the platform props, and its elevation rides beside them.
   expect(readJson("menuMaterial")).toEqual({
     windows: { backdrop: { material: "blur" } },
@@ -108,7 +94,6 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   // Switch back to build-time default cleanly.
   await app.press("text:Reset");
   expect(readJson("focus")).toEqual(initialFocus);
-  expect(read("motionFast")).toMatch(/^spring:\d+:\d+$/);
-  expect(readJson("btnAndroid")).toBeNull();
+  expect(read("motionFast")).toMatch(/^timing:150:/);
   expect(readJson("menuMaterial")).toEqual({});
 });

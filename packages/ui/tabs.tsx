@@ -16,7 +16,7 @@ import {
   dimmed,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
-import type { AndroidProps, JSX, StyleProp, ViewStyle } from "nsh";
+import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { computed, context, platform, signal, split, Text, View } from "nsh";
 import {
   Tab as BaseTab,
@@ -27,7 +27,6 @@ import {
 
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { pressHostProps, pressRipple } from "./lib/press";
 import { controlSize } from "./lib/surface";
 
 const pointer = platform.desktop;
@@ -45,7 +44,6 @@ export interface TabLook {
   readonly activeStyle?: ViewStyle;
   readonly focusVisibleStyle: ViewStyle;
   readonly disabledStyle: ViewStyle;
-  readonly android?: AndroidProps;
 }
 
 /**
@@ -131,9 +129,6 @@ export function tabsLook(o?: TabsLookOptions) {
         get disabledStyle(): ViewStyle {
           return { opacity: dimmed.disabled };
         },
-        get android(): AndroidProps | undefined {
-          return pressRipple("foreground", state.disabled);
-        },
       };
     },
   };
@@ -202,9 +197,6 @@ export function underlineTabsLook() {
         },
         get disabledStyle(): ViewStyle {
           return { opacity: dimmed.disabled };
-        },
-        get android(): AndroidProps | undefined {
-          return pressRipple("foreground", state.disabled);
         },
       };
     },
@@ -462,7 +454,6 @@ export function TabsTrigger(props: TabsTriggerProps) {
     <BaseTab
       {...rest}
       selected={selected()}
-      {...pressHostProps(() => tab().android)}
       onPress={() => {
         ctx?.onValueChange(props.value);
         props.onPress?.();

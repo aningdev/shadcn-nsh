@@ -120,7 +120,9 @@ function popOn(key: () => unknown): AnimatedValue {
     const next = key();
     if (next === shown) return;
     shown = next;
-    if (!reduceMotion()) void animate(s, 1, motion.default, { velocity: 4 });
+    if (reduceMotion()) return;
+    s.set(1.08);
+    void animate(s, 1, motion.default);
   });
   return s;
 }

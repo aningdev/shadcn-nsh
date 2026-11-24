@@ -255,7 +255,7 @@ function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[
  * value the app owns: the knob follows it, from a press or from elsewhere.
  *
  * The knob's box stays one size; its travel and its hover/press growth are CSS classes, so a
- * spring or a timing role in the theme paces them and no layout property moves. NSH animates a
+ * timing role in the theme paces them and no layout property moves. NSH animates a
  * view's translate and scale as one transform, so one transition carries both: `motion.fast`.
  */
 export function switchLook(on: () => boolean, size: SwitchSize = "default"): SwitchLook {

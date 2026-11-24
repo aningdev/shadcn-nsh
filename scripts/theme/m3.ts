@@ -468,10 +468,9 @@ export const m3Style = {
     },
   },
   state: {
-    // M3 presses with a state layer and an Android ripple, not by sinking.
+    // M3 presses with a state layer, not by sinking.
     "press-scale": 1,
     overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
-    ripple: true,
     "pressed-opacity": 1,
     "rest-opacity": 0.38,
     disabled: { content: 0.38, fill: true },
@@ -480,12 +479,12 @@ export const m3Style = {
     enter: { duration: 500, timingFunction: "emphasized-decelerate" },
   },
   motion: {
-    // M3 Expressive spatial springs, named by speed (`ExpressiveMotionTokens.kt`): FastSpatial for
-    // small components reacting, DefaultSpatial for a press or a thumb that moves, SlowSpatial for
-    // a panel that settles (damping 2·ζ·√k: 0.6/800 → 33.94, 0.8/380 → 31.19, 0.8/200 → 22.63).
-    fast: { stiffness: 800, damping: 33.94 },
-    default: { stiffness: 380, damping: 31.19 },
-    slow: { stiffness: 200, damping: 22.63 },
+    // M3 duration and easing tokens, named by speed (`_md-sys-motion.scss`): Short3 (150) for
+    // small components reacting, Medium1 (250) for a press or a thumb that moves, Medium4 (400)
+    // for a panel that settles.
+    fast: { duration: 150, timingFunction: "standard" },
+    default: { duration: 250, timingFunction: "standard" },
+    slow: { duration: 400, timingFunction: "emphasized-decelerate" },
     // M3 states fade with Short2 and the standard curve (`MotionTokens.DurationShort2`,
     // `Easing.StandardCubicBezier`; ExpressiveMotionTokens.kt).
     state: { duration: 100, timingFunction: "standard" },
@@ -565,11 +564,11 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     style: m3Style,
     designMd: {
       overview:
-        "Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and Expressive spatial/effects springs.",
+        "Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and M3 duration and easing motion.",
       elevation:
         "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.",
       dos: [
-        "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.",
+        "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) with `state.press-scale: 1`.",
         'Use `shape.curve: "circular"` with top-rounded underlined fields and underlined tabs.',
         "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation.",
       ],
@@ -602,21 +601,21 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "M3 control dimensions: underlined text fields (_md-comp-filled-text-field.scss), outlined selection controls, tinted tracks and the library's circle for a handle (docs/specs/theme-contract-v2.md §11.2).",
         shape: "M3 circular arc corners (ShapeTokens.kt).",
         "state.press-scale":
-          "Scale factor applied while pressed (1 disables press shrinking; M3 uses state layer + Android ripple).",
+          "Scale factor applied while pressed (1 disables press shrinking; M3 uses the state layer).",
         "state.overlay":
           "M3 state-layer ink opacities: hover 0.08, focus 0.10, pressed 0.10, dragged 0.16 (StateTokens.kt).",
         "state.pressed-opacity":
-          "Content stays full opacity when pressed (1; ripple/state layer shows press).",
+          "Content stays full opacity when pressed (1; the state layer shows press).",
         "state.disabled":
           "M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).",
         "transition.enter":
           "M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).",
         "motion.fast":
-          "M3 Expressive FastSpatial spring for control state (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt).",
+          "M3 DurationShort3 (150ms) with the standard curve for control state (_md-sys-motion.scss).",
         "motion.default":
-          "M3 Expressive DefaultSpatial spring for presses and movement (stiffness 380, damping ratio 0.8).",
+          "M3 DurationMedium1 (250ms) with the standard curve for presses and movement.",
         "motion.slow":
-          "M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8).",
+          "M3 DurationMedium4 (400ms) with the emphasized-decelerate curve for settling and panels.",
         "motion.state":
           "M3 DurationShort2 (100ms) with the standard curve (MotionTokens.DurationShort2, Easing.StandardCubicBezier; ExpressiveMotionTokens.kt).",
         "pointer.dimension.size.height":

@@ -185,7 +185,6 @@
       "pressed": 0,
       "dragged": 0
     },
-    "ripple": false,
     "pressed-opacity": 1,
     "rest-opacity": 0.5,
     "disabled": {

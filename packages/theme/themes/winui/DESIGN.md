@@ -437,14 +437,14 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles: fast, default, slow, and the state fade.
+Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
 - **`enter`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).
 - **`fast`** (83ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).
 - **`default`** (167ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).
 - **`slow`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).
 - **`state`** (83ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFasterAnimationDuration (83ms) with ControlFastOutSlowInKeySpline (Common_themeresources_any.xaml).
-- **Press & ripple** (`press-scale: 1`, `pressed-opacity: 1`, `ripple: false`): Interaction state opacities, press scale, and ripple switch.
+- **Press** (`press-scale: 1`, `pressed-opacity: 1`): Interaction state opacities and press scale.
 - **Timing curves:** Named timing curves shared across themes.
 
 ## Voice & Content Strategy
@@ -483,4 +483,4 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way.
-- **Don't:** Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves.
+- **Don't:** Do not substitute continuous squircle corners for WinUI 3's circular corners.

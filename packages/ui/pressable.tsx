@@ -10,13 +10,13 @@ import {
   stateLayer,
   style as themeStyle,
 } from "@shadcn-nsh/theme";
-import type { AndroidProps, JSX, ViewStyle } from "nsh";
+import type { JSX, ViewStyle } from "nsh";
 import { split } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
 import { type Live, read } from "./lib/live-value";
-import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
+import { pressSink, pressTransition } from "./lib/press";
 
 /** Options of `pressableLook`. */
 export interface PressableLookOptions {
@@ -63,9 +63,6 @@ export function pressableLook(o?: PressableLookOptions) {
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
-    get android(): AndroidProps | undefined {
-      return pressRipple("foreground", o?.disabled);
-    },
   };
 }
 
@@ -98,7 +95,6 @@ export function Pressable(props: PressableProps) {
   return (
     <BaseButton
       {...rest}
-      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}

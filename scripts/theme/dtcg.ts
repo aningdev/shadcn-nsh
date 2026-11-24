@@ -45,9 +45,11 @@ export interface ThemeTypeRoleStyle {
   letterSpacing: number;
 }
 
-export type ThemeMotionRoleStyle =
-  | { stiffness: number; damping: number }
-  | { duration: number; timingFunction: string };
+/** A motion role: how long it takes and the easing it follows. */
+export interface ThemeMotionRoleStyle {
+  duration: number;
+  timingFunction: string;
+}
 
 export interface ThemeStyleInput {
   typography: {
@@ -105,7 +107,6 @@ export interface ThemeStyleInput {
   state: {
     "press-scale": number;
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
-    ripple: boolean;
     "pressed-opacity": number;
     "rest-opacity": number;
     disabled: { content: number; fill: boolean };
@@ -862,12 +863,8 @@ function encodeSharedStyleOverrides(
 
   // 5. state
   const baseState = getAt(baseShared, "state");
-  const baseRipple = getExtNs(baseState).ripple as boolean;
   const stateOut: Record<string, unknown> = {
     $type: "number",
-    ...(style.state.ripple !== baseRipple
-      ? { $extensions: { [EXT_NS]: { ripple: style.state.ripple } } }
-      : {}),
     $description: desc("state", baseState.$description),
   };
 
@@ -965,51 +962,31 @@ function encodeSharedStyleOverrides(
     const spec = style.motion[role];
     if (spec === undefined) continue;
     const baseRole = getAt(baseMotion, role);
-    if ("duration" in spec) {
-      const timingFunction = `{cubicBezier.${spec.timingFunction}}`;
-      const baseTiming = isRecord(baseRole.timing)
-        ? (baseRole.timing.$value as {
-            duration: { value: number };
-            timingFunction: string;
-          })
-        : undefined;
-      if (
-        baseTiming !== undefined &&
-        baseTiming.duration.value === spec.duration &&
-        baseTiming.timingFunction === timingFunction
-      )
-        continue;
-      motionOverrides[role] = {
-        $description: desc(`motion.${role}`, baseRole.$description),
-        timing: {
-          $type: "transition",
-          $value: {
-            duration: { value: spec.duration, unit: "ms" },
-            delay: { value: 0, unit: "ms" },
-            timingFunction,
-          },
-          $description: desc(`motion.${role}.timing`, `Timing curve and duration for ${role}.`),
+    const timingFunction = `{cubicBezier.${spec.timingFunction}}`;
+    const baseTiming = isRecord(baseRole.timing)
+      ? (baseRole.timing.$value as {
+          duration: { value: number };
+          timingFunction: string;
+        })
+      : undefined;
+    if (
+      baseTiming !== undefined &&
+      baseTiming.duration.value === spec.duration &&
+      baseTiming.timingFunction === timingFunction
+    )
+      continue;
+    motionOverrides[role] = {
+      $description: desc(`motion.${role}`, baseRole.$description),
+      timing: {
+        $type: "transition",
+        $value: {
+          duration: { value: spec.duration, unit: "ms" },
+          delay: { value: 0, unit: "ms" },
+          timingFunction,
         },
-      };
-    } else {
-      const baseSpring = getExtNs(baseRole).spring as
-        | { stiffness: number; damping: number }
-        | undefined;
-      if (
-        baseSpring === undefined ||
-        spec.stiffness !== baseSpring.stiffness ||
-        spec.damping !== baseSpring.damping
-      ) {
-        motionOverrides[role] = {
-          $extensions: {
-            [EXT_NS]: {
-              spring: { stiffness: spec.stiffness, damping: spec.damping },
-            },
-          },
-          $description: desc(`motion.${role}`, baseRole.$description),
-        };
-      }
-    }
+        $description: desc(`motion.${role}.timing`, `Timing curve and duration for ${role}.`),
+      },
+    };
   }
   const motion =
     Object.keys(motionOverrides).length > 0
@@ -1330,7 +1307,7 @@ export function themeSourceDocs(
       ? sharedStyle.state
       : {
           $type: "number",
-          $description: "Interaction state opacities, press scale, and ripple switch.",
+          $description: "Interaction state opacities and press scale.",
           "press-scale": {
             $value: pressScale,
             $description:

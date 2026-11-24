@@ -16,7 +16,7 @@ import {
   tier,
 } from "@shadcn-nsh/theme";
 import { ChevronDown } from "lucide";
-import type { AndroidProps, JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
+import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, reduceMotion, signal, split, token, View } from "nsh";
 import {
   Link as BaseLink,
@@ -31,7 +31,7 @@ import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
 import { createSlot, type Slot } from "./lib/open-state";
 import { itemSpacing, PopIn, popupSurface, type PopupSide } from "./lib/popup";
-import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
+import { pressSink, pressTransition } from "./lib/press";
 
 /** A pointer's compact bar; a touch screen's roomier one, a finger's target in every trigger. */
 const pointer = tier === "pointer";
@@ -203,9 +203,6 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
     },
-    get android(): AndroidProps | undefined {
-      return pressRipple("foreground");
-    },
     /** Its name's type: the `body` type, medium, one line. */
     get text(): TextStyle {
       return {
@@ -272,9 +269,6 @@ export function navigationMenuLinkLook(o?: NavigationMenuLinkLookOptions) {
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple("foreground", o?.disabled);
     },
     /** Its name's type: `navigationMenuLook().linkText`. */
     get text(): TextStyle {
@@ -579,7 +573,6 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
       accessible
       role="button"
       disabled={props.disabled}
-      android={look.android}
       accessibilityState={{ disabled: props.disabled }}
       onMouseEnter={
         pointer && !props.disabled ? () => item.pointerOver("trigger", true) : undefined
@@ -679,7 +672,6 @@ export function NavigationMenuLink(props: NavigationMenuLinkProps) {
       {...rest}
       disabled={props.disabled}
       current={props.active}
-      {...pressHostProps(() => look().android)}
       style={[look().style, props.style ?? null]}
       hoverStyle={[look().hoverStyle, props.hoverStyle ?? null]}
       activeStyle={[look().activeStyle, props.activeStyle ?? null]}

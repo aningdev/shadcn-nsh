@@ -153,7 +153,7 @@
 
 ## 5 state
 
-交互状态的透明度、按下缩放、叠色与水波开关。
+交互状态的透明度、按下缩放与叠色。
 
 | 字段 | 说明 | NSH Gallery | shadcn/ui | Apple | Material | WinUI |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -162,7 +162,6 @@
 | `state.overlay.focus` | 获得焦点的叠色透明度 | 0 | 0 | 0 | 0.1 | 0 |
 | `state.overlay.pressed` | 按下的叠色透明度 | 0 | 0 | 0 | 0.1 | 0 |
 | `state.overlay.dragged` | 拖动的叠色透明度 | 0 | 0 | 0 | 0.16 | 0 |
-| `state.ripple` | 按下时是否画水波 | false | false | false | true | false |
 | `state.pressed-opacity` | 按下时内容的透明度 | 0.7 | 0.7 | 0.7 | 1 | 1 |
 | `state.rest-opacity` | 指示器静止时的透明度（滚动条滑块） | 0.5 | 0.5 | 0.5 | 0.38 | 0.5 |
 | `state.disabled.content` | 禁用时内容的透明度 | 0.5 | 0.5 | 0.3 | 0.38 | 0.36 |
@@ -179,24 +178,18 @@
 
 ## 7 motion
 
-三档弹簧与状态淡变。一套主题对一档要么写弹簧（`stiffness` / `damping`），要么写时间（`duration` / `timingFunction`），另一种参数化的那一格是 `—`。
+三档时间与状态淡变：每档是一个时长（`duration`）和一条曲线（`timingFunction`）。
 
 | 字段 | 说明 | NSH Gallery | shadcn/ui | Apple | Material | WinUI |
 | --- | --- | --- | --- | --- | --- | --- |
-| `motion.fast.stiffness` | 小控件开关的弹簧刚度 | 1218 | 1218 | 1218 | 800 | — |
-| `motion.fast.damping` | 小控件开关的阻尼 | 70 | 70 | 70 | 33.94 | — |
-| `motion.default.stiffness` | 日常反馈的弹簧刚度 | 520 | 520 | 520 | 380 | — |
-| `motion.default.damping` | 日常反馈的阻尼 | 34 | 34 | 34 | 31.19 | — |
-| `motion.slow.stiffness` | 大表面移动的弹簧刚度 | 320 | 320 | 320 | 200 | — |
-| `motion.slow.damping` | 大表面移动的阻尼 | 30 | 30 | 30 | 22.63 | — |
+| `motion.fast.duration` | 小控件开关的时长（ms） | 150 | 150 | 150 | 150 | 83 |
+| `motion.fast.timingFunction` | 小控件开关的曲线 | `out-cubic` | `out-cubic` | `out-cubic` | `standard` | `decelerate` |
+| `motion.default.duration` | 日常反馈的时长（ms） | 250 | 250 | 250 | 250 | 167 |
+| `motion.default.timingFunction` | 日常反馈的曲线 | `out-cubic` | `out-cubic` | `out-cubic` | `standard` | `decelerate` |
+| `motion.slow.duration` | 大表面移动的时长（ms） | 350 | 350 | 350 | 400 | 250 |
+| `motion.slow.timingFunction` | 大表面移动的曲线 | `out-cubic` | `out-cubic` | `out-cubic` | `emphasized-decelerate` | `decelerate` |
 | `motion.state.duration` | 状态淡变的时长（ms） | 120 | 120 | 120 | 100 | 83 |
 | `motion.state.timingFunction` | 状态淡变的曲线 | `out-cubic` | `out-cubic` | `out-cubic` | `standard` | `decelerate` |
-| `motion.fast.duration` | 小控件开关的时长（ms） | — | — | — | — | 83 |
-| `motion.fast.timingFunction` | 小控件开关的曲线 | — | — | — | — | `decelerate` |
-| `motion.default.duration` | 日常反馈的时长（ms） | — | — | — | — | 167 |
-| `motion.default.timingFunction` | 日常反馈的曲线 | — | — | — | — | `decelerate` |
-| `motion.slow.duration` | 大表面移动的时长（ms） | — | — | — | — | 250 |
-| `motion.slow.timingFunction` | 大表面移动的曲线 | — | — | — | — | `decelerate` |
 
 ## 8 finishes
 

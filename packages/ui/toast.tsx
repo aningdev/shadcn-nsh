@@ -17,7 +17,7 @@ import {
   stroke,
 } from "@shadcn-nsh/theme";
 import { CircleCheck, CircleX, Info, TriangleAlert, X, type IconNode } from "lucide";
-import type { AndroidProps, JSX, TextStyle, ViewStyle } from "nsh";
+import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { Overlay, platform, safeArea, signal, split, Text, View, windowSize } from "nsh";
 import {
   Toast as BaseToast,
@@ -29,7 +29,7 @@ import {
 
 import { Button, buttonLabel, buttonLook, type ButtonLookOptions } from "./button";
 import { Icon } from "./lib/icons";
-import { pressRipple, pressSink, pressTransition } from "./lib/press";
+import { pressSink, pressTransition } from "./lib/press";
 import { Spinner } from "./spinner";
 
 const pointer = platform.desktop;
@@ -128,9 +128,6 @@ export function toastCloseLook() {
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple("inverse-foreground");
     },
   };
 }

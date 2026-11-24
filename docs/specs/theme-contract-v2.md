@@ -245,7 +245,7 @@
 - 不为删掉的角色、finish、圆角、刻度名留 alias 或兼容层（AGENTS.md：不为旧 id 提供别名）。
 - 不改 A 层槽名。
 - 应用里的 Tailwind `shadow-*` 类不跟主题：NSH 不读主题文件里的阴影，这些类用 Tailwind 的默认值。应用要跟随主题的阴影，用 `elevation()`。
-- `state` 组（`press-scale`、M3 的 state layer `overlay` 与 `ripple`、`pressed-opacity`、`disabled`）保留在主题里（D6）：它作用于所有可按的东西，不只是控件，所以不进第 11 节的维度。
+- `state` 组（`press-scale`、M3 的 state layer `overlay`、`pressed-opacity`、`disabled`）保留在主题里（D6）：它作用于所有可按的东西，不只是控件，所以不进第 11 节的维度。
 - 自定义主题的作者要按 `CHANGELOG.md` 里每一步的 breaking 条目迁移。
 
 ## 8 跨步骤的验收
@@ -522,7 +522,7 @@
 
 契约就是 `semantics.json` 的 schema：finish 的层与字段、颜色与圆角阴影角色、控件维度、动效角色。
 
-**冻结在 contract v3。** 最后四件是 #340（删 `cells`、`ripple` 与弹簧）、#293 P6（`motion.state` 等动效角色）、#357（`fill` 层；开关的 `checked-*` 字段）、#358（`dimension.control.selection` 增加取值 `plate`：`pill` 是 `default` 的胶囊，`plate` 是 shadcn、solid-glass、apple 里按控件圆角切齐的块）。它们落地即冻结；在那之前，schema 只有它们能改。**#380 之后 `dimension.control` 只剩四键**（`selection` 与 `group` 删掉，[决策 0008](../decisions/0008-drop-selection-group.md)）：契约只减不增，这一次是减。
+**冻结在 contract v3。** 最后四件是 #340（删 `cells`、`ripple` 与弹簧，见[决策 0010](../decisions/0010-drop-ripple-springs.md)）、#293 P6（`motion.state` 等动效角色）、#357（`fill` 层；开关的 `checked-*` 字段）、#358（`dimension.control.selection` 增加取值 `plate`：`pill` 是 `default` 的胶囊，`plate` 是 shadcn、solid-glass、apple 里按控件圆角切齐的块）。它们落地即冻结；在那之前，schema 只有它们能改。**#380 之后 `dimension.control` 只剩四键**（`selection` 与 `group` 删掉，[决策 0008](../decisions/0008-drop-selection-group.md)）：契约只减不增，这一次是减。
 
 冻结之后，一套主题表达不了的外观按三条处置（现在写主题也该照这个来，冻结只是让它不可绕过）：
 

@@ -77,7 +77,7 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
-      // M3 presses with a state layer and a ripple, not by dimming.
+      // M3 presses with a state layer, not by dimming.
       "pressed-opacity": 1,
     },
     fill: {

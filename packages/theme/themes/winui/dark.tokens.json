@@ -23,7 +23,7 @@
           "Use underlined tabs and fields with leading navigation bar indicators."
         ],
         "donts": [
-          "Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves."
+          "Do not substitute continuous squircle corners for WinUI 3's circular corners."
         ]
       },
       "contrast": {
@@ -457,12 +457,7 @@
   },
   "state": {
     "$type": "number",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "ripple": false
-      }
-    },
-    "$description": "Interaction state opacities, press scale, and ripple switch.",
+    "$description": "Interaction state opacities and press scale.",
     "press-scale": {
       "$value": 1,
       "$description": "Scale factor applied while pressed (1 disables press shrinking; WinUI 3 swaps fill brushes instead)."
@@ -521,7 +516,7 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles: fast, default, slow, and the state fade.",
+    "$description": "Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.",
     "fast": {
       "$description": "WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).",
       "timing": {

@@ -20,7 +20,7 @@ import {
   dimmed,
 } from "@shadcn-nsh/theme";
 import { Check, Minus, type IconNode } from "lucide";
-import type { AnimatedValue, AndroidProps, JSX, ViewStyle } from "nsh";
+import type { AnimatedValue, JSX, ViewStyle } from "nsh";
 import { reduceMotion, split, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
@@ -29,7 +29,7 @@ import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
 import { choiceLook, type ChoiceLook, type Fill, HIT_TARGET } from "./lib/look";
-import { pressRipple, pressSink } from "./lib/press";
+import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 
 /** What a checkbox's box shows: a check, a dash (indeterminate) or nothing. */
@@ -255,7 +255,7 @@ const MARK_WEIGHT = 3.84;
 /**
  * What a checkbox's box shows (its `indicator`): citrus with a check or a
  * dash, drawn with the same bold pen. Each part follows the value on a
- * spring of its own (`motion.fast`) and grows in from 75%, so a check
+ * timing of its own (`motion.fast`) and grows in from 75%, so a check
  * turning into a dash crosses over on a fill that stays; at once with
  * reduced motion.
  */
@@ -333,7 +333,6 @@ export interface ChoiceTileLook {
   readonly activeStyle: ViewStyle;
   readonly focusVisibleStyle: ViewStyle;
   readonly disabledStyle: ViewStyle;
-  readonly android?: AndroidProps;
 }
 
 /**
@@ -378,9 +377,6 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple(lit() ? "accent-foreground" : "foreground", o?.disabled);
     },
   };
 }

@@ -19,7 +19,7 @@ import {
   dimmed,
   tier,
 } from "@shadcn-nsh/theme";
-import type { AndroidProps, JSX, TextStyle, ViewStyle } from "nsh";
+import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { split, Text } from "nsh";
 import {
   Toggle as BaseToggle,
@@ -29,7 +29,7 @@ import {
 } from "nsh/base";
 
 import { type Live, read } from "./lib/live-value";
-import { pressHostProps, pressRipple, pressSink, pressTransition, touchSlop } from "./lib/press";
+import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { toolbarTrack } from "./lib/tool";
 
 /** A toggle's size: the theme's three heights, `default` the middle (`sm` and `lg` the steps under
@@ -186,7 +186,7 @@ export function toggleLook(o?: ToggleLookOptions) {
     get hoverStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
       if (themeStyle().state.overlay.hover > 0) {
-        return read(o?.on) ? hovered("accent-foreground") : hovered();
+        return read(o?.on) ? hovered("primary-foreground") : hovered();
       }
       return read(o?.on) ? undefined : hovered();
     },
@@ -195,7 +195,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       if (themeStyle().state.overlay.pressed > 0) {
         return {
           ...(read(o?.on)
-            ? stateLayer("pressed", "accent-foreground")
+            ? stateLayer("pressed", "primary-foreground")
             : stateLayer("pressed", "foreground")),
           ...sink(0.92),
         };
@@ -210,9 +210,6 @@ export function toggleLook(o?: ToggleLookOptions) {
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).side);
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple(read(o?.on) ? "accent-foreground" : "foreground", o?.disabled);
     },
   };
 }
@@ -301,7 +298,6 @@ export function Toggle(props: ToggleProps) {
     <BaseToggle
       {...rest}
       hitSlop={props.hitSlop ?? look.hitSlop}
-      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}

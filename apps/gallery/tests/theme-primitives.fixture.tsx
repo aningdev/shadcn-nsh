@@ -5,7 +5,6 @@ import {
   focusRing,
   follow,
   hovered,
-  isTiming,
   motion,
   platformMaterial,
   selectTheme,
@@ -31,7 +30,7 @@ const { finishes } = defaultTheme.semantics;
 /**
  * A synthetic theme exercising the Phase 3 cross-platform primitives:
  * `double` focus ring, timing motion roles with M3/WinUI 3 curves, state-layer overlays with
- * surface-matched ink, `state.ripple`, and a layer's `material` and `elevation`.
+ * surface-matched ink, and a layer's `material` and `elevation`.
  */
 const expressive: AppTheme = {
   ...defaultTheme,
@@ -46,7 +45,6 @@ const expressive: AppTheme = {
     state: {
       ...defaultTheme.semantics.state,
       overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
-      ripple: true,
     },
     transition: {
       ...defaultTheme.semantics.transition,
@@ -73,9 +71,7 @@ const expressive: AppTheme = {
 };
 
 const showMotion = (m: typeof motion.fast) =>
-  isTiming(m)
-    ? `timing:${m.duration}:${JSON.stringify(m.timingFunction)}`
-    : `spring:${m.stiffness}:${m.damping}`;
+  `timing:${m.duration}:${JSON.stringify(m.timingFunction)}`;
 
 function App() {
   const step = signal(0);
@@ -104,10 +100,6 @@ function App() {
       <Text>{`toastHover=${JSON.stringify(toastClose.hoverStyle)}`}</Text>
       <Text>{`arrowHover=${JSON.stringify(arrow.hoverStyle)}`}</Text>
       <Text>{`bareHover=${JSON.stringify(hovered())}`}</Text>
-      <Text>{`btnAndroid=${JSON.stringify(defaultBtn.android ?? null)}`}</Text>
-      <Text>{`roundAndroid=${JSON.stringify(roundBtn.android ?? null)}`}</Text>
-      <Text>{`toggleOnAndroid=${JSON.stringify(onToggle.android ?? null)}`}</Text>
-      <Text>{`toastAndroid=${JSON.stringify(toastClose.android ?? null)}`}</Text>
       <Text>{`menuMaterial=${JSON.stringify(platformMaterial("overlay"))}`}</Text>
       <Text>{`tokens=${colors.primaryForeground}|${colors.inverseForeground}|${finish.accent.foreground}`}</Text>
       <Roll value={step()}>{`roll=${step()}`}</Roll>

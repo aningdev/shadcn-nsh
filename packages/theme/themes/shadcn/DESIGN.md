@@ -185,6 +185,18 @@ motion:
     duration: 420ms
     delay: 0ms
     timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
+  fast:
+    duration: 150ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
+  default:
+    duration: 250ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
+  slow:
+    duration: 350ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
   state:
     duration: 120ms
     delay: 0ms
@@ -425,14 +437,14 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles: fast, default, slow, and the state fade.
+Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
 - **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
-- **`fast`** (spring: stiffness=1218, damping=70 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Quickest response: small control toggles and thumbs.
-- **`default`** (spring: stiffness=520, damping=34 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Everyday feedback: presses, releases and modest movement.
-- **`slow`** (spring: stiffness=320, damping=30 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Slowest: large surfaces and long-travel layout movement.
+- **`fast`** (150ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Quickest response: small control toggles and thumbs.
+- **`default`** (250ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Everyday feedback: presses, releases and modest movement.
+- **`slow`** (350ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Slowest: large surfaces and long-travel layout movement.
 - **`state`** (120ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): State fade: how fast hover, press and choice states come and go (upstream nsh-gallery-ui's hover wash, 120 ms ease-out).
-- **Press & ripple** (`press-scale: 1`, `pressed-opacity: 0.7`, `ripple: false`): Interaction state opacities, press scale, and ripple switch.
+- **Press** (`press-scale: 1`, `pressed-opacity: 0.7`): Interaction state opacities and press scale.
 - **Timing curves:** Named timing curves shared across themes.
 
 ## Voice & Content Strategy
@@ -470,4 +482,4 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way.
-- **Don't:** Do not add backdrop blur, specular rim highlights, or spring press shrink to flat shadcn finishes.
+- **Don't:** Do not add backdrop blur, specular rim highlights, or press shrink to flat shadcn finishes.

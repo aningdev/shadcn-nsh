@@ -20,7 +20,7 @@ import {
   dimmed,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
-import type { AndroidProps, JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
+import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import {
   cleanup,
   context,
@@ -43,7 +43,7 @@ import { Input, type InputProps } from "./input";
 import { AsText } from "./lib/as-text";
 import { IconLabel } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
+import { pressSink, pressTransition } from "./lib/press";
 import { controlSize, narrowWindow } from "./lib/surface";
 import { Separator, type SeparatorProps } from "./separator";
 import { Sheet, SheetContent } from "./sheet";
@@ -551,9 +551,6 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
     },
-    get android(): AndroidProps | undefined {
-      return pressRipple("foreground", o?.disabled);
-    },
     /** Its name: `rowLabel`'s size, medium on the page the app is on, one line, the text clipped
      * when the column is folded. */
     get label(): TextStyle {
@@ -607,9 +604,6 @@ export function sidebarMenuActionLook(o?: SidebarMenuActionLookOptions) {
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple("foreground");
     },
     /** Its glyph: 16 points in the muted ink. */
     get glyph(): { size: number; tint: string } {
@@ -730,9 +724,6 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple("foreground", o?.disabled);
     },
     /** Its name: `subRowLabel`'s size, one line, the text clipped by a tight row. */
     get label(): TextStyle {
@@ -1384,7 +1375,6 @@ export function SidebarMenuButton(props: SidebarMenuButtonProps) {
     <BaseButton
       {...rest}
       disabled={props.disabled}
-      {...pressHostProps(() => look.android)}
       accessibilityLabel={
         props.accessibilityLabel !== undefined
           ? props.accessibilityLabel
@@ -1447,7 +1437,6 @@ export function SidebarMenuAction(props: SidebarMenuActionProps) {
       <BaseButton
         {...rest}
         disabled={props.disabled}
-        {...pressHostProps(() => look.android)}
         style={[look.style, props.style ?? null]}
         hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
         activeStyle={props.activeStyle ?? null}
@@ -1592,7 +1581,6 @@ export function SidebarMenuSubButton(props: SidebarMenuSubButtonProps) {
     <BaseButton
       {...rest}
       disabled={props.disabled}
-      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}

@@ -553,7 +553,6 @@ export const winuiStyle = {
   state: {
     "press-scale": 1,
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
-    ripple: false,
     "pressed-opacity": 1,
     "rest-opacity": 0.5,
     // Disabled containers switch to the dedicated disabled brush (`ControlFillColorDisabled` /
@@ -691,9 +690,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         'Use `focus.style: "double"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).',
         "Use underlined tabs and fields with leading navigation bar indicators.",
       ],
-      donts: [
-        "Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves.",
-      ],
+      donts: ["Do not substitute continuous squircle corners for WinUI 3's circular corners."],
     },
     // WinUI states these sizes itself, off the library's scales; each says where.
     scales: {

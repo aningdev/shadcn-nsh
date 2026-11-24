@@ -268,7 +268,6 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | --------------------------------------- | ----------------------------------------------------------------------- |
 | `press-scale`                           | 按下缩放（1 为不缩）                                                    |
 | `overlay.{hover,focus,pressed,dragged}` | 状态层叠色的不透明度（M3 的 state layer）                               |
-| `ripple`                                | 按下有没有涟漪                                                          |
 | `pressed-opacity` / `rest-opacity`      | 被动指示（滚动条把手等）按下与静止时的不透明度                          |
 | `disabled.content` / `disabled.fill`    | 禁用时内容的不透明度；`fill: true` 时改画 `disabled` finish，不整体变淡 |
 
@@ -294,7 +293,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **定义项**
 
-- `motion`：弹簧三档 `fast` / `default` / `slow`，按速度命名，不按用途。每档可以是弹簧（`stiffness` / `damping`），也可以是时间曲线（`duration` / `timingFunction`）。
+- `motion`：三档 `fast` / `default` / `slow`，按速度命名，不按用途。每档是时间曲线（`duration` / `timingFunction`），没有弹簧（[决策 0010](decisions/0010-drop-ripple-springs.md)）。
 - `motion.state`：一条状态过渡，只有时间曲线。悬停、按下、选中这类小状态来去的时长与曲线（表 2.11）。
 - `transition.enter`：浮层进场的时长与曲线。
 

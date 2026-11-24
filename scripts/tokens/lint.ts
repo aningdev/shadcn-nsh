@@ -20,7 +20,6 @@ import { finishFields, type FinishRole } from "../../packages/theme/finish-field
 import { checkMaterial } from "../theme/material";
 import { oklchToRgb } from "../theme/oklch";
 import {
-  checkSpringSpec,
   checkTimingSpec,
   easingNames,
   isValidPressScale,
@@ -291,29 +290,10 @@ function validateExtAtPath(
     return;
   }
 
-  if (p === "state") {
-    checkUnknownKeys(where, ext, ["ripple"], problems);
-    if (typeof ext.ripple !== "boolean") {
-      problems.push(`${where}.ripple must be a boolean`);
-    }
-    return;
-  }
-
   if (p === "state.disabled") {
     checkUnknownKeys(where, ext, ["fill"], problems);
     if (typeof ext.fill !== "boolean") {
       problems.push(`${where}.fill must be a boolean`);
-    }
-    return;
-  }
-
-  if (/^motion\.[a-z0-9-]+$/.test(p)) {
-    checkUnknownKeys(where, ext, ["spring"], problems);
-    if (!isRecord(ext.spring)) {
-      problems.push(`${where}.spring must be an object`);
-    } else {
-      checkUnknownKeys(`${where}.spring`, ext.spring, ["stiffness", "damping"], problems);
-      problems.push(...checkSpringSpec(label, `${p}.spring`, ext.spring));
     }
     return;
   }
@@ -936,52 +916,41 @@ function checkMergedSemantics(
     };
     walkDim(group, dimGroupPath);
   }
-  // Motion roles: spring OR timing (never mixed, never missing)
+  // Motion roles: each a timing token (never missing)
   const motionGroup = merged.motion;
   if (isRecord(motionGroup)) {
     for (const role of motionRoleNames) {
       const roleNode = motionGroup[role];
-      if (!isRecord(roleNode)) {
-        problems.push(`${label}: motion.${role} is missing`);
+      if (!isRecord(roleNode) || !("timing" in roleNode)) {
+        problems.push(`${label}: motion.${role} must declare a timing token`);
         continue;
       }
-      const ext = getExt(roleNode);
-      const hasSpring = ext !== undefined && "spring" in ext;
-      const hasTiming = "timing" in roleNode;
-      if (hasSpring && hasTiming) {
-        problems.push(`${label}: motion.${role} mixes spring extension and timing token`);
-      } else if (!hasSpring && !hasTiming) {
-        problems.push(
-          `${label}: motion.${role} must declare either spring extension or timing token`,
+      const timingResolved = getAtPath(resolved, `motion.${role}.timing`);
+      const timingRaw = roleNode.timing;
+      if (
+        isTokenNode(timingRaw) &&
+        isRecord(timingRaw.$value) &&
+        isTokenNode(timingResolved) &&
+        isRecord(timingResolved.$value)
+      ) {
+        const tfRef = timingRaw.$value.timingFunction;
+        const bezierTarget = checkTypedRef(
+          `${label}: motion.${role}.timing.timingFunction`,
+          tfRef,
+          "cubicBezier",
+          tokenTypes,
+          problems,
         );
-      } else if (hasTiming) {
-        const timingResolved = getAtPath(resolved, `motion.${role}.timing`);
-        const timingRaw = roleNode.timing;
-        if (
-          isTokenNode(timingRaw) &&
-          isRecord(timingRaw.$value) &&
-          isTokenNode(timingResolved) &&
-          isRecord(timingResolved.$value)
-        ) {
-          const tfRef = timingRaw.$value.timingFunction;
-          const bezierTarget = checkTypedRef(
-            `${label}: motion.${role}.timing.timingFunction`,
-            tfRef,
-            "cubicBezier",
-            tokenTypes,
-            problems,
-          );
-          const durVal = isRecord(timingResolved.$value.duration)
-            ? timingResolved.$value.duration.value
-            : undefined;
-          const easingName = bezierTarget?.replace(/^cubicBezier\./, "");
-          problems.push(
-            ...checkTimingSpec(label, `motion.${role}.timing`, {
-              duration: durVal,
-              timingFunction: easingName,
-            }),
-          );
-        }
+        const durVal = isRecord(timingResolved.$value.duration)
+          ? timingResolved.$value.duration.value
+          : undefined;
+        const easingName = bezierTarget?.replace(/^cubicBezier\./, "");
+        problems.push(
+          ...checkTimingSpec(label, `motion.${role}.timing`, {
+            duration: durVal,
+            timingFunction: easingName,
+          }),
+        );
       }
     }
   }

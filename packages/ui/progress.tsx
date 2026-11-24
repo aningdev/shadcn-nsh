@@ -342,8 +342,8 @@ export type ProgressStepMarkProps = ViewProps & {
 };
 
 /**
- * A step's mark: a ring sunk like a field, citrus with a check once `done` (the check grows in on a
- * spring, as a checkbox's does), an accent edge and dot while `current`. Becoming current or done
+ * A step's mark: a ring sunk like a field, citrus with a check once `done` (the check grows in over
+ * its own timing, as a checkbox's does), an accent edge and dot while `current`. Becoming current or done
  * pops the ring a little past its size and back; with reduced motion nothing moves. Every `nsh`
  * View prop passes through.
  */
@@ -357,7 +357,9 @@ export function ProgressStepMark(props: ProgressStepMarkProps) {
     const next = state();
     if (next === shown) return;
     shown = next;
-    if (!reduceMotion()) void animate(pop, 1, motion.default, { velocity: 4 });
+    if (reduceMotion()) return;
+    pop.set(1.08);
+    void animate(pop, 1, motion.default);
   });
   const look = progressStepsLook();
   return (

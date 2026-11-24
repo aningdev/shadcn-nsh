@@ -44,7 +44,7 @@ export const PALETTES = [
     id: "material",
     label: "Material",
     description:
-      "Material 3 Expressive: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive springs.",
+      "Material 3 Expressive: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive shapes.",
   },
   {
     id: "winui",

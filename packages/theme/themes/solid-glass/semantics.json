@@ -185,7 +185,6 @@
       "pressed": 0,
       "dragged": 0
     },
-    "ripple": false,
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
     "disabled": {
@@ -201,16 +200,16 @@
   },
   "motion": {
     "fast": {
-      "stiffness": 1218,
-      "damping": 70
+      "duration": 150,
+      "timingFunction": "out-cubic"
     },
     "default": {
-      "stiffness": 520,
-      "damping": 34
+      "duration": 250,
+      "timingFunction": "out-cubic"
     },
     "slow": {
-      "stiffness": 320,
-      "damping": 30
+      "duration": 350,
+      "timingFunction": "out-cubic"
     },
     "state": {
       "duration": 120,

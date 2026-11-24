@@ -19,11 +19,10 @@ import {
   stroke,
   dimmed,
 } from "@shadcn-nsh/theme";
-import type { AndroidProps, ViewStyle } from "nsh";
+import type { ViewStyle } from "nsh";
 import { computed, platform, Text, token, View, windowSize } from "nsh";
 
 import { type Live, read } from "./live-value";
-import { pressRipple } from "./press";
 
 const pointer = platform.desktop;
 
@@ -263,7 +262,6 @@ export interface ListRowLook {
   readonly activeStyle: ViewStyle;
   readonly focusVisibleStyle: ViewStyle;
   readonly disabledStyle: ViewStyle;
-  readonly android?: AndroidProps;
 }
 
 /**
@@ -307,9 +305,6 @@ export function listRow(o?: ListRowOptions): ListRowLook {
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple("foreground", o?.disabled);
     },
   };
 }

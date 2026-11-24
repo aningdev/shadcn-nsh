@@ -12,7 +12,7 @@ import { compileFinishGroup, compileShadowGroup } from "./compile";
 import { compileSemanticsJson, compileThemeJson } from "./compile";
 import { dtcgColorToHex } from "./design-md";
 import { lintDtcgSources, lintDtcgTheme } from "./lint";
-import { lookupToken, mergeTokenTrees, resolveAliases, resolvePermutation } from "./resolver";
+import { lookupToken, resolveAliases, resolvePermutation } from "./resolver";
 import { validateResolverDocument, validateTokensDocument } from "./schema-validate";
 import {
   EXT_NS,
@@ -465,7 +465,7 @@ describe("DTCG source lint", () => {
     expect(applePointer.typography.body.$value.fontSize.value).toBe(13);
     expect(appleTouch.typography.body.$value.fontSize.value).toBe(15);
 
-    // 2. Motion union replacement (winui timing replaces base spring; spring replaces timing)
+    // 2. A theme's timing replaces the base's, field by field
     const winuiResolver = path.join(root, "packages/theme/tokens/themes/winui/theme.resolver.json");
     const winuiMerged = resolvePermutation(winuiResolver, {
       appearance: "light",
@@ -473,19 +473,6 @@ describe("DTCG source lint", () => {
     }).merged as Record<string, any>;
     expect(winuiMerged.motion.fast.timing.$value.duration.value).toBe(83);
     expect(winuiMerged.motion.fast.$extensions).toBeUndefined();
-
-    const backToSpring = mergeTokenTrees(structuredClone(winuiMerged), {
-      motion: {
-        fast: {
-          $extensions: { "dev.aning.shadcn-nsh": { spring: { stiffness: 500, damping: 30 } } },
-        },
-      },
-    }) as Record<string, any>;
-    expect(backToSpring.motion.fast.timing).toBeUndefined();
-    expect(backToSpring.motion.fast.$extensions["dev.aning.shadcn-nsh"].spring).toEqual({
-      stiffness: 500,
-      damping: 30,
-    });
 
     // 3. WinUI sidebar-primary = var(--primary), and Material alias-backed colorOp (down-tint)
     const winuiTheme = compileThemeJson(winuiResolver);
@@ -679,7 +666,6 @@ describe("per-appearance standalone .tokens.json distribution", () => {
         expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
         expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
         expect(doc.state["rest-opacity"].$value).toBe(semanticsJson.state["rest-opacity"]);
-        expect(doc.state.$extensions[EXT_NS].ripple).toBe(semanticsJson.state.ripple);
         for (const [k, tok] of Object.entries(doc.state.overlay as Record<string, any>)) {
           if (k.startsWith("$")) continue;
           expect(tok.$value).toBe(semanticsJson.state.overlay[k]);
@@ -710,19 +696,14 @@ describe("per-appearance standalone .tokens.json distribution", () => {
         }).toEqual(semanticsJson.transition.enter);
 
         for (const role of ["fast", "default", "slow"] as const) {
-          const spring = doc.motion[role].$extensions?.[EXT_NS]?.spring;
-          if (spring) {
-            expect(spring).toEqual(semanticsJson.motion[role]);
-          } else {
-            const tVal = resolved.motion[role].timing.$value as DtcgTransition;
-            expect({
-              duration: tVal.duration.value,
-              timingFunction: bezierNameOf(
-                tVal.timingFunction as [number, number, number, number],
-                doc.motion[role].timing.$value.timingFunction,
-              ),
-            }).toEqual(semanticsJson.motion[role]);
-          }
+          const tVal = resolved.motion[role].timing.$value as DtcgTransition;
+          expect({
+            duration: tVal.duration.value,
+            timingFunction: bezierNameOf(
+              tVal.timingFunction as [number, number, number, number],
+              doc.motion[role].timing.$value.timingFunction,
+            ),
+          }).toEqual(semanticsJson.motion[role]);
         }
 
         const mergedFinishes = mergeFinishes(semanticsJson.finishes, appearance);

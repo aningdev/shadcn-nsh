@@ -34,10 +34,10 @@ describe("checkStyle", () => {
 
   test("names a key that was deleted", () => {
     const file = copy();
-    delete file.motion.default.damping;
+    delete file.motion.default.duration;
     const problems = check(file);
     expect(problems).toHaveLength(1);
-    expect(problems[0]).toContain("motion.default.damping");
+    expect(problems[0]).toContain("motion.default.duration");
     expect(problems[0]).toContain("missing");
   });
 
@@ -130,9 +130,9 @@ describe("checkStyle", () => {
       expect(check(withEasing), timingFunction).toEqual([]);
     }
 
-    const mixed = copy();
-    mixed.motion.fast = { stiffness: 300, duration: 150 };
-    expect(check(mixed).join("\n")).toContain("mixes spring keys");
+    const spring = copy();
+    spring.motion.fast = { stiffness: 300, damping: 30, duration: 150, timingFunction: "standard" };
+    expect(check(spring).join("\n")).toContain("motion.fast.stiffness");
 
     const badTiming = copy();
     badTiming.motion.fast = { duration: -10, timingFunction: "unknown-curve" };

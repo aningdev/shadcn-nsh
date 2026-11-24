@@ -213,7 +213,7 @@ export function compileDesignMd(resolverPath: string): string {
     icon: readDimLeaves(dimResolved.icon as Record<string, unknown>),
   };
 
-  // Motion (the entrance transition's timing; springs have no DESIGN.md field and are documented in prose)
+  // Motion (the entrance transition's timing and the role timings)
   const motionYaml: Record<string, Record<string, string>> = {};
   const enterVal = (lightResolved.transition as Record<string, Record<string, unknown>>).enter!
     .$value as DtcgTransition;
@@ -488,7 +488,6 @@ export function compileDesignMd(resolverPath: string): string {
   >;
   const shapeExt = getExt(lightMerged.shape) ?? {};
   const focusExt = getExt(focusGroup) ?? {};
-  const stateExt = getExt(stateGroup) ?? {};
   const controlSizeExt = getExt(sizeGroup.control) ?? {};
 
   const pointerRaw = resolvePermutationDescriptions(absPath, "pointer");
@@ -708,14 +707,8 @@ export function compileDesignMd(resolverPath: string): string {
   }
   for (const role of MOTION_ROLES) {
     const roleNode = motionGroup[role];
-    const roleExt = getExt(roleNode);
     const desc = getDesc(roleNode) ?? "";
-    if (roleExt?.spring) {
-      const sp = roleExt.spring as { stiffness: number; damping: number };
-      lines.push(
-        `- **\`${role}\`** (spring: stiffness=${sp.stiffness}, damping=${sp.damping} — omitted from YAML \`motion\` because DESIGN.md \`Motion\` only accepts \`duration\`/\`delay\`/\`timingFunction\`): ${desc}`,
-      );
-    } else if (motionYaml[role]) {
+    if (motionYaml[role]) {
       lines.push(
         `- **\`${role}\`** (${motionYaml[role]!.duration}, \`${motionYaml[role]!.timingFunction}\`): ${desc}`,
       );
@@ -727,7 +720,7 @@ export function compileDesignMd(resolverPath: string): string {
     const pressedOpacity = (stateGroup["pressed-opacity"] as Record<string, unknown> | undefined)
       ?.$value;
     lines.push(
-      `- **Press & ripple** (\`press-scale: ${String(pressScale)}\`, \`pressed-opacity: ${String(pressedOpacity)}\`, \`ripple: ${String(stateExt.ripple)}\`): ${stateDesc}`,
+      `- **Press** (\`press-scale: ${String(pressScale)}\`, \`pressed-opacity: ${String(pressedOpacity)}\`): ${stateDesc}`,
     );
   }
   const curveDesc = getDesc(cubicBezierGroup);

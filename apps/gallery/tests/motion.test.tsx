@@ -3,6 +3,9 @@ import { expect, open, test } from "nsh/test";
 const find = (texts: string[], prefix: string) =>
   texts.find((line) => line.startsWith(prefix))?.slice(prefix.length);
 
+/** Every motion role is a timing: out-cubic (a resolved curve object) at 150, 250 and 350 ms. */
+const timed = "150|object|250|object|350|object";
+
 const full = (ms: string) => ({
   press: `background-color, transform|${ms}|${ms === "0" ? "still" : "sink"}`,
   button: `background-color, border-color, box-shadow, opacity, transform|${ms}|${ms === "0" ? "still" : "sink"}|still`,
@@ -14,9 +17,9 @@ const full = (ms: string) => ({
   tooltip: ms === "0" ? "|0" : `opacity, transform|150`,
 });
 
-test("press, hover, chevrons, springs and the progress loop use the documented motion", async () => {
+test("press, hover, chevrons and the progress loop use the documented motion", async () => {
   const app = await open("./motion.fixture.tsx");
-  expect(find(app.texts(), "motion=")).toBe("false|1218|70|520|34|320|30");
+  expect(find(app.texts(), "motion=")).toBe(`false|${timed}`);
   const live = full("150");
   expect(find(app.texts(), "press=")).toBe(live.press);
   expect(find(app.texts(), "button=")).toBe(live.button);
@@ -39,7 +42,7 @@ test("press, hover, chevrons, springs and the progress loop use the documented m
 
 test("reduced motion zeroes durations and keeps motion-reduce classes", async () => {
   const app = await open("./motion.fixture.tsx", { reducedMotion: true });
-  expect(find(app.texts(), "motion=")).toBe("true|1218|70|520|34|320|30");
+  expect(find(app.texts(), "motion=")).toBe(`true|${timed}`);
   const live = full("150");
   expect(find(app.texts(), "press=")).toBe(`${live.press.split("|")[0]}|150|still`);
   expect(find(app.texts(), "button=")).toBe(`${live.button.split("|")[0]}|150|still|still`);

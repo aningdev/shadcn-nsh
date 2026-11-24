@@ -2,15 +2,9 @@
 // `activeStyle`, so it never waits for JS.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  hitTarget,
-  press,
-  stateLayerColor,
-  style as themeStyle,
-  terminal,
-} from "@shadcn-nsh/theme";
-import type { AndroidProps, Tokens, ViewStyle } from "nsh";
-import { reduceMotion, token } from "nsh";
+import { hitTarget, press, terminal } from "@shadcn-nsh/theme";
+import type { ViewStyle } from "nsh";
+import { reduceMotion } from "nsh";
 
 import { type Live, read } from "./live-value";
 
@@ -53,34 +47,6 @@ export function pressSink(
     transition: pressTransition(also),
   };
 }
-/**
- * Android press ripple when `state.ripple` is enabled: `{ ripple: { color } }` using `ink`
- * (default `"foreground"`) at `state.overlay.pressed` opacity (or bare `ink` when `overlay.pressed <= 0`).
- * Returns `undefined` when disabled, in a terminal, or when `state.ripple` is `false`.
- */
-export function pressRipple(
-  ink: keyof Tokens = "foreground",
-  disabled?: Live<boolean | undefined>,
-): AndroidProps | undefined {
-  if (terminal || read(disabled) || !themeStyle().state.ripple) return undefined;
-  const color = stateLayerColor("pressed", ink) ?? (token(ink) as string);
-  return { ripple: { color } };
-}
-
-/**
- * Packages a reactive `android` ripple getter in a spreadable object for `nsh/base` primitives
- * (matching `{...platformMaterial(...)}`, since `ComponentHostProps` omits named platform attrs).
- */
-export function pressHostProps(readAndroid: () => AndroidProps | undefined): {
-  readonly android?: AndroidProps;
-} {
-  return {
-    get android() {
-      return readAndroid();
-    },
-  };
-}
-
 /**
  * How far presses count past a control `side` points tall (a button's height,
  * a toggle's side), so a finger gets the theme's `size.hit` points without the control

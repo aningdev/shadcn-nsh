@@ -133,10 +133,10 @@ describe("motion.state", () => {
     }
   });
 
-  test("the default theme keeps the other three roles' springs", () => {
+  test("the default theme paces the other three roles at out-cubic", () => {
     const { motion } = semantics("default");
-    expect(motion.fast).toEqual({ stiffness: 1218, damping: 70 });
-    expect(motion.default).toEqual({ stiffness: 520, damping: 34 });
-    expect(motion.slow).toEqual({ stiffness: 320, damping: 30 });
+    expect(motion.fast).toEqual({ duration: 150, timingFunction: "out-cubic" });
+    expect(motion.default).toEqual({ duration: 250, timingFunction: "out-cubic" });
+    expect(motion.slow).toEqual({ duration: 350, timingFunction: "out-cubic" });
   });
 });

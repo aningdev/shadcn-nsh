@@ -23,7 +23,7 @@ test("a rendered page follows the style of the theme selected, and of the build-
     density: String(pointer.height.pointer.lg),
     control: String(pointer.control.pointer.padding),
     plain: String(pointer.height.pointer.lg),
-    press: `${defaults.motion.fast.stiffness}|${defaults.motion.fast.damping}`,
+    press: String(defaults.motion.fast.duration),
     focus: String(defaults.dimension.focus.width),
     curve: "continuous",
   });
@@ -34,14 +34,14 @@ test("a rendered page follows the style of the theme selected, and of the build-
     density: "60",
     control: "13",
     plain: "60",
-    press: "111|22",
+    press: "90",
     focus: "5",
     curve: "circular",
   });
 
-  // A spring made before the switch still springs under the new theme.
-  await app.press("text:Spring");
-  expect(read(app.texts(), "press")).toBe("111|22");
+  // A follower made before the switch still runs under the new theme.
+  await app.press("text:Follow");
+  expect(read(app.texts(), "press")).toBe("90");
 
   await app.press("text:Build-time");
 

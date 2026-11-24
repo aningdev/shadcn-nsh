@@ -12,7 +12,7 @@ import {
   stroke,
   dimmed,
 } from "@shadcn-nsh/theme";
-import type { AndroidProps, JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
+import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, signal, split, Text, View } from "nsh";
 import {
   Tab as BaseTab,
@@ -22,7 +22,6 @@ import {
 } from "nsh/base";
 
 import { type Live, read } from "./lib/live-value";
-import { pressHostProps, pressRipple } from "./lib/press";
 import { hoverOf, type TabLook, type TabState } from "./tabs";
 
 const pointer = platform.desktop;
@@ -115,9 +114,6 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         },
         get disabledStyle(): ViewStyle {
           return { opacity: dimmed.disabled };
-        },
-        get android(): AndroidProps | undefined {
-          return pressRipple("foreground", state.disabled);
         },
       };
     },
@@ -271,7 +267,6 @@ export function SegmentedItem(props: SegmentedItemProps) {
     <BaseTab
       {...rest}
       selected={selected()}
-      {...pressHostProps(() => segment.android)}
       onPress={() => {
         ctx.onValueChange(props.value);
         props.onPress?.();

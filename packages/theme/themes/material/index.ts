@@ -6,7 +6,7 @@ import type { AppTheme } from "@shadcn-nsh/theme";
 import semantics from "./semantics.json";
 import theme from "./theme.json";
 
-/** Material 3 Expressive baseline palette and metrics: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, press ripple, and expressive springs. */
+/** Material 3 Expressive baseline palette and metrics: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive shapes. */
 export const material: AppTheme = {
   id: "material",
   label: "Material",

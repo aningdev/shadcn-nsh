@@ -24,7 +24,7 @@ import {
   motion,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
-import type { AndroidProps, JSX, StyleProp, TextStyle, Tokens, ViewProps, ViewStyle } from "nsh";
+import type { JSX, StyleProp, TextStyle, Tokens, ViewProps, ViewStyle } from "nsh";
 import {
   context,
   createAnimatedValue,
@@ -41,7 +41,7 @@ import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/b
 import { AsText } from "./lib/as-text";
 import { Icon, IconLabel } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { pressHostProps, pressRipple, pressSink, pressTransition, touchSlop } from "./lib/press";
+import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { Spinner } from "./spinner";
 
 /**
@@ -184,7 +184,7 @@ const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
     : variant === "destructive"
       ? "destructive"
       : variant === "secondary" && selected
-        ? "accent-foreground"
+        ? "primary-foreground"
         : "foreground";
 
 /** The fill, edge and shadow of a variant at rest (or selected). A disabled filled button gives up the citrus for the
@@ -283,9 +283,6 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).height);
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple(buttonInk(v(), !!read(o?.selected)), idle);
     },
   };
 }
@@ -456,9 +453,6 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     get hitSlop(): number | undefined {
       return touchSlop(iconButtonDimensions(o).side);
     },
-    get android(): AndroidProps | undefined {
-      return pressRipple(destructive ? "destructive" : "foreground", o.disabled);
-    },
   };
 }
 
@@ -554,9 +548,6 @@ export function roundButtonLook(
     },
     get hitSlop(): number | undefined {
       return touchSlop(roundSide(o));
-    },
-    get android(): AndroidProps | undefined {
-      return pressRipple(primary ? "primary-foreground" : "foreground", o.disabled);
     },
   };
 }
@@ -656,9 +647,6 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
           const v = touchSlop(dimensions(o).height);
           return v ? { top: v, bottom: v } : undefined;
         },
-        get android(): AndroidProps | undefined {
-          return pressRipple(buttonInk(read(variant) ?? "default"), s?.disabled);
-        },
       };
     },
     get divider(): ViewStyle {
@@ -755,7 +743,6 @@ export function Button(props: ButtonProps) {
         props.onPressUp?.();
       }}
       hitSlop={props.hitSlop ?? look.hitSlop}
-      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
@@ -813,7 +800,6 @@ export function IconButton(props: IconButtonProps) {
     <BaseButton
       {...rest}
       hitSlop={props.hitSlop ?? look.hitSlop}
-      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
@@ -865,7 +851,6 @@ export function RoundButton(props: RoundButtonProps) {
     <BaseButton
       {...rest}
       hitSlop={props.hitSlop ?? look.hitSlop}
-      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
@@ -949,7 +934,6 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
     <BaseButton
       {...rest}
       hitSlop={props.hitSlop ?? segment.hitSlop}
-      {...pressHostProps(() => segment.android)}
       onPressDown={() => {
         if (!read(segmentOptions.disabled)) pressing.set(true);
         props.onPressDown?.();

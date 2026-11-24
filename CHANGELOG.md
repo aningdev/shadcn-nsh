@@ -2,9 +2,15 @@
 
 ## Unreleased
 
+### Removed
+
+- **BREAKING: the press ripple and motion springs are gone (#340).** `state.ripple`, `pressRipple` and `pressHostProps` are removed. A Material press draws the same state layer as every other theme, with no Android ripple. `Spring`, `isTiming` and `animate()`'s `springExtra` are removed too. `motion.fast` / `default` / `slow` are `{ duration, timingFunction }` only: default, shadcn, solid-glass and apple use 150 / 250 / 350 ms `out-cubic`; Material uses M3's durations and easings (150 / 250 ms `standard`, 400 ms `emphasized-decelerate`). A custom theme that set `stiffness` / `damping` should state a duration and an easing instead. Why: [ADR 0010](docs/decisions/0010-drop-ripple-springs.md).
+
 ### Fixed
 
 - **Apple light: a selected or hovered row shows on the grouped background (#349).** The light `muted` fill is now `secondarySystemFill` over the card (was the tertiary step), so `accent`, `sidebar-accent`, hover, field, track and inset fills, which reference it, separate from the grouped page and from cards. `bun run theme:contrast` gains a fill-separation check (lightness gap of at least 0.015 between a fill and the surface it sits on, translucent fills composited), which all six themes pass in light and dark.
+
+- **A selected toggle's, or selected secondary button's, hover and press wash matches its label ink.** The state layer used `accent-foreground` while the text uses the selected finish's `primary-foreground`.
 
 ## 0.10.0 — themes state their sources; components draw the rest
 
