@@ -121,6 +121,8 @@
 
 ### Fixed
 
+- **Accordion and collapsible triggers take the theme's label weight (#352).** shadcn/ui's trigger is `font-medium`; ours drew at the title weight (semibold). `RowLabel`'s `strong` now reads the `label` type role (500; 400 in WinUI), so a checkbox "Select all" row and avatar list names follow it too.
+
 - **A menu, select, combobox or command row with a second line grows to hold it (#333).** A row's height in the size table (`menuItemSize.height`, the listbox and command row heights) is now its least height: a row with `detail` or a note under its label grows, with the theme's item inset (at least 4) above and below, instead of drawing both lines in a one-line box over the next row. One-line rows keep their height.
 
 - **A `SelectGroup` or `ComboboxGroup` built from children shows its heading on the web (#345).** Items mapped beside a `SelectLabel` lost their group on the web target, so the heading was missing and same-named items in different groups merged; the group's children now sit in a `View`, which keeps the group in scope.
