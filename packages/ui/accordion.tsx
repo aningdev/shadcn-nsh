@@ -223,14 +223,8 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
       <DisclosureChevron accordion />
     </View>
   );
-  const states = {
-    class: joinClass(look.class, props.class),
-    style: [look.style, props.style ?? null],
-    hoverStyle: [look.hoverStyle ?? null, props.hoverStyle ?? null],
-    activeStyle: [look.activeStyle, props.activeStyle ?? null],
-    focusVisibleStyle: [look.focusVisibleStyle, props.focusVisibleStyle ?? null],
-    disabledStyle: [look.disabledStyle, props.disabledStyle ?? null],
-  };
+  // The look's states are read here, where the row is drawn, not gathered in the body: its row
+  // height is the theme's (`listRow`), so the row follows a theme chosen after it was mounted.
 
   // A trigger of its own disabled is a row, not the item's button: `nsh/base` stops the presses of
   // a disabled item, and takes nothing from a trigger that only dims.
@@ -241,14 +235,27 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
         role="button"
         accessibilityLabel={props.accessibilityLabel ?? undefined}
         accessibilityState={{ disabled: true }}
-        {...states}
+        class={joinClass(look.class, props.class)}
+        style={[look.style, props.style ?? null]}
+        hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+        activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+        focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+        disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
       >
         {row}
       </View>
     );
   }
   return (
-    <BaseAccordionTrigger {...rest} {...states}>
+    <BaseAccordionTrigger
+      {...rest}
+      class={joinClass(look.class, props.class)}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
       {row}
     </BaseAccordionTrigger>
   );
