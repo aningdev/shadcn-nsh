@@ -345,6 +345,7 @@ function validateExtAtPath(
         "pressed-foreground",
         "border-top-color",
         "border-bottom-color",
+        "checked-gradient",
       ],
       problems,
     );
@@ -362,6 +363,11 @@ function validateExtAtPath(
         problems.push(`${where}.${field} must be "none", or write the ${field} token instead`);
       }
     }
+    // A checked field is a state of the knob, not a neutral: the theme writes the token, or states
+    // the checked gradient as `"none"` for a knob that is flat while its control is on.
+    if ("checked-gradient" in ext && ext["checked-gradient"] !== "none") {
+      problems.push(`${where}.checked-gradient must be "none", or write the token instead`);
+    }
     if ("backdropFilter" in ext && !isNonEmptyString(ext.backdropFilter)) {
       problems.push(`${where}.backdropFilter must be a non-empty string`);
     }
@@ -375,7 +381,7 @@ function validateExtAtPath(
     return;
   }
 
-  if (/^finish\.[A-Za-z0-9-]+\.gradient$/.test(p)) {
+  if (/^finish\.[A-Za-z0-9-]+\.(?:checked-)?gradient$/.test(p)) {
     checkUnknownKeys(where, ext, ["angle", "transparentStops"], problems);
     if (typeof ext.angle !== "number" || !Number.isFinite(ext.angle)) {
       problems.push(`${where}.angle must be a finite number`);
@@ -402,7 +408,7 @@ function validateExtAtPath(
   }
 
   if (
-    /^finish\.[A-Za-z0-9-]+\.(?:background|foreground|border-color|border-top-color|border-bottom-color)$/.test(
+    /^finish\.[A-Za-z0-9-]+\.(?:background|foreground|border-color|border-top-color|border-bottom-color|checked-background|checked-border-color)$/.test(
       p,
     )
   ) {
@@ -690,7 +696,7 @@ function checkReferenceTypes(
 /** The parts a theme's shadow scale may hold: four levels, one inset, two edges (7 at most). */
 const SHADOW_LEVELS = ["sm", "md", "lg", "xl", "inset"] as const;
 const SHADOW_EDGES = ["surface", "accent"] as const;
-const FINISH_ROLES_MAX = 16;
+const FINISH_ROLES_MAX = 15;
 
 function scaleParts(node: Record<string, unknown>, prefix = ""): string[] {
   return Object.entries(node).flatMap(([k, v]) => {
@@ -752,12 +758,21 @@ function checkFinishLayers(
       }
     }
 
-    const gradient = node.gradient;
-    if (isTokenNode(gradient) && Array.isArray(gradient.$value)) {
+    for (const field of ["gradient", "checked-gradient"] as const) {
+      const gradient = node[field];
+      if (!isTokenNode(gradient) || !Array.isArray(gradient.$value)) continue;
       const stops = gradient.$value.filter(isRecord).map((stop) => JSON.stringify(stop.color));
       if (stops.length > 1 && new Set(stops).size === 1) {
         problems.push(
-          `${label}: finish.${role}.gradient is one colour from top to bottom — write a flat fill instead`,
+          `${label}: finish.${role}.${field} is one colour from top to bottom — write a flat fill instead`,
+        );
+      }
+    }
+    for (const key of Object.keys(node)) {
+      if (!key.startsWith("checked-")) continue;
+      if (role !== "knob") {
+        problems.push(
+          `${label}: finish.${role}.${key} is a knob's checked state; only knob states one`,
         );
       }
     }

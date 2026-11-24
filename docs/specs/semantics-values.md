@@ -216,6 +216,7 @@
 | `finishes.card.elevation` | 卡片与区块的平台自己的高度（dp） | — | — | — | 1 | — |
 | `finishes.card.shadow` | 卡片与区块的影子 | `0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04)` / `0 1px 0 oklch(0 0 0 / 0.35)` | `0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)` | `none` | `0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)` | `0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)` / `0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)` |
 | `finishes.inset.foreground` | 井的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
+| `finishes.inset.border-color` | 井的边 | `{border}` | `{border}` | `transparent` | `{input}` | `{input}` |
 | `finishes.inset.backdropFilter` | 井的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.inset.shadow` | 井的影子 | `inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.06)` / `inset 0 1px 1px oklch(0 0 0 / 0.2)` | `none` | `none` | `none` | `none` |
 | `finishes.channel.background` | 分段轨道的底 | `{inset}` | `{inset}` | `{card}` | `{inset}` | `{inset}` |
@@ -276,12 +277,20 @@
 | `finishes.accent.pressed-foreground` | 强调面的按下时换的字色 | — | — | — | — | `oklch(0.87245 0.03754 247.003)` / `oklch(0.42706 0.05878 229.834)` |
 | `finishes.accent.backdropFilter` | 强调面的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.accent.shadow` | 强调面的影子 | `inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)` / `inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)` | `none` | `none` | `none` | `none` |
+| `finishes.fill.foreground` | 跑起来的填充的字与图标 | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` |
+| `finishes.fill.backdropFilter` | 跑起来的填充的背景模糊 | `none` | `none` | `none` | `none` | `none` |
+| `finishes.fill.background` | 跑起来的填充的底 | `oklch(0.75073 0.18465 126.794)` / `oklch(0.83973 0.16469 124.137)` | `{primary}` | `{primary}` | `{primary}` | `{primary}` |
+| `finishes.fill.gradient` | 跑起来的填充的叠在底上的渐变 | `linear-gradient(180deg, oklch(0.80472 0.1815 126.061) 0%, oklch(0.75073 0.18465 126.794) 100%)` / `linear-gradient(180deg, oklch(0.88348 0.15928 123.937) 0%, oklch(0.83973 0.16469 124.137) 100%)` | — | — | — | — |
+| `finishes.fill.shadow` | 跑起来的填充的影子 | `inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)` / `inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)` | `none` | `none` | `none` | `none` |
+| `finishes.fill.border-color` | 跑起来的填充的边 | `oklch(0.69169 0.17204 126.956)` / `oklch(0.71963 0.15821 125.456)` | `transparent` | `transparent` | `transparent` | `oklch(0.52768 0.14982 252.341)` / `oklch(0.81732 0.11439 230)` |
 | `finishes.knob.foreground` | 旋钮的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
 | `finishes.knob.backdropFilter` | 旋钮的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.knob.background` | 旋钮的底 | `oklch(1 0 0)` / `{knob}` | `{knob}` | `{knob}` | `{knob}` | `{knob}` |
 | `finishes.knob.gradient` | 旋钮的叠在底上的渐变 | `linear-gradient(180deg, oklch(1 0 0) 0%, {raised} 100%)` / `linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)` | — | — | — | — |
 | `finishes.knob.shadow` | 旋钮的影子 | `0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)` / `0 1px 1px oklch(0 0 0 / 0.12)` | `0 1px 2px oklch(0 0 0 / 0.05)` | `0 1px 3px oklch(0 0 0 / 0.2)` | `0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)` | `none` |
 | `finishes.knob.border-color` | 旋钮的边 | `{input}` / `oklch(0.8324 0.00597 264.528)` | `transparent` | `transparent` | `transparent` | `transparent` |
+| `finishes.knob.checked-border-color` | 旋钮的选中时的边 | `oklch(0.72099 0.15728 124.776)` / `oklch(0.71963 0.15821 125.456)` | — | — | — | — |
+| `finishes.knob.checked-background` | 旋钮的选中时的底 | `oklch(1 0 0)` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` |
 | `finishes.hover.foreground` | 悬停中的控件的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
 | `finishes.hover.backdropFilter` | 悬停中的控件的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.hover.elevation` | 悬停中的控件的平台自己的高度（dp） | — | — | — | 1 | — |

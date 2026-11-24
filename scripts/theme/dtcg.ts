@@ -619,6 +619,19 @@ function encodeFinishSection(
     if (typeof finish["pressed-opacity"] === "number") {
       group["pressed-opacity"] = { $type: "number", $value: finish["pressed-opacity"] };
     }
+    // A knob's checked state: the values it paints while its control is on (`knob` only).
+    if (typeof finish["checked-background"] === "string") {
+      group["checked-background"] = encodeFinishColorToken(finish["checked-background"], colorMap);
+    }
+    if (typeof finish["checked-border-color"] === "string") {
+      group["checked-border-color"] = encodeFinishColorToken(
+        finish["checked-border-color"],
+        colorMap,
+      );
+    }
+    if (typeof finish["checked-gradient"] === "string") {
+      group["checked-gradient"] = encodeFinishGradientToken(finish["checked-gradient"]);
+    }
 
     const ext: Record<string, unknown> = {};
     if ("backdropFilter" in finish) ext.backdropFilter = finish.backdropFilter;

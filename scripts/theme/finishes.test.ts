@@ -28,7 +28,6 @@ const layers = [
   "accent",
   "fill",
   "knob",
-  "knob-on",
   "hover",
   "pressed",
   "disabled",

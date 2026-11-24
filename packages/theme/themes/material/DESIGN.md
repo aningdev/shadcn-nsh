@@ -273,7 +273,7 @@ components:
     backgroundColor: "{colors.light.primary}"
   switch-knob:
     backgroundColor: "{colors.light.knob}"
-  switch-knob-on:
+  switch-knob-checked:
     backgroundColor: "{colors.light.primary-foreground}"
   slider-handle:
     backgroundColor: "{colors.light.knob}"
@@ -475,8 +475,7 @@ The neutral fields of every finish role, written once: a flat surface states no 
 - **`finish.glass`** (backdropFilter: `none`; elevation: 3): A translucent surface: what is behind it shows through.
 - **`finish.accent`** (backdropFilter: `none`): The accent's own surface, with its ink.
 - **`finish.fill`** (backdropFilter: `none`): A run's fill: a progress bar's bar, a slider's range, a meter's column.
-- **`finish.knob`** (backdropFilter: `none`): A knob: a switch's thumb, a slider's handle, a segmented thumb.
-- **`finish.knob-on`** (backdropFilter: `none`): A knob on the run it opened: a switch's thumb on the filled track.
+- **`finish.knob`** (backdropFilter: `none`): A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.
 - **`finish.hover`** (backdropFilter: `none`; elevation: 1): A control under the pointer.
 - **`finish.pressed`** (backdropFilter: `none`; elevation: 1): A control held down.
 - **`finish.disabled`** (backdropFilter: `none`): A control that cannot be used.

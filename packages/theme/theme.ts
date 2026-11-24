@@ -77,6 +77,14 @@ export interface Finish {
    * states it on `accent`, 1 where its press swaps the accent out or lays a state layer over it.
    */
   "pressed-opacity"?: number;
+  /**
+   * A knob's checked state, painted only while its control is on: the fill, the edge and the gradient
+   * it wears then. Only `knob` states these, and a theme states only what differs — a field left out
+   * is the unchecked knob's, a stated `"none"` gradient (`null` here) paints the knob flat.
+   */
+  "checked-background"?: string;
+  "checked-border-color"?: string;
+  "checked-gradient"?: string | null;
   /** The ink on this finish's surface (a color, not a spread style key): every finish states one. */
   foreground: string;
   /** The platform's own material the layer asks for: `null` asks nothing of it (see `materials`).
@@ -117,6 +125,13 @@ export type FinishStyle = {
   pressedForeground?: string;
   /** How far a filled control dims while it is pressed (`accent` states it; 1: no dimming). */
   pressedOpacity?: number;
+  /**
+   * A knob's checked state, read by the control that draws the knob while the control is on: absent
+   * where the theme keeps the unchecked value, `checkedGradient` `null` where it paints the knob flat.
+   */
+  checkedBackground?: string;
+  checkedBorderColor?: string;
+  checkedGradient?: string | null;
   glassEffect?: "regular" | "clear";
   glassTintColor?: string;
 };
@@ -135,7 +150,6 @@ export type FinishRole =
   | "accent"
   | "fill"
   | "knob"
-  | "knob-on"
   | "hover"
   | "pressed"
   | "disabled";
@@ -457,7 +471,10 @@ const glassKeys = (role: FinishRole): readonly string[] => {
  * `platformMaterial`.
  */
 const finishStyleKeys: Record<
-  Exclude<keyof Finish, "material" | "elevation" | "foreground" | `pressed-${string}`>,
+  Exclude<
+    keyof Finish,
+    "material" | "elevation" | "foreground" | `pressed-${string}` | `checked-${string}`
+  >,
   keyof FinishStyle
 > = {
   background: "backgroundColor",
@@ -523,6 +540,32 @@ function themed(role: FinishRole): FinishStyle {
     enumerable: false,
     configurable: true,
     get: () => finishOf(role)["pressed-opacity"],
+  });
+  // A knob's checked state, where the theme states it; a spread never wears these either.
+  Object.defineProperty(out, "checkedBackground", {
+    enumerable: false,
+    configurable: true,
+    get: () => {
+      const value = finishOf(role)["checked-background"];
+      return typeof value === "string" ? alias(value) : undefined;
+    },
+  });
+  Object.defineProperty(out, "checkedBorderColor", {
+    enumerable: false,
+    configurable: true,
+    get: () => {
+      const value = finishOf(role)["checked-border-color"];
+      return typeof value === "string" ? alias(value) : undefined;
+    },
+  });
+  Object.defineProperty(out, "checkedGradient", {
+    enumerable: false,
+    configurable: true,
+    get: () => {
+      const value = finishOf(role)["checked-gradient"];
+      if (value === null) return null;
+      return typeof value === "string" ? alias(value) : undefined;
+    },
   });
   const glass = (key: string): string | undefined => {
     const recipe = recipeOf(role);
@@ -736,8 +779,8 @@ export const tints = tokens({
  * button, a chosen switch's track), `fill` a run's filled part (a progress bar's bar, a slider's
  * range, a switch's open track), `inverse` the page's inverse (a toast, a tooltip),
  * `glass` a translucent pane, `knob` the small thing that moves (a switch's thumb, a slider's
- * handle) and `knob-on` that knob on the run it opened, `plate` the labelled block chosen inside a
- * well (the selected tab, a segmented
+ * handle; a theme may state its checked state, `checked-*`, for the switch that is on), `plate` the
+ * labelled block chosen inside a well (the selected tab, a segmented
  * control's thumb), and `channel` the track such a block is chosen in (a segmented control's
  * track; a tab strip's track is a well, `inset`). `hover`, `pressed` and `disabled` are the steps a control takes — a control
  * that differs (a slider's thumb, a sheet's grabber) says so in its own
@@ -756,7 +799,6 @@ export const finish: Record<FinishRole, FinishStyle> = {
   accent: themed("accent"),
   fill: themed("fill"),
   knob: themed("knob"),
-  "knob-on": themed("knob-on"),
   hover: themed("hover"),
   pressed: themed("pressed"),
   disabled: themed("disabled"),

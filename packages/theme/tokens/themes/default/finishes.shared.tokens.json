@@ -274,7 +274,7 @@
       }
     },
     "knob": {
-      "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
+      "$description": "A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.",
       "shadow": {
         "$type": "shadow",
         "$value": ["{shadow.sm}"]
@@ -285,22 +285,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
-      }
-    },
-    "knob-on": {
-      "$description": "A knob on the run it opened: a switch's thumb on the filled track.",
-      "shadow": {
-        "$type": "shadow",
-        "$value": ["{shadow.sm}"]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.primary-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
+          "checked-gradient": "none",
           "material": "none"
         }
       }

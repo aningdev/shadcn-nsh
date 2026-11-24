@@ -200,11 +200,21 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
 }
 
 /**
- * A switch's knob: the `knob` layer, and on an open switch the `knob-on` layer — the knob as it
- * sits in the run it opened, in the run's edge as upstream's `knobOn` draws it.
+ * A switch's knob: the `knob` layer, and on an open switch its checked state — the fill, the edge
+ * and the gradient the theme states in `checked-*`, which a field it leaves out keeps from the
+ * unchecked knob.
  */
 function knobLook(on: boolean): ViewStyle {
-  return on ? { ...finish["knob-on"] } : { ...finish.knob };
+  const checked: ViewStyle = { ...finish.knob };
+  if (!on) return checked;
+  const background = finish.knob.checkedBackground;
+  if (background !== undefined) checked.backgroundColor = background;
+  const border = finish.knob.checkedBorderColor;
+  if (border !== undefined) checked.borderColor = border;
+  const gradient = finish.knob.checkedGradient;
+  if (gradient === null) delete checked.backgroundImage;
+  else if (gradient !== undefined) checked.backgroundImage = gradient;
+  return checked;
 }
 
 /**

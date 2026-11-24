@@ -1075,7 +1075,7 @@
       }
     },
     "knob": {
-      "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
+      "$description": "A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
@@ -1085,7 +1085,8 @@
           "gradient": "none",
           "material": "none",
           "pressed-background": "none",
-          "pressed-foreground": "none"
+          "pressed-foreground": "none",
+          "checked-gradient": "none"
         }
       },
       "shadow": {
@@ -1139,33 +1140,8 @@
           ],
           "hex": "#c6c8cc"
         }
-      }
-    },
-    "knob-on": {
-      "$description": "A knob on the run it opened: a switch's thumb on the filled track.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
-        }
       },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.primary-foreground}"
-      },
-      "background": {
+      "checked-background": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
@@ -1177,7 +1153,7 @@
           "hex": "#ffffff"
         }
       },
-      "border-color": {
+      "checked-border-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",

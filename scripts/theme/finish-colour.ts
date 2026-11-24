@@ -23,6 +23,9 @@ export const colourFields = [
   "border-bottom-color",
   "pressed-background",
   "pressed-foreground",
+  "checked-background",
+  "checked-border-color",
+  "checked-gradient",
 ] as const;
 
 /** One field's colour, and what the spec says about it. */

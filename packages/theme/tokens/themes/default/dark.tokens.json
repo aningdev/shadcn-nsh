@@ -1242,10 +1242,8 @@
           "components": [0.8324, 0.00597, 264.528],
           "hex": "#c6c8cc"
         }
-      }
-    },
-    "knob-on": {
-      "background": {
+      },
+      "checked-background": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
@@ -1253,7 +1251,7 @@
           "hex": "#ffffff"
         }
       },
-      "border-color": {
+      "checked-border-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",

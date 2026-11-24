@@ -538,22 +538,7 @@
       }
     },
     "knob": {
-      "$description": "A knob: a switch's thumb, a slider's handle, a segmented thumb.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
-        }
-      }
-    },
-    "knob-on": {
-      "$description": "A knob on the run it opened: a switch's thumb on the filled track.",
+      "$description": "A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",

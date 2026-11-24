@@ -312,6 +312,13 @@ export function compileDesignMd(resolverPath: string): string {
       finishesRes[role]?.foreground as Record<string, unknown> | undefined,
     );
 
+  /** The knob's checked fill: `checked-background` where the theme states it, else the knob's own. */
+  const resolveKnobCheckedBg = (): string | undefined =>
+    resolveColorField(
+      finishesRaw.knob?.["checked-background"] as Record<string, unknown> | undefined,
+      finishesRes.knob?.["checked-background"] as Record<string, unknown> | undefined,
+    ) ?? resolveFinishBg("knob", "knob");
+
   const componentsYaml: Record<string, Record<string, string>> = {
     "button-primary": {
       ...(resolveFinishBg("accent", "primary")
@@ -420,8 +427,8 @@ export function compileDesignMd(resolverPath: string): string {
         ? { backgroundColor: resolveFinishBg("knob", "knob")! }
         : {}),
     },
-    ...(resolveFinishInk("accent")
-      ? { "switch-knob-on": { backgroundColor: resolveFinishInk("accent")! } }
+    ...(resolveKnobCheckedBg()
+      ? { "switch-knob-checked": { backgroundColor: resolveKnobCheckedBg()! } }
       : {}),
     "slider-handle": {
       ...(resolveFinishBg("knob", "knob")

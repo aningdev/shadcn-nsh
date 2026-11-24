@@ -50,7 +50,7 @@ const roles: [string, string][] = [
  * a switch's disc and a slider's handle on either side of the track (a selected segment carries its
  * label on `raised`).
  */
-const inkless = new Set(["disabled", "knob", "knob-on"]);
+const inkless = new Set(["disabled", "knob"]);
 
 const stem = (name: string) => name.slice(0, -"-foreground".length);
 

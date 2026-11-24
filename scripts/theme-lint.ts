@@ -69,6 +69,9 @@ interface Finish {
   "pressed-background"?: string;
   "pressed-foreground"?: string;
   "pressed-opacity"?: number;
+  "checked-background"?: string;
+  "checked-border-color"?: string;
+  "checked-gradient"?: string;
   backdropFilter?: string;
   material?: unknown;
 }
@@ -288,6 +291,8 @@ for (const theme of themes) {
  * `backdropFilter: "none"`, a layer without an elevation says `elevation: null`, and a theme whose
  * press does not swap the accent out repeats the resting fill and ink. The neutral values are
  * written once in `tokens/base/style.shared.tokens.json`. */
+/** Fields a finish states only where a theme differs from the unchecked value: a knob's checked state. */
+const optionalFields = new Set(["checked-background", "checked-border-color", "checked-gradient"]);
 const shapeOf = new Map<string, string[]>();
 for (const appearance of appearances)
   for (const [role, finish] of Object.entries(defaultMerged[appearance]))
@@ -311,8 +316,12 @@ for (const theme of themes) {
         fail(`${path}: ${appearance} states \`${role}\`, which the default theme does not`);
 
     for (const [role, finish] of Object.entries(merged)) {
-      const have = Object.keys(finish).sort();
-      const want = shapeOf.get(`${role}.${appearance}`);
+      const have = Object.keys(finish)
+        .filter((field) => !optionalFields.has(field))
+        .sort();
+      const want = shapeOf
+        .get(`${role}.${appearance}`)
+        ?.filter((field) => !optionalFields.has(field));
       if (want === undefined) continue;
       for (const field of want)
         if (!have.includes(field))

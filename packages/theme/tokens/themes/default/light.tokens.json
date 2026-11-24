@@ -1206,18 +1206,8 @@
       "border-color": {
         "$type": "color",
         "$value": "{color.input}"
-      }
-    },
-    "knob-on": {
-      "background": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [1, 0, 0],
-          "hex": "#ffffff"
-        }
       },
-      "border-color": {
+      "checked-border-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",

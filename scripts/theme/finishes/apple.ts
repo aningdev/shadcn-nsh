@@ -99,15 +99,8 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       shadow: "{shadow.sm}",
       foreground: "{foreground}",
-      material: "none",
-    },
-
-    // Upstream `knobOn`: the knob as it sits on the open track.
-    "knob-on": {
-      background: "{primary-foreground}",
-      "border-color": "transparent",
-      shadow: "{shadow.sm}",
-      foreground: "{foreground}",
+      // Upstream `knobOn` paints an open knob in the accent's ink; the rest is still `knob`.
+      "checked-background": "{primary-foreground}",
       material: "none",
     },
     hover: {

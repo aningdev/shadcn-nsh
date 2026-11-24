@@ -101,9 +101,9 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `material`            | `"none"` 之外，`"glass"` 或 `"acrylic"`（见下）                                 |
 | `elevation`           | 平台自己的阴影高度（dp），只有要它的层写（见下）                                |
 
-颜色字段包括 `background`、`gradient`、`foreground`、`border-color` 与 `border-top-color` / `border-bottom-color`（读取后经 `themed()` 映射为 NSH 样式键 `backgroundColor`、`backgroundImage`、`color`、`borderColor`、`borderTopColor`、`borderBottomColor`）。`foreground` 以不可枚举的 getter 给出，把它展开进 `ViewStyle` 不会多写一个未知键；文字用 `finish.<role>.foreground` 取色。`shadow` 不是颜色字段：它引用刻度，刻度的值也是墨色 + alpha，`themed()` 把引用接成一条 `boxShadow`。按下时换色的主题另写 `pressed-background` / `pressed-foreground`（WinUI 的 `AccentFillColorTertiary` 与 `TextOnAccentFillColorSecondary`），同样以不可枚举的 getter 给出。
+颜色字段包括 `background`、`gradient`、`foreground`、`border-color` 与 `border-top-color` / `border-bottom-color`（读取后经 `themed()` 映射为 NSH 样式键 `backgroundColor`、`backgroundImage`、`color`、`borderColor`、`borderTopColor`、`borderBottomColor`）。`foreground` 以不可枚举的 getter 给出，把它展开进 `ViewStyle` 不会多写一个未知键；文字用 `finish.<role>.foreground` 取色。`shadow` 不是颜色字段：它引用刻度，刻度的值也是墨色 + alpha，`themed()` 把引用接成一条 `boxShadow`。按下时换色的主题另写 `pressed-background` / `pressed-foreground`（WinUI 的 `AccentFillColorTertiary` 与 `TextOnAccentFillColorSecondary`），同样以不可枚举的 getter 给出。`knob` 还可以写它被选中时的状态：`checked-background`、`checked-border-color`、`checked-gradient`（getter 是 `checkedBackground`、`checkedBorderColor`、`checkedGradient`）。选中是旋钮的一个状态，不是另一个面，所以只有 `knob` 写这三项，主题也只写与没选中时不同的字段：没写的字段就是 `knob` 自己的值；写 `checked-gradient: "none"` 表示选中时是平涂（编译成 `null`，与“没写”不同）。
 
-`finishes` 块分为 `shared`（明暗共用字段）与稀疏覆写 `light` / `dark`（只写与 `shared` 不同的字段）；合并后每个 finish 的角色集合固定，字段集合也固定。主题没写的字段取中性值，中性值写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里：`material: "none"`（编译成 `null`）、`backdropFilter: "none"`、`elevation: null`、`gradient: null`、两条边色不带自己的颜色（跟 `border-color`）、按下的两个颜色字段 `null`（按下只压暗，不换色）。源码里除 `elevation` 外的中性值以字符串 `"none"` 写在 finish 组的 `$extensions["dev.aning.shadcn-nsh"]` 上——DTCG 的 token 不接受 `null` 值——编译时换成 `null`；**写 token 就压过 `$extensions`**。
+`finishes` 块分为 `shared`（明暗共用字段）与稀疏覆写 `light` / `dark`（只写与 `shared` 不同的字段）；合并后每个 finish 的角色集合固定，字段集合也固定（只有 `knob` 的 `checked-*` 三项可选：没写就是没选中时的值，不取中性值）。主题没写的字段取中性值，中性值写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里：`material: "none"`（编译成 `null`）、`backdropFilter: "none"`、`elevation: null`、`gradient: null`、两条边色不带自己的颜色（跟 `border-color`）、按下的两个颜色字段 `null`（按下只压暗，不换色）。源码里除 `elevation` 外的中性值以字符串 `"none"` 写在 finish 组的 `$extensions["dev.aning.shadcn-nsh"]` 上——DTCG 的 token 不接受 `null` 值——编译时换成 `null`；**写 token 就压过 `$extensions`**。
 
 ## 2b 风格数据
 
@@ -242,36 +242,35 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 `themed()` 从不把 `material` 放进 style；style 里只多配方的玻璃键，`material` 为 `null` 时键与以前完全一样。`ios`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 按配方返回，`elevation` 在同一处作为 `android.elevation`，组件在同一个 View 上铺开：`<View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />`。`check:theme` 检查 `material` 存在于每个 finish、取值是三个之一，`elevation` 是非负数值或 `null`（`scripts/theme/material.ts`）。
 
-字段顺序固定：`background`、`gradient`、`shadow`、`foreground`、`border-color`、`border-top-color`、`border-bottom-color`、`pressed-background`、`pressed-foreground`、`pressed-opacity`、`backdropFilter`、`material`、`elevation`（`pressed-opacity` 只写在要压暗的角色上，其余字段每个角色都写，没写的取中性值）。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拦下比默认主题多一个或少一个字段的 finish。
+字段顺序固定：`background`、`gradient`、`shadow`、`foreground`、`border-color`、`border-top-color`、`border-bottom-color`、`pressed-background`、`pressed-foreground`、`pressed-opacity`、`checked-background`、`checked-border-color`、`checked-gradient`、`backdropFilter`、`material`、`elevation`（`pressed-opacity` 只写在要压暗的角色上，`checked-*` 只写在 `knob` 上且只写要变的字段，其余字段每个角色都写，没写的取中性值）。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拦下比默认主题多一个或少一个字段的 finish。
 
 ## 4 每个 finish
 
-十三个层加三种状态，一个面属于哪一层只由它“是什么”决定，不由它“画了什么”决定。旧的 27 个角色折进这里：`section`→`card`，`field`/`track`/`groove`→`inset`，`chip`/`pill`→`raised`，`menu`→`overlay`，`tooltip`→`inverse`，`light`/`on`→`accent`，`accentPressed`→`pressed`（填充色按下见下），`thumb`→`raised`，`handle`→`knob`，`grabber`→`sheet` 的控件预设。`fill` 一度也折进 `accent`，现在单独成层（见第 6 节）：一条跑起来的进度、一段滑杆的行程不是那个按钮的面。`knobOn` 同样分出成 `knob-on`：开着的开关圆点坐在跑动填充上，不是没开的那一个。
+十二个层加三种状态，一个面属于哪一层只由它“是什么”决定，不由它“画了什么”决定。旧的 27 个角色折进这里：`section`→`card`，`field`/`track`/`groove`→`inset`，`chip`/`pill`→`raised`，`menu`→`overlay`，`tooltip`→`inverse`，`light`/`on`→`accent`，`accentPressed`→`pressed`（填充色按下见下），`thumb`→`raised`，`handle`→`knob`，`grabber`→`sheet` 的控件预设。`fill` 一度也折进 `accent`，现在单独成层（见第 6 节）：一条跑起来的进度、一段滑杆的行程不是那个按钮的面。`knobOn` 不另立一层：上游给开着的开关圆点另写一套值，那是 `knob` 的选中态，写在它的 `checked-*` 上（见第 6 节）。
 
 <!-- theme-lint: finishes -->
 
-| finish     | 画什么                                                                          | What it draws                                                                | 谁读                                                                                |
-| ---------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `card`     | 卡片的底：一道接触影                                                            | A card's face: one contact shadow                                            | `sidebar`、`card`、`lib/surface`                                                    |
-| `inset`    | 凹下去的一层：输入井、轨道、槽、凹槽                                            | A well: a field, a track, a groove                                           | `lib/surface`、`input`、`select`、`tabs`、`switch`、`slider`、`progress`、`menu`    |
-| `channel`  | 一组选择所在的通道：分段控件的轨道                                              | The channel a group of choices sits in: a segmented control's track          | `segmented`                                                                         |
-| `raised`   | 卡片上的控件：内高光、接触影、边                                                | A control on a card: an inner highlight, a contact shadow, an edge           | `button`、`select`、`radio-group`、`carousel`、`combobox`                           |
-| `plate`    | 井里被选中的那块（上面有字）：胶囊标签页、分段控件的选中块                      | The labelled block chosen inside a well: the selected tab, a segment's thumb | `tabs`、`segmented`                                                                 |
-| `overlay`  | 浮层：菜单、弹层、toast                                                         | A floating surface: a menu, a popover                                        | `popover`、`lib/listbox`、`menu`、`command`                                         |
-| `modal`    | 模态面：对话框、抽屉、底部面板                                                  | A modal's face: a dialog, a sheet                                            | `dialog`、`sheet`                                                                   |
-| `inverse`  | 反色的面：toast、提示                                                           | The page's inverse: a toast, a tooltip                                       | `toast`、`tooltip`                                                                  |
-| `glass`    | 玻璃：半透明底 + 模糊                                                           | Glass: a translucent fill and a blur                                         | `carousel`、`lib/surface`                                                           |
-| `accent`   | 强调色的面：主操作、选中的开关/勾选/进度                                        | The accent's own surface: the main action, a chosen switch, a progress run   | `button`、`toggle`、`checkbox`、`switch`、`slider`、`progress`、`collapsing-header` |
-| `fill`     | 一段跑起来的填充：进度的条、滑杆的行程、开关打开的轨道                          | A run's fill: a progress bar's bar, a slider's range, a switch's open track  | `progress`、`slider`、`switch`                                                      |
-| `knob`     | 旋钮：开关圆点、滑杆把手（不带字）                                              | A knob: a switch's thumb, a slider's handle (no text on it)                  | `switch`、`slider`                                                                  |
-| `knob-on`  | 坐在跑动填充上的旋钮：开着的开关圆点                                            | A knob on the run it opened: the open switch's thumb                         | `switch`                                                                            |
-| `hover`    | 指针停在可点项上的那一步                                                        | The step a control takes under the pointer                                   | `button`、`carousel`                                                                |
-| `pressed`  | 按下的那一步（填充色按下读 `accent`，按它的 `pressed-opacity` 变淡，见第 6 节） | The step a control takes while pressed                                       | `button`                                                                            |
-| `disabled` | 禁用控件：容器与它自己的 `foreground`                                           | A disabled control's container and its own `foreground`                      | `button`、`toggle`                                                                  |
+| finish     | 画什么                                                                          | What it draws                                                                                     | 谁读                                                                             |
+| ---------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `card`     | 卡片的底：一道接触影                                                            | A card's face: one contact shadow                                                                 | `sidebar`、`card`、`lib/surface`                                                 |
+| `inset`    | 凹下去的一层：输入井、轨道、槽、凹槽                                            | A well: a field, a track, a groove                                                                | `lib/surface`、`input`、`select`、`tabs`、`switch`、`slider`、`progress`、`menu` |
+| `channel`  | 一组选择所在的通道：分段控件的轨道                                              | The channel a group of choices sits in: a segmented control's track                               | `segmented`                                                                      |
+| `raised`   | 卡片上的控件：内高光、接触影、边                                                | A control on a card: an inner highlight, a contact shadow, an edge                                | `button`、`select`、`radio-group`、`carousel`、`combobox`                        |
+| `plate`    | 井里被选中的那块（上面有字）：胶囊标签页、分段控件的选中块                      | The labelled block chosen inside a well: the selected tab, a segment's thumb                      | `tabs`、`segmented`                                                              |
+| `overlay`  | 浮层：菜单、弹层、toast                                                         | A floating surface: a menu, a popover                                                             | `popover`、`lib/listbox`、`menu`、`command`                                      |
+| `modal`    | 模态面：对话框、抽屉、底部面板                                                  | A modal's face: a dialog, a sheet                                                                 | `dialog`、`sheet`                                                                |
+| `inverse`  | 反色的面：toast、提示                                                           | The page's inverse: a toast, a tooltip                                                            | `toast`、`tooltip`                                                               |
+| `glass`    | 玻璃：半透明底 + 模糊                                                           | Glass: a translucent fill and a blur                                                              | `carousel`、`lib/surface`                                                        |
+| `accent`   | 强调色的面：主操作、选中的勾选与开关                                            | The accent's own surface: the main action, a chosen checkbox or toggle                            | `button`、`toggle`、`collapsing-header`                                          |
+| `fill`     | 一段跑起来的填充：进度的条、滑杆的行程、开关打开的轨道                          | A run's fill: a progress bar's bar, a slider's range, a switch's open track                       | `progress`、`slider`、`switch`                                                   |
+| `knob`     | 旋钮：开关圆点、滑杆把手（不带字）；选中时的样子写在它的 `checked-*`            | A knob: a switch's thumb, a slider's handle (no text on it), and its checked state in `checked-*` | `switch`、`slider`                                                               |
+| `hover`    | 指针停在可点项上的那一步                                                        | The step a control takes under the pointer                                                        | `button`、`carousel`                                                             |
+| `pressed`  | 按下的那一步（填充色按下读 `accent`，按它的 `pressed-opacity` 变淡，见第 6 节） | The step a control takes while pressed                                                            | `button`                                                                         |
+| `disabled` | 禁用控件：容器与它自己的 `foreground`                                           | A disabled control's container and its own `foreground`                                           | `button`、`toggle`                                                               |
 
 <!-- /theme-lint: finishes -->
 
-每个 finish 都写 `foreground`（面上的字与图标），所以组件不用 `?? colors.foreground` 兜底：`card`/`inset`/`raised`/`overlay`/`modal`/`glass`/`knob`/`hover`/`pressed` 是 `{foreground}`（`knob` 与 `knob-on` 上都不写字，它们的 `foreground` 只为形状一致，`theme:contrast` 不查它们），`knob-on` 在 default 上是 `{primary-foreground}`（白盘配强调色的字色），在五套主题上是 `{foreground}`，`accent` 是 `{primary-foreground}`，`inverse` 是 `{inverse-foreground}`，`disabled` 是 `{muted-foreground}`。填充色的按下态是 `accent` 按自己的 `pressed-opacity`（`finish.accent.pressedOpacity`，每套主题都写：按下变淡的主题写 0.88，按下叠色或换面的 Material / WinUI 写 1）变淡，不再另设一个面；主题若在按下时换掉强调色（WinUI 的 `AccentFillColorTertiary`），就在 `accent` 上多写两个字段 `pressed-background` 与 `pressed-foreground`，`button` 按下时读它们。
+每个 finish 都写 `foreground`（面上的字与图标），所以组件不用 `?? colors.foreground` 兜底：`card`/`inset`/`raised`/`overlay`/`modal`/`glass`/`knob`/`hover`/`pressed` 是 `{foreground}`（`knob` 上不写字，它的 `foreground` 只为形状一致，`theme:contrast` 不查它；选中态不另写墨，也没有字可写），`accent` 是 `{primary-foreground}`，`inverse` 是 `{inverse-foreground}`，`disabled` 是 `{muted-foreground}`。填充色的按下态是 `accent` 按自己的 `pressed-opacity`（`finish.accent.pressedOpacity`，每套主题都写：按下变淡的主题写 0.88，按下叠色或换面的 Material / WinUI 写 1）变淡，不再另设一个面；主题若在按下时换掉强调色（WinUI 的 `AccentFillColorTertiary`），就在 `accent` 上多写两个字段 `pressed-background` 与 `pressed-foreground`，`button` 按下时读它们。
 
 ## 5 alias 与例外
 
@@ -286,15 +285,15 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 6 折叠与例外
 
-十三个层不是十三个恰好画得一样的面：一个面属于哪一层，由它是什么决定。四条折叠与两条分出需要理由，记在这里：
+十二个层不是十二个恰好画得一样的面：一个面属于哪一层，由它是什么决定。折叠、分出与“状态不另立层”需要理由，记在这里：
 
-| 折起来的东西                          | 为什么是一层                                                                                                                                                                                                                                                                              |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `accentPressed` → `pressed`           | 按下是控件的事，不是面的事。填充色按下不是另一个面：`accent` 按自己的 `pressed-opacity` 变淡，按下时换强调色的主题在 `accent` 上写 `pressed-background` / `pressed-foreground`——一个面的按下态只该暗一点，不该换一整套边和阴影                                                            |
-| `handle` → `knob`；`thumb` → `raised` | 开关圆点与滑杆把手都是“一个能拨动、不带字的小块”；分段与胶囊标签页选中的那块上面有字，是井里被选中的一块，读 `plate`——`knob` 在暗色下是白色圆点（iOS、shadcn），字写不上去                                                                                                                |
-| `knobOn` 从 `knob` 分出（`knob-on`）  | 上游给开着的开关圆点另写一套值：白盘 + 跑动填充的边（`finish.knobOn`），而 `knob` 是灰边白盘。default 上两者明显不同（橄榄边 vs 灰边）；五套主题里 `knob-on` 就是它们的强调字色，与 `knob` 的盘不同色。一个层一种面，所以分开                                                             |
-| `grabber` → `sheet` 的控件预设        | 抓取条是抽屉这个控件的一部分，不是一个层；`sheetGrabber()` 画它（`alpha(colors.mutedForeground, 0.4)`）                                                                                                                                                                                   |
-| `fill` 从 `accent` 分出来             | 两者在五套主题里画同一个面（`fill` 取 `accent` 的底与边），但 default 的按钮是浅青柠、跑起来的填充是更深的一档绿：上游给它们两套值（`finish.accent` 与 `finish.fill`），放在一个层里只能二选一。分出 `fill` 后，`progress` 与 `slider` 读它、`switch` 打开的轨道也读它，按钮仍读 `accent` |
+| 折起来的东西                              | 为什么是一层                                                                                                                                                                                                                                                                              |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `accentPressed` → `pressed`               | 按下是控件的事，不是面的事。填充色按下不是另一个面：`accent` 按自己的 `pressed-opacity` 变淡，按下时换强调色的主题在 `accent` 上写 `pressed-background` / `pressed-foreground`——一个面的按下态只该暗一点，不该换一整套边和阴影                                                            |
+| `handle` → `knob`；`thumb` → `raised`     | 开关圆点与滑杆把手都是“一个能拨动、不带字的小块”；分段与胶囊标签页选中的那块上面有字，是井里被选中的一块，读 `plate`——`knob` 在暗色下是白色圆点（iOS、shadcn），字写不上去                                                                                                                |
+| `knobOn` → `knob` 的选中态（`checked-*`） | 上游给开着的开关圆点另写一套值：白盘 + 跑动填充的边（`finish.knobOn`）。那是旋钮在选中时画的样子，不是另一个面：一个面换不了状态，一个状态也不该新立一个面。default 上它改三处（暗色白底、平涂、橄榄边），五套主题只改底色（强调色的字色）；主题没写的字段沿用 `knob`，两边永远成套       |
+| `grabber` → `sheet` 的控件预设            | 抓取条是抽屉这个控件的一部分，不是一个层；`sheetGrabber()` 画它（`alpha(colors.mutedForeground, 0.4)`）                                                                                                                                                                                   |
+| `fill` 从 `accent` 分出来                 | 两者在五套主题里画同一个面（`fill` 取 `accent` 的底与边），但 default 的按钮是浅青柠、跑起来的填充是更深的一档绿：上游给它们两套值（`finish.accent` 与 `finish.fill`），放在一个层里只能二选一。分出 `fill` 后，`progress` 与 `slider` 读它、`switch` 打开的轨道也读它，按钮仍读 `accent` |
 
 `light` 与 `accent` 本来就是同一个面（在五套主题里逐字节相同），`on` 是强调色的字色，`field`/`track`/`groove` 是井的不同深度，`chip`/`pill` 是控件面，`tooltip` 是反色面——它们不是“值相同但决定不同”，是同一层上的不同控件。
 
@@ -342,13 +341,13 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | default     | dark  | `oklch(0.83973 0.16469 124.137)` | `fill.background`、`fill.gradient`（同上）                                                 | `primary`（ΔL +0.049，ΔC -0.001）           |
 | default     | dark  | `oklch(0.88348 0.15928 123.937)` | `fill.gradient`（同上，第一档）                                                            | `primary`（ΔL +0.005，ΔC +0.004）           |
 | default     | dark  | `oklch(0.71963 0.15821 125.456)` | `fill.border-color`（同上）                                                                | `up`（ΔL +0.060，ΔC -0.010）                |
-| default     | light | `oklch(0.72099 0.15728 124.776)` | `knob-on.border-color`（上游 `finish.knobOn` 的橄榄边）                                    | `brand-tint`（ΔL +0.081，ΔC -0.004）        |
+| default     | light | `oklch(0.72099 0.15728 124.776)` | `knob.checked-border-color`（上游 `finish.knobOn` 的橄榄边）                               | `brand-tint`（ΔL +0.081，ΔC -0.004）        |
 
 <!-- /theme-lint: pending -->
 
 ## 8 留给应用
 
-`theme-lint` 要求每个 token 和每个 finish 都被读到，否则就是写了没人用。上游的 `pill` 折进 `raised` 之后，本库的十三个层都由组件读着，这张表是空的——写一个没人读的 finish，组件里就会多一个看不出用处的东西。
+`theme-lint` 要求每个 token 和每个 finish 都被读到，否则就是写了没人用。上游的 `pill` 折进 `raised` 之后，本库的十二个层都由组件读着（`knob` 的 `checked-*` 由 `switch` 读），这张表是空的——写一个没人读的 finish，组件里就会多一个看不出用处的东西。
 
 <!-- theme-lint: unread -->
 

@@ -244,6 +244,23 @@ export function compileShadowGroup(group: Record<string, unknown>): CompiledShad
   return out;
 }
 
+/** A DTCG gradient token as the CSS `linear-gradient` a finish paints. */
+function compileGradientToken(node: Record<string, unknown>): string {
+  const ext = getExt(node);
+  const angle = (ext?.angle as number | undefined) ?? 180;
+  const transparentStops = new Set<number>((ext?.transparentStops as number[] | undefined) ?? []);
+  const rawStops = node.$value as DtcgGradientStop[];
+  const stops = rawStops.map((s, idx) => {
+    const col = transparentStops.has(idx)
+      ? "transparent"
+      : typeof s.color === "string"
+        ? toFlatColorRef(s.color)
+        : formatDtcgColor(s.color);
+    return `${col} ${Math.round(s.position * 10000) / 100}%`;
+  });
+  return `linear-gradient(${angle}deg, ${stops.join(", ")})`;
+}
+
 export function compileFinishGroup(
   finishGroup: Record<string, Record<string, unknown>>,
   shadows: CompiledShadows = {},
@@ -257,21 +274,7 @@ export function compileFinishGroup(
       item.background = compileFinishColor(group.background);
     }
     if (isRecord(group.gradient)) {
-      const ext = getExt(group.gradient);
-      const angle = (ext?.angle as number | undefined) ?? 180;
-      const transparentStops = new Set<number>(
-        (ext?.transparentStops as number[] | undefined) ?? [],
-      );
-      const rawStops = group.gradient.$value as DtcgGradientStop[];
-      const stops = rawStops.map((s, idx) => {
-        const col = transparentStops.has(idx)
-          ? "transparent"
-          : typeof s.color === "string"
-            ? toFlatColorRef(s.color)
-            : formatDtcgColor(s.color);
-        return `${col} ${Math.round(s.position * 10000) / 100}%`;
-      });
-      item.gradient = `linear-gradient(${angle}deg, ${stops.join(", ")})`;
+      item.gradient = compileGradientToken(group.gradient);
     }
     if (isRecord(group.shadow)) {
       const raw = group.shadow.$value;
@@ -307,6 +310,15 @@ export function compileFinishGroup(
     if (isRecord(group["pressed-opacity"])) {
       item["pressed-opacity"] = group["pressed-opacity"].$value;
     }
+    if (isRecord(group["checked-background"])) {
+      item["checked-background"] = compileFinishColor(group["checked-background"]);
+    }
+    if (isRecord(group["checked-border-color"])) {
+      item["checked-border-color"] = compileFinishColor(group["checked-border-color"]);
+    }
+    if (isRecord(group["checked-gradient"])) {
+      item["checked-gradient"] = compileGradientToken(group["checked-gradient"]);
+    }
     // A field the source states as `"none"` in the finish's extensions, and writes no token for,
     // compiles to `null`: no gradient, no pressed swap, no edge colour of its own. The base set
     // states them once for every role, so a compiled finish always carries every field.
@@ -319,6 +331,11 @@ export function compileFinishGroup(
       "border-bottom-color",
     ] as const) {
       if (groupExt?.[field] === "none" && !(field in item)) item[field] = null;
+    }
+    // A knob's checked gradient stated as `"none"` is a value, not a neutral: the knob is flat while
+    // checked. A checked field the theme states nowhere at all stays absent — the unchecked knob's.
+    if (groupExt?.["checked-gradient"] === "none" && !("checked-gradient" in item)) {
+      item["checked-gradient"] = null;
     }
     if (groupExt && "backdropFilter" in groupExt) {
       item.backdropFilter = groupExt.backdropFilter;
