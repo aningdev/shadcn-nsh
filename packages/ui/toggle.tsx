@@ -17,7 +17,7 @@ import {
   dimmed,
 } from "@shadcn-nsh/theme";
 import type { AndroidProps, JSX, TextStyle, ViewStyle } from "nsh";
-import { platform, split, Text } from "nsh";
+import { platform, split, Text, token } from "nsh";
 import {
   Toggle as BaseToggle,
   ToggleGroup as BaseToggleGroup,
@@ -79,6 +79,23 @@ export const toggleSizes: Record<ToggleSize, ToggleDimensions> = pointer
       lg: { side: 44, icon: 20, text: 16, pad: 14 },
     };
 
+/**
+ * The fill of a toggle that is on: the theme's `accent`, the quiet selected wash shadcn gives a
+ * pressed toggle (`bg-accent`) — a light neutral that stands off the surface without taking the
+ * brand accent a main action wears, so the icon and the label keep a paired ink on it. Each
+ * theme's own `accent` is its selected recipe (Material's tinted container, WinUI's control
+ * fill, Apple's selected grey).
+ */
+const selectedFill = (): ViewStyle => ({ backgroundColor: token("accent") });
+
+/**
+ * The edge of a toggle that is on: the theme's `input`, a control's own edge — the same one the
+ * `outline` variant sits on while it is off, so a pressed toggle is a chip with a full 1px outline
+ * on all four sides whatever the surface under it. A tinted edge (`alpha(brand, 0.3)`) would
+ * disappear on the axis the box lands off the pixel grid on; a theme role's solid edge does not.
+ */
+const selectedEdge = (): ViewStyle => ({ borderWidth: stroke.control, borderColor: colors.input });
+
 /** How far a press sinks a toggle (`activeStyle`): none with reduced motion. */
 const sink = (scale: number): ViewStyle => pressSink(scale).activeStyle;
 
@@ -96,12 +113,14 @@ const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "defa
  * (`sm` 24 / 32, `lg` 34 / 44), padded at its sides when it carries
  * text, its corners a quarter of its side; a hit slop makes a touch target
  * 44 points. Off, a default toggle is bare and an `outline` sits on a
- * field's edge; on (`pressedStyle`), it takes `finish.accent`, a fill that stands off
- * its surface in both appearances, further than the hover's whisper of the
- * text color. Pressed it sinks to 92% (none with reduced motion). Keyboard
- * focus: `focusRing(1)`. Disabled: 50%, no hover or press. Pair it with
- * `toggleLabel` for a label and `toggleGlyph` for an icon: muted while
- * off, the text's color while on.
+ * field's edge; on (`pressedStyle`), it takes the theme's `accent`, the quiet
+ * selected fill, with `accent-foreground` for its content — shadcn's
+ * `bg-accent text-accent-foreground`, not the brand accent — and the theme's
+ * `input` as its 1px edge on all four sides, a chip's outline on any surface.
+ * Pressed it sinks to 92% (none with reduced motion). Keyboard focus:
+ * `focusRing(1)`. Disabled: 50%, no hover or press. Pair it with `toggleLabel`
+ * for a label and `toggleGlyph` for an icon: muted while off,
+ * `accent-foreground` while on.
  */
 export function toggleLook(o?: ToggleLookOptions) {
   const outline = o?.variant === "outline";
@@ -127,7 +146,7 @@ export function toggleLook(o?: ToggleLookOptions) {
         ...(outline
           ? { borderColor: colors.input, backgroundColor: colors.field }
           : { borderColor: "transparent" }),
-        ...(on && !split ? finish.accent : {}),
+        ...(on && !split ? selectedFill() : {}),
         ...(split
           ? on
             ? finish.disabled
@@ -144,14 +163,12 @@ export function toggleLook(o?: ToggleLookOptions) {
       };
     },
     get pressedStyle(): ViewStyle {
-      return { ...finish.accent };
+      return { ...selectedFill(), ...selectedEdge() };
     },
     get hoverStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
       if (themeStyle().state.overlay.hover > 0) {
-        return read(o?.on)
-          ? hovered("accent-foreground", finish.accent.backgroundImage)
-          : hovered();
+        return read(o?.on) ? hovered("accent-foreground") : hovered();
       }
       return read(o?.on) ? undefined : hovered();
     },
@@ -160,7 +177,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       if (themeStyle().state.overlay.pressed > 0) {
         return {
           ...(read(o?.on)
-            ? stateLayer("pressed", "accent-foreground", finish.accent.backgroundImage)
+            ? stateLayer("pressed", "accent-foreground")
             : stateLayer("pressed", "foreground")),
           ...sink(0.92),
         };
@@ -182,13 +199,13 @@ export function toggleLook(o?: ToggleLookOptions) {
   };
 }
 
-/** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
+/** The ink of a toggle's content: `accent-foreground` while on, muted while off, disabled ink when disabled apart. */
 const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
   if (read(disabled) && themeStyle().state.disabled.fill) return finish.disabled.foreground;
-  return read(pressed) ? finish.accent.foreground : colors.mutedForeground;
+  return read(pressed) ? token("accent-foreground") : colors.mutedForeground;
 };
 
-/** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 13, `lg` 14 / 16), medium weight, muted while off. */
+/** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 13, `lg` 14 / 16), medium weight, muted while off, `accent-foreground` while on. */
 export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOptions): TextStyle {
   return {
     get color() {

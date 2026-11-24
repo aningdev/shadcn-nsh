@@ -514,10 +514,7 @@ function StarToggle(props: {
         borderColor: "transparent",
         ...transition(),
       }}
-      pressedStyle={{
-        backgroundColor: alpha(colors.brand, 0.12),
-        borderColor: alpha(colors.brand, 0.3),
-      }}
+      pressedStyle={{ backgroundColor: alpha(colors.brand, 0.12) }}
       hoverStyle={props.on ? undefined : hovered()}
       focusVisibleStyle={focusRing(1)}
     >
