@@ -49,6 +49,7 @@ npx shadcn-nsh add theme-apple                    # 多带一套，运行时切�
 
 | shadcn-nsh | NSH CLI |
 | ---------- | ------- |
+| 0.10.x     | v0.6.1  |
 | 0.9.x      | v0.6.1  |
 | 0.8.x      | v0.6.0  |
 | 0.7.x      | v0.5.1  |

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.10.0 — themes state their sources; components draw the rest
+
 ### Added
 
 - **Two finish roles, `plate` and `channel`, a `muted` palette step, and a `capsule` group (#331).** `plate` is the labelled block chosen inside a well (a selected tab, a segmented thumb); `channel` is the track a group of choices sits in. `colors.muted` is a quiet fill one step off the surface under it. `dimension.control.group` gains `capsule`, which `apple` now states: its `Segmented` draws iOS's capsule track with a grey capsule for the choice. **Breaking for theme authors:** a custom theme states the two new finishes (14 in all).
