@@ -1254,14 +1254,15 @@
       "type": "registry:ui",
       "title": "Rich Editor",
       "description": "Rich document typography and its session API, on nsh/base's RichEditor.",
-      "registryDependencies": ["class-names"],
+      "registryDependencies": ["class-names", "icons", "theme"],
       "files": [
         {
           "path": "packages/ui/rich-editor.tsx",
           "type": "registry:ui",
           "target": "components/ui/rich-editor.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "code-editor",

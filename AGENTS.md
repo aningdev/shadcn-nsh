@@ -77,7 +77,6 @@ registry.json → public/r → shadcn-nsh add
 
 ## 工作约定
 
-- 已定下的事在 [`docs/decisions/README.md`](docs/decisions/README.md)（`Settled` 与 `Known and open`）：审阅者与代理不再把 `Settled` 当问题提；一个 PR 定下一件事就加一行并更新 `Last reviewed`。
 - 新组件用脚手架（`bun run port:new`）起步，不从空文件或旧组件复制。
 - `main` 受保护：每个改动一个分支（`<type>/<短描述>`）、一个 PR（标题是约定式提交信息，squash 合并），bug 与新组件先有 issue，PR 写 `Closes #N`；用的人能感知到的改动在同一 PR 里写进 `CHANGELOG.md` 的 `Unreleased`。流程见 [`CONTRIBUTING.md`](CONTRIBUTING.md#分支与-pr)。
 - 一个家族一个 PR；开 PR 前 `port:check`、`nsh check apps/website/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。

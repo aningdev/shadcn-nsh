@@ -50,12 +50,11 @@ type KnobFeedback = "none" | "expand" | "stretch";
 
 /**
  * The library's own switch: a circle's knob at the theme's `icon.md` (`icon.sm` for `sm`), and a
- * track that is that knob plus `CIRCLE_ROOM` on every side. Only the outline is the family's, and
- * off it is no line at all: the 1-point border is the room the knob rests in.
+ * track that is that knob plus `CIRCLE_ROOM` on every side. Only the outline is the family's.
  */
 interface CircleShape {
   readonly kind: "circle";
-  /** The track's border width off, and on (off it is a transparent border, room rather than a line). */
+  /** The track's outline off, and on. */
   border: number;
   onBorder: number;
 }
@@ -123,12 +122,6 @@ const switchShapes: Record<HandleLook["form"], SwitchShape> = {
 };
 
 interface ResolvedSwitchGeometry extends SwitchGeometry {
-  /**
-   * What the track puts on its border while the switch is off: nothing, or the theme's input
-   * edge. The library's circle leaves it out — its 1-point border is room around the knob, not a
-   * line — while a form that draws its own track outlines it.
-   */
-  offOutline: "none" | "input";
   onBorder: number;
   onKnob: number;
   knobHover: number;
@@ -144,7 +137,6 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       width: 5 * TERMINAL_COLUMN,
       height: TERMINAL_ROW,
       border: 1,
-      offOutline: "none",
       inset: 0,
       knob: TERMINAL_ROW,
       onBorder: 1,
@@ -160,7 +152,6 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       width: shape.width,
       height: shape.height,
       border: shape.border,
-      offOutline: "input",
       inset: Math.max(0, (shape.height - shape.knob) / 2 - shape.border),
       knob: shape.knob,
       onBorder: shape.onBorder,
@@ -176,7 +167,6 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
     width: height + knob,
     height,
     border: shape.border,
-    offOutline: "none",
     inset: Math.max(0, (height - knob) / 2 - shape.border),
     knob,
     onBorder: shape.onBorder,
@@ -186,16 +176,6 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
     knobPressedHeight: knob,
     knobFeedback: "none",
   };
-}
-
-/**
- * The track's border colour while the switch is off: `transparent` where the border is room (the
- * library's circle — shadcn's `border border-transparent` — and the terminal's cell box), the
- * theme's input edge where the form outlines its own track (Material's bar, WinUI's ring). Read
- * here, so a theme switch follows.
- */
-function offBorderColor(g: ResolvedSwitchGeometry): string {
-  return g.offOutline === "none" ? "transparent" : colors.input;
 }
 
 /**
@@ -269,7 +249,7 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
         padding: g.inset,
         backgroundColor: checked ? colors.primary : colors.track,
         borderWidth: checked ? g.onBorder : g.border,
-        borderColor: checked ? finish.accent.borderColor : offBorderColor(g),
+        borderColor: checked ? finish.accent.borderColor : finish.inset.borderColor,
         boxShadow: checked ? finish.accent.boxShadow : finish.inset.boxShadow,
         transitionProperty: reduceMotion() ? "none" : "background-color, border-color, box-shadow",
         ...cssMotion(motion.fast),

@@ -38,6 +38,9 @@ Type **Markdown** as you go: \`#\` makes a heading, \`-\` a list, \`[ ]\` a task
 
 - Select text and press Bold
 - Undo and redo keep every step
+
+- [x] Markdown made this task
+- [ ] Press the box to uncheck it
 `;
 
 /** The notes the bar's document starts as. */
@@ -547,6 +550,21 @@ function App() {
           <Text style={{ fontSize: 12, color: ui().muted }}>
             {mentioned() === 1 ? "1 mention in the text" : `${mentioned()} mentions in the text`}
           </Text>
+        </DemoSection>
+      </DemoCard>
+
+      <DemoCard>
+        <DemoSection title="An editor of its own" axis="block">
+          <Text style={{ color: ui().muted }}>
+            With no `editor`, RichEditor makes the session itself, and still marks a checked task.
+          </Text>
+          <View style={{ height: 180, ...sectionSurface(), overflow: "hidden" }}>
+            <RichEditor
+              content={doc.doc}
+              accessibilityLabel="Its own document"
+              style={{ flex: 1 }}
+            />
+          </View>
         </DemoSection>
       </DemoCard>
     </DemoPage>

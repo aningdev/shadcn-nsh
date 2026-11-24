@@ -123,18 +123,6 @@ const overrides: Record<string, Override> = {
     },
   },
   dialog: { steps: (app) => app.press("Open a card") },
-  // The pointer rests on a closable tab: its close button fades in after the title — never over it
-  // — and a title wider than the tab's cap truncates before it. A desktop window, where that tab
-  // fits whole: at the phone's width the bottom dock is shut, so the touch pass, with no pointer,
-  // draws the shown tab's close instead.
-  "dock-area": {
-    viewport: { width: 1024, height: 760 },
-    steps: async (app) => {
-      // The pointer pass has a mouse, the touch pass a finger, which shows the shown tab's close.
-      await app.hover("id:tab-notes").catch(() => {});
-      await app.wait(160);
-    },
-  },
   // The pointer rests on the trail's first step: its ink goes from the muted one to the page's
   // text color, the one state a still can show (the keyboard's ring needs the keyboard). A phone
   // has no pointer, so the touch pass keeps the resting look.

@@ -1,5 +1,5 @@
 // The official dock scene (`references/nsh/website/demos/el-dock.tsx`) with this library's dock
-// area: a workspace of seven panels in three groups and two docks, tabs dragged between groups, the
+// area: a workspace of six panels in three groups and two docks, tabs dragged between groups, the
 // docks toggled from the inspector, the workspace locked, and every change logged.
 import { focusRing } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
@@ -19,7 +19,6 @@ const titles: Record<string, string> = {
   files: "Files",
   readme: "README.md",
   main: "main.rs",
-  notes: "hopper-workspace-session-notes.md",
   preview: "Preview",
   terminal: "Terminal",
   problems: "Problems",
@@ -28,7 +27,6 @@ const lines: Record<string, string[]> = {
   files: ["src/", "  main.rs", "  lib.rs", "README.md", "Cargo.toml"],
   readme: ["# Hopper", "", "A small app with a dockable workspace."],
   main: ["fn main() {", "    hopper::run();", "}"],
-  notes: ["# Notes", "", "- drag a tab to split a group"],
   preview: ["Hopper", "A small app with a dockable workspace."],
   terminal: ["$ cargo run", "   Compiling hopper v0.1.0", "    Finished dev in 1.92s"],
   problems: ["No problems"],
@@ -45,7 +43,7 @@ const initial: DockAreaLayout = {
     sizes: [null, 260],
   },
   left: { layout: { type: "tabs", panels: ["files"] }, size: 180 },
-  bottom: { layout: { type: "tabs", panels: ["terminal", "problems", "notes"] }, size: 130 },
+  bottom: { layout: { type: "tabs", panels: ["terminal", "problems"] }, size: 130 },
 };
 
 function App() {
@@ -123,10 +121,9 @@ function App() {
             compact={!wide()}
             handleAccessibilityLabel="Resize"
             renderTab={(tab) => (
-              // The title, then the close button: with a pointer it fades in after the title, a
-              // title wider than the tab's cap truncating before it; a touch screen shows it on the
-              // shown tab.
-              <DockTab testID={`tab-${tab.panel}`} title={titles[tab.panel]} active={tab.active}>
+              // The title, then the close button: with a pointer it fades in over the tab's end; a
+              // touch screen shows it on the shown tab.
+              <DockTab title={titles[tab.panel]} active={tab.active}>
                 {tab.closable && (desktop || tab.active) ? (
                   <BareButton
                     onPress={() => area.closePanel(tab.panel)}

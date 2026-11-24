@@ -24,16 +24,6 @@ npx shadcn-nsh add --all            # every component
 
 `list`, `view` and `diff` inspect the registry without writing: `npx shadcn-nsh list`, `view button`, `diff` (exits 1 when the app's copies differ). Every command takes `-c <dir>`, `add` also `--dry-run` and `--overwrite`. The [CLI reference](https://shadcn-nsh.aning.dev/docs/cli) has the flags and defaults.
 
-## For coding agents
-
-A skill teaches an agent the installed components, how to compose their parts, the theme roles and how to verify the screen:
-
-```sh
-npx skills add aningdev/shadcn-nsh
-```
-
-It reads the app's own `components/ui` and `lib/ui/theme.ts`, so it follows the app as it changes. The docs are also served for agents: [llms.txt](https://shadcn-nsh.aning.dev/llms.txt) and [llms-full.txt](https://shadcn-nsh.aning.dev/llms-full.txt).
-
 ## Themes
 
 The library's own theme comes with `init`. Two more ship as themes:

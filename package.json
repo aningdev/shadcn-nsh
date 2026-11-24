@@ -38,7 +38,7 @@
     "check": "vp check --fix && bun run catalog --check && bun run tokens:build --check && bun run check:theme && bun run theme:contrast && bun run check:children && bun run check:rtl && bun run check:ui && bun run registry:build --check && bun run port:check && bun run port:coverage && nsh check apps/website/demos && nsh check apps/gallery && nsh check apps/showcase && bun run check:pages && bun run check:docs",
     "test:gallery": "nsh test apps/gallery",
     "test:install": "bun scripts/install-test.ts",
-    "test:unit": "bun test ./packages/cli ./packages/ui/lib ./scripts/children ./scripts/theme ./scripts/tokens ./scripts/rtl ./scripts/ui-rules ./scripts/catalog.test.ts ./scripts/skills.test.ts",
+    "test:unit": "bun test ./packages/cli ./packages/ui/lib ./scripts/children ./scripts/theme ./scripts/tokens ./scripts/rtl ./scripts/ui-rules ./scripts/catalog.test.ts",
     "tokens:build": "bun scripts/tokens/build.ts",
     "theme:diff": "bun scripts/theme/diff.ts",
     "theme:contrast": "bun scripts/theme/contrast.ts",

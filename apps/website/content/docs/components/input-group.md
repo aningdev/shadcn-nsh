@@ -231,9 +231,6 @@ padding (`borderRadius: 22`, `padding: 6`), and let the textarea grow to five li
 and Shift-Return breaks the line under a keyboard (`submitBehavior="submit"` on desktop); on a
 touch screen Return breaks the line, and the button sends.
 
-A group is a field: give it a `minHeight` taller than what it holds (40 with a pointer, 48 on a
-touch screen) and the parts keep the middle line of the frame.
-
 ```tsx
 const message = signal("");
 const grown = signal(0);

@@ -26,11 +26,9 @@ export interface InputGroupLookOptions {
  * (`fieldLook`) — the field's fill, its 1-point edge, and while a control in it has the keys a
  * 2-point edge in the accent with its ring; the danger tone while invalid; flat on the quieter
  * edge and dimmed while disabled — as wide as the room it is given. Its parts sit in one row,
- * wrapping so that a `block-start` or `block-end` addon takes a line of its own; the lines fill
- * the frame's height, so a group taller than what it holds (a composer's `minHeight`, 40 with a
- * pointer) keeps its parts on the middle line, as the field centres each one in its line. Its
- * corners are `shape.control`, or the radius `style` gives it (`style={{ borderRadius: 22 }}`),
- * which the focus ring follows: the ring is drawn on the frame, not on the control.
+ * wrapping so that a `block-start` or `block-end` addon takes a line of its own. Its corners are
+ * `shape.control`, or the radius `style` gives it (`style={{ borderRadius: 22 }}`), which the
+ * focus ring follows: the ring is drawn on the frame, not on the control.
  */
 export function inputGroupLook(o?: InputGroupLookOptions) {
   const field = fieldLook({
@@ -46,9 +44,6 @@ export function inputGroupLook(o?: InputGroupLookOptions) {
         ...field.style,
         width: "100%",
         flexWrap: "wrap",
-        // A flex container's `align-content` is `flex-start` in NSH (CSS stretches its lines),
-        // so a group taller than its one line would hold it at the top: stretch the lines instead.
-        alignContent: "stretch",
         ...read(o?.style),
       };
     },

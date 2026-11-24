@@ -46,7 +46,6 @@ bun run nsh:bootstrap                     # 校验 CLI 与 references/nsh 在基
 - **先有 issue**：bug 与新组件先开 issue，PR 正文写 `Closes #N`。错字、文档小修可以直接开 PR。三个模板：**Bug report**（受影响的组件、现象、最小复现、版本）、**Feature request**（想要什么、为什么、参照）、**Task**（维护者或代理在动手前写的计划：问题与证据、改什么、完成标准、不做什么与破坏性变更）。
 - **分支名** `<type>/<短描述>`，type 与提交信息的相同：`fix/field-label-wrap`、`feat/combobox-chips`、`docs/install-tabs`。
 - **一个 PR 一件事**：一个组件家族、一个 bug。不相关的改动分开提，review 和回滚都按 PR 来。
-- **已定下的不再讨论**：[`docs/decisions/README.md`](docs/decisions/README.md) 的 `Settled` 是定论，review 与代理不再把它当问题提（`Known and open` 里的说清是哪一条，不要当新发现）。一个 PR 定下一件事，就在对应分组加一行，并更新文末的 `Last reviewed`；表里没有、也确实没定过的才提。
 - **PR 标题就是合并后的提交信息**，照下面「提交信息」的格式写；分支里的提交怎么写都行，合并时会压成一个。
 - **CHANGELOG**：用的人能感知到的改动，在 `CHANGELOG.md` 的 `## Unreleased` 下加一条（Added / Changed / Fixed），写在同一个 PR 里。只改内部工具、CI、测试的不用写。根目录 `.gitattributes` 给它设了 `merge=union`：本地 rebase 时两边的条目都保留，不再起冲突（GitHub 网页上的 "Update branch" 不用它，请在本地 rebase）；顺序发版时再理。
 - **发版**也是一个 PR（`chore(release): vX.Y.Z`），合并后打标签，见 [`docs/release.md`](docs/release.md)。

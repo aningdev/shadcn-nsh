@@ -20,6 +20,7 @@ import {
   extendMarkRange,
   redo,
   richEditorClasses,
+  RichEditorTaskMarks,
   type RichCommand,
   type RichNodeJSON,
   type RichNodeViewProps,
@@ -38,6 +39,9 @@ Type **Markdown** as you go: \`#\` makes a heading, \`-\` a list, \`[ ]\` a task
 
 - Select text and press Bold
 - Undo and redo keep every step
+
+- [x] Markdown made this task
+- [ ] Press the box to uncheck it
 `;
 
 /** The notes the bar's document starts as. */
@@ -125,6 +129,9 @@ const chatClasses = {
 function App() {
   // The rich document: the session owns it, the view renders it, the toolbar runs its commands.
   const doc = createRichEditor({ extensions: [StarterKit], content: CONTENT, format: "markdown" });
+  // The page's own no-session case: the same document, in a session this page holds so the base
+  // editor can be given the mark layer the library's `RichEditor` puts over the document itself.
+  const own = createRichEditor({ content: doc.doc });
   const markdown = signal(doc.getMarkdown());
   const revision = signal(0);
   const richEvents = signal<string[]>([]);
@@ -377,6 +384,7 @@ function App() {
             accessibilityLabel="Document"
             placeholder="Write something"
             classes={richEditorClasses}
+            contentLayer={<RichEditorTaskMarks editor={doc} />}
             style={{ flex: 1 }}
           />
         </View>
@@ -551,6 +559,23 @@ function App() {
           <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
             {mentioned() === 1 ? "1 mention in the text" : `${mentioned()} mentions in the text`}
           </Text>
+        </DemoSection>
+      </DemoCard>
+
+      <DemoCard>
+        <DemoSection title="An editor of its own" axis="block">
+          <Text style={{ color: colors.mutedForeground }}>
+            With no `editor`, RichEditor makes the session itself, and still marks a checked task.
+          </Text>
+          <View style={{ height: 180, ...sectionSurface(), overflow: "hidden" }}>
+            <RichEditor
+              editor={own}
+              classes={richEditorClasses}
+              contentLayer={<RichEditorTaskMarks editor={own} />}
+              accessibilityLabel="Its own document"
+              style={{ flex: 1 }}
+            />
+          </View>
         </DemoSection>
       </DemoCard>
     </DemoPage>

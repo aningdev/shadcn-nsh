@@ -16,16 +16,6 @@ npx shadcn-nsh@latest add button
 
 Consumer monorepo scaffolding (`shadcn-nsh create`) is not built. `init` and `add` work in a workspace that already has `apps/*` and a `packages/ui` named `@workspace/ui` (or already holding `nsh-ui.json`).
 
-## For coding agents
-
-The library ships a skill: it teaches an agent which components the app has, how their parts compose, how to read theme roles and how to verify the screen.
-
-```npm
-npx skills add aningdev/shadcn-nsh
-```
-
-It reads the app's `components/ui` and `lib/ui/theme.ts`, so it follows the app as it changes. [llms.txt](https://shadcn-nsh.aning.dev/llms.txt) has the docs in one file.
-
 ## Commands
 
 | Command           | What it does                                                                                 |
