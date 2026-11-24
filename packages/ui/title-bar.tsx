@@ -83,8 +83,10 @@ const lightTone: Record<WindowControl, string> = {
   maximize: "#28C840", // color: macOS's fixed traffic-light hue
 };
 
-/** The ink drawn on a traffic light, and the hairline round it: black at a share, as macOS draws them. */
+/** The ink drawn on a traffic light: black at half, as macOS draws it. */
 export const lightInk = alpha("#000000", 0.5); // color: the traffic lights' own ink, the same under every theme
+
+/** The hairline round a traffic light: black at an eighth, as macOS draws it. */
 export const lightEdge = alpha("#000000", 0.12); // color: the traffic lights' own ink, the same under every theme
 
 /** A title bar's parts as the styles they wear: spread each one. */

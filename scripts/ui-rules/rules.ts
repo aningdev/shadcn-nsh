@@ -1,11 +1,15 @@
 /**
  * The rules `packages/ui` holds beyond what TypeScript and the theme check see (docs/ARCHITECTURE.md,
- * P8): a component never picks a theme's geometry by name, never paints a colour that is not a theme
- * role, and never writes a state's colour into a Tailwind class. The two markers `// color: <why>` and
- * `// state: <why>` say why one line departs (on the line or the line above).
+ * P8 and P9): a component never picks a theme's geometry by name, never paints a colour that is
+ * not a theme role, and never writes a state's colour into a Tailwind class; an import stays inside
+ * the layer it is written in; and every export says with a doc comment what it is for. The markers
+ * `// color: <why>` and `// state: <why>` say why one line departs (on the line or the line above);
+ * an import or an export that departs is on `allowlist` with its reason.
  *
  * Pure: no `node:fs`, so the unit test reads it and the script walks the files.
  */
+import { parseSync } from "oxc-parser";
+import type { Comment, Declaration } from "oxc-parser";
 
 export interface Violation {
   /** The file, relative to the repository root. */
@@ -15,15 +19,43 @@ export interface Violation {
   /** 1-based column. */
   column: number;
   /** Which rule failed. */
-  rule: "controls" | "theme-name" | "colour" | "state";
+  rule: "controls" | "theme-name" | "colour" | "state" | "layer" | "jsdoc";
   /** The line's text, trimmed. */
   text: string;
+  /** What an `Allowance` names to excuse this line: an import's specifier, or an export's name. */
+  match?: string;
+}
+
+/** One line that departs from a rule, with why it stays; the check fails once an entry is not needed. */
+export interface Allowance {
+  /** The file, relative to the repository root. */
+  file: string;
+  /** Which rule it departs from. */
+  rule: "layer" | "jsdoc";
+  /** What it excuses: an import's specifier, or an export's name. */
+  match: string;
+  /** One line: why the layer or the doc is right here as it is. */
+  reason: string;
 }
 
 /**
- * The components whose colour literals are not the interface's, each with the reason it stays:
- * a platform's fixed identity colour, an identity hue, or an ink a template recolours.
+ * Nothing in `packages/ui` departs yet: the layers hold and every export is documented. An entry
+ * belongs here only when a line cannot follow the rule, never to get a check to pass.
  */
+export const allowlist: Allowance[] = [];
+
+/**
+ * The specifiers a component may import from outside its own package: NSH (and its base, by any of
+ * its entry points) and the icon set. Theme values come through `@shadcn-nsh/theme`'s entry, which
+ * reads `theme.ts`; never one of its JSON files or a `themes/<name>/` directory directly.
+ */
+const allowedPackages = (specifier: string): boolean =>
+  specifier === "nsh" ||
+  specifier.startsWith("nsh/") ||
+  specifier === "lucide" ||
+  specifier.startsWith("lucide/") ||
+  specifier === "@shadcn-nsh/theme";
+
 /** The theme names a component must not compare against: a component reads the dimensions, not the theme. */
 const themeNames = ["apple", "material", "shadcn", "solid-glass", "winui"] as const;
 
@@ -61,8 +93,148 @@ const codeOf = (line: string): string => {
 const marked = (lines: string[], index: number, marker: string): boolean =>
   lines[index]!.includes(marker) || (index > 0 && lines[index - 1]!.includes(marker));
 
+/** Where `index` (a 0-based offset in `source`) sits: its 1-based line and column, and that line's text. */
+const at = (source: string, index: number) => {
+  const before = source.slice(0, index);
+  const line = before.split("\n").length;
+  const column = index - before.lastIndexOf("\n");
+  return { line, column, text: source.split("\n")[line - 1]?.trim() ?? "" };
+};
+
+/**
+ * An import's specifier as a path from the repository root. `file` is the importing file's own
+ * path, so `../x` is read against the file's directory, not the one the check runs from.
+ */
+const resolve = (file: string, specifier: string): { path: string; escapes: boolean } => {
+  const parts = `${file.slice(0, file.lastIndexOf("/"))}/${specifier}`.split("/");
+  const out: string[] = [];
+  for (const part of parts) {
+    if (part === "" || part === ".") continue;
+    if (part === "..") {
+      if (out.length === 0) return { path: parts.join("/"), escapes: true };
+      out.pop();
+      continue;
+    }
+    out.push(part);
+  }
+  return { path: out.join("/"), escapes: false };
+};
+
+/** Whether `file` is a `packages/ui/lib` module (the layer a component may import, never the reverse). */
+const inLib = (file: string): boolean => file.startsWith("packages/ui/lib/");
+
+/** Whether `path` is a component file of `packages/ui` (not the shared `lib/` modules, not `index.ts`). */
+const isComponent = (path: string): boolean =>
+  path.startsWith("packages/ui/") &&
+  !path.startsWith("packages/ui/lib/") &&
+  path !== "packages/ui/index.ts";
+
+/**
+ * The import direction: a `packages/ui/lib` module never imports a component (`../button`: an
+ * import list would have to be cut to `lib/`, since a component cannot be seen from there), and no
+ * `packages/ui` file imports `apps/*`, `scripts/*`, another package, or one of the theme's JSON
+ * files. Relative paths inside `packages/ui` and the three specifiers in `allowedPackages` are it.
+ */
+const imports = (source: string, file: string): Violation[] => {
+  const { program } = parseSync(file, source);
+  const found: Violation[] = [];
+  for (const statement of program.body) {
+    if (
+      statement.type !== "ImportDeclaration" &&
+      statement.type !== "ExportNamedDeclaration" &&
+      statement.type !== "ExportAllDeclaration"
+    ) {
+      continue;
+    }
+    const specifier = "source" in statement ? statement.source : undefined;
+    if (!specifier || specifier.type !== "Literal" || typeof specifier.value !== "string") continue;
+    const report = () =>
+      found.push({
+        file,
+        ...at(source, specifier.start),
+        rule: "layer",
+        match: specifier.value,
+      });
+
+    if (specifier.value.startsWith(".")) {
+      const target = resolve(file, specifier.value);
+      if (target.escapes || !target.path.startsWith("packages/ui")) report();
+      else if (inLib(file) && isComponent(target.path)) report();
+    } else if (!allowedPackages(specifier.value)) {
+      report();
+    }
+  }
+  return found;
+};
+
+/** A doc comment (`/** … *\/`) with words in it, nothing but whitespace between it and `start`. */
+const documented = (comments: Comment[], start: number, source: string): boolean => {
+  const last = comments.filter((comment) => comment.end <= start).pop();
+  if (!last || last.type !== "Block" || !last.value.startsWith("*")) return false;
+  if (/\S/.test(source.slice(last.end, start))) return false;
+  return /\w/.test(last.value.replace(/\*/g, ""));
+};
+
+/** An identifier's name: a declaration's `id` is one, a destructuring pattern or a literal otherwise. */
+const identifier = (id: { type: string; name?: string } | null | undefined): string | null =>
+  id !== null && id !== undefined && (id.type === "Identifier" || id.type === "IdentifierName")
+    ? (id.name ?? null)
+    : null;
+
+/** The name an exported declaration goes by, for the report: its own, or its declarators' names. */
+const nameOf = (declaration: Declaration): string => {
+  if ("declarations" in declaration) {
+    return declaration.declarations
+      .map((entry) => identifier(entry.id) ?? "(destructured)")
+      .join(", ");
+  }
+  return "id" in declaration ? (identifier(declaration.id) ?? "(anonymous)") : "(anonymous)";
+};
+
+/** A function declaration's name, when the declaration is one (the only shape an overload takes). */
+const signature = (declaration: Declaration | null): string | null =>
+  declaration?.type === "FunctionDeclaration" || declaration?.type === "TSDeclareFunction"
+    ? identifier(declaration.id)
+    : null;
+
+/**
+ * Every export says what it is for: a function, a component, a type or a constant, with a `/** … *\/`
+ * above it saying what it is, in a sentence. A re-export (`export * from`, `export { … }`) is the
+ * other file's doc, and the second and later signatures of one overloaded function take the first's.
+ */
+const docs = (source: string, file: string): Violation[] => {
+  const { program, comments } = parseSync(file, source);
+  const found: Violation[] = [];
+  let previous: Declaration | null = null;
+  for (const statement of program.body) {
+    if (statement.type === "ExportNamedDeclaration" && statement.declaration) {
+      const declaration = statement.declaration;
+      const group = signature(declaration);
+      const documentedBefore =
+        documented(comments, statement.start, source) ||
+        (group !== null && group === signature(previous));
+      if (!documentedBefore) {
+        found.push({
+          file,
+          ...at(source, statement.start),
+          rule: "jsdoc",
+          match: nameOf(declaration),
+        });
+      }
+      previous = declaration;
+      continue;
+    }
+    previous = null;
+  }
+  return found;
+};
+
 /** The violations of one file's source, in line order. */
-export function violations(source: string, file: string): Violation[] {
+export function violations(
+  source: string,
+  file: string,
+  allowed: Allowance[] = allowlist,
+): Violation[] {
   const lines = source.split("\n");
   const found: Violation[] = [];
   lines.forEach((raw, index) => {
@@ -89,5 +261,15 @@ export function violations(source: string, file: string): Violation[] {
       }
     }
   });
-  return found;
+  const excused = (violation: Violation): boolean =>
+    allowed.some(
+      (entry) =>
+        entry.file === violation.file &&
+        entry.rule === violation.rule &&
+        entry.match === (violation.match ?? violation.text),
+    );
+  found.push(...imports(source, file), ...docs(source, file));
+  return found
+    .filter((violation) => !excused(violation))
+    .sort((a, b) => a.line - b.line || a.column - b.column);
 }

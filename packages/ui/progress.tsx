@@ -350,6 +350,7 @@ export function progressStepsLook(): ProgressStepsLook {
   };
 }
 
+/** A step's mark: which step it draws (`state`), and every `nsh` View prop the mark takes. */
 export type ProgressStepMarkProps = ViewProps & {
   /** Where the step stands: `done` (a check), `current` (a ring with a dot), `upcoming` (empty). */
   state: Live<ProgressStepState>;
