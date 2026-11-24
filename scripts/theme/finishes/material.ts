@@ -1,5 +1,5 @@
 /**
- * material: what each of the twelve layer finishes paints, and the shadow scale, per appearance.
+ * material: what each layer finish paints, and the shadow scale, per appearance.
  *
  * Field values use the generator vocabulary: `{role}` names a colour role of this theme's palette,
  * `oklch(from {role} l c h / a)` the role at an alpha, `{shadow.part}` a part of the scale below,
@@ -20,11 +20,26 @@ export const finishes: ThemeFinishes = {
       elevation: 1,
     },
     inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
+    channel: {
+      background: "{inset}",
+      "border-color": "{border}",
+      shadow: "{shadow.inset}",
+      foreground: "{foreground}",
+      material: "none",
+    },
     raised: {
       background: "{raised}",
       "border-color": "transparent",
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      shadow: "{shadow.edge.surface}, {shadow.sm}",
+      foreground: "{foreground}",
+      backdropFilter: "none",
+      material: "none",
+    },
+    plate: {
+      background: "{secondary}",
+      "border-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       backdropFilter: "none",

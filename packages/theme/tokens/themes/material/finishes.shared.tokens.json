@@ -53,6 +53,30 @@
         }
       }
     },
+    "channel": {
+      "$description": "The channel a group of choices sits in: a segmented control's track.",
+      "background": {
+        "$type": "color",
+        "$value": "{color.inset}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": ["{shadow.inset}"]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": "none"
+        }
+      }
+    },
     "raised": {
       "$description": "A control on a surface: a button, a chip, a pill.",
       "background": {
@@ -88,6 +112,41 @@
         }
       },
       "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": ["{shadow.edge.surface}", "{shadow.sm}"]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "material": "none"
+        }
+      }
+    },
+    "plate": {
+      "$description": "A labelled block chosen inside a well: the selected tab, a segmented control's thumb.",
+      "background": {
+        "$type": "color",
+        "$value": "{color.secondary}"
+      },
+      "border-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",

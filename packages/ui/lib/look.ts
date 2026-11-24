@@ -465,7 +465,7 @@ export function handleLook(value: Handle): HandleLook {
   return unreachable(value);
 }
 
-/** A group drawn as a track: a capsule over the chosen item, inside the track's groove. */
+/** A group drawn as a track: a plate over the chosen item, inside the track's groove. */
 export interface GroupTrackLook {
   readonly form: "track";
   readonly span: "item";
@@ -500,9 +500,10 @@ export interface GroupCellsLook {
 export type GroupLook = GroupTrackLook | GroupCellsLook;
 
 /**
- * The shape a `control()` value gives a group. `track` is a capsule inside the track's groove;
- * `cells` is M3's segmented button — 40-point cells, a 12-point padding, the check's 8-point gap,
- * and dividers between the cells.
+ * The shape a `control()` value gives a group. `track` is a block inside the track's groove;
+ * `capsule` is iOS's segmented control — a capsule track holding a capsule of the theme's muted
+ * fill, one step in from the track's ends; `cells` is M3's segmented button — 40-point cells, a
+ * 12-point padding, the check's 8-point gap, and dividers between the cells.
  */
 export function groupLook(value: Group): GroupLook {
   switch (value) {
@@ -511,7 +512,17 @@ export function groupLook(value: Group): GroupLook {
         form: value,
         span: "item",
         radius: "shape.control",
-        fill: { kind: "finish", role: "raised" },
+        fill: { kind: "finish", role: "plate" },
+        height: "height.md",
+      };
+    case "capsule":
+      return {
+        form: "track",
+        span: "item",
+        radius: "pill",
+        // A grey chosen block, not a raised one: iOS's secondary fill reads as a step *into* the
+        // capsule track, and the label keeps the primary ink.
+        fill: { kind: "colour", role: "muted" },
         height: "height.md",
       };
     case "cells":

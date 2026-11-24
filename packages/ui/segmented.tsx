@@ -93,17 +93,22 @@ export interface SegmentedLookOptions {
 export function segmentedLook(o?: SegmentedLookOptions) {
   const small = () => read(o?.size) === "sm";
   const spread = () => !pointer || !!read(o?.fill);
-  // The track's padding: the thumb sits inside it.
+  // The track's padding, and the room the thumb keeps inside it: both the same step, so a segment's
+  // own box is the thumb's box — the one the pointer's hover paints.
   const inset = 2;
   // The theme's height scale, read where it is drawn: the middle step, or the small one for `sm`
   // (so a small control is as tall as a small button, and the two sit level in a row).
   const height = () => (small() ? controlHeight.sm : controlHeight.md);
   // The theme's group, read where it is drawn: a change of theme redraws these parts.
   const group = () => groupLook(control().group);
-  // The thumb: the track's raised face, sitting `inset` points inside the track.
+  // The thumb: the track's raised plate, a segment's own box (the theme's `plate`: a labelled block
+  // chosen inside a well).
   const thumb = (track: { radius: Radius; fill: Fill }): ViewStyle => ({
     ...rounded(radiusOf(track.radius, height()), inset),
     borderWidth: stroke.control,
+    // A face without an edge of its own draws none: `paintOf` states the colour where the fill
+    // names one (a finish), and a border with no colour of its own draws black.
+    borderColor: "transparent",
     ...paintOf(track.fill),
   });
   return {
@@ -130,18 +135,17 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         alignSelf: spread() ? "stretch" : "flex-start",
         padding: inset,
         ...rounded(radiusOf(look.radius, height())),
-        // Sunk like the pill bar's, not the switch's track: in dark the track is
-        // raised as the thumb is, which would hide the thumb.
-        backgroundColor: colors.inset,
-        boxShadow: finish.inset.boxShadow,
+        // The channel the chosen block sits in (`channel`), not the switch's track: in dark a
+        // switch's track is as raised as its thumb, which would hide the thumb.
+        ...finish.channel,
         borderWidth: stroke.control,
-        borderColor: colors.border,
       };
     },
     /** The thumb as `Tabs`' indicator, which the core springs to the selected tab. */
     get indicatorStyle(): ViewStyle {
       const look = group();
-      // Connected cells have no thumb: their chosen cell is the indicator.
+      // Connected cells have no thumb: their chosen cell is the indicator. On a track the thumb
+      // takes a segment's box, which stands a pad in from the track's edge.
       return look.form === "cells" ? {} : { top: inset, bottom: inset, ...thumb(look) };
     },
     /**
@@ -205,12 +209,14 @@ export function segmentedLook(o?: SegmentedLookOptions) {
           },
         };
       }
+      // The track's corners, kept in a name of its own so the closures below hold the narrowed value.
+      const track = look;
       return {
         // A clear edge the thumb's takes over, so a checked segment keeps its size.
         get style(): ViewStyle {
           return {
             ...(spread() ? { flex: 1, paddingHorizontal: 7 } : { paddingHorizontal: 9 }),
-            ...rounded(shape.control, inset),
+            ...rounded(radiusOf(track.radius, height()), inset),
             borderWidth: stroke.control,
             borderColor: "transparent",
             flexDirection: "row",

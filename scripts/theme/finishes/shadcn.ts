@@ -1,5 +1,5 @@
 /**
- * shadcn: what each of the twelve layer finishes paints, and the shadow scale, per appearance.
+ * shadcn: what each layer finish paints, and the shadow scale, per appearance.
  *
  * Field values use the generator vocabulary: `{role}` names a colour role of this theme's palette,
  * `oklch(from {role} l c h / a)` the role at an alpha, `{shadow.part}` a part of the scale below,
@@ -19,11 +19,26 @@ export const finishes: ThemeFinishes = {
       material: "none",
     },
     inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
+    channel: {
+      background: "{inset}",
+      "border-color": "{border}",
+      shadow: "{shadow.inset}",
+      foreground: "{foreground}",
+      material: "none",
+    },
     raised: {
       background: "{raised}",
       "border-color": "transparent",
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      shadow: "{shadow.edge.surface}, {shadow.sm}",
+      foreground: "{foreground}",
+      backdropFilter: "none",
+      material: "none",
+    },
+    plate: {
+      background: "{field}",
+      "border-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       backdropFilter: "none",
@@ -107,6 +122,7 @@ export const finishes: ThemeFinishes = {
   },
   dark: {
     glass: { background: "oklch(from {card} l c h / 0.8)" },
+    plate: { "border-color": "{input}" },
     pressed: { background: "oklch(0.34846 0 0)" },
   },
 };

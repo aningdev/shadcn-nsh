@@ -631,6 +631,39 @@
         "$value": "{color.foreground}"
       }
     },
+    "channel": {
+      "$description": "The channel a group of choices sits in: a segmented control's track.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.inset}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.inset}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
+    },
     "raised": {
       "$description": "A control on a surface: a button, a chip, a pill.",
       "$extensions": {
@@ -702,6 +735,40 @@
             "transparentKeyword": true
           }
         }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          "{shadow.edge.surface}",
+          "{shadow.sm}"
+        ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
+    },
+    "plate": {
+      "$description": "A labelled block chosen inside a well: the selected tab, a segmented control's thumb.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": "{color.field}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.input}"
       },
       "shadow": {
         "$type": "shadow",

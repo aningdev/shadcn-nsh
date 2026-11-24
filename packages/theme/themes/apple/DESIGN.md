@@ -442,7 +442,7 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`choice`**: `well`
 - **`track`**: `sunk`
 - **`handle`**: `circle`
-- **`group`**: `track`
+- **`group`**: `capsule`
 
 ## Motion & Micro-interaction
 
@@ -466,7 +466,9 @@ The neutral fields of every finish role, written once: a flat surface states no 
 
 - **`finish.card`** (backdropFilter: `none`): A surface that holds content: a card, a section.
 - **`finish.inset`** (backdropFilter: `none`): A well cut into a surface: an inset, a field, a track, a groove.
+- **`finish.channel`** (backdropFilter: `none`): The channel a group of choices sits in: a segmented control's track.
 - **`finish.raised`** (backdropFilter: `blur(30px)`; material: `"glass"`): A control on a surface: a button, a chip, a pill.
+- **`finish.plate`** (backdropFilter: `none`): A labelled block chosen inside a well: the selected tab, a segmented control's thumb.
 - **`finish.overlay`** (backdropFilter: `blur(30px)`; material: `"glass"`): A panel floating over the page: a menu, a toast.
 - **`finish.modal`** (backdropFilter: `none`): A surface the page waits for: a dialog, a sheet.
 - **`finish.inverse`** (backdropFilter: `blur(30px)`; material: `"glass"`): The page's inverse: an inverse surface, a tooltip.

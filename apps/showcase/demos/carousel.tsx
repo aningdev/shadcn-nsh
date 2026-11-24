@@ -492,9 +492,6 @@ function Product(props: { log: (text: string) => void }) {
         <CarouselPagination
           accessibilityLabel="Choose a photo"
           style={{ flexDirection: "row", gap: 8 }}
-          // The pills are a dot's geometry; these items are pictures, marked by their own border
-          // (`selectedStyle`), so the pill would only draw a bar across the photo.
-          indicatorStyle={{ display: "none" }}
         >
           <Each of={PHOTOS_LIST}>
             {(p, i) => (

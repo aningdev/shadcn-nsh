@@ -120,7 +120,7 @@ export interface ThemeStyleInput {
 /** One layer finish as the generators author it: CSS-ish field values plus the extension fields. */
 export type ThemeFinish = Record<string, unknown>;
 
-/** What the twelve layer finishes paint: the shared recipes, plus each appearance's overrides. */
+/** What the layer finishes paint: the shared recipes, plus each appearance's overrides. */
 export type ThemeFinishes = SplitFinishes<ThemeFinish>;
 
 /** The shadow scale: `sm`/`md`/`lg`/`xl`/`inset` parts, each a CSS shadow string, plus `edge`. */

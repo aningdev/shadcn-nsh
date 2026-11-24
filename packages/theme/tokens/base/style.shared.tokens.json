@@ -402,8 +402,38 @@
         }
       }
     },
+    "channel": {
+      "$description": "The channel a group of choices sits in: a segmented control's track.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      }
+    },
     "raised": {
       "$description": "A control on a surface: a button, a chip, a pill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
+          "border-bottom-color": "none",
+          "border-top-color": "none",
+          "elevation": null,
+          "gradient": "none",
+          "material": "none",
+          "pressed-background": "none",
+          "pressed-foreground": "none"
+        }
+      }
+    },
+    "plate": {
+      "$description": "A labelled block chosen inside a well: the selected tab, a segmented control's thumb.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",

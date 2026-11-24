@@ -245,6 +245,20 @@
         "backdropFilter": "none",
         "elevation": null
       },
+      "channel": {
+        "background": "{inset}",
+        "shadow": "none",
+        "foreground": "{foreground}",
+        "border-color": "{border}",
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
+      },
       "raised": {
         "background": "{raised}",
         "shadow": "none",
@@ -255,6 +269,20 @@
         "gradient": null,
         "pressed-background": null,
         "pressed-foreground": null,
+        "elevation": null
+      },
+      "plate": {
+        "background": "{card}",
+        "shadow": "none",
+        "foreground": "{foreground}",
+        "border-color": "{border}",
+        "backdropFilter": "none",
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "elevation": null
       },
       "overlay": {

@@ -690,7 +690,7 @@ function checkReferenceTypes(
 /** The parts a theme's shadow scale may hold: four levels, one inset, two edges (7 at most). */
 const SHADOW_LEVELS = ["sm", "md", "lg", "xl", "inset"] as const;
 const SHADOW_EDGES = ["surface", "accent"] as const;
-const FINISH_ROLES_MAX = 12;
+const FINISH_ROLES_MAX = 14;
 
 function scaleParts(node: Record<string, unknown>, prefix = ""): string[] {
   return Object.entries(node).flatMap(([k, v]) => {

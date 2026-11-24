@@ -178,19 +178,14 @@ function pressedAccent(): ViewStyle {
       };
 }
 
-/**
- * The role a variant's label, icon and state layers read: the accent finish's ink on a filled
- * button, the accent role's ink on a chosen quiet one (`restLook`'s `token("accent")`), the text's
- * otherwise. The two accents ink apart — Material's `accent-foreground` is dark on its light accent
- * and its `primary-foreground` near-white on the purple fill — so each state names its own.
- */
-const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens => {
-  if (filled(variant)) return "primary-foreground";
-  if (variant === "destructive") return "destructive";
-  if (variant === "ghost" && selected) return "accent-foreground";
-  if (variant === "secondary" && selected) return "primary-foreground";
-  return "foreground";
-};
+const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
+  filled(variant)
+    ? "primary-foreground"
+    : variant === "destructive"
+      ? "destructive"
+      : variant === "secondary" && selected
+        ? "accent-foreground"
+        : "foreground";
 
 /** The fill, edge and shadow of a variant at rest (or selected). A disabled filled button gives up the citrus for the
  * neutral raised fill (or the theme's split disabled container where `state.disabled.fill` is true). */
@@ -220,9 +215,8 @@ function restLook(variant: ButtonVariant, selected: boolean, disabled = false): 
       backgroundColor: selected ? token("accent") : ghostFill(),
       borderColor: "transparent",
     };
-  // A chosen quiet button (a secondary one, a filter that is on, a trigger whose popup is open)
-  // wears the accent, the theme's selected fill, apart from rest; a ghost's is the accent's quiet
-  // face, above.
+  // Selected stays on: `on`, apart from rest and from hover in both
+  // appearances (a sunk `pressed` is a press's, too faint to hold).
   return selected ? { ...finish.accent } : { ...finish.raised };
 }
 
@@ -324,10 +318,7 @@ function ink(live: Live<ButtonVariant>, o?: ButtonLookOptions) {
       ? (finish.accent.pressedForeground ?? finish.accent.foreground)
       : finish.accent.foreground;
   if (variant === "destructive") return colors.destructive;
-  // A chosen quiet button inks with the fill it sits on: the accent finish's (`restLook`'s
-  // secondary) or the accent role's (its ghost).
   if (variant === "secondary" && read(o?.selected)) return finish.accent.foreground;
-  if (variant === "ghost" && read(o?.selected)) return token("accent-foreground");
   if (read(o?.pressed)) return finish.pressed.foreground;
   return colors.foreground;
 }

@@ -219,9 +219,9 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 | `accelerate`            | `[1, 0, 1, 1]`               | WinUI 3 Gentle Exit（`theme.ts:991`）                                              |
 | `point-to-point`        | `[0.55, 0.55, 0, 1]`         | WinUI 3 Point-to-Point（`theme.ts:995`）                                           |
 
-#### C. `finishes`（12 个图层，每个映射为 `finish.<role>` Group）
+#### C. `finishes`（14 个角色，每个映射为 `finish.<role>` Group）
 
-每层一个 finish，六套主题的集合一致：`card`, `inset`, `raised`, `overlay`, `modal`, `inverse`, `glass`, `accent`, `knob`, `hover`, `pressed`, `disabled`（`section` 并入 `card`，`field` / `track` / `groove` 并入 `inset`，`chip` / `pill` 并入 `raised`，`menu` 并入 `overlay`，`tooltip` 并入 `inverse`，`light` / `fill` / `on` 并入 `accent`，`accentPressed` 并入 `pressed`，`thumb` 并入 `raised`，`knobOn` / `handle` 并入 `knob`，`grabber` 化为 `sheet` 预设）。每个角色按如下字段映射（`background`、`foreground`、`material` 必写；`gradient`、`backdropFilter`、三个 border 字段与 `pressed-background` / `pressed-foreground` 可省，`pressed-opacity` 只在 `accent` 上写：平涂的主题不写 gradient，只有按下时换强调色的主题写 `pressed-background` / `pressed-foreground`），合并后保持固定形状：
+每层一个 finish，六套主题的集合一致：`card`, `inset`, `channel`, `raised`, `plate`, `overlay`, `modal`, `inverse`, `glass`, `accent`, `knob`, `hover`, `pressed`, `disabled`（`section` 并入 `card`，`field` / `track`（开关、滑杆的槽）并入 `inset`，`groove`（分段控件的通道）并入 `channel`，`chip` / `pill` 并入 `raised`，`thumb` 并入 `plate`，`menu` 并入 `overlay`，`tooltip` 并入 `inverse`，`light` / `fill` / `on` 并入 `accent`，`accentPressed` 并入 `pressed`，`knobOn` / `handle` 并入 `knob`，`grabber` 化为 `sheet` 预设）。每个角色按如下字段映射（`background`、`foreground`、`material` 必写；`gradient`、`backdropFilter`、三个 border 字段与 `pressed-background` / `pressed-foreground` 可省，`pressed-opacity` 只在 `accent` 上写：平涂的主题不写 gradient，只有按下时换强调色的主题写 `pressed-background` / `pressed-foreground`），合并后保持固定形状：
 
 | `finish` 字段                             | DTCG 路径                                                          | `$type`    | DTCG `$value` 形态与细节                                                                                                                                                                                                                  |
 | :---------------------------------------- | :----------------------------------------------------------------- | :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -367,7 +367,7 @@ DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处
 `scripts/theme-lint.ts` 演进为两阶段：
 
 1. **标准 Schema 校验**：用官方 2025.10 JSON Schema（`format.json`、`resolver.json`）校验全部 `.tokens.json` 与 `.resolver.json`；
-2. **本库语义校验**：解析 4 种 context 排列后执行现有约束——31 个 shadcn A 层槽位完整（`theme.rs`）、C 层键集合与 `radius >= 0`、27 个 finish 合并后角色与字段集合齐一（含 `material` 白名单）、`colorOp` 静态 `$value` 一致性、`unread` / 未使用 token 检查、以及 `$description` 覆盖检查。
+2. **本库语义校验**：解析 4 种 context 排列后执行现有约束——31 个 shadcn A 层槽位完整（`theme.rs`）、C 层键集合与 `radius >= 0`、各层 finish 合并后角色与字段集合齐一（含 `material` 白名单）、`colorOp` 静态 `$value` 一致性、`unread` / 未使用 token 检查、以及 `$description` 覆盖检查。
 
 ### 9.3 `DESIGN.md` 生成器（`scripts/tokens/design-md.ts`，#246）
 

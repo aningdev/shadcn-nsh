@@ -125,7 +125,9 @@ export type FinishStyle = {
 export type FinishRole =
   | "card"
   | "inset"
+  | "channel"
   | "raised"
+  | "plate"
   | "overlay"
   | "modal"
   | "inverse"
@@ -236,8 +238,8 @@ export type Track = "sunk" | "tint" | "hairline";
 /** A handle's look (a slider's thumb, a switch's knob): `circle` a dot, `bar` a wide bar, `ring` a ring. */
 export type Handle = "circle" | "bar" | "ring";
 
-/** A group's look (a segmented control): `track` choices in a groove, `cells` adjacent cells. */
-export type Group = "track" | "cells";
+/** A group's look (a segmented control): `track` choices in a groove, `capsule` choices in a capsule (iOS), `cells` adjacent cells. */
+export type Group = "track" | "capsule" | "cells";
 
 /** The six control dimensions of `semantics.json`'s `dimension.control`: one value each. */
 export interface ControlDimensions {
@@ -587,6 +589,9 @@ export interface Palette {
   inset: string;
   /** A control on a card (buttons, fields, tracks). */
   raised: string;
+  /** A quiet fill one step off the surface under it: the grey block chosen inside a capsule (iOS's
+   * secondary fill), a segment's ground. */
+  muted: string;
   /** An input's well: below the card and the insets it sits on. */
   field: string;
   /** An input's edge. */
@@ -660,6 +665,7 @@ export const colors: Palette = tokens<keyof Palette>({
   card: "card",
   inset: "inset",
   raised: "raised",
+  muted: "muted",
   field: "field",
   input: "input",
   border: "border",
@@ -726,14 +732,18 @@ export const tints = tokens({
  * The layers are what a surface is, not what draws it: `accent` is the accent's own face (a filled
  * button, a chosen switch, a progress run), `inverse` the page's inverse (a toast, a tooltip),
  * `glass` a translucent pane, `knob` the small thing that moves (a switch's thumb, a slider's
- * handle, a chosen segment). `hover`, `pressed` and `disabled` are the steps a control takes — a
- * control that differs (an open switch's thumb, a slider's thumb, a segmented control's thumb, a
- * sheet's grabber) says so in its own preset, not in a finish of its own.
+ * handle), `plate` the labelled block chosen inside a well (the selected tab, a segmented
+ * control's thumb), and `channel` the track such a block is chosen in (a segmented control's
+ * track; a tab strip's track is a well, `inset`). `hover`, `pressed` and `disabled` are the steps a control takes — a control
+ * that differs (an open switch's thumb, a slider's thumb, a sheet's grabber) says so in its own
+ * preset, not in a finish of its own.
  */
 export const finish: Record<FinishRole, FinishStyle> = {
   card: themed("card"),
   inset: themed("inset"),
+  channel: themed("channel"),
   raised: themed("raised"),
+  plate: themed("plate"),
   overlay: themed("overlay"),
   modal: themed("modal"),
   inverse: themed("inverse"),

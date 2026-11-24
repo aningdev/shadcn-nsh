@@ -1027,6 +1027,12 @@
         }
       }
     },
+    "plate": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.raised}"
+      }
+    },
     "overlay": {
       "background": {
         "$type": "color",

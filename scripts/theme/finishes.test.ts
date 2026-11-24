@@ -18,7 +18,9 @@ const mergedDark = mergeFinishes(semantics.finishes, "dark");
 const layers = [
   "card",
   "inset",
+  "channel",
   "raised",
+  "plate",
   "overlay",
   "modal",
   "inverse",

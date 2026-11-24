@@ -1,5 +1,5 @@
 /**
- * apple: what each of the twelve layer finishes paints, and the shadow scale, per appearance.
+ * apple: what each layer finish paints, and the shadow scale, per appearance.
  *
  * Field values use the generator vocabulary: `{role}` names a colour role of this theme's palette,
  * `oklch(from {role} l c h / a)` the role at an alpha, `{shadow.part}` a part of the scale below,
@@ -19,6 +19,14 @@ export const finishes: ThemeFinishes = {
       material: "none",
     },
     inset: { shadow: "{shadow.inset}", foreground: "{foreground}", material: "none" },
+    // iOS 26's segmented track: a capsule on the card layer, a hairline edge and a soft drop shadow.
+    channel: {
+      background: "{card}",
+      "border-color": "{border}",
+      shadow: "{shadow.sm}",
+      foreground: "{foreground}",
+      material: "none",
+    },
     raised: {
       "border-color": "transparent",
       "border-top-color": "transparent",
@@ -27,6 +35,14 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
       backdropFilter: "blur(30px)",
       material: "glass",
+    },
+    plate: {
+      background: "{card}",
+      "border-color": "transparent",
+      shadow: "{shadow.edge.surface}, {shadow.sm}",
+      foreground: "{foreground}",
+      backdropFilter: "none",
+      material: "none",
     },
     overlay: {
       "border-color": "transparent",
@@ -107,6 +123,7 @@ export const finishes: ThemeFinishes = {
   },
   dark: {
     raised: { background: "oklch(from {raised} l c h / 0.72)" },
+    plate: { background: "{raised}" },
     overlay: { background: "oklch(from {popover} l c h / 0.72)" },
     inverse: { background: "oklch(from {inverse} l c h / 0.72)" },
     glass: { background: "oklch(from {popover} l c h / 0.72)" },

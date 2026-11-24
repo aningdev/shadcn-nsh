@@ -12,7 +12,7 @@ const fields = values<Field>({ box: true, underline: true, "box-underline": true
 const choices = values<Choice>({ well: true, outline: true, inset: true });
 const tracks = values<Track>({ sunk: true, tint: true, hairline: true });
 const handles = values<Handle>({ circle: true, bar: true, ring: true });
-const groups = values<Group>({ track: true, cells: true });
+const groups = values<Group>({ track: true, capsule: true, cells: true });
 
 describe("selectionLook", () => {
   test("draws every value it takes", () => {
@@ -246,14 +246,24 @@ describe("handleLook", () => {
 
 describe("groupLook", () => {
   test("draws every value it takes", () => {
-    expect(groups.map((value) => groupLook(value).form)).toEqual(groups);
+    expect(groups.map((value) => groupLook(value).form)).toEqual(["track", "track", "cells"]);
   });
 
-  test("a track's capsule covers the chosen item, on the control's corner", () => {
+  test("a track's block covers the chosen item, on the control's corner", () => {
     expect(groupLook("track")).toMatchObject({
       span: "item",
       radius: "shape.control",
-      fill: { kind: "finish", role: "raised" },
+      fill: { kind: "finish", role: "plate" },
+      height: "height.md",
+    });
+  });
+
+  test("iOS's capsule covers the chosen item, a capsule in a capsule", () => {
+    expect(groupLook("capsule")).toMatchObject({
+      form: "track",
+      span: "item",
+      radius: "pill",
+      fill: { kind: "colour", role: "muted" },
       height: "height.md",
     });
   });

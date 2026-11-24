@@ -164,7 +164,7 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
   { id: "split-view", group: "base", ours: ["split-view"] },
   { id: "switch", group: "base", ours: ["switch"] },
   { id: "table", group: "base", ours: ["table"] },
-  { id: "tabs", group: "base", ours: ["tabs", "segmented"] },
+  { id: "tabs", group: "base", ours: ["tabs"] },
   { id: "terminal", group: "base", ours: ["terminal"] },
   { id: "text-view", group: "base", ours: ["text-view"] },
   { id: "time-field", group: "base", ours: ["time-field"] },

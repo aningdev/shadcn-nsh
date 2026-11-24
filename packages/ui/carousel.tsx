@@ -147,10 +147,7 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
  * A `CarouselPagination`'s look (spread it): its items in a row, and the
  * indicator, a citrus pill a dot high and two wide that springs to the item
  * of the slide shown, over its dot (`CarouselDot`). Hidden in a terminal,
- * whose dots are glyphs. The pill is a dot's geometry: a row that draws
- * something else in its items (a picture, a word) marks its own choice with
- * `CarouselPaginationItem`'s `selectedStyle` and hides the pill
- * (`indicatorStyle`), which would otherwise draw over it.
+ * whose dots are glyphs.
  */
 export function carouselPaginationLook() {
   return {
@@ -370,8 +367,7 @@ export function CarouselNext(props: CarouselNextProps) {
   );
 }
 
-/** The row of dots, and the pill that travels along it to the slide shown. The pill is a dot's,
- * drawn over the item it reaches: a row of anything but dots hides it (`indicatorStyle`). */
+/** The row of dots, and the pill that travels along it to the slide shown. */
 export function CarouselPagination(props: CarouselPaginationProps) {
   const [, rest] = split(props, [
     "class",

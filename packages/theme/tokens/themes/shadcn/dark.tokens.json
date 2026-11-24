@@ -1032,6 +1032,12 @@
     }
   },
   "finish": {
+    "plate": {
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.input}"
+      }
+    },
     "glass": {
       "background": {
         "$type": "color",

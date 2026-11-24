@@ -1,6 +1,6 @@
 // The official tabs scene (`references/nsh/website/demos/el-tabs.tsx`) with this library's parts:
-// a capsule strip switching a card of figures, and an underlined strip with counts (one folder
-// disabled), each press added to the inspector's log.
+// a pill strip as wide as its tabs switching a card of figures, and an underlined strip with counts
+// (one folder disabled), each press added to the inspector's log.
 import { mount, signal, Text, View } from "nsh";
 
 import { controlSize, plainRow, sectionSurface } from "@/packages/ui/lib/surface";
@@ -67,7 +67,8 @@ function App() {
         }
       >
         <Tabs value={section()} onValueChange={(value) => section.set(value)}>
-          {/* A tab list on a capsule track: the list's indicator is the raised pill inside it. */}
+          {/* A tab list on a sunken track, as wide as its tabs: the indicator is the raised pill
+              inside it, a step in from the track's corners (`fill` spans the row instead). */}
           <TabsList variant="default">
             {sections.map((s) => (
               <TabsTrigger value={s.id} onPress={() => log(`${s.label} pressed`)}>

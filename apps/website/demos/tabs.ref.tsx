@@ -48,7 +48,7 @@ const folders = [
   { id: "spam", label: "Spam", count: 3, locked: true },
 ];
 
-/** A pill strip that shares its row (the section switcher) and an underlined one as wide as its labels. */
+/** A pill strip as wide as its tabs and an underlined one as wide as its labels. */
 const strip = tabsLook();
 const underline = underlineTabsLook();
 
@@ -73,7 +73,8 @@ function App() {
           <Log title={`onPress · ${section()}, ${folder()}`} lines={events()} minHeight={76} />
         }
       >
-        {/* A tab list on a capsule track: the indicator is the raised pill inside it. */}
+        {/* A tab list on a sunken track, as wide as its tabs: the indicator is the raised pill
+            inside it, a step in from the track's corners. */}
         <Tabs style={strip.style} indicatorStyle={strip.indicatorStyle}>
           {sections.map((s) => (
             <Tab

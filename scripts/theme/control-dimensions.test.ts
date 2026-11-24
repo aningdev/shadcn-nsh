@@ -16,7 +16,7 @@ const themes = readdirSync(join(theme, "themes"), { withFileTypes: true })
   .sort();
 
 const semantics = (name: string) => read(`themes/${name}/semantics.json`);
-const shared = ["default", "shadcn", "solid-glass", "apple"];
+const shared = ["default", "shadcn", "solid-glass"];
 
 describe("the spec's control dimensions", () => {
   test("states one row per dimension, with values the enums allow", () => {
@@ -72,6 +72,7 @@ describe("the spec's control dimensions", () => {
       group: "track",
     });
     for (const name of shared) expect(semantics(name).dimension.control).toEqual(base);
+    expect(semantics("apple").dimension.control.group).toBe("capsule");
     expect(semantics("material").dimension.control.group).toBe("cells");
     expect(semantics("winui").dimension.control.group).toBe("track");
   });

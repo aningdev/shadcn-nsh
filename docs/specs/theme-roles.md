@@ -133,20 +133,20 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- theme-lint: enums -->
 
-| 键                                | 取值                                                                                                                                        | 管什么                                          |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `typography.*.fontWeight`         | `400` `500` `600` `700`                                                                                                                     | 字重                                            |
-| `shape.curve`                     | `continuous` `circular`                                                                                                                     | 圆角的曲率（Apple 是连续曲线）                  |
-| `shape.corners.button`            | `radius` `full`                                                                                                                             | 按钮的角：取圆角刻度，还是胶囊                  |
-| `dimension.size.control.*.switch` | `small` `regular`                                                                                                                           | 开关的钮取哪一档                                |
-| `dimension.focus.style`           | `halo` `outline` `double`                                                                                                                   | 焦点环的画法                                    |
-| `dimension.control.selection`     | `pill` `underline` `bar`                                                                                                                    | 选中项的那块记号画成什么、覆盖多宽              |
-| `dimension.control.field`         | `box` `underline` `box-underline`                                                                                                           | 输入井的框：四条边、只下边、还是框加下边        |
-| `dimension.control.choice`        | `well` `outline` `inset`                                                                                                                    | 选择框静止时的面，勾选记号由值推出              |
-| `dimension.control.track`         | `sunk` `tint` `hairline`                                                                                                                    | 轨道：凹槽、色带、还是一条细线                  |
-| `dimension.control.handle`        | `circle` `bar` `ring`                                                                                                                       | 手柄：圆钮、竖条、环                            |
-| `dimension.control.group`         | `track` `cells`                                                                                                                             | 一组互斥按钮：轨道里的胶囊，还是相邻格          |
-| `transition.enter.timingFunction` | `out-cubic` `in-cubic` `in-out-cubic` `standard` `emphasized-decelerate` `emphasized-accelerate` `decelerate` `accelerate` `point-to-point` | 表面进场用的缓动名（引用 `cubicBezier.<name>`） |
+| 键                                | 取值                                                                                                                                        | 管什么                                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `typography.*.fontWeight`         | `400` `500` `600` `700`                                                                                                                     | 字重                                                       |
+| `shape.curve`                     | `continuous` `circular`                                                                                                                     | 圆角的曲率（Apple 是连续曲线）                             |
+| `shape.corners.button`            | `radius` `full`                                                                                                                             | 按钮的角：取圆角刻度，还是胶囊                             |
+| `dimension.size.control.*.switch` | `small` `regular`                                                                                                                           | 开关的钮取哪一档                                           |
+| `dimension.focus.style`           | `halo` `outline` `double`                                                                                                                   | 焦点环的画法                                               |
+| `dimension.control.selection`     | `pill` `underline` `bar`                                                                                                                    | 选中项的那块记号画成什么、覆盖多宽                         |
+| `dimension.control.field`         | `box` `underline` `box-underline`                                                                                                           | 输入井的框：四条边、只下边、还是框加下边                   |
+| `dimension.control.choice`        | `well` `outline` `inset`                                                                                                                    | 选择框静止时的面，勾选记号由值推出                         |
+| `dimension.control.track`         | `sunk` `tint` `hairline`                                                                                                                    | 轨道：凹槽、色带、还是一条细线                             |
+| `dimension.control.handle`        | `circle` `bar` `ring`                                                                                                                       | 手柄：圆钮、竖条、环                                       |
+| `dimension.control.group`         | `track` `capsule` `cells`                                                                                                                   | 一组互斥按钮：槽里的圆角块、胶囊轨道里的胶囊块，还是相邻格 |
+| `transition.enter.timingFunction` | `out-cubic` `in-cubic` `in-out-cubic` `standard` `emphasized-decelerate` `emphasized-accelerate` `decelerate` `accelerate` `point-to-point` | 表面进场用的缓动名（引用 `cubicBezier.<name>`）            |
 
 <!-- /theme-lint: enums -->
 
@@ -156,14 +156,14 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- theme-lint: controls -->
 
-| 维度        | `default` `shadcn` `solid-glass` `apple` | `material`  | `winui`         |
-| ----------- | ---------------------------------------- | ----------- | --------------- |
-| `selection` | `pill`                                   | `underline` | `bar`           |
-| `field`     | `box`                                    | `underline` | `box-underline` |
-| `choice`    | `well`                                   | `outline`   | `inset`         |
-| `track`     | `sunk`                                   | `tint`      | `hairline`      |
-| `handle`    | `circle`                                 | `bar`       | `ring`          |
-| `group`     | `track`                                  | `cells`     | `track`         |
+| 维度        | `default` `shadcn` `solid-glass` | `apple`   | `material`  | `winui`         |
+| ----------- | -------------------------------- | --------- | ----------- | --------------- |
+| `selection` | `pill`                           | `pill`    | `underline` | `bar`           |
+| `field`     | `box`                            | `box`     | `underline` | `box-underline` |
+| `choice`    | `well`                           | `well`    | `outline`   | `inset`         |
+| `track`     | `sunk`                           | `sunk`    | `tint`      | `hairline`      |
+| `handle`    | `circle`                         | `circle`  | `bar`       | `ring`          |
+| `group`     | `track`                          | `capsule` | `cells`     | `track`         |
 
 <!-- /theme-lint: controls -->
 
@@ -243,24 +243,26 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 4 每个 finish
 
-十二个层，一个面属于哪一层只由它“是什么”决定，不由它“画了什么”决定。旧的 27 个角色折进这里：`section`→`card`，`field`/`track`/`groove`→`inset`，`chip`/`pill`→`raised`，`menu`→`overlay`，`tooltip`→`inverse`，`light`/`fill`/`on`→`accent`，`accentPressed`→`pressed`（填充色按下见下），`thumb`→`raised`，`knobOn`/`handle`→`knob`，`grabber`→`sheet` 的控件预设。
+十一个层加三种状态，一个面属于哪一层只由它“是什么”决定，不由它“画了什么”决定。旧的 27 个角色折进这里：`section`→`card`，`field`/`track`/`groove`→`inset`，`chip`/`pill`→`raised`，`menu`→`overlay`，`tooltip`→`inverse`，`light`/`fill`/`on`→`accent`，`accentPressed`→`pressed`（填充色按下见下），`thumb`→`raised`，`knobOn`/`handle`→`knob`，`grabber`→`sheet` 的控件预设。
 
 <!-- theme-lint: finishes -->
 
-| finish     | 画什么                                                                          | What it draws                                                              | 谁读                                                                                |
-| ---------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `card`     | 卡片的底：一道接触影                                                            | A card's face: one contact shadow                                          | `sidebar`、`card`、`lib/surface`                                                    |
-| `inset`    | 凹下去的一层：输入井、轨道、槽、凹槽                                            | A well: a field, a track, a groove                                         | `lib/surface`、`input`、`select`、`tabs`、`switch`、`slider`、`progress`、`menu`    |
-| `raised`   | 卡片上的控件：内高光、接触影、边；分段与胶囊标签页选中的那块                    | A control on a card: an inner highlight, a contact shadow, an edge         | `button`、`select`、`radio-group`、`carousel`、`combobox`、`segmented`、`tabs`      |
-| `overlay`  | 浮层：菜单、弹层、toast                                                         | A floating surface: a menu, a popover                                      | `popover`、`lib/listbox`、`menu`、`command`                                         |
-| `modal`    | 模态面：对话框、抽屉、底部面板                                                  | A modal's face: a dialog, a sheet                                          | `dialog`、`sheet`                                                                   |
-| `inverse`  | 反色的面：toast、提示                                                           | The page's inverse: a toast, a tooltip                                     | `toast`、`tooltip`                                                                  |
-| `glass`    | 玻璃：半透明底 + 模糊                                                           | Glass: a translucent fill and a blur                                       | `carousel`、`lib/surface`                                                           |
-| `accent`   | 强调色的面：主操作、选中的开关/勾选/进度                                        | The accent's own surface: the main action, a chosen switch, a progress run | `button`、`toggle`、`checkbox`、`switch`、`slider`、`progress`、`collapsing-header` |
-| `knob`     | 旋钮：开关圆点、滑杆把手（不带字）                                              | A knob: a switch's thumb, a slider's handle (no text on it)                | `switch`、`slider`                                                                  |
-| `hover`    | 指针停在可点项上的那一步                                                        | The step a control takes under the pointer                                 | `button`、`carousel`                                                                |
-| `pressed`  | 按下的那一步（填充色按下读 `accent`，按它的 `pressed-opacity` 变淡，见第 6 节） | The step a control takes while pressed                                     | `button`                                                                            |
-| `disabled` | 禁用控件：容器与它自己的 `foreground`                                           | A disabled control's container and its own `foreground`                    | `button`、`toggle`                                                                  |
+| finish     | 画什么                                                                          | What it draws                                                                | 谁读                                                                                |
+| ---------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `card`     | 卡片的底：一道接触影                                                            | A card's face: one contact shadow                                            | `sidebar`、`card`、`lib/surface`                                                    |
+| `inset`    | 凹下去的一层：输入井、轨道、槽、凹槽                                            | A well: a field, a track, a groove                                           | `lib/surface`、`input`、`select`、`tabs`、`switch`、`slider`、`progress`、`menu`    |
+| `channel`  | 一组选择所在的通道：分段控件的轨道                                              | The channel a group of choices sits in: a segmented control's track          | `segmented`                                                                         |
+| `raised`   | 卡片上的控件：内高光、接触影、边                                                | A control on a card: an inner highlight, a contact shadow, an edge           | `button`、`select`、`radio-group`、`carousel`、`combobox`                           |
+| `plate`    | 井里被选中的那块（上面有字）：胶囊标签页、分段控件的选中块                      | The labelled block chosen inside a well: the selected tab, a segment's thumb | `tabs`、`segmented`                                                                 |
+| `overlay`  | 浮层：菜单、弹层、toast                                                         | A floating surface: a menu, a popover                                        | `popover`、`lib/listbox`、`menu`、`command`                                         |
+| `modal`    | 模态面：对话框、抽屉、底部面板                                                  | A modal's face: a dialog, a sheet                                            | `dialog`、`sheet`                                                                   |
+| `inverse`  | 反色的面：toast、提示                                                           | The page's inverse: a toast, a tooltip                                       | `toast`、`tooltip`                                                                  |
+| `glass`    | 玻璃：半透明底 + 模糊                                                           | Glass: a translucent fill and a blur                                         | `carousel`、`lib/surface`                                                           |
+| `accent`   | 强调色的面：主操作、选中的开关/勾选/进度                                        | The accent's own surface: the main action, a chosen switch, a progress run   | `button`、`toggle`、`checkbox`、`switch`、`slider`、`progress`、`collapsing-header` |
+| `knob`     | 旋钮：开关圆点、滑杆把手（不带字）                                              | A knob: a switch's thumb, a slider's handle (no text on it)                  | `switch`、`slider`                                                                  |
+| `hover`    | 指针停在可点项上的那一步                                                        | The step a control takes under the pointer                                   | `button`、`carousel`                                                                |
+| `pressed`  | 按下的那一步（填充色按下读 `accent`，按它的 `pressed-opacity` 变淡，见第 6 节） | The step a control takes while pressed                                       | `button`                                                                            |
+| `disabled` | 禁用控件：容器与它自己的 `foreground`                                           | A disabled control's container and its own `foreground`                      | `button`、`toggle`                                                                  |
 
 <!-- /theme-lint: finishes -->
 
@@ -279,12 +281,12 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 6 折叠与例外
 
-十二个层不是十二个恰好画得一样的面：一个面属于哪一层，由它是什么决定。三条折叠需要理由，记在这里：
+十一个层不是十一个恰好画得一样的面：一个面属于哪一层，由它是什么决定。三条折叠需要理由，记在这里：
 
 | 折起来的东西                                     | 为什么是一层                                                                                                                                                                                                                   |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `accentPressed` → `pressed`                      | 按下是控件的事，不是面的事。填充色按下不是另一个面：`accent` 按自己的 `pressed-opacity` 变淡，按下时换强调色的主题在 `accent` 上写 `pressed-background` / `pressed-foreground`——一个面的按下态只该暗一点，不该换一整套边和阴影 |
-| `knobOn` / `handle` → `knob`；`thumb` → `raised` | 开关圆点与滑杆把手都是“一个能拨动、不带字的小块”，开着的开关圆点改读 `accent` 的字色；分段与胶囊标签页选中的那块上面有字，是一块抬起来的面，读 `raised`——`knob` 在暗色下是白色圆点（iOS、shadcn），字写不上去                  |
+| `knobOn` / `handle` → `knob`；`thumb` → `raised` | 开关圆点与滑杆把手都是“一个能拨动、不带字的小块”，开着的开关圆点改读 `accent` 的字色；分段与胶囊标签页选中的那块上面有字，是井里被选中的一块，读 `plate`——`knob` 在暗色下是白色圆点（iOS、shadcn），字写不上去                 |
 | `grabber` → `sheet` 的控件预设                   | 抓取条是抽屉这个控件的一部分，不是一个层；`sheetGrabber()` 画它（`alpha(colors.mutedForeground, 0.4)`）                                                                                                                        |
 
 `light` 与 `accent` 本来就是同一个面（在五套主题里逐字节相同），`fill` 与 `on` 是强调色的两种用法，`field`/`track`/`groove` 是井的不同深度，`chip`/`pill` 是控件面，`tooltip` 是反色面——它们不是“值相同但决定不同”，是同一层上的不同控件。
@@ -332,7 +334,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 8 留给应用
 
-`theme-lint` 要求每个 token 和每个 finish 都被读到，否则就是写了没人用。上游的 `pill` 折进 `raised` 之后，本库的十二个层都由组件读着，这张表是空的——写一个没人读的 finish，组件里就会多一个看不出用处的东西。
+`theme-lint` 要求每个 token 和每个 finish 都被读到，否则就是写了没人用。上游的 `pill` 折进 `raised` 之后，本库的十一个层都由组件读着，这张表是空的——写一个没人读的 finish，组件里就会多一个看不出用处的东西。
 
 <!-- theme-lint: unread -->
 

@@ -249,6 +249,9 @@ export const style = {
       },
       height: { pointer: { sm: 24, md: 28, lg: 32 }, touch: { sm: 32, md: 44, lg: 56 } },
     },
+    // A group of choices is iOS's segmented control: a capsule track on the card layer, a capsule
+    // grey chosen block inside it (HIG "Segmented controls": a capsule within a capsule).
+    control: { group: "capsule" },
     stroke: { hairline: 0.5, control: 1 },
     focus: { style: "halo", width: 3, offset: 0 },
     icon: {

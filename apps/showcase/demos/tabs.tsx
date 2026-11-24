@@ -1,7 +1,8 @@
 import { colors } from "@shadcn-nsh/theme";
 // Tabs: the official gallery's scene (`references/nsh/examples/gallery/demos/Controls.tsx`, the
 // Tabs demo) with this library's parts — a section switcher on the pill track, its tabs sharing
-// the width and their icons showing while they fit, and an underlined strip as wide as its labels
+// the width (`fill`) and their icons showing while they fit, and an underlined strip as wide as its
+// labels
 // that scrolls and carries the line to the selected tab; the rows of the tab shown settling in
 // as it changes.
 import {
@@ -124,11 +125,11 @@ function Sections(props: { log: (text: string) => void }) {
   const rows = settleOn(section);
   const sized = titles(SECTIONS.length);
   // The tabs share the track equally: icons show while every title fits
-  // its share with its icon (a tab's border and padding are 14).
+  // its share with its icon (a tab's padding and border are 18).
   const icons = () => {
     const widths = sized.widths();
     const share = (sized.room() - 2 * (inset + 1) - 2 * (SECTIONS.length - 1)) / SECTIONS.length;
-    return widths.length > 0 && widths.every((w) => w + TAB_ICON_ROOM + 14 <= share);
+    return widths.length > 0 && widths.every((w) => w + TAB_ICON_ROOM + 18 <= share);
   };
   return (
     <DemoCard title="Tabs" subtitle="A section switcher: the app shows the selected one">
@@ -139,7 +140,7 @@ function Sections(props: { log: (text: string) => void }) {
           props.log(`Tab: ${next}`);
         }}
       >
-        <TabsList onLayout={({ bounds }) => sized.room.set(bounds.size.width)}>
+        <TabsList fill onLayout={({ bounds }) => sized.room.set(bounds.size.width)}>
           <Each of={SECTIONS}>
             {(s) => (
               <TabsTrigger value={s().name} disabled={s().disabled}>

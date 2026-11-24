@@ -466,7 +466,9 @@ The neutral fields of every finish role, written once: a flat surface states no 
 
 - **`finish.card`** (backdropFilter: `none`; elevation: 1): A surface that holds content: a card, a section.
 - **`finish.inset`** (backdropFilter: `none`): A well cut into a surface: an inset, a field, a track, a groove.
-- **`finish.raised`** (backdropFilter: `none`; elevation: 1): A control on a surface: a button, a chip, a pill.
+- **`finish.channel`** (backdropFilter: `none`): The channel a group of choices sits in: a segmented control's track.
+- **`finish.raised`** (backdropFilter: `none`): A control on a surface: a button, a chip, a pill.
+- **`finish.plate`** (backdropFilter: `none`; elevation: 1): A labelled block chosen inside a well: the selected tab, a segmented control's thumb.
 - **`finish.overlay`** (backdropFilter: `none`; elevation: 3): A panel floating over the page: a menu, a toast.
 - **`finish.modal`** (backdropFilter: `none`; elevation: 6): A surface the page waits for: a dialog, a sheet.
 - **`finish.inverse`** (backdropFilter: `none`; elevation: 6): The page's inverse: an inverse surface, a tooltip.

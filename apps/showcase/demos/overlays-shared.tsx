@@ -98,15 +98,13 @@ export function Trigger(props: {
   onPress?: () => void;
 }) {
   const variant = () => props.variant ?? "secondary";
-  // The fill, the icon and the label take one set of options: a state's fill and its ink come from
-  // the same `selected`, so an open trigger's label reads on the fill it stands on.
-  const state = { selected: () => !!(props.open || props.on), disabled: () => props.disabled };
   const look = buttonLook(variant, {
-    ...state,
+    selected: () => !!(props.open || props.on),
+    disabled: () => props.disabled,
     style: props.inline ? { paddingHorizontal: pointer ? 4 : 0, height: undefined } : undefined,
   });
-  const glyph = buttonGlyph(variant, state);
-  const labelStyle = buttonLabel(variant, state);
+  const glyph = buttonGlyph(variant, { disabled: () => props.disabled });
+  const labelStyle = buttonLabel(variant, { disabled: () => props.disabled });
   return (
     <View
       role={props.onPress ? "button" : undefined}

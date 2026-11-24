@@ -247,6 +247,20 @@
         "backdropFilter": "none",
         "elevation": null
       },
+      "channel": {
+        "background": "{inset}",
+        "shadow": "none",
+        "foreground": "{foreground}",
+        "border-color": "{border}",
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
+      },
       "raised": {
         "background": "{raised}",
         "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
@@ -259,6 +273,19 @@
         "gradient": null,
         "pressed-background": null,
         "pressed-foreground": null,
+        "elevation": null
+      },
+      "plate": {
+        "background": "{field}",
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
+        "foreground": "{foreground}",
+        "backdropFilter": "none",
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "elevation": null
       },
       "overlay": {
@@ -389,11 +416,17 @@
       }
     },
     "light": {
+      "plate": {
+        "border-color": "transparent"
+      },
       "pressed": {
         "background": "{border}"
       }
     },
     "dark": {
+      "plate": {
+        "border-color": "{input}"
+      },
       "pressed": {
         "background": "oklch(0.34846 0 0)"
       }

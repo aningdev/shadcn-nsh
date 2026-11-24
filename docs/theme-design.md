@@ -84,7 +84,7 @@ flowchart LR
 
 **设计问题**：页面有几层面？卡片、凹槽、浮起的控件、浮层、对话框、反色气泡各长什么样？面上的字是什么颜色？
 
-**定义项**：`semantics.json` 的 `finishes`，正好 12 个，9 个层加 3 种状态。
+**定义项**：`semantics.json` 的 `finishes`，正好 14 个，11 个层加 3 种状态。
 
 | finish                           | 画什么                                             |
 | -------------------------------- | -------------------------------------------------- |
@@ -334,10 +334,10 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | `tokens/base/style.{shared,pointer,touch}.tokens.json` | 各主题共用的基础 token                     |
 | `tokens/themes/<id>/theme.tokens.json`                 | 这套主题的颜色（C 层）、圆角、字体与风格组 |
 | `tokens/themes/<id>/{light,dark}.tokens.json`          | 两种外观的颜色与阴影刻度                   |
-| `tokens/themes/<id>/finishes.shared.tokens.json`       | 12 个 finish                               |
+| `tokens/themes/<id>/finishes.shared.tokens.json`       | 14 个 finish                               |
 | `tokens/themes/<id>/theme.resolver.json`               | 把上面几个文件按外观与档位组合起来         |
 
-除 `default` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 12 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。`default` 是唯一手写的主题：它同时是构建时的根主题，编译产物除了 `themes/default/` 还有 `packages/theme/` 顶层那对 `theme.json` / `semantics.json`（`BUILD_ROOT_THEME`，`scripts/theme/tokens.ts`），这是它唯一特殊的地方——没有一条规则因为它是 `default` 而不同。
+除 `default` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 14 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。`default` 是唯一手写的主题：它同时是构建时的根主题，编译产物除了 `themes/default/` 还有 `packages/theme/` 顶层那对 `theme.json` / `semantics.json`（`BUILD_ROOT_THEME`，`scripts/theme/tokens.ts`），这是它唯一特殊的地方——没有一条规则因为它是 `default` 而不同。
 
 **加一套分档值**（`pointer` / `touch`）：加文件，不改代码。主题目录下写 `pointer.tokens.json` 与 `touch.tokens.json`（结构同 `tokens/base/style.{pointer,touch}.tokens.json`，只写这套主题与 base 不同的键），`theme.resolver.json` 的 `modifiers.input` 在 base 的档位文件之后按同名读它，后写者赢。只写其中一个档＝一个错（`check:theme` 的 `checkTiers`）：两档的键必须相同，缺的那档继续用 base 的值。主题不写这两个文件就完全继承 base 的两档。
 
@@ -355,7 +355,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 | 检查                                        | 拦什么                                                                                                                                                                                              |
 | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bun run check:theme`                       | 键齐全、12 个 finish 的 13 个字段齐全、材质枚举与不透明度下限、两档都在且键相同、刻度（三档、4 网格、间距值、字阶不降、行高取整、touch 的 hit ≥ 44），以及 `$extensions` 里的豁免与出处有没有被用到 |
+| `bun run check:theme`                       | 键齐全、14 个 finish 的 13 个字段齐全、材质枚举与不透明度下限、两档都在且键相同、刻度（三档、4 网格、间距值、字阶不降、行高取整、touch 的 hit ≥ 44），以及 `$extensions` 里的豁免与出处有没有被用到 |
 | `bun run theme:contrast`                    | 每套主题亮暗的角色对与每个 finish 的墨达到 WCAG AA；平台例外要点名                                                                                                                                  |
 | `bun run tokens:build --check`              | 产物与源码一致                                                                                                                                                                                      |
 | `bun run test:unit`（`generators.test.ts`） | 生成器逐字节重现提交的源码                                                                                                                                                                          |
@@ -378,7 +378,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | --- | -------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------- |
 | 1   | 对齐谁，差多少 | 主题类型、出处、裁剪                                                     | 生成器注释、主题 README、`native-themes.md`                 | 审阅                                  |
 | 2   | 调色板与语义色 | A 层 31、B 层 25、C 层 3                                                 | `theme.tokens.json`、`{light,dark}.tokens.json`             | `check:theme`、`theme:contrast`       |
-| 3   | 面的层级       | 12 个 finish                                                             | `finishes.shared.tokens.json`（生成器：`finishes/<id>.ts`） | `check:theme`、`theme:contrast`       |
+| 3   | 面的层级       | 14 个 finish                                                             | `finishes.shared.tokens.json`（生成器：`finishes/<id>.ts`） | `check:theme`、`theme:contrast`       |
 | 4   | 深度           | `elevation`：`sm`–`xl`、`inset`、`edge`                                  | `{light,dark}.tokens.json` 的 `shadow`                      | `check:theme`、截图                   |
 | 5   | 透明材质       | finish 的 `material`                                                     | `finishes.shared.tokens.json`                               | `check:theme`（不透明度下限）         |
 | 6   | 圆角           | `radius-control/container/modal`、`corners.button`、`curve`              | `theme.tokens.json`                                         | `check:theme`、截图                   |

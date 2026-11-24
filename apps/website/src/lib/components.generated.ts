@@ -288,15 +288,6 @@ export const components: ComponentDoc[] = [
     description: "A hover scroll bar in the shared gallery theme.",
   },
   {
-    slug: "segmented",
-    title: "Segmented",
-    kind: "official",
-    shadcn: null,
-    nshElement: "tabs",
-    description:
-      "A sunk track whose raised thumb springs to the selected segment, or a theme's connected cells.",
-  },
-  {
     slug: "select",
     title: "Select",
     kind: "official",
@@ -622,6 +613,15 @@ export const components: ComponentDoc[] = [
     nshElement: null,
     description:
       "The round chip a pull to refresh draws over a scroll view, traveling in with the pull and spinning while it refreshes.",
+  },
+  {
+    slug: "segmented",
+    title: "Segmented",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description:
+      "A track of mutually exclusive choices whose thumb springs to the chosen one, or a theme's connected cells.",
   },
   {
     slug: "separator",

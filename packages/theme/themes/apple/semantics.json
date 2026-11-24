@@ -170,7 +170,7 @@
       "choice": "well",
       "track": "sunk",
       "handle": "circle",
-      "group": "track"
+      "group": "capsule"
     }
   },
   "shape": {
@@ -247,6 +247,20 @@
         "backdropFilter": "none",
         "elevation": null
       },
+      "channel": {
+        "background": "{card}",
+        "shadow": "0 1px 3px oklch(0 0 0 / 0.2)",
+        "foreground": "{foreground}",
+        "border-color": "{border}",
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
+        "backdropFilter": "none",
+        "elevation": null
+      },
       "raised": {
         "background": "oklch(from {raised} l c h / 0.72)",
         "foreground": "{foreground}",
@@ -258,6 +272,18 @@
         "gradient": null,
         "pressed-background": null,
         "pressed-foreground": null,
+        "elevation": null
+      },
+      "plate": {
+        "foreground": "{foreground}",
+        "border-color": "transparent",
+        "backdropFilter": "none",
+        "material": null,
+        "gradient": null,
+        "pressed-background": null,
+        "pressed-foreground": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "elevation": null
       },
       "overlay": {
@@ -386,6 +412,10 @@
       "raised": {
         "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)"
       },
+      "plate": {
+        "background": "{card}",
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)"
+      },
       "overlay": {
         "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)"
       },
@@ -407,6 +437,10 @@
     },
     "dark": {
       "raised": {
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)"
+      },
+      "plate": {
+        "background": "{raised}",
         "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)"
       },
       "overlay": {

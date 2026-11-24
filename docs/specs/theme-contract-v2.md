@@ -159,18 +159,20 @@
 
 ## 5 finish：按层，加阴影刻度
 
-| finish（层） | 并入的旧 finish                                                                                    |
-| ------------ | -------------------------------------------------------------------------------------------------- |
-| `card`       | `card`、`section`                                                                                  |
-| `inset`      | `inset`、`field`、`track`、`groove`                                                                |
-| `raised`     | `raised`、`light`、`chip`、`pill`                                                                  |
-| `overlay`    | `menu`（菜单、选择框、弹出面板）                                                                   |
-| `modal`      | `dialog`                                                                                           |
-| `inverse`    | `inverse`、`tooltip`                                                                               |
-| `glass`      | `glass`                                                                                            |
-| `accent`     | `accent`、`fill`、`on`                                                                             |
-| `knob`       | `knob`；`knobOn`、`handle` 的差异进 `handle` 维度（第 11 节）；`thumb` 改归 `raised`（2026-11-23） |
-| 状态         | `hover`、`pressed`（含 `accentPressed`）、`disabled`                                               |
+| finish（层） | 并入的旧 finish                                                             |
+| ------------ | --------------------------------------------------------------------------- |
+| `card`       | `card`、`section`                                                           |
+| `inset`      | `inset`、`field`、`track`（开关、滑杆的槽）                                 |
+| `channel`    | `groove`（分段控件的通道；2026-11-24 自 `inset` 分出，见第 11.3 节）        |
+| `raised`     | `raised`、`light`、`chip`、`pill`                                           |
+| `plate`      | `thumb`（井里被选中的那块，上面有字；2026-11-24 自 `raised` / `knob` 分出） |
+| `overlay`    | `menu`（菜单、选择框、弹出面板）                                            |
+| `modal`      | `dialog`                                                                    |
+| `inverse`    | `inverse`、`tooltip`                                                        |
+| `glass`      | `glass`                                                                     |
+| `accent`     | `accent`、`fill`、`on`                                                      |
+| `knob`       | `knob`；`knobOn`、`handle` 的差异进 `handle` 维度（第 11 节）               |
+| 状态         | `hover`、`pressed`（含 `accentPressed`）、`disabled`                        |
 
 `grabber` 不再是 finish；sheet 的抓杆是组件自己的一个 36×5 胶囊，每套主题相同（第 12 节 M10）。
 
@@ -200,7 +202,7 @@
 
 验收：
 
-- 每套主题 finish ≤ 12 个；每种外观的阴影构件 ≤ 7 个（投影 4、内阴影 1、边光 2），finish 里没有手写的阴影串。
+- 每套主题 finish ≤ 14 个；每种外观的阴影构件 ≤ 7 个（投影 4、内阴影 1、边光 2），finish 里没有手写的阴影串。
 - 全库没有退化渐变。
 - 有可见变化的页面，6 套主题的截图都已审阅。已知会变的：solid-glass 的 knob 阴影（0.3）与 raised（0.06）并到同一档；default 的卡片（0.04）与控件凸起（0.05）并到同一档。
 
@@ -267,7 +269,7 @@
 | --- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | D1  | `sidebar-*`：删掉，还是作为对外格式保留？                                              | ✅ 已确认（2026-11-22）：**保留为 A 层 alias，组件不读。** NSH 的 `Theme` 就是 shadcn 的 31 个槽，缺一个就退回 neutral 灰，应用里写的 `bg-sidebar` 会变色。这改了之前"第 2 批删掉其余 `sidebar-*`"的计划                                                                                                                                                                                                                                                                                                                                                                            |
 | D2  | 材质是写在 finish 的字段里，还是按层固定？                                             | ✅ 已确认（2026-11-22）：**写在 finish 的 `material` 字段里，用枚举（方案 A）。** apple 现在在 `raised` 上也用玻璃（#252），按层固定会丢掉这个选择                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| D3  | finish 数量                                                                            | ✅ 已确认（2026-11-22）：**9 层 + 3 种状态 = 12 个**，M3 中过于个性化的差异按原则 6 裁剪。（比之前说的"约 8 个"多了 `modal` 和 `inverse`）。M3 的对话框（`SurfaceContainerHigh`）与菜单（`SurfaceContainer`）颜色不同，提示与 toast 的反色面也是一层，和第 2 节圆角的 `modal` 对得上                                                                                                                                                                                                                                                                                                |
+| D3  | finish 数量                                                                            | ✅ 已确认（2026-11-22）：**9 层 + 3 种状态 = 12 个**，M3 中过于个性化的差异按原则 6 裁剪。（比之前说的"约 8 个"多了 `modal` 和 `inverse`）。M3 的对话框（`SurfaceContainerHigh`）与菜单（`SurfaceContainer`）颜色不同，提示与 toast 的反色面也是一层，和第 2 节圆角的 `modal` 对得上。**2026-11-24 加了两个**（#331 深色下选中的那块要比井亮、#337 分段控件的通道不是开关的槽）：`plate` 井里被选中的那块（上面有字，不能读 `knob`）、`channel` 一组选择所在的通道；现在是 11 层 + 3 种状态 = 14 个                                                                                 |
 | D4  | 以组件命名的形态选择（`indicator.*`、`shape.corners.field`、`stroke.indicator`）放哪？ | ~~✅ 已确认（2026-11-22）：并入控件预设（第 4 节）~~ **已推翻（2026-11-23，#293）**：控件预设仍然是组件在回答“这个控件长什么样”，只是把三档换成十四张表（与 #293 的 Problem 同罪）。改为六个按行为命名的维度：`indicator.*` 归 `selection`，`shape.corners.field` 归 `field`，`stroke.indicator` 随取值消失（第 4 节、第 11 节）                                                                                                                                                                                                                                                    |
 | D5  | 描边 4 个值                                                                            | ✅ 已确认（2026-11-22）：**收成 `hairline`、`control` 两档**，`surface` 并入 `hairline`；`indicator` 这档随 #293 的 `selection`/`field` 取值消失（第 3、11 节）                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | D6  | `state` 组                                                                             | ✅ 已确认（2026-11-22）：**保留在主题**，只把 `accent-pressed-opacity` 并入第 3 批的 `state.pressed`（第 7 节）。**第 3 批实际（#264）：** `state` 只读亮色指针档、不随外观翻转，而 winui 的禁用与按下颜色明暗不同，所以这些颜色落进 `finish.disabled` / `finish.accentPressed` 的 `background`、`foreground`；`accent-pressed-opacity` 合进 `accentPressed` 的底色。**第 6 步之后（2026-11-23）：** `accentPressed` 并进 `accent`，按下变淡成了 `accent` 的 `pressed-opacity`（数，Material / WinUI 写 1），换面的颜色是 `accent` 的 `pressed-background` / `pressed-foreground`。 |
@@ -284,42 +286,43 @@
 
 ### 11.2 六个维度
 
-四套基础主题今天都取 `base` 档，取值完全相同，所以合成一列。
+三套基础主题（`default`、`shadcn`、`solid-glass`）今天都取 `base` 档，取值完全相同，所以合成一列；apple 只改了 `group` 一处。
 
-| 维度        | 值                                | 回答什么                                           | 实现它的控件（子集）                 | default、shadcn、solid-glass、apple | material    | winui           |
-| ----------- | --------------------------------- | -------------------------------------------------- | ------------------------------------ | ----------------------------------- | ----------- | --------------- |
-| `selection` | `pill` `underline` `bar`          | 当前项的那块记号画成什么、覆盖多宽、什么圆角       | tabs、sidebar                        | `pill`                              | `underline` | `bar`           |
-| `field`     | `box` `underline` `box-underline` | 输入井的框：四条边、只下边、还是框加下边、圆几角   | `lib/indicator`（所有输入控件）      | `box`                               | `underline` | `box-underline` |
-| `choice`    | `well` `outline` `inset`          | 选择框静止时的面，以及勾选记号（由值推出）         | radio-group、checkbox                | `well`                              | `outline`   | `inset`         |
-| `track`     | `sunk` `tint` `hairline`          | 轨道/条：凹槽、色带、还是一条细线；带不带边        | progress、spinner、slider、segmented | `sunk`                              | `tint`      | `hairline`      |
-| `handle`    | `circle` `bar` `ring`             | 手柄：圆钮、竖条、环                               | slider、switch（钮）                 | `circle`                            | `bar`       | `ring`          |
-| `group`     | `track` `cells`                   | 一组互斥按钮：轨道里滑动的胶囊，还是相邻格连成一行 | segmented                            | `track`                             | `cells`     | `track`         |
+| 维度        | 值                                | 回答什么                                                           | 实现它的控件（子集）                 | default、shadcn、solid-glass | apple     | material    | winui           |
+| ----------- | --------------------------------- | ------------------------------------------------------------------ | ------------------------------------ | ---------------------------- | --------- | ----------- | --------------- |
+| `selection` | `pill` `underline` `bar`          | 当前项的那块记号画成什么、覆盖多宽、什么圆角                       | tabs、sidebar                        | `pill`                       | `pill`    | `underline` | `bar`           |
+| `field`     | `box` `underline` `box-underline` | 输入井的框：四条边、只下边、还是框加下边、圆几角                   | `lib/indicator`（所有输入控件）      | `box`                        | `box`     | `underline` | `box-underline` |
+| `choice`    | `well` `outline` `inset`          | 选择框静止时的面，以及勾选记号（由值推出）                         | radio-group、checkbox                | `well`                       | `well`    | `outline`   | `inset`         |
+| `track`     | `sunk` `tint` `hairline`          | 轨道/条：凹槽、色带、还是一条细线；带不带边                        | progress、spinner、slider、segmented | `sunk`                       | `sunk`    | `tint`      | `hairline`      |
+| `handle`    | `circle` `bar` `ring`             | 手柄：圆钮、竖条、环                                               | slider、switch（钮）                 | `circle`                     | `circle`  | `bar`       | `ring`          |
+| `group`     | `track` `capsule` `cells`         | 一组互斥按钮：槽里的圆角块、胶囊轨道里的胶囊块，还是相邻格连成一行 | segmented                            | `track`                      | `capsule` | `cells`     | `track`         |
 
-`span`（跨度）与 `indicatorCorners` 不单独成维度：每个取值自带——`pill` 覆盖整项、胶囊角；`underline` 只覆盖标签、上圆角；`bar` 覆盖整项、胶囊端；`group` 的 `cells` 覆盖整格、整格自己的面。
+`span`（跨度）与 `indicatorCorners` 不单独成维度：每个取值自带——`pill` 覆盖整项、圆角从 `shape.control` 内嵌一步（第 11.3 节）；`underline` 只覆盖标签、上圆角；`bar` 覆盖整项、胶囊端；`group` 的 `cells` 覆盖整格、整格自己的面，`capsule` 覆盖整项、胶囊端。
 
 ### 11.3 取值的配方（它画成什么）与数字来源
 
 规则：**共同几何从刻度取，形态自己的官方数字写进取值的配方。** “共同几何”是高度、图标、圆点、内边距、间隙、描边、圆角；配方里只允许该形态的定义数字（M3 的 16 dp 轨道、WinUI 的 2 px 描边、M3 分段按钮的 40 dp 连格）。
 
-| 维度        | 取值            | 配方                                                                                                                                                              |
-| ----------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `selection` | `pill`          | 轨道里的一块胶囊，覆盖整项，读 `finish.raised`；粗细不适用                                                                                                        |
-|             | `underline`     | 标签下 3 点线，只覆盖标签，上两角（角半径 = 粗细 / 2）；`stroke.control` 之上，3 点是该形态的数字（M3 PrimaryTabs 3 dp）                                          |
-|             | `bar`           | 整项下 3 点线，胶囊端（WinUI SelectorBar/ NavigationView 的指示条）                                                                                               |
-| `field`     | `box`           | 四条边 `stroke.control`，四角圆（`shape.control`）                                                                                                                |
-|             | `underline`     | 只下边 `stroke.control`，只圆上两角                                                                                                                               |
-|             | `box-underline` | 四边都在，四角圆；WinUI TextBox 的形状（色仍由第 1 节的角色定）                                                                                                   |
-| `choice`    | `well`          | 井：`finish.inset` 的面，勾选后填 `primary`；尺寸按控件取 `icon` 刻度，点 `size.control.dot`，边 `stroke.control`                                                 |
-|             | `outline`       | 只描边 2 px（M3 的 outline 2 dp），井里留空；勾选后的记号由控件定（单选是环、复选是勾）；可点范围外扩 `size.target`（M3 40 dp state layer）                       |
-|             | `inset`         | 按下色的面（WinUI `ControlFillColorDefault`），勾选后填 `accent`；边框 1 px                                                                                       |
-| `track`     | `sunk`          | 凹槽：`colors.track` + `finish.inset`（分段控件的整条仍画 `colors.inset`：暗色下 `track` 与滑块一样抬起），progress 6 / slider 6 有沟，spinner 带 0.25 透明度的底 |
-|             | `tint`          | 色带：`brand-tint`，无边无沟，progress 4 / slider 16（M3 16 dp 轨道），spinner 无底                                                                               |
-|             | `hairline`      | 一条 `input` 色的细线：progress 3 的条 + 1 的线（WinUI），slider 4，无边                                                                                          |
-| `handle`    | `circle`        | 圆钮：slider 6 轨道 / 14 钮 / 按压 14、触屏 8 / 20 / 32；switch 的钮读 `icon.md`（第 12 节 M1），不用这一行的钮；`hoverBrightness`                                |
-|             | `bar`           | 竖条：M3 4×44 钮、按压 2 宽、16 轨道、端点圆 2                                                                                                                    |
-|             | `ring`          | 环：WinUI 18 px 钮带 12 的点（悬停 14、按下 10）、4 px 轨道                                                                                                       |
-| `group`     | `track`         | 轨道（沟由 `track` 维度定）里一块胶囊覆盖选中项，读 `finish.raised`；轨道高读 `height.md`                                                                         |
-|             | `cells`         | 相邻格连成的行，选中的格自己的面（`finish.raised`）并带勾，格间 `stroke.hairline` 分隔；格高 40、内边距 12、间隙 8、勾 18（M3 SegmentedButton）                   |
+| 维度        | 取值            | 配方                                                                                                                                                                                                                   |
+| ----------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `selection` | `pill`          | 轨道里的一块，覆盖整项：`finish.plate`——主题为“井里被选中的那块”写的面、边与阴影，标签的墨也写在它上面；角 `shape.control`、内嵌 `inset` 一步；轨道与标签同宽（`fill` 撑满）；粗细不适用                               |
+|             | `underline`     | 标签下 3 点线，只覆盖标签，上两角（角半径 = 粗细 / 2）；`stroke.control` 之上，3 点是该形态的数字（M3 PrimaryTabs 3 dp）                                                                                               |
+|             | `bar`           | 整项下 3 点线，胶囊端（WinUI SelectorBar/ NavigationView 的指示条）                                                                                                                                                    |
+| `field`     | `box`           | 四条边 `stroke.control`，四角圆（`shape.control`）                                                                                                                                                                     |
+|             | `underline`     | 只下边 `stroke.control`，只圆上两角                                                                                                                                                                                    |
+|             | `box-underline` | 四边都在，四角圆；WinUI TextBox 的形状（色仍由第 1 节的角色定）                                                                                                                                                        |
+| `choice`    | `well`          | 井：`finish.inset` 的面，勾选后填 `primary`；尺寸按控件取 `icon` 刻度，点 `size.control.dot`，边 `stroke.control`                                                                                                      |
+|             | `outline`       | 只描边 2 px（M3 的 outline 2 dp），井里留空；勾选后的记号由控件定（单选是环、复选是勾）；可点范围外扩 `size.target`（M3 40 dp state layer）                                                                            |
+|             | `inset`         | 按下色的面（WinUI `ControlFillColorDefault`），勾选后填 `accent`；边框 1 px                                                                                                                                            |
+| `track`     | `sunk`          | 凹槽：`colors.track` + `finish.inset`（分段控件的整条读 `finish.channel`：它是那条通道，不是开关的槽——暗色下 `track` 与滑块一样抬起），progress 6 / slider 6 有沟，spinner 带 0.25 透明度的底                          |
+|             | `tint`          | 色带：`brand-tint`，无边无沟，progress 4 / slider 16（M3 16 dp 轨道），spinner 无底                                                                                                                                    |
+|             | `hairline`      | 一条 `input` 色的细线：progress 3 的条 + 1 的线（WinUI），slider 4，无边                                                                                                                                               |
+| `handle`    | `circle`        | 圆钮：slider 6 轨道 / 14 钮 / 按压 14、触屏 8 / 20 / 32；switch 的钮读 `icon.md`（第 12 节 M1），不用这一行的钮；`hoverBrightness`                                                                                     |
+|             | `bar`           | 竖条：M3 4×44 钮、按压 2 宽、16 轨道、端点圆 2                                                                                                                                                                         |
+|             | `ring`          | 环：WinUI 18 px 钮带 12 的点（悬停 14、按下 10）、4 px 轨道                                                                                                                                                            |
+| `group`     | `track`         | 轨道（沟由 `track` 维度定，面读 `finish.channel`）里一块胶囊覆盖选中项，读 `finish.plate`；轨道高读 `height.md`                                                                                                        |
+|             | `capsule`       | iOS 26 的分段控件：胶囊轨道（面读 `finish.channel`，apple 在它上面写卡片层加细边与投影）里嵌一块胶囊选中项，面读 `colors.muted`（次级填色，读起来是陷进轨道的一步，标签保持主墨）、边 `stroke.control`；两者都是胶囊端 |
+|             | `cells`         | 相邻格连成的行，选中的格自己的面（`tints.brand`）并带勾，格间 `stroke.hairline` 分隔；格高 40、内边距 12、间隙 8、勾 18（M3 SegmentedButton）                                                                          |
 
 数字到刻度的对照只保留一处可查：`docs/theme-roles.md` 的 `theme-lint: scales` 表加一节“维度配方的数字”，每行写值名、数字、出处（M3 / WinUI / 本库自有），`check:theme` 校验配方实现与表里一致（防止代码里改了数字文档没改）。
 
@@ -331,7 +334,7 @@
 | --------------- | --------------------------------------------- | -------- | ----------------------------------------------------- |
 | tabs            | `selection` 的 `pill` `underline` `bar`       | —        | 全部 ✓                                                |
 | sidebar         | `selection` 的 `pill`（整行填色）`bar`        | `pill`   | 4 套 pill ✓、material underline → pill ✓、winui bar ✓ |
-| segmented       | `group` 两值全实现                            | —        | 5 套 track ✓、material cells ✓                        |
+| segmented       | `group` 三值全实现                            | —        | 5 套 track ✓、apple capsule ✓、material cells ✓       |
 | segmented 轨道  | `group: track` 时读 `track`，只有 `sunk` 画沟 | `sunk`   | 4 套与 winui 有沟 ✓                                   |
 | `field`         | 三值全实现                                    | —        | 全部 ✓                                                |
 | radio/checkbox  | `choice` 三值全实现（`handle` 不参与）        | —        | 全部 ✓                                                |

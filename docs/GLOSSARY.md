@@ -88,7 +88,7 @@ _Avoid_: `finishes.json`（旧文件名）、在语义层重复写颜色/圆角/
 _Avoid_: 用别的词指它；在 B 层另起一个与 A 层槽同义的名字
 
 **Finish（Finish Role）**:
-`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目：组件可能画在上面的一个**图层**（`card`、`inset`、`raised`、`overlay`、`modal`、`inverse`、`glass`、`accent`、`knob`、`hover`、`pressed`、`disabled`，共 12 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）。它写一个面的底、面上的墨 `foreground`、渐变、模糊、三个边色、按下的颜色，外加它向平台要的原生材质 `material`（`null` 表示不要）；`shadow` 只写影子刻度（[`影子刻度`](#影子刻度)）的引用，不写自己的影子。finish 只管一个面的画法，颜色写 `{token}`。合并后每个 finish 在每套主题、每种外观里的字段集合相同，一个字段都不省：不写就取中性值（`material: null`、`backdropFilter: "none"`、`elevation: null`、`gradient: null`、两条边色 `null`、按下字段 `null`），中性值写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里（[`中性值`](#中性值neutral-value)）。
+`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目：组件可能画在上面的一个**图层**（`card`、`inset`、`channel`、`raised`、`plate`、`overlay`、`modal`、`inverse`、`glass`、`accent`、`knob`、`hover`、`pressed`、`disabled`，共 14 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）。它写一个面的底、面上的墨 `foreground`、渐变、模糊、三个边色、按下的颜色，外加它向平台要的原生材质 `material`（`null` 表示不要）；`shadow` 只写影子刻度（[`影子刻度`](#影子刻度)）的引用，不写自己的影子。finish 只管一个面的画法，颜色写 `{token}`。合并后每个 finish 在每套主题、每种外观里的字段集合相同，一个字段都不省：不写就取中性值（`material: null`、`backdropFilter: "none"`、`elevation: null`、`gradient: null`、两条边色 `null`、按下字段 `null`），中性值写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里（[`中性值`](#中性值neutral-value)）。
 _Avoid_: 把 finish 当 token；用别的词指它；删字段表示“没有渐变”
 
 **Neutral Value（中性值）**:
