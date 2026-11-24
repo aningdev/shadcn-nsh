@@ -816,7 +816,7 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
   delete semantics.shape.curve;
   delete semantics.finishes.shared.modal;
   delete semantics.finishes.light.modal;
-  delete semantics.finishes.shared.card.material;
+  delete semantics.finishes.shared.card.elevation;
   await fs.writeFile(semanticsPath, `${JSON.stringify(semantics, null, 2)}\n`);
 
   await step("add button", "bun", [cli, "add", "button"], dir);
@@ -829,7 +829,7 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
     merged.shape.curve !== "continuous" ||
     merged.finishes.shared.modal == null ||
     merged.finishes.light.modal == null ||
-    !("material" in merged.finishes.shared.card)
+    !("elevation" in merged.finishes.shared.card)
   ) {
     throw new StepFailure(
       "semantics merge",
