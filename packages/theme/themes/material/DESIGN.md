@@ -182,7 +182,7 @@ spacing:
   height:
     sm: 24px
     md: 32px
-    lg: 48px
+    lg: 40px
   stroke:
     hairline: 1px
     control: 1px
@@ -190,9 +190,9 @@ spacing:
     width: 3px
     offset: 2px
   icon:
-    sm: 16px
-    md: 20px
-    lg: 24px
+    sm: 12px
+    md: 16px
+    lg: 20px
 motion:
   enter:
     duration: 500ms
@@ -405,11 +405,11 @@ Ergonomic sizing scales for pointer input.
 - **Density:** Page-level padding and gap.
 - **List rows:** Material 3 menu rows: the fill spans the menu's width (inset 0; a DropdownMenuItem takes no horizontal margin) and the text sits 12dp in (DropdownMenuItemHorizontalPadding, androidx compose material3 Menu.kt).
 - **Control geometry:** Control internal spacing and switch size tier.
-- **Control heights:** Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).
+- **Control heights:** Desktop control heights one step below the touch scale (24, 32, 40dp against M3's 32, 40, 56dp): the library's own desktop sizing, not an M3 density step (docs/decisions/0003-material-desktop-tier.md).
 - **Switch size tier (pointer):** `regular`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
 
-- **Pointer tier:** Material 3 Expressive desktop pointer input-tier overrides at M3 density -2 (each step reduces a control's height by 4dp; no hit padding).
+- **Pointer tier:** Material 3 Expressive desktop pointer input-tier overrides: control heights one step below the touch scale (24, 32, 40dp), glyphs 12, 16, 20dp, no hit padding (docs/decisions/0003-material-desktop-tier.md).
 - **Touch tier:** Material 3 Expressive touch input-tier overrides (Compose InteractiveComponentSize 48dp hit target, ListTokens 56dp row).
 
 ## Elevation & Depth

@@ -12,6 +12,8 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   stroke,
+  type Tiered,
+  tier,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { reduceMotion, split } from "nsh";
@@ -60,9 +62,10 @@ interface CircleShape {
 }
 
 /**
- * A form that brings its own switch: the track and knob in points, the same at either size and on
- * either tier (a form's official numbers, `docs/specs/theme-contract-v2.md` §4), so the pixels do
- * not ride on the library's scales at all.
+ * A form that brings its own switch: the track and knob in points, the same at either size, so the
+ * pixels do not ride on the library's scales at all (a form's official numbers,
+ * `docs/specs/theme-contract-v2.md` §4). A form that publishes no desktop density states its
+ * numbers once per tier (`Tiered<RecipeShape>`) — WinUI's switch has one, Material's does not.
  */
 interface RecipeShape {
   readonly kind: "recipe";
@@ -80,22 +83,37 @@ interface RecipeShape {
 
 type SwitchShape = CircleShape | RecipeShape;
 
-// M3 Switch: 52x32 track, 2dp off / 0dp on outline, the 16dp knob 24dp open and 28dp pressed, no hover growth (_md-comp-switch.scss:47-65 v34.0.21 / SwitchTokens.kt).
-const materialSwitch: RecipeShape = {
-  kind: "recipe",
-  width: 52,
-  height: 32,
-  border: 2,
-  onBorder: 0,
-  knob: 16,
-  onKnob: 24,
-  knobHover: 16,
-  knobPressedWidth: 28,
-  knobPressedHeight: 28,
-  knobFeedback: "expand",
+// M3 Switch: 52x32 track, 2dp off / 0dp on outline, the 16dp knob 24dp open and 28dp pressed, no hover growth (_md-comp-switch.scss:47-65 v34.0.21 / SwitchTokens.kt). M3 gives the switch no density, so the desktop numbers are the library's own one step down: 40x24, the knob 16 open 20 and 22 pressed, and a 1-point outline (M3's 2dp against a track a quarter shorter; `docs/decisions/0003-material-desktop-tier.md`).
+const materialSwitch: Tiered<RecipeShape> = {
+  pointer: {
+    kind: "recipe",
+    width: 40,
+    height: 24,
+    border: 1,
+    onBorder: 0,
+    knob: 16,
+    onKnob: 20,
+    knobHover: 16,
+    knobPressedWidth: 22,
+    knobPressedHeight: 22,
+    knobFeedback: "expand",
+  },
+  touch: {
+    kind: "recipe",
+    width: 52,
+    height: 32,
+    border: 2,
+    onBorder: 0,
+    knob: 16,
+    onKnob: 24,
+    knobHover: 16,
+    knobPressedWidth: 28,
+    knobPressedHeight: 28,
+    knobFeedback: "expand",
+  },
 };
 
-// WinUI 3 ToggleSwitch: 40x20 track, 1px off / 0px on stroke, the 12px knob 14px hover and 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312,315 in winui3/release/2.7.0).
+// WinUI 3 ToggleSwitch: 40x20 track, 1px off / 0px on stroke, the 12px knob 14px hover and 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312,315 in winui3/release/2.7.0). WinUI 3 publishes one density, so one recipe serves both tiers.
 const winuiSwitch: RecipeShape = {
   kind: "recipe",
   width: 40,
@@ -115,11 +133,17 @@ const winuiSwitch: RecipeShape = {
  * library's disc, `docs/specs/theme-contract-v2.md` §11.4), so the form picks the family whose
  * switch the theme is — the library's own, Material's growing one, or WinUI's stretching one.
  */
-const switchShapes: Record<HandleLook["form"], SwitchShape> = {
+const switchShapes: Record<HandleLook["form"], SwitchShape | Tiered<RecipeShape>> = {
   circle: { kind: "circle", border: 1, onBorder: 1 },
   bar: materialSwitch,
   ring: winuiSwitch,
 };
+
+/** The shape a form draws on this screen's tier: a recipe stated per tier takes this one. */
+function switchShape(form: HandleLook["form"]): SwitchShape {
+  const shape = switchShapes[form];
+  return "pointer" in shape ? shape[tier] : shape;
+}
 
 interface ResolvedSwitchGeometry extends SwitchGeometry {
   onBorder: number;
@@ -146,7 +170,7 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       knobPressedHeight: TERMINAL_ROW,
       knobFeedback: "none",
     };
-  const shape = switchShapes[handleLook(control().handle).form];
+  const shape = switchShape(handleLook(control().handle).form);
   if (shape.kind === "recipe")
     return {
       width: shape.width,

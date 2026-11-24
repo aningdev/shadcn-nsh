@@ -445,7 +445,9 @@ export const m3Style = {
         pointer: { padding: 8, gap: 8, dot: 10, switch: "regular" },
         touch: { padding: 8, gap: 8, dot: 10, switch: "regular" },
       },
-      height: { pointer: { sm: 24, md: 32, lg: 48 }, touch: { sm: 32, md: 40, lg: 56 } },
+      // Desktop runs a step below the touch scale; M3's own numbers stay on touch
+      // (docs/decisions/0003-material-desktop-tier.md).
+      height: { pointer: { sm: 24, md: 32, lg: 40 }, touch: { sm: 32, md: 40, lg: 56 } },
     },
     stroke: { hairline: 1, control: 1 },
     focus: { style: "outline", width: 3, offset: 2 },
@@ -461,7 +463,8 @@ export const m3Style = {
       group: "cells",
     },
     icon: {
-      pointer: { sm: 16, md: 20, lg: 24 },
+      // A desktop's glyphs keep the base scale (12/16/20); M3's own 16/20/24 stay on touch.
+      pointer: { sm: 12, md: 16, lg: 20 },
       touch: { sm: 16, md: 20, lg: 24 },
     },
   },
@@ -564,7 +567,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       "Light appearance colors for Material 3 Expressive (#6750A4 baseline with Expressive Tone 30 on*Container).",
     darkDescription: "Dark appearance colors for Material 3 Expressive (#6750A4 baseline).",
     pointerDescription:
-      "Material 3 Expressive desktop pointer input-tier overrides at M3 density -2 (each step reduces a control's height by 4dp; no hit padding).",
+      "Material 3 Expressive desktop pointer input-tier overrides: control heights one step below the touch scale (24, 32, 40dp), glyphs 12, 16, 20dp, no hit padding (docs/decisions/0003-material-desktop-tier.md).",
     touchDescription:
       "Material 3 Expressive touch input-tier overrides (Compose InteractiveComponentSize 48dp hit target, ListTokens 56dp row).",
     radiusGroupDescription:
@@ -628,7 +631,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "motion.state":
           "M3 DurationShort2 (100ms) with the standard curve (MotionTokens.DurationShort2, Easing.StandardCubicBezier; ExpressiveMotionTokens.kt).",
         "pointer.dimension.size.height":
-          "Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).",
+          "Desktop control heights one step below the touch scale (24, 32, 40dp against M3's 32, 40, 56dp): the library's own desktop sizing, not an M3 density step (docs/decisions/0003-material-desktop-tier.md).",
       },
     },
   };

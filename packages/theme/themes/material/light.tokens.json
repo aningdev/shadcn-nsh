@@ -386,7 +386,7 @@
         }
       },
       "height": {
-        "$description": "Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).",
+        "$description": "Desktop control heights one step below the touch scale (24, 32, 40dp against M3's 32, 40, 56dp): the library's own desktop sizing, not an M3 density step (docs/decisions/0003-material-desktop-tier.md).",
         "sm": {
           "$value": {
             "value": 24,
@@ -401,7 +401,7 @@
         },
         "lg": {
           "$value": {
-            "value": 48,
+            "value": 40,
             "unit": "px"
           }
         }
@@ -411,19 +411,19 @@
       "$description": "Standard icon dimensions (sm, md, lg).",
       "sm": {
         "$value": {
-          "value": 16,
+          "value": 12,
           "unit": "px"
         }
       },
       "md": {
         "$value": {
-          "value": 20,
+          "value": 16,
           "unit": "px"
         }
       },
       "lg": {
         "$value": {
-          "value": 24,
+          "value": 20,
           "unit": "px"
         }
       }
