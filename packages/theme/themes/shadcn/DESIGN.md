@@ -437,7 +437,7 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`modal`** (14px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
 **Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): Control dimensions: the six behaviour-named axes a theme decides for its controls (selection, field, choice, track, handle, group). Themes override only the axes that differ.
-- **`selection`**: `pill`
+- **`selection`**: `plate`
 - **`field`**: `box`
 - **`choice`**: `well`
 - **`track`**: `sunk`

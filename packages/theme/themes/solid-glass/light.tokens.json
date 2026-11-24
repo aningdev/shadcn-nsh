@@ -283,7 +283,7 @@
     "control": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "selection": "pill",
+          "selection": "plate",
           "field": "box",
           "choice": "well",
           "track": "sunk",

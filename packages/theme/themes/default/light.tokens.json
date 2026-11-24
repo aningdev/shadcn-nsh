@@ -714,21 +714,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
+        "$value": "{color.border}"
       },
       "shadow": {
         "$type": "shadow",
@@ -740,6 +726,14 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.border}"
       }
     },
     "overlay": {

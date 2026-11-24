@@ -140,7 +140,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `shape.corners.button`            | `radius` `full`                                                                                                                             | 按钮的角：取圆角刻度，还是胶囊                             |
 | `dimension.size.control.*.switch` | `small` `regular`                                                                                                                           | 开关的钮取哪一档                                           |
 | `dimension.focus.style`           | `halo` `outline` `double`                                                                                                                   | 焦点环的画法                                               |
-| `dimension.control.selection`     | `pill` `underline` `bar`                                                                                                                    | 选中项的那块记号画成什么、覆盖多宽                         |
+| `dimension.control.selection`     | `pill` `plate` `underline` `bar`                                                                                                            | 选中项的那块记号画成什么、覆盖多宽、什么圆角               |
 | `dimension.control.field`         | `box` `underline` `box-underline`                                                                                                           | 输入井的框：四条边、只下边、还是框加下边                   |
 | `dimension.control.choice`        | `well` `outline` `inset`                                                                                                                    | 选择框静止时的面，勾选记号由值推出                         |
 | `dimension.control.track`         | `sunk` `tint` `hairline`                                                                                                                    | 轨道：凹槽、色带、还是一条细线                             |
@@ -152,18 +152,20 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 `finish` 的 `material`（`none` `glass` `acrylic`）不在这张表里：它是 finish 的字段，由 `scripts/theme/dtcg.ts` 在生成时校验。
 
-**六个控件维度各主题取什么。** 四套基础主题取同一档（合成一列），`material` 与 `winui` 只写与默认不同的键，编译后六个键都齐全；`check:theme` 拿这张表与六套 `semantics.json` 逐格对账。维度名、取值名之外，其余不建主题键：`span`、`indicatorCorners` 由取值自带，控件的兜底写在控件里。
+**六个控件维度各主题取什么。** 取同一档的主题合成一列（表头在反引号里列出这一列的主题），其余主题只写与 base 不同的键，编译后六个键都齐全；`check:theme` 拿这张表与六套 `semantics.json` 逐格对账。维度名、取值名之外，其余不建主题键：`span`、`indicatorCorners` 由取值自带，控件的兜底写在控件里。
+
+基础主题只在 `selection` 上分家：官方 NSH 示例的胶囊标签页归 `default`（`pill`），shadcn 的圆角列表与圆角触发项归 `shadcn`、`solid-glass`、`apple`（`plate`，#358）；其余五个维度上基础主题仍取同一档。
 
 <!-- theme-lint: controls -->
 
-| 维度        | `default` `shadcn` `solid-glass` | `apple`   | `material`  | `winui`         |
-| ----------- | -------------------------------- | --------- | ----------- | --------------- |
-| `selection` | `pill`                           | `pill`    | `underline` | `bar`           |
-| `field`     | `box`                            | `box`     | `underline` | `box-underline` |
-| `choice`    | `well`                           | `well`    | `outline`   | `inset`         |
-| `track`     | `sunk`                           | `sunk`    | `tint`      | `hairline`      |
-| `handle`    | `circle`                         | `circle`  | `bar`       | `ring`          |
-| `group`     | `track`                          | `capsule` | `cells`     | `track`         |
+| 维度        | `default` | `shadcn` `solid-glass` | `apple`   | `material`  | `winui`         |
+| ----------- | --------- | ---------------------- | --------- | ----------- | --------------- |
+| `selection` | `pill`    | `plate`                | `plate`   | `underline` | `bar`           |
+| `field`     | `box`     | `box`                  | `box`     | `underline` | `box-underline` |
+| `choice`    | `well`    | `well`                 | `well`    | `outline`   | `inset`         |
+| `track`     | `sunk`    | `sunk`                 | `sunk`    | `tint`      | `hairline`      |
+| `handle`    | `circle`  | `circle`               | `circle`  | `bar`       | `ring`          |
+| `group`     | `track`   | `track`                | `capsule` | `cells`     | `track`         |
 
 <!-- /theme-lint: controls -->
 

@@ -56,8 +56,8 @@ import { Tooltip, TooltipContent, TooltipTrigger, type TooltipContentProps } fro
 /** The rail line's width where the theme's selection form states none (a fill): 2 points. */
 const RAIL_LINE = 2;
 
-/** The theme's mark on a selected row: `bar` draws the leading bar, `pill` fills the row's face
- * (and so does `underline`, which a sidebar's rows fall back from). */
+/** The theme's mark on a selected row: `bar` draws the leading bar, every fill form (`pill`, `plate`)
+ * fills the row's face — and so does `underline`, which a sidebar's rows fall back from. */
 const selectionMark = () => selectionLook(control().selection);
 
 /** What the mark's fill inks a part with: a palette role, a tint, or a finish's own face. */

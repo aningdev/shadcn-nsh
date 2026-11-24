@@ -124,6 +124,7 @@
 ### Fixed
 
 - **Material's desktop sizes sit one step below its touch sizes (#336).** Under a pointer, controls are 24 / 32 / 40 points and icons 12 / 16 / 20, the same scale as WinUI; the switch shrinks to 40×24 with M3's proportions. Touch keeps M3's own sizes.
+- **Tabs in the default theme are the official capsule again (#358).** The list is a capsule with a hairline edge and the chosen tab a pill with its own edge; shadcn, solid-glass and apple keep the control-radius block (the new `plate` value of `selection`).
 
 - **A menu, select, combobox or command row with a second line grows to hold it (#333).** A row's height in the size table (`menuItemSize.height`, the listbox and command row heights) is now its least height: a row with `detail` or a note under its label grows, with the theme's item inset (at least 4) above and below, instead of drawing both lines in a one-line box over the next row. One-line rows keep their height.
 

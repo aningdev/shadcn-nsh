@@ -282,11 +282,11 @@
         "border-color": "transparent",
         "backdropFilter": "none",
         "material": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "gradient": null,
         "pressed-background": null,
         "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
         "elevation": 1
       },
       "overlay": {

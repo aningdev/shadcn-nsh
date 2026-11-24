@@ -165,7 +165,7 @@
       }
     },
     "control": {
-      "selection": "pill",
+      "selection": "plate",
       "field": "box",
       "choice": "well",
       "track": "sunk",
@@ -281,11 +281,11 @@
         "foreground": "{foreground}",
         "backdropFilter": "none",
         "material": null,
+        "border-top-color": null,
+        "border-bottom-color": null,
         "gradient": null,
         "pressed-background": null,
         "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
         "elevation": null
       },
       "overlay": {

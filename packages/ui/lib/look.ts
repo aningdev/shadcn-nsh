@@ -83,9 +83,10 @@ export interface SelectionLook {
 }
 
 /**
- * The selection a `control()` value draws. `pill` fills the item; `underline` and `bar` are lines
- * with 3 points of their own (M3 PrimaryTabs' indicator, WinUI's SelectorBar), which differ in span
- * and corners, not in thickness.
+ * The selection a `control()` value draws. `pill` and `plate` fill the item — a capsule, or a block at
+ * the theme's control corner — and both read `finish.plate` for the face; `underline` and `bar` are
+ * lines with 3 points of their own (M3 PrimaryTabs' indicator, WinUI's SelectorBar), which differ in
+ * span and corners, not in thickness.
  */
 export function selectionLook(value: Selection): SelectionLook {
   switch (value) {
@@ -97,7 +98,17 @@ export function selectionLook(value: Selection): SelectionLook {
         corners: "all",
         thickness: null,
         radius: "pill",
-        fill: { kind: "finish", role: "raised" },
+        fill: { kind: "finish", role: "plate" },
+      };
+    case "plate":
+      return {
+        form: value,
+        span: "item",
+        edges: "all",
+        corners: "all",
+        thickness: null,
+        radius: "shape.control",
+        fill: { kind: "finish", role: "plate" },
       };
     case "underline":
       return {

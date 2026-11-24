@@ -68,23 +68,27 @@ export interface TabsLookOptions {
 const spreadOf = (o?: TabsLookOptions) => !pointer || !!read(o?.fill);
 
 /**
- * A tab strip's look, whose selected tab is a pill: a track `controlSize.tabs`
- * high (the theme's tallest control) sunk into the surface with a hairline
- * edge, its corners the theme's control radius (`shape.control`) and
- * the pill's a step inside them (`rounded(shape.control, inset)`) — shadcn's
- * `rounded-lg` list and `rounded-md` trigger. The track is as wide as its tabs
- * with a pointer, the tabs at their labels; `fill` spans the row, the tabs
- * sharing it (as a touch screen always does). The selected tab's pill
- * (`indicatorStyle`, the theme's `plate`: the labelled block chosen inside
- * the well) springs to the next one natively, and a tab's own box is the
- * pill's, so the pointer's hover lands exactly where the pill does.
- * `tab(state)`: a tab's props (hover on the others, the focus ring, dimmed
- * while disabled). Pair each tab with a `TabTitle`.
+ * A tab strip's look: a track `controlSize.tabs` high (the theme's tallest control) sunk into the
+ * surface with a hairline edge, and the selected tab a mark inside it reading `finish.plate` (the
+ * theme's labelled block chosen inside a well) — a capsule where the theme's `selection` draws one
+ * (`pill`), a block at the theme's control radius otherwise (`plate`, shadcn's `rounded-lg` list
+ * and `rounded-md` trigger) — the mark and the track concentric either way, a pointer's capsule or
+ * the control's corner one step inside it. The track is as wide as its tabs with a pointer, the
+ * tabs at their labels; `fill` spans the row, the tabs sharing it (as a touch screen always does).
+ * The mark springs to the next one natively, and a tab's own box is the mark's, so the pointer's
+ * hover lands exactly where the mark does. `tab(state)`: a tab's props (hover on the others, the
+ * focus ring, dimmed while disabled). Pair each tab with a `TabTitle`.
  */
 export function tabsLook(o?: TabsLookOptions) {
-  // The track's padding, and the room the pill keeps inside it: both the same step, so a tab's own
-  // box is the pill's box — the one the pointer's hover paints.
+  // The track's padding, and the room the mark keeps inside it: both the same step, so a tab's own
+  // box is the mark's box — the one the pointer's hover paints.
   const inset = 3;
+  // The track's corner, and the mark's one step inside it — concentric: half the strip's height where
+  // the theme's mark is a capsule, the theme's control corner otherwise.
+  const corners = (step = 0) =>
+    selectionMark().radius === "pill"
+      ? rounded(controlSize.tabs / 2, step)
+      : rounded(shape.control, step);
   return {
     get style(): ViewStyle {
       return {
@@ -93,7 +97,7 @@ export function tabsLook(o?: TabsLookOptions) {
         alignSelf: spreadOf(o) ? "stretch" : "flex-start",
         gap: 2,
         padding: inset,
-        ...rounded(shape.control),
+        ...corners(),
         borderWidth: stroke.control,
         borderColor: colors.border,
         backgroundColor: colors.inset,
@@ -102,12 +106,12 @@ export function tabsLook(o?: TabsLookOptions) {
     },
     get indicatorStyle(): ViewStyle {
       return {
-        // The indicator spans the selected tab along the row itself; across it, the track's own
-        // padding and this inset are the same step, so the pill takes exactly the tab's box — the
-        // one the pointer's hover paints.
+        // The mark spans the selected tab along the row itself; across it, the track's own padding and
+        // this inset are the same step, so the mark takes exactly the tab's box — the one the
+        // pointer's hover paints.
         top: inset,
         bottom: inset,
-        ...rounded(shape.control, inset),
+        ...corners(inset),
         borderWidth: stroke.control,
         ...finish.plate,
       };
@@ -117,9 +121,9 @@ export function tabsLook(o?: TabsLookOptions) {
         get style(): ViewStyle {
           return {
             ...(spreadOf(o) ? { flex: 1 } : { flexShrink: 0 }),
-            // The pill's side pad: the same fixed 8 as the underlined strip's (§12 M7).
+            // The mark's side pad: the same fixed 8 as the underlined strip's (§12 M7).
             paddingHorizontal: TAB_PAD,
-            ...rounded(shape.control, inset),
+            ...corners(inset),
             borderWidth: stroke.control,
             borderColor: "transparent",
             alignItems: "center",
@@ -158,6 +162,9 @@ const radiusOf = (radius: Radius, thickness: number): number =>
       ? thickness / 2
       : radius;
 
+/** The theme's mark on the selected tab or row: read inside a getter, so the look stays reactive. */
+const selectionMark = (): SelectionLook => selectionLook(control().selection);
+
 /** The line under an underlined strip: where the theme draws one, its own (3 points: M3's
  * PrimaryTabs indicator, WinUI's SelectorBar); where it fills the selected item, the strip's — 2
  * points in the accent over the whole tab — since a fill states no line. */
@@ -168,8 +175,8 @@ function stripLine(): {
   radius: Radius;
   fill: Fill;
 } {
-  const mark = selectionLook(control().selection);
-  if (mark.form === "pill") {
+  const mark = selectionMark();
+  if (mark.thickness === null) {
     return {
       thickness: PILL_LINE,
       span: "item",
@@ -306,8 +313,7 @@ export function TabTitle(props: {
   const listVariant = ListVariantContext();
   // A theme that marks the chosen tab with a line also sets its label in the accent.
   const chosenInk = () =>
-    selectionLook(control().selection).form !== "pill" &&
-    (listVariant === "line" || props.underline)
+    selectionMark().thickness !== null && (listVariant === "line" || props.underline)
       ? colors.brand
       : colors.foreground;
   const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
@@ -422,9 +428,9 @@ const TabsContext = context<TabsContextValue | null>(null);
 const ListVariantContext = context<TabsListVariant>("default");
 
 /** The variant a list wears when it names none: an underline where the theme's `selection` draws a
- * line, the pill where it fills the selected item. */
+ * line, the mark's own fill where it fills the selected item. */
 const themeVariant = (): TabsListVariant =>
-  selectionLook(control().selection).form === "pill" ? "default" : "line";
+  selectionMark().thickness === null ? "default" : "line";
 
 function useTabs() {
   return TabsContext();

@@ -380,6 +380,9 @@ export function themeFiles(): ThemeGeneratorOutput {
     // The material draws no press of its own: a pressed pane loses the shadow it stood on and
     // darkens a step, it does not shrink (`state["press-scale"]` of 1, which `press.scale` reads as none).
     "press-scale": 1,
+    // shadcn's tabs: a rounded list with a rounded trigger a step inside it, not the capsule the
+    // base theme's NSH look draws (`docs/specs/theme-roles.md` §控件维度).
+    control: { selection: "plate" },
     radiusGroupDescription:
       "Solid Glass layered corner radius scale (11px control, 14px container, 20px modal) referenced by semantic shape roles.",
     designMd: {

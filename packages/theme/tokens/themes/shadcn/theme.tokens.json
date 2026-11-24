@@ -57,6 +57,14 @@
         },
         "$description": "Corner radius for dialogs, sheets, and drawers."
       }
+    },
+    "control": {
+      "$description": "Control dimensions: the six behaviour-named axes a theme decides for its controls (selection, field, choice, track, handle, group). Themes override only the axes that differ.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "selection": "plate"
+        }
+      }
     }
   },
   "font": {

@@ -1094,6 +1094,20 @@
         "$value": "{color.border}"
       }
     },
+    "plate": {
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      }
+    },
     "glass": {
       "background": {
         "$type": "color",

@@ -737,7 +737,7 @@
       },
       "background": {
         "$type": "color",
-        "$value": "{color.card}"
+        "$value": "{color.raised}"
       },
       "border-color": {
         "$type": "color",
@@ -748,13 +748,8 @@
             0,
             0
           ],
-          "alpha": 0,
+          "alpha": 0.5,
           "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
         }
       },
       "shadow": {
@@ -767,6 +762,32 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
       }
     },
     "overlay": {

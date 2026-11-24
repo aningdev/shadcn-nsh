@@ -147,6 +147,11 @@ export interface ThemeGeneratorOutput {
   "press-scale"?: number;
   radiusGroupDescription?: string;
   style?: ThemeStyleInput;
+  /**
+   * The six control dimensions, for a theme that answers them differently but otherwise takes the
+   * base's style (one with no `style` of its own).
+   */
+  control?: Partial<Record<ControlDimension, string>>;
   designMd?: Pick<DesignMdExtension, "overview" | "elevation" | "dos" | "donts">;
   /** The pairs this theme keeps below AA, each with its platform source (`theme:contrast`). */
   contrast?: { waivers: ContrastWaiver[] };
@@ -706,6 +711,26 @@ function getExtNs(node: Record<string, unknown>): Record<string, unknown> {
   return exts[EXT_NS];
 }
 
+/** A theme's control dimensions that differ from the base's, as the `dimension.control` token group. */
+function encodeControlExtras(
+  control: Partial<Record<ControlDimension, string>> | undefined,
+  baseShared: Record<string, unknown>,
+  describe: (fallback: unknown) => string,
+): Record<string, unknown> | undefined {
+  const baseControl = getAt(baseShared, "dimension", "control");
+  const baseControlExt = getExtNs(baseControl);
+  const overrides: Record<string, string> = {};
+  for (const key of CONTROL_DIMENSIONS) {
+    const value = control?.[key];
+    if (value !== undefined && value !== baseControlExt[key]) overrides[key] = value;
+  }
+  if (Object.keys(overrides).length === 0) return undefined;
+  return {
+    $description: describe(baseControl.$description),
+    $extensions: { [EXT_NS]: overrides },
+  };
+}
+
 function encodeSharedStyleOverrides(
   style: ThemeStyleInput,
   baseShared: Record<string, unknown>,
@@ -797,19 +822,10 @@ function encodeSharedStyleOverrides(
   }
 
   // 3. dimension.control (six enum dimensions, group $extensions)
-  const baseControl = getAt(baseShared, "dimension", "control");
-  const baseControlExt = getExtNs(baseControl);
-  const controlOverrides: Record<string, string> = {};
-  for (const key of CONTROL_DIMENSIONS) {
-    const value = style.dimension.control?.[key];
-    if (value !== undefined && value !== baseControlExt[key]) controlOverrides[key] = value;
-  }
-  if (Object.keys(controlOverrides).length > 0) {
-    dimensionExtras.control = {
-      $description: desc("dimension.control", baseControl.$description),
-      $extensions: { [EXT_NS]: controlOverrides },
-    };
-  }
+  const control = encodeControlExtras(style.dimension.control, baseShared, (fallback) =>
+    desc("dimension.control", fallback),
+  );
+  if (control) dimensionExtras.control = control;
 
   // 4. shape ($extensions)
   const baseShape = getAt(baseShared, "shape");
@@ -1201,6 +1217,9 @@ export function themeSourceDocs(
   const sharedStyle = output.style
     ? encodeSharedStyleOverrides(output.style, meta.baseShared, output.descriptions?.style)
     : null;
+  const ownControl = encodeControlExtras(output.control, meta.baseShared, (fallback) =>
+    typeof fallback === "string" ? fallback : "dimension.control",
+  );
   const pointerDoc = output.style
     ? encodeInputTierOverrides(
         "pointer",
@@ -1355,6 +1374,7 @@ export function themeSourceDocs(
       $description: "Appearance-invariant base dimensional tokens.",
       radius: radiusEntries,
       ...(sharedStyle?.dimensionExtras ?? {}),
+      ...(ownControl ? { control: ownControl } : {}),
     },
     font: {
       $description: "Base font family tokens.",

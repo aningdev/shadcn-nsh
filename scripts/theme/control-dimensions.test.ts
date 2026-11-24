@@ -16,7 +16,6 @@ const themes = readdirSync(join(theme, "themes"), { withFileTypes: true })
   .sort();
 
 const semantics = (name: string) => read(`themes/${name}/semantics.json`);
-const shared = ["default", "shadcn", "solid-glass"];
 
 describe("the spec's control dimensions", () => {
   test("states one row per dimension, with values the enums allow", () => {
@@ -61,20 +60,42 @@ describe("the spec's control dimensions", () => {
     }
   });
 
-  test("takes a base default and only the platform themes depart from it", () => {
-    const base = semantics("default").dimension.control;
-    expect(base).toEqual({
+  test("takes a base default, shadcn's block where a theme draws shadcn's tabs, and the platforms' own controls", () => {
+    const base = {
       selection: "pill",
       field: "box",
       choice: "well",
       track: "sunk",
       handle: "circle",
       group: "track",
+    };
+    expect(semantics("default").dimension.control).toEqual(base);
+    // `plate` is shadcn's rounded list with its rounded trigger a step inside: solid-glass and apple
+    // keep it (apple's capsule belongs to `group`, its segmented control).
+    for (const name of ["shadcn", "solid-glass"]) {
+      expect(semantics(name).dimension.control, name).toEqual({ ...base, selection: "plate" });
+    }
+    expect(semantics("apple").dimension.control).toEqual({
+      ...base,
+      selection: "plate",
+      group: "capsule",
     });
-    for (const name of shared) expect(semantics(name).dimension.control).toEqual(base);
-    expect(semantics("apple").dimension.control.group).toBe("capsule");
-    expect(semantics("material").dimension.control.group).toBe("cells");
-    expect(semantics("winui").dimension.control.group).toBe("track");
+    expect(semantics("material").dimension.control).toEqual({
+      selection: "underline",
+      field: "underline",
+      choice: "outline",
+      track: "tint",
+      handle: "bar",
+      group: "cells",
+    });
+    expect(semantics("winui").dimension.control).toEqual({
+      selection: "bar",
+      field: "box-underline",
+      choice: "inset",
+      track: "hairline",
+      handle: "ring",
+      group: "track",
+    });
   });
 });
 

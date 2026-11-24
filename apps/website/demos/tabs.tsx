@@ -67,8 +67,9 @@ function App() {
         }
       >
         <Tabs value={section()} onValueChange={(value) => section.set(value)}>
-          {/* A tab list on a sunken track, as wide as its tabs: the indicator is the raised pill
-              inside it, a step in from the track's corners (`fill` spans the row instead). */}
+          {/* A tab list on a sunken track, as wide as its tabs: the indicator is the theme's chosen
+              block inside it — a capsule where the theme draws one — a step in from the track's
+              corners (`fill` spans the row instead). */}
           <TabsList variant="default">
             {sections.map((s) => (
               <TabsTrigger value={s.id} onPress={() => log(`${s.label} pressed`)}>

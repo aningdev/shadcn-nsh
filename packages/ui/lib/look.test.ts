@@ -7,7 +7,7 @@ import { choiceLook, fieldLook, groupLook, handleLook, selectionLook, trackLook 
 /** A dimension's values, read off a record that fails the typecheck when one is missing or extra. */
 const values = <T extends string>(record: Record<T, true>): T[] => Object.keys(record) as T[];
 
-const selections = values<Selection>({ pill: true, underline: true, bar: true });
+const selections = values<Selection>({ pill: true, plate: true, underline: true, bar: true });
 const fields = values<Field>({ box: true, underline: true, "box-underline": true });
 const choices = values<Choice>({ well: true, outline: true, inset: true });
 const tracks = values<Track>({ sunk: true, tint: true, hairline: true });
@@ -26,7 +26,18 @@ describe("selectionLook", () => {
       corners: "all",
       thickness: null,
       radius: "pill",
-      fill: { kind: "finish", role: "raised" },
+      fill: { kind: "finish", role: "plate" },
+    });
+  });
+
+  test("a plate is the same block at the theme's control corner", () => {
+    expect(selectionLook("plate")).toMatchObject({
+      span: "item",
+      edges: "all",
+      corners: "all",
+      thickness: null,
+      radius: "shape.control",
+      fill: { kind: "finish", role: "plate" },
     });
   });
 

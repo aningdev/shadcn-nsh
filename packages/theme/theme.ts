@@ -221,10 +221,11 @@ export interface Timing {
 }
 
 /**
- * A selection's look (tabs, a sidebar's rows): `pill` a capsule in the track it sits in, `underline`
- * a line under the label only, `bar` a line under the whole item.
+ * A selection's look (tabs, a sidebar's rows): `pill` a capsule in the track it sits in, `plate` a
+ * block at the theme's control corner inside it, `underline` a line under the label only, `bar` a
+ * line under the whole item.
  */
-export type Selection = "pill" | "underline" | "bar";
+export type Selection = "pill" | "plate" | "underline" | "bar";
 
 /** A field's look: `box` four edges, `underline` the bottom edge only, `box-underline` four edges with round corners. */
 export type Field = "box" | "underline" | "box-underline";
