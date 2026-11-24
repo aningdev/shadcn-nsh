@@ -69,11 +69,11 @@ describe("checkStyle", () => {
 
   test("names a control dimension outside its list", () => {
     const file = copy();
-    file.dimension.control.selection = "swatch";
-    file.dimension.control.group = "row";
+    file.dimension.control.field = "swatch";
+    file.dimension.control.track = "row";
     const problems = check(file).join("\n");
-    expect(problems).toContain('dimension.control.selection` is "swatch"');
-    expect(problems).toContain('dimension.control.group` is "row"');
+    expect(problems).toContain('dimension.control.field` is "swatch"');
+    expect(problems).toContain('dimension.control.track` is "row"');
   });
 
   test("holds every whitelist to the value the default theme states", () => {

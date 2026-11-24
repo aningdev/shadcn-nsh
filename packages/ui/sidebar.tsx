@@ -5,7 +5,6 @@
 import {
   alpha,
   colors,
-  control,
   controlHeight,
   finish,
   focusRing,
@@ -19,7 +18,6 @@ import {
   shape,
   stroke,
   dimmed,
-  tints,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { AndroidProps, JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
@@ -45,7 +43,6 @@ import { Input, type InputProps } from "./input";
 import { AsText } from "./lib/as-text";
 import { IconLabel } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { type Fill, selectionLook } from "./lib/look";
 import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { controlSize, narrowWindow } from "./lib/surface";
 import { Separator, type SeparatorProps } from "./separator";
@@ -53,44 +50,8 @@ import { Sheet, SheetContent } from "./sheet";
 import { Skeleton } from "./skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger, type TooltipContentProps } from "./tooltip";
 
-/** The rail line's width where the theme's selection form states none (a fill): 2 points. */
+/** The rail line's width: 2 points. */
 const RAIL_LINE = 2;
-
-/** The theme's mark on a selected row: `bar` draws the leading bar, every fill form (`pill`, `plate`)
- * fills the row's face — and so does `underline`, which a sidebar's rows fall back from. */
-const selectionMark = () => selectionLook(control().selection);
-
-/** What the mark's fill inks a part with: a palette role, a tint, or a finish's own face. */
-const inkOf = (fill: Fill): string | undefined =>
-  fill.kind === "colour"
-    ? colors[fill.role]
-    : fill.kind === "tint"
-      ? tints[fill.role]
-      : finish[fill.role].backgroundColor;
-
-/** Whether the theme marks the selected sidebar item with a leading bar instead of a fill. */
-export function navBar(): boolean {
-  return selectionMark().form === "bar";
-}
-
-/**
- * The selected item's bar: a short vertical pill, as wide as the theme's selection line, in its
- * accent, at the item's leading edge. Draw it as a child of the item, over its content.
- */
-export function navBarStyle(): ViewStyle {
-  const mark = selectionMark();
-  const width = mark.thickness ?? RAIL_LINE;
-  return {
-    pointerEvents: "none",
-    position: "absolute",
-    start: 0,
-    top: 8,
-    bottom: 8,
-    width,
-    borderRadius: width / 2,
-    backgroundColor: inkOf(mark.fill),
-  };
-}
 
 /**
  * A sidebar's measurements, in points, after shadcn/ui's: 256 across (`16rem`), 48 folded to its
@@ -414,7 +375,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
     },
     get railLine(): ViewStyle {
       return {
-        width: selectionMark().thickness ?? RAIL_LINE,
+        width: RAIL_LINE,
         height: "100%",
         borderRadius: 1,
         backgroundColor: colors.sidebarBorder,
@@ -568,8 +529,8 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
               borderColor: colors.sidebarBorder,
             }
           : {}),
-        // The selected row's fill; a preset that marks it with a bar (`navBar()`) draws none.
-        ...(active() && !navBar() ? { backgroundColor: colors.sidebarAccent } : {}),
+        // The selected row's fill.
+        ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
         ...pressTransition("background-color"),
       };
     },
@@ -749,7 +710,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
         paddingHorizontal: sidebarSize.padding,
         overflow: "hidden",
         ...rounded(shape.control),
-        ...(active() && !navBar() ? { backgroundColor: colors.sidebarAccent } : {}),
+        ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
         ...pressTransition("background-color"),
       };
     },
@@ -1437,9 +1398,6 @@ export function SidebarMenuButton(props: SidebarMenuButtonProps) {
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      <If when={props.isActive && navBar()}>
-        <View testID="nav-bar" style={navBarStyle()} />
-      </If>
       <AsText style={look.label}>{kids}</AsText>
     </BaseButton>
   );
@@ -1641,9 +1599,6 @@ export function SidebarMenuSubButton(props: SidebarMenuSubButtonProps) {
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      <If when={props.isActive && navBar()}>
-        <View testID="nav-bar" style={navBarStyle()} />
-      </If>
       <AsText style={look.label}>{props.children}</AsText>
     </BaseButton>
   );

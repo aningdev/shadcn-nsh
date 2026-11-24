@@ -3,21 +3,17 @@
 
 import {
   colors,
-  control,
   controlHeight,
   finish,
   focusRing,
-  hovered,
   rounded,
   font,
   shape,
   stroke,
   dimmed,
-  tints,
 } from "@shadcn-nsh/theme";
-import { Check } from "lucide";
 import type { AndroidProps, JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { cleanup, context, platform, signal, split, Text, View } from "nsh";
+import { context, platform, signal, split, Text, View } from "nsh";
 import {
   Tab as BaseTab,
   Tabs as BaseTabs,
@@ -25,9 +21,7 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { type Fill, groupLook, type Radius, type Scale } from "./lib/look";
 import { pressHostProps, pressRipple } from "./lib/press";
 import { hoverOf, type TabLook, type TabState } from "./tabs";
 
@@ -38,35 +32,6 @@ const pointer = platform.desktop;
  * (`height.sm`) for `sm`.
  */
 export type SegmentedSize = "sm" | "default";
-
-/** A corner the recipe names, in points: a scale's own, a capsule (half `extent`), half a line's
- * thickness (`extent` being that thickness), or the number itself. */
-const radiusOf = (radius: Radius, extent: number): number =>
-  radius === "shape.control"
-    ? shape.control
-    : radius === "pill" || radius === "half-thickness"
-      ? extent / 2
-      : radius;
-
-/** What a fill paints a part with: a finish's whole layer, a palette role, or a tint. */
-const paintOf = (fill: Fill): ViewStyle =>
-  fill.kind === "finish"
-    ? { ...finish[fill.role] }
-    : fill.kind === "colour"
-      ? { backgroundColor: colors[fill.role] }
-      : { backgroundColor: tints[fill.role] };
-
-/** The colour a fill paints an edge with: a palette role, a tint, or a finish's face. */
-const inkOf = (fill: Fill): string | undefined =>
-  fill.kind === "colour"
-    ? colors[fill.role]
-    : fill.kind === "tint"
-      ? tints[fill.role]
-      : finish[fill.role].backgroundColor;
-
-/** A stroke the recipe names, in points: a hairline, the control stroke, or the number itself. */
-const widthOf = (edge: Scale | number): number =>
-  typeof edge === "number" ? edge : edge === "stroke.hairline" ? stroke.hairline : stroke.control;
 
 /** Options of `segmentedLook`. */
 export interface SegmentedLookOptions {
@@ -80,15 +45,10 @@ export interface SegmentedLookOptions {
  * A segmented control's look. On a track (`style`, on `Tabs` or a `RadioGroup`): sunk, as wide as
  * its labels with a pointer (the theme's `height.md` high, 12-point labels, the thumb's corners a
  * step inside the track's), spanning the row on a touch screen or with `fill`; the selected
- * segment's thumb, standing off the track in both appearances (`finish.raised`: a lifted surface
- * that carries the label's ink; `knob` is the switch's white disc), as `Tabs`' traveling `indicatorStyle` or as a
- * `Radio`'s `checkedStyle` (`thumbStyle`). Where the theme's `group` is `cells`, as Material 3's
- * is, the control draws connected cells instead: one outline around the row, a divider between the
- * cells (none before the first), and the chosen cell on its own container behind a leading `check`
- * (its label's `label(selected)`, `count`). Either way, each segment's props (`segment(state)`:
- * hover, the focus ring, dimmed while disabled) and `gap` are the look's. Where the theme draws
- * cells, pass `segment(state, first)` with `first` true for the row's leading cell, which draws no
- * divider of its own.
+ * segment's thumb, standing off the track in both appearances (`finish.plate`: a labelled block
+ * chosen inside a well), as `Tabs`' traveling `indicatorStyle` or as a `Radio`'s `checkedStyle`
+ * (`thumbStyle`). Each segment's props (`segment(state)`: hover, the focus ring, dimmed while
+ * disabled) and its label are the look's.
  */
 export function segmentedLook(o?: SegmentedLookOptions) {
   const small = () => read(o?.size) === "sm";
@@ -99,42 +59,24 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   // The theme's height scale, read where it is drawn: the middle step, or the small one for `sm`
   // (so a small control is as tall as a small button, and the two sit level in a row).
   const height = () => (small() ? controlHeight.sm : controlHeight.md);
-  // The theme's group, read where it is drawn: a change of theme redraws these parts.
-  const group = () => groupLook(control().group);
   // The thumb: the track's raised plate, a segment's own box (the theme's `plate`: a labelled block
   // chosen inside a well).
-  const thumb = (track: { radius: Radius; fill: Fill }): ViewStyle => ({
-    ...rounded(radiusOf(track.radius, height()), inset),
+  const thumb = (): ViewStyle => ({
+    ...rounded(shape.control, inset),
     borderWidth: stroke.control,
-    // A face without an edge of its own draws none: `paintOf` states the colour where the fill
-    // names one (a finish), and a border with no colour of its own draws black.
+    // A face without an edge of its own draws none: `finish.plate` states the colour where it
+    // names one, and a border with no colour of its own draws black.
     borderColor: "transparent",
-    ...paintOf(track.fill),
+    ...finish.plate,
   });
   return {
     get style(): ViewStyle {
-      const look = group();
-      if (look.form === "cells") {
-        return {
-          height: look.height,
-          flexDirection: "row",
-          alignSelf: spread() ? "stretch" : "flex-start",
-          // The ends the recipe draws; the dividers between the cells are straight, so only the
-          // list draws a rounded edge.
-          ...rounded(radiusOf(look.corner, look.height)),
-          borderWidth: widthOf(look.edge.width),
-          borderColor: inkOf(look.edge.fill),
-          // The chosen cell's face is clipped to the list's rounded ends, so the ends keep the
-          // recipe's shape.
-          overflow: "hidden",
-        };
-      }
       return {
         height: height(),
         flexDirection: "row",
         alignSelf: spread() ? "stretch" : "flex-start",
         padding: inset,
-        ...rounded(radiusOf(look.radius, height())),
+        ...rounded(shape.control, inset),
         // The channel the chosen block sits in (`channel`), not the switch's track: in dark a
         // switch's track is as raised as its thumb, which would hide the thumb.
         ...finish.channel,
@@ -143,80 +85,20 @@ export function segmentedLook(o?: SegmentedLookOptions) {
     },
     /** The thumb as `Tabs`' indicator, which the core springs to the selected tab. */
     get indicatorStyle(): ViewStyle {
-      const look = group();
-      // Connected cells have no thumb: their chosen cell is the indicator. On a track the thumb
-      // takes a segment's box, which stands a pad in from the track's edge.
-      return look.form === "cells" ? {} : { top: inset, bottom: inset, ...thumb(look) };
+      // The thumb takes a segment's box, which stands a pad in from the track's edge.
+      return { top: inset, bottom: inset, ...thumb() };
     },
-    /**
-     * The selected segment drawn on itself (a `Radio`'s `checkedStyle`): the track's thumb, or the
-     * chosen cell's face where the theme draws cells.
-     */
+    /** The selected segment drawn on itself (a `Radio`'s `checkedStyle`). */
     get thumbStyle(): ViewStyle {
-      const look = group();
-      return look.form === "cells" ? paintOf(look.selected) : thumb(look);
+      return thumb();
     },
-    /**
-     * The chosen cell's face (`Tab`'s `selectedStyle`), `undefined` on the track, whose thumb is the
-     * indicator.
-     */
-    get selectedStyle(): ViewStyle | undefined {
-      const look = group();
-      return look.form === "cells" ? paintOf(look.selected) : undefined;
-    },
-    segment(state: TabState, first?: Live<boolean>): TabLook {
-      const look = group();
-      if (look.form === "cells") {
-        return {
-          get style(): ViewStyle {
-            // Only the cells after the first carry a divider: the list's own outline closes the
-            // leading end, so a divider there would show past its rounded edge.
-            const leading = first !== undefined && read(first);
-            const edge = widthOf(look.edge.width);
-            return {
-              ...(spread() ? { flex: 1 } : {}),
-              paddingHorizontal: look.padding,
-              ...(leading
-                ? {}
-                : {
-                    borderStartWidth: edge,
-                    // The logical start border takes its own colour; `borderColor` does not reach
-                    // it, and a divider with no colour of its own draws black.
-                    borderStartColor: inkOf(look.edge.fill),
-                    marginStart: -edge,
-                  }),
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: look.gap,
-            };
-          },
-          get hoverStyle() {
-            // M3 washes the chosen cell too: its state layer sits over the container, not instead
-            // of it (SegmentedButtonTokens.kt's selected state layers).
-            return hovered();
-          },
-          get focusVisibleStyle() {
-            // Inside the cell, as the split button's halves ring inside their clipping frame: a
-            // ring outside would be cut by the list's outline.
-            return focusRing(-2);
-          },
-          get disabledStyle(): ViewStyle {
-            return { opacity: dimmed.disabled };
-          },
-          get android(): AndroidProps | undefined {
-            return pressRipple("foreground", state.disabled);
-          },
-        };
-      }
-      // The track's corners, kept in a name of its own so the closures below hold the narrowed value.
-      const track = look;
+    segment(state: TabState): TabLook {
       return {
         // A clear edge the thumb's takes over, so a checked segment keeps its size.
         get style(): ViewStyle {
           return {
             ...(spread() ? { flex: 1, paddingHorizontal: 7 } : { paddingHorizontal: 9 }),
-            ...rounded(radiusOf(track.radius, height()), inset),
+            ...rounded(shape.control, inset),
             borderWidth: stroke.control,
             borderColor: "transparent",
             flexDirection: "row",
@@ -240,17 +122,6 @@ export function segmentedLook(o?: SegmentedLookOptions) {
       };
     },
     label(selected: Live<boolean | undefined>): TextStyle {
-      if (group().form === "cells") {
-        return {
-          numberOfLines: 1,
-          fontSize: font.size("label"),
-          fontWeight: font.weight("label"),
-          letterSpacing: font.letterSpacing("label"),
-          // M3's unselected ink is OnSurface; the chosen cell's OnSecondaryContainer has no role of
-          // its own, so both read the theme's foreground.
-          color: colors.foreground,
-        };
-      }
       return {
         numberOfLines: 1,
         // No type role has this size: a segment's 12, 13 or 14 follow the control's size.
@@ -262,21 +133,13 @@ export function segmentedLook(o?: SegmentedLookOptions) {
     get count(): TextStyle {
       return {
         fontSize: font.size("caption"),
-        color: group().form === "cells" ? colors.mutedForeground : colors.faint,
+        color: colors.faint,
         fontVariant: ["tabular-nums"],
       };
     },
-    /** The chosen cell's leading check (M3's selected icon); the track has none. */
-    get check(): JSX.Element | null {
-      const look = group();
-      return look.form === "cells" ? (
-        <Icon icon={Check} size={look.check} tint={colors.foreground} />
-      ) : null;
-    },
-    /** The gap between a segment's parts: the check, its label, its count. */
+    /** The gap between a segment's parts: its label and its count. */
     get gap(): number {
-      const look = group();
-      return look.form === "cells" ? look.gap : 5;
+      return 5;
     },
   };
 }
@@ -291,7 +154,7 @@ export type SegmentedProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** The sink the segments sit in (`nsh/base`'s `Tabs`): the track and its thumb, or connected cells. */
+/** The sink the segments sit in (`nsh/base`'s `Tabs`): the track and its thumb. */
 export type SegmentedListProps = Omit<BaseTabsProps, "children"> & {
   size?: SegmentedSize;
   fill?: boolean;
@@ -312,17 +175,10 @@ type SegmentedContextValue = {
 
 const SegmentedContext = context<SegmentedContextValue | null>(null);
 
-/**
- * What a segment reads from its list: the options the list was given, read where a segment is
- * drawn, and the segments it holds. Registration order is render order, so the first registered
- * segment is the first cell.
- */
+/** What a segment reads from its list: the options the list was given, read where a segment is drawn. */
 type SegmentedListValue = {
   size: () => SegmentedSize;
   fill: () => boolean;
-  segments: () => readonly string[];
-  register: (value: string) => void;
-  unregister: (value: string) => void;
 };
 
 const SegmentedListContext = context<SegmentedListValue | null>(null);
@@ -369,15 +225,7 @@ export function SegmentedList(props: SegmentedListProps) {
   const size = () => props.size ?? "default";
   const fill = () => !!props.fill;
   const look = segmentedLook({ size, fill });
-  const segments = signal<string[]>([]);
-  const value: SegmentedListValue = {
-    size,
-    fill,
-    segments,
-    register: (segment) =>
-      segments.update((list) => (list.includes(segment) ? list : [...list, segment])),
-    unregister: (segment) => segments.update((list) => list.filter((item) => item !== segment)),
-  };
+  const value: SegmentedListValue = { size, fill };
 
   return (
     <SegmentedListContext.Provider value={value}>
@@ -396,9 +244,6 @@ export function SegmentedList(props: SegmentedListProps) {
 export function SegmentedItem(props: SegmentedItemProps) {
   const ctx = useSegmented();
   const list = SegmentedListContext();
-  cleanup(() => list?.unregister(props.value));
-  list?.register(props.value);
-  const first = () => list?.segments()[0] === props.value;
   const [, rest] = split(props, [
     "value",
     "count",
@@ -417,13 +262,10 @@ export function SegmentedItem(props: SegmentedItemProps) {
     fill: () => !!list?.fill(),
   });
   const selected = () => ctx.value() === props.value;
-  const segment = look.segment(
-    {
-      selected: () => selected(),
-      disabled: () => !!props.disabled,
-    },
-    first,
-  );
+  const segment = look.segment({
+    selected: () => selected(),
+    disabled: () => !!props.disabled,
+  });
 
   return (
     <BaseTab
@@ -439,17 +281,14 @@ export function SegmentedItem(props: SegmentedItemProps) {
       activeStyle={[segment.activeStyle ?? null, props.activeStyle ?? null]}
       focusVisibleStyle={[segment.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[segment.disabledStyle, props.disabledStyle ?? null]}
-      selectedStyle={[look.selectedStyle ?? null, props.selectedStyle ?? null]}
+      selectedStyle={props.selectedStyle}
     >
       {(() => {
         // Read once, here where the segment is drawn (`marker.tsx` reads in the same shape): a
-        // string is the label (with its count and, where the theme draws cells, a leading check),
-        // anything else as it is.
+        // string is the label (with its count), anything else as it is.
         const kids = props.children;
-        const check = look.check;
         return typeof kids === "string" ? (
           <View style={{ flexDirection: "row", alignItems: "center", gap: look.gap }}>
-            <If when={selected() && check !== null}>{check}</If>
             <Text style={look.label(selected())}>{kids}</Text>
             <If when={props.count !== undefined}>
               <Text style={look.count}>{props.count}</Text>

@@ -439,7 +439,7 @@ for (const theme of themes) {
 }
 
 // 4c. The spec's tables are the one list of enumerated values: `style.ts` reads its whitelists from
-// the enum table, so every listed key must appear in every theme; and each of the six control
+// the enum table, so every listed key must appear in every theme; and each of the four control
 // dimensions reads from every theme's `semantics.json` as the spec's control table says, the
 // theme-to-column mapping coming from the table's own header.
 const enumKeys = specEnums(spec).map((row) => row.key);
@@ -463,7 +463,7 @@ for (const row of controlRows) {
   const values = controlDimensionValues[row.dimension as keyof typeof controlDimensionValues];
   if (values === undefined) {
     fail(
-      `docs/specs/theme-roles.md: the control table names \`${row.dimension}\`, not one of the six control dimensions`,
+      `docs/specs/theme-roles.md: the control table names \`${row.dimension}\`, not one of the four control dimensions`,
     );
     continue;
   }
@@ -494,7 +494,7 @@ for (const row of specRecipes(spec)) {
   const values = controlDimensionValues[row.dimension as keyof typeof controlDimensionValues];
   if (values === undefined)
     fail(
-      `docs/specs/theme-roles.md: the recipe table names \`${row.dimension}\`, not one of the six control dimensions`,
+      `docs/specs/theme-roles.md: the recipe table names \`${row.dimension}\`, not one of the four control dimensions`,
     );
   else if (!values.includes(row.value as never))
     fail(

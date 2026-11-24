@@ -436,13 +436,11 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (28px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
-**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): M3 control dimensions: tabs and fields underlined (PrimaryTabs, _md-comp-filled-text-field.scss), selection controls outlined, tracks tinted, the library's circle for a handle, and SegmentedButton's cells (docs/specs/theme-contract-v2.md §11.2).
-- **`selection`**: `underline`
+**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): M3 control dimensions: underlined text fields (_md-comp-filled-text-field.scss), outlined selection controls, tinted tracks and the library's circle for a handle (docs/specs/theme-contract-v2.md §11.2).
 - **`field`**: `underline`
 - **`choice`**: `outline`
 - **`track`**: `tint`
 - **`handle`**: `circle`
-- **`group`**: `cells`
 
 ## Motion & Micro-interaction
 

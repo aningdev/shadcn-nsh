@@ -24,14 +24,14 @@
 
 ```mermaid
 flowchart LR
-  T["主题（值）<br/>颜色 · finish · 刻度 · 动效"] --> P["控件维度（形态）<br/>selection · field · choice · track · handle · group"]
+  T["主题（值）<br/>颜色 · finish · 刻度 · 动效"] --> P["控件维度（形态）<br/>field · choice · track · handle"]
   T --> C["组件<br/>packages/ui"]
   P --> C
   C --> A["应用<br/>窗口材质 · 文案 · 布局"]
 ```
 
 - **主题**回答“这一层、这种语义长什么样”：页面是什么底色，浮层用什么面，控件多高，按下怎么变。它不回答“某个组件长什么样”。
-- **控件维度**回答“一个控件怎么画自己的零件”：选中标记是胶囊、下划线还是竖条，字段是盒子、下划线还是两者，一组控件是沟槽还是格子。六个维度各选一档（第 2.12 节）。
+- **控件维度**回答“一个控件怎么画自己的零件”：字段是盒子、下划线还是两者，选择框是沟槽底、外包框还是内嵌底，轨道是内凹槽、色带还是一条细线，手柄是圆点还是环。四个维度各选一档（第 2.12 节）。标签页、分段控件与侧边栏不读维度：它们各画一种形态（[决策 0008](decisions/0008-drop-selection-group.md)）。
 - **组件**按层读主题：一个按钮读 `accent` finish 和 `control` 圆角，而不是读“按钮色”。
 - **应用**拥有窗口和内容：窗口级材质、文案、布局都不在主题里（第 3 节）。
 
@@ -301,22 +301,20 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **设计问题**：开关、滑杆、复选框、单选、进度条、标签页、日历、输入框怎么画自己的零件？选中标记是胶囊、下划线还是竖条？字段是盒子、下划线，还是盒子上加一道下划线？
 
-**定义项**：`semantics.json` 的 `dimension.control`，六个维度各一档（`control()` 读）：
+**定义项**：`semantics.json` 的 `dimension.control`，四个维度各一档（`control()` 读）：
 
-| 维度        | 回答什么                 | 取值                                                                    |
-| ----------- | ------------------------ | ----------------------------------------------------------------------- |
-| `selection` | 一个被选中的项标在哪     | `pill`（胶囊底）、`underline`（下划线）、`bar`（左侧竖条）              |
-| `field`     | 输入框的边界             | `box`（盒子）、`underline`（下划线）、`box-underline`（盒子加强调底边） |
-| `choice`    | 一组里被选中的那一格     | `well`（沟槽底）、`outline`（外包框）、`inset`（内嵌底）                |
-| `track`     | 滑动轨道与进度的剩余部分 | `sunk`（内凹槽）、`tint`（同色淡底）、`hairline`（一条细线）            |
-| `handle`    | 滑杆、开关的可拖部分     | `circle`（圆点）、`ring`（带外圈的圆）                                  |
-| `group`     | 并排一组控件之间         | `track`（轨道到底）、`cells`（格子分段）                                |
+| 维度     | 回答什么                 | 取值                                                                    |
+| -------- | ------------------------ | ----------------------------------------------------------------------- |
+| `field`  | 输入框的边界             | `box`（盒子）、`underline`（下划线）、`box-underline`（盒子加强调底边） |
+| `choice` | 一组里被选中的那一格     | `well`（沟槽底）、`outline`（外包框）、`inset`（内嵌底）                |
+| `track`  | 滑动轨道与进度的剩余部分 | `sunk`（内凹槽）、`tint`（同色淡底）、`hairline`（一条细线）            |
+| `handle` | 滑杆、开关的可拖部分     | `circle`（圆点）、`ring`（带外圈的圆）                                  |
 
 每个取值画成什么样、按什么数字，见 [`specs/theme-roles.md`](specs/theme-roles.md) 第 11、14 节；枚举值登记在同文件的枚举表里，`check:theme` 把表、`style.ts` 的白名单和三套平台主题编译出的值三方对账。
 
 **约束**：主题只选维度，不在主题里细调某个控件的几何；以组件命名的值（开关多宽、日历格多大）不进主题——同样大小的开关和复选框，几何由各自组件决定，维度只决定“画成哪一类”。要新增一种形态，先在本表登记一个新取值，再改组件怎么画它。
 
-**参照**：`default` / `shadcn` / `solid-glass` / `apple` 用中性一套（胶囊、盒子、沟槽底、内凹槽、圆点、轨道）；`material` 照 M3 的 PrimaryTabs / outlined、text field / tinted track / SegmentedButton，取 `underline`、`underline`、`outline`、`tint`、`circle`、`cells`；`winui` 照 WinUI 的 NavigationView 指示条、控件描边与 ToggleSwitch，取 `bar`、`box-underline`、`inset`、`hairline`、`ring`，并排仍是 `track`。
+**参照**：`default` / `shadcn` / `solid-glass` / `apple` 用中性一套（盒子、沟槽底、内凹槽、圆点）；`material` 照 M3 的 text field / outlined 选择控件 / tinted track，取 `underline`、`outline`、`tint`、`circle`；`winui` 照 WinUI 的 TextBox 边框、控件描边与 ToggleSwitch，取 `box-underline`、`inset`、`hairline`、`ring`。标签页、分段控件与侧边栏在六套主题里画同一种形态，与 material / winui 原生的差别记在 [`specs/native-themes.md`](specs/native-themes.md) 第 3.6 节。
 
 ## 3 不属于主题的东西
 
@@ -394,6 +392,6 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | 9   | 线与焦点       | `stroke`、`focus`                                                        | `theme.tokens.json`                                         | 截图（键盘焦点）                      |
 | 10  | 交互状态       | `hover` / `pressed` / `disabled` finish、`accent` 的按下字段、`state` 组 | `finishes.shared.tokens.json`、`theme.tokens.json`          | `theme:contrast`、截图                |
 | 11  | 动效           | `motion.{fast,default,slow}`、`motion.state`、`transition.enter`         | `theme.tokens.json`                                         | 真机或演示里看                        |
-| 12  | 控件维度       | `dimension.control.{selection,field,choice,track,handle,group}`          | `theme.tokens.json`                                         | `check:theme`                         |
+| 12  | 控件维度       | `dimension.control.{field,choice,track,handle}`                          | `theme.tokens.json`                                         | `check:theme`                         |
 | —   | 无障碍收尾     | 对比度 AA、不只靠颜色、禁用可辨、touch 触控 ≥ 44、放大字号比例不乱       | —                                                           | `theme:contrast`、`checkScales`、截图 |
 | —   | 产物           | `tokens:build`、`registry:build`                                         | `packages/theme`、`public/r`                                | `tokens:build --check`、`test:unit`   |

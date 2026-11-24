@@ -165,12 +165,10 @@
       }
     },
     "control": {
-      "selection": "plate",
       "field": "box",
       "choice": "well",
       "track": "sunk",
-      "handle": "circle",
-      "group": "track"
+      "handle": "circle"
     }
   },
   "shape": {

@@ -35,24 +35,24 @@ describe("the recipe table and the looks", () => {
 describe("checkRecipeNumbers", () => {
   test("fails when a look's number is changed", () => {
     const changed = lookNumbers().map((look) =>
-      look.dimension === "group" && look.value === "cells"
-        ? { ...look, numbers: look.numbers.map((number) => (number === 40 ? 41 : number)) }
+      look.dimension === "track" && look.value === "tint"
+        ? { ...look, numbers: look.numbers.map((number) => (number === 4 ? 5 : number)) }
         : look,
     );
     expect(checkRecipeNumbers(rows, changed)).toEqual([
-      "docs/specs/theme-roles.md: `cells` states 40; packages/ui/lib/look.ts does not draw it",
-      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 41 for `cells`; the table does not state it",
+      "docs/specs/theme-roles.md: `tint` states 4; packages/ui/lib/look.ts does not draw it",
+      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 5 for `tint`; the table does not state it",
     ]);
   });
 
   test("fails when a look draws a number the table does not state", () => {
     const changed = lookNumbers().map((look) =>
-      look.dimension === "group" && look.value === "cells"
+      look.dimension === "track" && look.value === "tint"
         ? { ...look, numbers: [...look.numbers, 19] }
         : look,
     );
     expect(checkRecipeNumbers(rows, changed)).toEqual([
-      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 19 for `cells`; the table does not state it",
+      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 19 for `tint`; the table does not state it",
     ]);
   });
 
@@ -68,13 +68,13 @@ describe("checkRecipeNumbers", () => {
 
   test("fails when a table row's number is changed", () => {
     const changed = rows.map((row) =>
-      row.dimension === "group" && row.value === "cells"
-        ? { ...row, numbers: row.numbers.replace("格高 40", "格高 41") }
+      row.dimension === "track" && row.value === "tint"
+        ? { ...row, numbers: row.numbers.replace("progress 4", "progress 5") }
         : row,
     );
     expect(checkRecipeNumbers(changed, lookNumbers())).toEqual([
-      "docs/specs/theme-roles.md: `cells` states 41; packages/ui/lib/look.ts does not draw it",
-      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 40 for `cells`; the table does not state it",
+      "docs/specs/theme-roles.md: `tint` states 5; packages/ui/lib/look.ts does not draw it",
+      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 4 for `tint`; the table does not state it",
     ]);
   });
 
@@ -92,15 +92,12 @@ describe("checkRecipeNumbers", () => {
   test("fails when a look is missing", () => {
     // A look left out of `lookNumbers` stands for one dropped from `look.ts`: the table's row is
     // then unheld, and that is reported rather than skipped.
-    const withoutPill = lookNumbers().filter(
-      (look) => !(look.dimension === "selection" && look.value === "pill"),
+    const withoutTint = lookNumbers().filter(
+      (look) => !(look.dimension === "track" && look.value === "tint"),
     );
-    const problems = checkRecipeNumbers(
-      [...rows, { dimension: "selection", value: "pill", numbers: "3", source: "本库自有" }],
-      withoutPill,
-    );
+    const problems = checkRecipeNumbers(rows, withoutTint);
     expect(problems).toEqual([
-      "docs/specs/theme-roles.md: `selection` takes `pill`; packages/ui/lib/look.ts draws no look for it",
+      "docs/specs/theme-roles.md: `track` takes `tint`; packages/ui/lib/look.ts draws no look for it",
     ]);
   });
 
@@ -131,6 +128,6 @@ describe("collectNumbers", () => {
 
   test("reads a look's numbers", () => {
     expect(numbersOf("handle", "circle")).toEqual([6, 8, 20, 32, 14, 128, 144]);
-    expect(numbersOf("group", "cells")).toEqual([40, 12, 8, 18]);
+    expect(numbersOf("choice", "well")).toEqual([5, 7, 16, 22]);
   });
 });

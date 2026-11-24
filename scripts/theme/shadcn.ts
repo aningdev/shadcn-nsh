@@ -256,9 +256,6 @@ export function themeFiles(): ThemeGeneratorOutput {
     // A flat theme draws no press of its own: its surfaces change colour under the finger, they
     // do not sink (`state["press-scale"]` of 1, which `press.scale` reads as "no sink").
     "press-scale": 1,
-    // shadcn's tabs: a rounded list with a rounded trigger a step inside it, not the capsule the
-    // base theme's NSH look draws (`docs/specs/theme-roles.md` §控件维度).
-    control: { selection: "plate" },
     designMd: {
       overview:
         "shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) and Tailwind-style border/shadow lifts (`references/shadcn-ui` `new-york-v4`).",

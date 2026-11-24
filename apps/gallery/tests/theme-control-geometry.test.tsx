@@ -5,7 +5,8 @@ const find = (texts: string[], prefix: string) =>
 
 /**
  * Control dimensions (`control()`, read by the per-component looks: `checkbox`, `switch`,
- * `slider`, `radio`, `progress`, `spinner`, `tabs`, `calendar`) update reactively on `selectTheme`.
+ * `slider`, `radio`, `progress`, `spinner`, `calendar`) update reactively on `selectTheme`. Tabs
+ * draw one form, the same under every theme.
  */
 test("control dimensions and component looks follow the active theme", async () => {
   const app = await open("./theme-control-geometry.fixture.tsx", {
@@ -48,8 +49,8 @@ test("control dimensions and component looks follow the active theme", async () 
   expect(find(app.texts(), "slider=")?.endsWith("|false|true|false")).toBe(true);
   expect(find(app.texts(), "checkbox=")).toBe("2|true|false");
   expect(find(app.texts(), "progress=")).toBe("4/solid/false");
-  expect(find(app.texts(), "tabs=")).toBe("8/3");
-  expect(find(app.texts(), "tabs-indicator=")).toBe("3");
+  expect(find(app.texts(), "tabs=")).toBe("0/1");
+  expect(find(app.texts(), "tabs-indicator=")).toBe("2");
   expect(find(app.texts(), "grabber=")).toBe("36x5");
   expect(find(app.texts(), "calendar=")).toBe("32");
 
@@ -66,8 +67,8 @@ test("control dimensions and component looks follow the active theme", async () 
   expect(find(app.texts(), "slider=")?.endsWith("|false|false|true")).toBe(true);
   expect(find(app.texts(), "checkbox=")).toBe("1|false|true");
   expect(find(app.texts(), "progress=")).toBe("3/gradient/false");
-  expect(find(app.texts(), "tabs=")).toBe("0/1.5");
-  expect(find(app.texts(), "tabs-indicator=")).toBe("3");
+  expect(find(app.texts(), "tabs=")).toBe("0/1");
+  expect(find(app.texts(), "tabs-indicator=")).toBe("2");
   expect(find(app.texts(), "grabber=")).toBe("36x5");
   expect(find(app.texts(), "calendar=")).toBe("32");
 

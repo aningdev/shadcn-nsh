@@ -452,16 +452,13 @@ export const m3Style = {
     stroke: { hairline: 1, control: 1 },
     focus: { style: "outline", width: 3, offset: 2 },
     control: {
-      // M3's own controls (docs/specs/theme-contract-v2.md §11.2): PrimaryTabs' underline,
-      // underlined text fields, outlined radios and checkboxes, a tinted track, the library's
-      // circle for a handle (M3's 4×44 bar was a stray line in the app, #367), and
-      // SegmentedButton's cells.
-      selection: "underline",
+      // M3's own controls (docs/specs/theme-contract-v2.md §11.2): underlined text fields,
+      // outlined radios and checkboxes, a tinted track, and the library's circle for a handle
+      // (M3's 4×44 bar was a stray line in the app, #367).
       field: "underline",
       choice: "outline",
       track: "tint",
       handle: "circle",
-      group: "cells",
     },
     icon: {
       // A desktop's glyphs keep the base scale (12/16/20); M3's own 16/20/24 stay on touch.
@@ -611,7 +608,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
         "dimension.focus.offset": "2px outward focus indicator offset per M3.",
         "dimension.control":
-          "M3 control dimensions: tabs and fields underlined (PrimaryTabs, _md-comp-filled-text-field.scss), selection controls outlined, tracks tinted, the library's circle for a handle, and SegmentedButton's cells (docs/specs/theme-contract-v2.md §11.2).",
+          "M3 control dimensions: underlined text fields (_md-comp-filled-text-field.scss), outlined selection controls, tinted tracks and the library's circle for a handle (docs/specs/theme-contract-v2.md §11.2).",
         shape: "M3 circular arc corners (ShapeTokens.kt).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; M3 uses state layer + Android ripple).",

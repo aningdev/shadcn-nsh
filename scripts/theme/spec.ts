@@ -98,7 +98,7 @@ export function specParts(markdown: string): SpecParts {
 
 /** An enumerated value a theme may take: the style key and the values it allows, in the spec's order. */
 export interface EnumRow {
-  /** The style key the whitelist is under: `dimension.control.selection`, `shape.curve`. */
+  /** The style key the whitelist is under: `dimension.control.field`, `shape.curve`. */
   key: string;
   /** What it may be: `pill`, `underline`, `bar`. */
   values: string[];
@@ -123,7 +123,7 @@ export interface ControlColumn {
 
 /** One row of the spec's control-dimensions table: the dimension and what each column's themes take. */
 export interface ControlRow {
-  /** The dimension: `selection`, `field`, `choice`, `track`, `handle`, `group`. */
+  /** The dimension: `field`, `choice`, `track`, `handle`. */
   dimension: string;
   /** One column per theme family, named by the table's header rather than by this file. */
   columns: ControlColumn[];

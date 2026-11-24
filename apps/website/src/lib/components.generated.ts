@@ -619,8 +619,7 @@ export const components: ComponentDoc[] = [
     kind: "own",
     shadcn: null,
     nshElement: null,
-    description:
-      "A track of mutually exclusive choices whose thumb springs to the chosen one, or a theme's connected cells.",
+    description: "A track of mutually exclusive choices whose thumb springs to the chosen one.",
   },
   {
     slug: "separator",

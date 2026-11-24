@@ -60,41 +60,29 @@ describe("the spec's control dimensions", () => {
     }
   });
 
-  test("takes a base default, shadcn's block where a theme draws shadcn's tabs, and the platforms' own controls", () => {
+  test("takes a base default and the platforms' own controls", () => {
     const base = {
-      selection: "pill",
       field: "box",
       choice: "well",
       track: "sunk",
       handle: "circle",
-      group: "track",
     };
     expect(semantics("default").dimension.control).toEqual(base);
-    // `plate` is shadcn's rounded list with its rounded trigger a step inside: solid-glass and apple
-    // keep it (apple's capsule belongs to `group`, its segmented control).
-    for (const name of ["shadcn", "solid-glass"]) {
-      expect(semantics(name).dimension.control, name).toEqual({ ...base, selection: "plate" });
-    }
-    expect(semantics("apple").dimension.control).toEqual({
-      ...base,
-      selection: "plate",
-      group: "capsule",
-    });
+    // shadcn, solid glass and Apple draw the library's controls: no axis differs from the base, so
+    // their tokens state no `dimension.control` at all and the base's values compile in.
+    for (const name of ["shadcn", "solid-glass", "apple"])
+      expect(semantics(name).dimension.control, name).toEqual(base);
     expect(semantics("material").dimension.control).toEqual({
-      selection: "underline",
       field: "underline",
       choice: "outline",
       track: "tint",
       handle: "circle",
-      group: "cells",
     });
     expect(semantics("winui").dimension.control).toEqual({
-      selection: "bar",
       field: "box-underline",
       choice: "inset",
       track: "hairline",
       handle: "ring",
-      group: "track",
     });
   });
 });

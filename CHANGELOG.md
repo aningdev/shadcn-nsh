@@ -34,6 +34,8 @@
 
 ### Changed
 
+- **Breaking for theme authors: themes no longer choose how a selection or a group of choices is drawn (#380, ADR 0008).** `dimension.control.selection` and `dimension.control.group` are gone from `semantics.json`, with `control().selection` / `control().group`, the `Selection` / `Group` types and `lib/look`'s `selectionLook` / `groupLook`. `Tabs`, `Segmented` and `Sidebar` draw one form under every theme, the default theme's; how each platform theme differs from its native control is listed in `docs/specs/native-themes.md` §3.6. This supersedes the `selection`, `group` and `capsule` parts of the #293 and #331 entries above. A custom theme deletes the two keys.
+
 - **Each finish role lists only the fields it uses (#374).** `packages/theme/finish-fields.ts` names the fields of each of the 15 finish roles (198 slots become 88), and `FinishOf<role>`, `FinishStyle<role>` and `FaceRole` derive from it: `finish.card` has no `pressed-*`, `finish.knob` alone has `checked-*`, and so on. Every resolved value is unchanged (`theme:diff`: 0 values changed). **Breaking for theme authors:** a custom theme that writes a field its role does not have fails `check:theme`; delete the field.
 
 - **`CodeEditor` is `Editor`, NSH's own name for it (#354).** The registry item is `editor` (`shadcn-nsh add editor`), the file `editor.tsx`, and the exports `Editor`, `EditorFindBar`, `EditorProps`, `EditorFindBarProps`, `editorClasses` and `editorFrame`. **Breaking:** `code-editor` and the `CodeEditor*` / `codeEditor*` names are gone, with no alias; an app that installed `code-editor` keeps its copy, and a new `add` takes `editor`.

@@ -484,14 +484,14 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   const focusExt = getExt(lpDim.focus)!;
   const controlExt = getExt(lpDim.control);
   if (controlExt === undefined) {
-    throw new Error(`${absPath}: dimension.control carries none of the six control dimensions`);
+    throw new Error(`${absPath}: dimension.control carries none of the four control dimensions`);
   }
   const controlOut: Record<string, string> = {};
   for (const key of CONTROL_DIMENSIONS) {
     const value = controlExt[key];
     if (typeof value !== "string") {
       throw new Error(
-        `${absPath}: dimension.control.${key} is ${JSON.stringify(value)}, not one of the six control dimensions`,
+        `${absPath}: dimension.control.${key} is ${JSON.stringify(value)}, not one of the four control dimensions`,
       );
     }
     controlOut[key] = value;

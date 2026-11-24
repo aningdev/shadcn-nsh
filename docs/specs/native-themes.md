@@ -307,14 +307,21 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 
 新加一行之前，先在契约里找位置：面的差异进 finish（表面的种类），形态的差异进 `dimension.control` 的某一档，状态用 finish 上的字段。确实放不进去、降级代价又小，才写进这张表。
 
-| 主题       | 哪里                      | 官方                                               | 本库（降级后）                    | 省掉的契约项                           | 出处       |
-| ---------- | ------------------------- | -------------------------------------------------- | --------------------------------- | -------------------------------------- | ---------- |
-| `winui`    | 日期选择器的触发器        | 32 点日历格 + 右侧下拉箭头（`CalendarDatePicker`） | 整块按钮，文字加图标              | `trigger` 维度；`Picker` 的 `iconCell` | #286，11.7 |
-| `winui`    | 轮播的翻页箭头            | 贴边方钮 16×38、字形 `icon.sm`（`FlipView`）       | 胶囊按钮，图标 `icon.md`          | `arrow` 维度；`placement: "over"`      | #287，11.7 |
-| `winui`    | 日历的选中日              | 只描 2 px 边（`CalendarView`）                     | 填 `primary`                      | `mark` 维度                            | #293，11.7 |
-| `material` | 日历的 `today` 与日格形状 | outline 的描边 + 圆格                              | `quiet` 与 `shape.control` 的圆角 | 第 9 个维度 `hint` 与 `cellShape`      | #293，11.7 |
-| `winui`    | 日历的 `today` 与日格形状 | fill 的面 + 圆格                                   | `quiet` 与 `shape.control` 的圆角 | 同上                                   | #293，11.7 |
-| `material` | spinner 的弧宽比例        | 10                                                 | 8                                 | 一处刻度外的数字                       | #293，11.7 |
+| 主题       | 哪里                      | 官方                                                               | 本库（降级后）                    | 省掉的契约项                           | 出处       |
+| ---------- | ------------------------- | ------------------------------------------------------------------ | --------------------------------- | -------------------------------------- | ---------- |
+| `winui`    | 日期选择器的触发器        | 32 点日历格 + 右侧下拉箭头（`CalendarDatePicker`）                 | 整块按钮，文字加图标              | `trigger` 维度；`Picker` 的 `iconCell` | #286，11.7 |
+| `winui`    | 轮播的翻页箭头            | 贴边方钮 16×38、字形 `icon.sm`（`FlipView`）                       | 胶囊按钮，图标 `icon.md`          | `arrow` 维度；`placement: "over"`      | #287，11.7 |
+| `winui`    | 日历的选中日              | 只描 2 px 边（`CalendarView`）                                     | 填 `primary`                      | `mark` 维度                            | #293，11.7 |
+| `material` | 日历的 `today` 与日格形状 | outline 的描边 + 圆格                                              | `quiet` 与 `shape.control` 的圆角 | 第 9 个维度 `hint` 与 `cellShape`      | #293，11.7 |
+| `winui`    | 日历的 `today` 与日格形状 | fill 的面 + 圆格                                                   | `quiet` 与 `shape.control` 的圆角 | 同上                                   | #293，11.7 |
+| `material` | spinner 的弧宽比例        | 10                                                                 | 8                                 | 一处刻度外的数字                       | #293，11.7 |
+| `material` | 标签页                    | 下划线指示条：只覆盖标签的 3 dp（M3 PrimaryTabs）                  | 胶囊标签（`default` 的）          | `selection` 维度                       | #380，11.7 |
+| `material` | 分段控件                  | 40 dp 连格、选中格 `SecondaryContainer` 加勾（M3 SegmentedButton） | 通道里的滑块                      | `group` 维度                           | #380，11.7 |
+| `material` | 侧边栏的选中项            | `SecondaryContainer` 药丸（NavigationDrawer）                      | 整行填 `sidebarAccent`            | `selection` 维度                       | #380，11.7 |
+| `winui`    | 标签页                    | `TabView` 的填充式文档标签 / `SelectorBar` 的居中 16×3 药丸        | 胶囊标签（`default` 的）          | `selection` 维度                       | #380，11.7 |
+| `winui`    | 分段控件                  | 无边框项，选中的一项带居中 16×3 底部强调药丸（`SelectorBar`）      | 通道里的滑块                      | `group` 维度                           | #380，11.7 |
+| `winui`    | 侧边栏的选中项            | 3 px 前导强调条（`NavigationView`）                                | 整行填 `sidebarAccent`、轨线 2 点 | `selection` 维度                       | #380，11.7 |
+| `apple`    | 分段控件                  | 胶囊轨道里的胶囊块（iOS 26 的分段控件）                            | 通道里的滑块                      | `group` 维度                           | #380，11.7 |
 
 ## 4 主题做不到的部分
 

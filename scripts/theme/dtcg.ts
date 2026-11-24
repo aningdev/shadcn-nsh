@@ -84,7 +84,7 @@ export interface ThemeStyleInput {
     stroke: { hairline: number; control: number };
     focus: { style: string; width: number; offset: number };
     /**
-     * The six control dimensions that differ from the base theme's. A theme states all six when it
+     * The four control dimensions that differ from the base theme's. A theme states all four when it
      * imitates a platform's controls (Material, WinUI); one that agrees with the base states none.
      */
     control?: Partial<Record<ControlDimension, string>>;
@@ -834,7 +834,7 @@ function encodeSharedStyleOverrides(
     };
   }
 
-  // 3. dimension.control (six enum dimensions, group $extensions)
+  // 3. dimension.control (four enum dimensions, group $extensions)
   const control = encodeControlExtras(style.dimension.control, baseShared, (fallback) =>
     desc("dimension.control", fallback),
   );

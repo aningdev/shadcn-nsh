@@ -140,12 +140,10 @@
 | `dimension.icon.sm` | 图标的小档 | 12 / 16 | 12 / 16 | 12 / 16 | 12 / 16 | 12 / 16 |
 | `dimension.icon.md` | 图标的中档 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 |
 | `dimension.icon.lg` | 图标的大档 | 20 / 24 | 20 / 24 | 20 / 24 | 20 / 24 | 20 / 24 |
-| `dimension.control.selection` | 选中项的记号画成什么、覆盖多宽 | `pill` | `plate` | `plate` | `underline` | `bar` |
 | `dimension.control.field` | 输入井的框：四条边、只下边，还是框加下边 | `box` | `box` | `box` | `underline` | `box-underline` |
 | `dimension.control.choice` | 选择框静止时的面 | `well` | `well` | `well` | `outline` | `inset` |
 | `dimension.control.track` | 轨道：凹槽、色带，还是一条细线 | `sunk` | `sunk` | `sunk` | `tint` | `hairline` |
 | `dimension.control.handle` | 手柄：圆钮、竖条，还是环 | `circle` | `circle` | `circle` | `circle` | `ring` |
-| `dimension.control.group` | 一组互斥按钮的分组形状 | `track` | `track` | `capsule` | `cells` | `track` |
 
 ## 4 shape
 

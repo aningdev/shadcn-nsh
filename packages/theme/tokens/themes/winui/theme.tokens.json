@@ -79,10 +79,9 @@
       }
     },
     "control": {
-      "$description": "WinUI 3 control dimensions: SelectorBar's bar, TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).",
+      "$description": "WinUI 3 control dimensions: TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "selection": "bar",
           "field": "box-underline",
           "choice": "inset",
           "track": "hairline",

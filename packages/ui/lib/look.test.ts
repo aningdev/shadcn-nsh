@@ -1,69 +1,16 @@
 import { describe, expect, test } from "bun:test";
 
-import type { Choice, Field, Group, Handle, Selection, Track } from "@shadcn-nsh/theme";
+import type { Choice, Field, Handle, Track } from "@shadcn-nsh/theme";
 
-import { choiceLook, fieldLook, groupLook, handleLook, selectionLook, trackLook } from "./look";
+import { choiceLook, fieldLook, handleLook, trackLook } from "./look";
 
 /** A dimension's values, read off a record that fails the typecheck when one is missing or extra. */
 const values = <T extends string>(record: Record<T, true>): T[] => Object.keys(record) as T[];
 
-const selections = values<Selection>({ pill: true, plate: true, underline: true, bar: true });
 const fields = values<Field>({ box: true, underline: true, "box-underline": true });
 const choices = values<Choice>({ well: true, outline: true, inset: true });
 const tracks = values<Track>({ sunk: true, tint: true, hairline: true });
 const handles = values<Handle>({ circle: true, ring: true });
-const groups = values<Group>({ track: true, capsule: true, cells: true });
-
-describe("selectionLook", () => {
-  test("draws every value it takes", () => {
-    expect(selections.map((value) => selectionLook(value).form)).toEqual(selections);
-  });
-
-  test("a pill is a capsule that fills the whole item", () => {
-    expect(selectionLook("pill")).toMatchObject({
-      span: "item",
-      edges: "all",
-      corners: "all",
-      thickness: null,
-      radius: "pill",
-      fill: { kind: "finish", role: "plate" },
-    });
-  });
-
-  test("a plate is the same block at the theme's control corner", () => {
-    expect(selectionLook("plate")).toMatchObject({
-      span: "item",
-      edges: "all",
-      corners: "all",
-      thickness: null,
-      radius: "shape.control",
-      fill: { kind: "finish", role: "plate" },
-    });
-  });
-
-  test("underline and bar are one line, unlike in span and corners", () => {
-    expect(selectionLook("underline")).toMatchObject({
-      span: "label",
-      edges: "bottom",
-      corners: "top",
-    });
-    expect(selectionLook("bar")).toMatchObject({
-      span: "item",
-      edges: "bottom",
-      corners: "all",
-    });
-    expect(selectionLook("underline").thickness).toBe(selectionLook("bar").thickness);
-  });
-
-  test("a line is the form's own 3 points, in the accent, rounded by half its thickness", () => {
-    for (const value of ["underline", "bar"] as const) {
-      const look = selectionLook(value);
-      expect(look.thickness).toBe(3);
-      expect(look.radius).toBe("half-thickness");
-      expect(look.fill).toEqual({ kind: "colour", role: "brand" });
-    }
-  });
-});
 
 describe("fieldLook", () => {
   test("draws every value it takes", () => {
@@ -248,55 +195,16 @@ describe("handleLook", () => {
   });
 });
 
-describe("groupLook", () => {
-  test("draws every value it takes", () => {
-    expect(groups.map((value) => groupLook(value).form)).toEqual(["track", "track", "cells"]);
-  });
-
-  test("a track's block covers the chosen item, on the control's corner", () => {
-    expect(groupLook("track")).toMatchObject({
-      span: "item",
-      radius: "shape.control",
-      fill: { kind: "finish", role: "plate" },
-      height: "height.md",
-    });
-  });
-
-  test("iOS's capsule covers the chosen item, a capsule in a capsule", () => {
-    expect(groupLook("capsule")).toMatchObject({
-      form: "track",
-      span: "item",
-      radius: "pill",
-      fill: { kind: "colour", role: "muted" },
-      height: "height.md",
-    });
-  });
-
-  test("M3's cells are 40 high, padded 12, gapped 8, their check 18", () => {
-    expect(groupLook("cells")).toMatchObject({
-      height: 40,
-      padding: 12,
-      gap: 8,
-      check: 18,
-      corner: "pill",
-      edge: { width: "stroke.hairline", fill: { kind: "colour", role: "border" } },
-      selected: { kind: "tint", role: "brand" },
-    });
-  });
-});
-
 describe("the looks", () => {
   test("are pure: one call's object is not the next call's", () => {
-    for (const value of selections) expect(selectionLook(value)).not.toBe(selectionLook(value));
     for (const value of fields) expect(fieldLook(value)).not.toBe(fieldLook(value));
     for (const value of choices) expect(choiceLook(value)).not.toBe(choiceLook(value));
     for (const value of tracks) expect(trackLook(value)).not.toBe(trackLook(value));
     for (const value of handles) expect(handleLook(value)).not.toBe(handleLook(value));
-    for (const value of groups) expect(groupLook(value)).not.toBe(groupLook(value));
   });
 
   test("throw on a value the switch was not taught", () => {
-    expect(() => selectionLook("capsule" as Selection)).toThrow(
+    expect(() => handleLook("capsule" as Handle)).toThrow(
       "no look for the dimension value capsule",
     );
   });

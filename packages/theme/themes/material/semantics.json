@@ -165,12 +165,10 @@
       }
     },
     "control": {
-      "selection": "underline",
       "field": "underline",
       "choice": "outline",
       "track": "tint",
-      "handle": "circle",
-      "group": "cells"
+      "handle": "circle"
     }
   },
   "shape": {

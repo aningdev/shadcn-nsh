@@ -1,6 +1,6 @@
 ---
 title: Segmented
-description: A track of mutually exclusive choices whose thumb springs to the chosen one, or a theme's connected cells.
+description: A track of mutually exclusive choices whose thumb springs to the chosen one.
 component: true
 demo: segmented
 ---
@@ -42,14 +42,12 @@ Segmented
 `size` is the scale: `default` is the theme's `height.md` high (28 points with a pointer in the
 library's themes, 40 on a touch screen) and `sm` its `height.sm` (24, 32).
 
-The track is the theme's `channel` and the thumb its `plate`, both read where they are drawn, so
-each theme draws its own control: five of them a well holding a raised block, `apple` iOS 26's
-capsule track (on the card layer, a hairline edge and a soft drop shadow) holding a capsule of the
-theme's `muted` fill — a step _into_ the track, its label still the primary ink. The thumb is
-always as big as a segment's own box, so the pointer's hover shade covers exactly the box the
-chosen block covers.
-
-Where the theme's `group` is `cells` (the `material` theme's), the list draws connected cells instead: one outline around the row, a divider between the cells, and the chosen cell on the theme's container behind a leading check — 40 points high, 12 of padding, 8 between a cell's parts, an 18-point check, and a capsule at the ends. The numbers are the recipe's (`groupLook(control().group)`), not the list's. `size` and `fill` still size the cells; there is no smaller cell.
+The track is the theme's `channel` and the thumb its `plate`, both read where they are drawn: a
+well holding a raised block. The thumb is always as big as a segment's own box, so the pointer's
+hover shade covers exactly the box the chosen block covers. Every theme draws this one form — the
+list reads no control dimension, so `apple`'s capsule-in-a-capsule and `material`'s connected
+cells are gone; what the native controls look like instead is in the theme's difference table
+(`docs/specs/native-themes.md` §3.6).
 
 ```tsx
 <SegmentedList size="default" fill>

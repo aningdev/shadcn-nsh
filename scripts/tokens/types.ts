@@ -153,18 +153,12 @@ export const TYPE_ROLES = [
 export const SHAPE_ROLES = ["control", "container", "modal"] as const;
 
 /**
- * The six control dimensions a theme decides (`dimension.control`): behaviour-named axes, one value
+ * The four control dimensions a theme decides (`dimension.control`): behaviour-named axes, one value
  * each, not a per-platform preset. A control reads the axis it draws and falls back on its own
- * where a value cannot express it (`docs/specs/theme-contract-v2.md` §11.4).
+ * where a value cannot express it (`docs/specs/theme-contract-v2.md` §11.4). Tabs, a segmented
+ * control and a sidebar read none of them: they draw one form on global roles (ADR 0007, 0008).
  */
-export const CONTROL_DIMENSIONS = [
-  "selection",
-  "field",
-  "choice",
-  "track",
-  "handle",
-  "group",
-] as const;
+export const CONTROL_DIMENSIONS = ["field", "choice", "track", "handle"] as const;
 export type ControlDimension = (typeof CONTROL_DIMENSIONS)[number];
 
 /** The motion roles every theme states: the three speeds, then `state`'s fade. */

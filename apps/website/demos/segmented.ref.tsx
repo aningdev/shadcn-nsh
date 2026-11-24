@@ -44,21 +44,17 @@ function App() {
           <DemoSection title="Fill: the segments share the row" axis="block">
             <Tabs style={main().style} indicatorStyle={main().indicatorStyle}>
               {[{ value: "List", count: 12 }, { value: "Board" }, { value: "Calendar" }].map(
-                (option, index) => (
+                (option) => (
                   <Tab
                     selected={view() === option.value}
-                    selectedStyle={main().selectedStyle}
                     accessibilityLabel={option.value}
                     onPress={() => {
                       view.set(option.value);
                       log(`value: ${option.value}`);
                     }}
-                    {...main().segment({ selected: () => view() === option.value }, index === 0)}
+                    {...main().segment({ selected: () => view() === option.value })}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", gap: main().gap }}>
-                      <If when={view() === option.value && main().check !== null}>
-                        {main().check}
-                      </If>
                       <Text style={main().label(view() === option.value)}>{option.value}</Text>
                       <If when={option.count !== undefined}>
                         <Text style={main().count}>{option.count}</Text>
@@ -72,19 +68,17 @@ function App() {
 
           <DemoSection title="Small" axis="block">
             <Tabs style={compact().style} indicatorStyle={compact().indicatorStyle}>
-              {["Left", "Center", "Right"].map((label, index) => (
+              {["Left", "Center", "Right"].map((label) => (
                 <Tab
                   selected={align() === label}
-                  selectedStyle={compact().selectedStyle}
                   accessibilityLabel={label}
                   onPress={() => {
                     align.set(label);
                     log(`value: ${label}`);
                   }}
-                  {...compact().segment({ selected: () => align() === label }, index === 0)}
+                  {...compact().segment({ selected: () => align() === label })}
                 >
                   <View style={{ flexDirection: "row", alignItems: "center", gap: compact().gap }}>
-                    <If when={align() === label && compact().check !== null}>{compact().check}</If>
                     <Text style={compact().label(align() === label)}>{label}</Text>
                   </View>
                 </Tab>
@@ -97,23 +91,18 @@ function App() {
               <Tab
                 selected={false}
                 disabled
-                {...compact().segment({ selected: () => false, disabled: () => true }, true)}
+                {...compact().segment({ selected: () => false, disabled: () => true })}
               >
                 <View style={{ flexDirection: "row", alignItems: "center", gap: compact().gap }}>
                   <Text style={compact().label(false)}>Day</Text>
                 </View>
               </Tab>
-              <Tab
-                selected
-                selectedStyle={compact().selectedStyle}
-                {...compact().segment({ selected: () => true }, false)}
-              >
+              <Tab selected {...compact().segment({ selected: () => true })}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: compact().gap }}>
-                  <If when={compact().check !== null}>{compact().check}</If>
                   <Text style={compact().label(true)}>Week</Text>
                 </View>
               </Tab>
-              <Tab selected={false} {...compact().segment({ selected: () => false }, false)}>
+              <Tab selected={false} {...compact().segment({ selected: () => false })}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: compact().gap }}>
                   <Text style={compact().label(false)}>Month</Text>
                 </View>

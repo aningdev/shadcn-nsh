@@ -376,12 +376,10 @@ const DESCRIPTIONS: Record<string, string> = {
   "dimension.focus.style": "焦点环的画法：晕、外框还是双线",
   "dimension.focus.width": "焦点环的线宽",
   "dimension.focus.offset": "焦点环从控件边界向外的偏移",
-  "dimension.control.selection": "选中项的记号画成什么、覆盖多宽",
   "dimension.control.field": "输入井的框：四条边、只下边，还是框加下边",
   "dimension.control.choice": "选择框静止时的面",
   "dimension.control.track": "轨道：凹槽、色带，还是一条细线",
   "dimension.control.handle": "手柄：圆钮、竖条，还是环",
-  "dimension.control.group": "一组互斥按钮的分组形状",
 
   // shape: what a theme decides about corners, off the size scales.
   "shape.curve": "圆角的曲率：连续曲线（Apple）还是圆弧",

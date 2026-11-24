@@ -219,13 +219,8 @@ export interface Timing {
 }
 
 /**
- * A selection's look (tabs, a sidebar's rows): `pill` a capsule in the track it sits in, `plate` a
- * block at the theme's control corner inside it, `underline` a line under the label only, `bar` a
- * line under the whole item.
+ * A field's look: `box` four edges, `underline` the bottom edge only, `box-underline` four edges with round corners.
  */
-export type Selection = "pill" | "plate" | "underline" | "bar";
-
-/** A field's look: `box` four edges, `underline` the bottom edge only, `box-underline` four edges with round corners. */
 export type Field = "box" | "underline" | "box-underline";
 
 /** A choice's look (a radio, a checkbox): `well` a sunk face, `outline` an edge alone, `inset` a flat face. */
@@ -237,28 +232,16 @@ export type Track = "sunk" | "tint" | "hairline";
 /** A handle's look (a slider's thumb, a switch's knob): `circle` a dot, `ring` a ring. */
 export type Handle = "circle" | "ring";
 
-/** A group's look (a segmented control): `track` choices in a groove, `capsule` choices in a capsule (iOS), `cells` adjacent cells. */
-export type Group = "track" | "capsule" | "cells";
-
-/** The six control dimensions of `semantics.json`'s `dimension.control`: one value each. */
+/** The four control dimensions of `semantics.json`'s `dimension.control`: one value each. */
 export interface ControlDimensions {
-  selection: Selection;
   field: Field;
   choice: Choice;
   track: Track;
   handle: Handle;
-  group: Group;
 }
 
 /** The keys of `ControlDimensions`, in the order `semantics.json` writes them. */
-export const CONTROL_DIMENSIONS = [
-  "selection",
-  "field",
-  "choice",
-  "track",
-  "handle",
-  "group",
-] as const;
+export const CONTROL_DIMENSIONS = ["field", "choice", "track", "handle"] as const;
 
 /**
  * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
@@ -291,7 +274,7 @@ export interface Style {
     };
     stroke: { hairline: number; control: number };
     focus: { style: string; width: number; offset: number };
-    /** The six axes a theme decides for its controls (`control()`); nothing here names a platform. */
+    /** The four axes a theme decides for its controls (`control()`); nothing here names a platform. */
     control: ControlDimensions;
     icon: Tiered<Steps>;
   };
@@ -973,7 +956,7 @@ export function stateLayer(
 export const hitTarget = (): number => style().dimension.size.hit[tier];
 
 /** The control dimensions in use, made once at import (a `computed` made inside a component would
- * be disposed with it), so `control().selection` follows `selectTheme` and re-runs only when that
+ * be disposed with it), so `control().field` follows `selectTheme` and re-runs only when that
  * value changes. A control reads the axis it draws and keeps its own fallback where a value cannot
  * express it; see `docs/specs/theme-contract-v2.md` §11. */
 const controlDimensions = reactive<ControlDimensions>(
@@ -982,9 +965,9 @@ const controlDimensions = reactive<ControlDimensions>(
 );
 
 /**
- * The six control dimensions a theme decides (`semantics.json`'s `dimension.control`): how a
- * selection, a field, a choice, a track, a handle and a group are drawn. Reactive: reading one in
- * JSX, a `draw` or an effect follows `selectTheme`.
+ * The four control dimensions a theme decides (`semantics.json`'s `dimension.control`): how a
+ * field, a choice, a track and a handle are drawn. Reactive: reading one in JSX, a `draw` or an
+ * effect follows `selectTheme`.
  */
 export const control = (): ControlDimensions => controlDimensions;
 

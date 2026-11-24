@@ -165,12 +165,10 @@
       }
     },
     "control": {
-      "selection": "bar",
       "field": "box-underline",
       "choice": "inset",
       "track": "hairline",
-      "handle": "ring",
-      "group": "track"
+      "handle": "ring"
     }
   },
   "shape": {

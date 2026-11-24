@@ -12,10 +12,8 @@ import type {
   FaceRole,
   Field,
   FinishRole,
-  Group,
   Handle,
   Palette,
-  Selection,
   Track,
   Tiered,
 } from "@shadcn-nsh/theme";
@@ -68,73 +66,6 @@ export interface Edge {
 /** A dimension value a switch has not been taught: an enum added without a look fails the typecheck. */
 function unreachable(value: never): never {
   throw new Error(`no look for the dimension value ${String(value)}`);
-}
-
-/** The parts a selection value draws: a tab's or a sidebar row's indicator. */
-export interface SelectionLook {
-  readonly form: Selection;
-  /** Whether the indicator spans the whole item or just its label. */
-  readonly span: "item" | "label";
-  readonly edges: Edges;
-  readonly corners: Corners;
-  /** The line's thickness, or `null` where the form is a fill and has no thickness. */
-  readonly thickness: number | null;
-  readonly radius: Radius;
-  readonly fill: Fill;
-}
-
-/**
- * The selection a `control()` value draws. `pill` and `plate` fill the item — a capsule, or a block at
- * the theme's control corner — and both read `finish.plate` for the face; `underline` and `bar` are
- * lines with 3 points of their own (M3 PrimaryTabs' indicator, WinUI's SelectorBar), which differ in
- * span and corners, not in thickness.
- */
-export function selectionLook(value: Selection): SelectionLook {
-  switch (value) {
-    case "pill":
-      return {
-        form: value,
-        span: "item",
-        edges: "all",
-        corners: "all",
-        thickness: null,
-        radius: "pill",
-        fill: { kind: "finish", role: "plate" },
-      };
-    case "plate":
-      return {
-        form: value,
-        span: "item",
-        edges: "all",
-        corners: "all",
-        thickness: null,
-        radius: "shape.control",
-        fill: { kind: "finish", role: "plate" },
-      };
-    case "underline":
-      return {
-        form: value,
-        span: "label",
-        edges: "bottom",
-        corners: "top",
-        // 3 points: M3 PrimaryTabs' 3 dp indicator (`_md-comp-primary-navigation-tab.scss`).
-        thickness: 3,
-        radius: "half-thickness",
-        fill: { kind: "colour", role: "brand" },
-      };
-    case "bar":
-      return {
-        form: value,
-        span: "item",
-        edges: "bottom",
-        corners: "all",
-        // 3 points: WinUI's SelectorBar / NavigationView indicator.
-        thickness: 3,
-        radius: "half-thickness",
-        fill: { kind: "colour", role: "brand" },
-      };
-  }
-  return unreachable(value);
 }
 
 /** The parts a field value draws: an input's frame. */
@@ -452,81 +383,6 @@ export function handleLook(value: Handle): HandleLook {
         verticalLength,
         switch: null,
         brightensOnHover: false,
-      };
-  }
-  return unreachable(value);
-}
-
-/** A group drawn as a track: a plate over the chosen item, inside the track's groove. */
-export interface GroupTrackLook {
-  readonly form: "track";
-  readonly span: "item";
-  readonly radius: Radius;
-  readonly fill: Fill;
-  /** The track's height: the `md` height scale. */
-  readonly height: Scale;
-}
-
-/** A group drawn as cells: adjacent outlined cells, the chosen one on its own face. */
-export interface GroupCellsLook {
-  readonly form: "cells";
-  /** 40 points: M3's segmented button (`SegmentedButtonTokens.kt`). */
-  readonly height: number;
-  /** 12 points: M3's cell padding. */
-  readonly padding: number;
-  /** 8 points: M3's gap between a cell's check and its label. */
-  readonly gap: number;
-  /** 18 points: M3's leading check. */
-  readonly check: number;
-  /** The row's corner: a capsule, M3's full shape for the segmented button (§11.3 states no corner
-   * for cells, and material's picture draws one), whose ends the chosen cell is clipped to. */
-  readonly corner: Radius;
-  /** The edge round the row and between its cells. */
-  readonly edge: Edge;
-  /** The chosen cell's face: M3's SecondaryContainer, the brand tint (§11.3 names `finish.raised`,
-   * which material's picture does not draw: P3a keeps its pixels). */
-  readonly selected: Fill;
-}
-
-/** The parts a group value draws: a segmented control's track or its cells. */
-export type GroupLook = GroupTrackLook | GroupCellsLook;
-
-/**
- * The shape a `control()` value gives a group. `track` is a block inside the track's groove;
- * `capsule` is iOS's segmented control — a capsule track holding a capsule of the theme's muted
- * fill, one step in from the track's ends; `cells` is M3's segmented button — 40-point cells, a
- * 12-point padding, the check's 8-point gap, and dividers between the cells.
- */
-export function groupLook(value: Group): GroupLook {
-  switch (value) {
-    case "track":
-      return {
-        form: value,
-        span: "item",
-        radius: "shape.control",
-        fill: { kind: "finish", role: "plate" },
-        height: "height.md",
-      };
-    case "capsule":
-      return {
-        form: "track",
-        span: "item",
-        radius: "pill",
-        // A grey chosen block, not a raised one: iOS's secondary fill reads as a step *into* the
-        // capsule track, and the label keeps the primary ink.
-        fill: { kind: "colour", role: "muted" },
-        height: "height.md",
-      };
-    case "cells":
-      return {
-        form: value,
-        height: 40,
-        padding: 12,
-        gap: 8,
-        check: 18,
-        corner: "pill",
-        edge: { width: "stroke.hairline", fill: { kind: "colour", role: "border" } },
-        selected: { kind: "tint", role: "brand" },
       };
   }
   return unreachable(value);

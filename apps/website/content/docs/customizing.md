@@ -63,7 +63,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
 }
 ```
 
-Change the values in that function — a height, a radius, a hover fill — and the shell below still spreads the result. Keep the props it returns; they are what the base control reads. `buttonLook` is one; `iconButtonLook`, `roundButtonLook` and `splitButtonLook` live in the same file, and other components name theirs the same way (`switchLook`, `checkboxLook`). Controls whose shape and dimensions vary by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/indicator.ts` for fields) read the six control dimensions the theme states through `control()`; the per-component geometry that hangs off them stays right inside those component or lib files.
+Change the values in that function — a height, a radius, a hover fill — and the shell below still spreads the result. Keep the props it returns; they are what the base control reads. `buttonLook` is one; `iconButtonLook`, `roundButtonLook` and `splitButtonLook` live in the same file, and other components name theirs the same way (`switchLook`, `checkboxLook`). Controls whose shape and dimensions vary by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/indicator.ts` for fields) read the four control dimensions the theme states through `control()`; the per-component geometry that hangs off them stays right inside those component or lib files.
 
 ## Structure and API
 

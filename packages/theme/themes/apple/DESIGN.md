@@ -436,13 +436,11 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (26px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
-**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): Control dimensions: the six behaviour-named axes a theme decides for its controls (selection, field, choice, track, handle, group). Themes override only the axes that differ.
-- **`selection`**: `plate`
+**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): Control dimensions: the four behaviour-named axes a theme decides for its controls (field, choice, track, handle). Themes override only the axes that differ.
 - **`field`**: `box`
 - **`choice`**: `well`
 - **`track`**: `sunk`
 - **`handle`**: `circle`
-- **`group`**: `capsule`
 
 ## Motion & Micro-interaction
 

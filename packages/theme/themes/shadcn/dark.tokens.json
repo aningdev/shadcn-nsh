@@ -297,15 +297,13 @@
     "control": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "selection": "plate",
           "field": "box",
           "choice": "well",
           "track": "sunk",
-          "handle": "circle",
-          "group": "track"
+          "handle": "circle"
         }
       },
-      "$description": "Control dimensions: the six behaviour-named axes a theme decides for its controls (selection, field, choice, track, handle, group). Themes override only the axes that differ."
+      "$description": "Control dimensions: the four behaviour-named axes a theme decides for its controls (field, choice, track, handle). Themes override only the axes that differ."
     },
     "radius": {
       "$type": "dimension",

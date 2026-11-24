@@ -58,7 +58,7 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 - 字符串 children 渲染成带 look 字体的 `Text`，其他原样渲染
 - **函数 child 是一次响应式插入**：`<View>{() => …}</View>` 里的函数由 NSH 当作动态 child，在它自己的 render effect 里调用，只重跑它读到的那些值，兄弟节点不动（`crates/nsh-js/src/dom.rs` 的 `insert_value` → `insert_effect`，`JSX.Element` 里 `() => Element` 就是一员）。用在“先算出几个值、再交回一个元素”的地方：`combobox.tsx` 的 `ComboboxContent`（look、chrome、空表与 chips 都按这次绘制读一遍，再交给 `BaseCombobox`）、`date-picker.tsx` 的 `DatePickerContent`、`color-picker.tsx` 的 `ColorFields` 的字段行（换格式就换一组字段）。需要自己的状态、`cleanup` 或 context 的部分仍写成组件；它不能用来推迟读 children——读 `props.children` 的函数 child 只有门户的内容构建函数一个（`nsh/base` 每次打开才建它，带 `children-lint: <原因>` 注释）
 - **主题值在绘制时读**：模块作用域不读主题值；look 的成员写成 getter（`get height() { return controlHeight.md; }`，样板 `lib/surface.tsx`）或直接在 JSX / `style` 里读。组件体里的 `const h = controlHeight.md` 只读一次，换主题后留在旧值
-- **几何走刻度**：行高 `controlHeight.*`、图标 `iconSize.*`、边宽 `stroke.hairline` / `stroke.control`、圆角 `rounded()`、字重 `font.weight(<角色>)`、字号走字体角色；控件维度（`selection`、`field`、`choice`、`track`、`handle`、`group`）的形态从 `control()` 取值、交给 `lib/look.ts`，组件里不按主题名比较、不留按主题的表。刻度上没有的数字就地写一行注释说明它是哪来的
+- **几何走刻度**：行高 `controlHeight.*`、图标 `iconSize.*`、边宽 `stroke.hairline` / `stroke.control`、圆角 `rounded()`、字重 `font.weight(<角色>)`、字号走字体角色；控件维度（`field`、`choice`、`track`、`handle`）的形态从 `control()` 取值、交给 `lib/look.ts`，组件里不按主题名比较、不留按主题的表；标签页、分段控件与侧边栏的形态不读维度，写在组件自己的 look 里。刻度上没有的数字就地写一行注释说明它是哪来的
 - **时长走 `motion.*`**：状态过渡用 `motion.state`，浮层出现用 `motion.enter`，其余按快慢取 `motion.fast` / `motion.default` / `motion.slow`；只有循环动画留常量，并注释为什么
 - **JS 里的状态要写理由**：一个状态的外观实在进不了 state 样式（例如边画在触发器上、状态在列表里），就在那一行注释为什么
 - **每个导出部件都透传**：部件的 props 是它所画节点的 props 加自己的轴，`{...rest}` 落在那个节点上；不画自己视图的根（如 `Menu`）在 doc comment 里说明 props 去了哪

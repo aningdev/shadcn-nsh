@@ -10,14 +10,7 @@
  *
  * Pure: no `node:fs`, so the lint and its unit test both read it.
  */
-import {
-  choiceLook,
-  fieldLook,
-  groupLook,
-  handleLook,
-  selectionLook,
-  trackLook,
-} from "../../packages/ui/lib/look";
+import { choiceLook, fieldLook, handleLook, trackLook } from "../../packages/ui/lib/look";
 import type { ControlDimension } from "../tokens/types";
 import type { RecipeRow } from "./spec";
 import { controlDimensionValues } from "./style";
@@ -49,12 +42,10 @@ export function collectNumbers(part: unknown): number[] {
 /** Every look's numbers: each dimension, every value it takes. */
 export function lookNumbers(): LookNumbers[] {
   return [
-    ...numbersOf("selection", selectionLook, controlDimensionValues.selection),
     ...numbersOf("field", fieldLook, controlDimensionValues.field),
     ...numbersOf("choice", choiceLook, controlDimensionValues.choice),
     ...numbersOf("track", trackLook, controlDimensionValues.track),
     ...numbersOf("handle", handleLook, controlDimensionValues.handle),
-    ...numbersOf("group", groupLook, controlDimensionValues.group),
   ];
 }
 

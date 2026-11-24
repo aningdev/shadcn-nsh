@@ -448,13 +448,11 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`container`** (8px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (8px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
-**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): WinUI 3 control dimensions: SelectorBar's bar, TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).
-- **`selection`**: `bar`
+**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): WinUI 3 control dimensions: TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).
 - **`field`**: `box-underline`
 - **`choice`**: `inset`
 - **`track`**: `hairline`
 - **`handle`**: `ring`
-- **`group`**: `track`
 
 ## Motion & Micro-interaction
 

@@ -564,10 +564,8 @@ export const winuiStyle = {
     stroke: { hairline: 1, control: 1 },
     focus: { style: "double", width: 2, offset: 0 },
     control: {
-      // WinUI 3's own controls (docs/specs/theme-contract-v2.md §11.2): SelectorBar's bar,
-      // TextBox's box-underline, inset radios and checkboxes, a hairline track and a ring knob.
-      // A group stays in a track, the base's value.
-      selection: "bar",
+      // WinUI 3's own controls (docs/specs/theme-contract-v2.md §11.2): TextBox's box-underline,
+      // inset radios and checkboxes, a hairline track and a ring knob.
       field: "box-underline",
       choice: "inset",
       track: "hairline",
@@ -772,7 +770,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
           "WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).",
         "dimension.focus.width": "2px outer focus stroke width per WinUI 3.",
         "dimension.control":
-          "WinUI 3 control dimensions: SelectorBar's bar, TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).",
+          "WinUI 3 control dimensions: TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).",
         shape: "Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; WinUI 3 swaps fill brushes instead).",
