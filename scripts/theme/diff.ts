@@ -239,7 +239,7 @@ export function keyKind(key: string, theme: Json | undefined): "colour" | "value
     const name = key.slice("color.".length);
     const vars = (theme?.cssVars as { theme?: Record<string, string> } | undefined)?.theme;
     const raw = vars?.[name];
-    if (raw !== undefined) return tokenKind(name, raw) === "color" ? "colour" : "value";
+    if (raw !== undefined) return tokenKind(raw) === "color" ? "colour" : "value";
     return "colour";
   }
   if (key.startsWith("finish.")) {

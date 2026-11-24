@@ -259,12 +259,12 @@ export function TabTitle(props: {
         </View>
       </If>
       <Text
+        // The tab strip is a fixed height: the text follows the system size, but only so far.
+        maxFontSizeMultiplier={1.2}
         style={{
           numberOfLines: 1,
           // No type role has this size: a tab's label is 13 in both tiers (`label` is 14 / 15).
           fontSize: 13,
-          // The tab strip is a fixed height: the text follows the system size, but only so far.
-          maxFontSizeMultiplier: 1.2,
           fontWeight: font.weight("label"),
           color: on.interpolate({
             inputRange: [0, 1],
@@ -290,10 +290,10 @@ export function TabTitle(props: {
           }}
         >
           <Text
+            maxFontSizeMultiplier={1.2}
             style={{
               // No type role has this size: a tab's count is 10.
               fontSize: 10,
-              maxFontSizeMultiplier: 1.2,
               fontWeight: font.weight("title"),
               color: colors.mutedForeground,
               fontVariant: ["tabular-nums"],

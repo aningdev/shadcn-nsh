@@ -4,7 +4,7 @@
 import { alpha, colors, focusRing, font } from "@shadcn-nsh/theme";
 import { ExternalLink } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
-import { platform, split, Text, token, View } from "nsh";
+import { platform, split, Text, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
 import { Icon } from "./lib/icons";

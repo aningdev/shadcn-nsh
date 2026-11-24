@@ -181,7 +181,7 @@ export function themePairs(
   for (const [fg, bg] of Object.entries(vars)
     .filter(([name]) => name.endsWith("-foreground") && name !== "foreground" && !skipped[name])
     .map(([name]) => [name, stem(name)] as [string, string])) {
-    if (tokenKind(bg, vars[bg] ?? "") === "color") {
+    if (tokenKind(vars[bg] ?? "") === "color") {
       add({ fg, bg, required: 4.5, why: "a text role on its surface" }, fg, bg);
     }
   }

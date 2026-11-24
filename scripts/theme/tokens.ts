@@ -31,7 +31,7 @@ export interface SplitFinishes<F = Record<string, unknown>> {
 }
 
 /** The DTCG `$type` of one token in `cssVars.theme`. */
-export function tokenKind(name: string, value: string): TokenKind {
+export function tokenKind(value: string): TokenKind {
   if (/^\d+(?:\.\d+)?(?:px|rem)$/.test(value.trim())) return "dimension";
   return "color";
 }
@@ -39,7 +39,7 @@ export function tokenKind(name: string, value: string): TokenKind {
 /** Every token declared in a `theme.json`, mapped to its DTCG `$type`. */
 export function tokenKinds(cssVars: ThemeCssVars): Map<string, TokenKind> {
   const out = new Map<string, TokenKind>();
-  for (const [name, value] of Object.entries(cssVars.theme)) out.set(name, tokenKind(name, value));
+  for (const [name, value] of Object.entries(cssVars.theme)) out.set(name, tokenKind(value));
   for (const name of Object.keys(cssVars.light)) out.set(name, "color");
   for (const name of Object.keys(cssVars.dark)) out.set(name, "color");
   return out;

@@ -383,7 +383,7 @@ describe("DTCG source lint", () => {
     const problems = withMutatedDefault((tmp) => {
       const p = path.join(tmp, "packages/theme/tokens/themes/default/light.tokens.json");
       const doc = JSON.parse(fs.readFileSync(p, "utf8"));
-      doc.color.hover.$value.components = [0.5, 0.2, 120];
+      doc.color["brand-tint"].$value.components = [0.5, 0.2, 120];
       fs.writeFileSync(p, JSON.stringify(doc, null, 2));
     });
     expect(problems.join("\n")).toContain("differs from live colorOp evaluation");
@@ -587,7 +587,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           const dim = resolved.dimension.radius[dtcg].$value as { value: number; unit: string };
           expect(`${dim.value}${dim.unit}`).toBe(themeJson.cssVars.theme[cssVar]);
         }
-        expect(doc.font, "a theme owns no font group").toBeUndefined();
+        expect(doc.font.family, "a theme states no font family").toBeUndefined();
 
         // Colors in theme.json cssVars.theme (C-layer) and cssVars[appearance] (A/B-layer)
         const expectedColors: Record<string, string> = {};

@@ -3,7 +3,7 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { alpha, chart, colors, finish, rounded, terminal, shape, stroke } from "@shadcn-nsh/theme";
-import { Text, token, View } from "nsh";
+import { Text, View } from "nsh";
 import type { TextStyle, ViewStyle } from "nsh";
 
 // Every mark, so a chart asks one module for its parts and their look.

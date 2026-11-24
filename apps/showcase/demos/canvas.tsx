@@ -20,7 +20,6 @@ import {
   Path2D,
   signal,
   Text,
-  token,
   View,
 } from "nsh";
 
