@@ -39,15 +39,18 @@ export const FINISH_FIELDS = [
   "backdropFilter",
 ] as const;
 
-/** A finish as a theme file writes it: the fields it draws with, and nothing else. */
+/** A finish as a theme file writes it: the fields it draws with; `null` clears a field the shared finish set. */
+type WrittenFinish = Partial<Record<(typeof FINISH_FIELDS)[number], string | null>>;
+
+/** A finish after merging: the fields it draws with, and nothing else. */
 export type Finish = Partial<Record<(typeof FINISH_FIELDS)[number], string>>;
 
 /** A theme's semantics, as `semantics.json` writes them. */
 export type SemanticsFile = {
   finishes: {
-    shared: Record<string, Finish>;
-    light: Record<string, Finish>;
-    dark: Record<string, Finish>;
+    shared: Record<string, WrittenFinish>;
+    light: Record<string, WrittenFinish>;
+    dark: Record<string, WrittenFinish>;
   };
 };
 
@@ -130,7 +133,14 @@ function mergedFinishes(file: SemanticsFile, scheme: "light" | "dark"): Record<s
   const overrides = file.finishes[scheme] ?? {};
   const roles = [...new Set([...Object.keys(file.finishes.shared), ...Object.keys(overrides)])];
   return Object.fromEntries(
-    roles.map((role) => [role, { ...file.finishes.shared[role], ...overrides[role] }]),
+    roles.map((role) => [
+      role,
+      Object.fromEntries(
+        Object.entries({ ...file.finishes.shared[role], ...overrides[role] }).filter(
+          ([, value]) => value !== null,
+        ),
+      ) as Finish,
+    ]),
   );
 }
 
