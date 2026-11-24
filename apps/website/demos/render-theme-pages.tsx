@@ -42,6 +42,10 @@ export function renderThemePages({ reference = true }: { reference?: boolean } =
           const ours = await open(`./${id}.tsx`, options);
           const theirs =
             reference && !selfReference ? await open(`./${id}.ref.tsx`, options) : null;
+          // The palette arrives after the app has mounted (`apply-palette.ts`: `Storage` answers a
+          // promise), so both pages settle into it before a step puts a field in a state.
+          await settle(ours);
+          if (theirs) await settle(theirs);
           await steps?.(ours);
           await pointerSteps?.(ours);
           if (theirs) {

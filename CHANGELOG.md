@@ -13,6 +13,7 @@
 - **Apple light: a selected or hovered row shows on the grouped background (#349).** The light `muted` fill is now `secondarySystemFill` over the card (was the tertiary step), so `accent`, `sidebar-accent`, hover, field, track and inset fills, which reference it, separate from the grouped page and from cards. `bun run theme:contrast` gains a fill-separation check (lightness gap of at least 0.015 between a fill and the surface it sits on, translucent fills composited), which all six themes pass in light and dark.
 
 - **A selected toggle's, or selected secondary button's, hover and press wash matches its label ink.** The state layer used `accent-foreground` while the text uses the selected finish's `primary-foreground`.
+
 ### Fixed
 
 - **`nsh run` builds the demos and the showcase again (#347).** Their start-up no longer uses a top-level `await`, which `nsh run`'s hot-reload bundle (cjs) can't compile; the page stays hidden until the chosen palette is drawn, so the first visible frame is still in the site's theme.
