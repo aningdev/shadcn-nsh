@@ -128,12 +128,15 @@ jobs:
       - name: Publish to the site branch
         env:
           CHANNEL: ${{ steps.site.outputs.channel }}
+          # The checkout's credentials belong to the build's repository, not this one: the push
+          # authenticates with the job token.
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           site="$RUNNER_TEMP/site"
           mkdir -p "$site"
           git -C "$site" init -q
-          git -C "$site" remote add origin "$(git remote get-url origin)"
+          git -C "$site" remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           if git ls-remote --exit-code --heads origin site >/dev/null 2>&1; then
             git -C "$site" fetch --depth=1 origin site
             git -C "$site" checkout -q -B site FETCH_HEAD
