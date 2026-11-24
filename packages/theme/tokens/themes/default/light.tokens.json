@@ -1142,14 +1142,6 @@
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": "{color.border}"
       }
     },
     "glass": {
@@ -1240,14 +1232,6 @@
         "$value": "{color.muted}"
       },
       "border-color": {
-        "$type": "color",
-        "$value": "{color.input}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.input}"
-      },
-      "border-bottom-color": {
         "$type": "color",
         "$value": "{color.input}"
       }

@@ -436,7 +436,7 @@ const NOUNS: Record<string, string> = {
   inverse: "反色面",
   glass: "玻璃面",
   accent: "强调面",
-  fill: "跑起来的填充",
+  fill: "进度条、滑杆与开关选中的那段",
   knob: "旋钮",
   hover: "悬停中的控件",
   pressed: "按下的控件",
@@ -464,11 +464,11 @@ const FIELD_NOUNS: Record<string, Record<string, string>> = {
     "border-top-color": "上边色",
     "border-bottom-color": "下边色",
     backdropFilter: "背景模糊",
+    "checked-background": "打开时的底",
+    "checked-border-color": "打开时的边",
+    "checked-gradient": "打开时叠在底上的渐变",
     material: "材质",
     elevation: "平台自己的高度（dp）",
-    "checked-background": "选中时的底",
-    "checked-border-color": "选中时的边",
-    "checked-gradient": "选中时的渐变",
   },
 };
 

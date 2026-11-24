@@ -15,7 +15,7 @@
 
 - **改一个值只改一处。** 组件里没有颜色字面量，`semantics.json` 里通过 `{token}` 引用 `theme.json`，改 token（含宿主 `setThemeOverrides`）同时改到所有用到它的面与组件。
 - **影子只有一份刻度。** 一个 finish 不写影子，只点名刻度里的几部分（`"shadow": ["{shadow.edge.surface}", "{shadow.sm}"]`）；刻度的值在 light / dark 的 `shadow` 组里各写一次，编译进 `semantics.json` 的 `elevation`。同一步影子的面因此长得一样，改一步也只改一处。
-- **平涂的主题不写渐变。** 一个没有渐变的外观不写 `gradient` token，组件读到的就是没有背景图（编译产物里是 `null`）。一个 finish 的字段集合固定，可缺的字段各有中性值，写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里，主题只在真正不同时写（见 §3）。
+- **平涂的主题不写渐变。** 一个没有渐变的外观不写 `gradient` token，组件读到的就是没有背景图（编译产物里是 `null`）。每个角色只带 `finishFields` 给它的字段，主题不写某个字段就取这个角色的中性值，中性值写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里，主题只在真正不同时写（见 §2、§3）。
 
 规则的执行者是 `bun scripts/theme-lint.ts`（在 `bun run check` 里）：下文每一条都在那里有一条检查，写错了会点名文件、finish 和字段。
 
@@ -86,7 +86,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 2 semantics.json 的两条线
 
-一个 finish 是一个面的样子，由这几样拼出来：
+一个 finish 是一个面的样子，字段就这么几样：
 
 | 字段                  | 写什么                                                                          |
 | --------------------- | ------------------------------------------------------------------------------- |
@@ -99,11 +99,35 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `border-bottom-color` | 下边覆写（WinUI 控件斜角）：`{token}` 或 `transparent`                          |
 | `backdropFilter`      | 只有模糊，不放颜色                                                              |
 | `material`            | `"none"` 之外，`"glass"` 或 `"acrylic"`（见下）                                 |
-| `elevation`           | 平台自己的阴影高度（dp），只有要它的层写（见下）                                |
+| `elevation`           | 平台自己的阴影高度（dp），只有要它的层写（见第 3 节）                           |
 
 颜色字段包括 `background`、`gradient`、`foreground`、`border-color` 与 `border-top-color` / `border-bottom-color`（读取后经 `themed()` 映射为 NSH 样式键 `backgroundColor`、`backgroundImage`、`color`、`borderColor`、`borderTopColor`、`borderBottomColor`）。`foreground` 以不可枚举的 getter 给出，把它展开进 `ViewStyle` 不会多写一个未知键；文字用 `finish.<role>.foreground` 取色。`shadow` 不是颜色字段：它引用刻度，刻度的值也是墨色 + alpha，`themed()` 把引用接成一条 `boxShadow`。按下时换色的主题另写 `pressed-background` / `pressed-foreground`（WinUI 的 `AccentFillColorTertiary` 与 `TextOnAccentFillColorSecondary`），同样以不可枚举的 getter 给出。`knob` 还可以写它被选中时的状态：`checked-background`、`checked-border-color`、`checked-gradient`（getter 是 `checkedBackground`、`checkedBorderColor`、`checkedGradient`）。选中是旋钮的一个状态，不是另一个面，所以只有 `knob` 写这三项，主题也只写与没选中时不同的字段：没写的字段就是 `knob` 自己的值；写 `checked-gradient: "none"` 表示选中时是平涂（编译成 `null`，与“没写”不同）。
 
-`finishes` 块分为 `shared`（明暗共用字段）与稀疏覆写 `light` / `dark`（只写与 `shared` 不同的字段）；合并后每个 finish 的角色集合固定，字段集合也固定（只有 `knob` 的 `checked-*` 三项可选：没写就是没选中时的值，不取中性值）。主题没写的字段取中性值，中性值写一次在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里：`material: "none"`（编译成 `null`）、`backdropFilter: "none"`、`elevation: null`、`gradient: null`、两条边色不带自己的颜色（跟 `border-color`）、按下的两个颜色字段 `null`（按下只压暗，不换色）。源码里除 `elevation` 外的中性值以字符串 `"none"` 写在 finish 组的 `$extensions["dev.aning.shadcn-nsh"]` 上——DTCG 的 token 不接受 `null` 值——编译时换成 `null`；**写 token 就压过 `$extensions`**。
+`finishes` 块分为 `shared`（明暗共用字段）与稀疏覆写 `light` / `dark`（只写与 `shared` 不同的字段）。合并后角色集合固定，**每个角色只带它用得到的字段**：字段留着，是因为六套主题里至少一套在这个角色上给了它一个不是中性的值；没有一套用到的字段不属于这个角色。#374 之前十五个角色都写满十六个字段，其中大半在每套主题里都是中性值，等于让每套主题、每份编译产物都重复一遍“这里没有东西”。`packages/theme/finish-fields.ts` 的 `finishFields` 是这张表的唯一出处：`FinishRole` 与每个角色的字段类型都由它推出，`check:theme` 拿它与每套主题对账，读一个角色没有的字段是类型错误。
+
+<!-- theme-lint: finish-fields -->
+
+| finish     | 字段                                                                                                                                |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `card`     | `background` `shadow` `border-color` `foreground` `elevation`                                                                       |
+| `inset`    | `shadow` `border-color` `foreground`                                                                                                |
+| `channel`  | `background` `shadow` `border-color` `foreground`                                                                                   |
+| `raised`   | `background` `shadow` `border-color` `border-top-color` `border-bottom-color` `backdropFilter` `foreground` `material`              |
+| `plate`    | `background` `shadow` `border-color` `foreground` `elevation`                                                                       |
+| `overlay`  | `background` `shadow` `border-color` `backdropFilter` `foreground` `material` `elevation`                                           |
+| `modal`    | `background` `shadow` `border-color` `foreground` `elevation`                                                                       |
+| `inverse`  | `background` `shadow` `border-color` `backdropFilter` `foreground` `material` `elevation`                                           |
+| `glass`    | `background` `shadow` `border-color` `backdropFilter` `foreground` `material` `elevation`                                           |
+| `accent`   | `background` `shadow` `border-color` `border-bottom-color` `pressed-background` `pressed-foreground` `pressed-opacity` `foreground` |
+| `fill`     | `background` `gradient` `shadow` `border-color` `foreground`                                                                        |
+| `knob`     | `background` `gradient` `shadow` `border-color` `checked-background` `checked-border-color` `checked-gradient` `foreground`         |
+| `hover`    | `background` `shadow` `border-color` `border-top-color` `border-bottom-color` `foreground` `elevation`                              |
+| `pressed`  | `background` `shadow` `border-color` `foreground` `elevation`                                                                       |
+| `disabled` | `background` `shadow` `border-color` `foreground`                                                                                   |
+
+<!-- /theme-lint: finish-fields -->
+
+主题没写的字段取这个角色的中性值，中性值只写一次，在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里、只给有这个字段的角色：`material: "none"`（编译成 `null`）、`backdropFilter: "none"`、`elevation: null`、`gradient: "none"`（编译成 `null`）、`border-top-color` / `border-bottom-color: "none"`（编译成 `null`：不带自己的颜色，跟 `border-color`）、按下的两个颜色字段 `"none"`（编译成 `null`：按下只压暗，不换色）。源码里除 `elevation` 外的中性值以字符串 `"none"` 写在 `$extensions["dev.aning.shadcn-nsh"]` 上——DTCG 的 token 不接受 `null` 值——编译时换成 `null`；**写 token 就压过 `$extensions`**。`knob` 的 `checked-*` 没有中性值：没写就是没选中时的值。主题源码里也不再重复中性值：`"none"` 只在没有任何一套主题用到那个字段的时候才写，否则写出现值，`material.ts` 与 `tokens/lint.ts` 会在角色没有的字段被写上时报错。
 
 ## 2b 风格数据
 
@@ -193,7 +217,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 3 固定形状
 
-**每种主题、每种外观里，合并 `shared` 与稀疏覆写后的同一个 finish 的角色集合一样，且等于默认主题的那一份；字段集合也一样，除了可以缺的 `gradient`、`backdropFilter`、`material`。** 一个主题觉得“我没有渐变”，答案是不写 `gradient`——不是写一条两个 stop 同色的渐变。`fillStyle()` 与 `sliderFill` 读到 `undefined` 就是没有背景图，换主题不会换出另一种结构。
+**每种主题、每种外观里，合并 `shared` 与稀疏覆写后的同一个 finish 的角色集合一样，字段集合也一样：就是这个角色在 `finishFields` 里列的那几项。** 一个主题觉得“我没有渐变”，答案是不写 `gradient`——不是写一条两个 stop 同色的渐变。`fillStyle()` 与 `sliderFill` 读到 `undefined` 就是没有背景图，换主题不会换出另一种结构。
 
 引擎先画 `backgroundColor`，再把 `backgroundImage` 叠上去（`references/nsh/crates/nsh-core/src/canvas.rs`），所以一个面有底、有渐变两层，**颜色写在一层上，另一层留空**：
 
@@ -226,7 +250,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 **折掉的档位**（有意为之，记在这里）：`solid-glass` 的旋钮投影（0.3）与控件影（0.06）落进同一档 `sm`；`default` 的卡片影（0.04）与控件影（0.05）落进同一档 `md`；`apple` 的浮层与模态面本来就没有更深的档，`lg` 与 `xl` 同值。
 
-**`material`**（#267）是一个 finish 向平台要的原生材质，**每个 finish 都写**，不要就写 `"none"`（形状固定，不删字段）。源码里的取值只有三个：`"none"`、`"glass"`、`"acrylic"`，编译进 `semantics.json` 时是 `"glass"`、`"acrylic"` 或 `null`（`"none"` 与平涂不写 `gradient` 一样，编译后什么都不写）。
+**`material`**（#267）是一个 finish 向平台要的原生材质，**只有 `raised`、`overlay`、`inverse`、`glass` 写**（这张表里它们有 `material`）；要平台材质就点名，不要就写 `"none"`，编出 `null`。源码里的取值只有三个：`"none"`、`"glass"`、`"acrylic"`，编译进 `semantics.json` 时是 `"glass"`、`"acrylic"` 或 `null`（`"none"` 与平涂不写 `gradient` 一样，编译后什么都不写）。
 
 配方只有一份，在 `packages/theme/materials.ts`；主题只点名，不写平台参数：
 
@@ -238,11 +262,11 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 **玻璃要有回落。** 系统玻璃只在 iOS / macOS 26 及以上画出来，Acrylic 的模糊只在 Windows 11 的透明窗口里画出来，别处画的是 `backdropFilter`。所以每个配方都带回落：模糊半径（30px）与面色的最低不透明度（`glass` 0.72、`acrylic` 0.85）。`themed()` 在 `backdropFilter` 是 `none` 时补上配方的模糊；`check:theme` 核对面色 alpha 不低于最低值（`checkMaterialFill`），否则面板后面的字会原样透出来（#251）。
 
-**`elevation`** 是 Android 自己的阴影高度（dp），只有要平台阴影的层写（`material` 主题的 `card`、`raised`、`hover`、`pressed` 是 1，`overlay`、`glass` 是 3，`modal`、`inverse` 是 6）。它和 `shadow` 无关：`shadow` 是画出来的影子，`elevation` 是平台按高度生成的影子。
+**`elevation`** 是 Android 自己的阴影高度（dp），只有要平台阴影的层写（`card`、`plate`、`hover`、`pressed`、`overlay`、`modal`、`inverse`、`glass`；`material` 主题里 `card`、`plate`、`hover`、`pressed` 是 1，`overlay`、`glass` 是 3，`modal`、`inverse` 是 6）。它和 `shadow` 无关：`shadow` 是画出来的影子，`elevation` 是平台按高度生成的影子。
 
-`themed()` 从不把 `material` 放进 style；style 里只多配方的玻璃键，`material` 为 `null` 时键与以前完全一样。`ios`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 按配方返回，`elevation` 在同一处作为 `android.elevation`，组件在同一个 View 上铺开：`<View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />`。`check:theme` 检查 `material` 存在于每个 finish、取值是三个之一，`elevation` 是非负数值或 `null`（`scripts/theme/material.ts`）。
+`themed()` 从不把 `material` 放进 style；style 里只多配方的玻璃键，`material` 为 `null` 时键与以前完全一样。`ios`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 按配方返回，`elevation` 在同一处作为 `android.elevation`，组件在同一个 View 上铺开：`<View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />`。`check:theme` 检查 `material` 出现在有这个字段的角色上、取值是三个之一，`elevation` 是非负数值或 `null`，并拦下角色没有的字段被写上（`scripts/theme/material.ts`、`scripts/tokens/lint.ts`）。
 
-字段顺序固定：`background`、`gradient`、`shadow`、`foreground`、`border-color`、`border-top-color`、`border-bottom-color`、`pressed-background`、`pressed-foreground`、`pressed-opacity`、`checked-background`、`checked-border-color`、`checked-gradient`、`backdropFilter`、`material`、`elevation`（`pressed-opacity` 只写在要压暗的角色上，`checked-*` 只写在 `knob` 上且只写要变的字段，其余字段每个角色都写，没写的取中性值）。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拦下比默认主题多一个或少一个字段的 finish。
+字段顺序固定：`background`、`gradient`、`shadow`、`foreground`、`border-color`、`border-top-color`、`border-bottom-color`、`pressed-background`、`pressed-foreground`、`pressed-opacity`、`checked-background`、`checked-border-color`、`checked-gradient`、`backdropFilter`、`material`、`elevation`，一个角色只排它有的那几项。`knob` 的 `checked-*` 只写要变的字段，没写就是没选中时的值；其余字段每个颜色角色都写，主题不写的取这个角色的中性值。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拿 `finishFields` 拦下角色没有的字段，也拦下少一个字段的 finish。
 
 ## 4 每个 finish
 
@@ -270,7 +294,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- /theme-lint: finishes -->
 
-每个 finish 都写 `foreground`（面上的字与图标），所以组件不用 `?? colors.foreground` 兜底：`card`/`inset`/`raised`/`overlay`/`modal`/`glass`/`knob`/`hover`/`pressed` 是 `{foreground}`（`knob` 上不写字，它的 `foreground` 只为形状一致，`theme:contrast` 不查它；选中态不另写墨，也没有字可写），`accent` 是 `{primary-foreground}`，`inverse` 是 `{inverse-foreground}`，`disabled` 是 `{muted-foreground}`。填充色的按下态是 `accent` 按自己的 `pressed-opacity`（`finish.accent.pressedOpacity`，每套主题都写：按下变淡的主题写 0.88，按下叠色或换面的 Material / WinUI 写 1）变淡，不再另设一个面；主题若在按下时换掉强调色（WinUI 的 `AccentFillColorTertiary`），就在 `accent` 上多写两个字段 `pressed-background` 与 `pressed-foreground`，`button` 按下时读它们。
+每个 finish 都写 `foreground`（面上的字与图标），所以组件不用 `?? colors.foreground` 兜底：`card`/`inset`/`raised`/`overlay`/`modal`/`glass`/`knob`/`hover`/`pressed` 是 `{foreground}`（`knob` 上不写字，它的 `foreground` 只为形状一致，`theme:contrast` 不查它；选中态不另写墨，也没有字可写），`accent` 是 `{primary-foreground}`，`inverse` 是 `{inverse-foreground}`，`disabled` 是 `{muted-foreground}`。填充色的按下态是 `accent` 按自己的 `pressed-opacity`（`finish.accent.pressedOpacity`，每套主题都写：按下变淡的主题写 0.88，按下叠色或换面的 Material / WinUI 写 1）变淡，不再另设一个面；`accent` 的字段里就有按下时换的两个颜色 `pressed-background` 与 `pressed-foreground`：换强调色的主题（WinUI 的 `AccentFillColorTertiary`）给它们值，其余主题取中性值 `null`，`button` 按下时读它们。
 
 ## 5 alias 与例外
 

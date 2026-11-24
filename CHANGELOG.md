@@ -34,6 +34,8 @@
 
 ### Changed
 
+- **Each finish role lists only the fields it uses (#374).** `packages/theme/finish-fields.ts` names the fields of each of the 15 finish roles (198 slots become 88), and `FinishOf<role>`, `FinishStyle<role>` and `FaceRole` derive from it: `finish.card` has no `pressed-*`, `finish.knob` alone has `checked-*`, and so on. Every resolved value is unchanged (`theme:diff`: 0 values changed). **Breaking for theme authors:** a custom theme that writes a field its role does not have fails `check:theme`; delete the field.
+
 - **`CodeEditor` is `Editor`, NSH's own name for it (#354).** The registry item is `editor` (`shadcn-nsh add editor`), the file `editor.tsx`, and the exports `Editor`, `EditorFindBar`, `EditorProps`, `EditorFindBarProps`, `editorClasses` and `editorFrame`. **Breaking:** `code-editor` and the `CodeEditor*` / `codeEditor*` names are gone, with no alias; an app that installed `code-editor` keeps its copy, and a new `add` takes `editor`.
 
 - **Toggle, menu, menubar, navigation menu, nav stack, sidebar, trace and terminal sizes read the theme's scales (#293).** Their size tables are getters over `controlHeight`, `iconSize`, the `font.size` roles and `controlSize.row`, so a theme that states other steps resizes them. On screen in the default theme: a menu row is 28 high on a pointer (was 26) and 40 on touch (was 46), with 16-point icons; toggle sides are 24 / 28 / 32 on a pointer and 32 / 40 / 48 on touch; the menubar bar is 38 and a navigation-menu trigger 32; a touch sidebar row is 48. **Breaking:** `sidebarSize.glyph` is gone (the icon is `iconSize.md`), and `sidebarSize.folded` is a getter.

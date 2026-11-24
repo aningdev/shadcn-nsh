@@ -256,12 +256,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       if (idle() || read(o?.selected)) return undefined;
       const variant = v();
       if (themeStyle().state.overlay.hover > 0) {
-        const under = filled(variant)
-          ? finish.accent.backgroundImage
-          : variant === "secondary"
-            ? finish.raised.backgroundImage
-            : undefined;
-        return hovered(buttonInk(variant, !!read(o?.selected)), under);
+        return hovered(buttonInk(variant, !!read(o?.selected)));
       }
       if (filled(variant)) return { opacity: 0.94 };
       if (variant === "destructive") return { backgroundColor: alpha(colors.destructive, 0.16) };
@@ -272,17 +267,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       const variant = v();
       const shade: ViewStyle =
         themeStyle().state.overlay.pressed > 0
-          ? stateLayer(
-              "pressed",
-              buttonInk(variant, !!read(o?.selected)),
-              filled(variant)
-                ? finish.accent.backgroundImage
-                : variant === "secondary"
-                  ? read(o?.selected)
-                    ? finish.accent.backgroundImage
-                    : finish.raised.backgroundImage
-                  : undefined,
-            )
+          ? stateLayer("pressed", buttonInk(variant, !!read(o?.selected)))
           : filled(variant)
             ? pressedAccent()
             : variant === "destructive"
@@ -441,10 +426,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     get hoverStyle(): ViewStyle | undefined {
       if (read(o.selected) || read(o.disabled)) return undefined;
       if (themeStyle().state.overlay.hover > 0) {
-        return hovered(
-          destructive ? "destructive" : "foreground",
-          raised ? finish.raised.backgroundImage : undefined,
-        );
+        return hovered(destructive ? "destructive" : "foreground");
       }
       return destructive
         ? { backgroundColor: tints.destructive }
@@ -456,11 +438,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
       if (read(o.disabled)) return undefined;
       const shade: ViewStyle =
         themeStyle().state.overlay.pressed > 0
-          ? stateLayer(
-              "pressed",
-              destructive ? "destructive" : "foreground",
-              raised ? finish.raised.backgroundImage : undefined,
-            )
+          ? stateLayer("pressed", destructive ? "destructive" : "foreground")
           : raised
             ? { ...finish.pressed }
             : { backgroundColor: alpha(colors.foreground, 0.1) };
@@ -554,10 +532,7 @@ export function roundButtonLook(
     get hoverStyle(): ViewStyle | undefined {
       if (read(o.disabled)) return undefined;
       if (themeStyle().state.overlay.hover > 0) {
-        return hovered(
-          primary ? "primary-foreground" : "foreground",
-          primary ? finish.accent.backgroundImage : finish.raised.backgroundImage,
-        );
+        return hovered(primary ? "primary-foreground" : "foreground");
       }
       return primary ? { opacity: 0.94 } : { ...finish.hover };
     },
@@ -565,11 +540,7 @@ export function roundButtonLook(
       if (read(o.disabled)) return undefined;
       if (themeStyle().state.overlay.pressed > 0) {
         return {
-          ...stateLayer(
-            "pressed",
-            primary ? "primary-foreground" : "foreground",
-            primary ? finish.accent.backgroundImage : finish.raised.backgroundImage,
-          ),
+          ...stateLayer("pressed", primary ? "primary-foreground" : "foreground"),
           ...sink(0.92),
         };
       }

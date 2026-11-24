@@ -462,23 +462,23 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 ## Components
 
-The neutral fields of every finish role, written once: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, so a compiled finish carries every field in every theme.
+The neutral of each field a finish role can have, written once for the roles that have it: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, and a role carries only the fields it lists in `finishFields`.
 
-- **`finish.card`** (backdropFilter: `none`): A surface that holds content: a card, a section.
-- **`finish.inset`** (backdropFilter: `none`): A well cut into a surface: an inset, a field, a track, a groove.
-- **`finish.channel`** (backdropFilter: `none`): The channel a group of choices sits in: a segmented control's track.
+- **`finish.card`**: A surface that holds content: a card, a section.
+- **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
+- **`finish.channel`**: The channel a group of choices sits in: a segmented control's track.
 - **`finish.raised`** (backdropFilter: `none`): A control on a surface: a button, a chip, a pill.
-- **`finish.plate`** (backdropFilter: `none`): A labelled block chosen inside a well: the selected tab, a segmented control's thumb.
+- **`finish.plate`**: A labelled block chosen inside a well: the selected tab, a segmented control's thumb.
 - **`finish.overlay`** (backdropFilter: `none`): A panel floating over the page: a menu, a toast.
-- **`finish.modal`** (backdropFilter: `none`): A surface the page waits for: a dialog, a sheet.
+- **`finish.modal`**: A surface the page waits for: a dialog, a sheet.
 - **`finish.inverse`** (backdropFilter: `none`): The page's inverse: an inverse surface, a tooltip.
 - **`finish.glass`** (backdropFilter: `blur(14px) saturate(180%)`): A translucent surface: what is behind it shows through.
-- **`finish.accent`** (backdropFilter: `none`): The accent's own surface, with its ink.
-- **`finish.fill`** (backdropFilter: `none`): A run's fill: a progress bar's bar, a slider's range, a meter's column.
-- **`finish.knob`** (backdropFilter: `none`): A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.
-- **`finish.hover`** (backdropFilter: `none`): A control under the pointer.
-- **`finish.pressed`** (backdropFilter: `none`): A control held down.
-- **`finish.disabled`** (backdropFilter: `none`): A control that cannot be used.
+- **`finish.accent`**: The accent's own surface, with its ink.
+- **`finish.fill`**: A run's fill: a progress bar's bar, a slider's range, a meter's column.
+- **`finish.knob`**: A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.
+- **`finish.hover`**: A control under the pointer.
+- **`finish.pressed`**: A control held down.
+- **`finish.disabled`**: A control that cannot be used.
 - **Disabled handling** (content=0.5, fill=false): Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.
 
 ## Do's and Don'ts
@@ -490,5 +490,5 @@ The neutral fields of every finish role, written once: a flat surface states no 
 - **Do:** Keep gradient stops `transparent` on translucent `background` finishes so alpha is not doubled by the canvas.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
-- **Don't:** Never delete finish fields or alter the merged finish key set across appearances or themes.
+- **Don't:** Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way.
 - **Don't:** Do not stack opaque fills behind translucent glass gradients; keep the `background` layer `transparent` when the gradient carries the fill.

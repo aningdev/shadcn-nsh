@@ -224,66 +224,32 @@
       "card": {
         "background": "{card}",
         "foreground": "{foreground}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
         "elevation": null
       },
       "inset": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{input}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "border-color": "{input}"
       },
       "channel": {
         "background": "{inset}",
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{border}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "border-color": "{border}"
       },
       "raised": {
         "background": "{raised}",
         "shadow": "none",
         "foreground": "{foreground}",
-        "backdropFilter": "none",
-        "material": null,
         "border-color": "{border}",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "elevation": null
+        "backdropFilter": "none",
+        "material": null
       },
       "plate": {
         "background": "{card}",
         "shadow": "none",
         "foreground": "{foreground}",
         "border-color": "{border}",
-        "backdropFilter": "none",
-        "material": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
         "elevation": null
       },
       "overlay": {
@@ -291,23 +257,11 @@
         "border-color": "{glass-edge}",
         "backdropFilter": "none",
         "material": "acrylic",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
         "elevation": null
       },
       "modal": {
         "background": "{background}",
         "foreground": "{foreground}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
         "elevation": null
       },
       "inverse": {
@@ -316,11 +270,6 @@
         "border-color": "{glass-edge}",
         "backdropFilter": "none",
         "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
         "elevation": null
       },
       "glass": {
@@ -329,11 +278,6 @@
         "border-color": "{glass-edge}",
         "backdropFilter": "blur(30px)",
         "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
         "elevation": null
       },
       "accent": {
@@ -341,77 +285,39 @@
         "shadow": "none",
         "foreground": "{primary-foreground}",
         "border-bottom-color": "{brand-edge}",
-        "pressed-opacity": 1,
-        "material": null,
-        "gradient": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "pressed-opacity": 1
       },
       "fill": {
         "shadow": "none",
         "foreground": "{primary-foreground}",
-        "material": null,
         "background": "{primary}",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "gradient": null
       },
       "knob": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "material": null,
         "background": "{knob}",
         "gradient": null,
         "border-color": "transparent",
-        "checked-background": "{primary-foreground}",
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "checked-background": "{primary-foreground}"
       },
       "hover": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "material": null,
         "background": "{hover}",
         "border-color": "{border}",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "backdropFilter": "none",
         "elevation": null
       },
       "pressed": {
         "shadow": "none",
         "foreground": "{muted-foreground}",
-        "material": null,
         "background": "{muted}",
         "border-color": "{border}",
-        "border-top-color": "{border}",
-        "border-bottom-color": "{border}",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "backdropFilter": "none",
         "elevation": null
       },
       "disabled": {
         "shadow": "none",
-        "border-color": "{border}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "border-color": "{border}"
       }
     },
     "light": {
@@ -439,7 +345,6 @@
       },
       "accent": {
         "border-color": "oklch(0.52768 0.14982 252.341)",
-        "border-top-color": "oklch(0.52768 0.14982 252.341)",
         "pressed-background": "oklch(0.5773 0.13223 250.006)",
         "pressed-foreground": "oklch(0.87245 0.03754 247.003)"
       },
@@ -480,7 +385,6 @@
       },
       "accent": {
         "border-color": "oklch(0.81732 0.11439 230)",
-        "border-top-color": "oklch(0.81732 0.11439 230)",
         "pressed-background": "oklch(0.70029 0.10192 230.522)",
         "pressed-foreground": "oklch(0.42706 0.05878 229.834)"
       },

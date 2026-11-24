@@ -12,7 +12,7 @@
         "sharedDonts": [
           "Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.",
           "Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.",
-          "Never delete finish fields or alter the merged finish key set across appearances or themes."
+          "Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way."
         ],
         "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
         "overview": "WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.",
@@ -598,19 +598,12 @@
     }
   },
   "finish": {
-    "$description": "The neutral fields of every finish role, written once: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, so a compiled finish carries every field in every theme.",
+    "$description": "The neutral of each field a finish role can have, written once for the roles that have it: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, and a role carries only the fields it lists in `finishFields`.",
     "card": {
       "$description": "A surface that holds content: a card, a section.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "elevation": null
         }
       },
       "background": {
@@ -642,18 +635,6 @@
     },
     "inset": {
       "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
-        }
-      },
       "border-color": {
         "$type": "color",
         "$value": "{color.input}"
@@ -671,18 +652,6 @@
     },
     "channel": {
       "$description": "The channel a group of choices sits in: a segmented control's track.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
-        }
-      },
       "background": {
         "$type": "color",
         "$value": "{color.inset}"
@@ -709,11 +678,7 @@
           "backdropFilter": "none",
           "border-bottom-color": "none",
           "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "material": "none"
         }
       },
       "background": {
@@ -756,14 +721,7 @@
       "$description": "A labelled block chosen inside a well: the selected tab, a segmented control's thumb.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "elevation": null
         }
       },
       "background": {
@@ -791,13 +749,8 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
           "elevation": null,
-          "gradient": "none",
-          "material": "acrylic",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "material": "acrylic"
         }
       },
       "background": {
@@ -841,14 +794,7 @@
       "$description": "A surface the page waits for: a dialog, a sheet.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "elevation": null
         }
       },
       "background": {
@@ -883,13 +829,8 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
           "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "material": "none"
         }
       },
       "background": {
@@ -916,13 +857,8 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "backdropFilter": "blur(30px)",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
           "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "material": "none"
         }
       },
       "border-color": {
@@ -967,12 +903,7 @@
       "$description": "The accent's own surface, with its ink.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
           "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
           "pressed-background": "none",
           "pressed-foreground": "none"
         }
@@ -1000,18 +931,6 @@
         "$value": 1
       },
       "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.81732,
-            0.11439,
-            230
-          ],
-          "hex": "#6cd1ff"
-        }
-      },
-      "border-top-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
@@ -1052,14 +971,7 @@
       "$description": "A run's fill: a progress bar's bar, a slider's range, a meter's column.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "gradient": "none"
         }
       },
       "background": {
@@ -1093,14 +1005,7 @@
       "$description": "A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "gradient": "none"
         }
       },
       "background": {
@@ -1144,14 +1049,9 @@
       "$description": "A control under the pointer.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
           "border-bottom-color": "none",
           "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "elevation": null
         }
       },
       "background": {
@@ -1194,14 +1094,7 @@
       "$description": "A control held down.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
+          "elevation": null
         }
       },
       "background": {
@@ -1209,14 +1102,6 @@
         "$value": "{color.muted}"
       },
       "border-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.border}"
-      },
-      "border-bottom-color": {
         "$type": "color",
         "$value": "{color.border}"
       },
@@ -1233,18 +1118,6 @@
     },
     "disabled": {
       "$description": "A control that cannot be used.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null,
-          "gradient": "none",
-          "material": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
-        }
-      },
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"

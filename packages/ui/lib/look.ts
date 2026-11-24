@@ -9,6 +9,7 @@
 
 import type {
   Choice,
+  FaceRole,
   Field,
   FinishRole,
   Group,
@@ -25,9 +26,9 @@ export type ColourRole = keyof Palette;
 /** A tint a part reads: `tints[role]`. */
 export type TintRole = "brand";
 
-/** What fills a part: a finish's whole layer, a palette role, or a translucent tint. */
+/** What fills a part: a finish's whole layer (a role with a fill: every role but `inset`), a palette role, or a translucent tint. */
 export type Fill =
-  | { readonly kind: "finish"; readonly role: FinishRole }
+  | { readonly kind: "finish"; readonly role: FaceRole }
   | { readonly kind: "colour"; readonly role: ColourRole }
   | { readonly kind: "tint"; readonly role: TintRole };
 
@@ -197,6 +198,11 @@ export interface ChoiceLook {
   /** The face at rest, where the form paints one. */
   readonly face: Fill | null;
   /**
+   * The finish whose shade the face wears, where the form reads one it does not paint: the well's
+   * sunk `inset`. `null` where the face carries no shade.
+   */
+  readonly shade: FinishRole | null;
+  /**
    * The face once chosen: the accent layer the filled forms turn over to. A form that leaves its face
    * alone draws its own mark in it instead, and states null.
    */
@@ -238,7 +244,8 @@ export function choiceLook(value: Choice): ChoiceLook {
     case "well":
       return {
         form: value,
-        face: { kind: "finish", role: "inset" },
+        face: null,
+        shade: "inset",
         checked: { kind: "finish", role: "accent" },
         edge: { width: "stroke.control", fill: { kind: "colour", role: "input" } },
         // 5 points with a pointer, 7 on a touch screen: the well's own corner, off the shape scale.
@@ -254,6 +261,7 @@ export function choiceLook(value: Choice): ChoiceLook {
       return {
         form: value,
         face: null,
+        shade: null,
         // M3 leaves the well empty and each control draws its own mark (a radio's ring, a tick).
         checked: null,
         // 2 px: M3's outline (`outlineWidth`).
@@ -272,6 +280,7 @@ export function choiceLook(value: Choice): ChoiceLook {
         form: value,
         // WinUI's `ControlFillColorDefault`, the face an off switch's track takes.
         face: { kind: "colour", role: "track" },
+        shade: null,
         checked: { kind: "finish", role: "accent" },
         // 1 px: WinUI's `ControlStrokeColorDefault`.
         edge: { width: 1, fill: { kind: "colour", role: "input" } },

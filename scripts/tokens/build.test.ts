@@ -300,8 +300,9 @@ describe("DTCG source lint", () => {
         "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
       );
       const fin = JSON.parse(fs.readFileSync(finPath, "utf8"));
-      fin.finish.card.$extensions["dev.aning.shadcn-nsh"].material = "frosted";
-      fin.finish.raised.$extensions["dev.aning.shadcn-nsh"].elevation = -2;
+      fin.finish.overlay.$extensions = {
+        "dev.aning.shadcn-nsh": { material: "frosted", elevation: -2 },
+      };
       fs.writeFileSync(finPath, JSON.stringify(fin, null, 2));
     });
     const text = problems.join("\n");

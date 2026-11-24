@@ -25,7 +25,7 @@ test("a theme's material shows in the style and the platform props, and goes wit
 
   await app.press("text:Glassy");
   // Light: glass is the system glass tinted with the layer's own fill (resolved, no literal
-  // written), the menu is glass too, and the raised layer is acrylic at 6 points of elevation.
+  // written), the menu is glass at 6 points of elevation, and the raised layer is acrylic.
   expect(find(app.texts(), "glass=")).toBe("glassEffect,glassTintColor");
   expect(find(app.texts(), "glassEffect=")).toBe("regular");
   expect(find(app.texts(), "tint=")).not.toBe("none");
@@ -37,10 +37,10 @@ test("a theme's material shows in the style and the platform props, and goes wit
   });
   expect(JSON.parse(find(app.texts(), "menuProps=")!)).toEqual({
     ios: { backdropMaterial: "regular" },
+    android: { elevation: 6 },
   });
   expect(JSON.parse(find(app.texts(), "raisedProps=")!)).toEqual({
     windows: { backdrop: { material: "blur" } },
-    android: { elevation: 6 },
   });
   // A finish the theme leaves at none stays as it was.
   expect(find(app.texts(), "card=")).toBe("|{}");

@@ -228,7 +228,7 @@ describe("add", () => {
     delete semantics.shape.curve;
     delete semantics.finishes.shared.modal;
     delete semantics.finishes.light.modal;
-    delete semantics.finishes.shared.card.material;
+    delete semantics.finishes.shared.raised.material;
     current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
 
     const again = await captured(() =>
@@ -244,7 +244,7 @@ describe("add", () => {
     expect(merged.shape.curve).toBe("continuous");
     expect(merged.finishes.shared.modal).toBeDefined();
     expect(merged.finishes.light.modal).toBeDefined();
-    expect(merged.finishes.shared.card.material).toBeNull();
+    expect(merged.finishes.shared.raised.material).toBeNull();
   });
 
   test("keeps a modified .tokens.json or DESIGN.md unless --overwrite replaces it", async () => {

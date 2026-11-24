@@ -16,13 +16,11 @@ export const finishes: ThemeFinishes = {
       "border-color": "{border}",
       shadow: "{shadow.md}",
       foreground: "{foreground}",
-      material: "none",
     },
     inset: {
       shadow: "{shadow.inset}",
       "border-color": "transparent",
       foreground: "{foreground}",
-      material: "none",
     },
     // iOS 26's segmented track: a capsule on the card layer, a hairline edge and a soft drop shadow.
     channel: {
@@ -30,7 +28,6 @@ export const finishes: ThemeFinishes = {
       "border-color": "{border}",
       shadow: "{shadow.sm}",
       foreground: "{foreground}",
-      material: "none",
     },
     raised: {
       "border-color": "transparent",
@@ -46,8 +43,6 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      backdropFilter: "none",
-      material: "none",
     },
     overlay: {
       "border-color": "transparent",
@@ -61,7 +56,6 @@ export const finishes: ThemeFinishes = {
       "border-color": "{border}",
       shadow: "{shadow.xl}",
       foreground: "{foreground}",
-      material: "none",
     },
     inverse: {
       "border-color": "transparent",
@@ -80,11 +74,9 @@ export const finishes: ThemeFinishes = {
     accent: {
       background: "{primary}",
       "border-color": "transparent",
-      "border-top-color": "transparent",
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
-      material: "none",
       "pressed-opacity": 0.88,
     },
     fill: {
@@ -92,7 +84,6 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       foreground: "{primary-foreground}",
       shadow: "{shadow.edge.accent}",
-      material: "none",
     },
     knob: {
       background: "{knob}",
@@ -101,7 +92,6 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
       // Upstream `knobOn` paints an open knob in the accent's ink; the rest is still `knob`.
       "checked-background": "{primary-foreground}",
-      material: "none",
     },
     hover: {
       background: "{hover}",
@@ -110,23 +100,18 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: "none",
     },
     pressed: {
       background: "{muted}",
       "border-color": "transparent",
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
       shadow: "{shadow.inset}",
       foreground: "{foreground}",
-      material: "none",
     },
     disabled: {
       background: "{raised}",
       "border-color": "{border}",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: "none",
     },
   },
   light: {

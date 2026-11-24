@@ -186,9 +186,7 @@ export function toggleLook(o?: ToggleLookOptions) {
     get hoverStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
       if (themeStyle().state.overlay.hover > 0) {
-        return read(o?.on)
-          ? hovered("accent-foreground", finish.accent.backgroundImage)
-          : hovered();
+        return read(o?.on) ? hovered("accent-foreground") : hovered();
       }
       return read(o?.on) ? undefined : hovered();
     },
@@ -197,7 +195,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       if (themeStyle().state.overlay.pressed > 0) {
         return {
           ...(read(o?.on)
-            ? stateLayer("pressed", "accent-foreground", finish.accent.backgroundImage)
+            ? stateLayer("pressed", "accent-foreground")
             : stateLayer("pressed", "foreground")),
           ...sink(0.92),
         };

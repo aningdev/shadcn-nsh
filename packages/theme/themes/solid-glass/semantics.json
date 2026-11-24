@@ -225,64 +225,30 @@
         "background": "{card}",
         "foreground": "{foreground}",
         "border-color": "{border}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
         "elevation": null
       },
       "inset": {
         "foreground": "{foreground}",
-        "border-color": "{border}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "border-color": "{border}"
       },
       "channel": {
         "background": "{inset}",
         "foreground": "{foreground}",
-        "border-color": "{border}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "border-color": "{border}"
       },
       "raised": {
         "background": "{raised}",
         "foreground": "{foreground}",
-        "backdropFilter": "none",
-        "material": null,
         "border-color": "{glass-edge}",
         "border-top-color": "{glass-edge}",
         "border-bottom-color": "{glass-edge}",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "elevation": null
+        "backdropFilter": "none",
+        "material": null
       },
       "plate": {
         "background": "{field}",
         "foreground": "{foreground}",
         "border-color": "{glass-edge}",
-        "backdropFilter": "none",
-        "material": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
         "elevation": null
       },
       "overlay": {
@@ -290,24 +256,12 @@
         "foreground": "{foreground}",
         "backdropFilter": "none",
         "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
         "elevation": null
       },
       "modal": {
         "background": "{card}",
         "foreground": "{foreground}",
         "border-color": "{border}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
         "elevation": null
       },
       "inverse": {
@@ -315,101 +269,52 @@
         "foreground": "{inverse-foreground}",
         "backdropFilter": "none",
         "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
         "elevation": null
       },
       "glass": {
         "foreground": "{foreground}",
         "border-color": "{glass-edge}",
-        "material": null,
         "background": "{raised}",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
+        "material": null,
         "elevation": null
       },
       "accent": {
         "foreground": "{primary-foreground}",
         "border-color": "{brand-edge}",
-        "border-top-color": "{brand-edge}",
         "border-bottom-color": "{brand-edge}",
         "pressed-opacity": 0.88,
-        "material": null,
-        "gradient": null,
         "pressed-background": null,
-        "pressed-foreground": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "pressed-foreground": null
       },
       "fill": {
         "foreground": "{primary-foreground}",
-        "material": null,
         "gradient": null,
-        "border-color": "{brand-edge}",
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "border-color": "{brand-edge}"
       },
       "knob": {
         "foreground": "{foreground}",
-        "material": null,
         "background": "{knob}",
         "gradient": null,
         "border-color": "transparent",
-        "checked-background": "{primary-foreground}",
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "checked-background": "{primary-foreground}"
       },
       "hover": {
         "foreground": "{foreground}",
-        "material": null,
         "background": "{hover}",
         "border-color": "{glass-edge}",
         "border-top-color": "{glass-edge}",
         "border-bottom-color": "{glass-edge}",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "backdropFilter": "none",
         "elevation": null
       },
       "pressed": {
         "foreground": "{foreground}",
-        "material": null,
         "border-color": "{glass-edge}",
-        "border-top-color": "{glass-edge}",
-        "border-bottom-color": "{glass-edge}",
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "backdropFilter": "none",
         "elevation": null
       },
       "disabled": {
         "background": "{raised}",
         "foreground": "{foreground}",
-        "border-color": "{border}",
-        "material": null,
-        "gradient": null,
-        "pressed-background": null,
-        "pressed-foreground": null,
-        "border-top-color": null,
-        "border-bottom-color": null,
-        "backdropFilter": "none",
-        "elevation": null
+        "border-color": "{border}"
       }
     },
     "light": {

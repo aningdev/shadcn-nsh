@@ -462,23 +462,23 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 ## Components
 
-The neutral fields of every finish role, written once: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, so a compiled finish carries every field in every theme.
+The neutral of each field a finish role can have, written once for the roles that have it: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, and a role carries only the fields it lists in `finishFields`.
 
-- **`finish.card`** (backdropFilter: `none`; elevation: 1): A surface that holds content: a card, a section.
-- **`finish.inset`** (backdropFilter: `none`): A well cut into a surface: an inset, a field, a track, a groove.
-- **`finish.channel`** (backdropFilter: `none`): The channel a group of choices sits in: a segmented control's track.
+- **`finish.card`** (elevation: 1): A surface that holds content: a card, a section.
+- **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
+- **`finish.channel`**: The channel a group of choices sits in: a segmented control's track.
 - **`finish.raised`** (backdropFilter: `none`): A control on a surface: a button, a chip, a pill.
-- **`finish.plate`** (backdropFilter: `none`; elevation: 1): A labelled block chosen inside a well: the selected tab, a segmented control's thumb.
+- **`finish.plate`** (elevation: 1): A labelled block chosen inside a well: the selected tab, a segmented control's thumb.
 - **`finish.overlay`** (backdropFilter: `none`; elevation: 3): A panel floating over the page: a menu, a toast.
-- **`finish.modal`** (backdropFilter: `none`; elevation: 6): A surface the page waits for: a dialog, a sheet.
+- **`finish.modal`** (elevation: 6): A surface the page waits for: a dialog, a sheet.
 - **`finish.inverse`** (backdropFilter: `none`; elevation: 6): The page's inverse: an inverse surface, a tooltip.
 - **`finish.glass`** (backdropFilter: `none`; elevation: 3): A translucent surface: what is behind it shows through.
-- **`finish.accent`** (backdropFilter: `none`): The accent's own surface, with its ink.
-- **`finish.fill`** (backdropFilter: `none`): A run's fill: a progress bar's bar, a slider's range, a meter's column.
-- **`finish.knob`** (backdropFilter: `none`): A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.
-- **`finish.hover`** (backdropFilter: `none`; elevation: 1): A control under the pointer.
-- **`finish.pressed`** (backdropFilter: `none`; elevation: 1): A control held down.
-- **`finish.disabled`** (backdropFilter: `none`): A control that cannot be used.
+- **`finish.accent`**: The accent's own surface, with its ink.
+- **`finish.fill`**: A run's fill: a progress bar's bar, a slider's range, a meter's column.
+- **`finish.knob`**: A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.
+- **`finish.hover`** (elevation: 1): A control under the pointer.
+- **`finish.pressed`** (elevation: 1): A control held down.
+- **`finish.disabled`**: A control that cannot be used.
 - **Disabled handling** (content=0.38, fill=true): M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).
 
 ## Do's and Don'ts
@@ -491,6 +491,6 @@ The neutral fields of every finish role, written once: a flat surface states no 
 - **Do:** Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
-- **Don't:** Never delete finish fields or alter the merged finish key set across appearances or themes.
+- **Don't:** Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way.
 - **Don't:** Do not add backdrop blur (`backdropFilter`) or a surface edge (`border-color`) to M3 tonal surfaces.
 - **Don't:** Do not replace `outline` focus rings (`3px` width, `2px` offset) with halo rings.

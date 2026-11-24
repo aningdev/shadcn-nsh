@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import process from "process";
 
-import { colors, finish, isDark, tints, type Tone, toneColor } from "@shadcn-nsh/theme";
+import { colors, isDark, tints, type Tone, toneColor } from "@shadcn-nsh/theme";
 import {
   Bell,
   Check,
@@ -72,7 +72,6 @@ function SafeAreaDiagram() {
         borderWidth: 1.5,
         borderColor: colors.border,
         backgroundColor: colors.inset,
-        backgroundImage: finish.card.backgroundImage,
         overflow: "hidden",
       }}
     >

@@ -107,7 +107,7 @@ export const choiceCorner = (look: ChoiceLook): number => look.corner[tier];
  * with the appearance because no role names "the field under the inset shade". */
 export const choiceWell = (o?: { disabled?: boolean; look?: ChoiceLook }): ViewStyle => {
   const look = o?.look ?? choiceLook("well");
-  const shade = look.face === null ? "none" : (fillOf(look.face).boxShadow ?? "none");
+  const shade = look.shade === null ? "none" : finish[look.shade].boxShadow;
   const edge = look.edge === null ? colors.border : colourOf(look.edge.fill);
   if (look.form === "inset") {
     return {

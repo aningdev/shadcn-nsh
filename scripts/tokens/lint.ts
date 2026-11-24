@@ -16,6 +16,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { finishFields, type FinishRole } from "../../packages/theme/finish-fields";
 import { checkMaterial } from "../theme/material";
 import { oklchToRgb } from "../theme/oklch";
 import {
@@ -768,13 +769,25 @@ function checkFinishLayers(
         );
       }
     }
+    // A role states the fields it has (packages/theme/finish-fields.ts), as tokens or as extension
+    // values: a card has no gradient, a well no fill, a layer that never floats no elevation.
+    const fields: readonly string[] = finishFields[role as keyof typeof finishFields] ?? [];
+    if (finishFields[role as keyof typeof finishFields] === undefined) {
+      problems.push(`${label}: finish.${role} is not a finish role`);
+      continue;
+    }
     for (const key of Object.keys(node)) {
-      if (!key.startsWith("checked-")) continue;
-      if (role !== "knob") {
-        problems.push(
-          `${label}: finish.${role}.${key} is a knob's checked state; only knob states one`,
-        );
-      }
+      if (key.startsWith("$") || fields.includes(key)) continue;
+      problems.push(
+        `${label}: finish.${role}.${key} is not a field \`${role}\` has (${fields.join(", ")})`,
+      );
+    }
+    const ext = getExt(node);
+    for (const key of Object.keys(ext ?? {})) {
+      if (fields.includes(key)) continue;
+      problems.push(
+        `${label}: finish.${role}.${key} is not a field \`${role}\` has (${fields.join(", ")})`,
+      );
     }
   }
 }
@@ -1016,7 +1029,12 @@ function checkMergedSemantics(
       if (role.startsWith("$") || !isRecord(group)) continue;
       const ext = getExt(group) ?? {};
       problems.push(
-        ...checkMaterial(label, role, { material: ext.material, elevation: ext.elevation }),
+        ...checkMaterial(
+          label,
+          role,
+          { material: ext.material, elevation: ext.elevation },
+          role as FinishRole,
+        ),
       );
     }
   }

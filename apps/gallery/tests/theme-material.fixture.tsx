@@ -18,8 +18,8 @@ const glassy: AppTheme = {
       light: {
         ...finishes.light,
         glass: { ...finishes.light.glass, material: "glass" },
-        overlay: { ...finishes.light.overlay, material: "glass" },
-        raised: { ...finishes.light.raised, material: "acrylic", elevation: 6 },
+        overlay: { ...finishes.light.overlay, material: "glass", elevation: 6 },
+        raised: { ...finishes.light.raised, material: "acrylic" },
       },
       dark: {
         ...finishes.dark,

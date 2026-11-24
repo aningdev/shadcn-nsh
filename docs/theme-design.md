@@ -103,9 +103,9 @@ flowchart LR
 | `knob`                           | 开关圆点、滑杆把手（不带字）；`checked-*` 是它的选中态 |
 | `hover` / `pressed` / `disabled` | 三种状态（2.10）                                       |
 
-每个 finish 的字段集合固定（最多 16 个，`pressed-opacity` 只写在要压暗的角色上，`checked-*` 只写在 `knob` 上）：`background`、`foreground`（面上的墨，组件不再带 `?? colors.x` 兜底）、`shadow`（引用阴影刻度，2.4）、`gradient`、`backdropFilter`、三条边色（`border-color` / `border-top-color` / `border-bottom-color`）、`material`（2.5）、Android 用的 `elevation`、按压时的 `pressed-background` / `pressed-foreground` / `pressed-opacity`，以及 `knob` 选中时的 `checked-background` / `checked-border-color` / `checked-gradient`。写法是 `shared` 加稀疏的 `light` / `dark` 覆盖。
+**每个 finish 只带它用得到的字段**：字段留着，是因为六套主题里至少一套在这个角色上给了它一个不是中性的值（逐角色的表见 [`specs/theme-roles.md`](specs/theme-roles.md) §2，唯一出处是 `packages/theme/finish-fields.ts`）。可用的字段：`background`、`foreground`（面上的墨，组件不再带 `?? colors.x` 兜底）、`shadow`（引用阴影刻度，2.4）、`gradient`、`backdropFilter`、三条边色（`border-color` / `border-top-color` / `border-bottom-color`）、`material`（2.5）、Android 用的 `elevation`、按压时的 `pressed-background` / `pressed-foreground` / `pressed-opacity`，以及 `knob` 选中时的 `checked-background` / `checked-border-color` / `checked-gradient`。写法是 `shared` 加稀疏的 `light` / `dark` 覆盖。
 
-**没写的字段取什么值。** 中性值写一次，在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里，每个 finish 都继承；主题只在真正不同时写那个字段（源码写 token，`shared` 或某一外观都行）。编译产物里每个 finish 都带齐这套主题该有的字段，主题少写一个不会漏键，只会取到这里的中性值：
+**没写的字段取什么值。** 中性值写一次，在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里，只写在有这个字段的角色上，角色继承它；主题只在真正不同时写那个字段（源码写 token，`shared` 或某一外观都行）。编译产物里每个角色都带齐它的字段：主题少写一个不会漏键，只会取到这里的中性值；主题写一个角色没有的字段，`check:theme` 与类型都会拦下：
 
 | 字段                                        | 中性值 | 读作                                         |
 | ------------------------------------------- | ------ | -------------------------------------------- |
@@ -125,7 +125,7 @@ flowchart LR
 - finish 按层命名，不按组件：没有“tooltip finish”，tooltip 读 `inverse`。
 - 所有浮层共用 `overlay`，层级靠深度区分，不靠每个浮层各画一套。
 - 平涂的面不写 `gradient`，不写同色渐变。
-- 字段集合在各主题、亮暗之间一致，`check:theme` 守住。
+- 字段集合在各主题、亮暗之间一致，且等于 `finishFields` 给这个角色的那一份，`check:theme` 守住。
 
 **参照**：`material` 的 `card` 没有边（`border-color: transparent`），层次靠 tonal 底色；`winui` 的 `raised` 与 `accent` 用上下不同的边色做出斜面；`solid-glass` 的面是半透明底加顶部高光。
 

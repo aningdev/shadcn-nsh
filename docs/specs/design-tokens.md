@@ -369,7 +369,7 @@ DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处
 `scripts/theme-lint.ts` 演进为两阶段：
 
 1. **标准 Schema 校验**：用官方 2025.10 JSON Schema（`format.json`、`resolver.json`）校验全部 `.tokens.json` 与 `.resolver.json`；
-2. **本库语义校验**：解析 4 种 context 排列后执行现有约束——31 个 shadcn A 层槽位完整（`theme.rs`）、C 层键集合与 `radius >= 0`、各层 finish 合并后角色与字段集合齐一（含 `material` 白名单）、`colorOp` 静态 `$value` 一致性、`unread` / 未使用 token 检查、以及 `$description` 覆盖检查。
+2. **本库语义校验**：解析 4 种 context 排列后执行现有约束——31 个 shadcn A 层槽位完整（`theme.rs`）、C 层键集合与 `radius >= 0`、各层 finish 合并后角色与字段集合齐一、与 `finish-fields.ts` 的 `finishFields` 一致（含 `material` 白名单）、`colorOp` 静态 `$value` 一致性、`unread` / 未使用 token 检查、以及 `$description` 覆盖检查。
 
 ### 9.3 `DESIGN.md` 生成器（`scripts/tokens/design-md.ts`，#246）
 

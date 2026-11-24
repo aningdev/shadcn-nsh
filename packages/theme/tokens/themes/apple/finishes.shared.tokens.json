@@ -19,11 +19,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "inset": {
@@ -49,11 +44,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "channel": {
@@ -73,11 +63,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "raised": {
@@ -166,12 +151,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "overlay": {
@@ -222,11 +201,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "inverse": {
@@ -301,20 +275,6 @@
           }
         }
       },
-      "border-top-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
-      },
       "border-bottom-color": {
         "$type": "color",
         "$value": {
@@ -340,11 +300,6 @@
       "pressed-opacity": {
         "$type": "number",
         "$value": 0.88
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "fill": {
@@ -374,11 +329,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.primary-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "knob": {
@@ -412,11 +362,6 @@
       "checked-background": {
         "$type": "color",
         "$value": "{color.primary-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "hover": {
@@ -474,11 +419,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "pressed": {
@@ -501,34 +441,6 @@
           }
         }
       },
-      "border-top-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
-      },
       "shadow": {
         "$type": "shadow",
         "$value": ["{shadow.inset}"]
@@ -536,11 +448,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "disabled": {
@@ -560,11 +467,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     }
   }

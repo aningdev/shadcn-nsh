@@ -39,7 +39,6 @@ const stage = (): ViewStyle => ({
   backgroundColor: colors.inset,
   borderWidth: 1,
   borderColor: colors.line,
-  backgroundImage: finish.card.backgroundImage,
   boxShadow: isDark() ? "inset 0 1px 0 rgba(255,255,255,0.05)" : "inset 0 1px 0 #ffffff",
 });
 
@@ -599,7 +598,6 @@ function FlipCard() {
           ...face,
           backgroundColor: tints.info,
           borderColor: alpha(colors.info, 0.6),
-          backgroundImage: finish.card.backgroundImage,
           boxShadow: finish.card.boxShadow,
           transform: [{ perspective: 800 }, { rotateY: angle }],
         }}
@@ -626,7 +624,6 @@ function FlipCard() {
           ...face,
           backgroundColor: tints.brand,
           borderColor: alpha(colors.brand, 0.5),
-          backgroundImage: finish.card.backgroundImage,
           boxShadow: finish.card.boxShadow,
           transform: [
             { perspective: 800 },

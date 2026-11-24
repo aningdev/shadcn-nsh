@@ -4,8 +4,9 @@
  *    Format & Resolver schemas, no dangling/circular aliases, reference `$type`s, `$extensions`
  *    namespace `dev.aning.shadcn-nsh` schemas, `colorOp` evaluation accuracy, and `$description`s.
  * 2. Compiled stage (for all themes): one set of tokens and one set of semantics in every theme,
- *    each finish role resolving to the same fields in all of them, every `{token}` naming a token of
- *    the right DTCG `$type`, no literal where a token exists, and nothing left unread by the code.
+ *    each finish role resolving to the fields `packages/theme/finish-fields.ts` gives it (and to no
+ *    others), every `{token}` naming a token of the right DTCG `$type`, no literal where a token
+ *    exists, and nothing left unread by the code.
  *
  *   bun scripts/theme-lint.ts
  *
@@ -14,6 +15,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
+import { finishFields, type FinishRole } from "../packages/theme/finish-fields";
 import { scaleCitationsOf } from "./theme/extensions";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkMaterial, checkMaterialFill } from "./theme/material";
@@ -113,6 +115,42 @@ const specPartsOf = specParts(spec);
 
 const failures: string[] = [];
 const fail = (message: string) => failures.push(message);
+
+// 0a. The spec's per-role field table is `finishFields`, written out: one source, two readers.
+{
+  const stated = new Map(
+    specRows(specBlock(spec, "finish-fields")).map(([role, fields]) => [
+      role,
+      (fields ?? "").split(/\s+/).filter((field) => field !== ""),
+    ]),
+  );
+  for (const role of Object.keys(finishFields) as FinishRole[]) {
+    const want: string[] = [...finishFields[role]];
+    const have = stated.get(role);
+    const name = "docs/specs/theme-roles.md: the finish-fields table";
+    if (have === undefined) {
+      fail(`${name} states no \`${role}\` (packages/theme/finish-fields.ts lists it)`);
+      continue;
+    }
+    const missing = want.filter((field) => !have.includes(field));
+    const extra = have.filter((field) => !want.includes(field));
+    if (missing.length > 0) {
+      fail(`${name} gives \`${role}\` no ${missing.map((field) => `\`${field}\``).join(", ")}`);
+    }
+    if (extra.length > 0) {
+      fail(
+        `${name} gives \`${role}\` ${extra.map((field) => `\`${field}\``).join(", ")}, which it does not have`,
+      );
+    }
+  }
+  for (const role of stated.keys()) {
+    if (!(role in finishFields)) {
+      fail(
+        `docs/specs/theme-roles.md: the finish-fields table states \`${role}\`, which is not a finish role`,
+      );
+    }
+  }
+}
 
 // 0. Source stage: DTCG 2025.10 schemas, alias resolution, reference types, and extensions.
 const dtcg = lintDtcgSources(root);
@@ -287,16 +325,12 @@ for (const theme of themes) {
   }
 }
 
-/** Every finish states every field: a flat look says `gradient: null`, an opaque one says
- * `backdropFilter: "none"`, a layer without an elevation says `elevation: null`, and a theme whose
- * press does not swap the accent out repeats the resting fill and ink. The neutral values are
- * written once in `tokens/base/style.shared.tokens.json`. */
+/** A finish role carries the fields `packages/theme/finish-fields.ts` gives it and no others: a
+ * flat look has no gradient, an opaque one no backdrop blur and no material, a layer that never
+ * floats above the page no elevation. The neutral of each field a role has is written once in
+ * `tokens/base/style.shared.tokens.json`, so a theme that does not use it states nothing. */
 /** Fields a finish states only where a theme differs from the unchecked value: a knob's checked state. */
 const optionalFields = new Set(["checked-background", "checked-border-color", "checked-gradient"]);
-const shapeOf = new Map<string, string[]>();
-for (const appearance of appearances)
-  for (const [role, finish] of Object.entries(defaultMerged[appearance]))
-    shapeOf.set(`${role}.${appearance}`, Object.keys(finish).sort());
 
 for (const theme of themes) {
   const path = `packages/theme/themes/${theme}/semantics.json`;
@@ -316,21 +350,18 @@ for (const theme of themes) {
         fail(`${path}: ${appearance} states \`${role}\`, which the default theme does not`);
 
     for (const [role, finish] of Object.entries(merged)) {
-      const have = Object.keys(finish)
-        .filter((field) => !optionalFields.has(field))
-        .sort();
-      const want = shapeOf
-        .get(`${role}.${appearance}`)
-        ?.filter((field) => !optionalFields.has(field));
-      if (want === undefined) continue;
-      for (const field of want)
-        if (!have.includes(field))
+      const fields: readonly string[] = finishFields[role as keyof typeof finishFields] ?? [];
+      const have = Object.keys(finish).sort();
+      for (const field of fields)
+        if (!optionalFields.has(field) && !have.includes(field))
           fail(
-            `${path}: ${role}.${field} is missing, and every finish states a ${field} (write the neutral value in tokens/base/style.shared.tokens.json)`,
+            `${path}: ${role}.${field} is missing, and \`${role}\` has it (write its neutral in tokens/base/style.shared.tokens.json)`,
           );
       for (const field of have)
-        if (!want.includes(field))
-          fail(`${path}: ${role}.${field} is not a field the default theme's \`${role}\` states`);
+        if (!fields.includes(field))
+          fail(
+            `${path}: ${role}.${field} is not a field \`${role}\` has (packages/theme/finish-fields.ts lists them)`,
+          );
 
       // A press dims the accent to a visible opacity, or not at all (1).
       const dim = finish["pressed-opacity"];
@@ -364,7 +395,13 @@ for (const theme of themes) {
 
       // The platform material: stated on every finish, one of the recipes, over a fill the recipe's
       // fallback can stand in for where the platform draws none.
-      for (const problem of checkMaterial(path, `${role}.${appearance}`, finish)) fail(problem);
+      for (const problem of checkMaterial(
+        path,
+        `${role}.${appearance}`,
+        finish,
+        role as FinishRole,
+      ))
+        fail(problem);
       for (const problem of checkMaterialFill(path, `${role}.${appearance}`, finish)) fail(problem);
 
       // `shadow` is ink, except any `{token}` it names must exist and be a `"color"` token.

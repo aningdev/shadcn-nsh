@@ -1168,24 +1168,6 @@
           "alpha": 0.5,
           "hex": "#000000"
         }
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
       }
     },
     "glass": {
@@ -1299,24 +1281,6 @@
         "$value": "{color.line}"
       },
       "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.5,
-          "hex": "#000000"
-        }
-      },
-      "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",

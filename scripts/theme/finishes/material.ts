@@ -16,21 +16,18 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       shadow: "{shadow.md}",
       foreground: "{foreground}",
-      material: "none",
       elevation: 1,
     },
     inset: {
       shadow: "{shadow.inset}",
       "border-color": "{input}",
       foreground: "{foreground}",
-      material: "none",
     },
     channel: {
       background: "{inset}",
       "border-color": "{border}",
       shadow: "{shadow.inset}",
       foreground: "{foreground}",
-      material: "none",
     },
     raised: {
       background: "{raised}",
@@ -39,16 +36,12 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      backdropFilter: "none",
-      material: "none",
     },
     plate: {
       background: "{secondary}",
       "border-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      backdropFilter: "none",
-      material: "none",
       elevation: 1,
     },
     overlay: {
@@ -56,15 +49,12 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       shadow: "{shadow.lg}",
       foreground: "{foreground}",
-      backdropFilter: "none",
-      material: "none",
       elevation: 3,
     },
     modal: {
       "border-color": "transparent",
       shadow: "{shadow.xl}",
       foreground: "{foreground}",
-      material: "none",
       elevation: 6,
     },
     inverse: {
@@ -72,8 +62,6 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       shadow: "{shadow.lg}",
       foreground: "{inverse-foreground}",
-      backdropFilter: "none",
-      material: "none",
       elevation: 6,
     },
     glass: {
@@ -81,18 +69,14 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      backdropFilter: "none",
-      material: "none",
       elevation: 3,
     },
     accent: {
       background: "{primary}",
       "border-color": "transparent",
-      "border-top-color": "transparent",
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
-      material: "none",
       // M3 presses with a state layer and a ripple, not by dimming.
       "pressed-opacity": 1,
     },
@@ -101,7 +85,6 @@ export const finishes: ThemeFinishes = {
       "border-color": "transparent",
       foreground: "{primary-foreground}",
       shadow: "{shadow.edge.accent}",
-      material: "none",
     },
     knob: {
       background: "{knob}",
@@ -110,7 +93,6 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
       // Upstream `knobOn` paints an open knob in the accent's ink; the rest is still `knob`.
       "checked-background": "{primary-foreground}",
-      material: "none",
     },
     hover: {
       background: "{raised}",
@@ -119,24 +101,19 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: "none",
       elevation: 1,
     },
     pressed: {
       background: "{raised}",
       "border-color": "transparent",
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
       shadow: "{shadow.inset}",
       foreground: "{foreground}",
-      material: "none",
       elevation: 1,
     },
     disabled: {
       "border-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
-      material: "none",
     },
   },
   light: {

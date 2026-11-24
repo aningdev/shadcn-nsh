@@ -212,17 +212,14 @@
 | `finishes.card.background` | 卡片与区块的底 | `{card}` | `{card}` | `{card}` | `{card}` | `{card}` |
 | `finishes.card.foreground` | 卡片与区块的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
 | `finishes.card.border-color` | 卡片与区块的边 | `{border}` | `{border}` | `{border}` | `transparent` | `oklch(0.92191 0 0)` / `oklch(0.23075 0 0)` |
-| `finishes.card.backdropFilter` | 卡片与区块的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.card.elevation` | 卡片与区块的平台自己的高度（dp） | — | — | — | 1 | — |
 | `finishes.card.shadow` | 卡片与区块的影子 | `0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04)` / `0 1px 0 oklch(0 0 0 / 0.35)` | `0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)` | `none` | `0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)` | `0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)` / `0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)` |
 | `finishes.inset.foreground` | 井的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
 | `finishes.inset.border-color` | 井的边 | `{border}` | `{border}` | `transparent` | `{input}` | `{input}` |
-| `finishes.inset.backdropFilter` | 井的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.inset.shadow` | 井的影子 | `inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.06)` / `inset 0 1px 1px oklch(0 0 0 / 0.2)` | `none` | `none` | `none` | `none` |
 | `finishes.channel.background` | 分段轨道的底 | `{inset}` | `{inset}` | `{card}` | `{inset}` | `{inset}` |
 | `finishes.channel.foreground` | 分段轨道的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
 | `finishes.channel.border-color` | 分段轨道的边 | `{border}` | `{border}` | `{border}` | `{border}` | `{border}` |
-| `finishes.channel.backdropFilter` | 分段轨道的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.channel.shadow` | 分段轨道的影子 | `inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.06)` / `inset 0 1px 1px oklch(0 0 0 / 0.2)` | `none` | `0 1px 3px oklch(0 0 0 / 0.2)` | `none` | `none` |
 | `finishes.raised.background` | 按钮与胶囊的底 | `{raised}` | `{raised}` | `oklch(from {raised} l c h / 0.72)` | `{raised}` | `{raised}` |
 | `finishes.raised.foreground` | 按钮与胶囊的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
@@ -233,13 +230,10 @@
 | `finishes.raised.border-top-color` | 按钮与胶囊的上边色 | `{border}` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `{border}` / `oklch(0.32897 0 0)` |
 | `finishes.raised.border-bottom-color` | 按钮与胶囊的下边色 | `{border}` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `oklch(0.84522 0 0)` / `{border}` |
 | `finishes.plate.foreground` | 井里选中的一块的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
-| `finishes.plate.backdropFilter` | 井里选中的一块的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.plate.elevation` | 井里选中的一块的平台自己的高度（dp） | — | — | — | 1 | — |
 | `finishes.plate.background` | 井里选中的一块的底 | `{card}` / `{raised}` | `{field}` | `{card}` / `{raised}` | `{secondary}` | `{card}` |
 | `finishes.plate.shadow` | 井里选中的一块的影子 | `inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)` / `inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08), 0 1px 1px oklch(0 0 0 / 0.12)` | `0 1px 2px oklch(0 0 0 / 0.05)` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)` | `0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)` | `none` |
 | `finishes.plate.border-color` | 井里选中的一块的边 | `{border}` / `oklch(0 0 0 / 0.5)` | `transparent` / `{input}` | `transparent` | `transparent` | `{border}` |
-| `finishes.plate.border-top-color` | 井里选中的一块的上边色 | `{border}` / `oklch(0 0 0 / 0.5)` | — | — | — | — |
-| `finishes.plate.border-bottom-color` | 井里选中的一块的下边色 | `{border}` / `oklch(0 0 0 / 0.5)` | — | — | — | — |
 | `finishes.overlay.background` | 菜单与 toast的底 | `{popover}` | `{card}` | `oklch(from {popover} l c h / 0.72)` | `{popover}` | `oklch(from {popover} l c h / 0.85)` / `oklch(from {popover} l c h / 0.96)` |
 | `finishes.overlay.foreground` | 菜单与 toast的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
 | `finishes.overlay.border-color` | 菜单与 toast的边 | `{border}` | `{border}` | `transparent` | `transparent` | `{glass-edge}` |
@@ -250,7 +244,6 @@
 | `finishes.modal.background` | 对话框与抽屉的底 | `{card}` | `{card}` | `{card}` | `oklch(0.93251 0.01479 312.24)` / `oklch(0.2859 0.01293 298.633)` | `{background}` |
 | `finishes.modal.foreground` | 对话框与抽屉的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
 | `finishes.modal.border-color` | 对话框与抽屉的边 | `{border}` | `{border}` | `{border}` | `transparent` | `oklch(0.81093 0 0)` / `oklch(0.37909 0 0)` |
-| `finishes.modal.backdropFilter` | 对话框与抽屉的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.modal.elevation` | 对话框与抽屉的平台自己的高度（dp） | — | — | — | 6 | — |
 | `finishes.modal.shadow` | 对话框与抽屉的影子 | `0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04), 0 12px 28px -10px oklch(0.1686 0.02256 263.693 / 0.22)` / `0 1px 0 oklch(0 0 0 / 0.4), 0 16px 32px -10px oklch(0 0 0 / 0.6)` | `0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 30px oklch(0 0 0 / 0.4)` | `0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)` | `0 0 8px oklch(0 0 0 / 0.2), 0 64px 128px oklch(0 0 0 / 0.24)` / `0 0 8px oklch(0 0 0 / 0.4), 0 64px 128px oklch(0 0 0 / 0.48)` |
 | `finishes.inverse.background` | 反色面的底 | `{inverse}` | `{inverse}` | `oklch(from {inverse} l c h / 0.72)` | `{inverse}` | `{inverse}` |
@@ -270,29 +263,24 @@
 | `finishes.accent.background` | 强调面的底 | `{primary}` | `{primary}` | `{primary}` | `{primary}` | `{primary}` |
 | `finishes.accent.foreground` | 强调面的字与图标 | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` |
 | `finishes.accent.border-color` | 强调面的边 | `{brand-edge}` | `transparent` | `transparent` | `transparent` | `oklch(0.52768 0.14982 252.341)` / `oklch(0.81732 0.11439 230)` |
-| `finishes.accent.border-top-color` | 强调面的上边色 | `{brand-edge}` | `transparent` | `transparent` | `transparent` | `oklch(0.52768 0.14982 252.341)` / `oklch(0.81732 0.11439 230)` |
 | `finishes.accent.border-bottom-color` | 强调面的下边色 | `{brand-edge}` | `transparent` | `transparent` | `transparent` | `{brand-edge}` |
 | `finishes.accent.pressed-opacity` | 强调面的按下时的不透明度（强调面上的字与图标） | 0.88 | 0.88 | 0.88 | 1 | 1 |
 | `finishes.accent.pressed-background` | 强调面的按下时换的底色 | — | — | — | — | `oklch(0.5773 0.13223 250.006)` / `oklch(0.70029 0.10192 230.522)` |
 | `finishes.accent.pressed-foreground` | 强调面的按下时换的字色 | — | — | — | — | `oklch(0.87245 0.03754 247.003)` / `oklch(0.42706 0.05878 229.834)` |
-| `finishes.accent.backdropFilter` | 强调面的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.accent.shadow` | 强调面的影子 | `inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)` / `inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)` | `none` | `none` | `none` | `none` |
-| `finishes.fill.foreground` | 跑起来的填充的字与图标 | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` |
-| `finishes.fill.backdropFilter` | 跑起来的填充的背景模糊 | `none` | `none` | `none` | `none` | `none` |
-| `finishes.fill.background` | 跑起来的填充的底 | `oklch(0.75073 0.18465 126.794)` / `oklch(0.83973 0.16469 124.137)` | `{primary}` | `{primary}` | `{primary}` | `{primary}` |
-| `finishes.fill.gradient` | 跑起来的填充的叠在底上的渐变 | `linear-gradient(180deg, oklch(0.80472 0.1815 126.061) 0%, oklch(0.75073 0.18465 126.794) 100%)` / `linear-gradient(180deg, oklch(0.88348 0.15928 123.937) 0%, oklch(0.83973 0.16469 124.137) 100%)` | — | — | — | — |
-| `finishes.fill.shadow` | 跑起来的填充的影子 | `inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)` / `inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)` | `none` | `none` | `none` | `none` |
-| `finishes.fill.border-color` | 跑起来的填充的边 | `oklch(0.69169 0.17204 126.956)` / `oklch(0.71963 0.15821 125.456)` | `transparent` | `transparent` | `transparent` | `oklch(0.52768 0.14982 252.341)` / `oklch(0.81732 0.11439 230)` |
+| `finishes.fill.foreground` | 进度条、滑杆与开关选中的那段的字与图标 | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` |
+| `finishes.fill.background` | 进度条、滑杆与开关选中的那段的底 | `oklch(0.75073 0.18465 126.794)` / `oklch(0.83973 0.16469 124.137)` | `{primary}` | `{primary}` | `{primary}` | `{primary}` |
+| `finishes.fill.gradient` | 进度条、滑杆与开关选中的那段的叠在底上的渐变 | `linear-gradient(180deg, oklch(0.80472 0.1815 126.061) 0%, oklch(0.75073 0.18465 126.794) 100%)` / `linear-gradient(180deg, oklch(0.88348 0.15928 123.937) 0%, oklch(0.83973 0.16469 124.137) 100%)` | — | — | — | — |
+| `finishes.fill.shadow` | 进度条、滑杆与开关选中的那段的影子 | `inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)` / `inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)` | `none` | `none` | `none` | `none` |
+| `finishes.fill.border-color` | 进度条、滑杆与开关选中的那段的边 | `oklch(0.69169 0.17204 126.956)` / `oklch(0.71963 0.15821 125.456)` | `transparent` | `transparent` | `transparent` | `oklch(0.52768 0.14982 252.341)` / `oklch(0.81732 0.11439 230)` |
 | `finishes.knob.foreground` | 旋钮的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
-| `finishes.knob.backdropFilter` | 旋钮的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.knob.background` | 旋钮的底 | `oklch(1 0 0)` / `{knob}` | `{knob}` | `{knob}` | `{knob}` | `{knob}` |
 | `finishes.knob.gradient` | 旋钮的叠在底上的渐变 | `linear-gradient(180deg, oklch(1 0 0) 0%, {raised} 100%)` / `linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)` | — | — | — | — |
 | `finishes.knob.shadow` | 旋钮的影子 | `0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)` / `0 1px 1px oklch(0 0 0 / 0.12)` | `0 1px 2px oklch(0 0 0 / 0.05)` | `0 1px 3px oklch(0 0 0 / 0.2)` | `0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)` | `none` |
 | `finishes.knob.border-color` | 旋钮的边 | `{input}` / `oklch(0.8324 0.00597 264.528)` | `transparent` | `transparent` | `transparent` | `transparent` |
-| `finishes.knob.checked-border-color` | 旋钮的选中时的边 | `oklch(0.72099 0.15728 124.776)` / `oklch(0.71963 0.15821 125.456)` | — | — | — | — |
-| `finishes.knob.checked-background` | 旋钮的选中时的底 | `oklch(1 0 0)` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` |
+| `finishes.knob.checked-border-color` | 旋钮的打开时的边 | `oklch(0.72099 0.15728 124.776)` / `oklch(0.71963 0.15821 125.456)` | — | — | — | — |
+| `finishes.knob.checked-background` | 旋钮的打开时的底 | `oklch(1 0 0)` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` | `{primary-foreground}` |
 | `finishes.hover.foreground` | 悬停中的控件的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
-| `finishes.hover.backdropFilter` | 悬停中的控件的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.hover.elevation` | 悬停中的控件的平台自己的高度（dp） | — | — | — | 1 | — |
 | `finishes.hover.background` | 悬停中的控件的底 | `{popover}` / `{input}` | `{hover}` | `{hover}` | `{raised}` | `{hover}` |
 | `finishes.hover.shadow` | 悬停中的控件的影子 | `inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)` / `inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08), 0 1px 1px oklch(0 0 0 / 0.12)` | `0 1px 2px oklch(0 0 0 / 0.05)` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)` | `0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)` | `none` |
@@ -300,17 +288,13 @@
 | `finishes.hover.border-top-color` | 悬停中的控件的上边色 | `{border}` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `{border}` / `oklch(0.32897 0 0)` |
 | `finishes.hover.border-bottom-color` | 悬停中的控件的下边色 | `{border}` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `oklch(0.84522 0 0)` / `{border}` |
 | `finishes.pressed.foreground` | 按下的控件的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{muted-foreground}` |
-| `finishes.pressed.backdropFilter` | 按下的控件的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.pressed.elevation` | 按下的控件的平台自己的高度（dp） | — | — | — | 1 | — |
 | `finishes.pressed.background` | 按下的控件的底 | `{muted}` / `{line}` | `{border}` / `oklch(0.34846 0 0)` | `{muted}` | `{raised}` | `{muted}` |
 | `finishes.pressed.shadow` | 按下的控件的影子 | `inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.06)` / `inset 0 1px 1px oklch(0 0 0 / 0.2)` | `none` | `none` | `none` | `none` |
 | `finishes.pressed.border-color` | 按下的控件的边 | `{input}` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `{border}` |
-| `finishes.pressed.border-top-color` | 按下的控件的上边色 | `{input}` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `{border}` |
-| `finishes.pressed.border-bottom-color` | 按下的控件的下边色 | `{input}` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `{border}` |
 | `finishes.disabled.background` | 禁用的控件的底 | `{raised}` | `{raised}` | `{raised}` | `oklch(from {foreground} l c h / 0.1)` | `oklch(0.97015 0 0)` / `oklch(0.28502 0 0)` |
 | `finishes.disabled.foreground` | 禁用的控件的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `oklch(from {foreground} l c h / 0.38)` | `oklch(0.68949 0 0)` / `oklch(0.54863 0 0)` |
 | `finishes.disabled.border-color` | 禁用的控件的边 | `{border}` | `{border}` | `{border}` | `transparent` | `{border}` |
-| `finishes.disabled.backdropFilter` | 禁用的控件的背景模糊 | `none` | `none` | `none` | `none` | `none` |
 | `finishes.disabled.shadow` | 禁用的控件的影子 | `inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)` / `inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08), 0 1px 1px oklch(0 0 0 / 0.12)` | `0 1px 2px oklch(0 0 0 / 0.05)` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)` | `0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)` | `none` |
 
 ## 9 elevation

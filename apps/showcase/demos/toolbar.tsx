@@ -906,7 +906,6 @@ function Player() {
               width: "100%",
               borderRadius: 2,
               backgroundColor: colors.primary,
-              backgroundImage: terminal ? undefined : finish.accent.backgroundImage,
               transformOrigin: "left",
               transform: [{ scaleX: progress }],
             }}

@@ -19,11 +19,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "inset": {
@@ -39,11 +34,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "channel": {
@@ -63,11 +53,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "raised": {
@@ -125,12 +110,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "plate": {
@@ -160,12 +139,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "overlay": {
@@ -185,12 +158,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "modal": {
@@ -210,11 +177,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "inverse": {
@@ -234,12 +196,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.inverse-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "glass": {
@@ -258,8 +214,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "blur(20px)",
-          "material": "none"
+          "backdropFilter": "blur(20px)"
         }
       }
     },
@@ -270,20 +225,6 @@
         "$value": "{color.primary}"
       },
       "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
-      },
-      "border-top-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
@@ -322,11 +263,6 @@
       "pressed-opacity": {
         "$type": "number",
         "$value": 0.88
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "fill": {
@@ -356,11 +292,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.primary-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "knob": {
@@ -394,11 +325,6 @@
       "checked-background": {
         "$type": "color",
         "$value": "{color.primary-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "hover": {
@@ -456,44 +382,11 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "pressed": {
       "$description": "A control held down.",
       "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
-      },
-      "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
@@ -514,11 +407,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "disabled": {
@@ -538,11 +426,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     }
   }

@@ -39,6 +39,11 @@
           "target": "lib/ui/materials.ts"
         },
         {
+          "path": "packages/theme/finish-fields.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/finish-fields.ts"
+        },
+        {
           "path": "packages/theme/theme.ts",
           "type": "registry:lib",
           "target": "lib/ui/theme.ts"

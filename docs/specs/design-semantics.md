@@ -63,7 +63,7 @@
 }
 ```
 
-读取时 `theme.ts` 合并 `{ ...shared[role], ...finishes[appearance]?.[role] }`。`check:theme` 在合并后校验：每套主题在 `light` 与 `dark` 下解析出的 finish 角色集合与每个角色的字段集合，都与 `default` 主题完全一致。
+读取时 `theme.ts` 合并 `{ ...shared[role], ...finishes[appearance]?.[role] }`。`check:theme` 在合并后校验：每套主题在 `light` 与 `dark` 下解析出的 finish 角色集合与每个角色的字段集合，都与 `packages/theme/finish-fields.ts` 的 `finishFields` 完全一致（角色没有的字段写上去、有这个字段却没写，都点名）。
 
 ## 4 宿主覆写（`setThemeOverrides`）的到达范围
 

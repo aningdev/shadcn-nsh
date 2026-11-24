@@ -19,11 +19,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "inset": {
@@ -39,11 +34,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "channel": {
@@ -63,11 +53,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "raised": {
@@ -83,12 +68,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "plate": {
@@ -117,12 +96,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "overlay": {
@@ -142,12 +115,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "modal": {
@@ -167,11 +134,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "inverse": {
@@ -191,12 +153,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.inverse-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "material": "none"
-        }
       }
     },
     "glass": {
@@ -215,8 +171,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "backdropFilter": "blur(20px)",
-          "material": "none"
+          "backdropFilter": "blur(20px)"
         }
       }
     },
@@ -235,10 +190,6 @@
         "$type": "color",
         "$value": "{color.brand-edge}"
       },
-      "border-top-color": {
-        "$type": "color",
-        "$value": "{color.brand-edge}"
-      },
       "border-bottom-color": {
         "$type": "color",
         "$value": "{color.brand-edge}"
@@ -250,11 +201,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.primary-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "fill": {
@@ -266,11 +212,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.primary-foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "knob": {
@@ -285,8 +226,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "checked-gradient": "none",
-          "material": "none"
+          "checked-gradient": "none"
         }
       }
     },
@@ -299,11 +239,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "pressed": {
@@ -315,11 +250,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     },
     "disabled": {
@@ -339,11 +269,6 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": "none"
-        }
       }
     }
   }

@@ -111,21 +111,14 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
     },
     get hoverStyle(): ViewStyle {
       if (themeStyle().state.overlay.hover > 0) {
-        return hovered(
-          "foreground",
-          o?.glass ? finish.glass.backgroundImage : finish.raised.backgroundImage,
-        );
+        return hovered("foreground");
       }
       return { ...finish.hover };
     },
     get activeStyle(): ViewStyle {
       if (themeStyle().state.overlay.pressed > 0) {
         return {
-          ...stateLayer(
-            "pressed",
-            "foreground",
-            o?.glass ? finish.glass.backgroundImage : finish.raised.backgroundImage,
-          ),
+          ...stateLayer("pressed", "foreground"),
           ...pressSink(0.92).activeStyle,
         };
       }

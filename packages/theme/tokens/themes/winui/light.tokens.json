@@ -1091,14 +1091,6 @@
           "hex": "#146cbe"
         }
       },
-      "border-top-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0.52768, 0.14982, 252.341],
-          "hex": "#146cbe"
-        }
-      },
       "pressed-background": {
         "$type": "color",
         "$value": {

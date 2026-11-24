@@ -24,6 +24,14 @@ import {
   token,
 } from "nsh";
 
+import {
+  type FaceRole,
+  type FinishFieldList,
+  type FinishFieldName,
+  type FinishFields,
+  type FinishOf,
+  type FinishRole,
+} from "./finish-fields";
 import { materials, type FinishMaterial, type MaterialRecipe } from "./materials";
 import semantics from "./semantics.json";
 
@@ -52,54 +60,14 @@ export const TERMINAL_GAP = 24;
 /** Whether the app shows its dark palette; reactive: reading it subscribes. */
 export const isDark = () => colorScheme() !== "light";
 
-/** A surface's finish as `semantics.json` writes it: DTCG finish fields (`background`, `gradient`, `shadow`, `border-color`) plus `backdropFilter`, the `material` it asks of the platform (`null`: none) and the elevation that material's platform draws it at. */
-export interface Finish {
-  background?: string;
-  /** The gradient over the fill, or `null` where the layer paints flat. */
-  gradient?: string | null;
-  shadow: string;
-  "border-color"?: string;
-  /**
-   * A colour of its own for one edge, or `null`: that edge has none and takes `border-color`, as CSS's
-   * `currentColor` does. A theme states this only for a layer whose corner is drawn (`winui`).
-   */
-  "border-top-color"?: string | null;
-  "border-bottom-color"?: string | null;
-  backdropFilter?: string;
-  /**
-   * The fill and ink a theme paints instead of the accent while a filled control is pressed, or
-   * `null` where the press only dims it.
-   */
-  "pressed-background"?: string | null;
-  "pressed-foreground"?: string | null;
-  /**
-   * How far the accent dims while a filled control is pressed, fill and ink together: every theme
-   * states it on `accent`, 1 where its press swaps the accent out or lays a state layer over it.
-   */
-  "pressed-opacity"?: number;
-  /**
-   * A knob's checked state, painted only while its control is on: the fill, the edge and the gradient
-   * it wears then. Only `knob` states these, and a theme states only what differs — a field left out
-   * is the unchecked knob's, a stated `"none"` gradient (`null` here) paints the knob flat.
-   */
-  "checked-background"?: string;
-  "checked-border-color"?: string;
-  "checked-gradient"?: string | null;
-  /** The ink on this finish's surface (a color, not a spread style key): every finish states one. */
-  foreground: string;
-  /** The platform's own material the layer asks for: `null` asks nothing of it (see `materials`).
-   * A theme's sources spell that `"none"`, and every finish states the field. */
-  material: FinishMaterial | null;
-  /** The elevation the layer's material draws it at, in points (`android={{ elevation }}`): Android's own
-   * shadow; `null` where the layer asks for none. */
-  elevation?: number | null;
-}
-
-/** The `finishes` block of `semantics.json`: fields shared by both appearances plus sparse light/dark overrides. */
+/**
+ * The `finishes` block of `semantics.json`: fields shared by both appearances plus sparse light/dark
+ * overrides. A role carries exactly the fields `finish-fields.ts` gives it, in every theme.
+ */
 export interface SplitFinishes {
-  shared: Record<FinishRole, Partial<Finish>>;
-  light: Partial<Record<FinishRole, Partial<Finish>>>;
-  dark: Partial<Record<FinishRole, Partial<Finish>>>;
+  shared: { [R in FinishRole]: Partial<FinishOf<R>> };
+  light: Partial<{ [R in FinishRole]: Partial<FinishOf<R>> }>;
+  dark: Partial<{ [R in FinishRole]: Partial<FinishOf<R>> }>;
 }
 
 /**
@@ -107,7 +75,7 @@ export interface SplitFinishes {
  * finish whose `material` has `apple` also has `glassEffect` (and `glassTintColor`, unless its tint is
  * `null`); otherwise these keys are not there at all. `material` itself is never a style key.
  */
-export type FinishStyle = {
+interface FinishStyleFields {
   backgroundColor?: string;
   backgroundImage?: string;
   boxShadow: string;
@@ -134,25 +102,39 @@ export type FinishStyle = {
   checkedGradient?: string | null;
   glassEffect?: "regular" | "clear";
   glassTintColor?: string;
+}
+
+/** The style key one finish field draws with; `never` for the fields read by name (the ink, the elevation). */
+type FinishStyleKey = {
+  background: "backgroundColor";
+  gradient: "backgroundImage";
+  shadow: "boxShadow";
+  "border-color": "borderColor";
+  "border-top-color": "borderTopColor";
+  "border-bottom-color": "borderBottomColor";
+  backdropFilter: "backdropFilter";
+  "pressed-background": "pressedBackground";
+  "pressed-foreground": "pressedForeground";
+  "pressed-opacity": "pressedOpacity";
+  "checked-background": "checkedBackground";
+  "checked-border-color": "checkedBorderColor";
+  "checked-gradient": "checkedGradient";
+  foreground: "foreground";
+  material: "glassEffect" | "glassTintColor";
+  elevation: never;
 };
 
-/** The finishes' roles: the layers a surface can be. A control that differs reads its control dimension (`control()`), not a finish. */
-export type FinishRole =
-  | "card"
-  | "inset"
-  | "channel"
-  | "raised"
-  | "plate"
-  | "overlay"
-  | "modal"
-  | "inverse"
-  | "glass"
-  | "accent"
-  | "fill"
-  | "knob"
-  | "hover"
-  | "pressed"
-  | "disabled";
+type FinishStyleKeys<R extends FinishRole> = {
+  [F in FinishFieldList<R>[number]]: FinishStyleKey[F];
+}[FinishFieldList<R>[number]];
+
+export type FinishStyle<R extends FinishRole = FinishRole> = Pick<
+  FinishStyleFields,
+  FinishStyleKeys<R>
+>;
+
+/** The finishes' roles: the layers a surface can be (`FinishRole` in `finish-fields.ts`). A control that differs reads its control dimension (`control()`), not a finish. */
+export type { FaceRole, FinishRole };
 
 /** The shadow scale's levels: a control, a card, a floating panel, a dialog. */
 export type ElevationLevel = "sm" | "md" | "lg" | "xl";
@@ -436,14 +418,21 @@ const alias = (value: string): string =>
     });
 
 /** Merge `shared` with the active appearance's sparse override for one finish role (reactive). */
-const finishOf = (role: FinishRole): Finish => {
+const finishOf = <R extends FinishRole>(role: R): FinishOf<R> => {
   const { finishes } = semanticsOf();
   const overrides = isDark() ? finishes.dark : finishes.light;
-  return { ...finishes.shared[role], ...overrides?.[role] } as Finish;
+  return { ...finishes.shared[role], ...overrides[role] } as FinishOf<R>;
 };
 
+/** A role's finish as the fields it may or may not carry: what the platform layer reads of every role. */
+const anyFieldOf = (role: FinishRole): Partial<FinishFields> => finishOf(role);
+
+/** A field every role carries (the table gives all fifteen `foreground` and `shadow`): read without a guard. */
+const sharedFieldOf = <F extends FinishFieldName>(role: FinishRole, field: F): FinishFields[F] =>
+  (anyFieldOf(role) as FinishFields)[field];
+
 /** The material one finish role asks for in the semantics in use, in the appearance shown (reactive). */
-const materialOf = (role: FinishRole): FinishMaterial | null => finishOf(role).material;
+const materialOf = (role: FinishRole): FinishMaterial | null => anyFieldOf(role).material ?? null;
 
 /** The recipe of the material a finish asks for, in the appearance shown (reactive); `undefined` for `null`. */
 const recipeOf = (role: FinishRole): MaterialRecipe | undefined => {
@@ -470,13 +459,7 @@ const glassKeys = (role: FinishRole): readonly string[] => {
  * props of the material (its `ios` and `windows` blurs, its `android` elevation) come from
  * `platformMaterial`.
  */
-const finishStyleKeys: Record<
-  Exclude<
-    keyof Finish,
-    "material" | "elevation" | "foreground" | `pressed-${string}` | `checked-${string}`
-  >,
-  keyof FinishStyle
-> = {
+const finishStyleKeys: { [F in FinishFieldName]?: keyof FinishStyleFields } = {
   background: "backgroundColor",
   gradient: "backgroundImage",
   shadow: "boxShadow",
@@ -486,22 +469,24 @@ const finishStyleKeys: Record<
   backdropFilter: "backdropFilter",
 };
 
-function themed(role: FinishRole): FinishStyle {
-  const out = {} as FinishStyle;
-  const builtInRole = {
+function themed<R extends FinishRole>(role: R): FinishStyle<R> {
+  const out = {} as FinishStyle<R>;
+  const builtInRole: Partial<FinishFields> = {
     ...builtIn.finishes.shared[role],
     ...builtIn.finishes.dark[role],
     ...builtIn.finishes.light[role],
   };
-  for (const key of Object.keys(finishStyleKeys) as (keyof typeof finishStyleKeys)[]) {
-    if (!(key in builtInRole)) continue;
-    const styleKey = finishStyleKeys[key];
+  for (const [field, styleKey] of Object.entries(finishStyleKeys) as [
+    FinishFieldName,
+    keyof FinishStyleFields,
+  ][]) {
+    if (!(field in builtInRole)) continue;
     Object.defineProperty(out, styleKey, {
       enumerable: true,
       configurable: true,
       get: () => {
-        const value = finishOf(role)[key];
-        if (key === "backdropFilter") {
+        const value = anyFieldOf(role)[field];
+        if (field === "backdropFilter") {
           // A material guarantees its blur: a platform that draws no glass nor the host's blur still
           // blurs what is behind the layer, at the recipe's radius.
           const recipe = recipeOf(role);
@@ -517,14 +502,14 @@ function themed(role: FinishRole): FinishStyle {
   Object.defineProperty(out, "foreground", {
     enumerable: false,
     configurable: true,
-    get: () => alias(finishOf(role).foreground),
+    get: () => alias(sharedFieldOf(role, "foreground")),
   });
   // The theme's own pressed fill and ink, where it states them; a spread never wears them.
   Object.defineProperty(out, "pressedBackground", {
     enumerable: false,
     configurable: true,
     get: () => {
-      const value = finishOf(role)["pressed-background"];
+      const value = anyFieldOf(role)["pressed-background"];
       return typeof value === "string" ? alias(value) : undefined;
     },
   });
@@ -532,21 +517,21 @@ function themed(role: FinishRole): FinishStyle {
     enumerable: false,
     configurable: true,
     get: () => {
-      const value = finishOf(role)["pressed-foreground"];
+      const value = anyFieldOf(role)["pressed-foreground"];
       return typeof value === "string" ? alias(value) : undefined;
     },
   });
   Object.defineProperty(out, "pressedOpacity", {
     enumerable: false,
     configurable: true,
-    get: () => finishOf(role)["pressed-opacity"],
+    get: () => anyFieldOf(role)["pressed-opacity"],
   });
   // A knob's checked state, where the theme states it; a spread never wears these either.
   Object.defineProperty(out, "checkedBackground", {
     enumerable: false,
     configurable: true,
     get: () => {
-      const value = finishOf(role)["checked-background"];
+      const value = anyFieldOf(role)["checked-background"];
       return typeof value === "string" ? alias(value) : undefined;
     },
   });
@@ -554,7 +539,7 @@ function themed(role: FinishRole): FinishStyle {
     enumerable: false,
     configurable: true,
     get: () => {
-      const value = finishOf(role)["checked-border-color"];
+      const value = anyFieldOf(role)["checked-border-color"];
       return typeof value === "string" ? alias(value) : undefined;
     },
   });
@@ -562,7 +547,7 @@ function themed(role: FinishRole): FinishStyle {
     enumerable: false,
     configurable: true,
     get: () => {
-      const value = finishOf(role)["checked-gradient"];
+      const value = anyFieldOf(role)["checked-gradient"];
       if (value === null) return null;
       return typeof value === "string" ? alias(value) : undefined;
     },
@@ -571,7 +556,7 @@ function themed(role: FinishRole): FinishStyle {
     const recipe = recipeOf(role);
     if (recipe?.glassEffect === undefined) return undefined;
     if (key === "glassEffect") return recipe.glassEffect;
-    const background = finishOf(role).background;
+    const background = anyFieldOf(role).background;
     return background === undefined ? undefined : alias(background);
   };
   return new Proxy(out, {
@@ -590,12 +575,15 @@ function themed(role: FinishRole): FinishStyle {
 }
 
 /** What `platformMaterial` returns: the platform props a finish's material asks for. A platform it
- * asks nothing of has `undefined`. */
-export interface MaterialProps {
-  ios?: { backdropMaterial: BackdropMaterial };
-  windows?: { backdrop: { material: WindowsBackdropMaterial } };
-  android?: { elevation?: number };
-}
+ * asks nothing of has `undefined`; a role that has neither field has neither prop. */
+export type PlatformMaterial<R extends FinishRole = FinishRole> =
+  ("material" extends FinishFieldList<R>[number]
+    ? {
+        ios?: { backdropMaterial: BackdropMaterial };
+        windows?: { backdrop: { material: WindowsBackdropMaterial } };
+      }
+    : {}) &
+    ("elevation" extends FinishFieldList<R>[number] ? { android?: { elevation?: number } } : {});
 
 /**
  * The platform props of a finish's material, for the view that draws the finish: NSH's `ios`
@@ -610,7 +598,7 @@ export interface MaterialProps {
  * imitate no platform) gives `undefined` for all three: the view is drawn as it was. The Liquid
  * Glass of a glass material needs no prop: `glassEffect` and `glassTintColor` are in the style.
  */
-export function platformMaterial(role: FinishRole): MaterialProps {
+export function platformMaterial<R extends FinishRole>(role: R): PlatformMaterial<R> {
   return {
     get ios() {
       return recipeOf(role)?.props.ios;
@@ -619,10 +607,10 @@ export function platformMaterial(role: FinishRole): MaterialProps {
       return recipeOf(role)?.props.windows;
     },
     get android() {
-      const { elevation } = finishOf(role);
+      const { elevation } = anyFieldOf(role);
       return typeof elevation === "number" ? { elevation } : undefined;
     },
-  };
+  } as PlatformMaterial<R>;
 }
 
 /** The palette's roles: one color each, a token of the theme's `theme.json`. */
@@ -786,7 +774,7 @@ export const tints = tokens({
  * that differs (a slider's thumb, a sheet's grabber) says so in its own
  * preset, not in a finish of its own.
  */
-export const finish: Record<FinishRole, FinishStyle> = {
+export const finish: { [R in FinishRole]: FinishStyle<R> } = {
   card: themed("card"),
   inset: themed("inset"),
   channel: themed("channel"),
@@ -969,19 +957,16 @@ export function stateLayerColor(
 /**
  * The state layer of a theme that draws its hover, focus, press and drag as a wash of `ink`
  * (default `"foreground"`) over the surface (`state.overlay`, an opacity; Material's): a gradient
- * of that one color, stacked over `under` (an underlying `backgroundImage` fill) so the surface
- * fill is preserved. A theme whose overlay is 0 (the default: its states swap the surface's
+ * of that one color. A theme whose overlay is 0 (the default: its states swap the surface's
  * finish) draws none, so this is an empty style.
  */
 export function stateLayer(
   kind: keyof Style["state"]["overlay"],
   ink: keyof Tokens = "foreground",
-  under?: string,
 ): ViewStyle {
   const wash = stateLayerColor(kind, ink);
   if (!wash) return {};
-  const layer = `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)`;
-  return { backgroundImage: under && under !== "none" ? `${layer}, ${under}` : layer };
+  return { backgroundImage: `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)` };
 }
 
 /** The smallest target a finger or a pointer gets (`dimension.size.hit` of the tier): 0 adds none. */
@@ -1165,15 +1150,14 @@ export function follow(target: () => number, config: Spring | Timing = motion.fa
 /**
  * A pressable under the pointer (`hoverStyle`): when `state.overlay.hover` is 0 (the default:
  * swap fills), returns the theme's `hover` background; when `state.overlay.hover > 0`, returns a
- * state-layer wash of `ink` (default `"foreground"`), stacked over `under` (any underlying
- * `backgroundImage`). Leave it off a disabled control and, where a theme uses swap fills, off a
- * selected one whose own fill shows.
+ * state-layer wash of `ink` (default `"foreground"`). Leave it off a disabled control and, where a
+ * theme uses swap fills, off a selected one whose own fill shows.
  */
-export const hovered = (ink: keyof Tokens = "foreground", under?: string): ViewStyle => {
+export const hovered = (ink: keyof Tokens = "foreground"): ViewStyle => {
   if (style().state.overlay.hover <= 0) {
     return { backgroundColor: token("hover") };
   }
-  return stateLayer("hover", ink, under);
+  return stateLayer("hover", ink);
 };
 
 /**

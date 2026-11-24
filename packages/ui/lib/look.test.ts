@@ -120,7 +120,8 @@ describe("choiceLook", () => {
 
   test("a well is a sunk face that turns the accent, inside one control stroke", () => {
     expect(choiceLook("well")).toMatchObject({
-      face: { kind: "finish", role: "inset" },
+      face: null,
+      shade: "inset",
       checked: { kind: "finish", role: "accent" },
       edge: { width: "stroke.control", fill: { kind: "colour", role: "input" } },
       corner: { pointer: 5, touch: 7 },
