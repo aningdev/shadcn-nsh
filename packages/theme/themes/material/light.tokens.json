@@ -640,7 +640,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",

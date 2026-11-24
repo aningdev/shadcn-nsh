@@ -40,7 +40,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -59,7 +59,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -78,7 +78,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -260,7 +260,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -279,7 +279,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -294,7 +294,7 @@
       "$description": "A control that cannot be used.",
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",

@@ -25,7 +25,7 @@ export const finishes: ThemeFinishes = {
     },
     channel: {
       background: "{inset}",
-      "border-color": "{border}",
+      "border-color": "{line}",
       shadow: "{shadow.inset}",
       foreground: "{foreground}",
     },

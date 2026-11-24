@@ -934,7 +934,7 @@
     "raised": {
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "border-bottom-color": {
         "$type": "color",
@@ -1034,7 +1034,7 @@
     "hover": {
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "border-bottom-color": {
         "$type": "color",

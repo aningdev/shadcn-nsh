@@ -234,7 +234,7 @@
         "background": "{inset}",
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{border}"
+        "border-color": "{line}"
       },
       "raised": {
         "background": "{raised}",

@@ -942,7 +942,7 @@
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       }
     },
     "overlay": {
@@ -1042,7 +1042,7 @@
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       }
     },
     "disabled": {

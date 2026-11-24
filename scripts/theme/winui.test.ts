@@ -351,16 +351,16 @@ describe("compiled winui theme files", () => {
     expect(hexOf(String(files.semantics.finishes.light.modal?.["border-color"]))).toBe("#c1c1c1");
     expect(hexOf(String(files.semantics.finishes.dark.modal?.["border-color"]))).toBe("#424242");
     expect(files.semantics.finishes.shared.raised).toMatchObject({
-      "border-color": "{border}",
+      "border-color": "{line}",
       shadow: "none",
     });
     expect(files.semantics.finishes.light.raised).toMatchObject({
-      "border-top-color": "{border}",
+      "border-top-color": "{line}",
       "border-bottom-color": "oklch(0.84522 0 0)",
     });
     expect(files.semantics.finishes.dark.raised).toMatchObject({
       "border-top-color": "oklch(0.32897 0 0)",
-      "border-bottom-color": "{border}",
+      "border-bottom-color": "{line}",
     });
     expect(files.semantics.finishes.shared.accent).toMatchObject({
       "border-bottom-color": "{brand-edge}",
@@ -392,7 +392,7 @@ describe("compiled winui theme files", () => {
       "border-color": "oklch(0.23075 0 0)",
     });
     expect(files.semantics.finishes.shared.disabled).toMatchObject({
-      "border-color": "{border}",
+      "border-color": "{line}",
     });
     expect(files.semantics.finishes.light.disabled).toMatchObject({
       background: "oklch(0.97015 0 0)",

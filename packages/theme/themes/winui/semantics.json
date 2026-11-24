@@ -232,13 +232,13 @@
         "background": "{inset}",
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{border}"
+        "border-color": "{line}"
       },
       "raised": {
         "background": "{raised}",
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{border}",
+        "border-color": "{line}",
         "backdropFilter": "none",
         "material": null
       },
@@ -246,7 +246,7 @@
         "background": "{card}",
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{border}",
+        "border-color": "{line}",
         "elevation": null
       },
       "overlay": {
@@ -302,19 +302,19 @@
         "shadow": "none",
         "foreground": "{foreground}",
         "background": "{hover}",
-        "border-color": "{border}",
+        "border-color": "{line}",
         "elevation": null
       },
       "pressed": {
         "shadow": "none",
         "foreground": "{muted-foreground}",
         "background": "{muted}",
-        "border-color": "{border}",
+        "border-color": "{line}",
         "elevation": null
       },
       "disabled": {
         "shadow": "none",
-        "border-color": "{border}"
+        "border-color": "{line}"
       }
     },
     "light": {
@@ -323,7 +323,7 @@
         "border-color": "oklch(0.92191 0 0)"
       },
       "raised": {
-        "border-top-color": "{border}",
+        "border-top-color": "{line}",
         "border-bottom-color": "oklch(0.84522 0 0)"
       },
       "overlay": {
@@ -349,7 +349,7 @@
         "border-color": "oklch(0.52768 0.14982 252.341)"
       },
       "hover": {
-        "border-top-color": "{border}",
+        "border-top-color": "{line}",
         "border-bottom-color": "oklch(0.84522 0 0)"
       },
       "disabled": {
@@ -364,7 +364,7 @@
       },
       "raised": {
         "border-top-color": "oklch(0.32897 0 0)",
-        "border-bottom-color": "{border}"
+        "border-bottom-color": "{line}"
       },
       "overlay": {
         "background": "oklch(from {popover} l c h / 0.96)",
@@ -390,7 +390,7 @@
       },
       "hover": {
         "border-top-color": "oklch(0.32897 0 0)",
-        "border-bottom-color": "{border}"
+        "border-bottom-color": "{line}"
       },
       "disabled": {
         "background": "oklch(0.28502 0 0)",

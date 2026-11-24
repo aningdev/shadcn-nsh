@@ -651,7 +651,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -680,7 +680,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -707,7 +707,7 @@
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       }
     },
     "plate": {
@@ -723,7 +723,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -1053,7 +1053,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -1080,7 +1080,7 @@
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       }
     },
     "pressed": {
@@ -1096,7 +1096,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",
@@ -1113,7 +1113,7 @@
       "$description": "A control that cannot be used.",
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.line}"
       },
       "shadow": {
         "$type": "shadow",

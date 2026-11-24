@@ -8,6 +8,8 @@
 
 ### Fixed
 
+- **WinUI: a secondary button, and every raised, plate, hover, pressed or disabled control, draws WinUI's subtle control stroke again (#395).** Since 0.10.0 these edges took the strong field stroke (`#868686` light, `#9a9a9a` dark), so a Windows button read as an outlined field. Fields keep the strong edge. Material's track edge (`channel`) is the weak outline again for the same reason.
+
 - **Apple light: a selected or hovered row shows on the grouped background (#349).** The light `muted` fill is now `secondarySystemFill` over the card (was the tertiary step), so `accent`, `sidebar-accent`, hover, field, track and inset fills, which reference it, separate from the grouped page and from cards. `bun run theme:contrast` gains a fill-separation check (lightness gap of at least 0.015 between a fill and the surface it sits on, translucent fills composited), which all six themes pass in light and dark.
 
 - **A selected toggle's, or selected secondary button's, hover and press wash matches its label ink.** The state layer used `accent-foreground` while the text uses the selected finish's `primary-foreground`.
