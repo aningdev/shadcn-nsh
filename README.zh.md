@@ -24,6 +24,16 @@ npx shadcn-nsh add --all            # 全部组件
 
 `list`、`view`、`diff` 只读不写：`npx shadcn-nsh list`、`view button`、`diff`（应用的副本与 registry 不同时退出码 1）。每个命令都接受 `-c <dir>`，`add` 另有 `--dry-run` 与 `--overwrite`。参数与默认值见 [CLI 参考](https://shadcn-nsh.aning.dev/docs/cli)。
 
+## 供编码代理
+
+本库附带一个 skill：告诉代理应用里已有哪些组件、部件怎样组合、主题角色怎样读、界面怎样验收。
+
+```sh
+npx skills add aningdev/shadcn-nsh
+```
+
+它读应用自己的 `components/ui` 与 `lib/ui/theme.ts`，随应用一起更新。文档也有面向代理的版本：[llms.txt](https://shadcn-nsh.aning.dev/llms.txt) 与 [llms-full.txt](https://shadcn-nsh.aning.dev/llms-full.txt)。
+
 ## 主题
 
 `init` 装的是本库自己的主题。另外两套以主题条目提供：
