@@ -3,24 +3,22 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
+  buttonCorner,
   colors,
   controlHeight,
-  finish,
   focusRing,
   hovered,
   iconSize,
   rounded,
-  shape,
   stateLayer,
   style as themeStyle,
   terminal,
   font,
   stroke,
   dimmed,
-  tier,
 } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
-import { split, Text } from "nsh";
+import { platform, split, Text } from "nsh";
 import {
   Toggle as BaseToggle,
   ToggleGroup as BaseToggleGroup,
@@ -29,7 +27,7 @@ import {
 } from "nsh/base";
 
 import { type Live, read } from "./lib/live-value";
-import { disabledLook, edged, fillOf } from "./lib/look";
+import { disabledLook, edged, fillOf, selectedLook } from "./lib/look";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { toolbarTrack } from "./lib/tool";
 
@@ -69,8 +67,14 @@ export interface ToggleDimensions {
   pad: number;
 }
 
+/** The ground a toggle wears while on (`button.selected.face`), as the style that paints it. */
+function onFill(): ViewStyle {
+  const ground = selectedLook().face;
+  return ground === null ? {} : { ...fillOf(ground) };
+}
+
 /** The tier the theme measures at: a pointer's compact padding, a touch screen's roomier one. */
-const pointer = tier === "pointer";
+const pointer = platform.desktop;
 
 /**
  * A toggle's sides, icon and label sizes and paddings, by size: compact with a pointer, roomier on
@@ -134,9 +138,10 @@ const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "defa
  * steps under and over), padded at its sides when it carries
  * text, its corners a quarter of its side; a hit slop makes a touch target
  * 44 points. Off, a default toggle is bare and an `outline` sits on a
- * field's edge; on (`pressedStyle`), it takes `finish.accent`, a fill that stands off
- * its surface in both appearances, further than the hover's whisper of the
- * text color. Pressed it sinks to 92% (none with reduced motion). Keyboard
+ * field's edge; on (`pressedStyle`), it takes the chosen ground
+ * (`button.selected.face`, the accent unless a theme says otherwise) and its ink
+ * (`button.selected.ink`), a fill that stands off its surface in both appearances,
+ * further than the hover's whisper of the text color. Pressed it sinks to 92% (none with reduced motion). Keyboard
  * focus: `focusRing(1)`. Disabled: 50%, no hover or press. Pair it with
  * `toggleLabel` for a label and `toggleGlyph` for an icon: muted while
  * off, the text's color while on.
@@ -161,12 +166,12 @@ export function toggleLook(o?: ToggleLookOptions) {
         alignItems: "center",
         justifyContent: "center",
         gap: 6,
-        ...rounded(shape.button),
+        ...rounded(buttonCorner(read(o?.size) ?? "default")),
         borderWidth: stroke.control,
         ...(outline
           ? { borderColor: colors.input, backgroundColor: colors.field }
           : { borderColor: "transparent" }),
-        ...(on && !split ? finish.accent : {}),
+        ...(on && !split ? onFill() : {}),
         ...(split && off.face !== null
           ? on
             ? fillOf(off.face)
@@ -183,7 +188,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       };
     },
     get pressedStyle(): ViewStyle {
-      return { ...finish.accent };
+      return onFill();
     },
     get hoverStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
@@ -196,9 +201,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       if (read(o?.disabled)) return undefined;
       if (themeStyle().state.overlay.pressed > 0) {
         return {
-          ...(read(o?.on)
-            ? stateLayer("pressed", "primary-foreground")
-            : stateLayer("pressed", "foreground")),
+          ...stateLayer("pressed", read(o?.on) ? "primary-foreground" : "foreground"),
           ...sink(0.92),
         };
       }
@@ -222,7 +225,7 @@ const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undef
     const ink = disabledLook().ink;
     if (ink !== null) return ink;
   }
-  return read(pressed) ? finish.accent.foreground : colors.mutedForeground;
+  return read(pressed) ? (selectedLook().ink ?? colors.foreground) : colors.mutedForeground;
 };
 
 /** The label of a `toggleLook` of the same options: the theme's `body` type role (`sm` `detail`, `lg` `label`), medium weight, muted while off. */

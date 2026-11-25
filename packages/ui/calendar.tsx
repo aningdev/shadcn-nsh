@@ -23,6 +23,7 @@ import {
 
 import { timeFieldClass } from "./input";
 import { Icon } from "./lib/icons";
+import { calendarTodayLook } from "./lib/look";
 import { controlSize } from "./lib/surface";
 
 const pointer = platform.desktop;
@@ -54,8 +55,10 @@ const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 /**
  * A day's cell side: the theme's `height.md`, so a square day is as tall as a control row. A
  * calendar does not read the theme's `control()`: under Material and WinUI it keeps `nsh/base`'s
- * look — its days the same size as everywhere else, square-cornered in `shape.control`, today
- * quiet (docs/specs/theme-contract-v2.md §11.4, §11.7, §12 M5).
+ * look — its days the same size as everywhere else, square-cornered in `shape.control`; today is
+ * the theme's own (`calendar.today.*`: the library's quiet disc, Apple's brand ink with no disc),
+ * so a day keeps `nsh/base`'s hover and selection states (docs/specs/theme-contract-v2.md §11.4,
+ * §11.7, §12 M5).
  */
 const cell = () => controlHeight.md;
 
@@ -229,16 +232,18 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
   const column = computed(() =>
     props.item.date ? columnOf(props.item.date, props.firstDayOfWeek ?? 0) : -1,
   );
+  // The theme's today: the class its fill is drawn in and the role its number is inked in. Today
+  // takes no hover fill.
+  const today = () => calendarTodayLook();
   const boxClass = () => {
-    // Today is quiet (the library's look, and `nsh/base`'s under every theme); the selected day is `primary`.
     const restBase = props.item.today
-      ? `${quietFill} border-transparent`
+      ? `${today().face} border-transparent`
       : "border-transparent group-disabled:bg-transparent";
     const hoverCls = props.item.today ? "" : quietHover;
     return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent group-data-range-preview-middle:bg-transparent group-data-range-preview-middle:group-focus-visible:bg-brand-tint`;
   };
   const textClass = () =>
-    `${own()} font-normal group-aria-selected:text-primary-foreground group-disabled:text-muted-foreground group-disabled:opacity-50`;
+    `${props.item.today ? `text-${today().ink}` : own()} font-normal group-aria-selected:text-primary-foreground group-disabled:text-muted-foreground group-disabled:opacity-50`;
   return (
     <View style={{ minWidth: 0, paddingTop: weekGap }}>
       <View style={{ height: cell(), alignItems: "center", justifyContent: "center" }}>

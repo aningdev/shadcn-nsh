@@ -902,7 +902,7 @@
       "type": "registry:ui",
       "title": "Calendar",
       "description": "A month of days to pick a date or a range, on the shared calendar look.",
-      "registryDependencies": ["icons", "input", "surface", "theme"],
+      "registryDependencies": ["icons", "input", "look", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/calendar.tsx",

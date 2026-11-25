@@ -53,7 +53,15 @@ export interface Edge {
 const layer = (role: FaceRole): Record<string, string | undefined> =>
   ({ ...finish[role] }) as unknown as Record<string, string | undefined>;
 
-/** A face's whole layer, where a part wears all of it: a finish's background, edge, shade and gradient. */
+/** What a face paints as a colour (`transparent` where it paints none), for a part that spreads a ground. */
+export function ground(fill: Fill | null): string {
+  return fill === null ? "transparent" : painted(fill);
+}
+
+/**
+ * A face's whole layer, where a part wears all of it: a finish's background, edges, shade,
+ * gradient and the ink its text inherits (`foreground`).
+ */
 export function fillOf(fill: Fill): import("nsh").ViewStyle {
   switch (fill.kind) {
     case "finish":
@@ -220,7 +228,12 @@ function cornerPerTier(path: string): Tiered<number> {
 /** What a slot's face paints, per appearance where the theme states it per appearance. */
 function paintedFace(face: SlotFace): Fill | null {
   if (face === "none" || face === "keep") return null;
-  if ("finish" in face) return { kind: "finish", role: face.finish as FaceRole };
+  if ("finish" in face)
+    return {
+      kind: "finish",
+      role: face.finish as FaceRole,
+      field: face.field as FillField | undefined,
+    };
   if ("tint" in face) return { kind: "tint", role: face.tint as TintRole, alpha: face.alpha };
   return { kind: "colour", role: face.colour as ColourRole, alpha: face.alpha };
 }
@@ -264,6 +277,78 @@ export function trackGround(): Fill | null {
 /** How thick the line under a field's text is where focus lights it (`field.focus.width`). */
 export function fieldFocusWidth(): number {
   return points("field.focus.width");
+}
+
+/** A part painted from a group of slots: its ground, its ink, its edge and the shade it wears. */
+export interface VariantLook {
+  /** What the part fills with (`null` where it paints none). */
+  readonly face: Fill | null;
+  /** What its label and glyph are drawn in (`null` where the slot names no ink). */
+  readonly ink: string | null;
+  /** What its edge is drawn in (`null` where it draws none). */
+  readonly edge: Fill | null;
+  /** The finish whose shade it wears (`null` where it stands flat). */
+  readonly shade: FinishRole | null;
+}
+
+/** A variant's slots, as the look a part spreads. */
+function variantLook(group: string): VariantLook {
+  return {
+    face: face(`${group}.face`),
+    ink: inked(face(`${group}.ink`)),
+    edge: face(`${group}.edge`),
+    shade: shade(`${group}.shade`),
+  };
+}
+
+/** A secondary button's look (`button.secondary.*`): the ordinary visible action. */
+export function secondaryLook(): VariantLook {
+  return variantLook("button.secondary");
+}
+
+/** The ground a secondary button turns over to under the pointer (`button.secondary.hover`). */
+export function secondaryHover(): Fill | null {
+  return face("button.secondary.hover");
+}
+
+/** A destructive button's look (`button.destructive.*`): the danger tone's ground and ink. */
+export function destructiveLook(): VariantLook {
+  return variantLook("button.destructive");
+}
+
+/** A slot's name, where a part matches it against its own (`switch.feedback`, `calendar.today.ink`). */
+function name(path: string): string {
+  const found = value(path);
+  if (typeof found !== "string") {
+    throw new Error(`the theme's \`${path}\` slot names nothing: ${JSON.stringify(found)}`);
+  }
+  return found;
+}
+
+/** A fill as the class that paints it, for a part drawn in classes: `bg-foreground/8`, an alpha on its role's own class. */
+export function backgroundClass(fill: Fill | null, edge: string = "bg"): string {
+  if (fill === null) return `${edge}-transparent`;
+  if (fill.kind !== "colour") {
+    throw new Error(`a class-drawn fill names a palette colour, not ${JSON.stringify(fill)}`);
+  }
+  const role = kebab(fill.role);
+  return fill.alpha === undefined
+    ? `${edge}-${role}`
+    : `${edge}-${role}/${String(Math.round(fill.alpha * 100))}`;
+}
+
+/**
+ * A calendar's today (`calendar.today.*`): the fill under its number and the role its ink is drawn
+ * in — both classes, not colours, so the selected day's `primary` and `primary-foreground` still
+ * outrank it.
+ */
+export function calendarTodayLook(): { readonly face: string; readonly ink: string } {
+  return { face: backgroundClass(face("calendar.today.face")), ink: name("calendar.today.ink") };
+}
+
+/** A chosen control's look (`button.selected.*`): a toggle that is on, a tool that is picked. */
+export function selectedLook(): { readonly face: Fill | null; readonly ink: string | null } {
+  return { face: face("button.selected.face"), ink: inked(face("button.selected.ink")) };
 }
 
 /** The frame a field draws: the edges it paints, their corners, and what each reads. */
@@ -375,8 +460,9 @@ export interface TrackLook {
   readonly edge: Edge | null;
   /** A progress bar: its run's height, and the line's height where it draws one inside it (`0` names none). */
   readonly progress: { readonly height: number; readonly line: number | null };
-  /** A spinner: how faintly its arc's groove shows (`null` where it draws none). */
-  readonly spinner: { readonly opacity: number | null };
+  /** A spinner: how faintly its arc's groove shows (`null` where it draws none), and whether it
+   * turns Apple's eight rays instead of an arc. */
+  readonly spinner: { readonly opacity: number | null; readonly spokes: boolean };
 }
 
 /** The groove a track's controls sit in, as the theme's `progress.*` and `slider.*` slots state it. */
@@ -393,7 +479,10 @@ export function trackLook(part: "progress" | "slider"): TrackLook {
       // A line's height is a measurement, so 0 is how a theme says it draws none.
       line: points("progress.line") || null,
     },
-    spinner: { opacity: opacity === 0 ? null : ratio("spinner.opacity") },
+    spinner: {
+      opacity: opacity === 0 ? null : ratio("spinner.opacity"),
+      spokes: flag("spinner.spokes"),
+    },
   };
 }
 
@@ -405,8 +494,10 @@ export interface SliderLook {
   readonly band: Tiered<number>;
   /** How long a vertical slider's rail is, per input. */
   readonly vertical: Tiered<number>;
-  /** The knob's diameter, per input. */
+  /** The knob's width, per input. */
   readonly knob: Tiered<number>;
+  /** The knob's height, per input: equal to its width where the knob is a disc. */
+  readonly knobHeight: Tiered<number>;
   /** The knob's diameter while pressed, per input. */
   readonly knobPressed: Tiered<number>;
   /** What the knob is filled with, where the theme paints one (`null` where it draws none). */
@@ -431,6 +522,7 @@ export function sliderLook(): SliderLook {
     band: pointsPerTier("slider.band"),
     vertical: pointsPerTier("slider.vertical"),
     knob: pointsPerTier("slider.knob.size"),
+    knobHeight: pointsPerTier("slider.knob.height"),
     knobPressed: pointsPerTier("slider.knob.pressed.size"),
     knobFace: face("slider.knob.face"),
     dot: points("slider.mark.size"),

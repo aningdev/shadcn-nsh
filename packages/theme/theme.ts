@@ -902,6 +902,24 @@ export const shape = {
   },
 };
 
+/**
+ * A button's corner at its size, as points (`semantics.json`'s `button.corner.*` slots): the corner
+ * the theme shapes its buttons with (`shape.corners.button`, `"control"` unless it says otherwise),
+ * `CAPSULE_RADIUS` where it states a capsule, or the points it states. Reactive: a reading in JSX,
+ * a `draw` or an effect follows `selectTheme`.
+ */
+export function buttonCorner(size: "sm" | "default" | "lg"): number {
+  // A regular button is the scale's `md` step: its corner is `button.corner.md`.
+  const step = size === "default" ? "md" : size;
+  const corner = slots()[`button.corner.${step}`];
+  if (corner === "full") return CAPSULE_RADIUS;
+  if (corner === "control") return shape.button;
+  if (typeof corner === "number") return corner;
+  throw new Error(
+    `the theme states no \`button.corner.${step}\` corner: ${JSON.stringify(corner)}`,
+  );
+}
+
 /** Line widths in points (`semantics.json`'s `dimension.stroke`): `hairline` a divider's or a surface's edge (0 where surfaces stand by tone or shadow alone), `control` a control's edge. The focus ring's width is `dimension.focus.width`. */
 export const stroke = {
   get hairline() {

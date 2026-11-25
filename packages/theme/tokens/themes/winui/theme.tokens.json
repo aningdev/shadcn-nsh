@@ -513,7 +513,7 @@
             "value": 18,
             "unit": "px"
           },
-          "$description": "A slider's knob, per input: its diameter.",
+          "$description": "A slider's knob, per input: its width (`0` where the theme draws only a mark).",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
               "touch": {

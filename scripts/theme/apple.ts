@@ -111,11 +111,12 @@ const tints = (tone: string) => `color-mix(in srgb, var(--${tone}) 12%, transpar
 
 /** The theme's own tokens, shared by the appearances. */
 const themeLevel = (): Record<string, string> => ({
-  // Apple HIG Layout: 8 pt in-page controls/fields, 12 pt containers/menus, 26 pt modals, capsule buttons (`shape.corners.button: "full"`).
+  // Apple HIG Layout: 8 pt in-page controls/fields, 12 pt containers/menus, 16 pt modal windows,
+  // and per-size button corners (`button.corner.*`).
   radius: "8px",
   "radius-control": "8px",
   "radius-container": "12px",
-  "radius-modal": "26px",
+  "radius-modal": "16px",
   scrim: oklchColor(0, 0, 0, 0.4),
   media: oklchColor(0.1869, 0.0151, 266.766),
   "on-media": oklchColor(1, 0, 0),
@@ -272,7 +273,8 @@ export const style = {
         pointer: { padding: 8, gap: 8, dot: 6, switch: "regular" },
         touch: { padding: 8, gap: 8, dot: 8, switch: "regular" },
       },
-      height: { pointer: { sm: 24, md: 28, lg: 32 }, touch: { sm: 32, md: 44, lg: 56 } },
+      // macOS 26's control heights are 20/24/28 (mini/small/regular); large keeps 28.
+      height: { pointer: { sm: 20, md: 24, lg: 28 }, touch: { sm: 32, md: 44, lg: 56 } },
     },
     stroke: { hairline: 0.5, control: 1 },
     focus: { style: "halo", width: 3, offset: 0 },
@@ -281,10 +283,58 @@ export const style = {
       touch: { sm: 16, md: 20, lg: 24 },
     },
   },
+  slots: {
+    // Apple's own controls (docs/specs/theme-slots.md, docs/specs/native-themes.md §3.5–3.6):
+    // macOS buttons take a corner per size (capsules only at large), a selected control wears the
+    // 12% brand wash with brand ink, `.gray` (secondary) is a solid fill-3 ground, `.destructive`
+    // is the tint with neither border nor shadow, the checkbox is a white rounded square with a
+    // mid grey border, switch and slider thumbs are ovals on filled tracks, today's date is brand
+    // ink without a disc, and the spinner is eight spokes.
+    "button.corner.sm": 5,
+    "button.corner.md": 6,
+    "button.corner.lg": "full",
+    "button.selected.face": "tint:brand",
+    "button.selected.ink": "color:brand",
+    "button.secondary.edge": "none",
+    "button.secondary.hover": "color:muted",
+    "button.destructive.edge": "none",
+    "button.destructive.shade": "none",
+    "choice.corner": { pointer: 4, touch: 7 },
+    "choice.face": { light: "color:card", dark: "color:raised" },
+    "choice.shade": "none",
+    "switch.width": { pointer: 54, touch: 63 },
+    "switch.height": { pointer: 24, touch: 28 },
+    "switch.knob.width": { pointer: 31, touch: 37 },
+    "switch.knob.height": { pointer: 20, touch: 24 },
+    "switch.knob.on.width": { pointer: 31, touch: 37 },
+    "switch.knob.on.height": { pointer: 20, touch: 24 },
+    "switch.knob.hover": { pointer: 31, touch: 37 },
+    "switch.knob.pressed.width": { pointer: 31, touch: 37 },
+    "switch.knob.pressed.height": { pointer: 20, touch: 24 },
+    "switch.edge.off": 0,
+    "switch.edge.on": 0,
+    "slider.rail": { pointer: 4, touch: 6 },
+    "slider.band": { pointer: 24, touch: 32 },
+    "slider.knob.size": { pointer: 20, touch: 37 },
+    "slider.knob.height": { pointer: 16, touch: 24 },
+    "slider.knob.pressed.size": { pointer: 20, touch: 37 },
+    "slider.shade": "none",
+    "slider.edge.width": 0,
+    "calendar.today.face": "none",
+    "calendar.today.ink": "brand",
+    "spinner.spokes": true,
+    "spinner.opacity": 0,
+    // Apple's wells are their ground alone: no fill of a box ever draws a border (HIG, "Adopting
+    // Liquid Glass"; the inset edge is transparent for the same reason).
+    "well.edge": "none",
+  },
   shape: {
     curve: "continuous",
     corners: {
-      button: "full" as const,
+      // A button's own corners are the `button.corner.*` slots; this is the corner of the other
+      // button-like controls (icon buttons, pagination items, calendar days): macOS rounds them
+      // like a control, not as capsules.
+      button: "{dimension.radius.control}",
     },
   },
   state: {
@@ -293,12 +343,7 @@ export const style = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
-    disabled: { content: 0.3, fill: false },
-  },
-  slots: {
-    // Apple's wells are their ground alone: no fill of a box ever draws a border (HIG, "Adopting
-    // Liquid Glass"; the inset edge is transparent for the same reason).
-    "well.edge": "none",
+    disabled: { content: 0.4, fill: false },
   },
   transition: {
     enter: { duration: 420, timingFunction: "out-cubic" },
@@ -375,20 +420,20 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
       "Apple macOS pointer input-tier overrides (Apple HIG Layout and Typography).",
     touchDescription: "Apple iOS touch input-tier overrides (Apple HIG Layout and Typography).",
     radiusGroupDescription:
-      "Apple HIG corner radius scale (8px control, 12px container, 26px modal; capsule buttons via shape.corners.button).",
+      "Apple HIG corner radius scale (8px control, 12px container, 16px modal; button corners per size via the `button.corner.*` slots).",
     style,
     designMd: {
       overview:
-        "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule buttons, continuous corners, and Liquid Glass on floating and raised surfaces.",
+        "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, per-size button corners (capsules only at large), continuous corners, and Liquid Glass on floating and raised surfaces.",
       elevation:
         'Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: "regular"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.',
       dos: [
-        'Use `999px` capsule corners on button-like controls (`shape.corners.button: "full"`) alongside `8px` controls/fields, `12px` containers, and `26px` modals with `shape.curve: "continuous"`.',
+        'Use the `button.corner.*` slots (5/6/`full` with a pointer) alongside `8px` controls/fields, `12px` containers, and `16px` modals with `shape.curve: "continuous"`.',
         "Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.",
         "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.",
       ],
       donts: [
-        "Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners.",
+        "Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners, and do not paint a selected control a solid accent: Apple washes it at 12%.",
         "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+.",
       ],
     },
@@ -435,7 +480,7 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; Apple dims via pressed-opacity).",
         "state.disabled":
-          "UIKit disabled content opacity multiplier (0.3); containers keep resting fills.",
+          "UIKit disabled content opacity multiplier (0.4); containers keep resting fills.",
       },
     },
   };

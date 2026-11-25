@@ -4,6 +4,7 @@
 import {
   alpha,
   animate,
+  buttonCorner,
   colors,
   finish,
   focusRing,
@@ -13,11 +14,11 @@ import {
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
-  tints,
   rounded,
   font,
   shape,
   stroke,
+  tints,
   dimmed,
   controlHeight,
   iconSize,
@@ -41,7 +42,16 @@ import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/b
 import { AsText } from "./lib/as-text";
 import { Icon, IconLabel } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { disabledLook, fillOf } from "./lib/look";
+import {
+  destructiveLook,
+  disabledLook,
+  type Fill,
+  fillOf,
+  ground,
+  secondaryHover,
+  secondaryLook,
+  selectedLook,
+} from "./lib/look";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { Spinner } from "./spinner";
 
@@ -160,6 +170,10 @@ const dimensions = (o?: ButtonLookOptions) => buttonSizes[read(o?.size) ?? "defa
 
 const filled = (variant: ButtonVariant) => variant === "default";
 
+/** The shade a variant wears: the elevation of the finish its slot names, or none. */
+const shadeOf = (shade: ReturnType<typeof secondaryLook>["shade"]): string =>
+  shade === null ? "none" : (finish[shade].boxShadow ?? "none");
+
 /** The look a filled control wears while it is held: the accent dimmed to its `pressedOpacity`, or
  * the flat fill and ink the theme paints instead (`finish.accent.pressedBackground` /
  * `pressedForeground`): a theme whose press swaps the accent out paints a plain face, so the accent's
@@ -179,6 +193,7 @@ function pressedAccent(): ViewStyle {
       };
 }
 
+/** A button's label ink, as the token the state layers mix (a theme that swaps fills draws none). */
 const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
   filled(variant)
     ? "primary-foreground"
@@ -205,21 +220,50 @@ function restLook(variant: ButtonVariant, selected: boolean, disabled = false): 
   if (filled(variant) && disabled) return { ...finish.raised };
   if (filled(variant)) return { ...finish.accent, opacity: selected ? SELECTED_OPACITY : 1 };
   if (variant === "destructive") {
+    const look = destructiveLook();
+    if (selected)
+      return {
+        boxShadow: shadeOf(look.shade),
+        backgroundColor: alpha(colors.destructive, 0.2),
+        backgroundImage: "none",
+        borderColor: ground(look.edge),
+      };
     return {
-      boxShadow: finish.raised.boxShadow,
-      backgroundColor: selected ? alpha(colors.destructive, 0.2) : tints.destructive,
-      backgroundImage: "none",
-      borderColor: alpha(colors.destructive, 0.32),
+      ...(look.face === null ? {} : fillOf(look.face)),
+      ...edgeOf(look.edge),
+      ...(look.shade === null ? {} : { boxShadow: shadeOf(look.shade) }),
     };
+  }
+  if (selected) {
+    // Selected stays on: the chosen ground, apart from rest and from hover in both
+    // appearances (a sunk `pressed` is a press's, too faint to hold).
+    const chosen = selectedLook().face;
+    return chosen === null ? { ...finish.accent } : fillOf(chosen);
   }
   if (variant === "ghost")
     return {
-      backgroundColor: selected ? token("accent") : ghostFill(),
+      backgroundColor: ghostFill(),
       borderColor: "transparent",
     };
-  // Selected stays on: `on`, apart from rest and from hover in both
-  // appearances (a sunk `pressed` is a press's, too faint to hold).
-  return selected ? { ...finish.accent } : { ...finish.raised };
+  // The whole layer, not a ground: a theme's raised finish may draw more than a fill (WinUI's
+  // underline), and the variant's own edge and shade sit on top of it.
+  const look = secondaryLook();
+  return {
+    ...(look.face === null ? {} : fillOf(look.face)),
+    ...edgeOf(look.edge),
+    ...(look.shade === null ? {} : { boxShadow: shadeOf(look.shade) }),
+  };
+}
+
+/**
+ * A variant's edge as a style: a slot that states `none` draws no edge (a `borderWidth` alone would
+ * paint the label's ink), and a slot naming a layer that has no such colour keeps the face's own
+ * edge — which is what the base secondary (`finish:raised`'s `borderColor`) has always drawn.
+ */
+function edgeOf(edge: Fill | null): ViewStyle {
+  if (edge === null) return { borderColor: "transparent" };
+  const painted = ground(edge);
+  return painted === "transparent" ? {} : { borderColor: painted };
 }
 
 /**
@@ -243,7 +287,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       return {
         height: terminal ? TERMINAL_ROW : dims.height,
         paddingHorizontal: terminal ? TERMINAL_COLUMN : dims.pad,
-        ...rounded(shape.button),
+        ...rounded(buttonCorner(read(o?.size) ?? "default")),
         borderWidth: stroke.control,
         flexDirection: "row",
         alignItems: "center",
@@ -262,7 +306,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       }
       if (filled(variant)) return { opacity: 0.94 };
       if (variant === "destructive") return { backgroundColor: alpha(colors.destructive, 0.16) };
-      return variant === "ghost" ? hovered() : { ...finish.hover };
+      return variant === "ghost" ? hovered() : { backgroundColor: ground(secondaryHover()) };
     },
     get activeStyle(): ViewStyle | undefined {
       if (idle()) return undefined;
@@ -302,9 +346,11 @@ function ink(live: Live<ButtonVariant>, o?: ButtonLookOptions) {
     return read(o?.pressed)
       ? (finish.accent.pressedForeground ?? finish.accent.foreground)
       : finish.accent.foreground;
-  if (variant === "destructive") return colors.destructive;
-  if (variant === "secondary" && read(o?.selected)) return finish.accent.foreground;
+  if (variant === "destructive") return destructiveLook().ink ?? colors.destructive;
+  if (variant === "secondary" && read(o?.selected))
+    return selectedLook().ink ?? finish.accent.foreground;
   if (read(o?.pressed)) return finish.pressed.foreground;
+  if (variant === "secondary") return secondaryLook().ink ?? colors.foreground;
   return colors.foreground;
 }
 
@@ -603,7 +649,7 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
         return {
           flexDirection: "row",
           alignItems: "stretch",
-          ...rounded(shape.button),
+          ...rounded(buttonCorner(read(o?.size) ?? "default")),
           borderWidth: stroke.control,
           overflow: "hidden",
           ...restLook(read(variant) ?? "default", false, !!read(o?.disabled)),

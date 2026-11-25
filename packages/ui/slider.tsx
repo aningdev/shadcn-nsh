@@ -129,7 +129,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
       }
       return {
         width: h.knob[tier],
-        height: h.knob[tier],
+        height: h.knobHeight[tier],
         borderWidth: stroke.control,
         ...finish.knob,
         backgroundColor: painted(h.knobFace),

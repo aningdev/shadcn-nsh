@@ -25,17 +25,7 @@
       "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
       "border-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
+        "$value": "{color.input}"
       },
       "shadow": {
         "$type": "shadow",

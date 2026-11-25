@@ -570,6 +570,10 @@ export const m3Style = {
     "tabs.track.face": "none",
     // M3 containers are edge-free: a sunk well is its ground, not a line.
     "well.edge": "none",
+    // Every M3 button is a capsule, whatever its size.
+    "button.corner.sm": "full",
+    "button.corner.md": "full",
+    "button.corner.lg": "full",
     "state.disabled.face": "finish:disabled",
     "state.disabled.ink": "finish:disabled:foreground",
     "state.disabled.edge": "finish:disabled:border-color",

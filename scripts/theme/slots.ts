@@ -67,6 +67,65 @@ export type AppearanceSlot = { readonly light: SlotValue; readonly dark: SlotVal
  * every value it does not state (`docs/specs/theme-slots.md`).
  */
 export const SLOTS: Record<string, SlotSpec> = ordered({
+  // A button: its corners at each size, its selected state, and the variants whose look a platform
+  // states of its own (the filled one is `finish.accent`, which every theme paints its own way).
+  "button.corner.sm": {
+    kind: "corner",
+    doc: "A small button's corner: the control radius, `full` for a capsule, or points.",
+  },
+  "button.corner.md": {
+    kind: "corner",
+    doc: "A regular button's corner: the control radius, `full` for a capsule, or points.",
+  },
+  "button.corner.lg": {
+    kind: "corner",
+    doc: "A large button's corner: the control radius, `full` for a capsule, or points.",
+  },
+  "button.selected.face": {
+    kind: "face",
+    doc: "The ground a chosen control turns over to: a toggle that is on, a tool that is picked, a button that is selected.",
+  },
+  "button.selected.ink": {
+    kind: "face",
+    doc: "What a chosen control's label and glyph are drawn in.",
+  },
+  "button.secondary.face": {
+    kind: "face",
+    doc: "The ground of a secondary button: the ordinary visible action.",
+  },
+  "button.secondary.ink": {
+    kind: "face",
+    doc: "What a secondary button's label and glyph are drawn in.",
+  },
+  "button.secondary.edge": {
+    kind: "face",
+    doc: "What a secondary button's edge is drawn in, or `none` where it draws none.",
+  },
+  "button.secondary.shade": {
+    kind: "shade",
+    doc: "The finish whose shade a secondary button wears, or `none` where it stands flat.",
+  },
+  "button.secondary.hover": {
+    kind: "face",
+    doc: "The ground a secondary button turns over to under the pointer.",
+  },
+  "button.destructive.face": {
+    kind: "face",
+    doc: "The ground of a destructive button.",
+  },
+  "button.destructive.ink": {
+    kind: "face",
+    doc: "What a destructive button's label and glyph are drawn in.",
+  },
+  "button.destructive.edge": {
+    kind: "face",
+    doc: "What a destructive button's edge is drawn in, or `none` where it draws none.",
+  },
+  "button.destructive.shade": {
+    kind: "shade",
+    doc: "The finish whose shade a destructive button wears, or `none` where it stands flat.",
+  },
+
   // A field's frame: an input, a select, a combobox, a number input, an OTP cell.
   "field.face": {
     kind: "face",
@@ -264,7 +323,11 @@ export const SLOTS: Record<string, SlotSpec> = ordered({
   },
   "slider.knob.size": {
     kind: "px",
-    doc: "A slider's knob, per input: its diameter.",
+    doc: "A slider's knob, per input: its width (`0` where the theme draws only a mark).",
+  },
+  "slider.knob.height": {
+    kind: "px",
+    doc: "A slider's knob, per input: its height; equal to its width where the knob is a disc.",
   },
   "slider.knob.pressed.size": {
     kind: "px",
@@ -317,10 +380,22 @@ export const SLOTS: Record<string, SlotSpec> = ordered({
     doc: "How thick a progress bar's groove edge is; `control` is the theme's `stroke.control`.",
   },
 
-  // A spinner.
+  // A calendar's today, and a spinner.
+  "calendar.today.face": {
+    kind: "face",
+    doc: "The fill under a calendar's today, or `none` where it draws none.",
+  },
+  "calendar.today.ink": {
+    kind: "text",
+    doc: "The ink a calendar's today is drawn in: a role name the day's text class reads (`foreground`, `brand`).",
+  },
   "spinner.opacity": {
     kind: "ratio",
     doc: "How faintly the spinner's groove shows, or `0` where it draws none.",
+  },
+  "spinner.spokes": {
+    kind: "boolean",
+    doc: "Whether an indeterminate spinner turns Apple's eight tapered rays instead of a turning arc.",
   },
 
   // A popup's surface, and the track a strip of tabs sits in.
@@ -359,6 +434,21 @@ export const SLOTS: Record<string, SlotSpec> = ordered({
  * before the slots were stated — a boxed field, a sunk well, a sunk groove and a disc.
  */
 export const BASE_SLOTS: Record<string, SlotValue> = {
+  "button.corner.sm": "control",
+  "button.corner.md": "control",
+  "button.corner.lg": "control",
+  "button.selected.face": "finish:accent",
+  "button.selected.ink": "color:primaryForeground",
+  "button.secondary.face": "finish:raised",
+  "button.secondary.ink": "color:foreground",
+  "button.secondary.edge": "finish:raised:border-color",
+  "button.secondary.shade": "raised",
+  "button.secondary.hover": "finish:hover",
+  "button.destructive.face": "tint:destructive",
+  "button.destructive.ink": "color:destructive",
+  "button.destructive.edge": "color:destructive@0.32",
+  "button.destructive.shade": "raised",
+
   "field.face": "color:field",
   "field.shade": "inset",
   "field.edge.width": "control",
@@ -410,6 +500,7 @@ export const BASE_SLOTS: Record<string, SlotValue> = {
   "slider.edge.colour": "color:border",
   "slider.edge.width": "control",
   "slider.knob.size": { pointer: 14, touch: 20 },
+  "slider.knob.height": { pointer: 14, touch: 20 },
   "slider.knob.pressed.size": { pointer: 14, touch: 32 },
   "slider.knob.face": "finish:knob",
   "slider.mark.size": 0,
@@ -424,7 +515,10 @@ export const BASE_SLOTS: Record<string, SlotValue> = {
   "progress.edge.colour": "color:border",
   "progress.edge.width": "control",
 
+  "calendar.today.face": "color:foreground@0.08",
+  "calendar.today.ink": "foreground",
   "spinner.opacity": 0.25,
+  "spinner.spokes": false,
 
   "popup.corner": "container",
   "tabs.track.face": "color:inset",

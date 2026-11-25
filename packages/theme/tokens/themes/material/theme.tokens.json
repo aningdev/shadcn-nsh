@@ -656,6 +656,22 @@
         "$description": "What a sunk well's edge is drawn in, or `none` where it draws no edge and its ground alone marks it."
       }
     },
+    "button": {
+      "corner": {
+        "sm": {
+          "$value": "full",
+          "$description": "A small button's corner: the control radius, `full` for a capsule, or points."
+        },
+        "md": {
+          "$value": "full",
+          "$description": "A regular button's corner: the control radius, `full` for a capsule, or points."
+        },
+        "lg": {
+          "$value": "full",
+          "$description": "A large button's corner: the control radius, `full` for a capsule, or points."
+        }
+      }
+    },
     "state": {
       "disabled": {
         "face": {

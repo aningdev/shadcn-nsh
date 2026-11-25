@@ -166,6 +166,40 @@
     }
   },
   "slots": {
+    "button.corner.sm": "control",
+    "button.corner.md": "control",
+    "button.corner.lg": "control",
+    "button.selected.face": {
+      "finish": "accent"
+    },
+    "button.selected.ink": {
+      "colour": "primaryForeground"
+    },
+    "button.secondary.face": {
+      "finish": "raised"
+    },
+    "button.secondary.ink": {
+      "colour": "foreground"
+    },
+    "button.secondary.edge": {
+      "finish": "raised",
+      "field": "borderColor"
+    },
+    "button.secondary.shade": "raised",
+    "button.secondary.hover": {
+      "finish": "hover"
+    },
+    "button.destructive.face": {
+      "tint": "destructive"
+    },
+    "button.destructive.ink": {
+      "colour": "destructive"
+    },
+    "button.destructive.edge": {
+      "colour": "destructive",
+      "alpha": 0.32
+    },
+    "button.destructive.shade": "raised",
     "field.face": {
       "colour": "field"
     },
@@ -295,6 +329,10 @@
       "pointer": 18,
       "touch": 18
     },
+    "slider.knob.height": {
+      "pointer": 14,
+      "touch": 20
+    },
     "slider.knob.pressed.size": {
       "pointer": 18,
       "touch": 18
@@ -314,7 +352,13 @@
     "progress.shade": "none",
     "progress.edge.colour": "none",
     "progress.edge.width": 0,
+    "calendar.today.face": {
+      "colour": "foreground",
+      "alpha": 0.08
+    },
+    "calendar.today.ink": "foreground",
     "spinner.opacity": 0,
+    "spinner.spokes": false,
     "popup.corner": "container",
     "tabs.track.face": {
       "colour": "inset"

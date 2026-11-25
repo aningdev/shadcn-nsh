@@ -287,7 +287,7 @@
 
 ### 11.1 来源、读取与校验
 
-- 主题源码：`packages/theme/tokens/themes/<id>/theme.tokens.json` 的 `slot` 组，只写与本库默认不同的槽（今天只有 material 与 winui 写）。
+- 主题源码：`packages/theme/tokens/themes/<id>/theme.tokens.json` 的 `slot` 组，只写与本库默认不同的槽（今天 material、winui 与 apple 写）。
 - 默认值：`packages/theme/tokens/base/slots.tokens.json`。这个文件是**生成物**——`scripts/theme/slots.ts` 的 `BASE_SLOTS` 是它的源（名单 `SLOTS`、类型与说明也在那里），`tokens:build` 写它、`tokens:build --check` 拦下手改。每套主题的 resolver 在 `style.shared.tokens.json` 之后读它。
 - 编译产物：`semantics.json` 的 `slots`，扁平、点分键（`slider.mark.size`）；`theme.json` 不带（纯 CSS 侧不用）。
 - 读取：`theme.ts` 的 `slots()`，响应式；组件一律经 `packages/ui/lib/look.ts`（`fieldLook`、`choiceLook`、`trackLook`、`sliderLook`、`switchLook`、`disabledLook`）取解好的部件，不自己拼字符串。每套主题都必须有全部槽，缺一个就抛错。
@@ -312,42 +312,54 @@
 
 ### 11.3 每套主题今天填的值
 
-四套基础主题（`nsh-gallery`、`shadcn`、`solid-glass`、`apple`）取同一套值，material 与 winui 各写自己的。这就是 #404 之前枚举选出来的样子（第 2 步：值 = 今天的外观），出处随值进了 token 的说明。
+`nsh-gallery`、`shadcn`、`solid-glass` 取同一套值（本库默认），material、winui 与 apple 各写自己的。前两套的值是 #404 之前枚举选出来的样子（第 2 步：值 = 今天的外观），出处随值进了 token 的说明；apple 的槽是 2026-11-25 的审计按 macOS 26 / iOS 26 的规范改的值（按钮按尺寸的圆角、选中与次要变体的面与墨、破坏性没有边与阴影、开关与滑块的椭圆钮、日历今天的墨、spinner 的 8 根辐条）。
 
-| 槽                              | nsh-gallery、shadcn、solid-glass、apple | material                        | winui                  |
-| ------------------------------- | --------------------------------------- | ------------------------------- | ---------------------- |
-| `field.face` / `.shade`         | `field` / `inset`                       | 同左                            | 同左                   |
-| `field.edge.sides` / `.width`   | 四边 / 1                                | 只下边 / 1                      | 四边 / 1               |
-| `field.edge.colour` / `.bottom` | `input` / `input`                       | `—` / `mutedForeground`         | `border` / `input`     |
-| `field.corner.top` / `.bottom`  | `control` / `control`                   | `control` / 0                   | `control` / 0          |
-| `field.focus.line`              | `no`                                    | `yes`                           | `yes`                  |
-| `field.disabled.face`           | `keep`                                  | `keep`                          | `finish:disabled`      |
-| `choice.size` / `.corner`       | 16·22 / 5·7                             | 20 / 2                          | 20 / 4                 |
-| `choice.face` / `.shade`        | `field`（暗 `input@0.3`）/ `inset`      | `none` / `none`                 | `track` / `none`       |
-| `choice.edge.width` / `.colour` | 1 / `input`（暗 `foreground@0.2`）      | 2 / `mutedForeground`           | 1 / `input`            |
-| `choice.checked.face`           | `finish:accent`                         | `none`                          | `finish:accent`        |
-| `choice.mark`                   | 6·8，无 hover/按下                      | 6·8                             | 6·8，hover 14、按下 10 |
-| `choice.halo`                   | `none`                                  | 40                              | `none`                 |
-| `switch.width` / `.height`      | 36·44 / 20·24                           | 40·52 / 24·32                   | 40 / 20                |
-| `switch.knob` 关 / 开           | 16·20 / 16·20                           | 16 / 20·24                      | 12 / 12                |
-| `switch.knob.hover` / 按下      | 同关 / 同关                             | 16 / 22·28                      | 14 / 17×14             |
-| `switch.edge` 关 / 开           | 1 / 1                                   | 1·2 / 0                         | 1 / 0                  |
-| `switch.feedback`               | `none`                                  | `expand`                        | `stretch`              |
-| `slider.rail` / `.band`         | 6·8 / 20·32                             | 6·8 / 20·32                     | 4 / 32                 |
-| `slider.face` / `.shade` / 边   | `track` / `inset` / `border` 1          | `tint:brand` / `none` / 0       | `input` / `none` / 0   |
-| `slider.knob` / 按下            | 14·20 / 14·32                           | 同左                            | 18 / 18                |
-| `slider.mark`（内点）           | 0（实心）                               | 0                               | 12，hover 14、按下 10  |
-| `slider.brightens`              | `yes`                                   | `yes`                           | `no`                   |
-| `progress.height` / `.line`     | 6 / 0                                   | 4 / 0                           | 3 / 1                  |
-| `progress.face` / `.shade` / 边 | `track` / `inset` / `border` 1          | `tint:brand` / `none` / 0       | `input` / `none` / 0   |
-| `spinner.opacity`               | 0.25                                    | 0                               | 0                      |
-| `state.disabled.*`              | `keep`                                  | `finish:disabled`（面、墨、边） | 同 material            |
-| `field.focus.width`             | 3（apple 是它的 3 px 焦点环宽）         | 2                               | 2                      |
-| `choice.box`                    | 16·20（`icon.md` 的盒）                 | 18                              | 16·20                  |
-| `slider.knob.face`              | `finish:knob`                           | `primary`                       | `finish:knob`          |
-| `popup.corner`                  | `container`                             | `control`                       | `container`            |
-| `tabs.track.face`               | `inset`                                 | `none`                          | `inset`                |
-| `well.edge`                     | `border`                                | `none`                          | `border`               |
+| 槽                              | nsh-gallery、shadcn、solid-glass   | material                        | winui                  | apple                              |
+| ------------------------------- | ---------------------------------- | ------------------------------- | ---------------------- | ---------------------------------- |
+| `field.face` / `.shade`         | `field` / `inset`                  | 同左                            | 同左                   | 同左                               |
+| `field.edge.sides` / `.width`   | 四边 / 1                           | 只下边 / 1                      | 四边 / 1               | 四边 / 1                           |
+| `field.edge.colour` / `.bottom` | `input` / `input`                  | `—` / `mutedForeground`         | `border` / `input`     | `input` / `input`                  |
+| `field.corner.top` / `.bottom`  | `control` / `control`              | `control` / 0                   | `control` / 0          | `control` / `control`              |
+| `field.focus.line`              | `no`                               | `yes`                           | `yes`                  | `no`                               |
+| `field.disabled.face`           | `keep`                             | `keep`                          | `finish:disabled`      | `keep`                             |
+| `choice.size` / `.corner`       | 16·22 / 5·7                        | 20 / 2                          | 20 / 4                 | 16·22 / 4·7                        |
+| `choice.face` / `.shade`        | `field`（暗 `input@0.3`）/ `inset` | `none` / `none`                 | `track` / `none`       | `card`（暗 `raised`）/ `none`      |
+| `choice.edge.width` / `.colour` | 1 / `input`（暗 `foreground@0.2`） | 2 / `mutedForeground`           | 1 / `input`            | 1 / `input`（暗 `foreground@0.2`） |
+| `choice.checked.face`           | `finish:accent`                    | `primary`                       | `finish:accent`        | `finish:accent`                    |
+| `choice.mark`                   | 6·8，无 hover/按下                 | 6·8                             | 6·8，hover 14、按下 10 | 6·8，无 hover/按下                 |
+| `choice.halo`                   | `none`                             | 32                              | `none`                 | `none`                             |
+| `switch.width` / `.height`      | 36·44 / 20·24                      | 40·52 / 24·32                   | 40 / 20                | 54·63 / 24·28                      |
+| `switch.knob` 关 / 开           | 16·20 / 16·20                      | 16 / 20·24                      | 12 / 12                | 31·37 × 20·24 / 同静止             |
+| `switch.knob.hover` / 按下      | 同关 / 同关                        | 16 / 22·28                      | 14 / 17×14             | 同关 / 同关                        |
+| `switch.edge` 关 / 开           | 1 / 1                              | 1·2 / 0                         | 1 / 0                  | 0 / 0                              |
+| `switch.feedback`               | `none`                             | `expand`                        | `stretch`              | `none`                             |
+| `slider.rail` / `.band`         | 6·8 / 20·32                        | 6·8 / 20·32                     | 4 / 32                 | 4·6 / 24·32                        |
+| `slider.face` / `.shade` / 边   | `track` / `inset` / `border` 1     | `secondary` / `none` / 0        | `input` / `none` / 0   | `track` / `none` / 0               |
+| `slider.knob` 宽 × 高 / 按下    | 14·20 × 14·20 / 14·32              | 同左                            | 18 × 18 / 18           | 20·37 × 16·24 / 同静止             |
+| `slider.mark`（内点）           | 0（实心）                          | 0                               | 12，hover 14、按下 10  | 0（实心）                          |
+| `slider.brightens`              | `yes`                              | `yes`                           | `no`                   | `yes`                              |
+| `progress.height` / `.line`     | 6 / 0                              | 4 / 0                           | 3 / 1                  | 6 / 0                              |
+| `progress.face` / `.shade` / 边 | `track` / `inset` / `border` 1     | `secondary` / `none` / 0        | `input` / `none` / 0   | `track` / `inset` / `border` 1     |
+| `spinner.spokes` / `.opacity`   | `no` / 0.25                        | `no` / 0                        | `no` / 0               | `yes` / 0                          |
+| `state.disabled.*`              | `keep`                             | `finish:disabled`（面、墨、边） | 同 material            | `keep`                             |
+| `field.focus.width`             | 3                                  | 2                               | 2                      | 3（它的 3 px 焦点环宽）            |
+| `choice.box`                    | 16·20（`icon.md` 的盒）            | 18                              | 16·20                  | 16·20                              |
+| `slider.knob.face`              | `finish:knob`                      | `primary`                       | `finish:knob`          | `finish:knob`                      |
+| `popup.corner`                  | `container`                        | `control`                       | `container`            | `container`                        |
+| `tabs.track.face`               | `inset`                            | `none`                          | `inset`                | `inset`                            |
+| `well.edge`                     | `border`                           | `none`                          | `border`               | `none`                             |
+
+按钮与日历今天（`button.*`、`calendar.today.*`）是 2026-11-25 为 apple 审计加的，只有圆角与 apple 的那几行离开默认：
+
+| 槽                                   | nsh-gallery、shadcn、solid-glass   | material | winui            | apple                       |
+| ------------------------------------ | ---------------------------------- | -------- | ---------------- | --------------------------- |
+| `button.corner` sm / md / lg         | `control`                          | `full`   | `control`（= 4） | 5 / 6 / `full`              |
+| `button.selected` 面 / 墨            | `accent` / `primary-fg`            | 同左     | 同左             | `brand-tint` / `brand`      |
+| `button.secondary` 面 / 墨           | `raised` / `foreground`            | 同左     | 同左             | `raised` / `foreground`     |
+| `button.secondary` hover / 边 / 阴影 | `hover` / `raised` 的边 / `raised` | 同左     | 同左             | `muted` / `none` / `raised` |
+| `button.destructive` 面 / 墨         | `destructive-tint` / `destructive` | 同左     | 同左             | 同左                        |
+| `button.destructive` 边 / 阴影       | `destructive@0.32` / `raised`      | 同左     | 同左             | `none` / `none`             |
+| `calendar.today` 面 / 墨             | `foreground@0.08` / `foreground`   | 同左     | 同左             | `none` / `brand`            |
 
 `switch.small.*` 没有单列：M3 与 WinUI 的开关只有一种尺寸，小号与默认同尺寸；四套基础主题的小号是 `icon.sm` 的钮（12·16）与钮 + 4 的轨道（28·36）。
 
@@ -362,6 +374,8 @@
 ## 12 数字：今天不在刻度上的地方
 
 14 张预设表里的数字大部分已经落在刻度上（高度、图标、圆点、内边距、间隙、描边、圆角）；12 组不在：开关的轨道，滑块的轨道与手柄，分段的格高（#380 后随 `cells` 删掉），日历的格高与 `today`/`cellShape`，复选框的圆角，tabs 的内边距，spinner 的弧，sheet 的抓杆，进度条的高度，控件的可点范围外扩。第 3 节的决定（#293 第 3 条）是“复用已有刻度，不加新的按组件 token”，逐条（P5 已全部落地，下表的“差”记落地后的实测）：
+
+下表是 P5 落地时的实测，「四套基础主题」指 `nsh-gallery`、`shadcn`、`solid-glass`、`apple` 共用的那一套值；2026-11-25 起 apple 自己写开关、滑块、日历与 spinner 的槽（54×24 的轨道、20×16 的椭圆钮、今天的品牌色数字、8 根辐条），M1、M2、M5、M9 里 apple 的那一列随之作废，其余三套基础主题不变。
 
 | #   | 字段                                                                   | 今天（四套基础主题 / material / winui）                                                                                                    | 应读                                                                                                                                                                                                                                             | 差                                                                                                                                                                                                                                                                | 处理                                                                                                                                                                                                                          |
 | --- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

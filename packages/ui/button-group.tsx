@@ -1,6 +1,14 @@
 // A button group: buttons joined into one control, in a row or a column.
 
-import { colors, rounded, TERMINAL_COLUMN, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
+import {
+  buttonCorner,
+  colors,
+  font,
+  rounded,
+  stroke,
+  TERMINAL_COLUMN,
+  terminal,
+} from "@shadcn-nsh/theme";
 import type { TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, token, View } from "nsh";
 
@@ -25,7 +33,7 @@ export interface ButtonGroupLook {
    * lit top edge, which would otherwise draw a white seam.
    */
   item(orientation: ButtonGroupOrientation, position: ButtonGroupPosition): ViewStyle;
-  /** A word inside the group: the muted fill behind the control's corners. */
+  /** A word inside the group: its buttons' ground behind the control's corners. */
   textFrame(): ViewStyle;
   /** That word's type. */
   text(): TextStyle;
@@ -77,6 +85,7 @@ export function buttonGroupLook(): ButtonGroupLook {
         ...(after ? { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } : {}),
       };
     },
+    /** A word inside the group: the muted fill behind the control's corners. */
     textFrame: (): ViewStyle => ({
       flexDirection: "row",
       alignItems: "center",
@@ -86,7 +95,8 @@ export function buttonGroupLook(): ButtonGroupLook {
       backgroundColor: token("muted"),
       borderWidth: terminal ? 0 : stroke.control,
       borderColor: colors.border,
-      ...rounded(terminal ? 0 : shape.button),
+      // The group's word sits between its buttons: one control, one corner.
+      ...rounded(terminal ? 0 : buttonCorner("default")),
     }),
     text: (): TextStyle => ({
       fontSize: density.body,
@@ -103,7 +113,7 @@ export type ButtonGroupProps = ViewProps & {
   orientation?: ButtonGroupOrientation;
 };
 
-/** A word inside a group (`Path:`, `100%`), on the muted fill. */
+/** A word inside a group (`Path:`, `100%`), on the ground its buttons wear. */
 export type ButtonGroupTextProps = ViewProps;
 
 /** The divider inside a group: a hairline across the column or down the row, the group's to hide from a reader. */
@@ -134,8 +144,8 @@ export function ButtonGroup(props: ButtonGroupProps) {
 }
 
 /**
- * A word inside a group — a path, a unit, a count — on the muted fill with a hairline edge, as
- * tall as the buttons beside it. Join it as a button would be joined
+ * A word inside a group — a path, a unit, a count — on the ground its buttons wear, with their
+ * edge and shade, as tall as the buttons beside it. Join it as a button would be joined
  * (`buttonGroupLook().item(...)`).
  */
 export function ButtonGroupText(props: ButtonGroupTextProps) {

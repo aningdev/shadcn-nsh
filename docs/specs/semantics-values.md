@@ -127,9 +127,9 @@
 | `dimension.size.control.gap` | 控件内图标与字的间距 | 8 | 8 | 8 | 8 | 8 |
 | `dimension.size.control.dot` | 指示点的直径：开关的点、选择器的点 | 6 / 8 | 6 / 8 | 6 / 8 | 10 | 12 |
 | `dimension.size.control.switch` | 开关的钮取哪一档 | `small` / `regular` | `small` / `regular` | `regular` | `regular` | `regular` |
-| `dimension.size.height.sm` | 控件高度的小档 | 24 / 32 | 24 / 32 | 24 / 32 | 24 / 32 | 24 / 32 |
-| `dimension.size.height.md` | 控件高度的中档 | 28 / 40 | 28 / 40 | 28 / 44 | 32 / 40 | 32 / 40 |
-| `dimension.size.height.lg` | 控件高度的大档（也是列表行、标签页的高度） | 32 / 48 | 32 / 48 | 32 / 56 | 40 / 56 | 40 / 48 |
+| `dimension.size.height.sm` | 控件高度的小档 | 24 / 32 | 24 / 32 | 20 / 32 | 24 / 32 | 24 / 32 |
+| `dimension.size.height.md` | 控件高度的中档 | 28 / 40 | 28 / 40 | 24 / 44 | 32 / 40 | 32 / 40 |
+| `dimension.size.height.lg` | 控件高度的大档（也是列表行、标签页的高度） | 32 / 48 | 32 / 48 | 28 / 56 | 40 / 56 | 40 / 48 |
 | `dimension.stroke.hairline` | 发丝线宽：分隔、表面边、描边变体 | 1 | 1 | 0.5 | 1 | 1 |
 | `dimension.stroke.control` | 可点控件的描边宽 | 1 | 1 | 1 | 1 | 1 |
 | `dimension.focus.style` | 焦点环的画法：晕、外框还是双线 | `halo` | `halo` | `halo` | `outline` | `double` |
@@ -146,7 +146,7 @@
 | 字段 | 说明 | NSH Gallery | shadcn/ui | Apple | Material | WinUI |
 | --- | --- | --- | --- | --- | --- | --- |
 | `shape.curve` | 圆角的曲率：连续曲线（Apple）还是圆弧 | `continuous` | `continuous` | `continuous` | `circular` | `circular` |
-| `shape.corners.button` | 按钮的角：取圆角刻度，还是胶囊 | `{radius-control}` | `{radius-control}` | `full` | `full` | `{radius-control}` |
+| `shape.corners.button` | 按钮的角：取圆角刻度，还是胶囊 | `{radius-control}` | `{radius-control}` | `{radius-control}` | `full` | `{radius-control}` |
 
 ## 5 state
 
@@ -161,7 +161,7 @@
 | `state.overlay.dragged` | 拖动的叠色透明度 | 0 | 0 | 0 | 0.16 | 0 |
 | `state.pressed-opacity` | 按下时内容的透明度 | 0.7 | 0.7 | 0.7 | 1 | 1 |
 | `state.rest-opacity` | 指示器静止时的透明度（滚动条滑块） | 0.5 | 0.5 | 0.5 | 0.38 | 0.5 |
-| `state.disabled.content` | 禁用时内容的透明度（容器的槽写 `keep` 时用它） | 0.5 | 0.5 | 0.3 | 0.38 | 0.36 |
+| `state.disabled.content` | 禁用时内容的透明度（容器的槽写 `keep` 时用它） | 0.5 | 0.5 | 0.4 | 0.38 | 0.36 |
 
 ## 6 transition
 
@@ -199,7 +199,7 @@
 | `finishes.card.elevation` | 卡片与区块的平台自己的高度（dp） | — | — | — | 1 | — |
 | `finishes.card.shadow` | 卡片与区块的影子 | `0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04)` / `0 1px 0 oklch(0 0 0 / 0.35)` | `0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)` | `none` | `0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)` | `0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)` / `0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)` |
 | `finishes.inset.foreground` | 井的字与图标 | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` | `{foreground}` |
-| `finishes.inset.border-color` | 井的边 | `{border}` | `{border}` | `transparent` | `{muted-foreground}` | `oklch(0 0 0 / 0.059)` / `oklch(1 0 0 / 0.071)` |
+| `finishes.inset.border-color` | 井的边 | `{border}` | `{border}` | `{input}` | `{muted-foreground}` | `oklch(0 0 0 / 0.059)` / `oklch(1 0 0 / 0.071)` |
 | `finishes.inset.border-bottom-color` | 井的下边色 | — | — | — | — | `oklch(0 0 0 / 0.447)` / `oklch(1 0 0 / 0.545)` |
 | `finishes.inset.shadow` | 井的影子 | `inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.06)` / `inset 0 1px 1px oklch(0 0 0 / 0.2)` | `none` | `none` | `none` | `none` |
 | `finishes.channel.background` | 分段轨道的底 | `{inset}` | `{inset}` | `{card}` | `{inset}` | `{inset}` |

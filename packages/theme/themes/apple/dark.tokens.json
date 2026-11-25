@@ -15,15 +15,15 @@
           "Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way."
         ],
         "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
-        "overview": "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule buttons, continuous corners, and Liquid Glass on floating and raised surfaces.",
+        "overview": "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, per-size button corners (capsules only at large), continuous corners, and Liquid Glass on floating and raised surfaces.",
         "elevation": "Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: \"regular\"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.",
         "dos": [
-          "Use `999px` capsule corners on button-like controls (`shape.corners.button: \"full\"`) alongside `8px` controls/fields, `12px` containers, and `26px` modals with `shape.curve: \"continuous\"`.",
+          "Use the `button.corner.*` slots (5/6/`full` with a pointer) alongside `8px` controls/fields, `12px` containers, and `16px` modals with `shape.curve: \"continuous\"`.",
           "Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.",
           "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views."
         ],
         "donts": [
-          "Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners.",
+          "Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners, and do not paint a selected control a solid accent: Apple washes it at 12%.",
           "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+."
         ]
       },
@@ -333,7 +333,7 @@
     },
     "radius": {
       "$type": "dimension",
-      "$description": "Apple HIG corner radius scale (8px control, 12px container, 26px modal; capsule buttons via shape.corners.button).",
+      "$description": "Apple HIG corner radius scale (8px control, 12px container, 16px modal; button corners per size via the `button.corner.*` slots).",
       "control": {
         "$value": {
           "value": 8,
@@ -350,7 +350,7 @@
       },
       "modal": {
         "$value": {
-          "value": 26,
+          "value": 16,
           "unit": "px"
         },
         "$description": "Corner radius for dialogs, sheets, and drawers."
@@ -425,19 +425,19 @@
         "$description": "Standard control heights (sm, md, lg).",
         "sm": {
           "$value": {
-            "value": 24,
+            "value": 20,
             "unit": "px"
           }
         },
         "md": {
           "$value": {
-            "value": 28,
+            "value": 24,
             "unit": "px"
           }
         },
         "lg": {
           "$value": {
-            "value": 32,
+            "value": 28,
             "unit": "px"
           }
         }
@@ -475,7 +475,8 @@
     "corners": {
       "$description": "How a control cuts its corners.",
       "button": {
-        "$value": "full",
+        "$type": "dimension",
+        "$value": "{dimension.radius.control}",
         "$description": "A button's corner: the control radius, `full` for a capsule, or points."
       }
     }
@@ -511,9 +512,9 @@
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
     },
     "disabled": {
-      "$description": "UIKit disabled content opacity multiplier (0.3); containers keep resting fills.",
+      "$description": "UIKit disabled content opacity multiplier (0.4); containers keep resting fills.",
       "content": {
-        "$value": 0.3
+        "$value": 0.4
       }
     }
   },
@@ -648,21 +649,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
+        "$value": "{color.input}"
       },
       "shadow": {
         "$type": "shadow",
@@ -1320,6 +1307,80 @@
   },
   "slot": {
     "$description": "Control slots: the values every component draws its control from (docs/specs/theme-slots.md). A theme overrides the ones it answers differently.",
+    "button": {
+      "corner": {
+        "sm": {
+          "$type": "dimension",
+          "$value": {
+            "value": 5,
+            "unit": "px"
+          },
+          "$description": "A small button's corner: the control radius, `full` for a capsule, or points."
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": {
+            "value": 6,
+            "unit": "px"
+          },
+          "$description": "A regular button's corner: the control radius, `full` for a capsule, or points."
+        },
+        "lg": {
+          "$value": "full",
+          "$description": "A large button's corner: the control radius, `full` for a capsule, or points."
+        }
+      },
+      "selected": {
+        "face": {
+          "$value": "tint:brand",
+          "$description": "The ground a chosen control turns over to: a toggle that is on, a tool that is picked, a button that is selected."
+        },
+        "ink": {
+          "$value": "color:brand",
+          "$description": "What a chosen control's label and glyph are drawn in."
+        }
+      },
+      "secondary": {
+        "face": {
+          "$value": "finish:raised",
+          "$description": "The ground of a secondary button: the ordinary visible action."
+        },
+        "ink": {
+          "$value": "color:foreground",
+          "$description": "What a secondary button's label and glyph are drawn in."
+        },
+        "edge": {
+          "$value": "none",
+          "$description": "What a secondary button's edge is drawn in, or `none` where it draws none."
+        },
+        "shade": {
+          "$value": "shade:raised",
+          "$description": "The finish whose shade a secondary button wears, or `none` where it stands flat."
+        },
+        "hover": {
+          "$value": "color:muted",
+          "$description": "The ground a secondary button turns over to under the pointer."
+        }
+      },
+      "destructive": {
+        "face": {
+          "$value": "tint:destructive",
+          "$description": "The ground of a destructive button."
+        },
+        "ink": {
+          "$value": "color:destructive",
+          "$description": "What a destructive button's label and glyph are drawn in."
+        },
+        "edge": {
+          "$value": "none",
+          "$description": "What a destructive button's edge is drawn in, or `none` where it draws none."
+        },
+        "shade": {
+          "$value": "none",
+          "$description": "The finish whose shade a destructive button wears, or `none` where it stands flat."
+        }
+      }
+    },
     "field": {
       "face": {
         "$value": "color:field",
@@ -1414,7 +1475,7 @@
       "corner": {
         "$type": "dimension",
         "$value": {
-          "value": 5,
+          "value": 4,
           "unit": "px"
         },
         "$description": "A choice's corner, per input: a quarter of its box where it is a square, half of it where it is a circle.",
@@ -1428,16 +1489,16 @@
         }
       },
       "face": {
-        "$value": "color:field",
+        "$value": "color:card",
         "$description": "The ground an unchosen box lies on.",
         "$extensions": {
           "dev.aning.shadcn-nsh": {
-            "dark": "color:input@0.3"
+            "dark": "color:raised"
           }
         }
       },
       "shade": {
-        "$value": "shade:inset",
+        "$value": "none",
         "$description": "The finish whose shade an unchosen box wears, or `none`."
       },
       "edge": {
@@ -1509,14 +1570,14 @@
       "width": {
         "$type": "dimension",
         "$value": {
-          "value": 36,
+          "value": 54,
           "unit": "px"
         },
         "$description": "An off switch's track, per input: its width.",
         "$extensions": {
           "dev.aning.shadcn-nsh": {
             "touch": {
-              "value": 44,
+              "value": 63,
               "unit": "px"
             }
           }
@@ -1525,14 +1586,14 @@
       "height": {
         "$type": "dimension",
         "$value": {
-          "value": 20,
+          "value": 24,
           "unit": "px"
         },
         "$description": "An off switch's track, per input: its height.",
         "$extensions": {
           "dev.aning.shadcn-nsh": {
             "touch": {
-              "value": 24,
+              "value": 28,
               "unit": "px"
             }
           }
@@ -1610,7 +1671,7 @@
         "off": {
           "$type": "dimension",
           "$value": {
-            "value": 1,
+            "value": 0,
             "unit": "px"
           },
           "$description": "How thick an off switch's track edge is."
@@ -1618,7 +1679,7 @@
         "on": {
           "$type": "dimension",
           "$value": {
-            "value": 1,
+            "value": 0,
             "unit": "px"
           },
           "$description": "How thick an on switch's track edge is."
@@ -1628,14 +1689,14 @@
         "width": {
           "$type": "dimension",
           "$value": {
-            "value": 16,
+            "value": 31,
             "unit": "px"
           },
           "$description": "An off switch's knob, per input: its width.",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
               "touch": {
-                "value": 20,
+                "value": 37,
                 "unit": "px"
               }
             }
@@ -1644,14 +1705,14 @@
         "height": {
           "$type": "dimension",
           "$value": {
-            "value": 16,
+            "value": 20,
             "unit": "px"
           },
           "$description": "An off switch's knob, per input: its height.",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
               "touch": {
-                "value": 20,
+                "value": 24,
                 "unit": "px"
               }
             }
@@ -1661,14 +1722,14 @@
           "width": {
             "$type": "dimension",
             "$value": {
-              "value": 16,
+              "value": 31,
               "unit": "px"
             },
             "$description": "An on switch's knob, per input: its width.",
             "$extensions": {
               "dev.aning.shadcn-nsh": {
                 "touch": {
-                  "value": 20,
+                  "value": 37,
                   "unit": "px"
                 }
               }
@@ -1677,14 +1738,14 @@
           "height": {
             "$type": "dimension",
             "$value": {
-              "value": 16,
+              "value": 20,
               "unit": "px"
             },
             "$description": "An on switch's knob, per input: its height.",
             "$extensions": {
               "dev.aning.shadcn-nsh": {
                 "touch": {
-                  "value": 20,
+                  "value": 24,
                   "unit": "px"
                 }
               }
@@ -1694,14 +1755,14 @@
         "hover": {
           "$type": "dimension",
           "$value": {
-            "value": 16,
+            "value": 31,
             "unit": "px"
           },
           "$description": "The side a knob grows to under the pointer, where hovering changes nothing.",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
               "touch": {
-                "value": 20,
+                "value": 37,
                 "unit": "px"
               }
             }
@@ -1711,14 +1772,14 @@
           "width": {
             "$type": "dimension",
             "$value": {
-              "value": 16,
+              "value": 31,
               "unit": "px"
             },
             "$description": "The knob's width while pressed.",
             "$extensions": {
               "dev.aning.shadcn-nsh": {
                 "touch": {
-                  "value": 20,
+                  "value": 37,
                   "unit": "px"
                 }
               }
@@ -1727,14 +1788,14 @@
           "height": {
             "$type": "dimension",
             "$value": {
-              "value": 16,
+              "value": 20,
               "unit": "px"
             },
             "$description": "The knob's height while pressed.",
             "$extensions": {
               "dev.aning.shadcn-nsh": {
                 "touch": {
-                  "value": 20,
+                  "value": 24,
                   "unit": "px"
                 }
               }
@@ -1751,14 +1812,14 @@
       "rail": {
         "$type": "dimension",
         "$value": {
-          "value": 6,
+          "value": 4,
           "unit": "px"
         },
         "$description": "A slider's rail, per input: its thickness.",
         "$extensions": {
           "dev.aning.shadcn-nsh": {
             "touch": {
-              "value": 8,
+              "value": 6,
               "unit": "px"
             }
           }
@@ -1767,7 +1828,7 @@
       "band": {
         "$type": "dimension",
         "$value": {
-          "value": 20,
+          "value": 24,
           "unit": "px"
         },
         "$description": "The band a slider keeps around its rail, per input.",
@@ -1801,7 +1862,7 @@
         "$description": "What a slider's rail is filled with."
       },
       "shade": {
-        "$value": "shade:inset",
+        "$value": "none",
         "$description": "The finish whose shade a slider's rail wears, or `none`."
       },
       "edge": {
@@ -1810,7 +1871,11 @@
           "$description": "What a slider's rail edge is drawn in, or `none` where it draws none."
         },
         "width": {
-          "$value": "control",
+          "$type": "dimension",
+          "$value": {
+            "value": 0,
+            "unit": "px"
+          },
           "$description": "How thick a slider's rail edge is; `control` is the theme's `stroke.control`."
         }
       },
@@ -1818,14 +1883,30 @@
         "size": {
           "$type": "dimension",
           "$value": {
-            "value": 14,
+            "value": 20,
             "unit": "px"
           },
-          "$description": "A slider's knob, per input: its diameter.",
+          "$description": "A slider's knob, per input: its width (`0` where the theme draws only a mark).",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
               "touch": {
-                "value": 20,
+                "value": 37,
+                "unit": "px"
+              }
+            }
+          }
+        },
+        "height": {
+          "$type": "dimension",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
+          "$description": "A slider's knob, per input: its height; equal to its width where the knob is a disc.",
+          "$extensions": {
+            "dev.aning.shadcn-nsh": {
+              "touch": {
+                "value": 24,
                 "unit": "px"
               }
             }
@@ -1835,14 +1916,14 @@
           "size": {
             "$type": "dimension",
             "$value": {
-              "value": 14,
+              "value": 20,
               "unit": "px"
             },
             "$description": "The knob's diameter while pressed, per input.",
             "$extensions": {
               "dev.aning.shadcn-nsh": {
                 "touch": {
-                  "value": 32,
+                  "value": 37,
                   "unit": "px"
                 }
               }
@@ -1921,11 +2002,27 @@
         }
       }
     },
+    "calendar": {
+      "today": {
+        "face": {
+          "$value": "none",
+          "$description": "The fill under a calendar's today, or `none` where it draws none."
+        },
+        "ink": {
+          "$value": "brand",
+          "$description": "The ink a calendar's today is drawn in: a role name the day's text class reads (`foreground`, `brand`)."
+        }
+      }
+    },
     "spinner": {
       "opacity": {
         "$type": "number",
-        "$value": 0.25,
+        "$value": 0,
         "$description": "How faintly the spinner's groove shows, or `0` where it draws none."
+      },
+      "spokes": {
+        "$value": "yes",
+        "$description": "Whether an indeterminate spinner turns Apple's eight tapered rays instead of a turning arc."
       }
     },
     "popup": {

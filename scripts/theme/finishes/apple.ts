@@ -17,9 +17,10 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.md}",
       foreground: "{foreground}",
     },
+    // macOS's text field draws a 1-point bezel (HIG, Text fields): the field's edge, as material's.
     inset: {
       shadow: "{shadow.inset}",
-      "border-color": "transparent",
+      "border-color": "{input}",
       foreground: "{foreground}",
     },
     // iOS 26's segmented track: a capsule on the card layer, a hairline edge and a soft drop shadow.

@@ -483,7 +483,7 @@ describe("DTCG source lint", () => {
       appearance: "light",
       input: "touch",
     }).resolved as Record<string, any>;
-    expect(applePointer.dimension.size.height.md.$value.value).toBe(28);
+    expect(applePointer.dimension.size.height.md.$value.value).toBe(24);
     expect(appleTouch.dimension.size.height.md.$value.value).toBe(44);
     // Type sizes are one shared scale, not per theme (ADR 0009)
     expect(applePointer.typography.body.$value.fontSize.value).toBe(13);

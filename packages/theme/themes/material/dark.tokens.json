@@ -1284,6 +1284,72 @@
   },
   "slot": {
     "$description": "Control slots: the values every component draws its control from (docs/specs/theme-slots.md). A theme overrides the ones it answers differently.",
+    "button": {
+      "corner": {
+        "sm": {
+          "$value": "full",
+          "$description": "A small button's corner: the control radius, `full` for a capsule, or points."
+        },
+        "md": {
+          "$value": "full",
+          "$description": "A regular button's corner: the control radius, `full` for a capsule, or points."
+        },
+        "lg": {
+          "$value": "full",
+          "$description": "A large button's corner: the control radius, `full` for a capsule, or points."
+        }
+      },
+      "selected": {
+        "face": {
+          "$value": "finish:accent",
+          "$description": "The ground a chosen control turns over to: a toggle that is on, a tool that is picked, a button that is selected."
+        },
+        "ink": {
+          "$value": "color:primaryForeground",
+          "$description": "What a chosen control's label and glyph are drawn in."
+        }
+      },
+      "secondary": {
+        "face": {
+          "$value": "finish:raised",
+          "$description": "The ground of a secondary button: the ordinary visible action."
+        },
+        "ink": {
+          "$value": "color:foreground",
+          "$description": "What a secondary button's label and glyph are drawn in."
+        },
+        "edge": {
+          "$value": "finish:raised:border-color",
+          "$description": "What a secondary button's edge is drawn in, or `none` where it draws none."
+        },
+        "shade": {
+          "$value": "shade:raised",
+          "$description": "The finish whose shade a secondary button wears, or `none` where it stands flat."
+        },
+        "hover": {
+          "$value": "finish:hover",
+          "$description": "The ground a secondary button turns over to under the pointer."
+        }
+      },
+      "destructive": {
+        "face": {
+          "$value": "tint:destructive",
+          "$description": "The ground of a destructive button."
+        },
+        "ink": {
+          "$value": "color:destructive",
+          "$description": "What a destructive button's label and glyph are drawn in."
+        },
+        "edge": {
+          "$value": "color:destructive@0.32",
+          "$description": "What a destructive button's edge is drawn in, or `none` where it draws none."
+        },
+        "shade": {
+          "$value": "shade:raised",
+          "$description": "The finish whose shade a destructive button wears, or `none` where it stands flat."
+        }
+      }
+    },
     "field": {
       "face": {
         "$value": "color:field",
@@ -1790,7 +1856,23 @@
             "value": 14,
             "unit": "px"
           },
-          "$description": "A slider's knob, per input: its diameter.",
+          "$description": "A slider's knob, per input: its width (`0` where the theme draws only a mark).",
+          "$extensions": {
+            "dev.aning.shadcn-nsh": {
+              "touch": {
+                "value": 20,
+                "unit": "px"
+              }
+            }
+          }
+        },
+        "height": {
+          "$type": "dimension",
+          "$value": {
+            "value": 14,
+            "unit": "px"
+          },
+          "$description": "A slider's knob, per input: its height; equal to its width where the knob is a disc.",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
               "touch": {
@@ -1894,11 +1976,27 @@
         }
       }
     },
+    "calendar": {
+      "today": {
+        "face": {
+          "$value": "color:foreground@0.08",
+          "$description": "The fill under a calendar's today, or `none` where it draws none."
+        },
+        "ink": {
+          "$value": "foreground",
+          "$description": "The ink a calendar's today is drawn in: a role name the day's text class reads (`foreground`, `brand`)."
+        }
+      }
+    },
     "spinner": {
       "opacity": {
         "$type": "number",
         "$value": 0,
         "$description": "How faintly the spinner's groove shows, or `0` where it draws none."
+      },
+      "spokes": {
+        "$value": "no",
+        "$description": "Whether an indeterminate spinner turns Apple's eight tapered rays instead of a turning arc."
       }
     },
     "popup": {

@@ -5,7 +5,7 @@
       "radius": "8px",
       "radius-control": "8px",
       "radius-container": "12px",
-      "radius-modal": "26px",
+      "radius-modal": "16px",
       "scrim": "oklch(0 0 0 / 0.4)",
       "media": "oklch(0.1869 0.0151 266.766)",
       "on-media": "oklch(1 0 0)"

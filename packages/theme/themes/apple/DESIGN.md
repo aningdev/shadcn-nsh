@@ -155,7 +155,7 @@ typography:
 rounded:
   control: 8px
   container: 12px
-  modal: 26px
+  modal: 16px
 spacing:
   hit: 0px
   density:
@@ -169,9 +169,9 @@ spacing:
     gap: 8px
     dot: 6px
   height:
-    sm: 24px
-    md: 28px
-    lg: 32px
+    sm: 20px
+    md: 24px
+    lg: 28px
   stroke:
     hairline: 0.5px
     control: 1px
@@ -299,7 +299,7 @@ components:
 
 Apple theme (Apple HIG / UIKit system palette and Liquid Glass).
 
-Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule buttons, continuous corners, and Liquid Glass on floating and raised surfaces.
+Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, per-size button corners (capsules only at large), continuous corners, and Liquid Glass on floating and raised surfaces.
 
 ## Colors
 
@@ -422,15 +422,15 @@ Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` fini
 
 ## Shapes
 
-Apple HIG corner radius scale (8px control, 12px container, 26px modal; capsule buttons via shape.corners.button).
+Apple HIG corner radius scale (8px control, 12px container, 16px modal; button corners per size via the `button.corner.*` slots).
 
-Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "full"`).
+Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "{dimension.radius.control}"`).
 
 Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
 
 - **`control`** (8px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
 - **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
-- **`modal`** (26px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
+- **`modal`** (16px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
@@ -467,18 +467,18 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **`finish.hover`**: A control under the pointer.
 - **`finish.pressed`**: A control held down.
 - **`finish.disabled`**: A control that cannot be used.
-- **Disabled handling** (content=0.3, fill=undefined): UIKit disabled content opacity multiplier (0.3); containers keep resting fills.
+- **Disabled handling** (content=0.4, fill=undefined): UIKit disabled content opacity multiplier (0.4); containers keep resting fills.
 
 ## Do's and Don'ts
 
 - **Do:** Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.
 - **Do:** Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
-- **Do:** Use `999px` capsule corners on button-like controls (`shape.corners.button: "full"`) alongside `8px` controls/fields, `12px` containers, and `26px` modals with `shape.curve: "continuous"`.
+- **Do:** Use the `button.corner.*` slots (5/6/`full` with a pointer) alongside `8px` controls/fields, `12px` containers, and `16px` modals with `shape.curve: "continuous"`.
 - **Do:** Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.
 - **Do:** Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way.
-- **Don't:** Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners.
+- **Don't:** Do not replace Retina `0.5px` `stroke.hairline` with thick borders or `circular` corners, and do not paint a selected control a solid accent: Apple washes it at 12%.
 - **Don't:** Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+.

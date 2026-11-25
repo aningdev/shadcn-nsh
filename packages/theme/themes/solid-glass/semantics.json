@@ -166,6 +166,40 @@
     }
   },
   "slots": {
+    "button.corner.sm": "control",
+    "button.corner.md": "control",
+    "button.corner.lg": "control",
+    "button.selected.face": {
+      "finish": "accent"
+    },
+    "button.selected.ink": {
+      "colour": "primaryForeground"
+    },
+    "button.secondary.face": {
+      "finish": "raised"
+    },
+    "button.secondary.ink": {
+      "colour": "foreground"
+    },
+    "button.secondary.edge": {
+      "finish": "raised",
+      "field": "borderColor"
+    },
+    "button.secondary.shade": "raised",
+    "button.secondary.hover": {
+      "finish": "hover"
+    },
+    "button.destructive.face": {
+      "tint": "destructive"
+    },
+    "button.destructive.ink": {
+      "colour": "destructive"
+    },
+    "button.destructive.edge": {
+      "colour": "destructive",
+      "alpha": 0.32
+    },
+    "button.destructive.shade": "raised",
     "field.face": {
       "colour": "field"
     },
@@ -313,6 +347,10 @@
       "pointer": 14,
       "touch": 20
     },
+    "slider.knob.height": {
+      "pointer": 14,
+      "touch": 20
+    },
     "slider.knob.pressed.size": {
       "pointer": 14,
       "touch": 32
@@ -334,7 +372,13 @@
       "colour": "border"
     },
     "progress.edge.width": "control",
+    "calendar.today.face": {
+      "colour": "foreground",
+      "alpha": 0.08
+    },
+    "calendar.today.ink": "foreground",
     "spinner.opacity": 0.25,
+    "spinner.spokes": false,
     "popup.corner": "container",
     "tabs.track.face": {
       "colour": "inset"

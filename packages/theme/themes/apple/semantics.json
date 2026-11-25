@@ -132,9 +132,9 @@
       },
       "height": {
         "pointer": {
-          "sm": 24,
-          "md": 28,
-          "lg": 32
+          "sm": 20,
+          "md": 24,
+          "lg": 28
         },
         "touch": {
           "sm": 32,
@@ -166,6 +166,34 @@
     }
   },
   "slots": {
+    "button.corner.sm": 5,
+    "button.corner.md": 6,
+    "button.corner.lg": "full",
+    "button.selected.face": {
+      "tint": "brand"
+    },
+    "button.selected.ink": {
+      "colour": "brand"
+    },
+    "button.secondary.face": {
+      "finish": "raised"
+    },
+    "button.secondary.ink": {
+      "colour": "foreground"
+    },
+    "button.secondary.edge": "none",
+    "button.secondary.shade": "raised",
+    "button.secondary.hover": {
+      "colour": "muted"
+    },
+    "button.destructive.face": {
+      "tint": "destructive"
+    },
+    "button.destructive.ink": {
+      "colour": "destructive"
+    },
+    "button.destructive.edge": "none",
+    "button.destructive.shade": "none",
     "field.face": {
       "colour": "field"
     },
@@ -192,19 +220,18 @@
       "touch": 20
     },
     "choice.corner": {
-      "pointer": 5,
+      "pointer": 4,
       "touch": 7
     },
     "choice.face": {
       "light": {
-        "colour": "field"
+        "colour": "card"
       },
       "dark": {
-        "colour": "input",
-        "alpha": 0.3
+        "colour": "raised"
       }
     },
-    "choice.shade": "inset",
+    "choice.shade": "none",
     "choice.edge.width": 1,
     "choice.edge.colour": {
       "light": {
@@ -235,12 +262,12 @@
     "choice.mark.pressed": "none",
     "choice.halo": "none",
     "switch.width": {
-      "pointer": 36,
-      "touch": 44
+      "pointer": 54,
+      "touch": 63
     },
     "switch.height": {
-      "pointer": 20,
-      "touch": 24
+      "pointer": 24,
+      "touch": 28
     },
     "switch.small.width": {
       "pointer": 28,
@@ -258,43 +285,43 @@
       "pointer": 12,
       "touch": 16
     },
-    "switch.edge.off": 1,
-    "switch.edge.on": 1,
+    "switch.edge.off": 0,
+    "switch.edge.on": 0,
     "switch.knob.width": {
-      "pointer": 16,
-      "touch": 20
+      "pointer": 31,
+      "touch": 37
     },
     "switch.knob.height": {
-      "pointer": 16,
-      "touch": 20
+      "pointer": 20,
+      "touch": 24
     },
     "switch.knob.on.width": {
-      "pointer": 16,
-      "touch": 20
+      "pointer": 31,
+      "touch": 37
     },
     "switch.knob.on.height": {
-      "pointer": 16,
-      "touch": 20
+      "pointer": 20,
+      "touch": 24
     },
     "switch.knob.hover": {
-      "pointer": 16,
-      "touch": 20
+      "pointer": 31,
+      "touch": 37
     },
     "switch.knob.pressed.width": {
-      "pointer": 16,
-      "touch": 20
+      "pointer": 31,
+      "touch": 37
     },
     "switch.knob.pressed.height": {
-      "pointer": 16,
-      "touch": 20
+      "pointer": 20,
+      "touch": 24
     },
     "switch.feedback": "none",
     "slider.rail": {
-      "pointer": 6,
-      "touch": 8
+      "pointer": 4,
+      "touch": 6
     },
     "slider.band": {
-      "pointer": 20,
+      "pointer": 24,
       "touch": 32
     },
     "slider.vertical": {
@@ -304,18 +331,22 @@
     "slider.face": {
       "colour": "track"
     },
-    "slider.shade": "inset",
+    "slider.shade": "none",
     "slider.edge.colour": {
       "colour": "border"
     },
-    "slider.edge.width": "control",
+    "slider.edge.width": 0,
     "slider.knob.size": {
-      "pointer": 14,
-      "touch": 20
+      "pointer": 20,
+      "touch": 37
+    },
+    "slider.knob.height": {
+      "pointer": 16,
+      "touch": 24
     },
     "slider.knob.pressed.size": {
-      "pointer": 14,
-      "touch": 32
+      "pointer": 20,
+      "touch": 37
     },
     "slider.knob.face": {
       "finish": "knob"
@@ -334,7 +365,10 @@
       "colour": "border"
     },
     "progress.edge.width": "control",
-    "spinner.opacity": 0.25,
+    "calendar.today.face": "none",
+    "calendar.today.ink": "brand",
+    "spinner.opacity": 0,
+    "spinner.spokes": true,
     "popup.corner": "container",
     "tabs.track.face": {
       "colour": "inset"
@@ -347,7 +381,7 @@
   "shape": {
     "curve": "continuous",
     "corners": {
-      "button": "full"
+      "button": "{radius-control}"
     }
   },
   "state": {
@@ -361,7 +395,7 @@
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
     "disabled": {
-      "content": 0.3
+      "content": 0.4
     }
   },
   "transition": {
@@ -400,7 +434,7 @@
       "inset": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "transparent",
+        "border-color": "{input}",
         "border-top-color": null,
         "border-bottom-color": null
       },
