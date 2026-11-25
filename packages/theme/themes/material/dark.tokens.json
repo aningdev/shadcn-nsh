@@ -1411,7 +1411,7 @@
       },
       "checked": {
         "face": {
-          "$value": "none",
+          "$value": "color:primary",
           "$description": "The layer a chosen box turns over to, or `none` where it keeps its ground and draws a mark alone."
         }
       },
@@ -1444,7 +1444,7 @@
       "halo": {
         "$type": "dimension",
         "$value": {
-          "value": 40,
+          "value": 32,
           "unit": "px"
         },
         "$description": "The state layer's diameter round a box, or `none` where the form draws none."

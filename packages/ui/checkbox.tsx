@@ -25,7 +25,15 @@ import { AsText } from "./lib/as-text";
 import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { choiceBox, choiceLook, type ChoiceLook, type Fill, edged, fillOf } from "./lib/look";
+import {
+  borderClass,
+  choiceBox,
+  choiceLook,
+  type ChoiceLook,
+  type Fill,
+  edged,
+  fillOf,
+} from "./lib/look";
 import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 
@@ -48,7 +56,7 @@ export interface ChoiceOptions {
  * terminal, where it is a glyph three Cells wide. */
 const dims = (scale = 1) => ({
   control: Math.round(choiceBox()[tier] * scale),
-  height: terminal ? TERMINAL_ROW : Math.round(controlSize.control * scale),
+  height: terminal ? TERMINAL_ROW : Math.round(choiceBox()[tier] * scale),
   check: Math.round(controlSize.check * scale),
 });
 
@@ -138,8 +146,22 @@ export interface CheckboxLook {
  * sinking to 90% while its row (the `group`) is pressed. `CheckboxMark` fills it.
  */
 export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
+  /** A box whose chosen face is a palette colour turns its edge to that colour as it is chosen
+   * (`choice.checked.face`, an edge equal to the fill): the fill sits inside the edge, so an edge
+   * left in the empty box's colour would ring it. A class, so the indicator's `checked` state drives it. */
+  const turned = (look: ChoiceLook): boolean =>
+    !read(o?.disabled) &&
+    look.checked?.kind === "colour" &&
+    look.checked.alpha === undefined &&
+    look.edge?.fill.kind === "colour" &&
+    look.edge.fill.alpha === undefined;
   return {
-    indicatorClass: choiceSink,
+    get indicatorClass(): string {
+      const look = choiceLook();
+      return turned(look)
+        ? `${choiceSink} ${borderClass(look.edge!.fill)} checked:${borderClass(look.checked)}`
+        : choiceSink;
+    },
     get indicatorStyle(): ViewStyle {
       const { control: box, height } = dims(o?.scale);
       const look = choiceLook();
@@ -152,10 +174,16 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
         justifyContent: "center",
         borderWidth: choiceEdge(look),
         ...choiceWell({ look, disabled: !!read(o?.disabled) }),
+        ...(turned(look) ? { borderColor: undefined } : {}),
       };
     },
   };
 }
+
+/** A face that states no edge colour, or a transparent one, over a solid background. */
+const edgeless = (face: ViewStyle): boolean =>
+  typeof face.backgroundColor === "string" &&
+  (face.borderColor === undefined || face.borderColor === "transparent");
 
 /**
  * The fill of a box or ring that is on, over the empty one and covering its edge: it fades in and out
@@ -170,6 +198,7 @@ export function ChoiceLight(props: {
   fill?: Fill;
 }) {
   const b = props.border ?? stroke.control;
+  const face = () => fillOf(props.fill ?? { kind: "finish", role: "accent" });
   return (
     <View
       style={{
@@ -181,7 +210,10 @@ export function ChoiceLight(props: {
         bottom: -b,
         borderRadius: props.radius,
         borderWidth: stroke.control,
-        ...fillOf(props.fill ?? { kind: "finish", role: "accent" }),
+        ...face(),
+        // A face with no edge of its own (a colour, or a finish whose edge is transparent) fills its
+        // edge too: a transparent ring would let the empty box's edge show round the fill.
+        ...(edgeless(face()) ? { borderColor: face().backgroundColor } : {}),
         opacity: props.on,
       }}
     />
@@ -238,7 +270,11 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
       ) : null}
       <ChoiceLight
         on={on}
-        radius={props.round ? box / 2 : Math.round(choiceCorner(cb) * (props.scale ?? 1))}
+        // The fill sits inside the edge, so its corner is the edge's inner one.
+        radius={Math.max(
+          0,
+          (props.round ? box / 2 : Math.round(choiceCorner(cb) * (props.scale ?? 1))) - border,
+        )}
         border={border}
         fill={cb.checked ?? undefined}
       />

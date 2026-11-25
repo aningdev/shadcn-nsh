@@ -203,14 +203,16 @@
     "choice.edge.disabled": {
       "colour": "mutedForeground"
     },
-    "choice.checked.face": "none",
+    "choice.checked.face": {
+      "colour": "primary"
+    },
     "choice.mark.size": {
       "pointer": 10,
       "touch": 10
     },
     "choice.mark.hover": "none",
     "choice.mark.pressed": "none",
-    "choice.halo": 40,
+    "choice.halo": 32,
     "switch.width": {
       "pointer": 40,
       "touch": 52

@@ -82,7 +82,7 @@
 | 边 宽 / 色                      | 1 / input       | 2 / muted-fg    | 1 / input      | 待审计         |
 | 选中 底色 / 边色                | accent / =底色  | primary / =底色 | accent / =底色 | accent / =底色 |
 | radio 点：静止 / hover / 按下   | dot / dot / dot | dot / dot / dot | dot / 14 / 10  | 待审计         |
-| 光晕                            | 0               | 40              | 0              | 0              |
+| 光晕                            | 0               | 32（M3 为 40）  | 0              | 0              |
 
 **switch**：轨道尺寸、轨道边宽（关 / 开）、旋钮尺寸（关 / 开 / hover / 按下，均为宽 × 高）、旋钮颜色（knob finish）。
 

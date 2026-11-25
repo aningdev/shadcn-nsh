@@ -24,7 +24,7 @@ test("control dimensions and component looks follow the active theme", async () 
       "h-[6px] rounded-full|h-[20px] justify-center px-[7px]",
     );
     expect(find(app.texts(), "slider=")).toContain("|true|rounded-full");
-    expect(find(app.texts(), "slider=")?.endsWith("|true|false|false")).toBe(true);
+    expect(find(app.texts(), "slider=")?.endsWith("|true|false|false|false")).toBe(true);
     expect(find(app.texts(), "checkbox=")).toBe("1|false|false");
     expect(find(app.texts(), "progress=")).toBe("6/solid/true");
     expect(find(app.texts(), "tabs=")).toBe("0/1");
@@ -54,7 +54,8 @@ test("control dimensions and component looks follow the active theme", async () 
     "h-[6px] rounded-full|h-[20px] justify-center px-[7px]",
   );
   expect(find(app.texts(), "slider=")).toContain("|false|rounded-full");
-  expect(find(app.texts(), "slider=")?.endsWith("|false|false|false")).toBe(true);
+  // M3's brand tint is its SecondaryContainer too, so the band equals both.
+  expect(find(app.texts(), "slider=")?.endsWith("|false|true|false|true")).toBe(true);
   expect(find(app.texts(), "checkbox=")).toBe("2|true|false");
   expect(find(app.texts(), "progress=")).toBe("4/solid/false");
   expect(find(app.texts(), "tabs=")).toBe("0/1");
@@ -72,7 +73,7 @@ test("control dimensions and component looks follow the active theme", async () 
     "h-[4px] rounded-full|h-[32px] justify-center px-[9px]",
   );
   expect(find(app.texts(), "slider=")).toContain("|false|w-[16px] h-[16px]");
-  expect(find(app.texts(), "slider=")?.endsWith("|false|false|true")).toBe(true);
+  expect(find(app.texts(), "slider=")?.endsWith("|false|false|true|false")).toBe(true);
   expect(find(app.texts(), "checkbox=")).toBe("1|false|true");
   expect(find(app.texts(), "progress=")).toBe("3/gradient/false");
   expect(find(app.texts(), "tabs=")).toBe("0/1");

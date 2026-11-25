@@ -298,13 +298,15 @@ const m3Choice = {
   "choice.corner": { pointer: 2, touch: 2 },
   "choice.face": "none",
   "choice.shade": "none",
-  "choice.checked.face": "none",
+  // M3 fills a checked box with Primary, edge and all (CheckboxTokens.SelectedContainerColor).
+  "choice.checked.face": "color:primary",
   "choice.edge.width": 2,
   "choice.mark.size": { pointer: 10, touch: 10 },
   "choice.edge.colour": "color:mutedForeground",
   // M3 outlines a box the same way whether it can be used or not: only the mark fades.
   "choice.edge.disabled": "color:mutedForeground",
-  "choice.halo": 40,
+  // M3 states 40dp (CheckboxTokens.StateLayerSize); 32 keeps the hover halo from crowding the row.
+  "choice.halo": 32,
 } as const;
 
 /** M3's switch: a 40×24 track whose knob grows in place (the library's circle is M3's handle). */
