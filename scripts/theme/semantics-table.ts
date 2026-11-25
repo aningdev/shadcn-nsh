@@ -331,6 +331,7 @@ const DESCRIPTIONS: Record<string, string> = {
   faint: "更弱的字：占位、单位、次要标记",
   brand: "强调色作前景：字、图标、线",
   "brand-edge": "强调色填充控件的发丝线",
+  "focus-inner": "焦点环里贴着控件的那道线",
   track: "关着的开关、滑杆与进度条的底槽",
   knob: "关着的开关圆点",
   info: "提示状态的语义色",

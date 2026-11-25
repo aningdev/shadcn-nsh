@@ -321,6 +321,7 @@
 | `field.edge.colour` / `.bottom` | `input` / `input`                       | `—` / `mutedForeground`         | `border` / `input`     |
 | `field.corner.top` / `.bottom`  | `control` / `control`                   | `control` / 0                   | `control` / 0          |
 | `field.focus.line`              | `no`                                    | `yes`                           | `yes`                  |
+| `field.disabled.face`           | `keep`                                  | `keep`                          | `finish:disabled`      |
 | `choice.size` / `.corner`       | 16·22 / 5·7                             | 20 / 2                          | 20 / 4                 |
 | `choice.face` / `.shade`        | `field`（暗 `input@0.3`）/ `inset`      | `none` / `none`                 | `track` / `none`       |
 | `choice.edge.width` / `.colour` | 1 / `input`（暗 `foreground@0.2`）      | 2 / `mutedForeground`           | 1 / `input`            |

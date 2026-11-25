@@ -404,6 +404,8 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     faint: c(p.outline),
     brand: "var(--primary)",
     "brand-edge": c(p.outlineVariant),
+    // M3 draws no second ring: the line inside the focus ring is the surface M3 pairs with it.
+    "focus-inner": "var(--card)",
     track: c(p.surfaceContainerHighest),
     knob: c(p.outline),
     info: c(p.primary),
@@ -437,6 +439,7 @@ const origin: ColourOrigin = {
     input: "outline",
     ring: "secondary",
     "brand-edge": "outlineVariant",
+    "focus-inner": "surface (the ring's inner line is the surface)",
     "inverse-brand": "inversePrimary",
     inverse: "inverseSurface",
     "inverse-foreground": "inverseOnSurface",

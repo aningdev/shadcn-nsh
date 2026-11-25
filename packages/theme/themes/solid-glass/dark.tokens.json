@@ -590,6 +590,12 @@
     },
     "inset": {
       "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "border-top-color": "none",
+          "border-bottom-color": "none"
+        }
+      },
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"
@@ -1117,6 +1123,12 @@
             "unit": "px"
           },
           "$description": "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring."
+        }
+      },
+      "disabled": {
+        "face": {
+          "$value": "keep",
+          "$description": "The ground and edge a field that cannot be used turns over to, or `keep` where it keeps its own and fades instead."
         }
       }
     },
@@ -2110,6 +2122,15 @@
         }
       },
       "$description": "Primary button hairline mixed from --primary and --primary-edge."
+    },
+    "focus-inner": {
+      "$value": "{color.card}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "The line inside a focus ring, hugging the control: the surface's own color where a theme draws one."
     },
     "track": {
       "$value": {

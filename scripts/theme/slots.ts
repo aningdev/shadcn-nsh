@@ -23,7 +23,7 @@
  * - `face` — a colour a part paints with: `color:<role>` (a palette role), `finish:<role>` (a finish
  *   layer's ground), `finish:<role>:<field>` (one field of a layer: `border-color`, `foreground`,
  *   `shadow`), `none` (paints nothing), optionally at an alpha (`color:input@0.3`); the disabled
- *   group's three also take `keep` (the component draws its own).
+ *   slots and `field.disabled.face` also take `keep` (the component draws its own).
  * - `shade` — the finish whose elevation shadow a part wears, or `none`.
  * - `corner` — a radius: `control` (the theme's `shape.control`), `container` (its `shape.container`), `full` (a capsule), or points.
  * - `text` — a name the component matches: the switch's knob feedback (`none`, `expand`, `stretch`).
@@ -107,6 +107,10 @@ export const SLOTS: Record<string, SlotSpec> = ordered({
   "field.focus.width": {
     kind: "px",
     doc: "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring.",
+  },
+  "field.disabled.face": {
+    kind: "face",
+    doc: "The ground and edge a field that cannot be used turns over to, or `keep` where it keeps its own and fades instead.",
   },
 
   // A choice: a checkbox's box, a radio's ring.
@@ -365,6 +369,7 @@ export const BASE_SLOTS: Record<string, SlotValue> = {
   "field.corner.bottom": "control",
   "field.focus.line": false,
   "field.focus.width": 3,
+  "field.disabled.face": "keep",
 
   "choice.size": { pointer: 16, touch: 22 },
   "choice.box": { pointer: 16, touch: 20 },

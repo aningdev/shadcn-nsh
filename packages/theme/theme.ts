@@ -450,6 +450,10 @@ const finishStyleKeys: { [F in FinishFieldName]?: keyof FinishStyleFields } = {
   backdropFilter: "backdropFilter",
 };
 
+const fieldOfStyleKey: Record<string, FinishFieldName> = Object.fromEntries(
+  Object.entries(finishStyleKeys).map(([field, key]) => [key, field as FinishFieldName]),
+);
+
 function themed<R extends FinishRole>(role: R): FinishStyle<R> {
   const out = {} as FinishStyle<R>;
   const builtInRole: Partial<FinishFields> = {
@@ -540,8 +544,17 @@ function themed<R extends FinishRole>(role: R): FinishStyle<R> {
     const background = anyFieldOf(role).background;
     return background === undefined ? undefined : alias(background);
   };
+  // A field the theme in use states as `none` (`null`) is no key of the spread, so it never hands a
+  // component `borderBottomColor: undefined` over a value a slot drew; the theme that states it adds it.
+  const absent = (key: string | symbol): boolean => {
+    const field = typeof key === "string" ? fieldOfStyleKey[key] : undefined;
+    return field !== undefined && anyFieldOf(role)[field] == null;
+  };
   return new Proxy(out, {
-    ownKeys: (target) => [...Reflect.ownKeys(target), ...glassKeys(role)],
+    ownKeys: (target) => [
+      ...Reflect.ownKeys(target).filter((key) => !absent(key)),
+      ...glassKeys(role),
+    ],
     getOwnPropertyDescriptor: (target, key) =>
       typeof key === "string" && glassKeys(role).includes(key)
         ? { value: glass(key), enumerable: true, configurable: true, writable: false }
@@ -1122,9 +1135,9 @@ export const hovered = (ink: keyof Tokens = "foreground"): ViewStyle => {
  * The keyboard focus (`focusVisibleStyle`: not after a click or a tap):
  * - `"halo"`: `borderColor` turns `ring` and a halo of `ring` at 30% (`focus.width` points, 3 by default) sits outside.
  * - `"outline"`: `borderColor` stays untouched; `outlineColor` is `ring`.
- * - `"double"`: `borderColor` stays untouched; a 1 px line of `card` hugs the edge (a spread shadow, which
- *   stands in for the surface's own shadow while focused) and the `focus.width` outline of `ring` lies just outside
- *   it, so the outline's offset grows by that 1 px (WinUI 3's `FocusStrokeColorInner` / `Outer`).
+ * - `"double"`: `borderColor` stays untouched; a 1 px line of `focus-inner` hugs the edge (a spread shadow,
+ *   which stands in for the surface's own shadow while focused) and the `focus.width` outline of `ring` lies just
+ *   outside it, so the outline's offset grows by that 1 px (WinUI 3's `FocusStrokeColorInner` / `Outer`).
  */
 export const focusRing = (offset?: number): ViewStyle => {
   const { style: look, width, offset: base } = style().dimension.focus;
@@ -1144,7 +1157,7 @@ export const focusRing = (offset?: number): ViewStyle => {
     return {
       ...ringOutline,
       outlineOffset: (offset ?? base) + 1,
-      boxShadow: `0 0 0 1px ${token("card")}`,
+      boxShadow: `0 0 0 1px ${token("focus-inner")}`,
     };
   }
   return ringOutline;

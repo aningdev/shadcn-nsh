@@ -607,19 +607,35 @@
         "$value": {
           "colorSpace": "oklch",
           "components": [
-            0.92191,
+            0,
             0,
             0
           ],
-          "hex": "#e5e5e5"
+          "alpha": 0.059,
+          "hex": "#000000"
         }
       }
     },
     "inset": {
       "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "border-top-color": "none",
+          "border-bottom-color": "none"
+        }
+      },
       "border-color": {
         "$type": "color",
-        "$value": "{color.input}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.059,
+          "hex": "#000000"
+        }
       },
       "shadow": {
         "$type": "shadow",
@@ -630,6 +646,19 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.foreground}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.447,
+          "hex": "#000000"
+        }
       }
     },
     "channel": {
@@ -669,7 +698,16 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.059,
+          "hex": "#000000"
+        }
       },
       "shadow": {
         "$type": "shadow",
@@ -684,18 +722,28 @@
       },
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.059,
+          "hex": "#000000"
+        }
       },
       "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
           "components": [
-            0.84522,
+            0,
             0,
             0
           ],
-          "hex": "#cccccc"
+          "alpha": 0.161,
+          "hex": "#000000"
         }
       }
     },
@@ -712,7 +760,16 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.059,
+          "hex": "#000000"
+        }
       },
       "shadow": {
         "$type": "shadow",
@@ -759,7 +816,16 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.5624,
+            0,
+            0
+          ],
+          "alpha": 0.4,
+          "hex": "#757575"
+        }
       },
       "shadow": {
         "$type": "shadow",
@@ -798,11 +864,12 @@
         "$value": {
           "colorSpace": "oklch",
           "components": [
-            0.81093,
+            0.5624,
             0,
             0
           ],
-          "hex": "#c1c1c1"
+          "alpha": 0.4,
+          "hex": "#757575"
         }
       }
     },
@@ -1042,7 +1109,16 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.059,
+          "hex": "#000000"
+        }
       },
       "shadow": {
         "$type": "shadow",
@@ -1057,18 +1133,28 @@
       },
       "border-top-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.059,
+          "hex": "#000000"
+        }
       },
       "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
           "components": [
-            0.84522,
+            0,
             0,
             0
           ],
-          "hex": "#cccccc"
+          "alpha": 0.161,
+          "hex": "#000000"
         }
       }
     },
@@ -1102,7 +1188,16 @@
       "$description": "A control that cannot be used.",
       "border-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.059,
+          "hex": "#000000"
+        }
       },
       "shadow": {
         "$type": "shadow",
@@ -1188,6 +1283,12 @@
             "unit": "px"
           },
           "$description": "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring."
+        }
+      },
+      "disabled": {
+        "face": {
+          "$value": "finish:disabled",
+          "$description": "The ground and edge a field that cannot be used turns over to, or `keep` where it keeps its own and fades instead."
         }
       }
     },
@@ -2110,7 +2211,7 @@
           "role": "chrome"
         }
       },
-      "$description": "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base)."
+      "$description": "Standard control hairline border (WinUI ControlStrongStrokeColorDefault composited over base: this theme's hairline takes the stroke a field's edge draws)."
     },
     "input": {
       "$value": {
@@ -2451,6 +2552,24 @@
         }
       },
       "$description": "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary)."
+    },
+    "focus-inner": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "hex": "#ffffff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome",
+          "source": "WinUI 3 theme resources: FocusStrokeColorInner"
+        }
+      },
+      "$description": "The line inside a focus ring, hugging the control (WinUI FocusStrokeColorInner: white in light, 70% black over the base in dark)."
     },
     "track": {
       "$value": {

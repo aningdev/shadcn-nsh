@@ -491,6 +491,15 @@
       },
       "$description": "Brand container outline (M3 outlineVariant)."
     },
+    "focus-inner": {
+      "$value": "{color.card}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "The line inside a focus ring, hugging the control: the surface's own color where a theme draws one."
+    },
     "track": {
       "$value": {
         "colorSpace": "oklch",

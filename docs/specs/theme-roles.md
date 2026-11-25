@@ -51,6 +51,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `faint`                  | 更弱的字：占位、单位、次要标记                                                                | `input`、`combobox`、`number-input`                                          |
 | `brand`                  | 强调色作为前景：字、图标、线                                                                  | `input`、`calendar`、`command`、`otp-input`、`lib/listbox`                   |
 | `brand-edge`             | 强调色填充的那条边：主按钮的发丝线（WinUI 下作 `AccentControlElevationBorderBrush` 下边斜角） | `theme.ts` 的 `colors.brandEdge`、`finish.accent`（引用 `border`）           |
+| `focus-inner`            | 焦点环里贴着控件的那道线（WinUI 的 `FocusStrokeColorInner`；其余主题取面自身的颜色）          | `theme.ts` 的 `focusRing("double")` 内环                                     |
 | `track`                  | 关着的开关、滑杆与进度条的底槽（后两者按控件预设也可读 `brand-tint` / `input`）               | `switch`、`slider`、`progress`、`tabs`、`listbox`                            |
 | `knob`                   | 关着的开关圆点（`finish.knob` 的白底）                                                        | `theme.ts` 的 `colors.knob`                                                  |
 | `info` / `warn` / `up`   | 三状态色：提示、警告、增长；下降读 `destructive`                                              | `progress`、`diff-view`、`editor`、`status`                                  |
@@ -106,7 +107,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | finish     | 字段                                                                                                                                |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `card`     | `background` `shadow` `border-color` `foreground` `elevation`                                                                       |
-| `inset`    | `shadow` `border-color` `foreground`                                                                                                |
+| `inset`    | `shadow` `border-color` `border-top-color` `border-bottom-color` `foreground`                                                       |
 | `channel`  | `background` `shadow` `border-color` `foreground`                                                                                   |
 | `raised`   | `background` `shadow` `border-color` `border-top-color` `border-bottom-color` `backdropFilter` `foreground` `material`              |
 | `plate`    | `background` `shadow` `border-color` `foreground` `elevation`                                                                       |
@@ -289,37 +290,33 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- theme-lint: pending -->
 
-| 主题        | 外观  | 色值                             | 位置                                                                                       | 最接近的 token                              |
-| ----------- | ----- | -------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------- |
-| nsh-gallery | dark  | `oklch(0.88185 0.00589 264.53)`  | `knob.gradient`                                                                            | `knob`（ΔL +0.040，ΔC -0.002）              |
-| nsh-gallery | dark  | `oklch(0.8324 0.00597 264.528)`  | `knob.border-color`                                                                        | `knob`（ΔL +0.090，ΔC -0.002）              |
-| material    | light | `oklch(0.93251 0.01479 312.24)`  | `modal.background`（`SurfaceContainerHigh`，本库没有同名角色）                             | `field`（ΔL -0.019，ΔC -0.001）             |
-| material    | dark  | `oklch(0.2859 0.01293 298.633)`  | `modal.background`（同上）                                                                 | `popover`（ΔL -0.041，ΔC +0.001）           |
-| shadcn      | dark  | `oklch(0.34846 0 0)`             | `pressed.background`                                                                       | `chart-4`（ΔL -0.023，ΔC -0.000，语义不同） |
-| solid-glass | light | `oklch(0.38 0.03 265 / 0.22)`    | `overlay.border-color`、`inverse.border-color`                                             | `muted`（ΔL +0.079，ΔC +0.011）             |
-| winui       | light | `oklch(0.92191 0 0)`             | `card.border-color`（`CardStrokeColorDefault`）                                            | `border`                                    |
-| winui       | light | `oklch(0.81093 0 0)`             | `modal.border-color`（`SurfaceStrokeColorDefault` 在基色上合成）                           | `border`（ΔL -0.107，ΔC 0）                 |
-| winui       | light | `oklch(0.84522 0 0)`             | `raised.border-bottom-color`、`hover.border-bottom-color`（`ControlStrokeColorSecondary`） | `border`（ΔL +0.077，ΔC 0）                 |
-| winui       | light | `oklch(0.52768 0.14982 252.341)` | `accent.border-color`、`accent.border-top-color`（`ControlStrokeColorOnAccentDefault`）    | `primary`（ΔL -0.036，ΔC -0.010）           |
-| winui       | light | `oklch(0.97015 0 0)`             | `disabled.background`（`ControlFillColorDisabled`）                                        | `raised`（ΔL +0.018，ΔC 0）                 |
-| winui       | light | `oklch(0.68949 0 0)`             | `disabled.foreground`（`TextFillColorDisabled`）                                           | `input`（ΔL -0.069，ΔC 0）                  |
-| winui       | dark  | `oklch(0.23075 0 0)`             | `card.border-color`（`CardStrokeColorDefault`）                                            | `border`                                    |
-| winui       | dark  | `oklch(0.37909 0 0)`             | `modal.border-color`（`SurfaceStrokeColorDefault` 在基色上合成）                           | `border`（ΔL +0.070，ΔC 0）                 |
-| winui       | dark  | `oklch(0.32897 0 0)`             | `raised.border-top-color`、`hover.border-top-color`（`ControlStrokeColorSecondary`）       | `line`（ΔL -0.012，ΔC 0）                   |
-| winui       | dark  | `oklch(0.81732 0.11439 230)`     | `accent.border-color`、`accent.border-top-color`（`ControlStrokeColorOnAccentDefault`）    | `primary`（ΔL -0.013，ΔC +0.008）           |
-| winui       | dark  | `oklch(0.28502 0 0)`             | `disabled.background`（`ControlFillColorDisabled`）                                        | `raised`（ΔL +0.012，ΔC 0）                 |
-| winui       | dark  | `oklch(0.54863 0 0)`             | `disabled.foreground`（`TextFillColorDisabled`）                                           | `faint`（ΔL +0.124，ΔC 0）                  |
-| winui       | light | `oklch(0.5773 0.13223 250.006)`  | `accent.pressed-background`（`AccentFillColorTertiary` 在基色上合成）                      | `info`（ΔL +0.010，ΔC -0.034）              |
-| winui       | light | `oklch(0.87245 0.03754 247.003)` | `accent.pressed-foreground`（`TextOnAccentFillColorSecondary` 在按下底色上合成）           | `brand-tint`（ΔL -0.042，ΔC +0.022）        |
-| winui       | dark  | `oklch(0.70029 0.10192 230.522)` | `accent.pressed-background`（同上）                                                        | `brand-edge`（ΔL -0.021，ΔC -0.006）        |
-| winui       | dark  | `oklch(0.42706 0.05878 229.834)` | `accent.pressed-foreground`（同上）                                                        | `brand-tint`（ΔL +0.122，ΔC +0.041）        |
-| nsh-gallery | light | `oklch(0.75073 0.18465 126.794)` | `fill.background`、`fill.gradient`（上游 `finish.fill` 的第二档绿）                        | `chart-1`（ΔL 0，ΔC 0，数据色，语义不同）   |
-| nsh-gallery | light | `oklch(0.80472 0.1815 126.061)`  | `fill.gradient`（同上，第一档）                                                            | `brand-edge`（ΔL -0.039，ΔC -0.014）        |
-| nsh-gallery | light | `oklch(0.69169 0.17204 126.956)` | `fill.border-color`（同上，跑起来那段的边）                                                | `brand-tint`（ΔL +0.052，ΔC +0.012）        |
-| nsh-gallery | dark  | `oklch(0.83973 0.16469 124.137)` | `fill.background`、`fill.gradient`（同上）                                                 | `primary`（ΔL +0.049，ΔC -0.001）           |
-| nsh-gallery | dark  | `oklch(0.88348 0.15928 123.937)` | `fill.gradient`（同上，第一档）                                                            | `primary`（ΔL +0.005，ΔC +0.004）           |
-| nsh-gallery | dark  | `oklch(0.71963 0.15821 125.456)` | `fill.border-color`（同上）                                                                | `up`（ΔL +0.060，ΔC -0.010）                |
-| nsh-gallery | light | `oklch(0.72099 0.15728 124.776)` | `knob.checked-border-color`（上游 `finish.knobOn` 的橄榄边）                               | `brand-tint`（ΔL +0.081，ΔC -0.004）        |
+| 主题        | 外观  | 色值                             | 位置                                                                                                   | 最接近的 token                              |
+| ----------- | ----- | -------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------- |
+| nsh-gallery | dark  | `oklch(0.88185 0.00589 264.53)`  | `knob.gradient`                                                                                        | `knob`（ΔL +0.040，ΔC -0.002）              |
+| nsh-gallery | dark  | `oklch(0.8324 0.00597 264.528)`  | `knob.border-color`                                                                                    | `knob`（ΔL +0.090，ΔC -0.002）              |
+| material    | light | `oklch(0.93251 0.01479 312.24)`  | `modal.background`（`SurfaceContainerHigh`，本库没有同名角色）                                         | `field`（ΔL -0.019，ΔC -0.001）             |
+| material    | dark  | `oklch(0.2859 0.01293 298.633)`  | `modal.background`（同上）                                                                             | `popover`（ΔL -0.041，ΔC +0.001）           |
+| shadcn      | dark  | `oklch(0.34846 0 0)`             | `pressed.background`                                                                                   | `chart-4`（ΔL -0.023，ΔC -0.000，语义不同） |
+| solid-glass | light | `oklch(0.38 0.03 265 / 0.22)`    | `overlay.border-color`、`inverse.border-color`                                                         | `muted`（ΔL +0.079，ΔC +0.011）             |
+| winui       | light | `oklch(0.5624 0 0 / 0.4)`        | `overlay.border-color`、`modal.border-color`（`SurfaceStrokeColorDefault` `#66757575`）                | 无（`#757575` 不在调色板里）                |
+| winui       | dark  | `oklch(0.5624 0 0 / 0.4)`        | `overlay.border-color`、`modal.border-color`（`SurfaceStrokeColorDefault` `#66757575`，与 light 同值） | 无（`#757575` 不在调色板里）                |
+| winui       | light | `oklch(0.52768 0.14982 252.341)` | `accent.border-color`、`accent.border-top-color`（`ControlStrokeColorOnAccentDefault`）                | `primary`（ΔL -0.036，ΔC -0.010）           |
+| winui       | light | `oklch(0.97015 0 0)`             | `disabled.background`（`ControlFillColorDisabled`）                                                    | `raised`（ΔL +0.018，ΔC 0）                 |
+| winui       | light | `oklch(0.68949 0 0)`             | `disabled.foreground`（`TextFillColorDisabled`）                                                       | `input`（ΔL -0.069，ΔC 0）                  |
+| winui       | dark  | `oklch(0.81732 0.11439 230)`     | `accent.border-color`、`accent.border-top-color`（`ControlStrokeColorOnAccentDefault`）                | `primary`（ΔL -0.013，ΔC +0.008）           |
+| winui       | dark  | `oklch(0.28502 0 0)`             | `disabled.background`（`ControlFillColorDisabled`）                                                    | `raised`（ΔL +0.012，ΔC 0）                 |
+| winui       | dark  | `oklch(0.54863 0 0)`             | `disabled.foreground`（`TextFillColorDisabled`）                                                       | `faint`（ΔL +0.124，ΔC 0）                  |
+| winui       | light | `oklch(0.5773 0.13223 250.006)`  | `accent.pressed-background`（`AccentFillColorTertiary` 在基色上合成）                                  | `info`（ΔL +0.010，ΔC -0.034）              |
+| winui       | light | `oklch(0.87245 0.03754 247.003)` | `accent.pressed-foreground`（`TextOnAccentFillColorSecondary` 在按下底色上合成）                       | `brand-tint`（ΔL -0.042，ΔC +0.022）        |
+| winui       | dark  | `oklch(0.70029 0.10192 230.522)` | `accent.pressed-background`（同上）                                                                    | `brand-edge`（ΔL -0.021，ΔC -0.006）        |
+| winui       | dark  | `oklch(0.42706 0.05878 229.834)` | `accent.pressed-foreground`（同上）                                                                    | `brand-tint`（ΔL +0.122，ΔC +0.041）        |
+| nsh-gallery | light | `oklch(0.75073 0.18465 126.794)` | `fill.background`、`fill.gradient`（上游 `finish.fill` 的第二档绿）                                    | `chart-1`（ΔL 0，ΔC 0，数据色，语义不同）   |
+| nsh-gallery | light | `oklch(0.80472 0.1815 126.061)`  | `fill.gradient`（同上，第一档）                                                                        | `brand-edge`（ΔL -0.039，ΔC -0.014）        |
+| nsh-gallery | light | `oklch(0.69169 0.17204 126.956)` | `fill.border-color`（同上，跑起来那段的边）                                                            | `brand-tint`（ΔL +0.052，ΔC +0.012）        |
+| nsh-gallery | dark  | `oklch(0.83973 0.16469 124.137)` | `fill.background`、`fill.gradient`（同上）                                                             | `primary`（ΔL +0.049，ΔC -0.001）           |
+| nsh-gallery | dark  | `oklch(0.88348 0.15928 123.937)` | `fill.gradient`（同上，第一档）                                                                        | `primary`（ΔL +0.005，ΔC +0.004）           |
+| nsh-gallery | dark  | `oklch(0.71963 0.15821 125.456)` | `fill.border-color`（同上）                                                                            | `up`（ΔL +0.060，ΔC -0.010）                |
+| nsh-gallery | light | `oklch(0.72099 0.15728 124.776)` | `knob.checked-border-color`（上游 `finish.knobOn` 的橄榄边）                                           | `brand-tint`（ΔL +0.081，ΔC -0.004）        |
 
 <!-- /theme-lint: pending -->
 

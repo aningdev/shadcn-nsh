@@ -54,6 +54,7 @@ const EXEMPT: Exemption[] = [
   { key: "radius-modal", reason: "a radius, not a colour: this library's scale" },
   // Roles this library states that upstream has no key for.
   { key: "brand-edge", reason: "a hairline on brand fills; upstream draws it inside the fill" },
+  { key: "focus-inner", reason: "the line inside a focus ring; upstream draws one ring only" },
   { key: "inverse", reason: "the inverted surface a toast sits on; upstream reuses `card`" },
   { key: "inverse-foreground", reason: "ink on the inverted surface" },
   { key: "inverse-brand", reason: "brand ink on the inverted surface" },

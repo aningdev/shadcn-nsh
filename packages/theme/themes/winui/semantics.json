@@ -182,6 +182,9 @@
     "field.corner.bottom": "control",
     "field.focus.line": true,
     "field.focus.width": 2,
+    "field.disabled.face": {
+      "finish": "disabled"
+    },
     "choice.size": {
       "pointer": 20,
       "touch": 20
@@ -385,7 +388,7 @@
       "inset": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{input}"
+        "border-top-color": null
       },
       "channel": {
         "background": "{inset}",
@@ -397,7 +400,6 @@
         "background": "{raised}",
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{line}",
         "backdropFilter": "none",
         "material": null
       },
@@ -405,12 +407,11 @@
         "background": "{card}",
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{line}",
         "elevation": null
       },
       "overlay": {
         "foreground": "{foreground}",
-        "border-color": "{line}",
+        "border-color": "oklch(0.5624 0 0 / 0.4)",
         "backdropFilter": "none",
         "material": "acrylic",
         "elevation": null
@@ -418,6 +419,7 @@
       "modal": {
         "background": "{background}",
         "foreground": "{foreground}",
+        "border-color": "oklch(0.5624 0 0 / 0.4)",
         "elevation": null
       },
       "inverse": {
@@ -461,7 +463,6 @@
         "shadow": "none",
         "foreground": "{foreground}",
         "background": "{hover}",
-        "border-color": "{line}",
         "elevation": null
       },
       "pressed": {
@@ -472,26 +473,32 @@
         "elevation": null
       },
       "disabled": {
-        "shadow": "none",
-        "border-color": "{line}"
+        "shadow": "none"
       }
     },
     "light": {
       "card": {
         "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)",
-        "border-color": "oklch(0.92191 0 0)"
+        "border-color": "oklch(0 0 0 / 0.059)"
+      },
+      "inset": {
+        "border-color": "oklch(0 0 0 / 0.059)",
+        "border-bottom-color": "oklch(0 0 0 / 0.447)"
       },
       "raised": {
-        "border-top-color": "{line}",
-        "border-bottom-color": "oklch(0.84522 0 0)"
+        "border-color": "oklch(0 0 0 / 0.059)",
+        "border-top-color": "oklch(0 0 0 / 0.059)",
+        "border-bottom-color": "oklch(0 0 0 / 0.161)"
+      },
+      "plate": {
+        "border-color": "oklch(0 0 0 / 0.059)"
       },
       "overlay": {
         "background": "oklch(from {popover} l c h / 0.85)",
         "shadow": "0 0 8px oklch(0 0 0 / 0.2), 0 16px 32px oklch(0 0 0 / 0.24)"
       },
       "modal": {
-        "shadow": "0 0 8px oklch(0 0 0 / 0.2), 0 64px 128px oklch(0 0 0 / 0.24)",
-        "border-color": "oklch(0.81093 0 0)"
+        "shadow": "0 0 8px oklch(0 0 0 / 0.2), 0 64px 128px oklch(0 0 0 / 0.24)"
       },
       "inverse": {
         "shadow": "0 0 8px oklch(0 0 0 / 0.2), 0 16px 32px oklch(0 0 0 / 0.24)"
@@ -508,30 +515,39 @@
         "border-color": "oklch(0.52768 0.14982 252.341)"
       },
       "hover": {
-        "border-top-color": "{line}",
-        "border-bottom-color": "oklch(0.84522 0 0)"
+        "border-color": "oklch(0 0 0 / 0.059)",
+        "border-top-color": "oklch(0 0 0 / 0.059)",
+        "border-bottom-color": "oklch(0 0 0 / 0.161)"
       },
       "disabled": {
         "background": "oklch(0.97015 0 0)",
-        "foreground": "oklch(0.68949 0 0)"
+        "foreground": "oklch(0.68949 0 0)",
+        "border-color": "oklch(0 0 0 / 0.059)"
       }
     },
     "dark": {
       "card": {
         "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)",
-        "border-color": "oklch(0.23075 0 0)"
+        "border-color": "oklch(0 0 0 / 0.102)"
+      },
+      "inset": {
+        "border-color": "oklch(1 0 0 / 0.071)",
+        "border-bottom-color": "oklch(1 0 0 / 0.545)"
       },
       "raised": {
-        "border-top-color": "oklch(0.32897 0 0)",
-        "border-bottom-color": "{line}"
+        "border-color": "oklch(1 0 0 / 0.071)",
+        "border-top-color": "oklch(1 0 0 / 0.071)",
+        "border-bottom-color": "oklch(1 0 0 / 0.094)"
+      },
+      "plate": {
+        "border-color": "oklch(0 0 0 / 0.102)"
       },
       "overlay": {
         "background": "oklch(from {popover} l c h / 0.96)",
         "shadow": "0 0 8px oklch(0 0 0 / 0.4), 0 16px 32px oklch(0 0 0 / 0.48)"
       },
       "modal": {
-        "shadow": "0 0 8px oklch(0 0 0 / 0.4), 0 64px 128px oklch(0 0 0 / 0.48)",
-        "border-color": "oklch(0.37909 0 0)"
+        "shadow": "0 0 8px oklch(0 0 0 / 0.4), 0 64px 128px oklch(0 0 0 / 0.48)"
       },
       "inverse": {
         "shadow": "0 0 8px oklch(0 0 0 / 0.4), 0 16px 32px oklch(0 0 0 / 0.48)"
@@ -548,12 +564,14 @@
         "border-color": "oklch(0.81732 0.11439 230)"
       },
       "hover": {
-        "border-top-color": "oklch(0.32897 0 0)",
-        "border-bottom-color": "{line}"
+        "border-color": "oklch(1 0 0 / 0.071)",
+        "border-top-color": "oklch(1 0 0 / 0.071)",
+        "border-bottom-color": "oklch(1 0 0 / 0.094)"
       },
       "disabled": {
         "background": "oklch(0.28502 0 0)",
-        "foreground": "oklch(0.54863 0 0)"
+        "foreground": "oklch(0.54863 0 0)",
+        "border-color": "oklch(1 0 0 / 0.071)"
       }
     }
   },

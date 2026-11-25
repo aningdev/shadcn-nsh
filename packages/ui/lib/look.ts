@@ -286,6 +286,11 @@ export interface FieldLook {
   readonly shade: FinishRole | null;
   /** Where the theme draws the focus as a line under the text rather than a changed edge. */
   readonly focusLine: boolean;
+  /**
+   * The ground a field that cannot be used turns over to, where the theme states one: the box is
+   * drawn in it, edge and all, instead of fading (`null` where the control keeps its own and fades).
+   */
+  readonly disabled: Fill | null;
 }
 
 /** The field's frame, as the theme's `field.*` slots state it. */
@@ -301,6 +306,7 @@ export function fieldLook(): FieldLook {
     ground: face("field.face"),
     shade: shade("field.shade"),
     focusLine: flag("field.focus.line"),
+    disabled: face("field.disabled.face"),
   };
 }
 

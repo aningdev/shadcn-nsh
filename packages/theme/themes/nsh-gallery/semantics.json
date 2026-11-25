@@ -182,6 +182,7 @@
     "field.corner.bottom": "control",
     "field.focus.line": false,
     "field.focus.width": 3,
+    "field.disabled.face": "keep",
     "choice.size": {
       "pointer": 16,
       "touch": 22
@@ -399,7 +400,9 @@
       },
       "inset": {
         "foreground": "{foreground}",
-        "border-color": "{border}"
+        "border-color": "{border}",
+        "border-top-color": null,
+        "border-bottom-color": null
       },
       "channel": {
         "background": "{inset}",

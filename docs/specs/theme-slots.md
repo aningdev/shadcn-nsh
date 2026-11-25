@@ -61,14 +61,15 @@
 
 ## 3 输入组（input、select、combobox、number-input、otp-input、time-field、editor）
 
-| 槽                              | nsh-gallery | material         | winui                 | apple   |
-| ------------------------------- | ----------- | ---------------- | --------------------- | ------- |
-| 底色                            | field       | field            | field                 | field   |
-| 边宽：上 / 侧 / 下              | 1 / 1 / 1   | 0 / 0 / 1        | 1 / 1 / 1             | 待审计  |
-| 边色：上 / 侧 / 下              | input       | — / — / muted-fg | line / border / input | 待审计  |
-| 聚焦：边色 / 下边宽             | ring / 1    | primary / 2      | accent / 2            | 待审计  |
-| 下边线宽（`field.focus.width`） | 3           | 2                | 2                     | 3       |
-| 圆角                            | control     | 上 4 下 0        | 4                     | control |
+| 槽                                                      | nsh-gallery | material         | winui                 | apple   |
+| ------------------------------------------------------- | ----------- | ---------------- | --------------------- | ------- |
+| 底色                                                    | field       | field            | field                 | field   |
+| 边宽：上 / 侧 / 下                                      | 1 / 1 / 1   | 0 / 0 / 1        | 1 / 1 / 1             | 待审计  |
+| 边色：上 / 侧 / 下                                      | input       | — / — / muted-fg | line / border / input | 待审计  |
+| 聚焦：边色 / 下边宽                                     | ring / 1    | primary / 2      | accent / 2            | 待审计  |
+| 下边线宽（`field.focus.width`）                         | 3           | 2                | 2                     | 3       |
+| 圆角                                                    | control     | 上 4 下 0        | 4                     | control |
+| 禁用：底 / 边 / 墨（`keep` = 不换，按统一不透明度淡出） | keep        | keep             | finish:disabled       | keep    |
 
 ## 4 选择组
 

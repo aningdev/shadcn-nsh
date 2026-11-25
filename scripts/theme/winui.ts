@@ -318,6 +318,7 @@ export type WinuiAppearanceRole =
   | "faint"
   | "brand"
   | "brand-edge"
+  | "focus-inner"
   | "track"
   | "knob"
   | "info"
@@ -420,6 +421,10 @@ function buildAppearance(
     // `ControlStrokeColorOnAccentSecondary` (bottom bevel of `AccentControlElevationBorderBrush`)
     // composited over the accent fill `primary`, not over the base background.
     "brand-edge": compositeWinui(w.ControlStrokeColorOnAccentSecondary, primary),
+    // `FocusStrokeColorInner`: the line hugging the control, inside `FocusStrokeColorOuter`'s ring.
+    // White in light; `#B3000000`, a 70% black, in dark — composited here over the base it is drawn
+    // on (`background` `#202020`), as this theme states its translucent brushes.
+    "focus-inner": appearance === "light" ? "oklch(1 0 0)" : over("oklch(0 0 0 / 0.7)", background),
     track: inset,
     knob: mutedForeground,
     // `SystemFillColorAttentionBrush`: `SystemAccentColor` (`#0078D4`) in light, `SystemAccentColorLight2` in dark.
@@ -624,6 +629,9 @@ export const winuiStyle = {
     ...winuiChoice,
     ...winuiSwitch,
     ...winuiTrack,
+    // A field that cannot be used turns over to the disabled brushes (fill, edge and ink), where a
+    // theme without them keeps its own box and fades it.
+    "field.disabled.face": "finish:disabled",
     "state.disabled.face": "finish:disabled",
     "state.disabled.ink": "finish:disabled:foreground",
     "state.disabled.edge": "finish:disabled:border-color",
@@ -696,6 +704,7 @@ const origin: ColourOrigin = {
     ring: "FocusStrokeColorOuter",
     brand: "AccentTextFillColorPrimary",
     "brand-edge": "ControlStrokeColorOnAccentSecondary over the accent fill",
+    "focus-inner": "FocusStrokeColorInner",
     "inverse-brand": "TextOnAccentFillColorPrimary",
     inverse: "SolidBackgroundFillColorTertiary over base",
     "inverse-foreground": "TextFillColorPrimary",
@@ -741,7 +750,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "accent-foreground": "Ink on subtle accent fills (WinUI TextFillColorPrimary).",
     destructive: "Critical/error status ink (WinUI SystemFillColorCritical).",
     border:
-      "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base).",
+      "Standard control hairline border (WinUI ControlStrongStrokeColorDefault composited over base: this theme's hairline takes the stroke a field's edge draws).",
     input:
       "Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base).",
     ring: "Outer keyboard focus stroke (WinUI FocusStrokeColorOuter).",
@@ -768,6 +777,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       "Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark).",
     "brand-edge":
       "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary).",
+    "focus-inner":
+      "The line inside a focus ring, hugging the control (WinUI FocusStrokeColorInner: white in light, 70% black over the base in dark).",
     track: "Switch and slider track (WinUI ControlAltFillColorSecondary).",
     knob: "Unchecked switch thumb (WinUI TextFillColorSecondary).",
     code: "Inline code ink (WinUI TextFillColorPrimary).",

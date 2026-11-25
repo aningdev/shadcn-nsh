@@ -384,7 +384,13 @@
       }
     },
     "inset": {
-      "$description": "A well cut into a surface: an inset, a field, a track, a groove."
+      "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "border-top-color": "none",
+          "border-bottom-color": "none"
+        }
+      }
     },
     "channel": {
       "$description": "The channel a group of choices sits in: a segmented control's track."

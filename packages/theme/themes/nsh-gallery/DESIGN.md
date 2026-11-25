@@ -46,6 +46,7 @@ colors:
     faint: "#9a9da3"
     brand: "#4a840a"
     brand-edge: "#cacbcd"
+    focus-inner: "#ffffff"
     track: "#e9eaed"
     knob: "#ffffff"
     info: "#3d63d1"
@@ -100,6 +101,7 @@ colors:
     faint: "#6b6f76"
     brand: "#c8f26d"
     brand-edge: "#31343a"
+    focus-inner: "#1f2228"
     track: "#33363c"
     knob: "#e4e5e8"
     info: "#7ea8ff"
@@ -374,6 +376,7 @@ NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`)
 - **`sidebar-border`** (light `#dedee1`, dark `#24272d`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#a3a8b2`, dark `#5d636e`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#e4e4e7`, dark `#2d3036`): Hairline divider and grid rule inside recessed wells.
+- **`focus-inner`** (light `#ffffff`, dark `#1f2228`): The line inside a focus ring, hugging the control: the surface's own color where a theme draws one.
 
 ## Typography
 

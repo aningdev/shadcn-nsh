@@ -1,6 +1,10 @@
 /**
  * winui: what each layer finish paints, and the shadow scale, per appearance.
  *
+ * Hairlines are the XAML stroke brushes stated as the strokes they are — translucent, so each
+ * composites over the face it is drawn on rather than over the window behind it (an opaque stroke
+ * that replaced `ControlStrokeColorDefault #0F000000` would only be right on the base).
+ *
  * Field values use the generator vocabulary: `{role}` names a colour role of this theme's palette,
  * `oklch(from {role} l c h / a)` the role at an alpha, `{shadow.part}` a part of the scale below,
  * `"none"` and `"transparent"` their CSS keywords. `material` names the platform material the
@@ -17,8 +21,8 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
     },
     inset: {
-      shadow: "{shadow.inset}",
       "border-color": "{input}",
+      shadow: "{shadow.inset}",
       foreground: "{foreground}",
     },
     channel: {
@@ -103,37 +107,84 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
     },
   },
+  // Strokes are the XAML brushes at their own alpha: `ControlStrokeColorDefault #0F000000`,
+  // `ControlStrokeColorSecondary #29000000`, `ControlStrongStrokeColorDefault #72000000`,
+  // `CardStrokeColorDefault #0F000000`, `SurfaceStrokeColorDefault #66757575` (light) — each over the
+  // face it is drawn on (a card's `#fbfbfb`, a field's, a dialog's), the way WinUI paints them.
   light: {
-    card: { "border-color": "oklch(0.92191 0 0)" },
-    raised: { "border-top-color": "{line}", "border-bottom-color": "oklch(0.84522 0 0)" },
-    modal: { "border-color": "oklch(0.81093 0 0)" },
+    card: { "border-color": "oklch(0 0 0 / 0.0588)" },
+    plate: { "border-color": "oklch(0 0 0 / 0.0588)" },
+    inset: {
+      "border-color": "oklch(0 0 0 / 0.0588)",
+      "border-bottom-color": "oklch(0 0 0 / 0.4471)",
+    },
+    raised: {
+      "border-color": "oklch(0 0 0 / 0.0588)",
+      "border-top-color": "oklch(0 0 0 / 0.0588)",
+      "border-bottom-color": "oklch(0 0 0 / 0.161)",
+    },
+    hover: {
+      "border-color": "oklch(0 0 0 / 0.0588)",
+      "border-top-color": "oklch(0 0 0 / 0.0588)",
+      "border-bottom-color": "oklch(0 0 0 / 0.161)",
+    },
+    modal: { "border-color": "oklch(0.5624 0 0 / 0.4)" },
     // Acrylic's tint over its blur: `TintLuminosityOpacity` 0.85 light, 0.96 dark, the fill `popover`
     // falls back to `AcrylicInAppFillColorDefault` when the platform draws no blur.
-    overlay: { background: "oklch(from {popover} l c h / 0.85)" },
+    overlay: {
+      background: "oklch(from {popover} l c h / 0.85)",
+      "border-color": "oklch(0.5624 0 0 / 0.4)",
+    },
     glass: { background: "oklch(from {popover} l c h / 0.85)" },
     accent: {
       "border-color": "oklch(0.52768 0.14982 252.341)",
       "pressed-background": "oklch(0.5773 0.13223 250.006)",
       "pressed-foreground": "oklch(0.87245 0.03754 247.003)",
     },
-    hover: { "border-top-color": "{line}", "border-bottom-color": "oklch(0.84522 0 0)" },
     fill: { "border-color": "oklch(0.52768 0.14982 252.341)" },
-    disabled: { background: "oklch(0.97015 0 0)", foreground: "oklch(0.68949 0 0)" },
+    disabled: {
+      background: "oklch(0.97015 0 0)",
+      "border-color": "oklch(0 0 0 / 0.0588)",
+      foreground: "oklch(0.68949 0 0)",
+    },
   },
+  // Dark strokes: `ControlStrokeColorDefault #12FFFFFF`, `ControlStrokeColorSecondary #18FFFFFF`,
+  // `ControlStrongStrokeColorDefault #8BFFFFFF`, `CardStrokeColorDefault #19000000`,
+  // `SurfaceStrokeColorDefault #66757575`, the same grey at the same alpha as in light.
   dark: {
-    card: { "border-color": "oklch(0.23075 0 0)" },
-    raised: { "border-top-color": "oklch(0.32897 0 0)", "border-bottom-color": "{line}" },
-    modal: { "border-color": "oklch(0.37909 0 0)" },
-    overlay: { background: "oklch(from {popover} l c h / 0.96)" },
+    card: { "border-color": "oklch(0 0 0 / 0.102)" },
+    plate: { "border-color": "oklch(0 0 0 / 0.102)" },
+    inset: {
+      "border-color": "oklch(1 0 0 / 0.0706)",
+      "border-bottom-color": "oklch(1 0 0 / 0.5451)",
+    },
+    raised: {
+      "border-color": "oklch(1 0 0 / 0.0706)",
+      "border-top-color": "oklch(1 0 0 / 0.0706)",
+      "border-bottom-color": "oklch(1 0 0 / 0.0941)",
+    },
+    hover: {
+      "border-color": "oklch(1 0 0 / 0.0706)",
+      "border-top-color": "oklch(1 0 0 / 0.0706)",
+      "border-bottom-color": "oklch(1 0 0 / 0.0941)",
+    },
+    modal: { "border-color": "oklch(0.5624 0 0 / 0.4)" },
+    overlay: {
+      background: "oklch(from {popover} l c h / 0.96)",
+      "border-color": "oklch(0.5624 0 0 / 0.4)",
+    },
     glass: { background: "oklch(from {popover} l c h / 0.96)" },
     accent: {
       "border-color": "oklch(0.81732 0.11439 230)",
       "pressed-background": "oklch(0.70029 0.10192 230.522)",
       "pressed-foreground": "oklch(0.42706 0.05878 229.834)",
     },
-    hover: { "border-top-color": "oklch(0.32897 0 0)", "border-bottom-color": "{line}" },
     fill: { "border-color": "oklch(0.81732 0.11439 230)" },
-    disabled: { background: "oklch(0.28502 0 0)", foreground: "oklch(0.54863 0 0)" },
+    disabled: {
+      background: "oklch(0.28502 0 0)",
+      "border-color": "oklch(1 0 0 / 0.0706)",
+      foreground: "oklch(0.54863 0 0)",
+    },
   },
 };
 

@@ -123,6 +123,12 @@
           },
           "$description": "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring."
         }
+      },
+      "disabled": {
+        "face": {
+          "$value": "finish:disabled",
+          "$description": "The ground and edge a field that cannot be used turns over to, or `keep` where it keeps its own and fades instead."
+        }
       }
     },
     "choice": {

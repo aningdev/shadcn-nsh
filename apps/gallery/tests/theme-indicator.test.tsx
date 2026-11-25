@@ -21,6 +21,8 @@ test("the field dimension and the inverse, modal and tooltip roles follow the th
   expect(read(app.texts(), "field")?.endsWith("|0")).toBe(false);
   expect(read(app.texts(), "corners")?.startsWith("0|")).toBe(false);
   expect(read(app.texts(), "frame")).toContain("outline-2");
+  // A theme whose well states no edge of its own spreads none: the slots' classes draw it.
+  expect(read(app.texts(), "stroke")?.startsWith("false|")).toBe(true);
 
   // Material ("material"): underlined fields with top corners only.
   await app.press("text:Material");
@@ -47,6 +49,8 @@ test("the field dimension and the inverse, modal and tooltip roles follow the th
   expect(read(app.texts(), "frame")).toContain("focus-within:border-b-brand");
   expect(read(app.texts(), "frame")).toContain("focus-within:border-b-[2px]");
   expect(read(app.texts(), "frame")).not.toContain("outline-2");
+  // WinUI's well states its own translucent strokes, the bottom one stronger: a field spreads both.
+  expect(read(app.texts(), "stroke")).toBe("true|true|true");
   expect(after.inverse).not.toBe(before.inverse);
   expect(after.modal).not.toBe(before.modal);
   expect(after.tooltip).not.toBe(before.tooltip);

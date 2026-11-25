@@ -147,7 +147,7 @@
           "role": "chrome"
         }
       },
-      "$description": "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base)."
+      "$description": "Standard control hairline border (WinUI ControlStrongStrokeColorDefault composited over base: this theme's hairline takes the stroke a field's edge draws)."
     },
     "input": {
       "$value": {
@@ -272,6 +272,20 @@
         }
       },
       "$description": "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary)."
+    },
+    "focus-inner": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.14479, 0, 0],
+        "hex": "#0a0a0a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome",
+          "source": "WinUI 3 theme resources: FocusStrokeColorInner"
+        }
+      },
+      "$description": "The line inside a focus ring, hugging the control (WinUI FocusStrokeColorInner: white in light, 70% black over the base in dark)."
     },
     "track": {
       "$value": {
@@ -1004,23 +1018,70 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.23075, 0, 0],
-          "hex": "#1d1d1d"
+          "components": [0, 0, 0],
+          "alpha": 0.102,
+          "hex": "#000000"
         }
       }
     },
-    "raised": {
-      "border-top-color": {
+    "inset": {
+      "border-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.32897, 0, 0],
-          "hex": "#353535"
+          "components": [1, 0, 0],
+          "alpha": 0.071,
+          "hex": "#ffffff"
         }
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "alpha": 0.545,
+          "hex": "#ffffff"
+        }
+      }
+    },
+    "raised": {
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "alpha": 0.071,
+          "hex": "#ffffff"
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "alpha": 0.071,
+          "hex": "#ffffff"
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "alpha": 0.094,
+          "hex": "#ffffff"
+        }
+      }
+    },
+    "plate": {
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.102,
+          "hex": "#000000"
+        }
       }
     },
     "overlay": {
@@ -1041,6 +1102,15 @@
             }
           }
         }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.5624, 0, 0],
+          "alpha": 0.4,
+          "hex": "#757575"
+        }
       }
     },
     "modal": {
@@ -1048,8 +1118,9 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.37909, 0, 0],
-          "hex": "#424242"
+          "components": [0.5624, 0, 0],
+          "alpha": 0.4,
+          "hex": "#757575"
         }
       }
     },
@@ -1110,17 +1181,32 @@
       }
     },
     "hover": {
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "alpha": 0.071,
+          "hex": "#ffffff"
+        }
+      },
       "border-top-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.32897, 0, 0],
-          "hex": "#353535"
+          "components": [1, 0, 0],
+          "alpha": 0.071,
+          "hex": "#ffffff"
         }
       },
       "border-bottom-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "alpha": 0.094,
+          "hex": "#ffffff"
+        }
       }
     },
     "disabled": {
@@ -1130,6 +1216,15 @@
           "colorSpace": "oklch",
           "components": [0.28502, 0, 0],
           "hex": "#2a2a2a"
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "alpha": 0.071,
+          "hex": "#ffffff"
         }
       },
       "foreground": {

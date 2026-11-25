@@ -46,6 +46,7 @@ colors:
     faint: "#79747e"
     brand: "#6750a4"
     brand-edge: "#cac4d0"
+    focus-inner: "#f7f2fa"
     track: "#e6e0e9"
     knob: "#79747e"
     info: "#6750a4"
@@ -100,6 +101,7 @@ colors:
     faint: "#938f99"
     brand: "#d0bcff"
     brand-edge: "#49454f"
+    focus-inner: "#1d1b20"
     track: "#36343b"
     knob: "#938f99"
     info: "#d0bcff"
@@ -375,6 +377,7 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`sidebar-border`** (light `#79747e`, dark `#938f99`): Sidebar divider border (M3 outlineVariant).
 - **`sidebar-ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#cac4d0`, dark `#49454f`): Inset divider hairline (M3 outlineVariant).
+- **`focus-inner`** (light `#f7f2fa`, dark `#1d1b20`): The line inside a focus ring, hugging the control: the surface's own color where a theme draws one.
 
 ## Typography
 

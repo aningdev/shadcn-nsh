@@ -238,6 +238,7 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   border: "chrome",
   input: "chrome",
   ring: "chrome",
+  "focus-inner": "chrome",
   line: "chrome",
   "sidebar-border": "chrome",
   "sidebar-ring": "chrome",

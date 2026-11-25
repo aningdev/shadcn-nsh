@@ -34,7 +34,7 @@ import {
   triggerPadding,
 } from "./lib/listbox";
 import { type Live, read } from "./lib/live-value";
-import { fieldLook } from "./lib/look";
+import { fieldLook, fillOf, inked } from "./lib/look";
 import {
   createItemRegistry,
   createOpenState,
@@ -78,6 +78,8 @@ export interface PickerLookOptions {
    * form's field.
    */
   variant?: PickerVariant;
+  /** It cannot be opened: takes the theme's disabled field where it states one, else 50%. */
+  disabled?: Live<boolean>;
 }
 
 /**
@@ -100,6 +102,11 @@ export function pickerLook(o?: PickerLookOptions) {
     get style(): ViewStyle {
       const clearable = !!read(o?.clearable);
       const field = fieldLook();
+      // A theme that states the ground a field that cannot be used turns over to paints the trigger
+      // in it, edge and all (the finish's own stroke), rather than fading it.
+      const off = !outline && read(o?.disabled) ? field.disabled : null;
+      // A copy: a finish's properties are getters, read where the look is applied.
+      const inset = { ...finish.inset };
       return {
         flexDirection: "row",
         alignItems: "center",
@@ -120,14 +127,20 @@ export function pickerLook(o?: PickerLookOptions) {
         ...fieldEdgeWidths(field),
         ...(outline
           ? { backgroundColor: colors.raised, ...finish.raised }
-          : { backgroundColor: colors.field, ...finish.inset }),
+          : off
+            ? fillOf(off)
+            : { backgroundColor: colors.field, ...inset }),
+        // A theme whose inset states the field's edge (a stroke over its own face) has drawn it
+        // above: the slots' flat edge would paint the sides the same as the bottom and lose it.
         ...(invalid()
           ? { borderColor: colors.destructive }
           : read(o?.open)
             ? { borderColor: colors.faint }
             : outline
               ? { borderColor: colors.border }
-              : fieldRestEdge(field)),
+              : off || inset.borderBottomColor != null
+                ? {}
+                : fieldRestEdge(field)),
         ...(terminal ? {} : fieldRing(invalid() ? colors.destructive : colors.brand)),
         transitionProperty: "border-color, outline-color, opacity",
         transitionDuration: reduceMotion() ? 0 : edgeFade,
@@ -149,7 +162,7 @@ export function pickerLook(o?: PickerLookOptions) {
       return terminal ? { borderColor: tone } : fieldFocusEdge(fieldLook(), tone);
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return fieldLook().disabled ? {} : { opacity: dimmed.disabled };
     },
   };
 }
@@ -201,6 +214,7 @@ export function Picker(props: PickerProps) {
         open: () => props.open,
         invalid: () => !!props.invalid,
         clearable: () => !!props.clearable,
+        disabled: () => !!props.disabled,
         variant: props.variant,
         style: () => props.style ?? {},
       })}
@@ -214,7 +228,7 @@ export function Picker(props: PickerProps) {
           flex: 1,
           numberOfLines: 1,
           fontSize: fieldSize.font,
-          color: props.placeholder ? colors.mutedForeground : colors.foreground,
+          color: titleInk(!!props.placeholder, !!props.disabled),
         }}
       >
         {props.title}
@@ -641,4 +655,11 @@ export function SelectItem(props: SelectItemProps) {
   ctx.items.register(item);
   cleanup(() => ctx.items.unregister(item.value));
   return null;
+}
+
+/** A trigger's title: the placeholder in the muted ink, the disabled theme's ink while disabled. */
+function titleInk(placeholder: boolean, disabled: boolean): string {
+  const off = disabled ? fieldLook().disabled : null;
+  if (off) return inked(off) ?? colors.mutedForeground;
+  return placeholder ? colors.mutedForeground : colors.foreground;
 }

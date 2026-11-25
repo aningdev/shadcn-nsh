@@ -46,6 +46,7 @@ colors:
     faint: "#a1a1a1"
     brand: "#171717"
     brand-edge: "#e5e5e5"
+    focus-inner: "#ffffff"
     track: "#f5f5f5"
     knob: "#ffffff"
     info: "#737373"
@@ -100,6 +101,7 @@ colors:
     faint: "#a1a1a1"
     brand: "#e5e5e5"
     brand-edge: "#ffffff1a"
+    focus-inner: "#171717"
     track: "#262626"
     knob: "#fafafa"
     info: "#a1a1a1"
@@ -375,6 +377,7 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`sidebar-border`** (light `#e5e5e5`, dark `#ffffff1a`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#a1a1a1`, dark `#737373`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline divider and grid rule inside recessed wells.
+- **`focus-inner`** (light `#ffffff`, dark `#171717`): The line inside a focus ring, hugging the control: the surface's own color where a theme draws one.
 
 ## Typography
 

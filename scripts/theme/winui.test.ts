@@ -2,9 +2,9 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { css, parseColor, toOklchText } from "./oklch";
+import { css, over, parseColor, toOklchText } from "./oklch";
 import { checkStyle } from "./style";
-import { tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
+import { mergeFinishes, tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
 import { compositeWinui, WINUI, winuiAccent, winuiRoles, type Appearance } from "./winui";
 
 type RootThemeFile = {
@@ -317,6 +317,11 @@ const shipped = {
 describe("compiled winui theme files", () => {
   test("match the default keys, the style schema and the WinUI 3 values", () => {
     const files = shipped;
+    /** The runtime view: what the shared set and one appearance resolve to together. */
+    const merged = {
+      light: mergeFinishes(files.semantics.finishes, "light"),
+      dark: mergeFinishes(files.semantics.finishes, "dark"),
+    };
     expect(files.theme.name).toBe("WinUI 3");
     expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(rootTheme.cssVars.theme));
     expect(Object.keys(files.theme.cssVars.theme).some((key) => key.startsWith("font-"))).toBe(
@@ -327,11 +332,19 @@ describe("compiled winui theme files", () => {
 
     expect(files.semantics.motion.fast).toEqual({ duration: 83, timingFunction: "decelerate" });
     expect(files.semantics.dimension.size.height.pointer).toEqual({ sm: 24, md: 32, lg: 40 });
-    // A flyout is the overlay layer: Acrylic, its tint over the blur, the flyout's stroke.
+    // A flyout is the overlay layer: Acrylic, its tint over the blur, the flyout's stroke —
+    // `SurfaceStrokeColorDefault`, a translucent stroke so it composites over the flyout's own face.
     expect(files.semantics.finishes.shared.overlay).toMatchObject({
-      "border-color": "{line}",
       material: "acrylic",
+      foreground: "{foreground}",
     });
+    // `SurfaceStrokeColorDefault #66757575`, over the flyout's own face.
+    for (const appearance of ["light", "dark"] as const) {
+      expect(merged[appearance].overlay, appearance).toMatchObject({
+        "border-color": "oklch(0.5624 0 0 / 0.4)",
+        material: "acrylic",
+      });
+    }
     expect(files.semantics.finishes.light.overlay).toMatchObject({
       background: "oklch(from {popover} l c h / 0.85)",
     });
@@ -350,19 +363,32 @@ describe("compiled winui theme files", () => {
     });
     expect(files.semantics.finishes.light.overlay?.shadow).toContain("0 16px 32px");
     expect(files.semantics.finishes.light.modal?.shadow).toContain("0 64px 128px");
-    expect(hexOf(String(files.semantics.finishes.light.modal?.["border-color"]))).toBe("#c1c1c1");
-    expect(hexOf(String(files.semantics.finishes.dark.modal?.["border-color"]))).toBe("#424242");
-    expect(files.semantics.finishes.shared.raised).toMatchObject({
-      "border-color": "{line}",
-      shadow: "none",
-    });
+    // `SurfaceStrokeColorDefault #66757575` / `#66000000`: over the dialog's face it lands on the
+    // same #c1c1c1 / #424242 it drew before, now without pinning the face it was measured on.
+    expect(hexOf(over(String(merged.light.modal?.["border-color"]), "#f3f3f3"))).toBe("#c1c1c1");
+    expect(hexOf(over(String(merged.dark.modal?.["border-color"]), "#202020"))).toBe("#424242");
+    // A raised control's edge is WinUI's pair — `ControlStrokeColorDefault` above,
+    // `ControlStrokeColorSecondary` below — so the lower line is the stronger one.
+    expect(files.semantics.finishes.shared.raised).toMatchObject({ shadow: "none" });
     expect(files.semantics.finishes.light.raised).toMatchObject({
-      "border-top-color": "{line}",
-      "border-bottom-color": "oklch(0.84522 0 0)",
+      "border-color": "oklch(0 0 0 / 0.059)",
+      "border-top-color": "oklch(0 0 0 / 0.059)",
+      "border-bottom-color": "oklch(0 0 0 / 0.161)",
     });
     expect(files.semantics.finishes.dark.raised).toMatchObject({
-      "border-top-color": "oklch(0.32897 0 0)",
-      "border-bottom-color": "{line}",
+      "border-color": "oklch(1 0 0 / 0.071)",
+      "border-top-color": "oklch(1 0 0 / 0.071)",
+      "border-bottom-color": "oklch(1 0 0 / 0.094)",
+    });
+    // A field is the same pair at the controls' own strength (`ControlStrongStrokeColorDefault`
+    // under the text), so the line under it is the strong one and the rest is the hairline.
+    expect(files.semantics.finishes.light.inset).toMatchObject({
+      "border-color": "oklch(0 0 0 / 0.059)",
+      "border-bottom-color": "oklch(0 0 0 / 0.447)",
+    });
+    expect(files.semantics.finishes.dark.inset).toMatchObject({
+      "border-color": "oklch(1 0 0 / 0.071)",
+      "border-bottom-color": "oklch(1 0 0 / 0.545)",
     });
     expect(files.semantics.finishes.shared.accent).toMatchObject({
       "border-bottom-color": "{brand-edge}",
@@ -387,23 +413,30 @@ describe("compiled winui theme files", () => {
       foreground: "{muted-foreground}",
       shadow: "none",
     });
+    // `CardStrokeColorDefault #0F000000` / `#19000000`, over the card's own `#fbfbfb` / `#2b2b2b`.
     expect(files.semantics.finishes.light.card).toMatchObject({
-      "border-color": "oklch(0.92191 0 0)",
+      "border-color": "oklch(0 0 0 / 0.059)",
     });
     expect(files.semantics.finishes.dark.card).toMatchObject({
-      "border-color": "oklch(0.23075 0 0)",
+      "border-color": "oklch(0 0 0 / 0.102)",
     });
-    expect(files.semantics.finishes.shared.disabled).toMatchObject({
-      "border-color": "{line}",
-    });
+    expect(files.semantics.finishes.shared.disabled).toMatchObject({ shadow: "none" });
     expect(files.semantics.finishes.light.disabled).toMatchObject({
       background: "oklch(0.97015 0 0)",
+      "border-color": "oklch(0 0 0 / 0.059)",
       foreground: "oklch(0.68949 0 0)",
     });
     expect(files.semantics.finishes.dark.disabled).toMatchObject({
       background: "oklch(0.28502 0 0)",
+      "border-color": "oklch(1 0 0 / 0.071)",
       foreground: "oklch(0.54863 0 0)",
     });
+    // The line inside the focus ring: `FocusStrokeColorInner`, white in light, `#B3000000` over the
+    // base in dark.
+    expect(files.theme.cssVars.light["focus-inner"]).toBe("oklch(1 0 0)");
+    expect(files.theme.cssVars.dark["focus-inner"]).toBe("oklch(0.14479 0 0)");
+    // The disabled field turns over to the theme's disabled brushes rather than fading.
+    expect(files.semantics.slots["field.disabled.face"]).toEqual({ finish: "disabled" });
 
     const kinds = tokenKinds(files.theme.cssVars);
     expect(

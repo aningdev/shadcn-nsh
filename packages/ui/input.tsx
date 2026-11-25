@@ -25,7 +25,7 @@ import {
 } from "./lib/indicator";
 import { type Live, read } from "./lib/live-value";
 // `fieldLook` is the well's own look in this file; the recipe's is read as `fieldRecipe`.
-import { borderClass, fieldLook as fieldRecipe, sameFill } from "./lib/look";
+import { borderClass, fieldLook as fieldRecipe, fillOf, inked, sameFill } from "./lib/look";
 import { createRejectShake } from "./lib/motion";
 
 const pointer = platform.desktop;
@@ -154,14 +154,17 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
   const ghost = (read(o?.variant) ?? "default") === "ghost";
   const flat = !!read(o?.readonly) || !!read(o?.disabled);
   const field = fieldDrawn(fieldRecipe());
+  // A theme that states the ground a field that cannot be used turns over to draws the whole box in
+  // it (edge and all) rather than fading it, as WinUI's disabled brushes do.
+  const off = !ghost && read(o?.disabled) ? field.disabled : null;
   return {
     ...fieldCorners(field),
     ...fieldEdgeWidths(field),
-    backgroundColor: ghost ? "transparent" : colors.field,
+    ...(off ? fillOf(off) : { backgroundColor: ghost ? "transparent" : colors.field }),
     // Recessed while editable; a read-only, disabled or ghost field lies flat. Its edge is
     // `fieldEdge`'s classes, and so is its color: a theme whose inset is a fill alone states a
     // transparent edge there, and a box keeps its stroke.
-    ...(flat || ghost ? {} : finish.inset),
+    ...(off || flat || ghost ? {} : finish.inset),
   };
 }
 
@@ -169,7 +172,8 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
  * The well around a field's input (and its prefix, suffix, icons): spread
  * it on the view holding them. Its states (`class`): a stronger edge under
  * the pointer (none while invalid, read-only or disabled), the focus edge
- * while the input in it has the keys; 50% while disabled.
+ * while the input in it has the keys; 50% while disabled, or the theme's disabled brushes
+ * (`field.disabled.face`) where it states them.
  */
 export function fieldLook(o?: FieldLookOptions) {
   return {
@@ -185,7 +189,8 @@ export function fieldLook(o?: FieldLookOptions) {
       };
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      // A box drawn over to the disabled brushes dims nothing: its fill and its ink are the theme's.
+      return fieldDrawn(fieldRecipe()).disabled ? {} : { opacity: dimmed.disabled };
     },
   };
 }
@@ -199,6 +204,8 @@ export interface FieldTextOptions {
   /** Inside a `fieldLook` well, whose 1-point edge is part of the field's height: the text is that much shorter, so the
    * whole field is as tall as a lone input, a select or a number input. */
   inWell?: boolean;
+  /** Disabled: takes the ink of the theme's disabled field, where it states one. */
+  disabled?: boolean;
 }
 
 /**
@@ -211,6 +218,9 @@ export interface FieldTextOptions {
 export function fieldText(o?: FieldTextOptions): InputStyle {
   // The well's edge above and below.
   const edge = o?.inWell && !terminal ? 2 : 0;
+  const field = fieldDrawn(fieldRecipe());
+  // A disabled field drawn over to the theme's disabled box takes that box's ink, not a fade.
+  const ink = o?.disabled && field.disabled ? inked(field.disabled) : null;
   const box = terminal
     ? o?.multiline
       ? {
@@ -236,7 +246,7 @@ export function fieldText(o?: FieldTextOptions): InputStyle {
     flex: 1,
     paddingHorizontal: fieldSize.pad,
     fontSize: fieldSize.font,
-    color: colors.foreground,
+    color: ink ?? colors.foreground,
     placeholderColor: colors.mutedForeground,
     caretColor: colors.brand,
     selectionColor: colors.brand,
@@ -271,7 +281,11 @@ export function inputLook(o?: FieldLookOptions) {
       return look.class;
     },
     get style(): InputStyle {
-      const text = fieldText({ readonly: !!read(o?.readonly), multiline: !!read(o?.multiline) });
+      const text = fieldText({
+        readonly: !!read(o?.readonly),
+        disabled: !!read(o?.disabled),
+        multiline: !!read(o?.multiline),
+      });
       // A lone input is its own well: the text takes no `flex`, which a field's text has for the
       // parts beside it.
       return { ...frame(o), ...text, flex: undefined, ...read(o?.style) } as InputStyle;

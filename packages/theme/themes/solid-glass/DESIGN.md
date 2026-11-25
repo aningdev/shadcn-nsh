@@ -46,6 +46,7 @@ colors:
     faint: "#9e9e9e"
     brand: "#00754f"
     brand-edge: "#161616af"
+    focus-inner: "#eff1f5"
     track: "#292e3826"
     knob: "#ffffff"
     info: "#0078cc"
@@ -100,6 +101,7 @@ colors:
     faint: "#696969"
     brand: "#54d2a4"
     brand-edge: "#f4f4f4aa"
+    focus-inner: "#1d1d1d"
     track: "#ffffff21"
     knob: "#f5f5f5"
     info: "#449df0"
@@ -375,6 +377,7 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`sidebar-border`** (light `#292e381f`, dark `#ffffff1a`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#16161680`, dark `#ffffff66`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#292e3821`, dark `#ffffff1c`): Hairline divider and grid rule inside recessed wells.
+- **`focus-inner`** (light `#eff1f5`, dark `#1d1d1d`): The line inside a focus ring, hugging the control: the surface's own color where a theme draws one.
 
 ## Typography
 

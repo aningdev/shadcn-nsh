@@ -81,6 +81,7 @@ export const referenceColours: readonly string[] = [
   "hover",
   "brand",
   "brand-edge",
+  "focus-inner",
   "inverse",
   "inverse-foreground",
   "inverse-brand",
@@ -201,6 +202,7 @@ export function reduceColours(
   write("sidebar-ring", full["sidebar-ring"], ref(scheme.ring));
   write("brand", full.brand, ref("primary"));
   write("brand-edge", full["brand-edge"], ref("border"));
+  write("focus-inner", full["focus-inner"], ref("card"));
   write("inverse-brand", full["inverse-brand"], ref("primary-foreground"));
   write("inverse", full.inverse, ref(scheme.inverse[0]));
   write("inverse-foreground", full["inverse-foreground"], ref(scheme.inverse[1]));

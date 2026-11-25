@@ -46,6 +46,7 @@ colors:
     faint: "#c5c5c7"
     brand: "#007aff"
     brand-edge: "#dcdcdd"
+    focus-inner: "#ffffff"
     track: "#e9e9eb"
     knob: "#ffffff"
     info: "#007aff"
@@ -100,6 +101,7 @@ colors:
     faint: "#5a5a5f"
     brand: "#0a84ff"
     brand-edge: "#353538"
+    focus-inner: "#1c1c1e"
     track: "#39393d"
     knob: "#ffffff"
     info: "#0a84ff"
@@ -375,6 +377,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`sidebar-border`** (light `#dcdcdd`, dark `#353538`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#007aff`, dark `#0a84ff`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#dcdcdd`, dark `#353538`): Inset divider hairline (UIKit hairline composited over card).
+- **`focus-inner`** (light `#ffffff`, dark `#1c1c1e`): The line inside a focus ring, hugging the control: the surface's own color where a theme draws one.
 
 ## Typography
 

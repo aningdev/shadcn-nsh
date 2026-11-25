@@ -46,6 +46,7 @@ colors:
     faint: "#868686"
     brand: "#003e92"
     brand-edge: "#00396e"
+    focus-inner: "#ffffff"
     track: "#ededed"
     knob: "#5c5c5c"
     info: "#0078d4"
@@ -100,6 +101,7 @@ colors:
     faint: "#969696"
     brand: "#99ebff"
     brand-edge: "#53b1dc"
+    focus-inner: "#0a0a0a"
     track: "#1d1d1d"
     knob: "#cccccc"
     info: "#60cdff"
@@ -369,12 +371,13 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 
 ### Chrome
 
-- **`border`** (light `#868686`, dark `#9a9a9a`): Standard control hairline border (WinUI ControlStrokeColorDefault composited over base).
+- **`border`** (light `#868686`, dark `#9a9a9a`): Standard control hairline border (WinUI ControlStrongStrokeColorDefault composited over base: this theme's hairline takes the stroke a field's edge draws).
 - **`input`** (light `#868686`, dark `#9a9a9a`): Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base).
 - **`ring`** (light `#1a1a1a`, dark `#ffffff`): Outer keyboard focus stroke (WinUI FocusStrokeColorOuter).
 - **`sidebar-border`** (light `#e5e5e5`, dark `#323232`): Sidebar separator stroke (WinUI DividerStrokeColorDefault).
 - **`sidebar-ring`** (light `#1a1a1a`, dark `#ffffff`): Sidebar focus stroke (WinUI FocusStrokeColorOuter).
 - **`line`** (light `#e5e5e5`, dark `#323232`): Hairline divider stroke (WinUI DividerStrokeColorDefault).
+- **`focus-inner`** (light `#ffffff`, dark `#0a0a0a`): The line inside a focus ring, hugging the control (WinUI FocusStrokeColorInner: white in light, 70% black over the base in dark).
 
 ## Typography
 

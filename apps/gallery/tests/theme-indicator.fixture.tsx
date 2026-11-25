@@ -41,6 +41,7 @@ function App() {
       <Text testID="tooltip">{`tooltip:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>
+      <Text testID="stroke">{`stroke:${"borderBottomColor" in { ...finish.inset }}|${inputLook().style.borderBottomColor === finish.inset.borderBottomColor}|${finish.inset.borderBottomColor !== finish.inset.borderTopColor}`}</Text>
       <Text testID="frame">{`frame:${inputLook().class}`}</Text>
       <Text testID="corners">{`corners:${fieldCorners(fieldLook()).borderBottomLeftRadius}|${fieldCorners(fieldLook()).borderTopLeftRadius}`}</Text>
       <Button onPress={() => selectTheme(materialTheme)}>Material</Button>
