@@ -116,6 +116,14 @@
       }
     }
   },
+  "slot": {
+    "well": {
+      "edge": {
+        "$value": "none",
+        "$description": "What a sunk well's edge is drawn in, or `none` where it draws no edge and its ground alone marks it."
+      }
+    }
+  },
   "color": {
     "$type": "color",
     "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",

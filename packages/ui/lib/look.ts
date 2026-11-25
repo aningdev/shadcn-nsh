@@ -195,9 +195,10 @@ function flag(path: string): boolean {
   return found;
 }
 
-/** The side a value names `full`, or the points it names. */
+/** The side a value names `container` or `control` or `full`, or the points it names. */
 function cornerOf(face: SlotValue): number {
   if (face === "full") return CAPSULE_RADIUS;
+  if (face === "container") return shape.container;
   if (face === "control") return shape.control;
   if (typeof face === "number") return face;
   throw new Error(`the theme states no corner: ${JSON.stringify(face)}`);
@@ -238,6 +239,31 @@ function face(path: string): Fill | null {
 function shade(path: string): FinishRole | null {
   const found = value(path);
   return found === "none" ? null : (found as FinishRole);
+}
+
+/** The box a checkbox draws, per input: the theme's `choice.box`. */
+export function choiceBox(): Tiered<number> {
+  return pointsPerTier("choice.box");
+}
+
+/** A sunk well's edge, as the theme's `well.edge` slot states it (`null` where it draws none). */
+export function wellEdge(): Fill | null {
+  return face("well.edge");
+}
+
+/** A popup's surface corner, in points (`popup.corner`). */
+export function popupCorner(): number {
+  return corner("popup.corner");
+}
+
+/** The ground a tab strip's track lies on (`tabs.track.face`), `null` where the surface shows through. */
+export function trackGround(): Fill | null {
+  return face("tabs.track.face");
+}
+
+/** How thick the line under a field's text is where focus lights it (`field.focus.width`). */
+export function fieldFocusWidth(): number {
+  return points("field.focus.width");
 }
 
 /** The frame a field draws: the edges it paints, their corners, and what each reads. */
@@ -300,6 +326,8 @@ export interface ChoiceLook {
   readonly dotPressed: number | null;
   /** The box's diameter, per input. */
   readonly size: Tiered<number>;
+  /** A checkbox's box, per input: the side of its square. */
+  readonly box: Tiered<number>;
   /** The state layer's diameter, where the theme asks for one. */
   readonly halo: number | null;
 }
@@ -321,6 +349,7 @@ export function choiceLook(): ChoiceLook {
     dotHover: optionalPoints("choice.mark.hover"),
     dotPressed: optionalPoints("choice.mark.pressed"),
     size: pointsPerTier("choice.size"),
+    box: pointsPerTier("choice.box"),
     halo: optionalPoints("choice.halo"),
   };
 }
@@ -374,6 +403,8 @@ export interface SliderLook {
   readonly knob: Tiered<number>;
   /** The knob's diameter while pressed, per input. */
   readonly knobPressed: Tiered<number>;
+  /** What the knob is filled with, where the theme paints one (`null` where it draws none). */
+  readonly knobFace: Fill | null;
   /**
    * The mark inside the knob, where the theme has one: `0` is a solid knob, so a knob with a disc
    * is a ring around it and a knob without one is a disc.
@@ -395,6 +426,7 @@ export function sliderLook(): SliderLook {
     vertical: pointsPerTier("slider.vertical"),
     knob: pointsPerTier("slider.knob.size"),
     knobPressed: pointsPerTier("slider.knob.pressed.size"),
+    knobFace: face("slider.knob.face"),
     dot: points("slider.mark.size"),
     dotHover: optionalPoints("slider.mark.hover") ?? 0,
     dotPressed: optionalPoints("slider.mark.pressed") ?? 0,

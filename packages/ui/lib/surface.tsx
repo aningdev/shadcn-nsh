@@ -23,6 +23,7 @@ import type { ViewStyle } from "nsh";
 import { computed, platform, Text, token, View, windowSize } from "nsh";
 
 import { type Live, read } from "./live-value";
+import { edged, wellEdge } from "./look";
 
 const pointer = platform.desktop;
 
@@ -165,15 +166,16 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
 /**
  * A well inside a section (a preview, a panel of state, an image's frame):
  * the inset color a hair below the card, its hairline and inner shade, the
- * theme's `control` corners.
+ * theme's `control` corners, and the edge `well.edge` draws (`none` where the
+ * ground alone marks it).
  */
 export function insetSurface(): ViewStyle {
   return {
     backgroundColor: colors.inset,
     borderWidth: stroke.hairline,
-    borderColor: colors.line,
     ...rounded(shape.control),
     ...finish.inset,
+    borderColor: edged(wellEdge()),
   };
 }
 

@@ -43,6 +43,14 @@
         "line": {
           "$value": "no",
           "$description": "Whether focus lights the bottom line alone (a field whose edge is that line), or the whole edge inside a ring."
+        },
+        "width": {
+          "$type": "dimension",
+          "$value": {
+            "value": 3,
+            "unit": "px"
+          },
+          "$description": "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring."
         }
       }
     },
@@ -58,6 +66,22 @@
           "dev.aning.shadcn-nsh": {
             "touch": {
               "value": 22,
+              "unit": "px"
+            }
+          }
+        }
+      },
+      "box": {
+        "$type": "dimension",
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "A checkbox's box, per input: the side of its square (`choice.size` is a radio's across).",
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "touch": {
+              "value": 20,
               "unit": "px"
             }
           }
@@ -500,6 +524,10 @@
               }
             }
           }
+        },
+        "face": {
+          "$value": "finish:knob",
+          "$description": "What a slider's knob is filled with."
         }
       },
       "mark": {
@@ -574,6 +602,26 @@
         "$type": "number",
         "$value": 0.25,
         "$description": "How faintly the spinner's groove shows, or `0` where it draws none."
+      }
+    },
+    "popup": {
+      "corner": {
+        "$value": "container",
+        "$description": "A popup's surface corner (a menu's, a select's list, a calendar's): `container` is the theme's `shape.container`."
+      }
+    },
+    "tabs": {
+      "track": {
+        "face": {
+          "$value": "color:inset",
+          "$description": "The ground a tab strip's track lies on, or `none` where the surface behind it shows through."
+        }
+      }
+    },
+    "well": {
+      "edge": {
+        "$value": "color:border",
+        "$description": "What a sunk well's edge is drawn in, or `none` where it draws no edge and its ground alone marks it."
       }
     },
     "state": {

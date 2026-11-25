@@ -27,6 +27,7 @@ import {
 
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
+import { painted, trackGround } from "./lib/look";
 import { controlSize } from "./lib/surface";
 
 const pointer = platform.desktop;
@@ -90,7 +91,7 @@ export function tabsLook(o?: TabsLookOptions) {
         ...corners(),
         borderWidth: stroke.control,
         borderColor: colors.border,
-        backgroundColor: colors.inset,
+        backgroundColor: painted(trackGround()),
         boxShadow: finish.inset.boxShadow,
       };
     },

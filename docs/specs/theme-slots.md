@@ -20,16 +20,16 @@
 
 槽值是作者写的一行字符串（`scripts/theme/slots.ts` 的 `SLOTS` / `BASE_SLOTS` 定义写法与默认值），编译成数、布尔或对象：
 
-| 写法                      | 含义                                                          |
-| ------------------------- | ------------------------------------------------------------- |
-| `color:<role>[@alpha]`    | 颜色角色，可带不透明度（`color:foreground@0.2`）              |
-| `tint:<role>[@alpha]`     | tint 角色                                                     |
-| `finish:<role>[:<field>]` | finish 的一层，取它的哪个字段（`finish:disabled:foreground`） |
-| `none`                    | 不画：边宽 0、点 0、光晕 0、底 `none`                         |
-| `keep`                    | 沿用控件自己的（只用于 `state.disabled.*`）                   |
-| `shade:<role>`            | 用 finish 的内阴影作底色阴影                                  |
-| `control` / `full` / 数   | 圆角：控制圆角、胶囊（高度一半）、点                          |
-| 数 / `"yes"` / `"no"`     | 点（宽度、直径、高度；0 是“没有”，不是“最小”）、布尔          |
+| 写法                                  | 含义                                                          |
+| ------------------------------------- | ------------------------------------------------------------- |
+| `color:<role>[@alpha]`                | 颜色角色，可带不透明度（`color:foreground@0.2`）              |
+| `tint:<role>[@alpha]`                 | tint 角色                                                     |
+| `finish:<role>[:<field>]`             | finish 的一层，取它的哪个字段（`finish:disabled:foreground`） |
+| `none`                                | 不画：边宽 0、点 0、光晕 0、底 `none`                         |
+| `keep`                                | 沿用控件自己的（只用于 `state.disabled.*`）                   |
+| `shade:<role>`                        | 用 finish 的内阴影作底色阴影                                  |
+| `control` / `container` / `full` / 数 | 圆角：控制圆角、容器圆角、胶囊（高度一半）、点                |
+| 数 / `"yes"` / `"no"`                 | 点（宽度、直径、高度；0 是“没有”，不是“最小”）、布尔          |
 
 形态由值的退化表达，不另起名字：边宽 0 或边色等于底 → 只有填充；侧边与上边宽 0 → 下划线；宽 = 高 → 圆，不等 → 椭圆；圆角 = 高度一半 → 胶囊；内点 0 → 实心；光晕 0 → 没有。
 
@@ -61,26 +61,28 @@
 
 ## 3 输入组（input、select、combobox、number-input、otp-input、time-field、editor）
 
-| 槽                  | nsh-gallery | material         | winui                 | apple   |
-| ------------------- | ----------- | ---------------- | --------------------- | ------- |
-| 底色                | field       | 透明 / container | field                 | field   |
-| 边宽：上 / 侧 / 下  | 1 / 1 / 1   | 0 / 0 / 1        | 1 / 1 / 1             | 待审计  |
-| 边色：上 / 侧 / 下  | input       | — / — / muted-fg | line / border / input | 待审计  |
-| 聚焦：边色 / 下边宽 | ring / 1    | primary / 2      | accent / 2            | 待审计  |
-| 圆角                | control     | 上 4 下 0        | 4                     | control |
+| 槽                              | nsh-gallery | material         | winui                 | apple   |
+| ------------------------------- | ----------- | ---------------- | --------------------- | ------- |
+| 底色                            | field       | 透明 / container | field                 | field   |
+| 边宽：上 / 侧 / 下              | 1 / 1 / 1   | 0 / 0 / 1        | 1 / 1 / 1             | 待审计  |
+| 边色：上 / 侧 / 下              | input       | — / — / muted-fg | line / border / input | 待审计  |
+| 聚焦：边色 / 下边宽             | ring / 1    | primary / 2      | accent / 2            | 待审计  |
+| 下边线宽（`field.focus.width`） | 3           | 2                | 2                     | 3       |
+| 圆角                            | control     | 上 4 下 0        | 4                     | control |
 
 ## 4 选择组
 
 **checkbox / radio**：外框尺寸、圆角、底色、底色阴影（`none` 或 inset）、边宽、边色；选中底色、选中边色；内部记号（勾 / 点）颜色、线宽、点直径（静止 / hover / 按下）；光晕直径（0 = 无）。
 
-| 槽                            | nsh-gallery     | material        | winui          | apple          |
-| ----------------------------- | --------------- | --------------- | -------------- | -------------- |
-| 尺寸 / 圆角                   | 16·22 / 5·7     | 18 / 2          | 20 / 4         | 待审计         |
-| 底色 / 阴影                   | 透明 / inset    | 透明 / none     | track / none   | card / 待审计  |
-| 边 宽 / 色                    | 1 / input       | 2 / muted-fg    | 1 / input      | 待审计         |
-| 选中 底色 / 边色              | accent / =底色  | primary / =底色 | accent / =底色 | accent / =底色 |
-| radio 点：静止 / hover / 按下 | dot / dot / dot | dot / dot / dot | dot / 14 / 10  | 待审计         |
-| 光晕                          | 0               | 40              | 0              | 0              |
+| 槽                              | nsh-gallery     | material        | winui          | apple          |
+| ------------------------------- | --------------- | --------------- | -------------- | -------------- |
+| 尺寸 / 圆角                     | 16·22 / 5·7     | 18 / 2          | 20 / 4         | 待审计         |
+| checkbox 盒边长（`choice.box`） | 16·20           | 18              | 16·20          | 16·20          |
+| 底色 / 阴影                     | 透明 / inset    | 透明 / none     | track / none   | card / 待审计  |
+| 边 宽 / 色                      | 1 / input       | 2 / muted-fg    | 1 / input      | 待审计         |
+| 选中 底色 / 边色                | accent / =底色  | primary / =底色 | accent / =底色 | accent / =底色 |
+| radio 点：静止 / hover / 按下   | dot / dot / dot | dot / dot / dot | dot / 14 / 10  | 待审计         |
+| 光晕                            | 0               | 40              | 0              | 0              |
 
 **switch**：轨道尺寸、轨道边宽（关 / 开）、旋钮尺寸（关 / 开 / hover / 按下，均为宽 × 高）、旋钮颜色（knob finish）。
 
@@ -93,11 +95,12 @@
 
 **slider**：轨道粗细、轨道底色 / 阴影 / 边、旋钮尺寸、旋钮内点直径（0 = 实心）、hover / 按下尺寸、竖向长度。
 
-| 槽           | nsh-gallery | material | winui         | apple  |
-| ------------ | ----------- | -------- | ------------- | ------ |
-| 轨道粗细     | 6·8         | 16       | 4             | 4      |
-| 旋钮         | 14·20       | 现值     | 18（内点 12） | 20×16  |
-| hover / 按下 | 14 / 14·32  | 现值     | 内点 14 / 10  | 待审计 |
+| 槽                             | nsh-gallery   | material | winui         | apple         |
+| ------------------------------ | ------------- | -------- | ------------- | ------------- |
+| 轨道粗细                       | 6·8           | 16       | 4             | 4             |
+| 旋钮                           | 14·20         | 现值     | 18（内点 12） | 20×16         |
+| 旋钮底色（`slider.knob.face`） | `finish:knob` | primary  | `finish:knob` | `finish:knob` |
+| hover / 按下                   | 14 / 14·32    | 现值     | 内点 14 / 10  | 待审计        |
 
 ## 5 进度组（progress、spinner）
 
@@ -114,9 +117,12 @@ spinner：辐条数（0 = 连续弧）、弧长、轨道不透明度（0 = 无�
 面用 finish（card / overlay / modal）与全局圆角。
 **列表行**：高亮底色、高亮边色（=底色 → 只有填充）、边宽、圆角、高度、内缩。
 
-| 槽               | nsh-gallery            | material | winui  | apple          |
-| ---------------- | ---------------------- | -------- | ------ | -------------- |
-| 高亮 底色 / 边色 | brand-tint / brand 30% | 待审计   | 待审计 | accent / =底色 |
+| 槽                                  | nsh-gallery            | material | winui     | apple          |
+| ----------------------------------- | ---------------------- | -------- | --------- | -------------- |
+| 高亮 底色 / 边色                    | brand-tint / brand 30% | 待审计   | 待审计    | accent / =底色 |
+| 弹层圆角（`popup.corner`）          | container              | control  | container | container      |
+| 标签页轨道底色（`tabs.track.face`） | inset                  | none     | inset     | inset          |
+| 井的边（`well.edge`）               | border                 | none     | border    | none           |
 
 ## 7 提示与日期
 

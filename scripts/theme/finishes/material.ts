@@ -20,7 +20,9 @@ export const finishes: ThemeFinishes = {
     },
     inset: {
       shadow: "{shadow.inset}",
-      "border-color": "{input}",
+      // A filled field's indicator is OnSurfaceVariant (FilledTextFieldTokens.IndicatorColor), and
+      // every well takes its edge from `well.edge`.
+      "border-color": "{muted-foreground}",
       foreground: "{foreground}",
     },
     channel: {
@@ -40,9 +42,10 @@ export const finishes: ThemeFinishes = {
     plate: {
       background: "{secondary}",
       "border-color": "transparent",
-      shadow: "{shadow.edge.surface}, {shadow.sm}",
+      // A segmented button's selected container sits flat (SegmentedButtonTokens.ContainerElevation 0).
+      shadow: "{shadow.edge.surface}",
       foreground: "{foreground}",
-      elevation: 1,
+      elevation: 0,
     },
     overlay: {
       background: "{popover}",
@@ -60,7 +63,8 @@ export const finishes: ThemeFinishes = {
     inverse: {
       background: "{inverse}",
       "border-color": "transparent",
-      shadow: "{shadow.lg}",
+      // A snackbar is Level 3 (SnackbarTokens.ContainerElevation).
+      shadow: "{shadow.xl}",
       foreground: "{inverse-foreground}",
       elevation: 6,
     },
@@ -119,14 +123,15 @@ export const finishes: ThemeFinishes = {
   light: {
     modal: { background: "oklch(0.93251 0.01479 312.24)" },
     disabled: {
-      background: "oklch(from {foreground} l c h / 0.1)",
+      // A disabled container is OnSurface at 12 % (FilledTonalButtonDefaults.disabledContainerOpacity).
+      background: "oklch(from {foreground} l c h / 0.12)",
       foreground: "oklch(from {foreground} l c h / 0.38)",
     },
   },
   dark: {
     modal: { background: "oklch(0.2859 0.01293 298.633)" },
     disabled: {
-      background: "oklch(from {foreground} l c h / 0.1)",
+      background: "oklch(from {foreground} l c h / 0.12)",
       foreground: "oklch(from {foreground} l c h / 0.38)",
     },
   },

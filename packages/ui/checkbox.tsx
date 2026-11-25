@@ -25,7 +25,7 @@ import { AsText } from "./lib/as-text";
 import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { choiceLook, type ChoiceLook, type Fill, edged, fillOf } from "./lib/look";
+import { choiceBox, choiceLook, type ChoiceLook, type Fill, edged, fillOf } from "./lib/look";
 import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 
@@ -47,7 +47,7 @@ export interface ChoiceOptions {
 /** A box's or ring's size: `scale` times the page's; one row high in the
  * terminal, where it is a glyph three Cells wide. */
 const dims = (scale = 1) => ({
-  control: Math.round(controlSize.control * scale),
+  control: Math.round(choiceBox()[tier] * scale),
   height: terminal ? TERMINAL_ROW : Math.round(controlSize.control * scale),
   check: Math.round(controlSize.check * scale),
 });
@@ -132,8 +132,9 @@ export interface CheckboxLook {
 /**
  * A checkbox's box, as the props of `Checkbox`'s indicator (spread them:
  * `<Checkbox class="group" {...checkboxLook()} indicator={<CheckboxMark mark={..} />}>`):
- * the theme's choice slots (`choiceLook()`), its box the icon scale's `md`
- * (16 points with a pointer, 20 on a touch screen), its corner the recipe's (`round`: a circle),
+ * the theme's choice slots (`choiceLook()`), its box `choice.box` (16 points
+ * with a pointer, 20 on a touch screen, unless the theme states its own), its
+ * corner the recipe's (`round`: a circle),
  * sinking to 90% while its row (the `group`) is pressed. `CheckboxMark` fills it.
  */
 export function checkboxLook(o?: ChoiceOptions): CheckboxLook {

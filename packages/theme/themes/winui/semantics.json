@@ -181,8 +181,13 @@
     "field.corner.top": "control",
     "field.corner.bottom": "control",
     "field.focus.line": true,
+    "field.focus.width": 2,
     "choice.size": {
       "pointer": 20,
+      "touch": 20
+    },
+    "choice.box": {
+      "pointer": 16,
       "touch": 20
     },
     "choice.corner": {
@@ -291,6 +296,9 @@
       "pointer": 18,
       "touch": 18
     },
+    "slider.knob.face": {
+      "finish": "knob"
+    },
     "slider.mark.size": 12,
     "slider.mark.hover": 14,
     "slider.mark.pressed": 10,
@@ -304,6 +312,13 @@
     "progress.edge.colour": "none",
     "progress.edge.width": 0,
     "spinner.opacity": 0,
+    "popup.corner": "container",
+    "tabs.track.face": {
+      "colour": "inset"
+    },
+    "well.edge": {
+      "colour": "border"
+    },
     "state.disabled.face": {
       "finish": "disabled"
     },

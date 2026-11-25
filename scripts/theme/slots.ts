@@ -25,7 +25,7 @@
  *   `shadow`), `none` (paints nothing), optionally at an alpha (`color:input@0.3`); the disabled
  *   group's three also take `keep` (the component draws its own).
  * - `shade` — the finish whose elevation shadow a part wears, or `none`.
- * - `corner` — a radius: `control` (the theme's `shape.control`), `full` (a capsule), or points.
+ * - `corner` — a radius: `control` (the theme's `shape.control`), `container` (its `shape.container`), `full` (a capsule), or points.
  * - `text` — a name the component matches: the switch's knob feedback (`none`, `expand`, `stretch`).
  */
 export type SlotKind = "px" | "ratio" | "boolean" | "face" | "shade" | "corner" | "text";
@@ -104,11 +104,19 @@ export const SLOTS: Record<string, SlotSpec> = ordered({
     kind: "boolean",
     doc: "Whether focus lights the bottom line alone (a field whose edge is that line), or the whole edge inside a ring.",
   },
+  "field.focus.width": {
+    kind: "px",
+    doc: "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring.",
+  },
 
   // A choice: a checkbox's box, a radio's ring.
   "choice.size": {
     kind: "px",
     doc: "A radio's box, per input: its diameter.",
+  },
+  "choice.box": {
+    kind: "px",
+    doc: "A checkbox's box, per input: the side of its square (`choice.size` is a radio's across).",
   },
   "choice.corner": {
     kind: "corner",
@@ -258,6 +266,10 @@ export const SLOTS: Record<string, SlotSpec> = ordered({
     kind: "px",
     doc: "The knob's diameter while pressed, per input.",
   },
+  "slider.knob.face": {
+    kind: "face",
+    doc: "What a slider's knob is filled with.",
+  },
   "slider.mark.size": {
     kind: "px",
     doc: "The knob's inner dot, per input: `0` where the knob is a solid disc.",
@@ -307,6 +319,22 @@ export const SLOTS: Record<string, SlotSpec> = ordered({
     doc: "How faintly the spinner's groove shows, or `0` where it draws none.",
   },
 
+  // A popup's surface, and the track a strip of tabs sits in.
+  "popup.corner": {
+    kind: "corner",
+    doc: "A popup's surface corner (a menu's, a select's list, a calendar's): `container` is the theme's `shape.container`.",
+  },
+  "tabs.track.face": {
+    kind: "face",
+    doc: "The ground a tab strip's track lies on, or `none` where the surface behind it shows through.",
+  },
+
+  // A sunk well: the frame a list box, a terminal, an editor or a preview lies in.
+  "well.edge": {
+    kind: "face",
+    doc: "What a sunk well's edge is drawn in, or `none` where it draws no edge and its ground alone marks it.",
+  },
+
   // What a control that cannot be used turns into.
   "state.disabled.face": {
     kind: "face",
@@ -336,8 +364,10 @@ export const BASE_SLOTS: Record<string, SlotValue> = {
   "field.corner.top": "control",
   "field.corner.bottom": "control",
   "field.focus.line": false,
+  "field.focus.width": 3,
 
   "choice.size": { pointer: 16, touch: 22 },
+  "choice.box": { pointer: 16, touch: 20 },
   "choice.corner": { pointer: 5, touch: 7 },
   "choice.face": { light: "color:field", dark: "color:input@0.3" },
   "choice.shade": "inset",
@@ -376,6 +406,7 @@ export const BASE_SLOTS: Record<string, SlotValue> = {
   "slider.edge.width": "control",
   "slider.knob.size": { pointer: 14, touch: 20 },
   "slider.knob.pressed.size": { pointer: 14, touch: 32 },
+  "slider.knob.face": "finish:knob",
   "slider.mark.size": 0,
   "slider.mark.hover": 0,
   "slider.mark.pressed": 0,
@@ -389,6 +420,11 @@ export const BASE_SLOTS: Record<string, SlotValue> = {
   "progress.edge.width": "control",
 
   "spinner.opacity": 0.25,
+
+  "popup.corner": "container",
+  "tabs.track.face": "color:inset",
+
+  "well.edge": "color:border",
 
   "state.disabled.face": "keep",
   "state.disabled.ink": "keep",

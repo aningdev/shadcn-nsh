@@ -2,10 +2,10 @@
 // styles and classes every field control draws with, so an input, a select and an editor read the
 // same value the same way.
 
-import { alpha, cornerCurve, shape, style, terminal, stroke } from "@shadcn-nsh/theme";
+import { alpha, cornerCurve, shape, terminal, stroke } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 
-import { type FieldLook, painted } from "./look";
+import { type FieldLook, fieldFocusWidth, painted } from "./look";
 
 /**
  * The frame a field draws, as the platform reads it: the theme's, or the terminal's box — a shell's
@@ -96,18 +96,38 @@ export function fieldRing(tone: string): ViewStyle {
 export type FieldState = "focus" | "focus-within" | "focus-visible";
 
 /**
- * The line a field draws with the keys, `focus.width` wide, as classes: each size written whole, so
- * no class is ever assembled from a number. The scales state 3; WinUI's 2 is the only other step.
+ * The line a field draws with the keys, `field.focus.width` wide, as classes: each size written
+ * whole, so no class is ever assembled from a number. The scales state 3; WinUI's and M3's 2 are
+ * the other step, and a theme that states anything else is a theme bug.
  */
 const focusLine = {
-  focus: { 2: "focus:border-b-[2px]", 3: "focus:border-b-[3px]" },
-  "focus-within": { 2: "focus-within:border-b-[2px]", 3: "focus-within:border-b-[3px]" },
-  "focus-visible": { 2: "focus-visible:border-b-[2px]", 3: "focus-visible:border-b-[3px]" },
+  focus: {
+    1: "focus:border-b-[1px]",
+    2: "focus:border-b-[2px]",
+    3: "focus:border-b-[3px]",
+  },
+  "focus-within": {
+    1: "focus-within:border-b-[1px]",
+    2: "focus-within:border-b-[2px]",
+    3: "focus-within:border-b-[3px]",
+  },
+  "focus-visible": {
+    1: "focus-visible:border-b-[1px]",
+    2: "focus-visible:border-b-[2px]",
+    3: "focus-visible:border-b-[3px]",
+  },
 } as const;
 
-/** The line class a state draws (`edgeClass` adds it): `focus.width` wide, never assembled. */
+/** The line class a state draws (`edgeClass` adds it): `field.focus.width` wide, never assembled. */
 export function fieldFocusLine(state: FieldState): string {
-  return focusLine[state][style().dimension.focus.width === 2 ? 2 : 3];
+  const width = fieldFocusWidth();
+  const line = focusLine[state][width as 1 | 2 | 3];
+  if (line === undefined) {
+    throw new Error(
+      `the theme's \`field.focus.width\` slot is ${width} points; a line is 1, 2 or 3`,
+    );
+  }
+  return line;
 }
 
 /**
@@ -121,7 +141,7 @@ export function fieldFocusEdge(field: FieldLook, tone: string): ViewStyle {
   return {
     ...ring,
     borderBottomColor: tone,
-    borderBottomWidth: style().dimension.focus.width,
+    borderBottomWidth: fieldFocusWidth(),
     outlineColor: alpha(tone, 0),
   };
 }

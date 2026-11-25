@@ -181,9 +181,14 @@
     "field.corner.top": "control",
     "field.corner.bottom": 0,
     "field.focus.line": true,
+    "field.focus.width": 2,
     "choice.size": {
       "pointer": 20,
       "touch": 20
+    },
+    "choice.box": {
+      "pointer": 18,
+      "touch": 18
     },
     "choice.corner": {
       "pointer": 2,
@@ -277,7 +282,7 @@
       "touch": 144
     },
     "slider.face": {
-      "tint": "brand"
+      "colour": "secondary"
     },
     "slider.shade": "none",
     "slider.edge.colour": "none",
@@ -290,6 +295,9 @@
       "pointer": 14,
       "touch": 32
     },
+    "slider.knob.face": {
+      "colour": "primary"
+    },
     "slider.mark.size": 0,
     "slider.mark.hover": 0,
     "slider.mark.pressed": 0,
@@ -297,12 +305,15 @@
     "progress.height": 4,
     "progress.line": 0,
     "progress.face": {
-      "tint": "brand"
+      "colour": "secondary"
     },
     "progress.shade": "none",
     "progress.edge.colour": "none",
     "progress.edge.width": 0,
     "spinner.opacity": 0,
+    "popup.corner": "control",
+    "tabs.track.face": "none",
+    "well.edge": "none",
     "state.disabled.face": {
       "finish": "disabled"
     },
@@ -371,7 +382,7 @@
       "inset": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{input}"
+        "border-color": "{muted-foreground}"
       },
       "channel": {
         "background": "{inset}",
@@ -391,10 +402,10 @@
       },
       "plate": {
         "background": "{secondary}",
-        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "shadow": "none",
         "foreground": "{foreground}",
         "border-color": "transparent",
-        "elevation": 1
+        "elevation": 0
       },
       "overlay": {
         "background": "{popover}",
@@ -413,7 +424,7 @@
       },
       "inverse": {
         "background": "{inverse}",
-        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)",
+        "shadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)",
         "foreground": "{inverse-foreground}",
         "border-color": "transparent",
         "backdropFilter": "none",
@@ -471,7 +482,7 @@
         "elevation": 1
       },
       "disabled": {
-        "background": "oklch(from {foreground} l c h / 0.1)",
+        "background": "oklch(from {foreground} l c h / 0.12)",
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "foreground": "oklch(from {foreground} l c h / 0.38)",
         "border-color": "transparent"

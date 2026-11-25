@@ -297,16 +297,16 @@
 
 槽值是作者写的一行字符串，编译成数、布尔或对象。写法是全库统一的：
 
-| 写法                      | 意思                                                          |
-| ------------------------- | ------------------------------------------------------------- |
-| `color:<role>[@alpha]`    | 颜色角色，可带不透明度（`color:foreground@0.2`）              |
-| `tint:<role>[@alpha]`     | tint 角色                                                     |
-| `finish:<role>[:<field>]` | finish 的一层，取它的哪个字段（`finish:disabled:foreground`） |
-| `none`                    | 不画（边宽 0、点 0、光晕 0、底 `none`）                       |
-| `keep`                    | 沿用控件自己的（只用于 `state.disabled.*`）                   |
-| `shade:<role>`            | 用 finish 的内阴影作底色阴影                                  |
-| `control` / `full` / 数   | 圆角：控制圆角、胶囊、点                                      |
-| 数                        | 点（宽度、直径、高度）；0 是"没有"，不是"最小"                |
+| 写法                                  | 意思                                                          |
+| ------------------------------------- | ------------------------------------------------------------- |
+| `color:<role>[@alpha]`                | 颜色角色，可带不透明度（`color:foreground@0.2`）              |
+| `tint:<role>[@alpha]`                 | tint 角色                                                     |
+| `finish:<role>[:<field>]`             | finish 的一层，取它的哪个字段（`finish:disabled:foreground`） |
+| `none`                                | 不画（边宽 0、点 0、光晕 0、底 `none`）                       |
+| `keep`                                | 沿用控件自己的（只用于 `state.disabled.*`）                   |
+| `shade:<role>`                        | 用 finish 的内阴影作底色阴影                                  |
+| `control` / `container` / `full` / 数 | 圆角：控制圆角、容器圆角、胶囊、点                            |
+| 数                                    | 点（宽度、直径、高度）；0 是"没有"，不是"最小"                |
 
 尺寸槽可以按输入档给两个值（`pointer`、`touch`），面与边可以按外观给两个值（亮、暗）。第二个值写在同一个 token 的 `$extensions["dev.aning.shadcn-nsh"].touch` / `.dark` 里——一条槽一个 token，主题改一次就改到两个档，新主题也继承到两个档。布尔写成 `"yes"` / `"no"`（DTCG 没有布尔类型）。
 
@@ -341,16 +341,22 @@
 | `progress.face` / `.shade` / 边 | `track` / `inset` / `border` 1          | `tint:brand` / `none` / 0       | `input` / `none` / 0   |
 | `spinner.opacity`               | 0.25                                    | 0                               | 0                      |
 | `state.disabled.*`              | `keep`                                  | `finish:disabled`（面、墨、边） | 同 material            |
+| `field.focus.width`             | 3（apple 是它的 3 px 焦点环宽）         | 2                               | 2                      |
+| `choice.box`                    | 16·20（`icon.md` 的盒）                 | 18                              | 16·20                  |
+| `slider.knob.face`              | `finish:knob`                           | `primary`                       | `finish:knob`          |
+| `popup.corner`                  | `container`                             | `control`                       | `container`            |
+| `tabs.track.face`               | `inset`                                 | `none`                          | `inset`                |
+| `well.edge`                     | `border`                                | `none`                          | `border`               |
 
 `switch.small.*` 没有单列：M3 与 WinUI 的开关只有一种尺寸，小号与默认同尺寸；四套基础主题的小号是 `icon.sm` 的钮（12·16）与钮 + 4 的轨道（28·36）。
 
 ### 11.4 不读槽的控件
 
-标签页、分段控件与侧边栏不读槽：它们各画一种形态，颜色、圆角与阴影读全局角色。标签页是轨道里的一块胶囊（`finish.plate`、外端 `controlSize.tabs / 2`），分段控件是一条通道（`finish.channel`）里的滑块（`finish.plate`），侧边栏的选中项整行填 `sidebarAccent`、轨线 2 点。这是 #380 的结论：删掉那几个维度之后，只有 `nsh-gallery` 原本的样子留了下来，其余主题在这里降级（[决策 0008](../decisions/0008-drop-selection-group.md)）。
+分段控件与侧边栏不读槽：它们各画一种形态，颜色、圆角与阴影读全局角色。标签页今天只读一个槽（轨道底色 `tabs.track.face`），其余仍读全局角色。标签页是轨道里的一块胶囊（`finish.plate`、外端 `controlSize.tabs / 2`），分段控件是一条通道（`finish.channel`）里的滑块（`finish.plate`），侧边栏的选中项整行填 `sidebarAccent`、轨线 2 点。这是 #380 的结论：删掉那几个维度之后，只有 `nsh-gallery` 原本的样子留了下来，其余主题在这里降级（[决策 0008](../decisions/0008-drop-selection-group.md)）。
 
 ### 11.5 槽表达不了的样子
 
-槽是一套固定的写法，说不出的都记在 [`native-themes.md`](native-themes.md) 第 3.6 节，不靠再加一个槽或一句分支去凑：M3 滑块的 4×44 竖条手柄（槽里只有旋钮的宽 × 高，没有"长条 + 端圆角"）、M3 spinner 的 10 比 8 弧宽、WinUI 日历的选中日与日期选择器触发器、轮播箭头等等。加一个槽的唯一理由，是它对**每一套**主题都说得通。
+槽是一套固定的写法，说不出的都记在 [`native-themes.md`](native-themes.md) 第 3.6 节，不靠再加一个槽或一句分支去凑：M3 滑块的 4×44 竖条手柄（槽里只有旋钮的宽 × 高，没有"长条 + 端圆角"；手柄的底色已由 `slider.knob.face` 表达）、M3 弹层的 4 dp 与日期选择器的 28 dp 不可能同值（`popup.corner` 一个槽）、M3 菜单与下拉的选中行是 `TertiaryContainer`（库没有 tertiary 角色）、M3 spinner 的 10 比 8 弧宽、WinUI 日历的选中日与日期选择器触发器、轮播箭头等等。加一个槽的唯一理由，是它对**每一套**主题都说得通。
 
 ## 12 数字：今天不在刻度上的地方
 

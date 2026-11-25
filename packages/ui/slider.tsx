@@ -17,7 +17,7 @@ import { split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
 import { joinClass } from "./lib/class-names";
-import { sliderLook as sliderSlots, trackLook } from "./lib/look";
+import { painted, sliderLook as sliderSlots, trackLook } from "./lib/look";
 import { railFace, railShadow } from "./lib/track";
 
 /** The knob a slider draws: the theme's `slider.*` slots. */
@@ -132,6 +132,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
         height: h.knob[tier],
         borderWidth: stroke.control,
         ...finish.knob,
+        backgroundColor: painted(h.knobFace),
       };
     },
   };

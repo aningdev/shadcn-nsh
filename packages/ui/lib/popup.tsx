@@ -8,7 +8,6 @@ import {
   platformMaterial,
   reactive,
   rounded,
-  shape,
   stroke,
   style,
   terminal,
@@ -19,6 +18,7 @@ import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
 import { createMotion, Easing, reduceMotion, token, View } from "nsh";
 
 import { CheckMark } from "./icons";
+import { popupCorner } from "./look";
 
 /**
  * The scrim behind what is modal (a sheet, a dialog, a menu's sheet on a
@@ -45,23 +45,23 @@ const DOT = 6;
 
 /**
  * The surface every anchored popup shares (menus, popovers, a select's
- * list): the floating tier, one edge, a soft shadow, the theme's `radius`
- * corners and 4 points around its rows (Design Guides, "Surfaces and
- * elevation"). A terminal shows it by its line alone: a box there is its
- * line or its fill.
+ * list): the floating tier, one edge, a soft shadow, the theme's `popup.corner`
+ * (its `radius` unless it says otherwise) and 4 points around its rows (Design
+ * Guides, "Surfaces and elevation"). A terminal shows it by its line alone: a
+ * box there is its line or its fill.
  */
 export function popupSurface(): ViewStyle {
   return (
     // A terminal draws a popup as its line alone, over no fill of its own.
     terminal
       ? {
-          ...rounded(shape.container),
+          ...rounded(popupCorner()),
           borderWidth: stroke.hairline,
           padding: POPUP_PAD,
           borderColor: finish.overlay.borderColor,
         }
       : {
-          ...rounded(shape.container),
+          ...rounded(popupCorner()),
           borderWidth: stroke.hairline,
           padding: POPUP_PAD,
           ...finish.overlay,
@@ -113,7 +113,8 @@ export function listPadding(): ViewStyle {
  * at least 2), square when the container is or the row is full-bleed. */
 export function itemRadius(): number {
   const { inset } = itemSpacing;
-  return inset === 0 || shape.container === 0 ? 0 : Math.max(2, shape.container - inset);
+  const corner = popupCorner();
+  return inset === 0 || corner === 0 ? 0 : Math.max(2, corner - inset);
 }
 
 /**

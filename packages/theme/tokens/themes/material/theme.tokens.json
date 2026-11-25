@@ -5,11 +5,11 @@
     "dev.aning.shadcn-nsh": {
       "designMd": {
         "overview": "Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and M3 duration and easing motion.",
-        "elevation": "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.",
+        "elevation": "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), no backdrop blur, and a line only where a well or a channel states one (`inset`, `channel`): every other finish draws no edge (`border-color: transparent`).",
         "dos": [
           "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) with `state.press-scale: 1`.",
           "Use `shape.curve: \"circular\"` with top-rounded underlined fields and underlined tabs.",
-          "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation."
+          "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation; a well or channel keeps its hairline."
         ],
         "donts": [
           "Do not add backdrop blur (`backdropFilter`) or a surface edge (`border-color`) to M3 tonal surfaces.",
@@ -198,6 +198,14 @@
         "line": {
           "$value": "yes",
           "$description": "Whether focus lights the bottom line alone (a field whose edge is that line), or the whole edge inside a ring."
+        },
+        "width": {
+          "$type": "dimension",
+          "$value": {
+            "value": 2,
+            "unit": "px"
+          },
+          "$description": "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring."
         }
       }
     },
@@ -213,6 +221,22 @@
           "dev.aning.shadcn-nsh": {
             "touch": {
               "value": 20,
+              "unit": "px"
+            }
+          }
+        }
+      },
+      "box": {
+        "$type": "dimension",
+        "$value": {
+          "value": 18,
+          "unit": "px"
+        },
+        "$description": "A checkbox's box, per input: the side of its square (`choice.size` is a radio's across).",
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "touch": {
+              "value": 18,
               "unit": "px"
             }
           }
@@ -545,8 +569,14 @@
     },
     "slider": {
       "face": {
-        "$value": "tint:brand",
+        "$value": "color:secondary",
         "$description": "What a slider's rail is filled with."
+      },
+      "knob": {
+        "face": {
+          "$value": "color:primary",
+          "$description": "What a slider's knob is filled with."
+        }
       },
       "shade": {
         "$value": "none",
@@ -577,7 +607,7 @@
         "$description": "A progress bar's height."
       },
       "face": {
-        "$value": "tint:brand",
+        "$value": "color:secondary",
         "$description": "What a progress bar's groove is filled with."
       },
       "shade": {
@@ -604,6 +634,26 @@
         "$type": "number",
         "$value": 0,
         "$description": "How faintly the spinner's groove shows, or `0` where it draws none."
+      }
+    },
+    "popup": {
+      "corner": {
+        "$value": "control",
+        "$description": "A popup's surface corner (a menu's, a select's list, a calendar's): `container` is the theme's `shape.container`."
+      }
+    },
+    "tabs": {
+      "track": {
+        "face": {
+          "$value": "none",
+          "$description": "The ground a tab strip's track lies on, or `none` where the surface behind it shows through."
+        }
+      }
+    },
+    "well": {
+      "edge": {
+        "$value": "none",
+        "$description": "What a sunk well's edge is drawn in, or `none` where it draws no edge and its ground alone marks it."
       }
     },
     "state": {

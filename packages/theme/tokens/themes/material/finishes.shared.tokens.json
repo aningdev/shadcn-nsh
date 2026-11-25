@@ -40,7 +40,7 @@
       "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
       "border-color": {
         "$type": "color",
-        "$value": "{color.input}"
+        "$value": "{color.muted-foreground}"
       },
       "shadow": {
         "$type": "shadow",
@@ -149,7 +149,7 @@
       },
       "shadow": {
         "$type": "shadow",
-        "$value": ["{shadow.edge.surface}", "{shadow.sm}"]
+        "$value": ["{shadow.edge.surface}"]
       },
       "foreground": {
         "$type": "color",
@@ -157,7 +157,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "elevation": 1
+          "elevation": 0
         }
       }
     },
@@ -247,7 +247,7 @@
       },
       "shadow": {
         "$type": "shadow",
-        "$value": ["{shadow.lg}"]
+        "$value": ["{shadow.xl}"]
       },
       "foreground": {
         "$type": "color",

@@ -114,6 +114,14 @@
         "line": {
           "$value": "yes",
           "$description": "Whether focus lights the bottom line alone (a field whose edge is that line), or the whole edge inside a ring."
+        },
+        "width": {
+          "$type": "dimension",
+          "$value": {
+            "value": 2,
+            "unit": "px"
+          },
+          "$description": "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring."
         }
       }
     },

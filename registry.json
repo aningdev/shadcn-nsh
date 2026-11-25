@@ -449,7 +449,7 @@
       "type": "registry:lib",
       "title": "Popup",
       "description": "The popup families' surface, motion and mark, and the scrim behind what is modal.",
-      "registryDependencies": ["icons", "theme"],
+      "registryDependencies": ["icons", "look", "theme"],
       "files": [
         {
           "path": "packages/ui/lib/popup.tsx",
@@ -463,7 +463,7 @@
       "type": "registry:lib",
       "title": "Surface",
       "description": "Density, section surfaces, and list rows whose hover fill bleeds.",
-      "registryDependencies": ["live-value", "theme"],
+      "registryDependencies": ["live-value", "look", "theme"],
       "files": [
         {
           "path": "packages/ui/lib/surface.tsx",
@@ -941,7 +941,7 @@
       "type": "registry:ui",
       "title": "Tabs",
       "description": "A pill track or underlined row with a traveling indicator.",
-      "registryDependencies": ["icons", "live-value", "surface", "theme"],
+      "registryDependencies": ["icons", "live-value", "look", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/tabs.tsx",

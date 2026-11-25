@@ -206,7 +206,7 @@
           "role": "chrome"
         }
       },
-      "$description": "Hairline container border color (M3 outlineVariant)."
+      "$description": "Hairline container border color (M3 outline: one step stronger than outlineVariant, which reads too faint at 1dp)."
     },
     "input": {
       "$value": {
@@ -234,7 +234,7 @@
           "source": "Material 3 sys.color: secondary"
         }
       },
-      "$description": "Focus indicator ring color (M3 secondary)."
+      "$description": "Focus indicator ring color (M3 primary, the role M3 draws its focus indicator in)."
     },
     "chart-1": {
       "$value": {
@@ -262,7 +262,7 @@
           "source": "Material 3 sys.color: tertiary"
         }
       },
-      "$description": "Second chart series color (M3 tertiary)."
+      "$description": "Second chart series color (the theme's positive `up` tone)."
     },
     "chart-3": {
       "$value": {
@@ -276,7 +276,7 @@
           "source": "Material 3 sys.color: secondary"
         }
       },
-      "$description": "Third chart series color (M3 secondary)."
+      "$description": "Third chart series color (the theme's `warn` tone)."
     },
     "chart-4": {
       "$value": {
@@ -290,7 +290,7 @@
           "source": "Material 3 sys.color: outline"
         }
       },
-      "$description": "Fourth chart series color (M3 outline)."
+      "$description": "Fourth chart series color (M3 error)."
     },
     "chart-5": {
       "$value": {
@@ -304,7 +304,7 @@
           "source": "Material 3 sys.color: outlineVariant"
         }
       },
-      "$description": "Fifth chart series color (M3 outlineVariant)."
+      "$description": "Fifth chart series color (M3 onSurfaceVariant)."
     },
     "sidebar": {
       "$value": "{color.background}",
@@ -1055,7 +1055,7 @@
         "$value": {
           "colorSpace": "oklch",
           "components": [0.22652, 0.00999, 303.714],
-          "alpha": 0.1,
+          "alpha": 0.12,
           "hex": "#1d1b20"
         },
         "$extensions": {
@@ -1063,7 +1063,7 @@
             "colorOp": {
               "op": "alpha",
               "color": "{color.foreground}",
-              "alpha": 0.1
+              "alpha": 0.12
             }
           }
         }

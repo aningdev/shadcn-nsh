@@ -295,6 +295,11 @@ export const style = {
     "rest-opacity": 0.5,
     disabled: { content: 0.3, fill: false },
   },
+  slots: {
+    // Apple's wells are their ground alone: no fill of a box ever draws a border (HIG, "Adopting
+    // Liquid Glass"; the inset edge is transparent for the same reason).
+    "well.edge": "none",
+  },
   transition: {
     enter: { duration: 420, timingFunction: "out-cubic" },
   },

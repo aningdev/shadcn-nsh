@@ -307,9 +307,10 @@ describe("compiled material theme files", () => {
       ),
     ).toEqual([]);
 
-    // M3's disabled container and label are `onSurface` state layers, not tokens.
+    // M3's disabled container and label are `onSurface` state layers, not tokens: the container at
+    // 12 % (FilledTonalButtonDefaults.disabledContainerOpacity), the label at 38 %.
     expect(files.semantics.finishes.shared.disabled).toMatchObject({
-      background: "oklch(from {foreground} l c h / 0.1)",
+      background: "oklch(from {foreground} l c h / 0.12)",
       foreground: "oklch(from {foreground} l c h / 0.38)",
     });
     // Elevated surfaces sit at M3's level 1 on Android, and a dialog at level 6.

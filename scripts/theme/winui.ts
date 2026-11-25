@@ -487,6 +487,8 @@ const winuiField = {
   "field.edge.bottom": "color:input",
   "field.corner.bottom": "control",
   "field.focus.line": true,
+  // WinUI's focus line is the 2px accent underline (TextBox's FocusVisual / the base scale's width).
+  "field.focus.width": 2,
 } as const;
 
 const winuiChoice = {

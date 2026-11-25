@@ -46,13 +46,15 @@ test("control dimensions and component looks follow the active theme", async () 
   expect(find(app.texts(), "switch=")).toBe(
     "40x24|1|16|checked:translate-x-[16px] checked:scale-[1.25] active:scale-[1.375]",
   );
-  // Material's slider keeps the library's round knob on its tinted track (#367, a downgrade
-  // recorded in docs/specs/native-themes.md): the circle's 6-point rail and 20-point band.
+  // Material's slider keeps the library's round knob on M3's track (#367, a downgrade recorded in
+  // docs/specs/native-themes.md): the circle's 6-point rail and 20-point band, the track
+  // `SecondaryContainer` (`slider.face` / `progress.face`, #408) and the knob `primary`
+  // (`slider.knob.face`), so the band is neither the muted track nor a brand tint.
   expect(find(app.texts(), "slider=")).toContain(
     "h-[6px] rounded-full|h-[20px] justify-center px-[7px]",
   );
   expect(find(app.texts(), "slider=")).toContain("|false|rounded-full");
-  expect(find(app.texts(), "slider=")?.endsWith("|false|true|false")).toBe(true);
+  expect(find(app.texts(), "slider=")?.endsWith("|false|false|false")).toBe(true);
   expect(find(app.texts(), "checkbox=")).toBe("2|true|false");
   expect(find(app.texts(), "progress=")).toBe("4/solid/false");
   expect(find(app.texts(), "tabs=")).toBe("0/1");

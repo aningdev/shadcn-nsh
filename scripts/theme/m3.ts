@@ -287,10 +287,14 @@ const m3Field = {
   "field.edge.bottom": "color:mutedForeground",
   "field.corner.bottom": 0,
   "field.focus.line": true,
+  // M3's focus indicator: 2dp over the field's own 1dp line (_md-comp-filled-text-field.scss).
+  "field.focus.width": 2,
 } as const;
 
 const m3Choice = {
   "choice.size": { pointer: 20, touch: 20 },
+  // M3's checkbox container is 18dp whatever the platform (SliderTokens/CheckboxTokens).
+  "choice.box": { pointer: 18, touch: 18 },
   "choice.corner": { pointer: 2, touch: 2 },
   "choice.face": "none",
   "choice.shade": "none",
@@ -326,13 +330,15 @@ const m3Switch = {
 
 /** M3's groove: a tinted bar with no edge, and no spinner ring around it. */
 const m3Track = {
-  "slider.face": "tint:brand",
+  // The inactive run is SecondaryContainer, not a wash of Primary: SliderTokens.InactiveTrackColor.
+  "slider.face": "color:secondary",
+  "slider.knob.face": "color:primary",
   "slider.shade": "none",
   "slider.edge.colour": "none",
   "slider.edge.width": 0,
   "progress.height": 4,
   "progress.line": 0,
-  "progress.face": "tint:brand",
+  "progress.face": "color:secondary",
   "progress.shade": "none",
   "progress.edge.colour": "none",
   "progress.edge.width": 0,
@@ -553,6 +559,12 @@ export const m3Style = {
     ...m3Choice,
     ...m3Switch,
     ...m3Track,
+    // A popup keeps ExtraSmall corners (4dp) inside a shape scale whose container is 12dp.
+    "popup.corner": "control",
+    // A segmented strip draws its own outline on the surface: its track has no ground of its own.
+    "tabs.track.face": "none",
+    // M3 containers are edge-free: a sunk well is its ground, not a line.
+    "well.edge": "none",
     "state.disabled.face": "finish:disabled",
     "state.disabled.ink": "finish:disabled:foreground",
     "state.disabled.edge": "finish:disabled:border-color",
@@ -610,14 +622,15 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     accent: "Tonal accent fill (M3 secondaryContainer).",
     "accent-foreground": "Text and icon ink on accent fills (M3 Expressive onSecondaryContainer).",
     destructive: "Error and destructive action color (M3 error).",
-    border: "Hairline container border color (M3 outlineVariant).",
+    border:
+      "Hairline container border color (M3 outline: one step stronger than outlineVariant, which reads too faint at 1dp).",
     input: "Input outline color (M3 outline).",
-    ring: "Focus indicator ring color (M3 secondary).",
+    ring: "Focus indicator ring color (M3 primary, the role M3 draws its focus indicator in).",
     "chart-1": "First chart series color (M3 primary).",
-    "chart-2": "Second chart series color (M3 tertiary).",
-    "chart-3": "Third chart series color (M3 secondary).",
-    "chart-4": "Fourth chart series color (M3 outline).",
-    "chart-5": "Fifth chart series color (M3 outlineVariant).",
+    "chart-2": "Second chart series color (the theme's positive `up` tone).",
+    "chart-3": "Third chart series color (the theme's `warn` tone).",
+    "chart-4": "Fourth chart series color (M3 error).",
+    "chart-5": "Fifth chart series color (M3 onSurfaceVariant).",
     sidebar: "Sidebar canvas background (M3 surface).",
     "sidebar-accent": "Sidebar active item fill (M3 secondaryContainer).",
     "sidebar-accent-foreground":
@@ -666,11 +679,11 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       overview:
         "Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and M3 duration and easing motion.",
       elevation:
-        "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.",
+        "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), no backdrop blur, and a line only where a well or a channel states one (`inset`, `channel`): every other finish draws no edge (`border-color: transparent`).",
       dos: [
         "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) with `state.press-scale: 1`.",
         'Use `shape.curve: "circular"` with top-rounded underlined fields and underlined tabs.',
-        "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation.",
+        "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation; a well or channel keeps its hairline.",
       ],
       donts: [
         "Do not add backdrop blur (`backdropFilter`) or a surface edge (`border-color`) to M3 tonal surfaces.",

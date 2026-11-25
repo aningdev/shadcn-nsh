@@ -354,10 +354,10 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 
 - **`destructive`** (light `#b3261e`, dark `#f2b8b5`): Error and destructive action color (M3 error).
 - **`chart-1`** (light `#6750a4`, dark `#d0bcff`): First chart series color (M3 primary).
-- **`chart-2`** (light `#7d5260`, dark `#efb8c8`): Second chart series color (M3 tertiary).
-- **`chart-3`** (light `#625b71`, dark `#ccc2dc`): Third chart series color (M3 secondary).
-- **`chart-4`** (light `#79747e`, dark `#938f99`): Fourth chart series color (M3 outline).
-- **`chart-5`** (light `#cac4d0`, dark `#49454f`): Fifth chart series color (M3 outlineVariant).
+- **`chart-2`** (light `#7d5260`, dark `#efb8c8`): Second chart series color (the theme's positive `up` tone).
+- **`chart-3`** (light `#625b71`, dark `#ccc2dc`): Third chart series color (the theme's `warn` tone).
+- **`chart-4`** (light `#79747e`, dark `#938f99`): Fourth chart series color (M3 error).
+- **`chart-5`** (light `#cac4d0`, dark `#49454f`): Fifth chart series color (M3 onSurfaceVariant).
 - **`info`** (light `#6750a4`, dark `#d0bcff`): Informational semantic color matching M3 primary.
 - **`warn`** (light `#b26a00`, dark `#ffb547`): Warning semantic status color.
 - **`up`** (light `#138a5a`, dark `#45d49a`): Positive trend and growth semantic color.
@@ -369,9 +369,9 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 
 ### Chrome
 
-- **`border`** (light `#79747e`, dark `#938f99`): Hairline container border color (M3 outlineVariant).
+- **`border`** (light `#79747e`, dark `#938f99`): Hairline container border color (M3 outline: one step stronger than outlineVariant, which reads too faint at 1dp).
 - **`input`** (light `#79747e`, dark `#938f99`): Input outline color (M3 outline).
-- **`ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color (M3 secondary).
+- **`ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color (M3 primary, the role M3 draws its focus indicator in).
 - **`sidebar-border`** (light `#79747e`, dark `#938f99`): Sidebar divider border (M3 outlineVariant).
 - **`sidebar-ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#cac4d0`, dark `#49454f`): Inset divider hairline (M3 outlineVariant).
@@ -407,7 +407,7 @@ Ergonomic sizing scales for pointer input.
 
 ## Elevation & Depth
 
-Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.
+Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), no backdrop blur, and a line only where a well or a channel states one (`inset`, `channel`): every other finish draws no edge (`border-color: transparent`).
 
 - **Strokes:** Border stroke widths.
   - `stroke.hairline` (1px): Hairline width for dividers, container edges (cards, drawers, overlays) and outlined variants.
@@ -453,7 +453,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
 - **`finish.channel`**: The channel a group of choices sits in: a segmented control's track.
 - **`finish.raised`** (backdropFilter: `none`): A control on a surface: a button, a chip, a pill.
-- **`finish.plate`** (elevation: 1): A labelled block chosen inside a well: the selected tab, a segmented control's thumb.
+- **`finish.plate`** (elevation: 0): A labelled block chosen inside a well: the selected tab, a segmented control's thumb.
 - **`finish.overlay`** (backdropFilter: `none`; elevation: 3): A panel floating over the page: a menu, a toast.
 - **`finish.modal`** (elevation: 6): A surface the page waits for: a dialog, a sheet.
 - **`finish.inverse`** (backdropFilter: `none`; elevation: 6): The page's inverse: an inverse surface, a tooltip.
@@ -473,7 +473,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
 - **Do:** Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) with `state.press-scale: 1`.
 - **Do:** Use `shape.curve: "circular"` with top-rounded underlined fields and underlined tabs.
-- **Do:** Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation.
+- **Do:** Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation; a well or channel keeps its hairline.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way.
