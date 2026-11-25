@@ -523,6 +523,34 @@ for (const theme of themes) {
     fail(problem);
 }
 
+// 5b. A slot's `color:<role>` names a palette role the components can read (`colors` in theme.ts).
+{
+  const block =
+    themeModule.match(
+      /export const colors: Palette = tokens<keyof Palette>\(\{([\s\S]*?)\}\);/,
+    )?.[1] ?? "";
+  const palette = new Set([...block.matchAll(/^\s*(\w+):/gm)].map((match) => match[1]));
+  if (palette.size === 0) fail("packages/theme/theme.ts: no `colors` palette found");
+  const colours = (value: unknown): string[] =>
+    isRecord(value)
+      ? [
+          ...(typeof value.colour === "string" ? [value.colour] : []),
+          ...Object.values(value).flatMap(colours),
+        ]
+      : [];
+  for (const theme of themes) {
+    const file = readJson<{ slots?: Record<string, unknown> }>(
+      `packages/theme/themes/${theme}/semantics.json`,
+    );
+    for (const [slot, value] of Object.entries(file.slots ?? {}))
+      for (const role of colours(value))
+        if (palette.size > 0 && !palette.has(role))
+          fail(
+            `packages/theme/themes/${theme}/semantics.json: slot \`${slot}\` reads \`color:${role}\`, which \`colors\` in packages/theme/theme.ts does not expose`,
+          );
+  }
+}
+
 // 6. The spec's pending table holds only colours its themes still write.
 for (const entry of pending)
   if (!written.has(entry))

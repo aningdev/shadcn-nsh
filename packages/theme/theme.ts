@@ -629,6 +629,10 @@ export interface Palette {
   primary: string;
   /** Text on `primary`. */
   primaryForeground: string;
+  /** The quieter action's fill (the theme's `secondary`): a tonal button, a groove. */
+  secondary: string;
+  /** Text on `secondary`. */
+  secondaryForeground: string;
   /** The app's sidebar, beside the page. */
   sidebar: string;
   /** The selected row of the sidebar. */
@@ -688,6 +692,8 @@ export const colors: Palette = tokens<keyof Palette>({
   brand: "brand",
   primary: "primary",
   primaryForeground: "primary-foreground",
+  secondary: "secondary",
+  secondaryForeground: "secondary-foreground",
   sidebar: "sidebar",
   sidebarAccent: "sidebar-accent",
   sidebarBorder: "sidebar-border",

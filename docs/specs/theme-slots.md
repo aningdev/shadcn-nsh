@@ -63,7 +63,7 @@
 
 | 槽                              | nsh-gallery | material         | winui                 | apple   |
 | ------------------------------- | ----------- | ---------------- | --------------------- | ------- |
-| 底色                            | field       | 透明 / container | field                 | field   |
+| 底色                            | field       | field            | field                 | field   |
 | 边宽：上 / 侧 / 下              | 1 / 1 / 1   | 0 / 0 / 1        | 1 / 1 / 1             | 待审计  |
 | 边色：上 / 侧 / 下              | input       | — / — / muted-fg | line / border / input | 待审计  |
 | 聚焦：边色 / 下边宽             | ring / 1    | primary / 2      | accent / 2            | 待审计  |
@@ -95,34 +95,36 @@
 
 **slider**：轨道粗细、轨道底色 / 阴影 / 边、旋钮尺寸、旋钮内点直径（0 = 实心）、hover / 按下尺寸、竖向长度。
 
-| 槽                             | nsh-gallery   | material | winui         | apple         |
-| ------------------------------ | ------------- | -------- | ------------- | ------------- |
-| 轨道粗细                       | 6·8           | 16       | 4             | 4             |
-| 旋钮                           | 14·20         | 现值     | 18（内点 12） | 20×16         |
-| 旋钮底色（`slider.knob.face`） | `finish:knob` | primary  | `finish:knob` | `finish:knob` |
-| hover / 按下                   | 14 / 14·32    | 现值     | 内点 14 / 10  | 待审计        |
+| 槽                             | nsh-gallery   | material  | winui         | apple         |
+| ------------------------------ | ------------- | --------- | ------------- | ------------- |
+| 轨道底色（`slider.face`）      | tint:brand    | secondary | 现值          | 现值          |
+| 轨道粗细                       | 6·8           | 16        | 4             | 4             |
+| 旋钮                           | 14·20         | 现值      | 18（内点 12） | 20×16         |
+| 旋钮底色（`slider.knob.face`） | `finish:knob` | primary   | `finish:knob` | `finish:knob` |
+| hover / 按下                   | 14 / 14·32    | 现值      | 内点 14 / 10  | 待审计        |
 
 ## 5 进度组（progress、spinner）
 
 progress：高度、轨道底色 / 阴影 / 边、内线高度（0 = 无）。
 spinner：辐条数（0 = 连续弧）、弧长、轨道不透明度（0 = 无轨道）。
 
-| 槽                    | nsh-gallery | material | winui | apple       |
-| --------------------- | ----------- | -------- | ----- | ----------- |
-| progress 高度 / 内线  | 6 / 0       | 4 / 0    | 3 / 1 | 待审计      |
-| spinner 辐条数 / 轨道 | 0 / 0.25    | 0 / 0    | 0 / 0 | 8 或 12 / 0 |
+| 槽                    | nsh-gallery | material  | winui | apple       |
+| --------------------- | ----------- | --------- | ----- | ----------- |
+| progress 轨道底色     | 现值        | secondary | 现值  | 现值        |
+| progress 高度 / 内线  | 6 / 0       | 4 / 0     | 3 / 1 | 待审计      |
+| spinner 辐条数 / 轨道 | 0 / 0.25    | 0 / 0     | 0 / 0 | 8 或 12 / 0 |
 
 ## 6 面与列表行（card、popover、sheet、select 弹层、menu 行）
 
 面用 finish（card / overlay / modal）与全局圆角。
 **列表行**：高亮底色、高亮边色（=底色 → 只有填充）、边宽、圆角、高度、内缩。
 
-| 槽                                  | nsh-gallery            | material | winui     | apple          |
-| ----------------------------------- | ---------------------- | -------- | --------- | -------------- |
-| 高亮 底色 / 边色                    | brand-tint / brand 30% | 待审计   | 待审计    | accent / =底色 |
-| 弹层圆角（`popup.corner`）          | container              | control  | container | container      |
-| 标签页轨道底色（`tabs.track.face`） | inset                  | none     | inset     | inset          |
-| 井的边（`well.edge`）               | border                 | none     | border    | none           |
+| 槽                                  | nsh-gallery            | material            | winui     | apple          |
+| ----------------------------------- | ---------------------- | ------------------- | --------- | -------------- |
+| 高亮 底色 / 边色                    | brand-tint / brand 30% | muted（降级，§3.6） | 待审计    | accent / =底色 |
+| 弹层圆角（`popup.corner`）          | container              | control             | container | container      |
+| 标签页轨道底色（`tabs.track.face`） | inset                  | none                | inset     | inset          |
+| 井的边（`well.edge`）               | border                 | none                | border    | none           |
 
 ## 7 提示与日期
 
