@@ -6,6 +6,7 @@ import type { JSX } from "nsh";
 import { cleanup, context, effect, signal, untracked } from "nsh";
 import {
   AlertDialog as BaseAlertDialog,
+  type AlertDialogInput,
   type AlertDialogOptions,
   type AlertDialogPresentation,
   type AlertDialogRole,
@@ -31,8 +32,11 @@ export type AlertDialogProps = {
   defaultOpen?: boolean;
   children?: JSX.Element;
   onOpenChange?: (event: { open: boolean; reason: AlertDialogChangeReason }) => void;
-  /** The chosen action `id`, or `null` when the alert closed without one. */
-  onAction?: (event: { action: string | null }) => void;
+  /**
+   * The chosen action `id`, or `null` when the alert closed without one; with an `input`, its
+   * text as the alert closed (`null` without one, or where the platform's alert has no field).
+   */
+  onAction?: (event: { action: string | null; value: string | null }) => void;
 };
 
 /**
@@ -43,7 +47,8 @@ export type AlertDialogProps = {
  *
  * The box is the platform's (UIAlertController on iOS, NSAlert on macOS, this library's drawing of
  * the same box on the web, the platform dialog on Android). It shows plain text — a title, a message
- * and button labels — never views, icons or fields, and an Android alert takes at most three buttons
+ * and button labels — and at most one text field (`input`, where the platform's alert has one:
+ * not on Windows, Linux or the terminal); never views or icons, and an Android alert takes at most three buttons
  * (a fourth is dropped there). Reach for `Dialog` when the box has to hold the app's own content or
  * wear the app's look.
  */
@@ -51,6 +56,8 @@ export type AlertDialogContentProps = {
   presentation?: AlertDialogPresentation;
   closeOnEscape?: boolean | null;
   closeOnBackdropPress?: boolean | null;
+  /** A text field in an alert (not an action sheet), its text reported as `onAction`'s `value`. */
+  input?: AlertDialogInput | null;
   /** The parts that register what it shows: `AlertDialogTitle`, `AlertDialogAction`, … */
   children?: JSX.Element;
 };
@@ -114,7 +121,7 @@ type AlertDialogContextValue = OpenState & {
   registerAction: (action: AlertAction) => void;
   forgetAction: (id: string) => void;
   /** The system's answer: report it, and close. */
-  settle: (action: string | null) => void;
+  settle: (action: string | null, value: string | null) => void;
 };
 
 const AlertDialogContext = context<AlertDialogContextValue | null>(null);
@@ -140,6 +147,7 @@ const boxKey = (options: AlertDialogOptions) =>
     options.presentation,
     options.closeOnEscape,
     options.closeOnBackdropPress,
+    options.input,
     (options.actions ?? []).map((action) => [action.id, action.label, action.role]),
   ]);
 
@@ -182,9 +190,9 @@ export function AlertDialog(props: AlertDialogProps) {
             return next;
           });
         },
-        settle: (action) => {
+        settle: (action, value) => {
           if (state.open()) state.setOpen(false, action === null ? "cancel" : "select");
-          props.onAction?.({ action });
+          props.onAction?.({ action, value });
         },
       }}
     >
@@ -217,6 +225,7 @@ export function AlertDialogContent(props: AlertDialogContentProps) {
       presentation: props.presentation,
       closeOnEscape: props.closeOnEscape,
       closeOnBackdropPress: props.closeOnBackdropPress,
+      input: props.input,
     };
     // A page can render these parts again with the alert already open — a stage that rebuilds its
     // children on every change does — and that part must not stack a second box on the first.
@@ -229,15 +238,15 @@ export function AlertDialogContent(props: AlertDialogContentProps) {
     onScreen.set(key);
     showing.set(true);
     BaseAlertDialog.show(options)
-      .then(({ action }) => {
+      .then(({ action, value }) => {
         clear();
-        ctx.settle(action ?? null);
+        ctx.settle(action ?? null, value ?? null);
       })
       .catch(() => {
         clear();
         // `nsh/base` rejects an alert without actions only — the app's bug. Close it as a
         // dismissal rather than leave the app open on a box that never showed.
-        ctx.settle(null);
+        ctx.settle(null, null);
       });
   });
   // The parts draw nothing; rendering them is what registers the title, the message and the

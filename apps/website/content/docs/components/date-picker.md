@@ -38,7 +38,8 @@ DatePicker
 
 ### A range
 
-`range` on the content; the trigger shows both ends.
+`range` on the content; the trigger shows both ends. After the first pick the band previews the
+range to the day under the pointer or the keyboard, as the calendar's does.
 
 ```tsx
 <DatePicker value={range} onChange={({ value }) => setRange(value)}>

@@ -373,6 +373,9 @@ export function RowLabel(props: {
       <Text
         style={{
           minWidth: terminal ? (props.width ?? LABEL_WIDTH) + TERMINAL_GAP : undefined,
+          // The gap is the label's own end padding, so a label longer than its column still keeps
+          // it before the detail.
+          paddingEnd: terminal ? TERMINAL_GAP : undefined,
           flexShrink: 0,
           fontSize: controlSize.label,
           fontWeight: props.strong ? font.weight("title") : font.weight("body"),

@@ -3,6 +3,7 @@ import { Button } from "nsh/base";
 
 import {
   Calendar,
+  CalendarItem,
   DatePicker,
   DatePickerContent,
   DatePickerTrigger,
@@ -57,6 +58,19 @@ function App() {
         onChange={({ value }) =>
           range.set(Array.isArray(value) ? `${value[0] ?? ""}..${value[1] ?? ""}` : "none")
         }
+        // The library's day, and a probe that shows while the day is in a previewed range's
+        // middle: the state the day's band is drawn from.
+        renderItem={(item) => (
+          <View style={{ flex: 1 }}>
+            <CalendarItem item={item} />
+            {item.kind === "day" && item.date ? (
+              <View
+                testID={`preview-${item.date}`}
+                class="hidden h-px group-data-range-preview-middle:flex"
+              />
+            ) : null}
+          </View>
+        )}
       />
       <Text>range={range()}</Text>
       <TimeField

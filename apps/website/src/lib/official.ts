@@ -162,6 +162,7 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
   { id: "sheet", group: "base", ours: ["sheet"] },
   { id: "slider", group: "base", ours: ["slider"] },
   { id: "split-view", group: "base", ours: ["split-view"] },
+  { id: "title-bar", group: "base", ours: ["title-bar"] },
   { id: "switch", group: "base", ours: ["switch"] },
   { id: "table", group: "base", ours: ["table"] },
   { id: "tabs", group: "base", ours: ["tabs"] },

@@ -23,7 +23,7 @@ import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
 import { pressSink } from "@/packages/ui/lib/press";
 import { density } from "@/packages/ui/lib/surface";
-import { pressableLook } from "@/packages/ui/pressable";
+import { Pressable } from "@/packages/ui/pressable";
 import { Stat } from "@/packages/ui/stat";
 
 import { DemoPage } from "../kit";
@@ -735,13 +735,11 @@ function Accessibility() {
     >
       <Each of={items}>
         {(item, i) => (
-          <View
-            accessible
-            role="button"
+          <Pressable
             accessibilityLabel={item().label}
             accessibilityHint={item().hint}
             onPress={() => last.set(item().label)}
-            {...pressableLook({ style: { borderRadius: 0 } })}
+            style={{ borderRadius: 0 }}
           >
             <Row first={i() === 0}>
               <If when={!terminal}>
@@ -770,7 +768,7 @@ function Accessibility() {
                 button
               </Text>
             </Row>
-          </View>
+          </Pressable>
         )}
       </Each>
     </Scene>

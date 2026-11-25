@@ -49,7 +49,7 @@ The box is the platform's own (`nsh/base`'s `AlertDialog.show`): UIAlertControll
 on macOS, NSH's drawing of the same box on the web, the platform dialog on Android. The parts only
 fill it in — they register a title, a message and buttons, and `AlertDialogContent` shows it when
 the root is open. So the box **does not follow this library's theme**, what it shows is **text
-only** (no views, icons or fields), and an Android alert takes **at most three buttons**. The
+only** (no views or icons; at most one text field, `input`, where the platform's alert has one), and an Android alert takes **at most three buttons**. The
 platform shows one box at a time, so a process has one: two `AlertDialog`s opened together share
 it, and the second is not stacked on the first.
 
@@ -112,10 +112,35 @@ own, `destructive` in red where the platform has red.
 <AlertDialog onAction={({ action }) => action === "delete" && remove()}>…</AlertDialog>
 ```
 
+### A text field
+
+`input` on `AlertDialogContent` adds one text field to an alert (not an action sheet) —
+`defaultValue`, `placeholder`, `selectTextOnFocus`, `required` (no confirming an empty one).
+`onAction` reports its text as `value` with the button chosen. Windows, Linux and the terminal
+show no field there: `value` is `null`, so an app that must have the text uses a `Dialog` with
+an `Input`.
+
+```tsx
+<AlertDialog onAction={({ action, value }) => action === "rename" && rename(value)}>
+  <AlertDialogTrigger>Rename…</AlertDialogTrigger>
+  <AlertDialogContent
+    input={{ defaultValue: name(), placeholder: "Name", selectTextOnFocus: true }}
+  >
+    <AlertDialogHeader>
+      <AlertDialogTitle>Rename the photo</AlertDialogTitle>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction id="rename">Rename</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+```
+
 ### Awaiting the answer
 
 An app that wants the choice before it draws anything else — `await`, then act — shows the same box
-with `nsh/base`'s own `AlertDialog.show`, which resolves with `{ action }`. That is the app's call.
+with `nsh/base`'s own `AlertDialog.show`, which resolves with `{ action, value }`. That is the app's call.
 The parts above declare a box under a root of the page's, for an alert that is part of what the page
 draws; the library has no imperative `show` of its own: a web alert is
 always the app's own drawing, and a second way in would be two APIs for one box.
@@ -176,14 +201,14 @@ const open = signal(false);
 one while it is up: a part that renders again with the alert still open — a page whose layout
 rebuilds its children does — stacks nothing, and the answer belongs to the app that asked.
 
-| Part                     | Props                                                                                         | Description                                                                                                 |
-| ------------------------ | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `AlertDialog`            | `open`, `defaultOpen`, `onOpenChange({ open, reason })`, `onAction({ action })`               | The root: owns the open state and the text its parts registered.                                            |
-| `AlertDialogTrigger`     | `Action`'s props — `children`, `variant`, `disabled`, and every view prop — without `onPress` | The press that opens it; a string child is a `Button`, `variant` picking its look (`secondary` by default). |
-| `AlertDialogContent`     | `presentation`, `closeOnEscape`, `closeOnBackdropPress` — the rest of `AlertDialogOptions`    | The parts the box shows, and the `AlertDialog.show` call when the root opens.                               |
-| `AlertDialogTitle`       | `children` (a string)                                                                         | The heading.                                                                                                |
-| `AlertDialogDescription` | `children` (a string)                                                                         | The message.                                                                                                |
-| `AlertDialogAction`      | `id`, `role`, `children` (a string; the `id` when left out)                                   | A choice; `role` is what it means and `onAction` reports its `id`.                                          |
-| `AlertDialogCancel`      | `id` (default `"cancel"`), `children`                                                         | The same button with `role="cancel"`.                                                                       |
-| `AlertDialogHeader`      | `children`                                                                                    | A group that draws nothing.                                                                                 |
-| `AlertDialogFooter`      | `children`                                                                                    | A group that draws nothing; the buttons keep the order they are written in.                                 |
+| Part                     | Props                                                                                               | Description                                                                                                 |
+| ------------------------ | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `AlertDialog`            | `open`, `defaultOpen`, `onOpenChange({ open, reason })`, `onAction({ action, value })`              | The root: owns the open state and the text its parts registered.                                            |
+| `AlertDialogTrigger`     | `Action`'s props — `children`, `variant`, `disabled`, and every view prop — without `onPress`       | The press that opens it; a string child is a `Button`, `variant` picking its look (`secondary` by default). |
+| `AlertDialogContent`     | `presentation`, `closeOnEscape`, `closeOnBackdropPress`, `input` — the rest of `AlertDialogOptions` | The parts the box shows, and the `AlertDialog.show` call when the root opens.                               |
+| `AlertDialogTitle`       | `children` (a string)                                                                               | The heading.                                                                                                |
+| `AlertDialogDescription` | `children` (a string)                                                                               | The message.                                                                                                |
+| `AlertDialogAction`      | `id`, `role`, `children` (a string; the `id` when left out)                                         | A choice; `role` is what it means and `onAction` reports its `id`.                                          |
+| `AlertDialogCancel`      | `id` (default `"cancel"`), `children`                                                               | The same button with `role="cancel"`.                                                                       |
+| `AlertDialogHeader`      | `children`                                                                                          | A group that draws nothing.                                                                                 |
+| `AlertDialogFooter`      | `children`                                                                                          | A group that draws nothing; the buttons keep the order they are written in.                                 |

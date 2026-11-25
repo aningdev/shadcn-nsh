@@ -368,6 +368,15 @@ export const components: ComponentDoc[] = [
     description: "A sunk well for a time of day, one segment at a time.",
   },
   {
+    slug: "title-bar",
+    title: "TitleBar",
+    kind: "official",
+    shadcn: null,
+    nshElement: "title-bar",
+    description:
+      "The bar that drags a desktop window, the window buttons a frameless one draws for itself, and the edges that resize it.",
+  },
+  {
     slug: "toast",
     title: "Toast",
     kind: "official",
@@ -669,15 +678,6 @@ export const components: ComponentDoc[] = [
     shadcn: null,
     nshElement: null,
     description: "A dot and label for quiet state in rows or headers.",
-  },
-  {
-    slug: "title-bar",
-    title: "TitleBar",
-    kind: "own",
-    shadcn: null,
-    nshElement: null,
-    description:
-      "The bar that drags a desktop window, the window buttons a frameless one draws for itself, and the edges that resize it.",
   },
   {
     slug: "trace",

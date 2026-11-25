@@ -15,6 +15,7 @@ import {
 
 function App() {
   const action = signal("none");
+  const value = signal("none");
   // A controlled root: the app keeps the flag and mirrors what the component reports.
   const open = signal(false);
   const off = signal(false);
@@ -22,6 +23,7 @@ function App() {
     <View>
       <Text>{() => `action ${action()}`}</Text>
       <Text>{() => `open ${String(open())}`}</Text>
+      <Text>{() => `value ${value()}`}</Text>
       <BaseButton onPress={() => off.set(true)}>
         <Text>Flip</Text>
       </BaseButton>
@@ -59,6 +61,25 @@ function App() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction id="save">Save</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* D: an alert with a text field, its text reported with the action. */}
+      <AlertDialog
+        onAction={(event) => {
+          action.set(event.action ?? "null");
+          value.set(event.value ?? "null");
+        }}
+      >
+        <AlertDialogTrigger>Open D</AlertDialogTrigger>
+        <AlertDialogContent input={{ defaultValue: "Untitled", placeholder: "Name" }}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Rename the photo</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction id="rename">Rename</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -4,9 +4,17 @@
 
 ### Added
 
+- **`AlertDialogContent` takes an `input` (#122).** One text field in the platform's alert (`defaultValue`, `placeholder`, `selectTextOnFocus`, `required`); `onAction` reports its text as `value` beside the chosen `action`. Windows, Linux and the terminal show no field, and `value` is `null` there. Needs NSH v0.7.0.
+
+- **A half-picked range previews its band (#326).** In `Calendar` and `DatePicker` with `range`, the band runs from the first pick to the later day under the pointer or the keyboard until the second pick commits it. A day before the first starts the range again, as `nsh/base` does, so nothing is previewed there.
+
+- **`Pressable` passes `accessibilityHint` through.** A screen reader reads it after the name, to say what a press does.
+
 - **The docs publish two sites (#283).** The root holds the latest `v*` tag's docs — the release `npm i shadcn-nsh` installs — and `/dev/` holds `main`'s. A merge to `main` rewrites only `/dev/`; a tag rewrites the root. The label next to the site's name says which one you are reading and links to the other: the release's version, or `dev (main)`.
 
 ### Changed
+
+- **The baseline moves to NSH v0.7.0.** Components are checked against that CLI's `nsh/base`; install it with `curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.7.0 sh`. From the official Gallery's UI layer the library takes: emoji tabs in the terminal (a 12-column grid with an emoji per group instead of icons), colour fields and row labels that keep their spacing in the terminal, and dock tabs spaced by a margin, since they scroll in a row of their own.
 
 - **BREAKING: the `default` theme is now NSH Gallery, id `nsh-gallery` (#360).** It is the official NSH look, the one nsh.dev's demos draw, and the name now says so. The registry item `theme-default` is `theme-nsh-gallery`, `init --theme nsh-gallery` installs it (as `init` with no flag still does), and its page moved to `/docs/themes/nsh-gallery`. There is no alias: `--theme default` is an error that lists the ids. An app that installed `theme-default` re-runs `shadcn-nsh add theme-nsh-gallery`; no value changed. Why: [ADR 0011](docs/decisions/0011-nsh-gallery-theme.md).
 

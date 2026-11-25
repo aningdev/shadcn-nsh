@@ -22,6 +22,14 @@ test("the chosen button's id reaches onAction", async () => {
   await app.waitFor("text:action delete");
 });
 
+test("an alert's text field reports its text with the chosen action", async () => {
+  const app = await open("./alert-dialog.fixture.tsx");
+  app.onDialog((dialog) => (dialog.buttons.includes("Rename") ? "Rename" : null));
+  await app.press("text:Open D");
+  await app.waitFor("text:action rename");
+  expect(app.texts()).toContain("value Untitled");
+});
+
 test("closing without a button reports null and closes a controlled alert", async () => {
   const app = await open("./alert-dialog.fixture.tsx");
   app.onDialog(() => null);

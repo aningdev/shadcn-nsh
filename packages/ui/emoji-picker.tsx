@@ -3,7 +3,7 @@
 // no shell below.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, font } from "@shadcn-nsh/theme";
+import { colors, font, terminal } from "@shadcn-nsh/theme";
 import {
   Car,
   Clock,
@@ -33,18 +33,21 @@ import {
 
 import { Icon } from "./lib/icons";
 
-/** The groups, their names and their tabs' icons. */
-export const emojiGroups: { id: EmojiGroupId; label: string; icon: IconNode }[] = [
-  { id: "recent", label: "Frequently used", icon: Clock },
-  { id: "smileysEmotion", label: "Smileys & emotion", icon: Smile },
-  { id: "peopleBody", label: "People & body", icon: User },
-  { id: "animalsNature", label: "Animals & nature", icon: Leaf },
-  { id: "foodDrink", label: "Food & drink", icon: Utensils },
-  { id: "travelPlaces", label: "Travel & places", icon: Car },
-  { id: "activities", label: "Activities", icon: Volleyball },
-  { id: "objects", label: "Objects", icon: Lightbulb },
-  { id: "symbols", label: "Symbols", icon: Heart },
-  { id: "flags", label: "Flags", icon: Flag },
+/**
+ * The groups, their names and their tabs' icons; in the terminal, which draws no icons, an emoji of
+ * the group (two Cells, no variation selector, whose width terminals disagree on).
+ */
+export const emojiGroups: { id: EmojiGroupId; label: string; icon: IconNode; emoji: string }[] = [
+  { id: "recent", label: "Frequently used", icon: Clock, emoji: "🕘" },
+  { id: "smileysEmotion", label: "Smileys & emotion", icon: Smile, emoji: "😀" },
+  { id: "peopleBody", label: "People & body", icon: User, emoji: "👋" },
+  { id: "animalsNature", label: "Animals & nature", icon: Leaf, emoji: "🐻" },
+  { id: "foodDrink", label: "Food & drink", icon: Utensils, emoji: "🍔" },
+  { id: "travelPlaces", label: "Travel & places", icon: Car, emoji: "🚗" },
+  { id: "activities", label: "Activities", icon: Volleyball, emoji: "⚽" },
+  { id: "objects", label: "Objects", icon: Lightbulb, emoji: "💡" },
+  { id: "symbols", label: "Symbols", icon: Heart, emoji: "🔣" },
+  { id: "flags", label: "Flags", icon: Flag, emoji: "🏁" },
 ];
 
 /** The groups' headings. */
@@ -70,10 +73,15 @@ export const emojiPickerClasses = {
   /** Eight points each side: some glyphs (🫡) reach past their cell. */
   row: "px-2",
   group: platform.desktop ? "px-3 pt-2.5 pb-1" : "px-3.5 pt-3 pb-1.5",
-  /** A cell: quiet until the pointer or the keys are on it (one gray for both, as Slack's), sunk while pressed. */
-  item: platform.desktop
-    ? "size-9 items-center justify-center rounded-(--radius-control) text-[22px] transition-colors duration-100 motion-reduce:transition-none hover:bg-raised focus:bg-raised active:scale-90"
-    : "h-12 flex-1 items-center justify-center rounded-(--radius-control) text-[28px] active:bg-raised",
+  /**
+   * A cell: quiet until the pointer or the keys are on it (one gray for both, as Slack's), sunk
+   * while pressed; in the terminal three Cells, the emoji's two and a column between them.
+   */
+  item: terminal
+    ? "w-6 h-4 items-center justify-center focus:bg-raised"
+    : platform.desktop
+      ? "size-9 items-center justify-center rounded-(--radius-control) text-[22px] transition-colors duration-100 motion-reduce:transition-none hover:bg-raised focus:bg-raised active:scale-90"
+      : "h-12 flex-1 items-center justify-center rounded-(--radius-control) text-[28px] active:bg-raised",
 };
 
 /** A group's heading: quiet semibold, as Slack's. */
@@ -114,11 +122,15 @@ export function EmojiTabs(props: {
           tooltip={platform.desktop ? g.label : undefined}
           class={`hover:bg-raised focus-visible:outline-ring items-center justify-center rounded-(--radius-control) focus-visible:outline-2 ${platform.desktop ? "h-8 w-8" : "h-11 flex-1"}`}
         >
-          <Icon
-            icon={g.icon}
-            size={platform.desktop ? 17 : 21}
-            tint={props.group === g.id ? colors.foreground : colors.faint}
-          />
+          {terminal ? (
+            <Text>{g.emoji}</Text>
+          ) : (
+            <Icon
+              icon={g.icon}
+              size={platform.desktop ? 17 : 21}
+              tint={props.group === g.id ? colors.foreground : colors.faint}
+            />
+          )}
         </Tab>
       ))}
     </Tabs>
@@ -235,11 +247,15 @@ export function EmojiPanel(props: {
   return (
     <EmojiPicker
       ref={(r) => (picker = r)}
-      class={props.class ?? (props.fill ? "flex-1" : "h-[392px] w-[342px]")}
+      // In the terminal as wide as its grid: twelve cells of three columns and the rows' padding.
+      class={
+        props.class ??
+        (props.fill ? "flex-1" : terminal ? "h-[392px] w-[304px]" : "h-[392px] w-[342px]")
+      }
       recent={props.recent ?? []}
       skinTone={tone()}
       groupLabels={emojiGroupLabels}
-      columns={platform.desktop ? 9 : 8}
+      columns={terminal ? 12 : platform.desktop ? 9 : 8}
       emojiVersion="15.1"
       autoFocus={platform.desktop}
       placeholder="Search emoji"

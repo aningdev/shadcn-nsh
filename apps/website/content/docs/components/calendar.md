@@ -29,7 +29,9 @@ import { Calendar } from "@/components/ui/calendar";
 <Calendar value={day()} onChange={({ value }) => day.set(value)} />
 ```
 
-`value` is an ISO date; with `range` it is `[start, end]`.
+`value` is an ISO date; with `range` it is `[start, end]`. While the second end is chosen, the band
+previews the range from the first to a later day under the pointer or the keyboard; the pick
+commits it. A day before the first starts the range again, so nothing is previewed there.
 
 ### Uncontrolled
 

@@ -235,7 +235,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
       ? `${quietFill} border-transparent`
       : "border-transparent group-disabled:bg-transparent";
     const hoverCls = props.item.today ? "" : quietHover;
-    return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent`;
+    return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent group-data-range-preview-middle:bg-transparent group-data-range-preview-middle:group-focus-visible:bg-brand-tint`;
   };
   const textClass = () =>
     `${own()} font-normal group-aria-selected:text-primary-foreground group-disabled:text-muted-foreground group-disabled:opacity-50`;
@@ -245,7 +245,9 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
         <View
           class={
             `absolute inset-y-0 start-0 end-0 hidden ${quietFill} group-data-range-middle:flex group-data-range-start:start-1/2 group-data-range-start:flex ` +
-            "group-data-range-end:end-1/2 group-data-range-end:flex group-data-range-start:group-data-range-end:hidden"
+            "group-data-range-end:end-1/2 group-data-range-end:flex group-data-range-start:group-data-range-end:hidden " +
+            "group-data-range-preview-middle:flex group-data-range-preview-start:start-1/2 group-data-range-preview-start:flex " +
+            "group-data-range-preview-end:end-1/2 group-data-range-preview-end:flex group-data-range-preview-start:group-data-range-preview-end:hidden"
           }
           style={{
             borderTopStartRadius: column() === 0 ? dayRadius() : 0,
@@ -255,24 +257,36 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
             ...cornerCurve,
           }}
         />
+        {/* Under the end of a previewed range, the popup's own color: the band reaches the end's
+            middle, as a picked end's `primary` square covers it, and the end's quiet fill (the
+            pointer's, or the keyboard's tint) shows as on any other day, not on the band too. */}
         <View
-          class={boxClass()}
-          style={{
-            width: cell(),
-            maxWidth: "100%",
-            height: cell(),
-            borderWidth: stroke.control,
-            ...rounded(dayRadius()),
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          class={
+            pointer
+              ? "group-data-range-preview-end:bg-raised"
+              : "group-data-range-preview-end:bg-card"
+          }
+          style={{ maxWidth: "100%", ...rounded(dayRadius()) }}
         >
-          <Text
-            class={textClass()}
-            style={{ fontSize: pointer ? 14 : 16, fontVariant: ["tabular-nums"] }}
+          <View
+            class={boxClass()}
+            style={{
+              width: cell(),
+              maxWidth: "100%",
+              height: cell(),
+              borderWidth: stroke.control,
+              ...rounded(dayRadius()),
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            {String(props.item.value)}
-          </Text>
+            <Text
+              class={textClass()}
+              style={{ fontSize: pointer ? 14 : 16, fontVariant: ["tabular-nums"] }}
+            >
+              {String(props.item.value)}
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -303,7 +317,9 @@ function heading(props: CalendarItemProps) {
  * `accent`) under the pointer and for today, `primary` with its foreground
  * for the selected date and a range's ends, the range's other days on a
  * band of the quiet fill from end to end (`data-range-*`) whose corners
- * round at the weeks' ends, the other months' days muted, the disabled ones
+ * round at the weeks' ends, the same band from a half range's start to the
+ * day under the pointer or the keyboard while its end is chosen
+ * (`data-range-preview-*`), the other months' days muted, the disabled ones
  * muted at half opacity, and the keyboard's day in the brand tint and edge:
  * a list's highlight is the quiet fill, which a day already takes for today
  * and the hover, so the keys' day needs a mark of its own. What draws each kind

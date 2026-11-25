@@ -22,6 +22,21 @@ test("Dates: a Calendar range completes on the second day", async () => {
   expect(app.texts()).toContain("range=2026-04-02..2026-04-05");
 });
 
+test("Dates: a half-picked range previews its band to the day under the pointer", async () => {
+  const app = await open("./date.fixture.tsx", { platform: "macos", reducedMotion: true });
+  await app.press("role:button[2026-04-05]");
+  expect(app.shows("id:preview-2026-04-06")).toBe(false);
+  await app.hover("role:button[2026-04-08]");
+  expect(app.shows("id:preview-2026-04-06")).toBe(true);
+  expect(app.shows("id:preview-2026-04-07")).toBe(true);
+  expect(app.shows("id:preview-2026-04-09")).toBe(false);
+  // Before the start a pick starts the range again (`nsh/base`), so nothing is previewed there.
+  await app.hover("role:button[2026-04-02] >> nth=1");
+  expect(app.shows("id:preview-2026-04-04")).toBe(false);
+  expect(app.shows("id:preview-2026-04-06")).toBe(false);
+  expect(app.texts()).toContain("range=none");
+});
+
 test("Dates: a Calendar moves from the selected day with the keyboard", async () => {
   const app = await open("./date.fixture.tsx", { platform: "macos", reducedMotion: true });
   // Header buttons take the first stops; the day grid is the next and lands on the 10th.
