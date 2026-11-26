@@ -1,0 +1,16 @@
+const host=globalThis.__nsh_browser_realm.modules;
+let e0=host.get("nsh")["Easing"];export{e0 as "Easing"};
+let e1=host.get("nsh")["Storage"];export{e1 as "Storage"};
+let e2=host.get("nsh")["View"];export{e2 as "View"};
+let e3=host.get("nsh")["colorScheme"];export{e3 as "colorScheme"};
+let e4=host.get("nsh")["computed"];export{e4 as "computed"};
+let e5=host.get("nsh")["context"];export{e5 as "context"};
+let e6=host.get("nsh")["mount"];export{e6 as "mount"};
+let e7=host.get("nsh")["platform"];export{e7 as "platform"};
+let e8=host.get("nsh")["reduceMotion"];export{e8 as "reduceMotion"};
+let e9=host.get("nsh")["setTheme"];export{e9 as "setTheme"};
+let e10=host.get("nsh")["signal"];export{e10 as "signal"};
+let e11=host.get("nsh")["split"];export{e11 as "split"};
+let e12=host.get("nsh")["token"];export{e12 as "token"};
+let e13=host.get("nsh")["windowSize"];export{e13 as "windowSize"};
+globalThis.__nsh_browser_realm.watch(()=>{e0=host.get("nsh")["Easing"];e1=host.get("nsh")["Storage"];e2=host.get("nsh")["View"];e3=host.get("nsh")["colorScheme"];e4=host.get("nsh")["computed"];e5=host.get("nsh")["context"];e6=host.get("nsh")["mount"];e7=host.get("nsh")["platform"];e8=host.get("nsh")["reduceMotion"];e9=host.get("nsh")["setTheme"];e10=host.get("nsh")["signal"];e11=host.get("nsh")["split"];e12=host.get("nsh")["token"];e13=host.get("nsh")["windowSize"];});

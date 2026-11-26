@@ -10,18 +10,14 @@
 
 <ThemeTokenLead />
 
-### The slots NSH resolves [#the-slots-nsh-resolves]
+### The appearance roles [#the-appearance-roles]
 
-<ThemeTokens id="nsh-gallery" group="slots" />
-
-### The library's own tokens [#the-librarys-own-tokens]
-
-<ThemeTokens id="nsh-gallery" group="extension" />
+<ThemeTokens id="nsh-gallery" group="roles" />
 
 ### The shared values [#the-shared-values]
 
 <ThemeTokens id="nsh-gallery" group="shared" />
 
-## Finishes [#finishes]
+## Surfaces [#surfaces]
 
-<ThemeFinishes id="nsh-gallery" />
+<ThemeSurfaces id="nsh-gallery" />

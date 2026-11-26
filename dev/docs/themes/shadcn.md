@@ -10,18 +10,14 @@
 
 <ThemeTokenLead />
 
-### The slots NSH resolves [#the-slots-nsh-resolves]
+### The appearance roles [#the-appearance-roles]
 
-<ThemeTokens id="shadcn" group="slots" />
-
-### The library's own tokens [#the-librarys-own-tokens]
-
-<ThemeTokens id="shadcn" group="extension" />
+<ThemeTokens id="shadcn" group="roles" />
 
 ### The shared values [#the-shared-values]
 
 <ThemeTokens id="shadcn" group="shared" />
 
-## Finishes [#finishes]
+## Surfaces [#surfaces]
 
-<ThemeFinishes id="shadcn" />
+<ThemeSurfaces id="shadcn" />

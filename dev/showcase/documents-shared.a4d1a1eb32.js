@@ -1,0 +1,1 @@
+import{platform as e}from"./facades/nsh.75d44d8778.js";function t(t,n){return e.desktop?n:t}export{t};

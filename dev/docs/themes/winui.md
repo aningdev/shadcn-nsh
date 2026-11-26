@@ -10,18 +10,14 @@
 
 <ThemeTokenLead />
 
-### The slots NSH resolves [#the-slots-nsh-resolves]
+### The appearance roles [#the-appearance-roles]
 
-<ThemeTokens id="winui" group="slots" />
-
-### The library's own tokens [#the-librarys-own-tokens]
-
-<ThemeTokens id="winui" group="extension" />
+<ThemeTokens id="winui" group="roles" />
 
 ### The shared values [#the-shared-values]
 
 <ThemeTokens id="winui" group="shared" />
 
-## Finishes [#finishes]
+## Surfaces [#surfaces]
 
-<ThemeFinishes id="winui" />
+<ThemeSurfaces id="winui" />

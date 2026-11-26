@@ -5,7 +5,7 @@
 - [Customizing](/dev/docs/customizing.md): The three places to change a copied component: the theme, its look, and its shell.
 - [Getting started](/dev/docs/getting-started.md): Add shadcn-nsh to an existing NSH app.
 - [Icons](/dev/docs/icons.md): lucide's icons, drawn by `Icon` in the size and color a component gives them.
-- [Theme](/dev/docs/theme.md): theme.json and semantics.json are the look; lib/ui/theme.ts reads them for every component.
+- [Theme](/dev/docs/theme.md): One TypeScript spec is the look; theme.json and DESIGN.md are its exports, and lib/ui/theme.ts reads it for every component.
 - [Themes](/dev/docs/themes.md): The palettes the demos can draw in: what a theme is, the radius layers, and a page for each palette.
 - Components
   - [Accordion](/dev/docs/components/accordion.md): List rows that reveal panels with a turning chevron.
@@ -96,6 +96,6 @@
   - [Apple](/dev/docs/themes/apple.md): Apple's system colors and Liquid Glass: capsule controls, 20-point cards, hairline edges, and glass on the overlays that float.
   - [Material](/dev/docs/themes/material.md): Material 3 Expressive: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive shapes.
   - [NSH Gallery](/dev/docs/themes/nsh-gallery.md): The library's own: graphite surfaces, one citrus accent, 8-point controls and 14-point cards.
-  - [shadcn/ui](/dev/docs/themes/shadcn.md): shadcn/ui's neutral palette: near-black and near-white fills, flat finishes, 8-point controls and 14-point cards.
+  - [shadcn/ui](/dev/docs/themes/shadcn.md): shadcn/ui's neutral palette: near-black and near-white fills, flat surfaces, 8-point controls and 14-point cards.
   - [Solid Glass](/dev/docs/themes/solid-glass.md): Panes of thick smoky glass: a rim of light on each top edge, a hairline round it, a shadow underneath, 11-point controls and 20-point cards.
   - [WinUI 3](/dev/docs/themes/winui.md): WinUI 3 (Windows 11): WinUI fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, and timing motion.
