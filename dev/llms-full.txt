@@ -1440,9 +1440,15 @@ import { ButtonGroup, buttonGroupLook } from "@/components/ui/button-group";
 
 ```tsx
 <ButtonGroup>
-  <Button style={buttonGroupLook().item("horizontal", "first")}>Back</Button>
-  <Button style={buttonGroupLook().item("horizontal", "middle")}>Archive</Button>
-  <Button style={buttonGroupLook().item("horizontal", "last")}>Next</Button>
+  <Button variant="outline" style={buttonGroupLook().item("horizontal", "first")}>
+    Back
+  </Button>
+  <Button variant="outline" style={buttonGroupLook().item("horizontal", "middle")}>
+    Archive
+  </Button>
+  <Button variant="outline" style={buttonGroupLook().item("horizontal", "last")}>
+    Next
+  </Button>
 </ButtonGroup>
 ```
 
@@ -1462,15 +1468,16 @@ ButtonGroup
 
 A view styles itself and not its children, so each button wears its own place in the group:
 `item(orientation, position)` squares the sides that touch and keeps one edge per join (the one
-before it), the outer sides keeping the corners and the edge the button came with. `first` at the leading edge, `last` at the
-trailing one, `middle` between two others.
+before it), the outer sides keeping the corners and the edge the button came with. `first` at the
+leading edge, `last` at the trailing one, `middle` between two others. Pair `variant="outline"`
+buttons when joining bordered actions directly.
 
 ```tsx
 <ButtonGroup>
-  <Button variant="secondary" style={buttonGroupLook().item("horizontal", "first")}>
+  <Button variant="outline" style={buttonGroupLook().item("horizontal", "first")}>
     Back
   </Button>
-  <Button variant="secondary" style={buttonGroupLook().item("horizontal", "last")}>
+  <Button variant="outline" style={buttonGroupLook().item("horizontal", "last")}>
     Next
   </Button>
 </ButtonGroup>
@@ -1480,30 +1487,52 @@ The group is `role="group"`, so a reader hears the buttons as one set.
 
 ### A column [#a-column]
 
-`orientation="vertical"` stacks them: the corners at the top and the bottom of the column keep the
-corners, the sides between them are squared, and one hairline is left between two buttons. A button
-below another also drops the raised face's lit top edge, which would read as a white seam.
+`orientation="vertical"` stacks them: the top and bottom corners are clamped to `shape.container`
+so capsule buttons stay tidy in a column, the touching sides are squared, and one hairline is left
+between adjacent items. Shadows are dropped inside the stack so seams stay clean.
 
 ```tsx
 <ButtonGroup orientation="vertical">
-  <Button style={buttonGroupLook().item("vertical", "first")}>Copy the path</Button>
-  <Button style={buttonGroupLook().item("vertical", "middle")}>Open in a new window</Button>
-  <Button style={buttonGroupLook().item("vertical", "last")}>Reveal in the file manager</Button>
+  <Button variant="outline" style={buttonGroupLook().item("vertical", "first")}>
+    Copy the path
+  </Button>
+  <Button variant="outline" style={buttonGroupLook().item("vertical", "middle")}>
+    Open in a new window
+  </Button>
+  <Button variant="outline" style={buttonGroupLook().item("vertical", "last")}>
+    Reveal in the file manager
+  </Button>
 </ButtonGroup>
 ```
 
-### A word and a divider [#a-word-and-a-divider]
+### With a separator [#with-a-separator]
 
-`ButtonGroupText` is a word inside the group on the muted fill — a path, a unit, a count — and
-`ButtonGroupSeparator` is the hairline between it and what follows. The separator turns with the
-group: down a row, across a column. Join the word as a button would be joined; the separator needs
-no join, and is hidden from a reader (it is the group's own hairline).
+`ButtonGroupSeparator` puts a hairline between borderless filled buttons (`secondary` or
+`default`). The separator turns with the group — vertical down a row, horizontal across a column —
+and is hidden from screen readers.
+
+```tsx
+<ButtonGroup>
+  <Button variant="secondary" style={buttonGroupLook().item("horizontal", "first")}>
+    Cut
+  </Button>
+  <ButtonGroupSeparator />
+  <Button variant="secondary" style={buttonGroupLook().item("horizontal", "last")}>
+    Copy
+  </Button>
+</ButtonGroup>
+```
+
+### With a text addon [#with-a-text-addon]
+
+`ButtonGroupText` sits on the muted fill with the same outline edge (`button.outline.edge`) and
+height (`controlHeight.md`) as an outline button, so it joins directly with `item(...)` and shares
+one clean border.
 
 ```tsx
 <ButtonGroup>
   <ButtonGroupText style={buttonGroupLook().item("horizontal", "first")}>Path</ButtonGroupText>
-  <ButtonGroupSeparator />
-  <Button variant="secondary" style={buttonGroupLook().item("horizontal", "last")}>
+  <Button variant="outline" style={buttonGroupLook().item("horizontal", "last")}>
     Copy
   </Button>
 </ButtonGroup>
@@ -1518,7 +1547,7 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all 
 | ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `ButtonGroup`          | `orientation`: `"horizontal" \| "vertical"` (default `"horizontal"`) | Buttons joined into one control, in a row or a column: `buttonGroupLook().root(orientation)`.                |
 | `ButtonGroupText`      | —                                                                    | A word inside the group on the muted fill, joined as a button would be joined: `.textFrame()` and `.text()`. |
-| `ButtonGroupSeparator` | —                                                                    | The separator's own, turned to the group's orientation; hidden from a reader.                                |
+| `ButtonGroupSeparator` | —                                                                    | The separator's own hairline (`.separator()`), turned to the group's orientation; hidden from a reader.      |
 
 | Prop          | Type                         | Default      |
 | ------------- | ---------------------------- | ------------ |
@@ -1526,7 +1555,7 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all 
 
 `buttonGroupLook()` is exported for a group the app lays out itself: `root(orientation)` the group,
 `item(orientation, position)` the join each button wears, `textFrame()` and `text()` the word's box
-and its type.
+and its type, and `separator()` the divider's hairline.
 
 # Button (/dev/docs/components/button)
 
@@ -1556,6 +1585,7 @@ The examples draw icons with `Icon` from `lib/ui/icons`; see [Icons](../icons) f
 ```tsx
 <Button variant="default">Save</Button>
 <Button variant="secondary">Cancel</Button>
+<Button variant="outline">Outline</Button>
 <Button variant="ghost">Skip</Button>
 <Button variant="destructive">Delete</Button>
 ```
@@ -1586,7 +1616,7 @@ A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch sc
 
 ### With an icon [#with-an-icon]
 
-`icon` takes a lucide node and draws it before the label, sized and tinted by the variant, the size and the state (a disabled filled button's icon goes muted with its label). The terminal draws no icons, so there it is the label alone.
+`icon` takes a lucide node and draws it before the label, sized and tinted by the variant, the size and the state (a disabled filled button's icon dims with its label). The terminal draws no icons, so there it is the label alone.
 
 ```tsx
 import { Plus } from "lucide";
@@ -1634,7 +1664,7 @@ points and the icon grows with the square. `lg` is upstream's 32 pt tool square,
 toolbar; `xs` is a tab's close × beside a document's name. `selected` (a base prop) shows it as
 chosen.
 
-`icon` draws a lucide node in the look's size and tint: the accent while selected, the danger tone as
+`icon` draws a lucide node in the look's size and tint: the chosen surface's ink while selected, the danger tone as
 `destructive`; in the terminal, which draws no icons, the `accessibilityLabel` is its text. For an
 icon of your own, pass it as `children` and spread `iconButtonGlyph` on it. `iconButtonSizes` is the
 table, for geometry that has to match a square. A ghost icon button keeps the scale's metrics (28
@@ -1699,7 +1729,7 @@ it: the padding is the look's own.
 | -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | `Button`             | `variant`, `size`, `icon`, `busy`, `accessibilityLabel`, `children`         | A press that acts; a string child is the label and its name for screen readers. |
 | `IconButton`         | `variant`, `size`, `icon`, `accessibilityLabel`, `children`                 | A square icon-only button; it will not compile without an `accessibilityLabel`. |
-| `RoundButton`        | `variant`, `size`, `side`, `accessibilityLabel`, `children`                 | A round icon-only button; `side` is an exact diameter where the scale is off.   |
+| `RoundButton`        | `variant`, `size`, `side`, `icon`, `accessibilityLabel`, `children`         | A round icon-only button; `side` is an exact diameter where the scale is off.   |
 | `SplitButton`        | `variant`, `size`                                                           | A main action and a menu half in one silhouette.                                |
 | `SplitButtonSegment` | every [`nsh/base` Button](https://nsh.dev/elements/button) prop; `children` | One half; a string child is the label and its name for screen readers.          |
 | `SplitButtonDivider` | `style`                                                                     | The hairline between the main action and the menu half.                         |
@@ -1708,24 +1738,24 @@ it: the padding is the look's own.
 
 Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes through. `style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle` and `disabledStyle` go over the look's.
 
-| Prop                 | Type                                                   | Default     |
-| -------------------- | ------------------------------------------------------ | ----------- |
-| `variant`            | `"default" \| "secondary" \| "ghost" \| "destructive"` | `"default"` |
-| `size`               | `"sm" \| "default" \| "lg"`                            | `"default"` |
-| `icon`               | `IconNode` (lucide)                                    |             |
-| `busy`               | `boolean`                                              | `false`     |
-| `accessibilityLabel` | `string`                                               |             |
-| `children`           | `string \| JSX.Element`                                |             |
+| Prop                 | Type                                                                | Default     |
+| -------------------- | ------------------------------------------------------------------- | ----------- |
+| `variant`            | `"default" \| "secondary" \| "outline" \| "ghost" \| "destructive"` | `"default"` |
+| `size`               | `"sm" \| "default" \| "lg"`                                         | `"default"` |
+| `icon`               | `IconNode` (lucide)                                                 |             |
+| `busy`               | `boolean`                                                           | `false`     |
+| `accessibilityLabel` | `string`                                                            |             |
+| `children`           | `string \| JSX.Element`                                             |             |
 
 ### IconButton [#iconbutton]
 
-| Prop                 | Type                                       | Default     |
-| -------------------- | ------------------------------------------ | ----------- |
-| `variant`            | `"ghost" \| "secondary" \| "destructive"`  | `"ghost"`   |
-| `size`               | `"xs" \| "sm" \| "default" \| "lg"`        | `"default"` |
-| `icon`               | `IconNode` (lucide)                        |             |
-| `accessibilityLabel` | `string` (required: an icon names nothing) |
-| `children`           | `JSX.Element`                              |             |
+| Prop                 | Type                                                   | Default     |
+| -------------------- | ------------------------------------------------------ | ----------- |
+| `variant`            | `"ghost" \| "secondary" \| "outline" \| "destructive"` | `"ghost"`   |
+| `size`               | `"xs" \| "sm" \| "default" \| "lg"`                    | `"default"` |
+| `icon`               | `IconNode` (lucide)                                    |             |
+| `accessibilityLabel` | `string` (required: an icon names nothing)             |
+| `children`           | `JSX.Element`                                          |             |
 
 `selected` (a base prop) shows it as chosen. `iconButtonSizes` is the table: `side`, the square's
 side in points, and `glyph`, the icon's size.
@@ -1737,15 +1767,16 @@ side in points, and `glyph`, the icon's size.
 | `variant`            | `"default" \| "secondary"`                 | `"default"` |
 | `size`               | `"sm" \| "default" \| "lg"`                | `"default"` |
 | `side`               | `number`                                   |             |
+| `icon`               | `IconNode` (lucide)                        |             |
 | `accessibilityLabel` | `string` (required: an icon names nothing) |
 | `children`           | `JSX.Element`                              |             |
 
 ### SplitButton [#splitbutton]
 
-| Prop      | Type                                                   | Default     |
-| --------- | ------------------------------------------------------ | ----------- |
-| `variant` | `"default" \| "secondary" \| "ghost" \| "destructive"` | `"default"` |
-| `size`    | `"sm" \| "default" \| "lg"`                            | `"default"` |
+| Prop      | Type                                                                | Default     |
+| --------- | ------------------------------------------------------------------- | ----------- |
+| `variant` | `"default" \| "secondary" \| "outline" \| "ghost" \| "destructive"` | `"default"` |
+| `size`    | `"sm" \| "default" \| "lg"`                                         | `"default"` |
 
 `SplitButtonSegment` takes every prop of [`nsh/base` Button](https://nsh.dev/elements/button); a string child is the label, and its name for screen readers.
 
@@ -9906,7 +9937,7 @@ import { Switch } from "@/components/ui/switch";
 
 ```tsx
 <Switch checked={on()} onChange={({ checked }) => on.set(checked)}>
-  <Text>Wi-Fi</Text>
+  Wi-Fi
 </Switch>
 ```
 
@@ -9914,8 +9945,7 @@ import { Switch } from "@/components/ui/switch";
 
 ### Size [#size]
 
-`size` is the knob: `default` takes the theme's `icon.md`, `sm` its `icon.sm`, and the track is
-that knob plus 2 points of room on every side.
+`size` switches between the theme's standard (`default`) and compact (`sm`) switch geometry in `switch.*` and `switch.small.*` (with pointer vs touch scales applied automatically via the active input `tier`; WinUI 3 uses `44 × 22` / `sm 36 × 18` on touch).
 
 ```tsx
 <Switch size="sm" checked={on()} onChange={({ checked }) => on.set(checked)} />
@@ -10027,30 +10057,27 @@ Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes throug
 
 ### Where the numbers come from [#where-the-numbers-come-from]
 
-A switch's knob is a circle on every theme: WinUI's `ring` handle still gives its switch a round
-knob, and the family whose numbers it uses is the theme's own — the library's disc (above) or
-WinUI's stretching knob, with Material's growing knob wherever the theme tints its track (`tint`).
-The look reads `control()` where it draws, so switching the theme redraws the track and the knob on
-the next frame.
+The track, border (`switch.edge.off`, `switch.edge.on`, `switch.edge.color`), knob dimensions (`switch.track`, `switch.knob.*`), and derived press feedback all read `controls().switch` (`packages/ui/lib/look.ts`) so switching themes updates geometry and motion on the next frame:
+
+- **Apple** draws an oval knob on a borderless pill track (`54 × 24` with `31 × 20` knob on pointer; `63 × 28` with `37 × 24` on touch; `sm`: `40 × 18` with `23 × 14` on pointer).
+- **shadcn** draws a borderless pill track (`32 × 18` on pointer, `sm`: `24 × 14`; `44 × 24` / `36 × 20` on touch) with `--input` off track.
+- **Material 3** draws a `40 × 24` (`52 × 32` touch; `sm`: `32 × 20` / `40 × 24`) track with an `outline` border when off and an expanding circle knob (`16 → 20 / 24` on, `22 / 28` pressed; `sm`: `12pt` rest).
+- **WinUI 3** draws a `40 × 20` (`44 × 22` touch; `sm`: `32 × 16` / `36 × 18` touch) track with a strong off border (`ControlStrongStrokeColorDefault`) and a `12pt` (`14pt` touch; `sm`: `10pt` / `12pt`) circle knob that enlarges on hover and stretches while pressed.
+
+A standalone switch adds `focusRing()` shaped to the capsule track and handles disabled appearance directly (dimming via `dimmed.disabled` when `controls.disabled.face` is `keep`, or switching to `disabled.*` surface/ink/edge on Material 3 and WinUI 3).
 
 ### Sizes [#sizes]
 
-| Size      | Track                                      | Knob      |
+| Size      | Track (`nsh-gallery` / `solid-glass`)      | Knob      |
 | --------- | ------------------------------------------ | --------- |
 | `default` | `icon.md` + 4 high, 2 × `icon.md` + 4 long | `icon.md` |
 | `sm`      | `icon.sm` + 4 high, 2 × `icon.sm` + 4 long | `icon.sm` |
 
-In the library's own themes that is 36 × 20 with a 16-point knob under a pointer and 44 × 24 with
-20 on a touch screen (`sm`: 28 × 16 with 12, 36 × 20 with 16): 2 points of track above, below and
-at each end, so the knob travels its own width — as far from the end on as off. A theme whose
-form brings its own switch draws that recipe at either size and on either tier: Material's track
-is 52 × 32 with a 16-point knob that grows to 24 when on and 28 under a press, WinUI's is 40 × 20
-with a 12-point knob, 14 under a hover and 17 × 14 under a press.
+In `nsh-gallery` and `solid-glass`, that is 36 × 20 with a 16-point knob under a pointer and 44 × 24 with 20 on a touch screen (`sm`: 28 × 16 with 12, 36 × 20 with 16): 2 points of track above, below and at each end, so the knob travels its own width — as far from the end on as off.
 
 `SwitchSize` is `"sm" | "default"`.
 
-The knob keeps its size on and off: off it is `finish.knob`, and on it takes the accent's own ink
-(`finish.accent.foreground`), as the switch's preset (`packages/ui/switch.tsx`, `knobLook`).
+Off, the knob wears `finish.knob`; on, it reads `finish.knob.checkedBackground` / `checkedBorderColor` / `checkedGradient` (`packages/ui/switch.tsx`, `knobLook`).
 
 # Table (/dev/docs/components/table)
 
@@ -10947,17 +10974,20 @@ const commit = (next, what) => {
 
 <Toolbar accessibilityLabel="Formatting" style={toolbarTrack()}>
   <ToolbarGroup accessibilityLabel="History">
-    <Button variant="ghost" accessibilityLabel="Undo" disabled={past().length === 0} onPress={undo}>
-      <Icon icon={Undo2} />
-    </Button>
     <Button
       variant="ghost"
+      icon={Undo2}
+      accessibilityLabel="Undo"
+      disabled={past().length === 0}
+      onPress={undo}
+    />
+    <Button
+      variant="ghost"
+      icon={Redo2}
       accessibilityLabel="Redo"
       disabled={future().length === 0}
       onPress={redo}
-    >
-      <Icon icon={Redo2} />
-    </Button>
+    />
   </ToolbarGroup>
   <ToolbarSeparator style={toolbarRule()} />
   <Menu>
@@ -10969,7 +10999,7 @@ const commit = (next, what) => {
         {...toggleLook({ on: open, text: true })}
       >
         <Text style={toggleLabel(open)}>{doc().block}</Text>
-        <Text>▾</Text>
+        <Text style={toggleLabel(open)}>▾</Text>
       </View>
     </MenuTrigger>
     <MenuContent>
@@ -11034,12 +11064,11 @@ import { Toolbar, ToolbarGroup, ToolbarButton, ToolbarOverflow } from "@/compone
     >
       <Button
         variant="ghost"
+        icon={Undo2}
         accessibilityLabel="Undo"
         disabled={past().length === 0}
         onPress={undo}
-      >
-        <Icon icon={Undo2} />
-      </Button>
+      />
     </ToolbarButton>
     <ToolbarButton
       priority={3}
@@ -11051,12 +11080,11 @@ import { Toolbar, ToolbarGroup, ToolbarButton, ToolbarOverflow } from "@/compone
     >
       <Button
         variant="ghost"
+        icon={Redo2}
         accessibilityLabel="Redo"
         disabled={future().length === 0}
         onPress={redo}
-      >
-        <Icon icon={Redo2} />
-      </Button>
+      />
     </ToolbarButton>
   </ToolbarGroup>
   <ToolbarGroup accessibilityLabel="Marks" fold="none">
@@ -11827,17 +11855,17 @@ npx shadcn-nsh@latest add theme
 
 `theme.json` is a shadcn theme: `cssVars.theme` holds the radii and the accent's raw values, `cssVars.light` and `cssVars.dark` hold the same semantic keys for the two appearances. The core keys are shadcn's (`background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1` … `chart-5`, `sidebar*`). Upstream adds the roles the gallery needs:
 
-| Role                                                                               | Use                                                                                                         |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `inset` / `raised`                                                                 | A surface inside a card, and a control on the card                                                          |
-| `field` / `input`                                                                  | An input's well and its edge                                                                                |
-| `line` / `border`                                                                  | Hairlines inside insets, and the edge of a card or control                                                  |
-| `hover` / `faint`                                                                  | The pointer's wash, and the quietest text                                                                   |
-| `brand`                                                                            | The accent as ink                                                                                           |
-| `track` / `knob`                                                                   | A switch's track when off, and a switch's knob; sliders and progress bars read their preset's track role    |
-| `info` / `warn` / `up`                                                             | The tones beside the accent; a data loss reads `destructive`                                                |
-| `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` | The same tones as fills behind text                                                                         |
-| `inverse` / `inverse-foreground` / `inverse-brand`                                 | A toast's and a tooltip's reversed surface, its text and action; quieter ink is `finish.inverse.foreground` |
+| Role                                                                  | Use                                                                                                         |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `inset` / `raised`                                                    | A surface inside a card, and a control on the card                                                          |
+| `field` / `input`                                                     | An input's well and its edge                                                                                |
+| `line` / `border`                                                     | Hairlines inside insets, and the edge of a card or control                                                  |
+| `hover` / `faint`                                                     | The pointer's wash, and the quietest text                                                                   |
+| `brand`                                                               | The accent as ink                                                                                           |
+| `track` / `knob`                                                      | A switch's track when off, and a switch's knob; sliders and progress bars read their preset's track role    |
+| `info` / `warn` / `up`                                                | The tones beside the accent; a data loss reads `destructive`                                                |
+| `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint` | The same tones as fills behind text (negative trend reuses `destructive-tint`)                              |
+| `inverse` / `inverse-foreground` / `inverse-brand`                    | A toast's and a tooltip's reversed surface, its text and action; quieter ink is `finish.inverse.foreground` |
 
 `colors` maps the roles a component names onto those keys:
 
@@ -11918,15 +11946,15 @@ Spread one where a control needs that depth:
 
 ## Radii [#radii]
 
-`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-control` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-container` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-modal` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-control`. In `semantics.json`, `dimension.shape.*` references them with `"{radius-…}"`, and `shape.corners.button` (`"full" | "radius"`) says whether buttons are capsules. `shape` resolves each role reactively via `token()`:
+`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-control` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-container` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-modal` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-control`. `shape` resolves each role reactively via `token()`, and `buttonCorner(size)` reads `controls().button.corner` (`"control"` or `"full"` capsule):
 
 ```tsx
-import { shape } from "@shadcn-nsh/theme";
+import { buttonCorner, shape } from "@shadcn-nsh/theme";
 
 shape.control; // 8, from radius-control
 shape.container; // 12, from radius-container
 shape.modal; // 14, from radius-modal
-shape.button; // 999 when shape.corners.button is "full", else shape.control
+buttonCorner("default"); // 999 when button.corner.md is "full", else shape.control
 ```
 
 | Theme               | `control` | `container` | `modal` | Buttons   |
@@ -12221,8 +12249,7 @@ and the [theme roles spec](https://github.com/aningdev/shadcn-nsh/blob/main/docs
 
 `theme.json` states one corner radius per layer in `cssVars.theme` — `radius-control` (in-page
 elements), `radius-container` (cards, menus, popovers, toasts) and `radius-modal` (dialogs, sheets) —
-and `semantics.json`'s `shape.*` references them with `{radius-…}`. `shape.corners.button` makes
-buttons capsules (`apple`, `material`) or gives them `control` (the rest). A surface nested in
+and `controls().button.corner.*` makes buttons capsules (`material`, touch `apple`) or points / `control` (the rest). A surface nested in
 another takes the concentric corner, `rounded(outer, inset)`. Every corner that reads a theme radius
 uses `shape.curve` (`"continuous"` or `"circular"`), which `rounded()` applies in one place.
 

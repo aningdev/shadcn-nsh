@@ -26,6 +26,7 @@ The examples draw icons with `Icon` from `lib/ui/icons`; see [Icons](../icons) f
 ```tsx
 <Button variant="default">Save</Button>
 <Button variant="secondary">Cancel</Button>
+<Button variant="outline">Outline</Button>
 <Button variant="ghost">Skip</Button>
 <Button variant="destructive">Delete</Button>
 ```
@@ -56,7 +57,7 @@ A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch sc
 
 ### With an icon [#with-an-icon]
 
-`icon` takes a lucide node and draws it before the label, sized and tinted by the variant, the size and the state (a disabled filled button's icon goes muted with its label). The terminal draws no icons, so there it is the label alone.
+`icon` takes a lucide node and draws it before the label, sized and tinted by the variant, the size and the state (a disabled filled button's icon dims with its label). The terminal draws no icons, so there it is the label alone.
 
 ```tsx
 import { Plus } from "lucide";
@@ -104,7 +105,7 @@ points and the icon grows with the square. `lg` is upstream's 32 pt tool square,
 toolbar; `xs` is a tab's close × beside a document's name. `selected` (a base prop) shows it as
 chosen.
 
-`icon` draws a lucide node in the look's size and tint: the accent while selected, the danger tone as
+`icon` draws a lucide node in the look's size and tint: the chosen surface's ink while selected, the danger tone as
 `destructive`; in the terminal, which draws no icons, the `accessibilityLabel` is its text. For an
 icon of your own, pass it as `children` and spread `iconButtonGlyph` on it. `iconButtonSizes` is the
 table, for geometry that has to match a square. A ghost icon button keeps the scale's metrics (28
@@ -169,7 +170,7 @@ it: the padding is the look's own.
 | -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | `Button`             | `variant`, `size`, `icon`, `busy`, `accessibilityLabel`, `children`         | A press that acts; a string child is the label and its name for screen readers. |
 | `IconButton`         | `variant`, `size`, `icon`, `accessibilityLabel`, `children`                 | A square icon-only button; it will not compile without an `accessibilityLabel`. |
-| `RoundButton`        | `variant`, `size`, `side`, `accessibilityLabel`, `children`                 | A round icon-only button; `side` is an exact diameter where the scale is off.   |
+| `RoundButton`        | `variant`, `size`, `side`, `icon`, `accessibilityLabel`, `children`         | A round icon-only button; `side` is an exact diameter where the scale is off.   |
 | `SplitButton`        | `variant`, `size`                                                           | A main action and a menu half in one silhouette.                                |
 | `SplitButtonSegment` | every [`nsh/base` Button](https://nsh.dev/elements/button) prop; `children` | One half; a string child is the label and its name for screen readers.          |
 | `SplitButtonDivider` | `style`                                                                     | The hairline between the main action and the menu half.                         |
@@ -178,24 +179,24 @@ it: the padding is the look's own.
 
 Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes through. `style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle` and `disabledStyle` go over the look's.
 
-| Prop                 | Type                                                   | Default     |
-| -------------------- | ------------------------------------------------------ | ----------- |
-| `variant`            | `"default" \| "secondary" \| "ghost" \| "destructive"` | `"default"` |
-| `size`               | `"sm" \| "default" \| "lg"`                            | `"default"` |
-| `icon`               | `IconNode` (lucide)                                    |             |
-| `busy`               | `boolean`                                              | `false`     |
-| `accessibilityLabel` | `string`                                               |             |
-| `children`           | `string \| JSX.Element`                                |             |
+| Prop                 | Type                                                                | Default     |
+| -------------------- | ------------------------------------------------------------------- | ----------- |
+| `variant`            | `"default" \| "secondary" \| "outline" \| "ghost" \| "destructive"` | `"default"` |
+| `size`               | `"sm" \| "default" \| "lg"`                                         | `"default"` |
+| `icon`               | `IconNode` (lucide)                                                 |             |
+| `busy`               | `boolean`                                                           | `false`     |
+| `accessibilityLabel` | `string`                                                            |             |
+| `children`           | `string \| JSX.Element`                                             |             |
 
 ### IconButton [#iconbutton]
 
-| Prop                 | Type                                       | Default     |
-| -------------------- | ------------------------------------------ | ----------- |
-| `variant`            | `"ghost" \| "secondary" \| "destructive"`  | `"ghost"`   |
-| `size`               | `"xs" \| "sm" \| "default" \| "lg"`        | `"default"` |
-| `icon`               | `IconNode` (lucide)                        |             |
-| `accessibilityLabel` | `string` (required: an icon names nothing) |
-| `children`           | `JSX.Element`                              |             |
+| Prop                 | Type                                                   | Default     |
+| -------------------- | ------------------------------------------------------ | ----------- |
+| `variant`            | `"ghost" \| "secondary" \| "outline" \| "destructive"` | `"ghost"`   |
+| `size`               | `"xs" \| "sm" \| "default" \| "lg"`                    | `"default"` |
+| `icon`               | `IconNode` (lucide)                                    |             |
+| `accessibilityLabel` | `string` (required: an icon names nothing)             |
+| `children`           | `JSX.Element`                                          |             |
 
 `selected` (a base prop) shows it as chosen. `iconButtonSizes` is the table: `side`, the square's
 side in points, and `glyph`, the icon's size.
@@ -207,14 +208,15 @@ side in points, and `glyph`, the icon's size.
 | `variant`            | `"default" \| "secondary"`                 | `"default"` |
 | `size`               | `"sm" \| "default" \| "lg"`                | `"default"` |
 | `side`               | `number`                                   |             |
+| `icon`               | `IconNode` (lucide)                        |             |
 | `accessibilityLabel` | `string` (required: an icon names nothing) |
 | `children`           | `JSX.Element`                              |             |
 
 ### SplitButton [#splitbutton]
 
-| Prop      | Type                                                   | Default     |
-| --------- | ------------------------------------------------------ | ----------- |
-| `variant` | `"default" \| "secondary" \| "ghost" \| "destructive"` | `"default"` |
-| `size`    | `"sm" \| "default" \| "lg"`                            | `"default"` |
+| Prop      | Type                                                                | Default     |
+| --------- | ------------------------------------------------------------------- | ----------- |
+| `variant` | `"default" \| "secondary" \| "outline" \| "ghost" \| "destructive"` | `"default"` |
+| `size`    | `"sm" \| "default" \| "lg"`                                         | `"default"` |
 
 `SplitButtonSegment` takes every prop of [`nsh/base` Button](https://nsh.dev/elements/button); a string child is the label, and its name for screen readers.

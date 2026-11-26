@@ -1,1 +1,0 @@
-import{d as e,y as t}from"./live-value.7b6fcd1fb7.js";import{p as n,s as r}from"./look.bb3a2c82ad.js";function i(e){return e.groove===null?`transparent`:n(e.groove.fill)}function a(n){let{edge:i,groove:a}=n,o=a?.shade??null;if(i===null&&o===null)return;let s=i===null?void 0:r(i.fill),c=i?.width,l=o===null?void 0:e[o].boxShadow;return t(s,l,c)}export{a as n,i as t};
