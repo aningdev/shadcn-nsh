@@ -1,9 +1,25 @@
-// Shared motion: a control shakes when a value is rejected, a figure rolls to its next one, and a
-// theme's motion role becomes the transition a state's transform rides.
+// Shared motion and press feedback: CSS transitions for theme timing roles, reject shakes,
+// rolling counters, press sink transforms, and touch hit-target expansion.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { motion as themeMotion, type Timing } from "@shadcn-nsh/theme";
-import type { StyleProp, TextStyle, ViewStyle } from "nsh";
-import { createMotion, effect, reduceMotion, signal, Text } from "nsh";
+import { feedback, motion as themeMotion, press, terminal, type Timing } from "@shadcn-nsh/theme";
+import type { MotionSpec as NshMotionSpec, StyleProp, TextStyle, ViewStyle } from "nsh";
+import {
+  createMotion,
+  effect,
+  reduceMotion,
+  ScreenTransition,
+  shadersAvailable,
+  signal,
+  Text,
+} from "nsh";
+
+import { type Live, read } from "./utils";
+
+/** Theme-driven dialog enter motion spec (`dialogEnter` timing, scale, Y offset, and optional spring). */
+export function dialogMotion(): NshMotionSpec {
+  return themeMotion.enterSpec("dialogEnter");
+}
 
 /**
  * A theme's motion role as a CSS transition: the two properties a `transitionProperty` needs, for
@@ -24,6 +40,54 @@ export function cssMotion(m: Timing): {
       ? `cubic-bezier(${curve.join(", ")})`
       : "ease-out",
   };
+}
+
+/**
+ * A `style`'s transition for a press's sink: `transform`, and `also` (more
+ * of CSS's property names the control's states change, as
+ * `"background-color, opacity"`) alike, over the theme's `motion.state`.
+ */
+export function pressTransition(also?: string): ViewStyle {
+  return {
+    transitionProperty: also ? `${also}, transform` : "transform",
+    ...cssMotion(themeMotion.state),
+  };
+}
+
+/**
+ * A press that sinks a control to `scale` (default: the theme's `press.scale`,
+ * 97%; none with reduced motion). A theme that draws no press (`press.scale` of
+ * 1, as shadcn's flat surfaces do) sinks nothing, whichever scale a control
+ * asks for. `scale` may be a function (a signal), read where the press is
+ * drawn. Spread `activeStyle` into the control's `activeStyle` (after its
+ * own pressed shade) and `transition` into its `style`
+ * (`pressTransition(also)`).
+ */
+export function pressSink(
+  scale?: Live<number | undefined>,
+  also?: string,
+): { readonly activeStyle: ViewStyle; readonly transition: ViewStyle } {
+  return {
+    get activeStyle(): ViewStyle {
+      if (reduceMotion()) return {};
+      const sink = press.scale;
+      if (sink >= 1) return {};
+      return { transform: [{ scale: read(scale) ?? sink }] };
+    },
+    get transition(): ViewStyle {
+      return pressTransition(also);
+    },
+  };
+}
+
+/**
+ * How far presses count past a control `side` points tall (a button's height,
+ * a toggle's side), so a finger gets the theme's `size.hit` points without the control
+ * looking bigger: none in a terminal or where the theme's hit target is 0 (a pointer's), and none
+ * once `side` is that big already.
+ */
+export function touchSlop(side: number): number | undefined {
+  return feedback.touchSlop(side);
 }
 
 /**
@@ -108,5 +172,49 @@ export function Roll(props: { value: number; style?: StyleProp<TextStyle>; child
     <Text style={[props.style ?? null, { transform: motion.transform, opacity: motion.opacity }]}>
       {props.children}
     </Text>
+  );
+}
+
+/**
+ * Props of `ThemeTransition`. `value` is what `ScreenTransition` watches: a string, a number or a
+ * boolean, because that is the identity a screen transition compares.
+ */
+export interface ThemeTransitionProps {
+  /** Identity of the screen being shown. A change runs the active theme's switch. */
+  readonly value: string | number | boolean;
+  /** Length of the transition in milliseconds. Defaults to the theme's `themeSwitch.duration`. */
+  readonly duration?: number;
+}
+
+/**
+ * The active theme's screen transition when `value` changes. A theme that switches with `"none"`,
+ * and the terminal, draw nothing. Where a GPU shader is available the theme's WGSL runs; otherwise
+ * the platform cross-fades.
+ */
+export function ThemeTransition(props: ThemeTransitionProps) {
+  return (
+    <>
+      {() => {
+        const sw = themeMotion.themeSwitch;
+        if (sw.kind === "none" || terminal) return null;
+        if (sw.shader && shadersAvailable()) {
+          return (
+            <ScreenTransition
+              value={props.value}
+              source={sw.shader}
+              duration={props.duration ?? sw.duration}
+              fallback="fade"
+            />
+          );
+        }
+        return (
+          <ScreenTransition
+            value={props.value}
+            duration={props.duration ?? sw.duration}
+            fallback="fade"
+          />
+        );
+      }}
+    </>
   );
 }

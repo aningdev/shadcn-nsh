@@ -954,7 +954,7 @@ function SystemMenu(props: {
               borderRadius: 12,
               borderWidth: 1,
               borderColor: colors.border,
-              backgroundColor: isOpen(note) ? token("accent") : colors.raised,
+              backgroundColor: isOpen(note) ? token("accent") : colors.surface,
             }}
           >
             <View
@@ -964,7 +964,7 @@ function SystemMenu(props: {
                 borderRadius: 8,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: colors.inset,
+                backgroundColor: colors.muted,
               }}
             >
               <Icon icon={Layers} size={18} tint={colors.mutedForeground} />

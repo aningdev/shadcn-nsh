@@ -4,13 +4,14 @@
 
 import {
   colors,
-  finish,
-  style,
+  control,
+  feedback,
+  metrics,
+  surface,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   font,
-  dimmed,
 } from "@shadcn-nsh/theme";
 import type { InputStyle, ViewStyle } from "nsh";
 import { platform, reduceMotion, signal, split } from "nsh";
@@ -29,10 +30,10 @@ import {
   fieldHasUniformEdge,
   fieldRestEdge,
   fieldRing,
-} from "./lib/indicator";
-import { type Live, read } from "./lib/live-value";
+} from "./lib/field-look";
+import { type Live, read } from "./lib/utils";
 // `fieldLook` is the well's own look in this file; the recipe's is read as `fieldRecipe`.
-import { borderClass, fieldLook as fieldRecipe, fillOf, inked, sameFill } from "./lib/look";
+const fieldRecipe = () => control("field");
 import { createRejectShake } from "./lib/motion";
 
 const pointer = platform.desktop;
@@ -52,7 +53,7 @@ export const fieldSize = terminal
   : {
       /** 32 points with a pointer; the theme's touch target (`dimension.size.hit.touch`) on touch. */
       get height() {
-        return pointer ? 32 : style().dimension.size.hit.touch;
+        return pointer ? 32 : metrics.hit;
       },
       /** The `label` role: 14 with a pointer, 15 on a touch screen. */
       get font() {
@@ -244,10 +245,9 @@ export function edgeClass(o: EdgeOptions): string {
   const hover = o.hoverVariant === "enabled:hover" ? "enabled:hover" : "hover";
   const classes = FOCUS_CLASSES[focus];
   const drawn = fieldDrawn(fieldRecipe());
-  const sideFill = drawn.side ?? drawn.bottom;
-  const split = !sameFill(sideFill, drawn.bottom);
-  const sides = borderClass(sideFill);
-  const bottom = borderClass(drawn.bottom, split ? "border-b" : "border");
+  const sideFill = drawn.sideColor ?? drawn.bottomColor ?? "transparent";
+  const split = drawn.sideColor !== null && drawn.sideColor !== drawn.bottomColor;
+  const sides = sideFill;
   const own = o.rest === "border-input";
   const line = drawn.focusLine;
   const borderless = drawn.width === 0;
@@ -255,7 +255,7 @@ export function edgeClass(o: EdgeOptions): string {
   const lineTone = o.invalid ? "destructive" : "brand";
   const ringTone = o.invalid ? "destructive" : usesRing ? "ring" : "brand";
   const hoverEdge = own && (split || borderless) ? undefined : o.hover;
-  const restClass = borderless && own ? "" : own ? (split ? `${sides} ${bottom}` : sides) : o.rest;
+  const restClass = borderless && own ? "" : own ? sides : o.rest;
   const focusEdge = line ? classes.bottom[lineTone] : classes.border[ringTone];
   const hoverFocusEdge = line
     ? classes.hoverBottom[hover][lineTone]
@@ -297,7 +297,7 @@ function fieldEdge(o: FieldLookOptions | undefined): string {
   const { invalid, ghost, disabled, flat } = fieldFlags(o);
   if (invalid) return edgeClass({ rest: "border-destructive", invalid });
   if (ghost) return edgeClass({ rest: "border-transparent" });
-  if (disabled && fieldDrawn(fieldRecipe()).disabled) {
+  if (disabled && feedback.disabled.replaceFace) {
     return edgeClass({ rest: "border-transparent" });
   }
   return flat
@@ -309,14 +309,14 @@ function fieldEdge(o: FieldLookOptions | undefined): string {
  * The inset shade without `border*Color` overrides so the frame's own rest, hover, focus, and
  * invalid edge colours stay in control.
  */
-/** The inset finish's shade without its border colours, so field edge slots govern the rest border. */
+/** The inset surface's shade without its border colours, so field edge slots govern the rest border. */
 export function insetShade(): ViewStyle {
   const {
     borderColor: _bc,
     borderBottomColor: _bbc,
     ...rest
   } = {
-    ...finish.inset,
+    ...surface("inset").style,
   };
   return rest as ViewStyle;
 }
@@ -332,12 +332,8 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
   const field = fieldDrawn(fieldRecipe());
   // A theme that states the ground a field that cannot be used turns over to draws the whole box in
   // it (edge and all) rather than fading it, as WinUI's disabled brushes do.
-  const off = !ghost && disabled ? field.disabled : null;
-  const face = ghost
-    ? { backgroundColor: "transparent" }
-    : field.ground
-      ? fillOf(field.ground)
-      : { backgroundColor: colors.field };
+  const off = !ghost && disabled && feedback.disabled.replaceFace;
+  const face = ghost ? { backgroundColor: "transparent" } : { backgroundColor: field.ground };
   const restEdge: ViewStyle =
     field.width === 0 || off
       ? {}
@@ -358,7 +354,7 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
   return {
     ...fieldCorners(field),
     ...fieldEdgeWidths(field),
-    ...(off ? fillOf(off) : face),
+    ...(off ? feedback.disabled.style : face),
     ...restEdge,
     ...ringInit,
     ...(focused ? fieldFocus(o) : {}),
@@ -402,7 +398,7 @@ export function fieldLook(o?: FieldLookOptions) {
     },
     get disabledStyle(): ViewStyle {
       // A box drawn over to the disabled brushes dims nothing: its fill and its ink are the theme's.
-      return fieldDrawn(fieldRecipe()).disabled ? {} : { opacity: dimmed.disabled };
+      return feedback.disabled.replaceFace ? {} : { opacity: feedback.disabled.contentOpacity };
     },
   };
 }
@@ -432,7 +428,7 @@ export function fieldText(o?: FieldTextOptions): InputStyle {
   // The well's edge above and below (0, 1, or 2 points depending on the theme's edges).
   const edge = o?.inWell && !terminal ? fieldEdgeThickness(field) : 0;
   // A disabled field drawn over to the theme's disabled box takes that box's ink, not a fade.
-  const ink = o?.disabled && field.disabled ? inked(field.disabled) : null;
+  const ink = o?.disabled && feedback.disabled.replaceFace ? feedback.disabled.ink : null;
   const box = terminal
     ? o?.multiline
       ? {
@@ -532,7 +528,7 @@ export function timeFieldClass(): string {
   return [
     pointer ? "h-8 px-2" : "h-11 px-3",
     fieldCornerClass(field),
-    terminal ? "items-center bg-field" : "items-center bg-field dark:bg-input/30",
+    terminal ? "items-center bg-card" : "items-center bg-card dark:bg-input/30",
     fieldEdgeClass(field),
     edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
   ].join(" ");

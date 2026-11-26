@@ -4,13 +4,14 @@
 
 import {
   colors,
-  finish,
+  control,
+  feedback,
   focusRing,
   rounded,
+  surface,
   terminal,
   shape,
   stroke,
-  dimmed,
 } from "@shadcn-nsh/theme";
 import { X } from "lucide";
 import type { InputStyle, JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
@@ -35,7 +36,6 @@ import {
 
 import { Button, type ButtonVariant } from "./button";
 import { edgeClass, fieldSize, insetShade } from "./input";
-import { Icon } from "./lib/icons";
 import {
   fieldCorners,
   fieldEdgeThickness,
@@ -45,7 +45,8 @@ import {
   fieldHasUniformEdge,
   fieldRestEdge,
   fieldRing,
-} from "./lib/indicator";
+} from "./lib/field-look";
+import { Icon } from "./lib/icons";
 import {
   Chevron,
   clearButtonLook,
@@ -55,8 +56,6 @@ import {
   OptionRow,
   triggerPadding,
 } from "./lib/listbox";
-import { type Live, read } from "./lib/live-value";
-import { fieldLook, fillOf } from "./lib/look";
 import {
   createItemRegistry,
   createOpenState,
@@ -64,8 +63,9 @@ import {
   type ItemRegistry,
   type OpenState,
   type Slot,
-} from "./lib/open-state";
+} from "./lib/state";
 import { narrowWindow } from "./lib/surface";
+import { type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -94,7 +94,7 @@ const fieldMinWidth = 160;
 export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
   return {
     get style(): ViewStyle {
-      const field = fieldLook();
+      const field = control("field");
       return {
         flexDirection: "row",
         alignItems: "center",
@@ -108,7 +108,7 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         paddingEnd: 4,
         ...fieldCorners(field),
         ...fieldEdgeWidths(field),
-        ...(field.ground ? fillOf(field.ground) : {}),
+        ...(field.ground ? { backgroundColor: field.ground } : {}),
         ...insetShade(),
         ...(read(open) && fieldHasUniformEdge(field)
           ? { borderColor: colors.faint }
@@ -128,10 +128,10 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         : "";
     },
     get hoverStyle(): ViewStyle | undefined {
-      return fieldHasUniformEdge(fieldLook()) ? { borderColor: colors.faint } : undefined;
+      return fieldHasUniformEdge(control("field")) ? { borderColor: colors.faint } : undefined;
     },
     get focusWithinStyle(): ViewStyle {
-      const field = fieldLook();
+      const field = control("field");
       const tone = fieldFocusTone(field, false);
       return terminal ? { borderColor: tone } : fieldFocusEdge(field, tone);
     },
@@ -140,7 +140,11 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
     },
     get inputStyle(): InputStyle {
       // A least width for the query, so a row of chips leaves it room at the row's end.
-      return { flex: 1, minWidth: 40, height: fieldSize.height - fieldEdgeThickness(fieldLook()) };
+      return {
+        flex: 1,
+        minWidth: 40,
+        height: fieldSize.height - fieldEdgeThickness(control("field")),
+      };
     },
   };
 }
@@ -162,7 +166,7 @@ export function ComboToggle(props: { open: boolean; id?: string; label?: string 
         // A step inside a control's corners (`radius-control`).
         ...rounded(shape.control, 1),
       }}
-      hoverStyle={{ backgroundColor: colors.track }}
+      hoverStyle={feedback.hoverStyle()}
     >
       <Chevron open={props.open} />
     </View>
@@ -197,8 +201,8 @@ export function chipLook(o?: ChipLookOptions) {
         paddingRight: 3,
         borderRadius: terminal ? 0 : height / 2,
         borderWidth: stroke.control,
-        ...finish.raised,
-        opacity: read(o?.disabled) ? dimmed.disabled : 1,
+        ...surface("raised").style,
+        opacity: read(o?.disabled) ? feedback.disabled.contentOpacity : 1,
       };
     },
     get textStyle(): TextStyle {
@@ -208,7 +212,7 @@ export function chipLook(o?: ChipLookOptions) {
     get removeClass(): string {
       return terminal
         ? ""
-        : "items-center justify-center rounded-full enabled:hover:bg-foreground/8 active:bg-track";
+        : "items-center justify-center rounded-full enabled:hover:bg-foreground/8 active:bg-surface";
     },
     get removeStyle(): ViewStyle | undefined {
       return terminal ? undefined : { width: remove, height: remove };

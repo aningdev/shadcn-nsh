@@ -69,7 +69,7 @@ export function OtpInputDemo() {
     );
   };
   const verifyTone = (): Tone | undefined =>
-    verdict() === "wrong" ? "destructive" : verdict() === "right" ? "up" : undefined;
+    verdict() === "wrong" ? "destructive" : verdict() === "right" ? "success" : undefined;
   const verifyMessage = () =>
     verdict() === "right"
       ? "Verified"
@@ -232,11 +232,13 @@ export function OtpInputDemo() {
             class="flex-row items-center gap-3"
             groupClass="flex-row gap-1.5"
             cells={otpCells}
-            tone={() => (phase() === locked ? "destructive" : phase() === done ? "up" : undefined)}
+            tone={() =>
+              phase() === locked ? "destructive" : phase() === done ? "success" : undefined
+            }
           />
           <Message
             text={signInMessage()}
-            tone={phase() === locked ? "destructive" : phase() === done ? "up" : undefined}
+            tone={phase() === locked ? "destructive" : phase() === done ? "success" : undefined}
           />
           <View
             style={{
@@ -276,7 +278,7 @@ export function OtpInputDemo() {
       <DemoCard title="Pin" subtitle="Chosen, then confirmed">
         <View style={{ alignItems: "center", gap: 12 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Badge tone={pinDone() ? "up" : "neutral"}>
+            <Badge tone={pinDone() ? "success" : "neutral"}>
               {pinDone() ? "Set" : `Step ${step()} of 2`}
             </Badge>
             <View style={{ flexDirection: "row", gap: 4 }}>
@@ -287,7 +289,7 @@ export function OtpInputDemo() {
                       width: 28,
                       height: 4,
                       borderRadius: 2,
-                      backgroundColor: step() >= n() ? colors.brand : colors.track,
+                      backgroundColor: step() >= n() ? colors.brand : colors.muted,
                     }}
                   />
                 )}
@@ -325,7 +327,7 @@ export function OtpInputDemo() {
             class="flex-row items-center gap-3"
             groupClass="flex-row gap-1.5"
             cells={otpCells}
-            tone={() => (mismatch() ? "destructive" : setPin() !== null ? "up" : undefined)}
+            tone={() => (mismatch() ? "destructive" : setPin() !== null ? "success" : undefined)}
           />
           <Message
             text={
@@ -337,7 +339,7 @@ export function OtpInputDemo() {
                     ? "Choose four digits"
                     : "Enter them again to confirm"
             }
-            tone={mismatch() ? "destructive" : setPin() !== null ? "up" : undefined}
+            tone={mismatch() ? "destructive" : setPin() !== null ? "success" : undefined}
           />
           <View
             style={{
@@ -371,7 +373,7 @@ export function OtpInputDemo() {
           </Caption>
           {pinDone() ? (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-              <Icon icon={Check} size={14} tint={toneColor("up")} />
+              <Icon icon={Check} size={14} tint={toneColor("success")} />
               <Text style={{ fontSize: controlSize.detail, color: colors.mutedForeground }}>
                 Set on this device
               </Text>

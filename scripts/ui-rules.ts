@@ -19,6 +19,7 @@ const ui = path.join(repo, "packages/ui");
 
 const walk = (dir: string): string[] =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    if (entry.name.startsWith(".")) return [];
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) return walk(full);
     return /\.(ts|tsx)$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name) ? [full] : [];
@@ -29,11 +30,11 @@ const problems = walk(ui).flatMap((file) =>
 );
 
 const advice: Record<(typeof problems)[number]["rule"], string> = {
-  controls:
-    "read slot parts via `./lib/look` rather than calling `controls()` directly in components",
-  "theme-name": "read what the theme states (a dimension, a finish), not which theme it is",
-  colour: "read a theme role (`colors.*`, `finish.*`), or mark the line `// color: <why>`",
-  state: "use `hoverStyle` / `activeStyle` / `hovered()`, or mark the line `// state: <why>`",
+  "theme-name":
+    "read what the theme states (a dimension, a surface, a control slot), not which theme it is",
+  colour: "read a theme role (`colors.*`, `surface()`), or mark the line `// color: <why>`",
+  state:
+    "use `feedback.hoverStyle` / `feedback.press` / `feedback.hovered()`, or mark the line `// state: <why>`",
   layer:
     "import inside the layer: a relative path in `packages/ui` (never a component from `lib/`), " +
     "`nsh` / `nsh/base`, `@shadcn-nsh/theme` itself, or `lucide`",

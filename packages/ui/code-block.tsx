@@ -1,16 +1,25 @@
 // A code block: a titled block of code or output, a copy button that flips to a check, line numbers
 // and a footer.
 
-import { alpha, colors, font, rounded, shape, stroke, type TypeName } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  font,
+  rounded,
+  shape,
+  stroke,
+  surface,
+  type TypeRole,
+} from "@shadcn-nsh/theme";
 import { Check, Copy } from "lucide";
 import type { JSX, ScrollProps, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { Clipboard, context, Scroll, split, Text, View } from "nsh";
 
 import { IconButton, iconButtonGlyph, type IconButtonProps } from "./button";
-import { AsText } from "./lib/as-text";
-import { useCopied } from "./lib/copied";
 import { IconLabel } from "./lib/icons";
+import { useCopied } from "./lib/state";
 import { density } from "./lib/surface";
+import { AsText } from "./lib/utils";
 
 /** A code block's variants: `default`, an inset well; `destructive`, the danger tone's, for an error log. */
 export type CodeBlockVariant = "default" | "destructive";
@@ -51,7 +60,7 @@ export interface CodeBlockLook {
 const DIGIT = 0.62;
 
 /** The theme's type role for code: `detail`, and `caption` a step smaller for `sm`. */
-const codeRole = (size: CodeBlockSize): TypeName => (size === "sm" ? "caption" : "detail");
+const codeRole = (size: CodeBlockSize): TypeRole => (size === "sm" ? "caption" : "detail");
 
 /** The hairline inside a block: `line`, and the danger tone's thin tint in `destructive`. */
 const rule = (variant: CodeBlockVariant) =>
@@ -72,7 +81,10 @@ export function codeBlockLook(): CodeBlockLook {
       borderWidth: stroke.hairline,
       borderColor: variant === "destructive" ? alpha(colors.destructive, 0.4) : colors.border,
       ...rounded(shape.control),
-      backgroundColor: variant === "destructive" ? alpha(colors.destructive, 0.06) : colors.inset,
+      backgroundColor:
+        variant === "destructive"
+          ? alpha(colors.destructive, 0.06)
+          : surface("inset").style.backgroundColor,
     }),
     header: (variant, size) => ({
       flexDirection: "row",
@@ -121,7 +133,7 @@ export function codeBlockLook(): CodeBlockLook {
         variant === "highlighted"
           ? alpha(colors.foreground, 0.08)
           : variant === "added"
-            ? alpha(colors.up, 0.14)
+            ? alpha(colors.success, 0.14)
             : variant === "removed"
               ? alpha(colors.destructive, 0.14)
               : "transparent",
@@ -145,7 +157,7 @@ export function codeBlockLook(): CodeBlockLook {
       width: Math.ceil(font.size(codeRole(size)) * DIGIT * 2),
       color:
         variant === "added"
-          ? colors.up
+          ? colors.success
           : variant === "removed"
             ? colors.destructive
             : "transparent",

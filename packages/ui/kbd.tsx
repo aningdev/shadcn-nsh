@@ -4,7 +4,7 @@ import { colors, rounded, TERMINAL_ROW, terminal, font, shape, stroke } from "@s
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, token, View } from "nsh";
 
-import { AsText } from "./lib/as-text";
+import { AsText } from "./lib/utils";
 
 /** A key's look: the cap itself, the type on it, and a row of them. Spread each one. */
 export interface KbdLook {

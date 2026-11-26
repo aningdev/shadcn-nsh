@@ -89,7 +89,7 @@ function Links() {
         <Text
           style={{
             fontFamily: "monospace",
-            backgroundColor: colors.raised,
+            backgroundColor: colors.surface,
             borderRadius: 4,
             paddingHorizontal: 4,
           }}
@@ -116,7 +116,7 @@ function Inline() {
         <View
           style={{
             verticalAlign: "middle",
-            backgroundColor: tints.up,
+            backgroundColor: tints.success,
             borderRadius: 9,
             paddingHorizontal: 8,
             height: 18,
@@ -125,8 +125,10 @@ function Inline() {
             gap: 4,
           }}
         >
-          <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.up }} />
-          <Text style={{ color: colors.up, fontSize: 11, fontWeight: "700", letterSpacing: 0.5 }}>
+          <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.success }} />
+          <Text
+            style={{ color: colors.success, fontSize: 11, fontWeight: "700", letterSpacing: 0.5 }}
+          >
             LIVE
           </Text>
         </View>
@@ -135,7 +137,7 @@ function Inline() {
           <Pressable accessibilityLabel="Like" scale={0.9} onPress={() => likes.set(likes() + 1)}>
             <View
               style={{
-                backgroundColor: colors.raised,
+                backgroundColor: colors.surface,
                 borderRadius: 11,
                 paddingHorizontal: 9,
                 height: 22,
@@ -228,7 +230,7 @@ function ShadowPhoto(props: { photo: PhotoName; label: string; color: string; sh
         height: 96,
         ...rounded(shape.control),
         overflow: "hidden",
-        backgroundColor: colors.raised,
+        backgroundColor: colors.surface,
       }}
     >
       <Image

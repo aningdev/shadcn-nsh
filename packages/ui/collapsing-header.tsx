@@ -1,12 +1,12 @@
 // A collapsing header: a page's header, a picture behind its title, that shrinks into a bar as the
 // page scrolls.
 
-import { alpha, colors, finish, font, stroke, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
+import { alpha, colors, font, stroke, surface, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { AnimatedNode, AnimatedValue, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, reduceMotion, split, Text, View } from "nsh";
 
-import { AsText } from "./lib/as-text";
 import { density } from "./lib/surface";
+import { AsText } from "./lib/utils";
 
 /** How much of the collapse the picture travels: half of it, so the header moves slower than the page. */
 const PARALLAX = 0.5;
@@ -85,7 +85,7 @@ function wholeRows(points: number): number {
  * frame. With reduced motion the picture stands still; a terminal draws whole rows and no picture.
  */
 export function collapsingHeaderLook(): CollapsingHeaderLook {
-  const ink = (): string => finish.accent.foreground;
+  const ink = (): string => surface("accent").ink;
   return {
     heights: (expandedHeight: number, collapsedHeight: number): CollapsingHeaderHeights => {
       const open = terminal ? wholeRows(expandedHeight) : expandedHeight;
@@ -97,7 +97,7 @@ export function collapsingHeaderLook(): CollapsingHeaderLook {
       top: -heights.range,
       height: heights.open,
       overflow: "hidden",
-      ...finish.accent,
+      ...surface("accent").style,
       borderBottomWidth: stroke.hairline,
     }),
     backdrop: (scroll: AnimatedValue, heights: CollapsingHeaderHeights): ViewStyle => ({

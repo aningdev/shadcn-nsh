@@ -158,7 +158,7 @@ function Toolbar(props: { log: (line: string) => void }) {
           borderRadius: 10,
           borderWidth: 1,
           borderColor: colors.border,
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
           flexWrap: "wrap",
         }}
       >
@@ -297,7 +297,7 @@ function Rich() {
             </View>
           </TooltipContent>
         </Tooltip>
-        <Badge tone="up">Approved</Badge>
+        <Badge tone="success">Approved</Badge>
       </View>
     </DemoCard>
   );

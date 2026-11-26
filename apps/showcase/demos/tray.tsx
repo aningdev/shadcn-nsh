@@ -1,7 +1,7 @@
 // `Tray` of nsh/desktop: the app's icon in the system tray with a tooltip, a click and a menu. A
 // click opens a panel next to the icon, placed from the frame the click reports (macOS, Windows);
 // where the system reports no frame (Linux), it brings the showcase forward.
-import { alpha, colors, finish } from "@shadcn-nsh/theme";
+import { surface, alpha, colors } from "@shadcn-nsh/theme";
 import { Star } from "lucide";
 import { cleanup, effect, type Bounds, type Point, type Size, signal, Text, View } from "nsh";
 import {
@@ -171,7 +171,7 @@ function TrayPanel(props: {
     <PopIn
       side={props.below ? "bottom" : "top"}
       style={[
-        finish.card,
+        surface("card").style,
         {
           padding: 14,
           gap: 12,
@@ -190,10 +190,10 @@ function TrayPanel(props: {
             height: 32,
             borderRadius: 9,
             borderColor: "transparent",
-            backgroundColor: alpha(colors.warn, 0.16),
+            backgroundColor: alpha(colors.warning, 0.16),
           }}
         >
-          <Icon icon={Star} size={16} tint={colors.warn} fill />
+          <Icon icon={Star} size={16} tint={colors.warning} fill />
         </ItemMedia>
         <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
           <Text
@@ -205,7 +205,10 @@ function TrayPanel(props: {
             Opened from the tray
           </Text>
         </View>
-        <Status label={props.muted ? "Muted" : "Sound on"} tone={props.muted ? "neutral" : "up"} />
+        <Status
+          label={props.muted ? "Muted" : "Sound on"}
+          tone={props.muted ? "neutral" : "success"}
+        />
       </View>
       <View
         style={{

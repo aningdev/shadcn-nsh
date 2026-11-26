@@ -170,7 +170,7 @@ function MailboxRow(props: { mailbox: Mailbox; selected: boolean; onPress: () =>
         gap: 10,
         paddingHorizontal: 10,
         ...rounded(shape.control),
-        backgroundColor: props.selected ? colors.sidebarAccent : "transparent",
+        backgroundColor: props.selected ? colors.accent : "transparent",
       }}
     >
       <Icon

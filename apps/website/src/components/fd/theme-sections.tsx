@@ -3,13 +3,13 @@
 import { sitePath } from "@/lib/base";
 import { REPO_URL } from "@/lib/layout.shared";
 import { choosePalette } from "@/lib/palette";
-import { finishSampleCss, themePages, type ThemePage, type TokenGroup } from "@/lib/themes";
+import { surfaceSampleCss, themePages, type ThemePage, type TokenGroup } from "@/lib/themes";
 
 /**
  * The pieces of one theme's docs page (`content/docs/themes/<id>.mdx`). The headings live in the
  * markdown, so the table of contents lists them; these components only fill a section. The list is
- * `demos/palettes.ts`, the values are each theme's two JSON files, and what a token's layer and a
- * finish's duty are is `docs/specs/theme-roles.md`.
+ * `demos/palettes.ts`, the values are each theme's spec (`packages/theme/themes/<id>/index.ts`,
+ * compiled by `defineTheme()`), and what a surface is for is `SURFACE_DUTIES` in `lib/themes.ts`.
  *
  * The showcase preview is the overview's (`demo: themes` on `/docs/themes`). A demo panel follows
  * the palette stored for every demo, not the page it sits on, so "Show it in the preview" stores
@@ -19,11 +19,11 @@ import type { PaletteId } from "../../../demos/palettes";
 import { InstallTabs } from "./install-tabs";
 
 const themes = themePages();
-const samples = finishSampleCss();
+const samples = surfaceSampleCss();
 
 /** The spec on GitHub: the page's lists are its, so the reader can read the reasons behind them. */
 const SPEC_URL = `${REPO_URL}/blob/main/docs/specs/theme-roles.md`;
-const SEMANTICS_SPEC_URL = `${REPO_URL}/blob/main/docs/specs/design-semantics.md`;
+const ADR_URL = `${REPO_URL}/blob/main/docs/decisions/0020-theme-v5.md`;
 
 function themeOf(id: PaletteId): ThemePage {
   const theme = themes.find((page) => page.palette.id === id);
@@ -79,21 +79,20 @@ export function ThemeIntro({ id }: { id: PaletteId }) {
   const theme = themeOf(id);
   return (
     <>
+      {theme.overview === null ? null : <p>{theme.overview}</p>}
       <p>
-        A theme is three files — <code>theme.json</code> for its base tokens,{" "}
-        <code>semantics.json</code> for its style groups and surface finishes, <code>index.ts</code>{" "}
-        for the theme object. Which tokens there are, and what each finish draws, is{" "}
-        <a href={SPEC_URL}>the theme spec on GitHub</a> (see{" "}
-        <a href={SEMANTICS_SPEC_URL}>the design-semantics standard</a> for the two-file split and{" "}
-        <code>{"{token}"}</code> syntax); this page reads it, so a name or a duty here is the
-        spec&apos;s own.
+        A theme is one TypeScript module — <code>index.ts</code> for its spec, the tokens, metrics,
+        elevation, surfaces, feedback, motion and controls <code>defineTheme()</code> compiles — and
+        two files that same build exports from it: <code>theme.json</code> for NSH&apos;s variables
+        and <code>DESIGN.md</code> for the language in words. Which tokens there are, and what each
+        surface draws, is <a href={SPEC_URL}>the theme spec on GitHub</a> (the reasons are{" "}
+        <a href={ADR_URL}>the Theme v5 decision</a>); this page reads the specs themselves.
       </p>
       <p>
-        A token is a colour, length or font family under a name, a finish is a surface a component
-        draws itself in, and an alias is a token written as another (<code>card</code> is{" "}
-        <code>var(--background)</code> in <code>theme.json</code>, or <code>{"{card}"}</code> in{" "}
-        <code>semantics.json</code>): the table shows an alias as the token it points at. The
-        swatches follow the site&apos;s light and dark switch; the finish samples follow it too,
+        A token is a colour, length or font family under a name, a surface is a layer a component
+        draws itself in, and an alias is a token written as another (<code>secondary</code> is{" "}
+        <code>var(--surface)</code>): the table shows an alias as the token it points at. The
+        swatches follow the site&apos;s light and dark switch; the surface samples follow it too,
         drawn with this theme&apos;s values.
       </p>
       <p>
@@ -133,7 +132,7 @@ export function ThemeInstall({ id }: { id: PaletteId }) {
   );
 }
 
-/** How to read the three token tables: one paragraph under the Tokens heading. */
+/** How to read the two token tables: one paragraph under the Tokens heading. */
 export function ThemeTokenLead() {
   return (
     <p>
@@ -191,22 +190,22 @@ export function ThemeTokens({ id, group }: { id: PaletteId; group: TokenGroup["i
   );
 }
 
-/** The finish table, with a sample drawn from this theme's <code>semantics.json</code>. */
-export function ThemeFinishes({ id }: { id: PaletteId }) {
+/** The surface table, with a sample drawn from this theme's own spec. */
+export function ThemeSurfaces({ id }: { id: PaletteId }) {
   const theme = themeOf(id);
   return (
     <>
       <style>{samples}</style>
       <p>
-        The surfaces this theme draws, in <code>semantics.json</code>&apos;s order: what each one
-        draws and what reads it is the spec&apos;s, the tokens are the ones its values name in this
-        theme, and the sample is drawn from <code>semantics.json</code> itself — the background, the
-        gradient, the shadow and the edge it writes, with its references filled in.
+        The surfaces this theme draws, in the schema&apos;s order: the tokens are the ones its
+        values name, and the sample is drawn from the spec itself — the background, the gradient,
+        the shadow and the edges it writes, with its references filled in and the shadow taken from
+        the theme&apos;s own elevation scale.
       </p>
       <table>
         <thead>
           <tr>
-            <th>Finish</th>
+            <th>Surface</th>
             <th>What it draws</th>
             <th>Read by</th>
             <th>Tokens</th>
@@ -214,20 +213,20 @@ export function ThemeFinishes({ id }: { id: PaletteId }) {
           </tr>
         </thead>
         <tbody>
-          {theme.finishes.map((finish) => (
-            <tr key={finish.role}>
+          {theme.surfaces.map((surface) => (
+            <tr key={surface.role}>
               <td>
-                <code>{finish.role}</code>
+                <code>{surface.role}</code>
               </td>
-              <td>{finish.drawsEn}</td>
+              <td>{surface.draws}</td>
               <td>
-                <Reads text={finish.reads} />
+                <Reads text={surface.reads} />
               </td>
               <td>
-                {finish.tokens.length === 0 ? (
+                {surface.tokens.length === 0 ? (
                   <span className="text-fd-muted-foreground">—</span>
                 ) : (
-                  finish.tokens.map((token, index) => (
+                  surface.tokens.map((token, index) => (
                     <span key={token}>
                       {index === 0 ? null : ", "}
                       <code>{token}</code>
@@ -241,7 +240,7 @@ export function ThemeFinishes({ id }: { id: PaletteId }) {
                   className="inline-flex items-center justify-center rounded-md p-2"
                 >
                   <span
-                    data-sample={`${theme.palette.id}-${finish.role}`}
+                    data-sample={`${theme.palette.id}-${surface.role}`}
                     className="block h-8 w-16 rounded-md"
                   />
                 </span>

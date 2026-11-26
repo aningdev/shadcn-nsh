@@ -19,7 +19,7 @@ export interface Violation {
   /** 1-based column. */
   column: number;
   /** Which rule failed. */
-  rule: "controls" | "theme-name" | "colour" | "state" | "layer" | "jsdoc";
+  rule: "theme-name" | "colour" | "state" | "layer" | "jsdoc";
   /** The line's text, trimmed. */
   text: string;
   /** What an `Allowance` names to excuse this line: an import's specifier, or an export's name. */
@@ -244,12 +244,6 @@ export function violations(
     const report = (rule: Violation["rule"], column: number) =>
       found.push({ file, line, column, rule, text: raw.trim() });
 
-    if (
-      file !== "packages/ui/lib/look.ts" &&
-      (/(?<![\w.])controls\(\s*\)/.test(code) || /\bControls\b/.test(code))
-    ) {
-      report("controls", 1);
-    }
     const name = themeName.exec(code);
     if (name) report("theme-name", name.index + 1);
     const stateHit = marked(lines, index, "// state:")

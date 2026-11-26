@@ -1,16 +1,15 @@
 // An OTP input: the cells (`otpCells`, `otpCellLook`) and the `OtpInput` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
+import { colors, control, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
 
 import { edgeClass, insetShade } from "./input";
-import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
-import { type Live, read } from "./lib/live-value";
-import { fieldLook } from "./lib/look";
+import { fieldCornerClass, fieldDrawn, fieldEdgeClass } from "./lib/field-look";
 import { createRejectShake } from "./lib/motion";
+import { type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -47,25 +46,25 @@ const FILLED_FOCUS_CLASS = {
 export function otpCellLook(o?: OtpCellOptions) {
   const cells = o?.cells ?? otpCells;
   return {
-    // A cell is a field (`fieldLook()`), read here, where the classes are applied: a cell drawn
+    // A cell is a field (its recipe), read here, where the classes are applied: a cell drawn
     // after the theme changed wears that theme's form (material's line, winui's box and line).
     get cellClass(): string {
       if (terminal)
         return "w-10 h-12 items-center justify-center border border-line font-semibold text-foreground focus:border-brand disabled:opacity-50";
-      const field = fieldLook();
+      const field = fieldDrawn(control("field"));
       const filledFocus = field.focusLine
         ? FILLED_FOCUS_CLASS.line
         : field.focusUsesRing
           ? FILLED_FOCUS_CLASS.ring
           : FILLED_FOCUS_CLASS.brand;
-      return `${cells} items-center justify-center ${fieldCornerClass(field)} bg-inset font-semibold text-foreground ${fieldEdgeClass(field)} border-line data-filled:border-input data-filled:bg-card ${filledFocus} disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`;
+      return `${cells} items-center justify-center ${fieldCornerClass(field)} font-semibold text-foreground ${fieldEdgeClass(field)} border-line data-filled:border-input data-filled:bg-card ${filledFocus} disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`;
     },
     get cellStyle(): ViewStyle {
       const tone = read(o?.tone);
       if (terminal) return tone ? { borderColor: toneColor(tone) } : {};
-      // A copy, as the other looks hand a finish out: `finish` reads the theme when the style is
-      // applied, so a cell drawn after an appearance change wears that appearance (a shared object
-      // passed as it is would keep the one of the render that made it).
+      // A copy, as the other looks hand a surface out: the theme is read when the style is applied,
+      // so a cell drawn after an appearance change wears that appearance (a shared object passed as
+      // it is would keep the one of the render that made it).
       const shade = insetShade();
       return tone
         ? { ...shade, backgroundColor: toneTint(tone), borderColor: toneColor(tone) }

@@ -176,7 +176,7 @@ export function ColorPickerDemo() {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: colors.track,
+              backgroundColor: colors.muted,
               opacity: 0.35,
             }}
           />

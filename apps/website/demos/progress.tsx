@@ -27,7 +27,7 @@ import { Switch } from "@/packages/ui/switch";
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split, ui } from "./stage";
 
-const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
+const TONES: Tone[] = ["neutral", "accent", "info", "warning", "success", "destructive"];
 
 const SETUP = ["Account", "Profile", "Team", "Review"];
 
@@ -38,7 +38,7 @@ const stateOf = (i: number, current: number): ProgressStepState =>
 /** A bar with a limit on it: where the limit stands, and what the bar reads beside it. */
 const LIMITS: { label: string; value: number; limit: number; tone?: Tone }[] = [
   { label: "Quota", value: 83, limit: 90 },
-  { label: "Storage", value: 92, limit: 85, tone: "warn" },
+  { label: "Storage", value: 92, limit: 85, tone: "warning" },
   { label: "Performance", value: 60, limit: 100 },
 ];
 

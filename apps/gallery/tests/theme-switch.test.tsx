@@ -1,25 +1,32 @@
+import type { ElevationScale, ShadowExpr, ThemeSpec } from "@shadcn-nsh/theme";
 import { expect, open, test } from "nsh/test";
 
-import plainSemantics from "../../../packages/theme/semantics.json";
-import neutralSemantics from "../../../packages/theme/themes/shadcn/semantics.json";
+import { nshGallery } from "../../../packages/theme/themes/nsh-gallery/index";
+import { shadcn } from "../../../packages/theme/themes/shadcn/index";
 
-type Finish = {
-  background?: string;
-  gradient?: string;
-  shadow: string;
-  "border-color"?: string;
-};
-type Semantics = {
-  state: { "press-scale": number };
-  finishes: {
-    shared: Record<string, Partial<Finish>>;
-    light: Record<string, Partial<Finish>>;
-    dark: Record<string, Partial<Finish>>;
-  };
-};
+const plain = nshGallery.spec;
+const neutral = shadcn.spec;
 
-const plain = plainSemantics as unknown as Semantics;
-const neutral = neutralSemantics as unknown as Semantics;
+/** One layer as the appearance in use resolves it: the surface's own keys over its per-mode ones. */
+const layerOf = (spec: ThemeSpec, role: "raised", appearance: "light" | "dark") => ({
+  ...spec.surfaces[role],
+  ...spec.surfaces[role][appearance],
+});
+
+/** A shadow expression as the page sees it: its elevation steps, resolved for the appearance. */
+const shadowOf = (
+  spec: ThemeSpec,
+  appearance: "light" | "dark",
+  shadow: ShadowExpr | undefined,
+): string => {
+  if (shadow === undefined || shadow === null) return "none";
+  const scale = spec.elevation[appearance];
+  if (typeof shadow === "string") return scale[shadow as keyof ElevationScale] ?? shadow;
+  const parts = shadow
+    .map((part) => scale[part])
+    .filter((part): part is string => typeof part === "string" && part.length > 0);
+  return parts.length > 0 ? parts.join(", ") : "none";
+};
 
 /** What the probe page rendered, by the `key:value` line each reading is. */
 type Look = {
@@ -50,19 +57,16 @@ const look = (texts: string[]): Look => ({
 /** A colour the engine resolved: `#rrggbbaa`, what a `var(--token)` alias reads as. */
 const resolved = /^#[0-9a-f]{6,8}$/i;
 
-/** A raised button's shadow, its corners and how far it sinks, from a theme's finishes and radii. A
- * theme whose `state["press-scale"]` is 1 draws no press: a control asked to sink as ever stands still. Its
- * fill is an alias, so the page reads it out resolved and the shape of it is checked, not a
- * literal. */
-const raisedIn = (semantics: Semantics, appearance: "light" | "dark", radius: string) => {
-  const finish = {
-    ...semantics.finishes.shared.raised,
-    ...semantics.finishes[appearance]?.raised,
-  } as Finish;
+/** A raised button's shadow, its corners and how far it sinks, from a theme's `raised` surface and
+ * radii. A theme whose `feedback.press.scale` is 1 draws no press: a control asked to sink as ever
+ * stands still. Its fill is an alias, so the page reads it out resolved and the shape of it is
+ * checked, not a literal. */
+const raisedIn = (spec: ThemeSpec, appearance: "light" | "dark", radius: string) => {
+  const raised = layerOf(spec, "raised", appearance);
   return {
-    shadow: finish.shadow,
+    shadow: shadowOf(spec, appearance, raised.shadow),
     radius,
-    sink: semantics.state["press-scale"] >= 1 ? "1" : "0.97",
+    sink: spec.feedback.press.scale >= 1 ? "1" : "0.97",
   };
 };
 

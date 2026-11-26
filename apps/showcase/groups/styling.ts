@@ -1,5 +1,5 @@
 // The Styling group: Styles, Tailwind classes and patterns, in this library's theme.
-import { Component, Palette, Wind } from "lucide";
+import { Component, Palette, SwatchBook, Wind } from "lucide";
 
 import { lazy, type DemoEntry } from "./entry";
 
@@ -22,5 +22,11 @@ export const styling: DemoEntry[] = [
     detail: "Press feedback, a sheet, layout animation, input accessory, dialog options",
     icon: Component,
     screen: lazy(() => import("../demos/patterns").then((m) => m.PatternsDemo)),
+  },
+  {
+    name: "Theme Specimen",
+    detail: "L1 paradigm, materials, and the theme-switch shader",
+    icon: SwatchBook,
+    screen: lazy(() => import("../demos/specimen").then((m) => m.SpecimenDemo)),
   },
 ];

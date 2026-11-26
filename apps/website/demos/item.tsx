@@ -122,7 +122,7 @@ function App() {
               <ItemDescription>Designer, shipping the settings screens.</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Badge tone="up">New</Badge>
+              <Badge tone="success">New</Badge>
             </ItemActions>
           </Item>
           <ItemSeparator />

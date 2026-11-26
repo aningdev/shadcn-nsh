@@ -5,18 +5,7 @@ import { runView } from "./view";
 
 const fixture = (): Fixture =>
   makeFixture({
-    items: [
-      "theme",
-      "switch-geometry",
-      "press",
-      "motion",
-      "spinner",
-      "as-text",
-      "icons",
-      "button",
-      "live-value",
-      "look",
-    ],
+    items: ["theme", "motion", "spinner", "utils", "icons", "button"],
   });
 
 let current: Fixture | null = null;
@@ -35,14 +24,13 @@ describe("view", () => {
 
     expect(out.result).toBe(0);
     expect(out.text).toContain("button (registry:ui)");
-    expect(out.text).toContain(
-      "  depends on: as-text, icons, live-value, look, press, spinner, theme",
-    );
+    expect(out.text).toContain("  depends on: icons, motion, spinner, theme, utils");
     expect(out.text).toContain("file components/ui/button.tsx");
-    expect(out.text).toContain("file lib/ui/as-text.tsx");
-    expect(out.text).toContain("file lib/ui/live-value.ts");
-    expect(out.text).toContain("file lib/ui/press.ts");
+    expect(out.text).toContain("file lib/ui/utils.tsx");
+    expect(out.text).toContain("file lib/ui/motion.tsx");
     expect(out.text).toContain("file lib/ui/theme.ts");
+    expect(out.text).toContain("file lib/ui/effects.ts");
+    expect(out.text).toContain("file lib/ui/paradigm.ts");
     // The app's layout decides the import: `@shadcn-nsh/theme` → `lib/ui/theme` two levels up.
     expect(out.text).not.toContain('"@shadcn-nsh/theme"');
     expect(out.text).toContain('from "../../lib/ui/theme"');

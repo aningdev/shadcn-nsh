@@ -13,9 +13,9 @@ import {
 
 import { Action, type ButtonVariant } from "./button";
 import { dialogText, dialogTitle } from "./dialog";
-import { AsText } from "./lib/as-text";
-import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
+import { createOpenState, type OpenState } from "./lib/state";
+import { AsText } from "./lib/utils";
 import { sheetPanel, type SheetSide } from "./sheet";
 
 /**

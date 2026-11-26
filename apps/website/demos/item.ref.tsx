@@ -109,7 +109,7 @@ function App() {
               <Text style={itemLook().description}>Designer, shipping the settings screens.</Text>
             </View>
             <View style={itemLook().actions}>
-              <Badge tone="up">New</Badge>
+              <Badge tone="success">New</Badge>
             </View>
           </View>
           <View style={itemLook().separator} />

@@ -24,11 +24,34 @@ describe("transformContent", () => {
 
   test("rewrites ./lib/* relative to the component", () => {
     const out = transformContent(
-      'import { createOpenState } from "./lib/open-state";',
+      'import { createOpenState } from "./lib/state";',
       path.join(cwd, "components/ui/popover.tsx"),
       config,
       cwd,
     );
-    expect(out).toBe('import { createOpenState } from "../../lib/ui/open-state";');
+    expect(out).toBe('import { createOpenState } from "../../lib/ui/state";');
+  });
+
+  test("rewrites monorepo theme relative imports for themes/<id>.ts and lib/ui/*", () => {
+    const themeFile = path.join(cwd, "themes/shadcn.ts");
+    expect(
+      transformContent(
+        'import { defineTheme } from "../../schema";\nimport { base } from "../nsh-gallery";',
+        themeFile,
+        config,
+        cwd,
+      ),
+    ).toBe(
+      'import { defineTheme } from "../lib/ui/schema";\nimport { base } from "../lib/ui/base";',
+    );
+
+    expect(
+      transformContent(
+        'export { nshGallery as presetTheme } from "./themes/nsh-gallery";',
+        path.join(cwd, "lib/ui/preset.ts"),
+        config,
+        cwd,
+      ),
+    ).toBe('export { nshGallery as presetTheme } from "./base";');
   });
 });

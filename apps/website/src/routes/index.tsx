@@ -90,8 +90,9 @@ const FAQ: { question: string; answer: ReactNode }[] = [
         picks apple on Apple platforms, material on Android, winui on Windows, and default
         elsewhere. Choose one with <code>init --theme</code>, add more with{" "}
         <code>add theme-&lt;name&gt;</code> and switch at run time with <code>selectTheme</code>. A
-        theme is data — <code>theme.json</code> and <code>semantics.json</code> — so yours is an
-        edit away. See <a href={sitePath("/docs/themes")}>Themes</a>.
+        theme is one TypeScript spec — <code>defineTheme()</code> over the theme it extends, with{" "}
+        <code>theme.json</code> as its build export — so yours is an edit away. See{" "}
+        <a href={sitePath("/docs/themes")}>Themes</a>.
       </>
     ),
   },

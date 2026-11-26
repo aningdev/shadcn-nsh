@@ -10,8 +10,8 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn } from "./lib/popup";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
 import { popoverLook } from "./popover";
 
 /** Why a hover card closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */

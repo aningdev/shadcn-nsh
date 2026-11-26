@@ -85,7 +85,7 @@ The columns' widths are the platform's. Panes the user resizes are [`Resizable`]
 
 ### Three columns
 
-Each column is a stack of its own, so pushing a page in the detail leaves the sidebar and the list where they are. `SplitViewSidebar` is the sidebar's fill (`colors.sidebar`) with a hairline of `colors.sidebarBorder` after it. `SplitViewContent` is the page's fill with `colors.line` after it. `SplitViewDetail` has no hairline. iOS draws the columns' own edges, so the hairlines are left out there.
+Each column is a stack of its own, so pushing a page in the detail leaves the sidebar and the list where they are. `SplitViewSidebar` is the sidebar's fill (`colors.background`) with a hairline of `colors.line` after it. `SplitViewContent` is the page's fill with `colors.line` after it. `SplitViewDetail` has no hairline. iOS draws the columns' own edges, so the hairlines are left out there.
 
 ```tsx
 <SplitViewSidebar title="Folders">{/* rows */}</SplitViewSidebar>

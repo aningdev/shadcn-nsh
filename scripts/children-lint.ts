@@ -1,7 +1,7 @@
 /**
  * Children read once: each read of `props.children` builds the children again (new native views),
  * so a control reads them once, in the place where the children go — through `AsText`
- * (`packages/ui/lib/as-text.tsx`), a component whose props are getters, where a string child is
+ * (`packages/ui/lib/utils.tsx`), a component whose props are getters, where a string child is
  * drawn as a `Text`. Every component under `packages/ui` and `packages/ui/lib` is checked; the
  * rule lives in `scripts/children/rules.ts`.
  *

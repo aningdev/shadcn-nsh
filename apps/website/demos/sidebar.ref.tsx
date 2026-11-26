@@ -388,8 +388,8 @@ function App() {
                       borderTopRightRadius: 0,
                       borderBottomLeftRadius: 0,
                       borderBottomRightRadius: 0,
-                      backgroundColor: colors.sidebar,
-                      borderColor: colors.sidebarBorder,
+                      backgroundColor: colors.background,
+                      borderColor: colors.border,
                     },
                   ]}
                 >

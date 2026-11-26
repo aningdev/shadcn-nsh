@@ -1,7 +1,7 @@
 // Dock area: `dockClasses`, `DockTab`, and the `DockArea` that spreads them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, finish, terminal } from "@shadcn-nsh/theme";
+import { surface, terminal } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -20,7 +20,7 @@ import {
   type DockTarget,
 } from "nsh/base";
 
-import { joinClass } from "./lib/class-names";
+import { joinClass } from "./lib/utils";
 import { handleThumb, RESIZE_HANDLE_LABEL } from "./resizable";
 
 /**
@@ -32,14 +32,14 @@ import { handleThumb, RESIZE_HANDLE_LABEL } from "./resizable";
  * theme's `scrim`, every modal's backdrop.
  */
 export const dockClasses = {
-  groupClass: "flex-1 bg-inset",
+  groupClass: "flex-1 bg-muted",
   tabBarClass: "flex-row border-b border-line",
   tabClass: "group ml-1 first:ml-0",
   contentClass: "flex-1",
   handleClass: "basis-px bg-line",
   handleThumbClass: handleThumb,
-  dockClass: "bg-inset",
-  dropIndicatorClass: "rounded-(--radius-container) border-2 border-brand bg-brand-tint",
+  dockClass: "bg-muted",
+  dropIndicatorClass: "rounded-(--radius-container) border-2 border-brand bg-brand/15",
   drawerClass: "border-r border-border bg-card",
   sheetClass: "rounded-t-(--radius-modal) border-t border-border bg-card",
   backdropClass: "bg-scrim",
@@ -86,7 +86,7 @@ export function DockTab(props: {
 export const dockTabCloseClass = terminal
   ? "size-5 items-center justify-center opacity-0 group-hover:opacity-100"
   : platform.desktop
-    ? "absolute right-1 top-2 size-5 items-center justify-center rounded-(--radius-control) bg-inset opacity-0 transition-opacity group-hover:opacity-100 hover:bg-raised"
+    ? "absolute right-1 top-2 size-5 items-center justify-center rounded-(--radius-control) bg-muted opacity-0 transition-opacity group-hover:opacity-100 hover:bg-surface"
     : "-mr-1.5 size-5 items-center justify-center rounded-(--radius-control) active:opacity-70";
 
 /** A dragged tab's preview (what `renderDragPreview` returns): its title on a raised chip. */
@@ -94,7 +94,7 @@ export function DockDragPreview(props: { title: string }) {
   return (
     <View
       class="border-border rounded-(--radius-control) border px-3 py-1.5"
-      style={{ backgroundColor: colors.raised, ...finish.raised }}
+      style={surface("raised").style}
     >
       <Text class="text-foreground text-[13px] font-medium">{props.title}</Text>
     </View>
@@ -197,7 +197,7 @@ export function DockArea(props: DockAreaProps) {
       class={props.class}
       style={props.style}
       handleAccessibilityLabel={props.handleAccessibilityLabel ?? RESIZE_HANDLE_LABEL}
-      // The app's class follows the look's, and a later background utility replaces `bg-inset`.
+      // The app's class follows the look's, and a later background utility replaces `bg-muted`.
       groupClass={joinClass(dockClasses.groupClass, props.groupClass)}
       groupStyle={props.groupStyle}
       tabBarClass={joinClass(dockClasses.tabBarClass, props.tabBarClass)}

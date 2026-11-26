@@ -5,7 +5,7 @@
 import {
   alpha,
   colors,
-  finish,
+  surface,
   focusRing,
   rounded,
   type Tone,
@@ -28,7 +28,7 @@ import { IconButton } from "@/packages/ui/button";
 import { CodeBlock, CodeBlockContent, CodeBlockFooter } from "@/packages/ui/code-block";
 import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import {
   Trace,
   TraceCollapsible,
@@ -128,8 +128,8 @@ export function FileChip(props: { file: FileRef; onRemove?: () => void }) {
       size="sm"
       style={{
         alignSelf: "flex-start",
-        backgroundColor: colors.raised,
-        ...finish.raised,
+        backgroundColor: colors.surface,
+        ...surface("raised").style,
         borderWidth: 1,
         borderColor: colors.border,
       }}
@@ -174,7 +174,7 @@ export function Photo(props: {
         height: props.height,
         ...rounded(shape.control),
         overflow: "hidden",
-        backgroundColor: colors.raised,
+        backgroundColor: colors.surface,
         borderWidth: 1,
         borderColor: colors.border,
       }}
@@ -296,7 +296,7 @@ function ToolBody(props: { tool: Tool }) {
                       width: "100%",
                       height: 6 + (temp() - weather().low) * 3,
                       borderRadius: 3,
-                      backgroundColor: i() === 0 ? colors.warn : colors.raised,
+                      backgroundColor: i() === 0 ? colors.warning : colors.surface,
                     }}
                   />
                   <Text
@@ -327,7 +327,7 @@ function ToolBody(props: { tool: Tool }) {
               flex: 1,
               fontFamily: "monospace",
               fontSize: 14,
-              color: colors.up,
+              color: colors.success,
             }}
           >
             {code().output}
@@ -410,7 +410,7 @@ export function ErrorRow(props: { message: string; onRetry: () => void }) {
           alignItems: "center",
           gap: 6,
           backgroundColor: colors.primary,
-          ...finish.accent,
+          ...surface("accent").style,
         }}
         hoverStyle={{ opacity: 0.86 }}
         activeStyle={pressSink().activeStyle}
@@ -435,8 +435,8 @@ export function Avatar() {
         ...rounded(8),
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: colors.raised,
-        ...finish.raised,
+        backgroundColor: colors.surface,
+        ...surface("raised").style,
         borderWidth: 1,
         borderColor: colors.border,
       }}

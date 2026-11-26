@@ -141,13 +141,13 @@ function App() {
               <Text class="text-muted-foreground" style={{ fontSize: 12, width: 132 }}>
                 on an added line
               </Text>
-              <DiffHunkActions index={0} tone="up" onRevert={() => {}} onKeep={() => {}} />
+              <DiffHunkActions index={0} tone="success" onRevert={() => {}} onKeep={() => {}} />
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
               <Text class="text-muted-foreground" style={{ fontSize: 12, width: 132 }}>
                 on a deleted line
               </Text>
-              <DiffHunkActions index={1} tone="down" onRevert={() => {}} onKeep={() => {}} />
+              <DiffHunkActions index={1} tone="destructive" onRevert={() => {}} onKeep={() => {}} />
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
               <Text class="text-muted-foreground" style={{ fontSize: 12, width: 132 }}>
@@ -156,8 +156,8 @@ function App() {
               <DiffHunkActions index={2} iconOnly onRevert={() => {}} onKeep={() => {}} />
             </View>
             {/* Any of the theme's tones can back the chips (an app tinting its rows by severity):
-                a change is `up` or `down`, and the rest are open to it. */}
-            {(["neutral", "accent", "info", "warn", "destructive"] as const).map((tone) => (
+                a change is `success` or `destructive`, and the rest are open to it. */}
+            {(["neutral", "accent", "info", "warning", "destructive"] as const).map((tone) => (
               <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                 <Text class="text-muted-foreground" style={{ fontSize: 12, width: 132 }}>
                   {`on a ${tone} row`}

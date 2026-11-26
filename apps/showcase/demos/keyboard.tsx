@@ -75,7 +75,7 @@ function Keycap(props: { label: string; name?: string; down?: boolean; wide?: bo
         borderRadius: terminal ? 0 : shape.control,
         borderWidth: terminal ? 0 : 1,
         borderColor: props.down ? colors.brand : colors.border,
-        backgroundColor: props.down ? alpha(colors.brand, 0.16) : colors.raised,
+        backgroundColor: props.down ? alpha(colors.brand, 0.16) : colors.surface,
         transitionProperty: "colors",
         transitionDuration: 120,
       }}
@@ -281,7 +281,7 @@ function HeldArrows() {
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: focused() ? colors.brand : colors.border,
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
           overflow: "hidden",
           cursor: "pointer",
           transitionProperty: "colors",
@@ -517,14 +517,14 @@ function ModifierChords() {
             alignItems: "center",
             gap: 8,
             paddingHorizontal: 10,
-            backgroundColor: colors.raised,
+            backgroundColor: colors.surface,
             borderBottomWidth: 1,
             borderBottomColor: colors.line,
           }}
         >
           <If when={!terminal}>
             <View style={{ flexDirection: "row", gap: 4 }}>
-              <Each of={[colors.destructive, colors.warn, colors.up]}>
+              <Each of={[colors.destructive, colors.warning, colors.success]}>
                 {(tint) => (
                   <View
                     style={{ width: 7, height: 7, borderRadius: 3.5, backgroundColor: tint() }}
@@ -629,7 +629,7 @@ function ModifierChords() {
                 borderRadius: terminal ? 0 : shape.control,
                 borderWidth: terminal ? 0 : 1,
                 borderColor: colors.border,
-                backgroundColor: colors.raised,
+                backgroundColor: colors.surface,
               }}
             >
               <Text
@@ -947,8 +947,10 @@ function TypingStaysInInput() {
           </Text>
         </View>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <Icon icon={Check} size={14} tint={colors.up} />
-          <Text style={{ fontSize: 12.5, fontWeight: "500", color: colors.up, numberOfLines: 1 }}>
+          <Icon icon={Check} size={14} tint={colors.success} />
+          <Text
+            style={{ fontSize: 12.5, fontWeight: "500", color: colors.success, numberOfLines: 1 }}
+          >
             Input owns its text
           </Text>
         </View>

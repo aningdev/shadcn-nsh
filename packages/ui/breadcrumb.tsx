@@ -7,8 +7,8 @@ import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
-import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
+import { AsText } from "./lib/utils";
 
 /** A pointer's compact trail; a touch screen's roomier one, a finger's target in each step. */
 const pointer = platform.desktop;

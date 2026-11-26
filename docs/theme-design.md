@@ -1,405 +1,61 @@
-# 主题设计：做一套主题要决定什么
+# 主题设计：做一套主题要决定什么（Theme v5）
 
-**读者**：要新写一套主题，或要改现有主题的人（包括编码代理）。
-**读完你会知道**：一套主题要想清楚哪些设计问题；每个问题落到本库的哪个定义项、写在哪个文件、由哪项检查守住。
+**读者**：需要新增、继承修改或在应用中定制一套 Theme v5 主题的开发者与编码代理。
 
-## 0 怎么用这篇
+## 0 参考文档
 
-本篇是总览和入口，只讲“要决定什么”和“决定落在哪”，细节都链到下面这些文档，这里不重复：
+| 文档                                                       | 内容                                                                             |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [`decisions/0020-theme-v5.md`](decisions/0020-theme-v5.md) | Theme v5 总体架构决策（TS 稀疏继承、25 键 `theme.json`、4 层正交模型、零 Proxy） |
+| [`specs/theme-roles.md`](specs/theme-roles.md)             | 颜色角色、`surfaces`、`feedback`、`motion` 契约说明                              |
+| [`specs/theme-slots.md`](specs/theme-slots.md)             | 13 个 `controls` 控件组配方说明                                                  |
+| [`specs/semantics-values.md`](specs/semantics-values.md)   | 五套基准平台主题全字段解析对比表                                                 |
+| [`specs/native-themes.md`](specs/native-themes.md)         | Apple、Material、WinUI 原生规范出处与差异登记                                    |
 
-| 文档                                                       | 管什么                                                                                            |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| [`specs/theme-roles.md`](specs/theme-roles.md)             | 每个颜色角色、每个 finish 的含义与读者；刻度例外的出处表（`theme-lint: scales`）                  |
-| [`specs/theme-contract-v2.md`](specs/theme-contract-v2.md) | 当前契约的由来：原则、删除与去向、实施顺序、冻结（第 20 节）                                      |
-| [`specs/design-semantics.md`](specs/design-semantics.md)   | 一个值进 `theme.json` 还是 `semantics.json` 的判定规则                                            |
-| [`specs/design-tokens.md`](specs/design-tokens.md)         | DTCG 2025.10 源码的文件布局、组结构与编译                                                         |
-| [`specs/native-themes.md`](specs/native-themes.md)         | Apple、Material、WinUI 三套原生主题的出处与差异                                                   |
-| [`specs/semantics-values.md`](specs/semantics-values.md)   | 五套主题解析后的每一个值（颜色角色、风格组、finish、elevation）；生成表，查“这个字段各主题是什么” |
-| [`GLOSSARY.md`](GLOSSARY.md)                               | 词汇                                                                                              |
+## 1 怎么新增或定制一套主题
 
-- **新写一套主题**：按第 2 节从上往下决定，用第 5 节的清单逐项核对。
-- **改现有主题**：先在第 5 节找到要改的那一行，看它的定义项和检查，再到第 4 节看怎么验收。
+### 1.1 在本库内新增内置主题
 
-## 1 设计体系总览
+1. 在 `packages/theme/themes/<id>/index.ts` 使用 `defineTheme({ id, label, extends: base, ... })` 声明稀疏覆写：
+   - **仅当需要整体替换调色板时**：提供 `tokens.light` 与 `tokens.dark`（21 个核心颜色键；省略 `brand` 将自动使用 `var(--primary)`）；切勿依赖继承 `base` 的 `brand` / `tints` / `chart`。
+   - **字体（可选）**：仅当设计语言明确要求特定字体族时配置 `tokens.font.{sans,mono}`，默认省略以使用系统原生字体栈。
+   - **结构与交互**：按需覆写 `metrics`、`elevation`、`surfaces`（11 角色）、`feedback`、`motion`、`controls`（13 组）。
+   - **豁免说明**：若依据平台官方规范保留了低于 WCAG 2.2 AA (4.5:1) 的配色对，必须在 `meta.contrastWaivers` 中登记理由与规范出处。
+2. 在 `packages/theme/themes/index.ts` 与 `packages/theme/preset.ts` 注册该主题。
+3. 运行 `bun run tokens:build`，自动导出该主题目录下的：
+   - `theme.json`（7 共享键 + 可选字体 + 21 亮暗颜色键）
+   - `light.tokens.json` / `dark.tokens.json`（W3C DTCG 2025.10 互操作导出）
+   - `DESIGN.md`（经 `@google/design.md/linter` 校验的视觉语言规格文档）
+4. 注册进 `registry.json` 并运行 `bun run registry:build` 更新 CLI 分发清单。
 
-```mermaid
-flowchart LR
-  T["主题（值）<br/>颜色 · finish · 刻度 · 动效"] --> P["控件维度（形态）<br/>field · choice · track · handle"]
-  T --> C["组件<br/>packages/ui"]
-  P --> C
-  C --> A["应用<br/>窗口材质 · 文案 · 布局"]
+### 1.2 应用侧定制
+
+通过 `shadcn-nsh init --theme <id>` 初始化后，项目根目录会获得 `theme.json` 与 `DESIGN.md`，`lib/ui/` 下获得精简的主题源码（`schema.ts`、`materials.ts`、`effects.ts`、`paradigm.ts`、`base.ts`、`preset.ts`、`theme.ts`）。应用可直接微调 `theme.json` 的颜色、圆角或可选的 `font-sans`/`font-mono`，或借助 `base.ts` + `defineTheme()` 扩展视觉行为。
+
+### 1.3 L1 `ThemeParadigm`
+
+写一套新主题时先选六个语义轴，再只写下和这套轴不同的 L2 字段：
+
+1. **L1** `ThemeParadigm`（`packages/theme/paradigm.ts`）：`depth`、`shape`、`stroke`、`motion`、`feedback`、`density`。`expandParadigm()` 把它展开成稀疏 L2 patch。
+2. **L2** `defineTheme({ extends, paradigm, ... })`：合并顺序是被继承的主题、展开后的 paradigm、然后这次调用自己的 `tokens` / `metrics` / `elevation` / `surfaces` / `feedback` / `motion` / `controls`。显式 L2 字段胜出。解析后的 `ThemeSpec` 不保留 `paradigm`。
+3. **L3** 表面材质与 WGSL：`material` 用 `"glass"` / `"acrylic"`（或 `MaterialSpec`），`effect` 用 `{ kind: "liquid-glass" | "acrylic-noise" | "specular-rim" | "paper-grain" }`。`<ThemedSurface role="…">` 画出该表面；`<ThemeTransition value={…} />` 没有子节点，放在要切换的画面旁边，按 `motion.presets.themeSwitch` 播放 `dissolve` 或 `radial-wipe`（`fade` / `none` 不走着色器）。
+
+轴的取舍、调色板角色、不变量和一份可复制的 `defineTheme({ paradigm })` 写在 [`.agents/skills/theme-designer/SKILL.md`](../.agents/skills/theme-designer/SKILL.md)。Showcase 的 **Theme Specimen**（`apps/showcase/demos/specimen.tsx`）用同一套轴现场切换六套内置主题和 `Editorial Paper`。
+
+## 2 硬性原则
+
+1. **按层与语义命名，不以组件名建颜色键**：例如使用 `surface` / `accent` / `line`，不再存在 `sidebar-*`、`button-*`、`field` 等专属颜色键。
+2. **禁止 `theme.id === "..."` 分支**：所有外观差异必须落入 `surfaces`、`feedback`、`motion` 或 `controls` 契约字段，通过数值/表达式退化实现。
+3. **组件内不出现颜色字面量**：所有颜色一律从 `@shadcn-nsh/theme` 的 `colors`、`tints`、`chart`、`surface()` 或 Tailwind 语义 token（如 `bg-surface`、`bg-brand/15`）读取。
+4. **对比度与分离度红线**：正文与图标对比度必须满足 WCAG 2.2 AA（≥ 4.5:1，除非有登记在 `meta.contrastWaivers` 的平台规范原文豁免）；选中/悬停填充在 `background`/`card`/`popover` 上的 OKLCH 亮度差须 ≥ `0.015`。
+
+## 3 常用校验命令
+
+```sh
+bun run tokens:build --check   # 确认导出物（theme.json / *.tokens.json / DESIGN.md）与 TS 真源一致
+bun run check:theme            # 确认全部主题键名与表面完备性
+bun run theme:contrast         # 运行对比度与填充分离度检查
+bun run theme:parity           # 确认 nsh-gallery 与上游配色一致性
+bun run docs:semantics --check # 确认对比表文档最新
+bun test ./scripts/theme ./scripts/tokens ./scripts/ui-rules
 ```
-
-- **主题**回答“这一层、这种语义长什么样”：页面是什么底色，浮层用什么面，控件多高，按下怎么变。它不回答“某个组件长什么样”。
-- **控件维度**回答“一个控件怎么画自己的零件”：字段是盒子、下划线还是两者，选择框是沟槽底、外包框还是内嵌底，轨道是内凹槽、色带还是一条细线，手柄是圆点还是环。四个维度各选一档（第 2.12 节）。标签页、分段控件与侧边栏不读维度：它们各画一种形态（[决策 0008](decisions/0008-drop-selection-group.md)）。
-- **组件**按层读主题：一个按钮读 `accent` finish 和 `control` 圆角，而不是读“按钮色”。
-- **应用**拥有窗口和内容：窗口级材质、文案、布局都不在主题里（第 3 节）。
-
-两条贯穿全篇的原则（[`theme-contract-v2.md`](specs/theme-contract-v2.md)）：
-
-1. **按层与语义定角色，不按组件。** 角色名回答“哪一层、什么语义”（面、墨、边、状态、数据），不出现组件名。
-2. **同类少值。** 同一类值在一套主题里是一条短刻度：高度三档、圆角三个、阴影四档、弹簧三个。加一个值之前，先看这一类已有的档能不能用。
-
-一套设计系统要先回答的问题，就是第 2 节的 12 项：语义色组、面的层级、深度、材质、圆角、尺度与密度、字阶、线与焦点、状态、动效、控件形态，以及这套主题对齐谁（定位）。
-
-## 2 设计一套主题要决定的事
-
-每一节按同一结构写：**设计问题 → 定义项 → 约束 → 参照**。参照列出本库 6 套主题里有代表性的取值。
-
-### 2.1 定位
-
-**设计问题**：这是本库自有的风格，还是还原某个平台？和平台官方外观差多少可以接受？
-
-**定义项**
-
-- 主题类型：自有主题（`nsh-gallery`、`shadcn`、`solid-glass`）照自己的设计语言；原生主题（`apple`、`material`、`winui`）照平台官方外观。
-- 出处：原生主题的每个值都能指到官方资源名（M3 的 `SurfaceContainerHigh`、WinUI 的 `ControlFillColorDefault`），写在生成器注释和主题 README 里。
-- 裁剪：某个控件的官方外观个性化太强、放进契约代价太大时，原生主题可以裁剪，写进主题 README 与 [`native-themes.md`](specs/native-themes.md) 的差异表（契约原则 6）。契约冻结在 contract v3，降级并记账是它的出路：表达不了的外观改值、写进差异表，不加键、不加层。
-
-**约束**：不为一套主题新增键、层、字段，也不在组件里写这套主题的代码或分支（[`decisions/0004`](decisions/0004-theme-contract-freeze.md)）。差异先找已有的位置：面的差异进 finish，控件外观进某个槽的值（[`specs/theme-slots.md`](specs/theme-slots.md)）；状态不是新的一层，而是 finish 上的字段或 `state.disabled.*`。实在放不进就改值降级，并把差别写进差异表。
-
-**参照**：`shadcn` 对齐 shadcn/ui 的 `neutral`；`solid-glass` 对齐 Solid Glass；`apple` 对齐 Apple HIG 与 Liquid Glass；`material` 对齐 Material 3 Expressive；`winui` 对齐 WinUI 3（Windows 11）。
-
-### 2.2 颜色
-
-**设计问题**：调色板是什么？页面分几层，每层什么色？亮暗怎么翻？墨色和底色的对比度要多少？哪些语义要单独的颜色（品牌、信息、警告、涨跌）？
-
-**定义项**（`theme.json`，共 55 个角色：15 个源色由主题写值；引用色与派生色默认由这 15 个源色派生，主题也可以写自己的取值，但要记出处，见 [ADR 0007](decisions/0007-theme-customization-scope.md) 第 4 条与 [ADR 0012](decisions/0012-derived-colours-are-defaults.md)）
-
-| 类           | 角色                                                                                                                                                                                                                        | 主题写什么                                                                                            |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| 源色（15）   | `primary`、`primary-foreground`、`secondary`、`foreground`、`muted-foreground`、`faint`、`background`、`card`、`muted`、`border`（强：控件与输入框的边）、`line`（弱：分割线、卡片边）、`destructive`、`warn`、`info`、`up` | 字面值                                                                                                |
-| 引用         | `popover`、`accent`、`inset`、`raised`、`field`、`track`、`knob`、`hover`、`input`、`ring`、`brand`、`brand-edge`、`inverse*`、`sidebar*`、`*-foreground`（foreground 族）                                                  | 默认 DTCG 引用（`{color.x}`）指向某个源色；写自己的值时在 token 的 `$extensions` 里记出处（ADR 0012） |
-| 派生         | 五个 `*-tint`（`brand-tint`、`info-tint`、`warn-tint`、`destructive-tint`、`up-tint`，下跌复用 `destructive-tint`）                                                                                                         | 默认同一条公式 `color-mix(in srgb, X N%, transparent)`，`N` 每套主题一个数；写自己的值时记出处        |
-| 图表         | `chart-1…5`                                                                                                                                                                                                                 | 默认引用源色：状态色序列（主色、蓝、绿、黄、红）或由 `foreground` 混出的灰阶；写自己的值时记出处      |
-| C 层（3 色） | `scrim`、`media`、`on-media`                                                                                                                                                                                                | 亮暗共用（同层还有 3 个圆角，见 2.6、2.8）                                                            |
-
-`violet`、`glass-edge`、`ring-halo` 已删：读它们的组件改读源色（链接的已访问色读 `muted-foreground`，焦点环的晕是 `ring` 的 30%，`double` 的内线读 `card`，玻璃的边读 `line`）。
-
-**约束**
-
-- 一个角色在每套主题里都等于某个已有角色时，删掉它，读者改读那个角色（契约原则 4）。
-- 每个底色都有配套的墨色，成对可读：WCAG 2 AA，正文 4.5:1。`theme:contrast` 检查角色对（`foreground` 在 `background` / `card` / `raised` / `popover` 上，`muted-foreground` 在 `muted` 等上），以及每个 finish 用它自己的 `foreground`。达不到 AA 的值只能是平台自己的取值，要在 `contrast.ts` 里点名出处。
-- 填充与它落下的每一种底要分得开：`accent` 在 `background` / `card` / `popover` 上、`sidebar-accent` 在 `sidebar` 上，OKLCH 亮度差至少 0.015（shadcn 亮色侧栏选中就是 0.015），半透明填充先合成到底上再比（`theme:contrast` 的填充检查，没有豁免）。主题的规范只给到下面的档位时，取最近一档过关的（取的是哪一档，写进 token 的出处），把规范自己的值直接搬进来会在某个底上消失：#349 里 apple 亮色的 `muted` 只比成组的页面深 0.010，ADR 0012 之后 `accent` 也取规范值，所以这条底线管的是主题自己写的填充。
-- 状态不能只靠颜色表达：选中、错误还要有形状、图标或文字的区别。
-- 引用色、`*-tint`、`chart-*` 写了值，就在那个 token 的 `$extensions["dev.aning.shadcn-nsh"].source` 里写它取自什么：规范的编号加它在那份规范里的名字（如 `"Material 3 sys.color.on-secondary-container"`、`"nsh-gallery-ui theme.json: accent"`）。出处跟着 token 走，不集中的表里，改一个值得同时改它；编译产物只有 CSS 值，`check:theme` 读的是 DTCG 源码里的这一项。
-- 组件代码里不写颜色字面量。唯一的例外是平台固定的身份色（第 3 节）。
-
-**参照**：`material` 的面是 M3 tonal 角色（`SurfaceContainer*`），`winui` 是填充色叠在 `SolidBackgroundFillColorBase` 上的合成值，`apple` 用系统色板，`muted-foreground` 保留 Apple 的 secondary label（低于 AA，在 `contrast.ts` 里点名）。
-
-### 2.3 面与层次
-
-**设计问题**：页面有几层面？卡片、凹槽、浮起的控件、浮层、对话框、反色气泡各长什么样？面上的字是什么颜色？
-
-**定义项**：`semantics.json` 的 `finishes`，正好 15 个，12 个层加 3 种状态。
-
-| finish                           | 画什么                                                 |
-| -------------------------------- | ------------------------------------------------------ |
-| `card`                           | 卡片、区块面                                           |
-| `inset`                          | 凹进去的面：输入框、轨道、凹槽                         |
-| `channel`                        | 一组选择所在的通道：分段控件的轨道                     |
-| `raised`                         | 浮起的面：按钮、选择器、组合框                         |
-| `plate`                          | 井里被选中的那块（上面有字）：标签页、分段的选中块     |
-| `overlay`                        | 菜单、弹出框、列表浮层                                 |
-| `modal`                          | 对话框、抽屉                                           |
-| `inverse`                        | 反色气泡：toast、tooltip                               |
-| `glass`                          | 半透明的玻璃面                                         |
-| `accent`                         | 强调填充：主按钮、选中的勾选与开关                     |
-| `fill`                           | 一段跑起来的填充：进度的条、滑杆的行程、开关的轨道     |
-| `knob`                           | 开关圆点、滑杆把手（不带字）；`checked-*` 是它的选中态 |
-| `hover` / `pressed` / `disabled` | 三种状态（2.10）                                       |
-
-**每个 finish 只带它用得到的字段**：字段留着，是因为六套主题里至少一套在这个角色上给了它一个不是中性的值（逐角色的表见 [`specs/theme-roles.md`](specs/theme-roles.md) §2，唯一出处是 `packages/theme/finish-fields.ts`）。可用的字段：`background`、`foreground`（面上的墨，组件不再带 `?? colors.x` 兜底）、`shadow`（引用阴影刻度，2.4）、`gradient`、`backdropFilter`、三条边色（`border-color` / `border-top-color` / `border-bottom-color`）、`material`（2.5）、Android 用的 `elevation`、按压时的 `pressed-background` / `pressed-foreground` / `pressed-opacity`，以及 `knob` 选中时的 `checked-background` / `checked-border-color` / `checked-gradient`。写法是 `shared` 加稀疏的 `light` / `dark` 覆盖。
-
-**没写的字段取什么值。** 中性值写一次，在 `tokens/base/style.shared.tokens.json` 的 `finish` 组里，只写在有这个字段的角色上，角色继承它；主题只在真正不同时写那个字段（源码写 token，`shared` 或某一外观都行）。编译产物里每个角色都带齐它的字段：主题少写一个不会漏键，只会取到这里的中性值；主题写一个角色没有的字段，`check:theme` 与类型都会拦下：
-
-| 字段                                        | 中性值 | 读作                                         |
-| ------------------------------------------- | ------ | -------------------------------------------- |
-| `material`                                  | `none` | 不透明面（编译成 `null`，2.5）               |
-| `backdropFilter`                            | `none` | 不模糊；有材质的面上它退回配方的模糊         |
-| `elevation`                                 | `null` | 不交给平台画高度                             |
-| `gradient`                                  | `none` | 平涂，不是同色渐变                           |
-| `border-top-color` / `border-bottom-color`  | `none` | 这条边不带自己的颜色，跟 `border-color` 一样 |
-| `pressed-background` / `pressed-foreground` | `none` | 按下只压暗，不换色                           |
-
-`knob` 的 `checked-*` 是**例外**：选中态是旋钮的状态，不是另一个面，所以它没有中性值——主题没写哪一项，选中时就沿用没选中时的值；只有 `checked-gradient: "none"` 是一个明确的值（选中时平涂，与 `knob` 的渐变不同）。
-
-源码里这些中性用字符串 `"none"` 连同 `elevation: null` 写在 finish 组的 `$extensions` 里（DTCG 的 token 不接受 `null` 值），编译时换成 `null`：**写 token 就压过 `$extensions`**。加一个字段、或给某个主题单独定一个值，改的是这些源码；没有任何脚本会因为主题 id 而不同（`scripts/theme/no-theme-ids.test.ts` 守住）。
-
-**约束**
-
-- finish 按层命名，不按组件：没有“tooltip finish”，tooltip 读 `inverse`。
-- 所有浮层共用 `overlay`，层级靠深度区分，不靠每个浮层各画一套。
-- 平涂的面不写 `gradient`，不写同色渐变。
-- 字段集合在各主题、亮暗之间一致，且等于 `finishFields` 给这个角色的那一份，`check:theme` 守住。
-
-**参照**：`material` 的 `card` 没有边（`border-color: transparent`），层次靠 tonal 底色；`winui` 的 `raised` 与 `accent` 用上下不同的边色做出斜面；`solid-glass` 的面是半透明底加顶部高光。
-
-### 2.4 深度
-
-**设计问题**：阴影有几档？各用在哪？凹槽和边光怎么画？
-
-**定义项**：每种外观一条阴影刻度（DTCG `shadow` token，编译进 `semantics.json` 的 `elevation.{light,dark}`，组件经 `elevation("sm" | "md" | "lg" | "xl")` 读）。
-
-| 部件                           | 用在                                   |
-| ------------------------------ | -------------------------------------- |
-| `sm`                           | 控件落在面上的投影                     |
-| `md`                           | 卡片：离页面一级                       |
-| `lg`                           | 浮层：菜单浮在页面上方                 |
-| `xl`                           | 对话框：页面在它后面等着               |
-| `inset`                        | 凹槽：光落进槽里                       |
-| `edge.surface` / `edge.accent` | 面的硬边与高光；强调填充的边与自身投影 |
-
-finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`），不写阴影值。
-
-**约束**：投影最多 4 档，部件最多 7 个。一套主题没有的部件写 `$extensions.none`，引用它的 finish 跳过它。阴影说明“谁盖在谁上面”，不用来装饰。
-
-**参照**：`material` 用 M3 elevation level 1/3/6（Android 上还走 `elevation` 字段）；`winui` 用 `shadow2/8/16/32/128` 推出的刻度；`shadcn`、`material`、`winui` 没有 `edge` 部件。
-
-### 2.5 材质
-
-**设计问题**：哪些层透出背后的内容？透不出来的平台上退回什么？
-
-**定义项**：finish 的 `material`，三选一：`none`、`glass`、`acrylic`。配方都在 `packages/theme/materials.ts`：
-
-- `glass`：系统玻璃（`glassEffect`，iOS 的 `backdropMaterial`），finish 自己的底色做 tint。
-- `acrylic`：Windows 的窗口模糊。
-
-两者在不支持的平台上都退回 `30px` 模糊加不透明度有下限的底色。
-
-**约束**：玻璃面的底色不透明度至少 `0.72`，acrylic 至少 `0.85`，保证退回时也读得清（`check:theme`）。窗口级材质（Mica、vibrancy）不是 finish（第 3 节）。
-
-**参照**：`apple` 的 `raised` / `overlay` / `inverse` / `glass` 是 `glass`；`winui` 的 `overlay` 是 `acrylic`；其余主题全是 `none`。
-
-### 2.6 形状
-
-**设计问题**：圆角多大？按钮是不是胶囊？圆角是圆弧还是连续曲率？嵌套的面怎么定圆角？
-
-**定义项**
-
-| 定义项                                                 | 位置                                                   | 说明                                                                                              |
-| ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `radius-control` / `radius-container` / `radius-modal` | `theme.json` `cssVars.theme`；`shape.*` 直接 `token()` | 控件 / 容器（卡片、浮层、区块） / 模态（对话框、抽屉）三层。A 层的 `radius` 等于 `radius-control` |
-| `controls.button.corner.{sm,md,lg}`                    | `semantics.json` `controls`                            | 按尺寸设按钮角：`full` 时按钮是胶囊、`control` 取 `shape.control`，或具体点数                     |
-| `shape.curve`                                          | `semantics.json`                                       | `continuous` 或 `circular`                                                                        |
-
-**约束**
-
-- 只有三个圆角。嵌套的面按同心推出：`rounded(outer, inset)` 即外层圆角减去内边距，不小于 0。
-- 圆角随层级递增：`control` ≤ `container` ≤ `modal`。
-
-**参照**
-
-| 主题          | control / container / modal | 按钮        | 曲线       |
-| ------------- | --------------------------- | ----------- | ---------- |
-| m             | `nsh-gallery` / `shadcn`    | 8 / 12 / 14 | radius     | continuous |
-| `solid-glass` | 11 / 14 / 20                | radius      | continuous |
-| `apple`       | 8 / 12 / 16                 | full        | continuous |
-| `material`    | 4 / 12 / 28                 | full        | circular   |
-| `winui`       | 4 / 8 / 8                   | radius      | circular   |
-
-### 2.7 尺度与密度
-
-**设计问题**：控件多高？间距多大？图标多大？用鼠标和用手指时差多少？触控目标多大？
-
-**定义项**：`semantics.json` 的 `dimension.size` 与 `dimension.icon`，都分 `pointer` / `touch` 两档，同一结构只换数值。
-
-| 定义项         | 内容                                                 |
-| -------------- | ---------------------------------------------------- |
-| `size.height`  | `sm` / `md` / `lg` 三档。行、标签栏、数值行都读 `lg` |
-| `icon`         | `sm` / `md` / `lg` 三档                              |
-| `size.density` | 面的 `pad`（内边距）与 `gap`（间距）                 |
-| `size.control` | 控件的 `padding` / `gap` 与指示点 `dot`              |
-| `size.hit`     | 触控目标外扩：`pointer` 一般为 0，`touch` 不小于 44  |
-
-**约束**（`check:theme` 的 `checkScales`）
-
-- 高度和图标各三档，递增，在 4 的网格上。
-- 间距只从 `4, 8, 12, 16, 24, 32` 里取，每档最多三个值。按关系选值：同组的元素间距小，不同组的间距大。
-- `touch` 档的 `hit` 不小于 44。
-- 两档都在：一个值要么两档都给，要么不给（继承 base 的两档），且两档的键相同（`check:theme` 的 `checkTiers`）。
-- 不在规则内的值必须是平台官方值，写在这套主题自己 `theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].scales.citations` 里，按 token 路径记出处；出处不再需要时 `check:theme` 会拦下这条引用。
-
-**参照**
-
-| 主题       | 高度 pointer / touch                                                                        | hit（touch）       | 例外                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------- |
-| m          | `nsh-gallery`                                                                               | 24/28/32、32/40/48 | 44                                                                   | —   |
-| `apple`    | 24/28/32、32/44/56                                                                          | 44                 | —                                                                    |
-| `material` | 24/32/40（桌面档低一步，见 [`0003`](../decisions/0003-material-desktop-tier.md)）、32/40/56 | 48                 | —                                                                    |
-| `winui`    | 24/32/40、32/40/48                                                                          | 40                 | 控件内边距 6、触控 40（WinUI 官方值，出处写在它的 `$extensions` 里） |
-
-### 2.8 排版
-
-**设计问题**：字阶里每个角色多重、字距多少？用户放大字号时比例还对不对？
-
-**定义项**
-
-- 字体：主题不带字体族，没有可填的项；应用的 `font-sans` 画正文，等宽文字写 `monospace`（[决策 0009](decisions/0009-no-theme-type-scale.md)）。
-- 字阶：`typography` 的 7 个角色，`caption`、`detail`、`body`、`label`、`title`、`headline`、`display`。字号与行高是全主题共用的一把字阶，主题只写每个角色的 `fontWeight`、`letterSpacing`。
-
-**约束**：字号按角色顺序不降；行高是整数点，且不小于字号（DTCG 源码存倍数，编译时换回点）。字阶成比例设计，不放零散的数。
-
-**参照**：`material` 的 `title` 字重 500（M3），其余主题 600；WinUI 3 只用 400 与 600 两档。
-
-### 2.9 描边与焦点
-
-**设计问题**：线有多细？控件的边多粗？键盘焦点怎么画？
-
-**定义项**
-
-- `dimension.stroke`：`hairline`（分割线、面的边）与 `control`（控件的边）。
-- `dimension.focus`：`style`（`halo` 光晕、`outline` 外描边、`double` 双线）、`width`、`offset`；颜色读 `ring`，`halo` 的晕是它的 30%，`double` 的内线读 `card`。
-
-**约束**：描边只有两档。不想要边的面，在 finish 里把边色写成 `transparent`，不用 0 宽。焦点只在键盘导航时出现，不能和选中、悬停混淆。
-
-**参照**：`apple` 的 `hairline` 是 0.5；`material` 是 `outline` 3 / 偏移 2；`winui` 是 `double` 2（外 `FocusStrokeColorOuter`，内 `FocusStrokeColorInner`）。
-
-### 2.10 交互状态
-
-**设计问题**：悬停、按下、选中、禁用分别怎么表现？按下是缩小、变暗、叠色还是换面？
-
-**定义项**
-
-- 三个状态 finish：`hover`、`pressed`、`disabled`（2.3 的字段）。
-- `accent` 的按下：`pressed-opacity`（变淡），或 `pressed-background` / `pressed-foreground`（换面）。
-- `state` 组：
-
-| 键                                 | 含义                                                              |
-| ---------------------------------- | ----------------------------------------------------------------- |
-| `press-scale`                      | 按下缩放（1 为不缩）                                              |
-| `overlay.{hover,pressed}`          | 状态层叠色的不透明度（M3 的 state layer）                         |
-| `pressed-opacity` / `rest-opacity` | 被动指示（滚动条把手等）按下与静止时的不透明度                    |
-| `disabled.content`                 | 禁用时内容的不透明度（换面/墨/边时由 `controls.disabled.*` 覆盖） |
-
-**约束**
-
-- 一个状态只有一种主表达，不叠加两种。
-- 悬停不能是唯一的提示（触屏没有悬停）。选中要和悬停分得开。
-- 禁用要一眼认得出，但不计入对比度检查（`theme:contrast` 跳过 `disabled` 与不带字的 `knob`）。
-- 选中态用项目自身表达，不加左侧竖条；分段控件的选中块和容器同形。
-
-**参照**
-
-| 主题                               | 按下                                                                | 禁用                                  |
-| ---------------------------------- | ------------------------------------------------------------------- | ------------------------------------- |
-| m                                  | `nsh-gallery`                                                       | 缩到 0.97；强调填充变淡到 0.88        | 整体 0.5 |
-| `shadcn` / `solid-glass` / `apple` | 不缩；强调填充变淡到 0.88                                           | 整体 0.5（`apple` 0.3）               |
-| `material`                         | 状态层 8 / 10 / 10 / 16%，加涟漪                                    | `disabled` finish，内容 0.38          |
-| `winui`                            | 换面：`AccentFillColorTertiary` 与 `TextOnAccentFillColorSecondary` | `disabled` finish（`*Disabled` 资源） |
-
-### 2.11 动效
-
-**设计问题**：动得快还是慢？用弹簧还是时间曲线？浮层怎么进场？
-
-**定义项**
-
-- `motion`：三档 `fast` / `default` / `slow`，按速度命名，不按用途。每档是时间曲线（`duration` / `timingFunction`），没有弹簧（[决策 0010](decisions/0010-drop-ripple-springs.md)）。
-- `motion.state`：一条状态过渡，只有时间曲线。悬停、按下、选中这类小状态来去的时长与曲线（表 2.11）。
-
-**约束**：弹簧只有三档，状态过渡只有一条。动效解释变化，不做装饰；要能中断；尊重系统的减弱动态效果设置（组件负责）。主题只给档位，不规定哪个组件要动。
-
-**参照**：`nsh-gallery` / `apple` 的弹簧是 1218/70、520/34、320/30；`material` 用 M3 的 `FastSpatial` / `DefaultSpatial` / `SlowSpatial`，进场 500 ms `emphasized-decelerate`；`winui` 用 83 / 167 / 250 ms `decelerate`。`motion.state` 在 `nsh-gallery` / `shadcn` / `solid-glass` / `apple` 取上游悬停层的 120 ms `out-cubic`，`material` 取 M3 `DurationShort2` + `Easing.StandardCubicBezier`（100 ms `standard`），`winui` 取 `ControlFasterAnimationDuration`（83 ms `decelerate`）。
-
-### 2.12 控件维度
-
-**设计问题**：开关、滑杆、复选框、单选、进度条、标签页、日历、输入框怎么画自己的零件？选中标记是胶囊、下划线还是竖条？字段是盒子、下划线，还是盒子上加一道下划线？
-
-**定义项**：`semantics.json` 的 `slots`，每个槽一个值（`slots()` 读，组件经 `packages/ui/lib/look.ts` 取解好的部件）。槽的名单、单位与分组在 [`specs/theme-slots.md`](specs/theme-slots.md)，一套主题只写与 base 不同的槽：
-
-| 组               | 回答什么                                                                 |
-| ---------------- | ------------------------------------------------------------------------ |
-| `field.*`        | 输入框的底、边（上 / 侧 / 下）、角、聚焦线                               |
-| `choice.*`       | 一组里被选中的那一格：外框、底、边、勾 / 点、光晕                        |
-| `switch.*`       | 开关的轨道与钮：宽 × 高、边宽、hover 与按下、按下的反馈                  |
-| `slider.*`       | 滑杆：轨道粗细与面、行程带宽、钮与内点、竖向长度、悬停是否提亮           |
-| `progress.*`     | 进度条：高度、内线、轨道面与边                                           |
-| `spinner.*`      | 转圈：轨道的不透明度（0 = 无轨道）                                       |
-| `state.disabled` | 禁用时换成哪个面、墨、边（`keep` = 沿用控件自己的，只按 `content` 变淡） |
-| `handle`         | 滑杆、开关的可拖部分                                                     | `circle`（圆点）、`ring`（带外圈的圆） |
-
-每个取值画成什么样、按什么数字，见 [`specs/theme-roles.md`](specs/theme-roles.md) 第 11、14 节；枚举值登记在同文件的枚举表里，`check:theme` 把表、`style.ts` 的白名单和三套平台主题编译出的值三方对账。
-
-**约束**：主题只选维度，不在主题里细调某个控件的几何；以组件命名的值（开关多宽、日历格多大）不进主题——同样大小的开关和复选框，几何由各自组件决定，维度只决定“画成哪一类”。要新增一种形态，先在本表登记一个新取值，再改组件怎么画它。
-
-**参照**：`nsh-gallery` / `shadcn` / `solid-glass` / `apple` 用中性一套（盒子、沟槽底、内凹槽、圆点）；`material` 照 M3 的 text field / outlined 选择控件 / tinted track，取 `underline`、`outline`、`tint`、`circle`；`winui` 照 WinUI 的 TextBox 边框、控件描边与 ToggleSwitch，取 `box-underline`、`inset`、`hairline`、`ring`。标签页、分段控件与侧边栏在六套主题里画同一种形态，与 material / winui 原生的差别记在 [`specs/native-themes.md`](specs/native-themes.md) 第 3.6 节。
-
-## 3 不属于主题的东西
-
-| 东西                                     | 归谁                    | 为什么                                                               |
-| ---------------------------------------- | ----------------------- | -------------------------------------------------------------------- |
-| 以组件命名的几何（开关多宽、日历格多大） | 组件的控件维度（2.12）  | 主题按层与行为定值，不按组件                                         |
-| 平台固定的身份色（macOS 红绿灯）         | 组件（`title-bar.tsx`） | 它不随主题变；这是“颜色只来自主题”的唯一例外，记在 `ARCHITECTURE.md` |
-| 窗口级材质（Mica、vibrancy）             | 应用                    | 它是窗口的 `backdrop`，不是某一层面                                  |
-| 应用自己的 Tailwind 类（`shadow-*` 等）  | 应用                    | 它们在构建时定型，不跟主题切换                                       |
-| 文案、命令放在哪、浮层选型、布局         | 应用                    | 主题只管外观                                                         |
-| 光标、键盘行为、无障碍语义               | `nsh/base` 与组件       | 行为不归外观                                                         |
-
-## 4 落地：从设计到文件
-
-### 4.1 源码布局
-
-所有主题的真源是 `packages/theme/tokens/` 下的 DTCG 2025.10 源码（[`design-tokens.md`](specs/design-tokens.md#2-源文件布局与-resolver-架构)）：
-
-| 文件                                                   | 管什么                               |
-| ------------------------------------------------------ | ------------------------------------ |
-| `tokens/base/style.{shared,pointer,touch}.tokens.json` | 各主题共用的基础 token               |
-| `tokens/themes/<id>/theme.tokens.json`                 | 这套主题的颜色（C 层）、圆角与风格组 |
-| `tokens/themes/<id>/{light,dark}.tokens.json`          | 两种外观的颜色与阴影刻度             |
-| `tokens/themes/<id>/finishes.shared.tokens.json`       | 15 个 finish                         |
-| `tokens/themes/<id>/theme.resolver.json`               | 把上面几个文件按外观与档位组合起来   |
-
-除 `nsh-gallery` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 15 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。`nsh-gallery`（NSH Gallery）是唯一手写的主题：它同时是构建时的根主题，编译产物除了 `themes/nsh-gallery/` 还有 `packages/theme/` 顶层那对 `theme.json` / `semantics.json`（`BUILD_ROOT_THEME`，`scripts/theme/tokens.ts`），这是它唯一特殊的地方——没有一条规则因为它是 `nsh-gallery` 而不同。
-
-**加一套分档值**（`pointer` / `touch`）：加文件，不改代码。主题目录下写 `pointer.tokens.json` 与 `touch.tokens.json`（结构同 `tokens/base/style.{pointer,touch}.tokens.json`，只写这套主题与 base 不同的键），`theme.resolver.json` 的 `modifiers.input` 在 base 的档位文件之后按同名读它，后写者赢。只写其中一个档＝一个错（`check:theme` 的 `checkTiers`）：两档的键必须相同，缺的那档继续用 base 的值。主题不写这两个文件就完全继承 base 的两档。
-
-### 4.2 编译与产物
-
-`bun run tokens:build` 从源码编译：
-
-- 运行时读的 `theme.json` 与 `semantics.json`（oklch）。
-- 给设计工具的 `{light,dark}.tokens.json`（Figma Variables、Tokens Studio、Style Dictionary）。
-- 给编码代理的 `DESIGN.md`。
-
-产物都不手改。改完再跑 `bun run registry:build` 更新 `public/r`。
-
-### 4.3 检查分别拦什么
-
-| 检查                                        | 拦什么                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `bun run check:theme`                       | 键齐全、只用 [ADR 0007](decisions/0007-theme-customization-scope.md) 的源色与引用色（多一个颜色键、引用键或 tint 或 chart 写了值却没有出处（[ADR 0012](decisions/0012-derived-colours-are-defaults.md)）、出处指向不存在的键或本该引用源色的键、同一套主题里公式 tint 的 `N` 不一致、`slots` 的键集与 `SLOTS` 不一致（多一个、少一个都失败）、主题带字体或自己的字阶，都失败）、15 个 finish 的 13 个字段齐全（`knob` 另有可选的 `checked-*`）、材质枚举与不透明度下限、两档都在且键相同、刻度（三档、4 网格、间距值、字阶不降、行高取整、touch 的 hit ≥ 44），以及 `$extensions` 里的豁免与出处有没有被用到 |
-| `bun run theme:contrast`                    | 每套主题亮暗的角色对与每个 finish 的墨达到 WCAG AA，平台例外要点名；填充与它落下的底（`accent` 在 `background` / `card` / `popover`、`sidebar-accent` 在 `sidebar`）亮度差 ≥ 0.015                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `bun run tokens:build --check`              | 产物与源码一致                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `bun run test:unit`（`generators.test.ts`） | 生成器逐字节重现提交的源码                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `bun run theme:diff --gate`                 | 契约的改动（键的新增或删除、共用源改动）没有同一分支的 `docs/decisions/` 记录；CI 在碰主题的 PR 上跑，没有放行开关                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-
-### 4.4 改完怎么验收
-
-1. `bun run theme:diff`：把每处改动分成三类。
-   - `colour`：颜色角色或画颜色的 finish 字段。
-   - `value`：尺寸、字阶、阴影、材质、状态、动效、不透明度。
-   - `contract`：增删了键，或改了所有主题共用的源（基础 token、读取层、编译）。契约冻结在 v3，这一类的改动要同一分支的 `docs/decisions/` 记录，否则 `bun run theme:diff --gate` 失败；表达不了的外观应该是值改动加差异表的一行（第 2.1 节）。
-2. `bun run port:render:theme --changed`：按这个分类只渲染会动的页面（`--list` 先看会渲染哪些、为什么）。只改颜色时不重画每一页，改值时重画这套主题的所有页，改契约时全部重画。CI 里 PR 只画改动代码触及的页（`--code-only`），主题改动带来的重画在合进 `main` 后的那次运行里做。
-3. 人眼审阅截图，把有意的可见变化写进 `CHANGELOG.md`。审过后 `bun run port:baseline --update` 更新基线。
-4. 重构如果要求一个像素都不变，用 `bun run theme:diff --same` 当门槛。
-
-## 5 速查清单
-
-新主题从上往下填；改主题时找到对应的行。
-
-| #   | 设计问题       | 定义项                                                                                                                                               | 文件                                                        | 检查 / 验收                           |
-| --- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------- |
-| 1   | 对齐谁，差多少 | 主题类型、出处、裁剪、契约表达不了的降级                                                                                                             | 生成器注释、主题 README、`native-themes.md` 差异表          | 审阅                                  |
-| 2   | 调色板与语义色 | A 层 31、B 层 25、C 层 3                                                                                                                             | `theme.tokens.json`、`{light,dark}.tokens.json`             | `check:theme`、`theme:contrast`       |
-| 3   | 面的层级       | 15 个 finish                                                                                                                                         | `finishes.shared.tokens.json`（生成器：`finishes/<id>.ts`） | `check:theme`、`theme:contrast`       |
-| 4   | 深度           | `elevation`：`sm`–`xl`、`inset`、`edge`                                                                                                              | `{light,dark}.tokens.json` 的 `shadow`                      | `check:theme`、截图                   |
-| 5   | 透明材质       | finish 的 `material`                                                                                                                                 | `finishes.shared.tokens.json`                               | `check:theme`（不透明度下限）         |
-| 6   | 圆角           | `radius-control/container/modal`、`corners.button`、`curve`、各槽的角                                                                                | `theme.tokens.json`                                         | `check:theme`、截图                   |
-| 7   | 尺度与密度     | `size.height`、`icon`、`density`、`control`、`hit`                                                                                                   | `theme.tokens.json`                                         | `checkScales`，例外进出处表           |
-| 8   | 字重与字距     | 7 个 `typography` 角色的 `fontWeight`、`letterSpacing`                                                                                               | `theme.tokens.json`                                         | `checkScales`                         |
-| 9   | 线与焦点       | `stroke`、`focus`                                                                                                                                    | `theme.tokens.json`                                         | 截图（键盘焦点）                      |
-| 10  | 交互状态       | `hover` / `pressed` / `disabled` finish、`accent` 的按下字段、`state` 组                                                                             | `finishes.shared.tokens.json`、`theme.tokens.json`          | `theme:contrast`、截图                |
-| 11  | 动效           | `motion.{fast,default,slow}`、`motion.state`                                                                                                         | `theme.tokens.json`                                         | 真机或演示里看                        |
-| 12  | 控件外观       | `controls`（`button`、`field`、`choice`、`switch`、`slider`、`progress`、`spinner`、`disabled` 等，[ADR 0019](decisions/0019-theme-contract-v4.md)） | `theme.tokens.json`、base 的 `slots.tokens.json`（生成物）  | `check:theme`、`tokens:build --check` |
-| —   | 无障碍收尾     | 对比度 AA、不只靠颜色、禁用可辨、touch 触控 ≥ 44、放大字号比例不乱                                                                                   | —                                                           | `theme:contrast`、`checkScales`、截图 |
-| —   | 产物           | `tokens:build`、`registry:build`                                                                                                                     | `packages/theme`、`public/r`                                | `tokens:build --check`、`test:unit`   |

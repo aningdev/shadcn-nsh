@@ -234,7 +234,7 @@ function SidebarColumn() {
                   alignItems: "center",
                   justifyContent: "center",
                   ...rounded(shape.control),
-                  backgroundColor: colors.inset,
+                  backgroundColor: colors.muted,
                 }}
               >
                 <Icon icon={Palette} size={15} tint={colors.mutedForeground} />
@@ -385,7 +385,7 @@ function IndexRow(props: { demo: DemoEntry; first: boolean }) {
             alignItems: "center",
             justifyContent: "center",
             ...rounded(shape.control),
-            backgroundColor: colors.inset,
+            backgroundColor: colors.muted,
           }}
         >
           <Icon icon={props.demo.icon} size={15} tint={colors.mutedForeground} />

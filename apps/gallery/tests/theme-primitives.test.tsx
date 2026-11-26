@@ -1,9 +1,8 @@
 import { expect, open, test } from "nsh/test";
 
-const atAlpha = (hex: string, a: number) =>
-  `${hex.slice(0, 7)}${Math.round(a * 255)
-    .toString(16)
-    .padStart(2, "0")}`;
+/** The wash `feedback.hover` lays over a fill: a `color-mix()` of the ink at the theme's overlay. */
+const wash = (ink: string, a: number) =>
+  `color-mix(in srgb, ${ink} ${Math.round(a * 100)}%, transparent)`;
 
 test("double focus, timing motion, state-layer inks and platform material follow selectTheme", async () => {
   const app = await open("./theme-primitives.fixture.tsx", {
@@ -56,9 +55,9 @@ test("double focus, timing motion, state-layer inks and platform material follow
 
   // State-layer hover omits backgroundColor: token("hover") and lays the ink wash over the fill.
   const [primaryForeground, inverseForeground, selectedInk] = read("tokens").split("|");
-  const expectedPrimaryFgHover = atAlpha(primaryForeground, 0.08);
-  const expectedInverseFgHover = atAlpha(inverseForeground, 0.08);
-  const expectedSelectedFgHover = atAlpha(selectedInk, 0.08);
+  const expectedPrimaryFgHover = wash(primaryForeground, 0.08);
+  const expectedInverseFgHover = wash(inverseForeground, 0.08);
+  const expectedSelectedFgHover = wash(selectedInk, 0.08);
 
   const btnHover = readJson<Record<string, unknown>>("btnHover");
   expect(btnHover.backgroundColor).toBeUndefined();
@@ -88,6 +87,38 @@ test("double focus, timing motion, state-layer inks and platform material follow
   expect(readJson("menuMaterial")).toEqual({
     windows: { backdrop: { material: "blur" } },
     android: { elevation: 6 },
+  });
+
+  // Built-in theme motion presets across nsh-gallery, apple, material, and winui.
+  expect(readJson("motionPresets")).toEqual({
+    pop: { scale: 0.96, y: 0, spring: null },
+    dlg: { scale: 0.96, y: 0, spring: null },
+    glide: { dur: 150, spring: null },
+    switch: { kind: "fade", duration: 200, shader: null },
+  });
+
+  await app.press("text:Apple");
+  expect(readJson("motionPresets")).toEqual({
+    pop: { scale: 0.96, y: 0, spring: { stiffness: 340, damping: 30, mass: 1 } },
+    dlg: { scale: 0.96, y: 0, spring: { stiffness: 340, damping: 30, mass: 1 } },
+    glide: { dur: 150, spring: { stiffness: 340, damping: 30, mass: 1 } },
+    switch: { kind: "dissolve", duration: 240, shader: "shader" },
+  });
+
+  await app.press("text:Material");
+  expect(readJson("motionPresets")).toEqual({
+    pop: { scale: 0.96, y: -4, spring: { stiffness: 380, damping: 32, mass: 1 } },
+    dlg: { scale: 0.94, y: 8, spring: { stiffness: 380, damping: 32, mass: 1 } },
+    glide: { dur: 150, spring: { stiffness: 380, damping: 32, mass: 1 } },
+    switch: { kind: "radial-wipe", duration: 320, shader: "shader" },
+  });
+
+  await app.press("text:WinUI");
+  expect(readJson("motionPresets")).toEqual({
+    pop: { scale: 1, y: -6, spring: null },
+    dlg: { scale: 1.04, y: 0, spring: null },
+    glide: { dur: 83, spring: null },
+    switch: { kind: "fade", duration: 167, shader: null },
   });
 
   // Switch back to the build-time theme cleanly.

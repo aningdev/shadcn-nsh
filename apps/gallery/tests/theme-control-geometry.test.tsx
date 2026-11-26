@@ -25,7 +25,7 @@ test("control dimensions and component looks follow the active theme", async () 
     );
     expect(find(app.texts(), "slider=")).toContain("|true|rounded-full");
     expect(find(app.texts(), "slider=")?.endsWith("|true|false|false|false")).toBe(true);
-    expect(find(app.texts(), "checkbox=")).toBe("1|false|false|true|finish");
+    expect(find(app.texts(), "checkbox=")).toBe("1|false|true|true|accent");
     expect(find(app.texts(), "progress=")).toBe("6/solid/true");
     expect(find(app.texts(), "tabs=")).toBe("0/1");
     expect(find(app.texts(), "tabs-indicator=")).toBe("2");
@@ -47,15 +47,16 @@ test("control dimensions and component looks follow the active theme", async () 
     "40x24|2|16|checked:translate-x-[16px] checked:scale-[1.25] active:scale-[1.375]",
   );
   // Material's slider uses a 4-point rail and 20-point band with its 16-point round knob (8px pad),
-  // the track `SecondaryContainer` (`slider.face` / `progress.face`, #408) and the knob `primary`
-  // (`slider.knob.face`), so the band is neither the muted track nor a brand tint.
+  // the band `SecondaryContainer` (`slider.face` / `progress.face`, #408) and the knob `primary`
+  // (`slider.knob.face`), so the band is the theme's own face, neither the muted track nor a tint.
   expect(find(app.texts(), "slider=")).toContain(
     "h-[4px] rounded-full|h-[20px] justify-center px-[8px]",
   );
   expect(find(app.texts(), "slider=")).toContain("|false|rounded-full");
-  // M3's brand tint is its SecondaryContainer too, so the band equals both.
-  expect(find(app.texts(), "slider=")?.endsWith("|false|true|false|true")).toBe(true);
-  expect(find(app.texts(), "checkbox=")).toBe("2|true|false|true|primary");
+  // M3's brand tint is its SecondaryContainer too, so the band equals both. Its box takes the
+  // theme's own face — `choice.face: "none"`, so no fill — and is drawn by the edge alone.
+  expect(find(app.texts(), "slider=")?.endsWith("|true|false|false|true")).toBe(true);
+  expect(find(app.texts(), "checkbox=")).toBe("2|true|true|true|primary");
   expect(find(app.texts(), "progress=")).toBe("4/solid/false");
   expect(find(app.texts(), "tabs=")).toBe("0/1");
   expect(find(app.texts(), "tabs-indicator=")).toBe("2");
@@ -66,15 +67,15 @@ test("control dimensions and component looks follow the active theme", async () 
   await app.press("text:WinUI");
   expect(app.texts()).toContain("theme:winui");
   expect(find(app.texts(), "switch=")).toBe(
-    "40x20|1|12|checked:translate-x-[20px] hover:scale-[1.1667] active:scale-x-[1.4167] active:scale-y-[1.1667] active:translate-x-[1.5px] checked:active:translate-x-[18.5px]",
+    "40x20|1|12|checked:translate-x-[20px] active:scale-x-[1.4167] active:scale-y-[1.1667] active:translate-x-[2.5px] checked:active:translate-x-[17.5px]",
   );
   expect(find(app.texts(), "slider=")).toContain(
     "h-[4px] rounded-full|h-[32px] justify-center px-[9px]",
   );
   expect(find(app.texts(), "slider=")).toContain("|false|w-[16px] h-[16px]");
-  expect(find(app.texts(), "slider=")?.endsWith("|false|false|true|false")).toBe(true);
+  expect(find(app.texts(), "slider=")?.endsWith("|true|false|true|false")).toBe(true);
   expect(find(app.texts(), "checkbox=")).toBe("1|false|true|true|primary");
-  expect(find(app.texts(), "progress=")).toBe("3/gradient/false");
+  expect(find(app.texts(), "progress=")).toBe("3/solid/false");
   expect(find(app.texts(), "tabs=")).toBe("0/1");
   expect(find(app.texts(), "tabs-indicator=")).toBe("2");
   expect(find(app.texts(), "grabber=")).toBe("36x5");

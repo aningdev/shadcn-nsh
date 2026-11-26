@@ -78,11 +78,11 @@ These pages are drawn by a component, because their rows come from generated tab
 | All components | `content/docs/components.mdx`          | `ComponentsIndex` (`kind="official"` / `"own"`)                |
 | Coverage       | `content/docs/components/coverage.mdx` | `CoverageTable` (`group="shadcn"` / `"base"` / `"primitives"`) |
 | Themes         | `content/docs/themes.mdx`              | `ThemeIndex` (one card per palette)                            |
-| One theme      | `content/docs/themes/<id>.mdx`         | `ThemeIntro`, `ThemeInstall`, `ThemeTokens`, `ThemeFinishes`   |
+| One theme      | `content/docs/themes/<id>.mdx`         | `ThemeIntro`, `ThemeInstall`, `ThemeTokens`, `ThemeSurfaces`   |
 
 The prose and the `##` headings stay in the page (headings belong in markdown — that is where the table of contents and the anchor buttons come from); the component only renders the rows. An `.mdx` page is registered for its `.md` URL too (`src/lib/content-paths.ts`), because the route looks pages up by that path.
 
-`content/docs/components/coverage.mdx` must not grow rows by hand: every row is a line of `src/lib/official.ts`. `themes.mdx` must not list palettes by hand: `ThemeIndex` reads `themePages()`. Each palette has `content/docs/themes/<id>.mdx` with the same headings (Installation, Tokens and its three groups, Finishes); those headings are markdown, because that is what the table of contents lists. `check:pages` fails when a palette has no page, a page has no palette, the headings differ, or a page's title and description drift from `demos/palettes.ts`.
+`content/docs/components/coverage.mdx` must not grow rows by hand: every row is a line of `src/lib/official.ts`. `themes.mdx` must not list palettes by hand: `ThemeIndex` reads `themePages()`. Each palette has `content/docs/themes/<id>.mdx` with the same headings (Installation, Tokens and its two groups, Surfaces); those headings are markdown, because that is what the table of contents lists. `check:pages` fails when a palette has no page, a page has no palette, the headings differ, or a page's title and description drift from `demos/palettes.ts`.
 
 Imports in MDX resolve through Vite, not through `@/`: use relative paths (`../../src/lib/components`) inside a page.
 
@@ -125,7 +125,7 @@ Adding a component: add or extend the official row if one of theirs answers it (
 
 ## Theme
 
-`packages/theme` is the only look: `theme.json` (colors, 8 radii, fonts), `semantics.json` (style groups and finishes), `theme.ts` (`colors`, `finish`, `shape`, `font`, `focusRing`, `alpha`). Pages and demos use those readers; no page hand-writes a palette, and no stylesheet in this app carries a color — `src/styles/fd.css` only imports Tailwind, Fumadocs' preset and its neutral colors (usable as `bg-fd-success`, `text-fd-muted-foreground`, …). See `content/docs/theme.md` and [the theme README](../../packages/theme/README.md).
+`packages/theme` is the only look, and it is one source: each theme is a `ThemeSpec` in `packages/theme/themes/<id>/index.ts` (`defineTheme()`; `nsh-gallery` full, the other five sparse deltas over it), `theme.json` and `DESIGN.md` are `bun run tokens:build`'s exports from it, and `theme.ts` is the reader (`colors`, `surface`, `control`, `feedback`, `shape`, `font`, `metrics`, `elevation`, `motion`, `focusRing`, `alpha`). `src/lib/themes.ts` reads `ALL_THEMES` for the theme pages and the surface samples, so a theme is never written twice here. Pages and demos use those readers; no page hand-writes a palette, and no stylesheet in this app carries a color — `src/styles/fd.css` only imports Tailwind, Fumadocs' preset and its neutral colors (usable as `bg-fd-success`, `text-fd-muted-foreground`, …). See `content/docs/theme.md`, `docs/decisions/0020-theme-v5.md` and [the theme README](../../packages/theme/README.md).
 
 ## Checks
 

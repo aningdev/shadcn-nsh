@@ -12,7 +12,7 @@
 import {
   alpha,
   colors,
-  finish,
+  surface,
   focusRing,
   follow,
   hovered,
@@ -57,7 +57,7 @@ import { Bubble, BubbleContent, BubbleText } from "@/packages/ui/bubble";
 import { Button, roundButtonGlyph, RoundButton } from "@/packages/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/packages/ui/input-group";
 import { Icon } from "@/packages/ui/lib/icons";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import { Marker, MarkerContent, MarkerIcon } from "@/packages/ui/marker";
 import {
   MessageScroller,
@@ -590,7 +590,7 @@ export function ChatDemo() {
       </If>
       <If when={m().waiting}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <Spinner size={12} tint={colors.warn} />
+          <Spinner size={12} tint={colors.warning} />
           <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
             Waiting for a connection
           </Text>
@@ -627,7 +627,7 @@ export function ChatDemo() {
             {m().script.startsWith("local:") ? m().script.slice(6) : m().model}
           </Text>
           <If when={!live() && m().status === "stopped"}>
-            <Badge tone="warn">Stopped</Badge>
+            <Badge tone="warning">Stopped</Badge>
           </If>
         </View>
         <If when={reasoning()}>
@@ -684,7 +684,7 @@ export function ChatDemo() {
               glyph={copied() === m().id ? "check" : "copy"}
               label="Copy"
               active={copied() === m().id}
-              tone="up"
+              tone="success"
               onPress={() => copy(m().id, m().md)}
             />
             <ActionButton glyph="regenerate" label="Regenerate" onPress={() => regenerate(m())} />
@@ -814,7 +814,7 @@ export function ChatDemo() {
                         gap: 8,
                         ...rounded(shape.control),
                         backgroundColor: colors.card,
-                        ...finish.card,
+                        ...surface("card").style,
                         borderWidth: 1,
                         borderColor: colors.border,
                       }}
@@ -945,9 +945,12 @@ export function ChatDemo() {
                 minHeight: 48,
                 paddingHorizontal: 14,
                 ...rounded(shape.container),
-                ...finish.overlay,
+                ...surface("overlay").style,
                 borderWidth: 1,
-                borderColor: alpha(bannerKind() === "offline" ? colors.warn : colors.up, 0.35),
+                borderColor: alpha(
+                  bannerKind() === "offline" ? colors.warning : colors.success,
+                  0.35,
+                ),
               }}
             >
               <View
@@ -957,13 +960,13 @@ export function ChatDemo() {
                   borderRadius: 14,
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: tints[bannerKind() === "offline" ? "warn" : "up"],
+                  backgroundColor: tints[bannerKind() === "offline" ? "warning" : "success"],
                 }}
               >
                 <Glyph
                   name={bannerKind() === "offline" ? "offline" : "check"}
                   size={15}
-                  tint={bannerKind() === "offline" ? colors.warn : colors.up}
+                  tint={bannerKind() === "offline" ? colors.warning : colors.success}
                 />
               </View>
               <View style={{ flex: 1, gap: 1 }}>
@@ -1011,7 +1014,7 @@ export function ChatDemo() {
               <View
                 style={{
                   ...rounded(shape.container),
-                  ...finish.overlay,
+                  ...surface("overlay").style,
                   borderWidth: 1,
                   paddingVertical: 6,
                   // 460 at most, and short of a low window: its rows scroll.
@@ -1119,7 +1122,7 @@ export function ChatDemo() {
               borderRadius: terminal ? 0 : 24,
               ...(terminal ? {} : rounded(24)),
               // Glass like the menu above it, without the blur: nothing scrolls under it.
-              ...finish.overlay,
+              ...surface("overlay").style,
               backdropFilter: undefined,
               borderWidth: 1,
               padding: 6,
@@ -1209,7 +1212,7 @@ export function ChatDemo() {
                     alignItems: "center",
                     justifyContent: "center",
                     backgroundColor: colors.primary,
-                    ...finish.accent,
+                    ...surface("accent").style,
                   }}
                   hoverStyle={{ opacity: 0.86 }}
                   activeStyle={pressSink(0.9).activeStyle}
@@ -1262,8 +1265,8 @@ export function ChatDemo() {
               alignItems: "center",
               justifyContent: "center",
               gap: 8,
-              backgroundColor: colors.raised,
-              ...finish.raised,
+              backgroundColor: colors.surface,
+              ...surface("raised").style,
               borderWidth: 1,
               borderColor: colors.border,
             }}

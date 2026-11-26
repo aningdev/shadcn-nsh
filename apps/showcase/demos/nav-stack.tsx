@@ -1,7 +1,7 @@
 import {
   animate,
   colors,
-  finish,
+  surface,
   header,
   motion,
   rounded,
@@ -714,19 +714,19 @@ function NativeBarButtons(_props: { pop: () => void }) {
               width="33%"
               label="All"
               value={filter() === "all" ? "On" : "—"}
-              tone={filter() === "all" ? "up" : "neutral"}
+              tone={filter() === "all" ? "success" : "neutral"}
             />
             <Stat
               width="33%"
               label="Open"
               value={filter() === "open" ? "On" : "—"}
-              tone={filter() === "open" ? "up" : "neutral"}
+              tone={filter() === "open" ? "success" : "neutral"}
             />
             <Stat
               width="34%"
               label="Done"
               value={filter() === "done" ? "On" : "—"}
-              tone={filter() === "done" ? "up" : "neutral"}
+              tone={filter() === "done" ? "success" : "neutral"}
             />
           </View>
         </SectionCard>
@@ -752,7 +752,7 @@ function Locked(_props: { pop: () => void }) {
         <SectionCard title="Leaving" note="popOnSwipe={false}">
           <View style={{ flexDirection: "row" }}>
             <Stat width="50%" label="Swipe / predictive" value="Off" tone="destructive" />
-            <Stat width="50%" label="Back buttons" value="On" tone="up" />
+            <Stat width="50%" label="Back buttons" value="On" tone="success" />
           </View>
         </SectionCard>
       </Page>
@@ -792,7 +792,7 @@ function Unsaved(props: { pop: () => void }) {
           title="Draft"
           subtitle="popOnBack + onBackPress"
           right={
-            <Badge tone={text().length > 0 ? "warn" : "neutral"}>
+            <Badge tone={text().length > 0 ? "warning" : "neutral"}>
               {text().length > 0 ? "Guarded" : "Empty"}
             </Badge>
           }
@@ -809,11 +809,11 @@ function Unsaved(props: { pop: () => void }) {
               paddingHorizontal: 14,
               fontSize: 15,
               color: colors.foreground,
-              backgroundColor: colors.field,
+              backgroundColor: colors.card,
               borderWidth: 1,
               borderColor: focused() ? colors.brand : colors.input,
               ...rounded(shape.control),
-              ...finish.inset,
+              ...surface("inset").style,
             }}
           />
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
@@ -943,8 +943,10 @@ function Deep(props: {
                     justifyContent: "center",
                     borderWidth: level() === props.depth ? 0 : 1,
                     borderColor: colors.border,
-                    backgroundColor: level() === props.depth ? colors.primary : colors.raised,
-                    ...(level() === props.depth ? finish.accent : finish.raised),
+                    backgroundColor: level() === props.depth ? colors.primary : colors.surface,
+                    ...(level() === props.depth
+                      ? surface("accent").style
+                      : surface("raised").style),
                   }}
                 >
                   <Text
@@ -1488,7 +1490,7 @@ export function NavStackDemo() {
                 value={String(backs())}
                 unit={backs() === 1 ? "press" : "presses"}
                 note={intercept() ? "caught" : "popped"}
-                tone={intercept() ? "warn" : "accent"}
+                tone={intercept() ? "warning" : "accent"}
               />
               <Text style={{ fontSize: 13, lineHeight: 18, color: colors.mutedForeground }}>
                 {intercept()
@@ -1585,10 +1587,10 @@ export function NavStackDemo() {
                 borderRadius: 11,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: colors.raised,
+                backgroundColor: colors.surface,
                 borderWidth: 1,
                 borderColor: colors.border,
-                ...finish.raised,
+                ...surface("raised").style,
               }}
             >
               <Icon icon={Trash} size={18} tint={colors.destructive} />

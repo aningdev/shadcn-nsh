@@ -6,11 +6,10 @@ import {
   animate,
   buttonCorner,
   colors,
-  finish,
+  control,
+  feedback,
   focusRing,
-  hovered,
-  stateLayer,
-  style as themeStyle,
+  surface,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
@@ -18,13 +17,13 @@ import {
   font,
   stroke,
   tints,
-  dimmed,
   controlHeight,
   iconSize,
   motion,
 } from "@shadcn-nsh/theme";
+import type { AnyColorKey } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
-import type { JSX, StyleProp, TextStyle, Tokens, ViewProps, ViewStyle } from "nsh";
+import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import {
   context,
   createAnimatedValue,
@@ -38,22 +37,9 @@ import {
 } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
-import { AsText } from "./lib/as-text";
 import { Icon, IconLabel } from "./lib/icons";
-import { type Live, read } from "./lib/live-value";
-import {
-  destructiveLook,
-  disabledLook,
-  edged,
-  type Fill,
-  fillOf,
-  ground,
-  outlineEdge,
-  secondaryHover,
-  secondaryLook,
-  selectedLook,
-} from "./lib/look";
-import { pressSink, pressTransition, touchSlop } from "./lib/press";
+import { pressTransition, touchSlop } from "./lib/motion";
+import { AsText, type Live, read } from "./lib/utils";
 import { Spinner } from "./spinner";
 
 /**
@@ -150,9 +136,6 @@ export const buttonSizes: Record<ButtonSize, ButtonDimensions> = {
  * paint their press instead of dimming it, so the press opacity is not the selected one's). */
 const SELECTED_OPACITY = 0.88;
 
-/** How far a press sinks a button (`activeStyle`): none with reduced motion. */
-const sink = (scale: number): ViewStyle => pressSink(scale).activeStyle;
-
 /** The properties a button's states change, eased over 150 ms: the press's
  * sink (Design Guides, "Motion") and the hover's and press's colors. */
 const transition = pressTransition("background-color, border-color, box-shadow, opacity");
@@ -172,60 +155,34 @@ const dimensions = (o?: ButtonLookOptions) => buttonSizes[read(o?.size) ?? "defa
 
 const filled = (variant: ButtonVariant) => variant === "default";
 
-/** The shade a variant wears: the elevation of the finish its slot names, or none. */
-const shadeOf = (shade: ReturnType<typeof secondaryLook>["shade"]): string =>
-  shade === null ? "none" : (finish[shade].boxShadow ?? "none");
-
-/** The look a filled control wears while it is held: the accent dimmed to its `pressedOpacity`, or
- * the flat fill and ink the theme paints instead (`finish.accent.pressedBackground` /
- * `pressedForeground`): a theme whose press swaps the accent out paints a plain face, so the accent's
- * gradient and bevels go with it (WinUI's pressed accent: no border of its own). */
-function pressedAccent(): ViewStyle {
-  const pressed = finish.accent.pressedBackground;
-  const accent: ViewStyle = { ...finish.accent, opacity: finish.accent.pressedOpacity };
-  return pressed === undefined
-    ? accent
-    : {
-        ...accent,
-        backgroundColor: pressed,
-        backgroundImage: "none",
-        borderColor: "transparent",
-        borderTopColor: "transparent",
-        borderBottomColor: "transparent",
-      };
-}
-
 /** A button's label ink, as the token the state layers mix (a theme that swaps fills draws none). */
-const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
+const buttonInk = (variant: ButtonVariant, selected = false): AnyColorKey =>
   filled(variant)
     ? "primary-foreground"
     : variant === "destructive"
       ? "destructive"
       : (variant === "secondary" || variant === "outline") && selected
         ? "primary-foreground"
-        : variant === "secondary"
-          ? "secondary-foreground"
-          : "foreground";
+        : "foreground";
 
 /** A secondary button's resting layer: its face, edge, and shade (`none` where flat). */
 function secondaryStyle(): ViewStyle {
-  const look = secondaryLook();
-  return {
-    ...(look.face === null ? {} : fillOf(look.face)),
-    ...edgeOf(look.edge),
-    boxShadow: shadeOf(look.shade),
-  };
+  return control("button").secondary.style;
 }
 
-/** Opacity fade for disabled controls in themes without a dedicated `state.disabled` surface. */
+/** The raised control's hover surface (`control("button").secondary` over `feedback.hoverSurface`). */
+function secondaryHoverStyle(): ViewStyle {
+  return feedback.hoverSurface();
+}
+
+/** Opacity fade for disabled controls in themes without a dedicated disabled surface. */
 const disabledDimmed = (): ViewStyle =>
-  disabledLook().face === null ? { opacity: dimmed.disabled } : {};
+  feedback.disabled.replaceFace ? {} : { opacity: feedback.disabled.contentOpacity };
 
 /** The fill, edge and shadow of a variant at rest (or selected). A disabled filled button falls back
- * to the secondary surface (or the face the theme's `state.disabled.face` slot states). */
+ * to the secondary surface (or the face the theme's `feedback.disabled` states). */
 function restLook(variant: ButtonVariant, selected: boolean, disabled = false): ViewStyle {
-  const off = disabled ? disabledLook() : null;
-  if (off !== null && off.face !== null) {
+  if (disabled && feedback.disabled.replaceFace) {
     if (variant === "ghost") {
       return {
         backgroundColor: ghostFill(),
@@ -236,41 +193,33 @@ function restLook(variant: ButtonVariant, selected: boolean, disabled = false): 
     if (variant === "outline") {
       return {
         backgroundColor: ghostFill(),
-        borderColor: off.edge === null ? edged(outlineEdge()) : edged(off.edge),
+        borderColor: control("button").outlineEdge,
         boxShadow: "none",
       };
     }
-    return fillOf(off.face);
+    return feedback.disabled.style;
   }
   if (filled(variant) && disabled) return secondaryStyle();
-  if (filled(variant)) return { ...finish.accent, opacity: selected ? SELECTED_OPACITY : 1 };
+  if (filled(variant))
+    return { ...surface("accent").style, opacity: selected ? SELECTED_OPACITY : 1 };
   if (variant === "destructive") {
-    const look = destructiveLook();
+    const look = control("button").destructive;
     if (selected)
       return {
-        boxShadow: shadeOf(look.shade),
+        boxShadow: look.style.boxShadow,
         backgroundColor: alpha(colors.destructive, 0.2),
         backgroundImage: "none",
-        borderColor: ground(look.edge),
+        borderColor: look.edge ?? "transparent",
       };
-    return {
-      ...(look.face === null ? {} : fillOf(look.face)),
-      ...edgeOf(look.edge),
-      ...(look.shade === null ? {} : { boxShadow: shadeOf(look.shade) }),
-    };
+    return look.style;
   }
   if (selected) {
-    // Selected stays on: the chosen ground, apart from rest and from hover in both
-    // appearances (a sunk `pressed` is a press's, too faint to hold).
-    const chosen = selectedLook().face;
-    return chosen === null
-      ? { ...finish.accent }
-      : { borderColor: "transparent", boxShadow: "none", ...fillOf(chosen) };
+    return control("button").selected.style;
   }
   if (variant === "outline")
     return {
       backgroundColor: ghostFill(),
-      borderColor: edged(outlineEdge()),
+      borderColor: control("button").outlineEdge,
       boxShadow: "none",
     };
   if (variant === "ghost")
@@ -278,20 +227,7 @@ function restLook(variant: ButtonVariant, selected: boolean, disabled = false): 
       backgroundColor: ghostFill(),
       borderColor: "transparent",
     };
-  // The whole layer, not a ground: a theme's raised finish may draw more than a fill (WinUI's
-  // underline), and the variant's own edge and shade sit on top of it.
   return secondaryStyle();
-}
-
-/**
- * A variant's edge as a style: a slot that states `none` draws no edge (a `borderWidth` alone would
- * paint the label's ink), and a slot naming a layer that has no such colour keeps the face's own
- * edge — which is what the base secondary (`finish:raised`'s `borderColor`) has always drawn.
- */
-function edgeOf(edge: Fill | null): ViewStyle {
-  if (edge === null) return { borderColor: "transparent" };
-  const painted = ground(edge);
-  return painted === "transparent" ? {} : { borderColor: painted };
 }
 
 /**
@@ -329,29 +265,31 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
     get hoverStyle(): ViewStyle | undefined {
       if (idle() || read(o?.selected)) return undefined;
       const variant = v();
-      if (themeStyle().state.overlay.hover > 0) {
-        return hovered(buttonInk(variant, !!read(o?.selected)));
+      if (feedback.hoverOverlay > 0) {
+        return feedback.hoverStyle(buttonInk(variant, !!read(o?.selected)));
       }
       if (filled(variant)) return { opacity: 0.94 };
       if (variant === "destructive") return { backgroundColor: alpha(colors.destructive, 0.16) };
       return variant === "ghost" || variant === "outline"
-        ? hovered()
-        : { backgroundColor: ground(secondaryHover()) };
+        ? feedback.hoverStyle()
+        : secondaryHoverStyle();
     },
     get activeStyle(): ViewStyle | undefined {
       if (idle()) return undefined;
       const variant = v();
-      const shade: ViewStyle =
-        themeStyle().state.overlay.pressed > 0
-          ? stateLayer("pressed", buttonInk(variant, !!read(o?.selected)))
-          : filled(variant)
-            ? pressedAccent()
-            : variant === "destructive"
-              ? { backgroundColor: alpha(colors.destructive, 0.22), boxShadow: "none" }
-              : variant === "outline"
-                ? { ...finish.pressed, borderColor: edged(outlineEdge()) }
-                : { ...finish.pressed };
-      return { ...shade, ...sink(0.97) };
+      return feedback.press(
+        filled(variant)
+          ? "accent"
+          : variant === "destructive"
+            ? "destructive"
+            : variant === "outline"
+              ? "outline"
+              : "surface",
+        {
+          scale: 0.97,
+          ...(variant === "outline" ? { outlineBorder: control("button").outlineEdge } : {}),
+        },
+      ).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
@@ -369,20 +307,13 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
 function ink(live: Live<ButtonVariant>, o?: ButtonLookOptions) {
   const variant = read(live) ?? "secondary";
   const disabled = !!read(o?.disabled);
-  if (disabled) {
-    const off = disabledLook();
-    if (off.ink !== null) return off.ink;
-    if (filled(variant)) return secondaryLook().ink ?? colors.foreground;
-  }
+  if (disabled) return feedback.disabled.ink;
   if (filled(variant))
-    return read(o?.pressed)
-      ? (finish.accent.pressedForeground ?? finish.accent.foreground)
-      : finish.accent.foreground;
-  if (variant === "destructive") return destructiveLook().ink ?? colors.destructive;
+    return read(o?.pressed) ? feedback.pressedInk("accent") : surface("accent").ink;
+  if (variant === "destructive") return control("button").destructive.ink;
   if ((variant === "secondary" || variant === "outline") && read(o?.selected))
-    return selectedLook().ink ?? finish.accent.foreground;
-  if (read(o?.pressed)) return finish.pressed.foreground;
-  if (variant === "secondary") return secondaryLook().ink ?? colors.foreground;
+    return control("button").selected.ink;
+  if (read(o?.pressed)) return feedback.pressedInk("surface");
   return colors.foreground;
 }
 
@@ -481,10 +412,10 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
       const selected = !!read(o.selected);
       const disabled = !!read(o.disabled);
       const side = iconButtonDimensions(o).side;
-      const off = disabled ? disabledLook() : null;
-      if (off !== null && off.face !== null) {
+      if (disabled && feedback.disabled.replaceFace) {
+        const off = feedback.disabled;
         const outlineStyle = (): ViewStyle => ({
-          borderColor: off.edge === null ? edged(outlineEdge()) : edged(off.edge),
+          borderColor: control("button").outlineEdge,
           backgroundColor: ghostFill(),
           boxShadow: "none",
         });
@@ -496,14 +427,13 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
           ...rounded(iconButtonCorner(o)),
           borderWidth: stroke.control,
           ...(raised || selected
-            ? fillOf(off.face)
+            ? off.style
             : outline
               ? outlineStyle()
               : { borderColor: "transparent", backgroundColor: ghostFill(), boxShadow: "none" }),
           ...transition,
         };
       }
-      const chosen = selected ? selectedLook().face : null;
       return {
         width: terminal ? undefined : side,
         height: terminal ? undefined : side,
@@ -511,54 +441,59 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
         justifyContent: "center",
         ...rounded(iconButtonCorner(o)),
         borderWidth: stroke.control,
-        borderColor: outline && !selected ? edged(outlineEdge()) : "transparent",
+        borderColor: outline && !selected ? control("button").outlineEdge : "transparent",
         backgroundColor: ghostFill(),
         ...(outline && !selected ? { boxShadow: "none" } : {}),
         ...(raised && !selected ? secondaryStyle() : {}),
         ...(selected
-          ? chosen === null
-            ? { ...finish.accent }
-            : { borderColor: "transparent", boxShadow: "none", ...fillOf(chosen) }
+          ? { borderColor: "transparent", boxShadow: "none", ...control("button").selected.style }
           : {}),
         ...transition,
       };
     },
     get hoverStyle(): ViewStyle | undefined {
       if (read(o.selected) || read(o.disabled)) return undefined;
-      if (themeStyle().state.overlay.hover > 0) {
-        return hovered(
-          destructive ? "destructive" : raised ? "secondary-foreground" : "foreground",
+      if (feedback.hoverOverlay > 0) {
+        return feedback.hoverStyle(
+          destructive ? "destructive" : raised ? "primary-foreground" : "foreground",
         );
       }
       return destructive
         ? { backgroundColor: tints.destructive }
         : raised
-          ? { backgroundColor: ground(secondaryHover()) }
-          : hovered();
+          ? secondaryHoverStyle()
+          : feedback.hoverStyle();
     },
     get activeStyle(): ViewStyle | undefined {
       if (read(o.disabled)) return undefined;
-      const shade: ViewStyle =
-        themeStyle().state.overlay.pressed > 0
-          ? stateLayer(
-              "pressed",
-              read(o.selected)
-                ? "primary-foreground"
-                : destructive
-                  ? "destructive"
-                  : raised
-                    ? "secondary-foreground"
-                    : "foreground",
-            )
-          : raised
-            ? { ...finish.pressed }
-            : outline
-              ? { ...finish.pressed, borderColor: edged(outlineEdge()) }
-              : { backgroundColor: alpha(colors.foreground, 0.1) };
-      return {
-        ...shade,
-        ...sink(0.9),
-      };
+      if (feedback.pressOverlay > 0) {
+        return feedback.press(
+          read(o.selected)
+            ? "accent"
+            : destructive
+              ? "destructive"
+              : raised
+                ? "surface"
+                : "sinkOnly",
+          {
+            scale: 0.9,
+            ink: read(o.selected)
+              ? "primary-foreground"
+              : destructive
+                ? "destructive"
+                : raised
+                  ? "primary-foreground"
+                  : "foreground",
+          },
+        ).activeStyle;
+      }
+      if (raised) return feedback.press("surface", { scale: 0.9 }).activeStyle;
+      if (outline)
+        return feedback.press("outline", {
+          scale: 0.9,
+          outlineBorder: control("button").outlineEdge,
+        }).activeStyle;
+      return { backgroundColor: alpha(colors.foreground, 0.1), transform: [{ scale: 0.9 }] };
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
@@ -580,15 +515,14 @@ export function iconButtonGlyph(o: IconButtonLookOptions = {}) {
     },
     get tint() {
       if (read(o.disabled)) {
-        const face = disabledLook().ink;
-        if (face !== null) return face;
+        return feedback.disabled.ink;
       }
       return read(o.selected)
-        ? (selectedLook().ink ?? finish.accent.foreground)
+        ? control("button").selected.ink
         : o.variant === "destructive"
           ? colors.destructive
           : o.variant === "secondary"
-            ? (secondaryLook().ink ?? colors.foreground)
+            ? colors.foreground
             : o.variant === "outline"
               ? colors.foreground
               : colors.mutedForeground;
@@ -628,7 +562,7 @@ export function roundButtonLook(
   return {
     get style(): ViewStyle {
       const side = roundSide(o);
-      const off = read(o.disabled) ? disabledLook().face : null;
+      const disabled = !!read(o.disabled);
       return {
         width: side,
         height: side,
@@ -636,26 +570,30 @@ export function roundButtonLook(
         alignItems: "center",
         justifyContent: "center",
         borderWidth: stroke.control,
-        ...(off !== null ? fillOf(off) : primary ? finish.accent : secondaryStyle()),
+        ...(disabled && feedback.disabled.replaceFace
+          ? feedback.disabled.style
+          : primary
+            ? surface("accent").style
+            : secondaryStyle()),
         ...transition,
       };
     },
     get hoverStyle(): ViewStyle | undefined {
       if (read(o.disabled)) return undefined;
-      if (themeStyle().state.overlay.hover > 0) {
-        return hovered(primary ? "primary-foreground" : "secondary-foreground");
+      if (feedback.hoverOverlay > 0) {
+        return feedback.hoverStyle(primary ? "primary-foreground" : "primary-foreground");
       }
-      return primary ? { opacity: 0.94 } : { backgroundColor: ground(secondaryHover()) };
+      return primary ? { opacity: 0.94 } : secondaryHoverStyle();
     },
     get activeStyle(): ViewStyle | undefined {
       if (read(o.disabled)) return undefined;
-      if (themeStyle().state.overlay.pressed > 0) {
-        return {
-          ...stateLayer("pressed", primary ? "primary-foreground" : "secondary-foreground"),
-          ...sink(0.92),
-        };
+      if (feedback.pressOverlay > 0) {
+        return feedback.press(primary ? "accent" : "surface", {
+          scale: 0.92,
+          ink: "primary-foreground",
+        }).activeStyle;
       }
-      return { ...(primary ? pressedAccent() : finish.pressed), ...sink(0.92) };
+      return feedback.press(primary ? "accent" : "surface", { scale: 0.92 }).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
@@ -683,12 +621,9 @@ export function roundButtonGlyph(
     },
     get tint() {
       if (read(o?.disabled)) {
-        const face = disabledLook().ink;
-        if (face !== null) return face;
+        return feedback.disabled.ink;
       }
-      return variant === "default"
-        ? colors.primaryForeground
-        : (secondaryLook().ink ?? colors.foreground);
+      return variant === "default" ? colors.primaryForeground : colors.foreground;
     },
   };
 }
@@ -750,15 +685,16 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
         },
         get hoverStyle(): ViewStyle | undefined {
           if (segmentDisabled() || read(s?.selected)) return undefined;
-          if (themeStyle().state.overlay.hover > 0) {
-            return hovered(buttonInk(read(variant) ?? "default"));
+          if (feedback.hoverOverlay > 0) {
+            return feedback.hoverStyle(buttonInk(read(variant) ?? "default"));
           }
           return { backgroundColor: shade(0.06) };
         },
         get activeStyle(): ViewStyle | undefined {
           if (segmentDisabled()) return undefined;
-          if (themeStyle().state.overlay.pressed > 0) {
-            return stateLayer("pressed", buttonInk(read(variant) ?? "default"));
+          if (feedback.pressOverlay > 0) {
+            return feedback.press("sinkOnly", { ink: buttonInk(read(variant) ?? "default") })
+              .activeStyle;
           }
           return { backgroundColor: shade(0.12) };
         },

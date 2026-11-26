@@ -2,7 +2,7 @@
 // `numberInputSteps`) and the `NumberInput` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, terminal } from "@shadcn-nsh/theme";
+import { colors, control, terminal } from "@shadcn-nsh/theme";
 import { ChevronDown, ChevronUp, Minus, Plus, type IconNode } from "lucide";
 import type { InputStyle, ViewStyle } from "nsh";
 import { platform, signal, split, Text } from "nsh";
@@ -12,17 +12,16 @@ import {
 } from "nsh/base";
 
 import { edgeClass, fieldLook as fieldWellLook, fieldSize } from "./input";
+import { fieldCornerClass, fieldDrawn, fieldEdgeClass } from "./lib/field-look";
 import { Icon } from "./lib/icons";
-import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
-import { type Live } from "./lib/live-value";
-import { fieldLook } from "./lib/look";
+import { type Live } from "./lib/utils";
 
 const pointer = platform.desktop;
 
 /** The step buttons' feedback: lit under the pointer, darker while pressed, faded where a step does nothing. */
 const press = terminal
   ? "justify-center disabled:opacity-50"
-  : "items-center justify-center transition-colors duration-100 motion-reduce:transition-none enabled:hover:bg-accent active:bg-track disabled:opacity-50";
+  : "items-center justify-center transition-colors duration-100 motion-reduce:transition-none enabled:hover:bg-accent active:bg-surface disabled:opacity-50";
 
 /**
  * A number input's parts as classes (`NumberInput`'s `class` and its
@@ -36,12 +35,12 @@ const press = terminal
 export const numberInputClasses = {
   /** The well: its corners and edge are the theme's field, read where it is drawn. */
   get frame(): string {
-    if (terminal) return "h-4 flex-row items-stretch bg-field pl-2 disabled:opacity-50";
-    const field = fieldLook();
+    if (terminal) return "h-4 flex-row items-stretch pl-2 disabled:opacity-50";
+    const field = fieldDrawn(control("field"));
     return [
       pointer ? "h-8" : "h-11",
       fieldCornerClass(field),
-      "flex-row items-stretch overflow-hidden bg-field",
+      "flex-row items-stretch overflow-hidden",
       fieldEdgeClass(field),
       edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
     ].join(" ");
@@ -55,7 +54,7 @@ export const numberInputClasses = {
 
 /**
  * A number input's frame props (`style`, `hoverStyle`, `focusWithinStyle`, `disabledStyle`, and
- * `class` in a terminal): aligns the well with `fieldLook()` so step buttons share the theme's
+ * `class` in a terminal): aligns the well with the field's recipe so step buttons share the theme's
  * field fill, corners, edge widths, and smooth focus halo.
  */
 export function numberInputLook(o?: { disabled?: Live<boolean>; focused?: Live<boolean> }) {
@@ -64,7 +63,8 @@ export function numberInputLook(o?: { disabled?: Live<boolean>; focused?: Live<b
       get class(): string {
         return numberInputClasses.frame;
       },
-      style: undefined as ViewStyle | undefined,
+      // The band's ground, which a class cannot name (`colors.field` became the field's recipe).
+      style: { backgroundColor: control("field").ground } as ViewStyle,
       hoverStyle: undefined as ViewStyle | undefined,
       focusWithinStyle: undefined as ViewStyle | undefined,
       disabledStyle: undefined as ViewStyle | undefined,

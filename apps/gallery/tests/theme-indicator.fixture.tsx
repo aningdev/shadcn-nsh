@@ -1,37 +1,30 @@
-import { colors, finish, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
+import { colors, control, defineTheme, selectTheme, surface } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import materialTheme from "../../../packages/theme/themes/material/index";
 import { nshGallery } from "../../../packages/theme/themes/nsh-gallery/index";
 import winuiTheme from "../../../packages/theme/themes/winui/index";
-import { Button, fieldCorners, inputLook } from "../../../packages/ui";
-import { fieldLook } from "../../../packages/ui/lib/look";
+import { Button, inputLook } from "../../../packages/ui";
+
+/** The value as the string NSH writes: a style's colour keeps `{ animated }` in its type. */
+const css = (value: unknown) => value as string;
 
 /** A WinUI-dimension theme with distinct inverse and modal roles. */
-const marked: AppTheme = {
-  ...winuiTheme,
+const marked = defineTheme({
+  extends: winuiTheme.spec,
   id: "marked",
   label: "marked",
-  semantics: {
-    ...winuiTheme.semantics,
-    finishes: {
-      ...winuiTheme.semantics.finishes,
-      shared: {
-        ...winuiTheme.semantics.finishes.shared,
-        modal: { ...nshGallery.semantics.finishes.shared.modal, "border-color": "{brand}" },
-        inverse: { ...nshGallery.semantics.finishes.shared.inverse, background: "{brand}" },
-      },
-    },
+  surfaces: {
+    modal: { ...nshGallery.spec.surfaces.modal, border: "brand" },
+    inverse: { ...nshGallery.spec.surfaces.inverse, background: "brand", foreground: "muted" },
   },
-  theme: {
-    ...nshGallery.theme,
-    cssVars: {
-      ...nshGallery.theme.cssVars,
-      light: { ...nshGallery.theme.cssVars.light, "inverse-foreground": "oklch(0.5 0.1 120)" },
-      dark: { ...nshGallery.theme.cssVars.dark, "inverse-foreground": "oklch(0.5 0.1 120)" },
-    },
-  },
-};
+});
+
+/** A field's box corners: an all-round edge keeps its radius, an underline field has flat bottoms. */
+const fieldCorners = () => ({
+  borderBottomLeftRadius: control("field").bottomRadius,
+  borderTopLeftRadius: control("field").radius,
+});
 
 function frameLine() {
   const look = inputLook();
@@ -44,21 +37,21 @@ function frameLine() {
     `hover=${look.hoverStyle !== undefined}`,
     `focus-bottom-brand=${f.borderBottomColor === colors.brand}`,
     `focus-bottom-width=${f.borderBottomWidth ?? 0}`,
-    `ring=${(f.outlineWidth ?? 0) === 2 && !fieldLook().focusLine}`,
+    `ring=${(f.outlineWidth ?? 0) === 2 && !control("field").focusLine}`,
   ].join("|");
 }
 
 function App() {
   return (
     <View>
-      <Text testID="inverse">{`inverse:${colors.inverseForeground}`}</Text>
-      <Text testID="modal">{`modal:${finish.modal.borderColor}`}</Text>
-      <Text testID="tooltip">{`tooltip:${finish.inverse.backgroundColor}`}</Text>
-      <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
+      <Text testID="inverse">{`inverse:${surface("inverse").ink}`}</Text>
+      <Text testID="modal">{`modal:${css(surface("modal").style.borderColor)}`}</Text>
+      <Text testID="tooltip">{`tooltip:${css(surface("inverse").style.backgroundColor)}`}</Text>
+      <Text testID="inverse-fill">{`inverse-fill:${css(surface("inverse").style.backgroundColor)}`}</Text>
       <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>
-      <Text testID="stroke">{`stroke:${"borderBottomColor" in { ...finish.inset }}|${inputLook().style.borderBottomColor === finish.inset.borderBottomColor}|${finish.inset.borderBottomColor !== finish.inset.borderColor}`}</Text>
+      <Text testID="stroke">{`stroke:${"borderBottomColor" in { ...surface("inset").style }}|${inputLook().style.borderBottomColor === surface("inset").style.borderBottomColor}|${surface("inset").style.borderBottomColor !== surface("inset").style.borderColor}`}</Text>
       <Text testID="frame">{`frame:${frameLine()}`}</Text>
-      <Text testID="corners">{`corners:${fieldCorners(fieldLook()).borderBottomLeftRadius}|${fieldCorners(fieldLook()).borderTopLeftRadius}`}</Text>
+      <Text testID="corners">{`corners:${fieldCorners().borderBottomLeftRadius}|${fieldCorners().borderTopLeftRadius}`}</Text>
       <Button onPress={() => selectTheme(materialTheme)}>Material</Button>
       <Button onPress={() => selectTheme(marked)}>Marked</Button>
       <Button onPress={() => selectTheme(null)}>Build-time</Button>

@@ -4,8 +4,8 @@ import { colors, font, dimmed } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 
-import { AsText } from "./lib/as-text";
 import { controlSize } from "./lib/surface";
+import { AsText } from "./lib/utils";
 
 /** A label's look: the row it is (a control can sit before its text) and the type of its text. */
 export interface LabelLook {

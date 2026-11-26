@@ -37,7 +37,7 @@ function Window(props: { variant: WindowControlsVariant; title: string; lines: [
           paddingStart: 12,
           // Caption buttons sit flush against the window's corner, as the platform draws them.
           paddingEnd: props.variant === "caption" ? 0 : 12,
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
           borderBottomWidth: stroke.hairline,
           borderBottomColor: colors.line,
         }}

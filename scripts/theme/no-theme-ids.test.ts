@@ -16,8 +16,8 @@ import { join } from "node:path";
 
 const root = join(import.meta.dir, "../..");
 
-/** Every theme's id, read from the source tree so a new theme is covered without this file changing. */
-const THEME_IDS = readdirSync(join(root, "packages/theme/tokens/themes"), { withFileTypes: true })
+/** Every theme's id, read from `packages/theme/themes` so a new theme is covered without editing this file. */
+const THEME_IDS = readdirSync(join(root, "packages/theme/themes"), { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .filter((entry) => entry.name !== "native")
   .map((entry) => entry.name);

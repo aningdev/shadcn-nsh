@@ -1,6 +1,7 @@
 import {
   colors,
-  finish,
+  feedback,
+  surface,
   focusRing,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
@@ -28,7 +29,7 @@ import {
 import { Button } from "@/packages/ui/button";
 import { Dialog, DialogContent } from "@/packages/ui/dialog";
 import { Icon } from "@/packages/ui/lib/icons";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import { Pressable } from "@/packages/ui/pressable";
 import { Sheet, SheetContent } from "@/packages/ui/sheet";
 import { Stat } from "@/packages/ui/stat";
@@ -90,7 +91,7 @@ function DayRange(props: { stock: Stock }) {
         accessibilityLabel={`Day range ${p(q().low)} to ${p(q().high)}`}
         style={{ flex: 1, height: 16, justifyContent: "center" }}
       >
-        <View style={{ height: 4, borderRadius: 2, backgroundColor: colors.raised }} />
+        <View style={{ height: 4, borderRadius: 2, backgroundColor: colors.surface }} />
         <View
           style={{
             position: "absolute",
@@ -305,7 +306,9 @@ function Ranges(props: { market: Market; stock: Stock }) {
               <Text style={[column, { color: colors.destructive }]}>
                 {price(row().lo, props.stock)}
               </Text>
-              <Text style={[column, { color: colors.up }]}>{price(row().hi, props.stock)}</Text>
+              <Text style={[column, { color: colors.success }]}>
+                {price(row().hi, props.stock)}
+              </Text>
             </View>
           )}
         </Each>
@@ -341,7 +344,7 @@ function Ranges(props: { market: Market; stock: Stock }) {
             cx.stroke();
             for (const [v, c] of [
               [row.lo, colors.destructive],
-              [row.hi, colors.up],
+              [row.hi, colors.success],
             ] as const) {
               cx.fillStyle = c;
               cx.beginPath();
@@ -399,7 +402,7 @@ function PauseButton(props: { market: Market }) {
       role="button"
       hitSlop={6}
       accessibilityLabel={label()}
-      hoverStyle={props.market.running() ? finish.hover : { opacity: 0.94 }}
+      hoverStyle={props.market.running() ? feedback.hoverSurface() : { opacity: 0.94 }}
       activeStyle={pressSink(0.97).activeStyle}
       focusVisibleStyle={focusRing()}
       style={{
@@ -409,7 +412,7 @@ function PauseButton(props: { market: Market }) {
         alignItems: "center",
         justifyContent: "center",
         borderWidth: 1,
-        ...(props.market.running() ? finish.raised : finish.accent),
+        ...(props.market.running() ? surface("raised").style : surface("accent").style),
       }}
     >
       <Icon
@@ -605,9 +608,10 @@ export function StockView(props: {
           paddingHorizontal: terminal ? TERMINAL_COLUMN : 16,
           paddingTop: terminal ? TERMINAL_ROW - 1 : 10,
           paddingBottom: terminal ? 0 : 10 + insets().bottom,
-          ...(terminal ? { backgroundColor: colors.background } : finish.glass),
+          ...(terminal
+            ? { backgroundColor: colors.background, borderTopColor: colors.line }
+            : surface("glass").style),
           borderTopWidth: 1,
-          borderTopColor: terminal ? colors.line : finish.glass.borderColor,
         }}
       >
         <View

@@ -38,10 +38,10 @@ export type PlannedFile = {
   missing?: string[];
 };
 
-/** `theme.json` and `semantics.json` are merged by key, never compared by value: the app owns its look. */
+/** `theme.json` is merged by key, never compared by value: the app owns its look. */
 export function isThemeFile(file: PlannedFile) {
   const name = path.basename(file.absolute);
-  return name === "theme.json" || name === "semantics.json";
+  return name === "theme.json";
 }
 
 /** True when the file `add` would write differs from what the app has, by the rule above. */

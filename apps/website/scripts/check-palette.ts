@@ -28,11 +28,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { ALL_THEMES } from "../../../packages/theme/themes/index";
 import { PALETTES, PALETTE_KEY, type PaletteId } from "../demos/palettes";
 import { packagedDemo, repo, servePackagedDemos, watchDemo } from "./demo-frames";
 
 const docsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const themeRoot = path.join(repo, "packages", "theme", "themes");
 
 const args = process.argv.slice(2);
 const demo = named("--only") ?? "button";
@@ -127,11 +127,11 @@ function rgb(value: string): string | null {
   return channels.every(Number.isFinite) ? channels.join(",") : null;
 }
 
-/** A palette's colors: every color its two theme files hold, the data the demo loads. */
+/** A palette's colors: every color its theme holds — the spec and the `theme.json` built from it. */
 function themeColors(id: PaletteId): Set<string> {
-  const dir = path.join(themeRoot, id);
-  const read = (file: string) => JSON.parse(fs.readFileSync(path.join(dir, file), "utf8"));
-  const colors = [...strings(read("theme.json")), ...strings(read("semantics.json"))]
+  const theme = ALL_THEMES.find((entry) => entry.id === id);
+  if (!theme) throw new Error(`palette: no theme "${id}"`);
+  const colors = [...strings(theme.spec), ...strings(theme.theme)]
     .map(rgb)
     .filter((color): color is string => color !== null);
   return new Set(colors);

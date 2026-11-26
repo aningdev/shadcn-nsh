@@ -16,9 +16,9 @@ import {
 import { CalendarItem, calendarLook, TimeSegment } from "./calendar";
 import { timeFieldClass } from "./input";
 import { clearButtonLook, listboxPopup, listboxPopupStarting } from "./lib/listbox";
-import { type Live, read } from "./lib/live-value";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
+import { type Live, read } from "./lib/utils";
 import { Picker, type PickerProps } from "./select";
 
 /** The room around the calendar in its popup (6 with a pointer) or sheet (10 on a touch screen): a

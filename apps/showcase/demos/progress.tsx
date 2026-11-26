@@ -215,7 +215,7 @@ function Uploads(props: { report: (line: string) => void }) {
       title="Several files"
       subtitle="Each at its own pace, checked when sent"
       right={
-        <Badge tone={all() ? "up" : "neutral"}>
+        <Badge tone={all() ? "success" : "neutral"}>
           {`${sent().filter((value) => value >= 100).length} of ${FILES.length}`}
         </Badge>
       }
@@ -259,7 +259,7 @@ function FileRow(props: {
     <Progress
       value={props.value}
       height={4}
-      tone={props.value >= 100 ? "up" : undefined}
+      tone={props.value >= 100 ? "success" : undefined}
       accessibilityLabel={props.name}
       style={{
         flexDirection: "column-reverse",
@@ -296,7 +296,7 @@ function FileRow(props: {
             }
           >
             <View style={{ opacity: done, transform: [{ scale: done }] }}>
-              <Icon icon={Check} size={14} tint={toneColor("up")} />
+              <Icon icon={Check} size={14} tint={toneColor("success")} />
             </View>
           </If>
         </View>
@@ -315,7 +315,7 @@ function Steps(props: { report: (line: string) => void }) {
       title="Steps"
       subtitle="The bar fills to the step you are on"
       right={
-        <Badge tone={step() >= STEPS.length ? "up" : "neutral"}>
+        <Badge tone={step() >= STEPS.length ? "success" : "neutral"}>
           {step() >= STEPS.length ? "Done" : `Step ${step() + 1} of ${STEPS.length}`}
         </Badge>
       }
@@ -372,7 +372,7 @@ function Meters(props: { report: (line: string) => void }) {
   const { report } = props;
   const values = signal([14, 92, 60]);
   const tone = (index: number, value: number): Tone | undefined =>
-    index === 0 && value < 20 ? "destructive" : index === 1 && value > 85 ? "warn" : undefined;
+    index === 0 && value < 20 ? "destructive" : index === 1 && value > 85 ? "warning" : undefined;
   return (
     <DemoCard title="Sizes and tones" subtitle="Thin, regular and thick; a tone when it matters">
       <View style={{ gap: 14 }}>

@@ -1,22 +1,13 @@
 // A pressable: a region that owns its look and gets only the feedback of a press — the sink, the
 // pointer's hover and the keyboard's ring.
 
-import {
-  colors,
-  focusRing,
-  hovered,
-  rounded,
-  shape,
-  stateLayer,
-  style as themeStyle,
-} from "@shadcn-nsh/theme";
+import { colors, feedback, rounded, shape } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { split } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
-import { AsText } from "./lib/as-text";
-import { type Live, read } from "./lib/live-value";
-import { pressSink, pressTransition } from "./lib/press";
+import { pressSink, pressTransition } from "./lib/motion";
+import { AsText, type Live, read } from "./lib/utils";
 
 /** Options of `pressableLook`. */
 export interface PressableLookOptions {
@@ -36,7 +27,8 @@ const SINK = 0.98;
  * its content draws, on the page's surface; `shape.control` shapes the keyboard's ring to the
  * region's corners (a `style` with its own radius moves the ring with it). Under the pointer it
  * takes the lightest hover fill the theme has (a whisper of the text color); pressed it sinks to
- * `scale` (98% by default, none with reduced motion); with the keyboard on it, `focusRing()`.
+ * `scale` (98% by default, none with reduced motion); with the keyboard on it,
+ * `feedback.focusRing()`.
  */
 export function pressableLook(o?: PressableLookOptions) {
   return {
@@ -48,20 +40,17 @@ export function pressableLook(o?: PressableLookOptions) {
       };
     },
     get hoverStyle(): ViewStyle | undefined {
-      return read(o?.disabled) ? undefined : hovered();
+      return read(o?.disabled) ? undefined : feedback.hoverStyle();
     },
     get activeStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
-      if (themeStyle().state.overlay.pressed > 0) {
-        return {
-          ...stateLayer("pressed"),
-          ...pressSink(() => read(o?.scale) ?? SINK).activeStyle,
-        };
-      }
-      return pressSink(() => read(o?.scale) ?? SINK).activeStyle;
+      const scale = read(o?.scale) ?? SINK;
+      return feedback.pressOverlay > 0
+        ? feedback.press("surface", { scale }).activeStyle
+        : pressSink(() => scale).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
   };
 }

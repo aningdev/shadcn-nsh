@@ -10,9 +10,9 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { AsText } from "./lib/as-text";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn, popupSurface } from "./lib/popup";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
+import { AsText } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -27,7 +27,7 @@ export interface PopoverLookOptions {
 /**
  * A popover's or a hover card's surface (the `style` of the `PopIn` it
  * comes in with): the popup surface every menu shares (`popupSurface`:
- * `finish.overlay`'s fill, edge and soft shadow, 10-point corners), 14 points
+ * `surface("overlay")`'s fill, edge and soft shadow, 10-point corners), 14 points
  * of padding with a pointer and 16 on a touch screen, its rows 12 apart.
  */
 export function popoverLook(o?: PopoverLookOptions): ViewStyle {

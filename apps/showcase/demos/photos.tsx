@@ -3,7 +3,7 @@
 // The picture data, pull to refresh, native scrolling and the compact bar belong to the scene.
 import {
   colors,
-  finish,
+  surface,
   focusRing,
   rounded,
   terminal,
@@ -30,7 +30,7 @@ import {
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import { scrollbarTheme } from "@/packages/ui/scrollbar";
 import { Stat } from "@/packages/ui/stat";
 
@@ -50,7 +50,7 @@ const belowBar = {
 type Photo = { id: number; title: string; author: string; tone: Tone; views: number };
 
 const authors = ["Ada", "Linus", "Grace", "Ken", "Barbara"];
-const tones: Tone[] = ["accent", "info", "warn", "up", "destructive"];
+const tones: Tone[] = ["accent", "info", "warning", "success", "destructive"];
 const places = [
   "Harbor",
   "Ridge",
@@ -108,8 +108,8 @@ function PhotoRow(props: { photo: Photo }) {
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
-          backgroundColor: colors.raised,
-          ...finish.raised,
+          backgroundColor: colors.surface,
+          ...surface("raised").style,
         }}
       />
       <View
@@ -181,8 +181,8 @@ function PhotoTile(props: { photo: Photo }) {
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
-          backgroundColor: colors.raised,
-          ...finish.raised,
+          backgroundColor: colors.surface,
+          ...surface("raised").style,
         }}
       />
       <View style={{ gap: 3, paddingHorizontal: 4, paddingBottom: 4 }}>
@@ -258,7 +258,7 @@ function Hero(props: {
                 borderColor: colors.border,
                 padding: 16,
                 gap: 12,
-                ...finish.card,
+                ...surface("card").style,
               }
         }
       >
@@ -269,12 +269,12 @@ function Hero(props: {
               height: 40,
               borderRadius: 12,
               borderCurve: "continuous",
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
               borderWidth: 1,
               borderColor: colors.border,
               alignItems: "center",
               justifyContent: "center",
-              ...finish.raised,
+              ...surface("raised").style,
             }}
           >
             <Image src={logo} style={{ width: 24, height: 24 }} />

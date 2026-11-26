@@ -87,7 +87,7 @@ A picture that fails to load leaves the initials on the ring, as a gone picture 
   accessibilityLabel="Ada Lovelace, online"
   style={{ width: 36, height: 36 }}
 >
-  <AvatarBadge style={{ backgroundColor: colors.up }} />
+  <AvatarBadge style={{ backgroundColor: colors.success }} />
 </Avatar>
 ```
 

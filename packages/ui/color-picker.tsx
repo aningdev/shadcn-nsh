@@ -33,9 +33,9 @@ import {
 
 import { IconButton, iconButtonLook } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./input";
-import { useCopied } from "./lib/copied";
 import { Icon } from "./lib/icons";
 import { MenuMark, menuIndicator, PopIn } from "./lib/popup";
+import { useCopied } from "./lib/state";
 import { menuItemLabel, menuItemLook, menuItemNote, menuItemSize, menuPopup } from "./menu";
 import { popoverLook } from "./popover";
 import { Picker } from "./select";

@@ -112,7 +112,7 @@ const WORDS = ["Empty", "Weak", "Fair", "Good", "Strong"];
 
 const score = (value: string) =>
   value === "" ? 0 : PASSWORD_RULES.filter((rule) => rule.test(value)).length;
-const tones = [colors.faint, colors.destructive, colors.warn, colors.info, colors.up];
+const tones = [colors.faint, colors.destructive, colors.warning, colors.info, colors.success];
 
 const strength = score(password());
 
@@ -155,7 +155,7 @@ const strength = score(password());
           return (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 5, minWidth: 140 }}>
               {met ? (
-                <Icon icon={Check} size={12} tint={colors.up} />
+                <Icon icon={Check} size={12} tint={colors.success} />
               ) : (
                 <View
                   style={{

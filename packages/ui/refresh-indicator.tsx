@@ -1,6 +1,6 @@
 // A refresh indicator: the round chip a pull-to-refresh draws over the top of a scroll view.
 
-import { colors, controlHeight, finish, iconSize, stroke } from "@shadcn-nsh/theme";
+import { colors, controlHeight, iconSize, stroke, surface } from "@shadcn-nsh/theme";
 import { ArrowDown } from "lucide";
 import type { AnimatedValue, ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
@@ -39,7 +39,7 @@ export interface RefreshIndicatorLook {
 }
 
 /**
- * A refresh indicator's look: a chip on the raised finish at least 40 points, its opacity, travel
+ * A refresh indicator's look: a chip on the raised surface at least 40 points, its opacity, travel
  * and scale driven by `pull` (all of it on the UI thread), the arrow and the ring in the brand's
  * color. The chip takes its size from the theme's mid control height, read where it is drawn.
  */
@@ -63,8 +63,7 @@ export function refreshIndicatorLook(): RefreshIndicatorLook {
         borderRadius: chip / 2,
         borderWidth: stroke.hairline,
         borderColor: colors.border,
-        backgroundColor: colors.raised,
-        ...finish.raised,
+        ...surface("raised").style,
         alignItems: "center",
         justifyContent: "center",
         opacity: pull.interpolate({ inputRange: [0, FADE_IN], outputRange: [0, 1] }),

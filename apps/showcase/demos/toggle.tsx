@@ -8,7 +8,8 @@ import {
   alpha,
   animate,
   colors,
-  finish,
+  surface,
+  control,
   focusRing,
   hovered,
   motion,
@@ -88,7 +89,7 @@ type Content = {
 
 /**
  * A toolbar toggle in the shared look (`toggleLook`): bare (`default`) or on a field's edge
- * (`outline`) while off, `finish.accent` while pressed; the pointer's hover and the focus ring as
+ * (`outline`) while off, `surface("accent").style` while pressed; the pointer's hover and the focus ring as
  * every control's. Its label is what screen readers say and, with a pointer, its tooltip.
  */
 function Tool(
@@ -298,7 +299,7 @@ function Formatting() {
         style={{
           padding: 12,
           borderRadius: 8,
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
           borderWidth: 1,
           borderColor: colors.line,
         }}
@@ -376,7 +377,7 @@ function Views() {
               borderRadius: 10,
               borderWidth: 1,
               borderColor: colors.line,
-              backgroundColor: colors.inset,
+              backgroundColor: colors.muted,
               justifyContent: "flex-end",
             }
           : {
@@ -435,8 +436,8 @@ function Views() {
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
-          backgroundColor: colors.inset,
-          boxShadow: finish.inset.boxShadow,
+          backgroundColor: colors.muted,
+          boxShadow: surface("inset").style.boxShadow,
         }}
       >
         {/* The thumb, in points: a terminal's Cells show the selected toggle as its own band instead. */}
@@ -452,7 +453,7 @@ function Views() {
               borderRadius: 7,
               borderCurve: "continuous",
               borderWidth: 1,
-              ...finish.knob,
+              ...control("switch").knobStyle(false),
               transform: [{ translateX: x }],
             }}
           />

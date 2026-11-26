@@ -5,18 +5,7 @@ import { runAdd } from "./add";
 
 const fixture = (): Fixture =>
   makeFixture({
-    items: [
-      "theme",
-      "switch-geometry",
-      "press",
-      "motion",
-      "spinner",
-      "as-text",
-      "icons",
-      "button",
-      "live-value",
-      "look",
-    ],
+    items: ["theme", "motion", "spinner", "utils", "icons", "button"],
     installed: true,
   });
 
@@ -38,12 +27,16 @@ describe("add", () => {
     expect(current.exists("nsh-ui.json")).toBe(true);
     expect(current.exists("components/ui/button.tsx")).toBe(true);
     expect(current.exists("components/ui/spinner.tsx")).toBe(true);
-    expect(current.exists("lib/ui/press.ts")).toBe(true);
+    expect(current.exists("lib/ui/motion.tsx")).toBe(true);
     expect(current.exists("lib/ui/theme.ts")).toBe(true);
     expect(current.exists("theme.json")).toBe(true);
-    expect(current.exists("light.tokens.json")).toBe(true);
-    expect(current.exists("dark.tokens.json")).toBe(true);
     expect(current.exists("DESIGN.md")).toBe(true);
+    expect(current.exists("lib/ui/schema.ts")).toBe(true);
+    expect(current.exists("lib/ui/base.ts")).toBe(true);
+    expect(current.exists("lib/ui/preset.ts")).toBe(true);
+    expect(current.exists("light.tokens.json")).toBe(false);
+    expect(current.exists("dark.tokens.json")).toBe(false);
+    expect(current.exists("lib/ui/semantics.json")).toBe(false);
     expect(current.read("components/ui/button.tsx")).toContain('from "../../lib/ui/theme"');
     expect(out.lines).toContain("write components/ui/button.tsx");
   });
@@ -95,14 +88,11 @@ describe("add", () => {
     expect(out.result).toBe(0);
     expect(out.lines).toContain("would write components/ui/button.tsx");
     expect(out.lines).toContain("would write theme.json");
-    expect(out.lines).toContain("would write light.tokens.json");
-    expect(out.lines).toContain("would write dark.tokens.json");
     expect(out.lines).toContain("would write DESIGN.md");
+    expect(out.lines).toContain("would write lib/ui/schema.ts");
     expect(out.text).toContain("Dry run: nothing written.");
     expect(current.exists("components/ui/button.tsx")).toBe(false);
     expect(current.exists("theme.json")).toBe(false);
-    expect(current.exists("light.tokens.json")).toBe(false);
-    expect(current.exists("dark.tokens.json")).toBe(false);
     expect(current.exists("DESIGN.md")).toBe(false);
     expect(current.exists("nsh-ui.json")).toBe(false);
   });
@@ -192,68 +182,9 @@ describe("add", () => {
     expect(typeof merged.cssVars.light.primary).toBe("string");
   });
 
-  test("keeps a customized semantics.json without sending the reader to diff", async () => {
+  test("keeps a modified DESIGN.md unless --overwrite replaces it", async () => {
     current = fixture();
     await captured(() => runAdd(["button"], { cwd: current!.app, registry: current!.url }));
-    const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
-      state: { "press-scale": number };
-    };
-    semantics.state["press-scale"] = 1;
-    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
-
-    const again = await captured(() =>
-      runAdd(["button"], { cwd: current!.app, registry: current!.url }),
-    );
-
-    expect(again.lines).toContain("kept lib/ui/semantics.json (the app's semantics stay)");
-    const kept = JSON.parse(current.read("lib/ui/semantics.json")) as {
-      state: { "press-scale": number };
-    };
-    expect(kept.state["press-scale"]).toBe(1);
-  });
-
-  test("merges a semantics.json that lacks keys and keeps existing app values", async () => {
-    current = fixture();
-    await captured(() => runAdd(["button"], { cwd: current!.app, registry: current!.url }));
-    const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
-      state: { "press-scale": number };
-      shape: { curve?: string };
-      finishes: {
-        shared: Record<string, Record<string, unknown>>;
-        light: Record<string, Record<string, unknown>>;
-        dark: Record<string, Record<string, unknown>>;
-      };
-    };
-    semantics.state["press-scale"] = 1;
-    semantics.finishes.light.card.shadow = "none";
-    delete semantics.shape.curve;
-    delete semantics.finishes.shared.modal;
-    delete semantics.finishes.light.modal;
-    delete semantics.finishes.shared.raised.material;
-    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
-
-    const again = await captured(() =>
-      runAdd(["button"], { cwd: current!.app, registry: current!.url }),
-    );
-
-    expect(
-      again.lines.some((line) => line.startsWith("merge lib/ui/semantics.json (added 4 keys)")),
-    ).toBe(true);
-    const merged = JSON.parse(current.read("lib/ui/semantics.json")) as typeof semantics;
-    expect(merged.state["press-scale"]).toBe(1);
-    expect(merged.finishes.light.card.shadow).toBe("none");
-    expect(merged.shape.curve).toBe("continuous");
-    expect(merged.finishes.shared.modal).toBeDefined();
-    expect(merged.finishes.light.modal).toBeDefined();
-    expect(merged.finishes.shared.raised.material).toBeNull();
-  });
-
-  test("keeps a modified .tokens.json or DESIGN.md unless --overwrite replaces it", async () => {
-    current = fixture();
-    await captured(() => runAdd(["button"], { cwd: current!.app, registry: current!.url }));
-    const original = current.read("light.tokens.json");
-    const edited = `${original}\n`;
-    current.write("light.tokens.json", edited);
     const originalDesign = current.read("DESIGN.md");
     const editedDesign = `${originalDesign}\n`;
     current.write("DESIGN.md", editedDesign);
@@ -261,20 +192,13 @@ describe("add", () => {
     const kept = await captured(() =>
       runAdd(["button"], { cwd: current!.app, registry: current!.url }),
     );
-    expect(kept.lines).toContain("kept light.tokens.json, differs (run diff)");
     expect(kept.lines).toContain("kept DESIGN.md, differs (run diff)");
-    expect(kept.lines).toContain("skip dark.tokens.json (identical)");
-    expect(current.read("light.tokens.json")).toBe(edited);
     expect(current.read("DESIGN.md")).toBe(editedDesign);
 
     const replaced = await captured(() =>
       runAdd(["button"], { cwd: current!.app, registry: current!.url, overwrite: true }),
     );
-    expect(replaced.lines.some((line) => line.startsWith("overwrite light.tokens.json "))).toBe(
-      true,
-    );
     expect(replaced.lines.some((line) => line.startsWith("overwrite DESIGN.md "))).toBe(true);
-    expect(current.read("light.tokens.json")).toBe(original);
     expect(current.read("DESIGN.md")).toBe(originalDesign);
   });
 

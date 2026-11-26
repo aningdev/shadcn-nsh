@@ -62,9 +62,9 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 - **时长走 `motion.*`**：状态过渡用 `motion.state`，浮层出现用 `motion.enter`，其余按快慢取 `motion.fast` / `motion.default` / `motion.slow`；只有循环动画留常量，并注释为什么
 - **JS 里的状态要写理由**：一个状态的外观实在进不了 state 样式（例如边画在触发器上、状态在列表里），就在那一行注释为什么
 - **每个导出部件都透传**：部件的 props 是它所画节点的 props 加自己的轴，`{...rest}` 落在那个节点上；不画自己视图的根（如 `Menu`）在 doc comment 里说明 props 去了哪
-- `class` 合并用 `lib/class-names.ts` 的 `joinClass`，不手拼模板字符串
-- 定时器、订阅、快捷键绑定在 `cleanup` 里释放（样板 `lib/copied.ts`）
-- 同一段形状在两个组件里出现，就搬进 `lib/` 共用（样板 `button.tsx` 的 `Action`、`lib/copied.ts`），不复制第二份
+- `class` 合并用 `lib/utils.tsx` 的 `joinClass`，不手拼模板字符串
+- 定时器、订阅、快捷键绑定在 `cleanup` 里释放（样板 `lib/state.ts` 的 `useCopied`）
+- 同一段形状在两个组件里出现，就搬进 `lib/` 共用（样板 `button.tsx` 的 `Action`、`lib/state.ts` 的 `useCopied`），不复制第二份
 - 轴的 prop 名用 shadcn 的（`variant`、`size`），取值与默认值用上游组件的
 - 复合控件（**Composition Facade**）：Root 只持有开关状态（`createOpenState`）与生命周期回调；Content 持有 `nsh/base` 根并透传它的全部 props；Trigger / Close 对字符串 child 渲染 `Button`
 - 文件头两行：一句说它是什么、做什么；起源于上游的，第二行是致谢行（本库自己的没有这一行）——读它的是复制文件的应用，不是维护者，所以不写搬运史、理由和 `port:vendor` 这类本库工具。代码里不放任何来源标记：来源只在致谢行，去向只在 `port-map.json`。每个导出的类型、prop 和组件都有 doc comment

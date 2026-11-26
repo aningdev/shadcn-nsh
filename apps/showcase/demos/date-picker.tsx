@@ -3,7 +3,7 @@
 // `DatePicker`, `DatePickerTrigger`, `DatePickerContent`, `Badge`, `Button`, and `RadioGroup` parts.
 // Compact triggers sit at the end of `plainRow` rows (or `flex-start` in `Booking`) so every calendar
 // popup is sized by its calendar and aligned to its trigger rather than stretched across the card.
-import { colors, finish, rounded, shape, type Tone } from "@shadcn-nsh/theme";
+import { surface, colors, rounded, shape, type Tone } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { platform, signal, Text, View, windowSize } from "nsh";
 import type { DateMatcher, DateRangePreset } from "nsh/base";
@@ -210,8 +210,8 @@ export function DatePickerDemo() {
     if (!d) return { label: "No deadline", tone: "neutral" };
     const days = daysBetween(iso(today), d);
     if (days === 0) return { label: "Due today", tone: "destructive" };
-    if (days === 1) return { label: "Due tomorrow", tone: "warn" };
-    return { label: `Due in ${days} days`, tone: days <= 3 ? "warn" : "neutral" };
+    if (days === 1) return { label: "Due tomorrow", tone: "warning" };
+    return { label: `Due in ${days} days`, tone: days <= 3 ? "warning" : "neutral" };
   };
 
   // Slots card state
@@ -233,8 +233,8 @@ export function DatePickerDemo() {
     ...rounded(shape.control),
     borderWidth: 1,
     borderColor: on ? colors.brand : colors.border,
-    backgroundColor: on ? colors.primary : colors.raised,
-    boxShadow: on ? "none" : finish.raised.boxShadow,
+    backgroundColor: on ? colors.primary : colors.surface,
+    boxShadow: on ? "none" : surface("raised").style.boxShadow,
   });
 
   return (
@@ -330,7 +330,7 @@ export function DatePickerDemo() {
           title="Reminder"
           subtitle="The system's picker: a day, a time, or both"
           right={
-            <Badge tone={reminderDays() > 0 ? "neutral" : "warn"}>
+            <Badge tone={reminderDays() > 0 ? "neutral" : "warning"}>
               {reminderDays() > 0 ? `${reminderDays()} days` : "Ends before it starts"}
             </Badge>
           }

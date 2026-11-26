@@ -1,7 +1,7 @@
 // What the two apps of the Apps group share: the width the demo draws into, and the shell pieces
 // the gallery keeps in its own `ui.tsx` (an entering block, an icon tile, a caps label). Nothing
 // here belongs to a component: it is the scene's, drawn over this library's theme.
-import { alpha, colors, finish, motion, terminal } from "@shadcn-nsh/theme";
+import { surface, alpha, colors, motion, terminal } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import { computed, createAnimatedValue, pixelRatio, platform, View, windowSize } from "nsh";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
@@ -60,8 +60,8 @@ export function IconTile(props: { icon: IconNode; tint?: string; size?: number }
         borderCurve: "continuous",
         borderWidth: 1,
         borderColor: colors.border,
-        backgroundColor: colors.raised,
-        ...finish.raised,
+        backgroundColor: colors.surface,
+        ...surface("raised").style,
         alignItems: "center",
         justifyContent: "center",
       }}

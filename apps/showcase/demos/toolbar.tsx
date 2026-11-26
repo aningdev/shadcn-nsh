@@ -10,7 +10,7 @@ import {
   animate,
   chart,
   colors,
-  finish,
+  surface,
   hovered,
   motion,
   terminal,
@@ -63,7 +63,7 @@ import { Badge } from "@/packages/ui/badge";
 import { RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
-import { toolbarTrack } from "@/packages/ui/lib/tool";
+import { toolbarTrack } from "@/packages/ui/lib/surface";
 import { Link } from "@/packages/ui/link";
 import { Menu, MenuContent, MenuItem, MenuTrigger, menuPopup } from "@/packages/ui/menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/packages/ui/popover";
@@ -724,7 +724,7 @@ function Formatting() {
         style={{
           padding: 12,
           borderRadius: 8,
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
           borderWidth: 1,
           borderColor: colors.line,
           borderLeftWidth: block() === "Quote" ? 3 : 1,
@@ -850,7 +850,7 @@ function Player() {
             borderRadius: 10,
             borderCurve: "continuous",
             objectFit: "cover",
-            backgroundColor: colors.raised,
+            backgroundColor: colors.surface,
           }}
         />
         <View style={{ flex: 1, gap: 2 }}>
@@ -882,7 +882,7 @@ function Player() {
             height: 4,
             borderRadius: 2,
             overflow: "hidden",
-            backgroundColor: colors.track,
+            backgroundColor: colors.muted,
           }}
         >
           <View
@@ -1073,7 +1073,7 @@ function Palette() {
                 height: TOOL.side,
                 borderRadius: TOOL.side / 4 + 1,
                 borderWidth: 1,
-                ...finish.accent,
+                ...surface("accent").style,
                 transform: [{ translateY: y }],
               }}
             />
@@ -1092,7 +1092,7 @@ function Palette() {
                 }}
                 {...toggleLook({ disabled: () => t().value === "eraser" })}
                 // The thumb shows the chosen tool (a terminal's band is the on fill); no hover over it.
-                pressedStyle={terminal ? finish.accent : undefined}
+                pressedStyle={terminal ? surface("accent").style : undefined}
                 hoverStyle={tool() === t().value || t().value === "eraser" ? undefined : hovered()}
               >
                 <ToolIcon
@@ -1131,7 +1131,7 @@ function Palette() {
             borderRadius: 10,
             borderWidth: 1,
             borderColor: colors.line,
-            backgroundColor: colors.inset,
+            backgroundColor: colors.muted,
             overflow: "hidden",
             alignItems: "center",
             justifyContent: "center",

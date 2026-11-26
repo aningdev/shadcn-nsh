@@ -4,10 +4,10 @@ const find = (texts: string[], prefix: string) =>
   texts.find((t) => t.startsWith(prefix))?.slice(prefix.length);
 
 /**
- * A finish's `material` reaches the view on the next frame: its recipe's `glassEffect` and the
- * layer's own fill as `glassTintColor` ride in the finish's style, the platform props come from
- * `platformMaterial`, and a finish that asks for nothing (`material: "none"`, every shipped layer of
- * the build-time theme) keeps exactly the keys it had.
+ * A surface's `material` reaches the view on the next frame: its recipe's `glassEffect` and the
+ * layer's own fill as `glassTintColor` ride in `surface(role).style`, the platform props come from
+ * `surface(role).platformProps`, and a surface that asks for nothing (`material: null`, every
+ * shipped layer of the build-time theme) keeps exactly the keys it had.
  */
 test("a theme's material shows in the style and the platform props, and goes with the theme", async () => {
   const app = await open("./theme-material.fixture.tsx", {
@@ -70,4 +70,40 @@ test("the material follows the appearance", async () => {
   expect(find(app.texts(), "menu=")).toBe("");
   expect(find(app.texts(), "menuProps=")).toBe("{}");
   expect(find(app.texts(), "raisedProps=")).toBe("{}");
+});
+
+test("built-in themes expose their surface effect and theme-switch shader", async () => {
+  const app = await open("./theme-material.fixture.tsx", {
+    platform: "macos",
+    colorScheme: "light",
+  });
+
+  expect(find(app.texts(), "fx=")).toBe("none");
+  expect(find(app.texts(), "sw=")).toBe("fade:none");
+  expect(app.texts()).toContain("live");
+
+  await app.press("text:Apple");
+  expect(find(app.texts(), "fx=")).toBe("i=0.35;off=4;shade=true;bd=true;ct=true");
+  expect(find(app.texts(), "sw=")).toBe("dissolve:shader");
+  expect(app.texts()).toContain("live");
+
+  await app.press("text:WinUI");
+  expect(find(app.texts(), "fx=")).toBe("i=0.035;off=0;shade=true;bd=false;ct=true");
+  expect(find(app.texts(), "sw=")).toBe("fade:none");
+  expect(app.texts()).toContain("live");
+
+  await app.press("text:Solid Glass");
+  expect(find(app.texts(), "fx=")).toBe("i=0.4;off=0;shade=true;bd=false;ct=true");
+  expect(find(app.texts(), "sw=")).toBe("dissolve:shader");
+  expect(app.texts()).toContain("live");
+
+  await app.press("text:Material");
+  expect(find(app.texts(), "fx=")).toBe("none");
+  expect(find(app.texts(), "sw=")).toBe("radial-wipe:shader");
+  expect(app.texts()).toContain("live");
+
+  await app.press("text:Build-time");
+  expect(find(app.texts(), "fx=")).toBe("none");
+  expect(find(app.texts(), "sw=")).toBe("fade:none");
+  expect(app.texts()).toContain("live");
 });

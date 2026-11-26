@@ -81,7 +81,7 @@ function SmileButton(props: { open: boolean; onPress?: () => void; label: string
       accessibilityLabel={props.label}
       tooltip={pointer ? props.label : undefined}
       onPress={props.onPress}
-      class="hover:bg-hover items-center justify-center transition duration-100 active:scale-95 motion-reduce:transition-none"
+      class="hover:bg-accent items-center justify-center transition duration-100 active:scale-95 motion-reduce:transition-none"
       style={{
         width: pointer ? 32 : 40,
         height: pointer ? 32 : 40,
@@ -186,7 +186,7 @@ function Reactions() {
         <View style={{ flexDirection: "row", gap: 10 }}>
           <View
             class="items-center justify-center rounded-full"
-            style={{ width: 32, height: 32, backgroundColor: colors.raised }}
+            style={{ width: 32, height: 32, backgroundColor: colors.surface }}
           >
             <Text style={{ fontSize: 13, fontWeight: "600", color: colors.mutedForeground }}>
               MC
@@ -212,7 +212,7 @@ function Reactions() {
                 class="flex-row items-center gap-1 rounded-full border px-2 active:opacity-70"
                 style={{
                   height: 26,
-                  borderColor: r().mine ? colors.brandEdge : colors.border,
+                  borderColor: r().mine ? colors.brand : colors.border,
                   backgroundColor: r().mine ? colors.primary : colors.card,
                 }}
               >
@@ -241,7 +241,7 @@ function Reactions() {
                 role="button"
                 accessibilityLabel={`React ${emoji()}`}
                 onPress={() => react(emoji())}
-                class="hover:bg-hover items-center justify-center active:scale-90"
+                class="hover:bg-accent items-center justify-center active:scale-90"
                 style={{
                   width: pointer ? 30 : 38,
                   height: pointer ? 30 : 38,

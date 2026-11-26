@@ -1,7 +1,7 @@
 // Editor: `editorClasses`, `editorFrame`, the `Editor` that wears them and the `EditorFindBar`
 // that finds in it.
 
-import { colors, finish, platformMaterial } from "@shadcn-nsh/theme";
+import { colors, control, surface } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import {
   cleanup,
@@ -24,11 +24,10 @@ import {
 
 import { buttonGlyph } from "./button";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./input-group";
-import { mergeClasses } from "./lib/class-names";
+import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/field-look";
 import { Icon } from "./lib/icons";
-import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/indicator";
-import { fieldLook, fillOf } from "./lib/look";
 import { popupSurface } from "./lib/popup";
+import { mergeClasses } from "./lib/utils";
 import { Toggle } from "./toggle";
 
 /**
@@ -48,13 +47,13 @@ export const editorClasses: EditorClasses = {
   selection: "bg-brand/25",
   caret: "bg-foreground",
   composition: "text-foreground",
-  searchMatch: "bg-warn/25",
-  currentSearchMatch: "bg-warn/40",
+  searchMatch: "bg-warning/25",
+  currentSearchMatch: "bg-warning/40",
   matchingBracket: "border-border",
   indentGuide: "bg-border",
   placeholder: "text-muted-foreground",
   diagnosticError: "text-destructive",
-  diagnosticWarning: "text-warn",
+  diagnosticWarning: "text-warning",
   diagnosticInfo: "text-info",
   diagnosticHint: "text-muted-foreground",
   unnecessaryText: "text-muted-foreground",
@@ -70,13 +69,13 @@ export const editorClasses: EditorClasses = {
  * used, so it follows the appearance and the theme; an app's `style` goes over it.
  */
 export function editorFrame(): ViewStyle {
-  const field = fieldLook();
+  const field = control("field");
   return {
-    ...(field.ground ? fillOf(field.ground) : {}),
+    ...(field.ground ? { backgroundColor: field.ground } : {}),
     ...fieldEdgeWidths(field),
     ...fieldRestEdge(field),
     ...fieldCorners(field),
-    boxShadow: finish.inset.boxShadow,
+    boxShadow: surface("inset").style.boxShadow,
   };
 }
 
@@ -192,7 +191,7 @@ export function EditorFindBar(props: EditorFindBarProps) {
   const glyph = buttonGlyph("ghost", { size: "sm" });
   return (
     <View
-      {...platformMaterial("overlay")}
+      {...surface("overlay").platformProps}
       {...rest}
       class={props.class}
       style={[{ ...popupSurface(), gap: 4 }, props.style ?? null]}

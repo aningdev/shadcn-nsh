@@ -31,7 +31,9 @@ export function VideoDemo() {
         >
           <Caption>Play, seek, volume and what it reports</Caption>
           <Badge
-            tone={failed() ? "destructive" : buffering() ? "warn" : paused() ? "neutral" : "accent"}
+            tone={
+              failed() ? "destructive" : buffering() ? "warning" : paused() ? "neutral" : "accent"
+            }
           >
             {failed() ? "Error" : buffering() ? "Buffering" : paused() ? "Paused" : "Playing"}
           </Badge>

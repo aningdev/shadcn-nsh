@@ -136,7 +136,7 @@ function App() {
                 width: 32,
                 height: 32,
                 borderRadius: 8,
-                backgroundColor: colors.raised,
+                backgroundColor: colors.surface,
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -185,11 +185,11 @@ function App() {
             borderRadius: 13,
             justifyContent: "center",
             borderWidth: 1,
-            borderColor: alpha(colors.up, 0.3),
-            backgroundColor: alpha(colors.up, 0.1),
+            borderColor: alpha(colors.success, 0.3),
+            backgroundColor: alpha(colors.success, 0.1),
           }}
         >
-          <Text style={{ fontSize: 13, fontWeight: "600", color: colors.up }}>$AAPL ▲</Text>
+          <Text style={{ fontSize: 13, fontWeight: "600", color: colors.success }}>$AAPL ▲</Text>
         </View>
       }
     >
@@ -209,7 +209,7 @@ function App() {
           <Text
             style={{
               fontSize: 13,
-              color: price() >= 224.1 ? colors.up : colors.destructive,
+              color: price() >= 224.1 ? colors.success : colors.destructive,
               fontVariant: ["tabular-nums"],
             }}
           >

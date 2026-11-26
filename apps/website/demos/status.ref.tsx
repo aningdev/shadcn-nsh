@@ -11,24 +11,24 @@ import { Toggle } from "@/packages/ui/toggle";
 import { DemoPage } from "./kit";
 import { Log, Panel, Split } from "./stage";
 
-const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
+const TONES: Tone[] = ["neutral", "accent", "info", "warning", "success", "destructive"];
 
 const SERVICES: { name: string; detail: string; label: string; tone: Tone }[] = [
-  { name: "API", detail: "42 ms at the 95th percentile", label: "Online", tone: "up" },
+  { name: "API", detail: "42 ms at the 95th percentile", label: "Online", tone: "success" },
   { name: "Database", detail: "3 connections left", label: "Busy", tone: "accent" },
   { name: "Cache", detail: "Hit rate 98%", label: "Idle", tone: "neutral" },
-  { name: "Search", detail: "Reindexing 4 of 9 shards", label: "Degraded", tone: "warn" },
+  { name: "Search", detail: "Reindexing 4 of 9 shards", label: "Degraded", tone: "warning" },
   { name: "Jobs", detail: "The worker stopped at 03:12", label: "Offline", tone: "destructive" },
   { name: "Webhooks", detail: "Version 2 is out", label: "Update available", tone: "info" },
-  { name: "Exports", detail: "Back at 06:00", label: "Down", tone: "down" },
+  { name: "Exports", detail: "Back at 06:00", label: "Down", tone: "destructive" },
 ];
 
 function App() {
-  const tone = signal<Tone>("up");
+  const tone = signal<Tone>("success");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 6));
   const healthy = () =>
-    SERVICES.filter((service) => service.tone === "up" || service.tone === "accent").length;
+    SERVICES.filter((service) => service.tone === "success" || service.tone === "accent").length;
   return (
     <DemoPage title="Status">
       <Text style={{ color: colors.mutedForeground }}>

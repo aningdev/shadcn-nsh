@@ -28,7 +28,7 @@ const frame = () =>
     ...rounded(shape.control),
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.raised,
+    backgroundColor: colors.surface,
   }) as const;
 
 /** A quiet label under a tile (`code` for API values). */
@@ -57,7 +57,7 @@ function Tile(props: { note: string; code?: boolean; height?: number; children: 
         style={{
           height: props.height ?? 76,
           ...rounded(shape.control),
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
           borderWidth: 1,
           borderColor: colors.line,
           alignItems: "center",
@@ -195,7 +195,7 @@ function Svg() {
           )}
         </Each>
         <View style={{ flex: 1, gap: 8 }}>
-          <View style={{ ...frame(), height: 96, padding: 14, backgroundColor: colors.inset }}>
+          <View style={{ ...frame(), height: 96, padding: 14, backgroundColor: colors.muted }}>
             <Image testID="svg-remote" src={remoteSvg} style={{ flex: 1, objectFit: "contain" }} />
           </View>
           <Note>Remote</Note>
@@ -337,7 +337,7 @@ function Info() {
         <Caption>{`getSize: ${size()}`}</Caption>
         <Caption>{`prefetch: ${prefetched()}`}</Caption>
         <Caption>{`onProgress: ${Math.round(progress() * 100)}% · ${status()}`}</Caption>
-        <Progress value={progress() * 100} tone={progress() >= 1 ? "up" : "accent"} />
+        <Progress value={progress() * 100} tone={progress() >= 1 ? "success" : "accent"} />
       </View>
       <If when={show()} else={<Note>Prefetch, then show: no download, no progress</Note>}>
         <Image
@@ -379,7 +379,7 @@ function Events() {
         <View style={{ flex: 1, gap: 4 }}>
           <Text style={{ fontSize: 15, color: colors.foreground }}>pbs.twimg.com</Text>
           <Text
-            style={{ fontSize: 13, color: colors.up, fontVariant: ["tabular-nums"] }}
+            style={{ fontSize: 13, color: colors.success, fontVariant: ["tabular-nums"] }}
           >{`Loaded, ${loaded()} px`}</Text>
         </View>
       </View>
@@ -424,7 +424,7 @@ function Events() {
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
         <If when={events().length > 0} else={<Note>No load events yet</Note>}>
           <Each of={events()}>
-            {(e) => <Badge tone={e() === "onLoad" ? "up" : "neutral"}>{e()}</Badge>}
+            {(e) => <Badge tone={e() === "onLoad" ? "success" : "neutral"}>{e()}</Badge>}
           </Each>
         </If>
       </View>

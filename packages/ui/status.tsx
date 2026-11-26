@@ -4,7 +4,7 @@
 import { colors, terminal, toneColor, type Tone, font } from "@shadcn-nsh/theme";
 import { Text, View } from "nsh";
 
-import { type Live, read } from "./lib/live-value";
+import { type Live, read } from "./lib/utils";
 
 /** The dot's diameter; half of it is its corner, a full circle. */
 const dotSide = 7;

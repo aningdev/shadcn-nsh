@@ -1,4 +1,4 @@
-import { alpha, colors, finish, rounded, toneColor, shape } from "@shadcn-nsh/theme";
+import { feedback, surface, alpha, colors, rounded, toneColor, shape } from "@shadcn-nsh/theme";
 // Helpers the overlay demos share: a trigger, a field, the event log, and a toast host that
 // delegates to the library's `toast` / `Toaster`. Menu, popover and sheet still call
 // `createToaster` and resolve with the action label. Sounds stay out.
@@ -145,8 +145,8 @@ export function Field(props: InputProps & { prefix?: string }) {
         alignItems: props.multiline ? "flex-start" : "center",
         flex: 1,
         ...rounded(shape.control),
-        backgroundColor: colors.field,
-        ...finish.inset,
+        backgroundColor: colors.card,
+        ...surface("inset").style,
       }}
     >
       <If when={props.prefix}>
@@ -306,10 +306,12 @@ export function Chip(props: {
           ? undefined
           : props.bar
             ? { backgroundColor: alpha(colors.foreground, 0.06) }
-            : { ...finish.hover }
+            : { ...feedback.hoverSurface() }
       }
       activeStyle={
-        props.bar ? { backgroundColor: alpha(colors.foreground, 0.1) } : { ...finish.pressed }
+        props.bar
+          ? { backgroundColor: alpha(colors.foreground, 0.1) }
+          : { ...feedback.press().activeStyle }
       }
       style={{
         flexDirection: "row",
@@ -321,9 +323,13 @@ export function Chip(props: {
         paddingHorizontal: props.bar ? 10 : pointer ? 10 : 14,
         ...rounded(pointer ? 7 : 10),
         borderWidth: 1,
-        borderColor: props.bar ? "transparent" : finish.raised.borderColor,
-        backgroundColor: props.bar ? (props.open ? token("accent") : "transparent") : colors.raised,
-        ...(props.bar ? null : props.open ? finish.pressed : finish.raised),
+        borderColor: props.bar ? "transparent" : surface("raised").style.borderColor,
+        backgroundColor: props.bar
+          ? props.open
+            ? token("accent")
+            : "transparent"
+          : colors.surface,
+        ...(props.bar ? null : props.open ? feedback.press().activeStyle : surface("raised").style),
       }}
     >
       <If when={props.icon}>

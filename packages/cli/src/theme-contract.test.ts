@@ -7,29 +7,75 @@ type Theme = { cssVars: { theme: Vars; light: Vars; dark: Vars } };
 const read = (file: string) =>
   JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8")) as Theme;
 
-/** NSH's own default theme: every key an app that uses `nsh/base` is entitled to. */
-const official = read("../../../references/nsh/crates/nsh-base/src/default-theme.json");
-/**
- * The ported gallery-ui theme (`packages/theme`). Values may differ from
- * the official defaults; the contract is the key set, not the palette.
- */
+/** Theme v5 minimal 25-key contract (`docs/decisions/0020-theme-v5.md`). */
+const REQUIRED_THEME = [
+  "radius",
+  "radius-control",
+  "radius-container",
+  "radius-modal",
+  "scrim",
+  "media",
+  "on-media",
+] as const;
+
+const REQUIRED_MODE = [
+  "background",
+  "card",
+  "popover",
+  "muted",
+  "surface",
+  "foreground",
+  "muted-foreground",
+  "faint",
+  "primary",
+  "primary-foreground",
+  "secondary",
+  "accent",
+  "brand",
+  "border",
+  "line",
+  "input",
+  "ring",
+  "info",
+  "success",
+  "warning",
+  "destructive",
+] as const;
+
+const REMOVED = [
+  "sidebar",
+  "sidebar-foreground",
+  "sidebar-primary",
+  "sidebar-primary-foreground",
+  "sidebar-accent",
+  "sidebar-accent-foreground",
+  "sidebar-border",
+  "sidebar-ring",
+  "card-foreground",
+  "popover-foreground",
+  "secondary-foreground",
+  "accent-foreground",
+  "up",
+  "warn",
+  "brand-tint",
+  "chart-1",
+] as const;
+
 const ours = read("../../../packages/theme/theme.json");
 
-const sections = ["theme", "light", "dark"] as const;
-
-describe("theme.json", () => {
-  test("has every key of NSH's default theme", () => {
-    for (const section of sections) {
-      for (const key of Object.keys(official.cssVars[section])) {
-        expect(key in ours.cssVars[section], `${section}.${key}`).toBe(true);
-      }
+describe("theme.json (Theme v5)", () => {
+  test("declares all 7 shared theme keys and 21 light/dark core keys", () => {
+    for (const key of REQUIRED_THEME) {
+      expect(key in ours.cssVars.theme, `theme.${key}`).toBe(true);
     }
+    expect(Object.keys(ours.cssVars.light).sort()).toEqual([...REQUIRED_MODE].sort());
+    expect(Object.keys(ours.cssVars.dark).sort()).toEqual([...REQUIRED_MODE].sort());
   });
 
-  test("declares light and dark for every color-like key it adds", () => {
-    const light = new Set(Object.keys(ours.cssVars.light));
-    const dark = new Set(Object.keys(ours.cssVars.dark));
-    for (const key of light) expect(dark.has(key), `dark missing ${key}`).toBe(true);
-    for (const key of dark) expect(light.has(key), `light missing ${key}`).toBe(true);
+  test("omits removed legacy keys (sidebar-*, *-foreground, *-tint, chart-*)", () => {
+    for (const key of REMOVED) {
+      expect(key in ours.cssVars.light, `light has removed ${key}`).toBe(false);
+      expect(key in ours.cssVars.dark, `dark has removed ${key}`).toBe(false);
+    }
   });
 });

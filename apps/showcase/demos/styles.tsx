@@ -3,7 +3,7 @@
 // (circular and continuous, per corner), a progressive blur that layers `backdropFilter` under
 // masks, borders per side in each style, shadows that glow rather than darken, clipping and
 // stacking order, 3D transforms with two faces, numerals, and a right-to-left layout.
-import { alpha, colors, finish, isDark, tints, shape } from "@shadcn-nsh/theme";
+import { surface, alpha, colors, isDark, tints, shape } from "@shadcn-nsh/theme";
 import {
   Animated,
   cleanup,
@@ -36,7 +36,7 @@ const stage = (): ViewStyle => ({
   justifyContent: "center",
   borderRadius: shape.control,
   borderCurve: "continuous",
-  backgroundColor: colors.inset,
+  backgroundColor: colors.muted,
   borderWidth: 1,
   borderColor: colors.line,
   boxShadow: isDark() ? "inset 0 1px 0 rgba(255,255,255,0.05)" : "inset 0 1px 0 #ffffff",
@@ -48,7 +48,7 @@ const box = (): ViewStyle => ({
   height: 76,
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: colors.raised,
+  backgroundColor: colors.surface,
 });
 
 function Label(props: { children: string; color?: string }) {
@@ -153,7 +153,7 @@ function Corners() {
         height: 28,
         borderRadius: 14,
         borderCurve: "continuous",
-        backgroundColor: colors.up,
+        backgroundColor: colors.success,
       }),
     },
   ];
@@ -217,7 +217,7 @@ function ProgressiveBlur() {
           borderRadius: shape.control,
           borderCurve: "continuous",
           overflow: "hidden",
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
         }}
       >
         <Each of={Array.from({ length: 8 }, (_, i) => i)}>
@@ -227,7 +227,7 @@ function ProgressiveBlur() {
                 height: 20,
                 paddingLeft: 12,
                 justifyContent: "center",
-                backgroundColor: i() % 2 ? colors.info : colors.inset,
+                backgroundColor: i() % 2 ? colors.info : colors.muted,
               }}
             >
               <Text
@@ -280,11 +280,11 @@ function Borders() {
               borderTopWidth: 6,
               borderTopColor: colors.destructive,
               borderRightWidth: 2,
-              borderRightColor: colors.up,
+              borderRightColor: colors.success,
               borderBottomWidth: 4,
               borderBottomColor: colors.info,
               borderLeftWidth: 1,
-              borderLeftColor: colors.warn,
+              borderLeftColor: colors.warning,
             }}
           />
         </Tile>
@@ -306,7 +306,7 @@ function Borders() {
                 height: 28,
                 borderRadius: 8,
                 borderWidth: 3,
-                borderColor: colors.warn,
+                borderColor: colors.warning,
                 borderStyle: "dotted",
               }}
             />
@@ -333,7 +333,10 @@ function Borders() {
           />
         </Tile>
         <Tile label="Single-side dots" code="border-b-4 · border-dotted">
-          <View class="border-b-4 border-dotted" style={{ ...box(), borderColor: colors.warn }} />
+          <View
+            class="border-b-4 border-dotted"
+            style={{ ...box(), borderColor: colors.warning }}
+          />
         </Tile>
         <Tile label="Colored dashes" note="One color per side">
           <View
@@ -343,9 +346,9 @@ function Borders() {
               borderWidth: 3,
               borderStyle: "dashed",
               borderTopColor: colors.destructive,
-              borderRightColor: colors.up,
+              borderRightColor: colors.success,
               borderBottomColor: colors.info,
-              borderLeftColor: colors.warn,
+              borderLeftColor: colors.warning,
             }}
           />
         </Tile>
@@ -395,7 +398,7 @@ function Shadows() {
               height: 76,
               borderTopLeftRadius: 28,
               borderBottomRightRadius: 28,
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
               boxShadow: isDark() ? "0 8px 12px rgb(0 0 0 / 0.6)" : "0 8px 12px rgb(0 0 0 / 0.22)",
             }}
           />
@@ -420,8 +423,8 @@ function Shadows() {
             style={{
               fontSize: 15,
               fontWeight: "600",
-              color: colors.up,
-              backgroundColor: tints.up,
+              color: colors.success,
+              backgroundColor: tints.success,
               borderTopLeftRadius: 14,
               borderBottomRightRadius: 14,
               paddingHorizontal: 14,
@@ -437,7 +440,7 @@ function Shadows() {
             style={{
               ...box(),
               borderRadius: 16,
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
               boxShadow: "0 6px 10px rgb(0 0 0 / 0.5)",
             }}
           >
@@ -455,7 +458,7 @@ function Layers() {
   const front = signal(0);
   const opacity = createAnimatedValue(0.45);
   const level = signal<"0.2" | "0.45" | "1">("0.45");
-  const tones = [colors.destructive, colors.info, colors.up];
+  const tones = [colors.destructive, colors.info, colors.success];
   return (
     <Card
       title="Clipping and layers"
@@ -472,10 +475,10 @@ function Layers() {
           <View
             style={{
               ...box(),
-              backgroundColor: tints.warn,
+              backgroundColor: tints.warning,
               borderRadius: 22,
               borderWidth: 1.5,
-              borderColor: colors.warn,
+              borderColor: colors.warning,
               overflow: clip() ? "hidden" : "visible",
             }}
           >
@@ -490,7 +493,7 @@ function Layers() {
                 backgroundColor: colors.destructive,
               }}
             />
-            <Label color={colors.warn}>{hint("Tap", "Click")}</Label>
+            <Label color={colors.warning}>{hint("Tap", "Click")}</Label>
           </View>
         </Tile>
         <Tile
@@ -598,7 +601,7 @@ function FlipCard() {
           ...face,
           backgroundColor: tints.info,
           borderColor: alpha(colors.info, 0.6),
-          boxShadow: finish.card.boxShadow,
+          boxShadow: surface("card").style.boxShadow,
           transform: [{ perspective: 800 }, { rotateY: angle }],
         }}
       >
@@ -624,7 +627,7 @@ function FlipCard() {
           ...face,
           backgroundColor: tints.brand,
           borderColor: alpha(colors.brand, 0.5),
-          boxShadow: finish.card.boxShadow,
+          boxShadow: surface("card").style.boxShadow,
           transform: [
             { perspective: 800 },
             { rotateY: angle.interpolate({ inputRange: [0, 180], outputRange: [180, 360] }) },
@@ -700,13 +703,13 @@ function Transforms() {
             style={{
               ...box(),
               borderRadius: 10,
-              backgroundColor: tints.warn,
+              backgroundColor: tints.warning,
               borderWidth: 1,
-              borderColor: colors.warn,
+              borderColor: colors.warning,
               transform: "skewX(-12deg)",
             }}
           >
-            <Label color={colors.warn}>Skew</Label>
+            <Label color={colors.warning}>Skew</Label>
           </View>
         </Tile>
         <Tile label="Origin" code="transformOrigin" note="Top left · rotated 30°">
@@ -789,7 +792,7 @@ function Numerals() {
 /** Rows, `marginStart` and text under a right-to-left layout: the app's language decides it, and `direction` sets a view's own. */
 function RightToLeft() {
   const rtl = signal(false);
-  const tones = [colors.destructive, colors.info, colors.up];
+  const tones = [colors.destructive, colors.info, colors.success];
   const chip: ViewStyle = {
     width: 40,
     height: 40,

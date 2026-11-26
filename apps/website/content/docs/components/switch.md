@@ -139,7 +139,7 @@ Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes throug
 
 ### Where the numbers come from
 
-The track, border (`switch.edge.off`, `switch.edge.on`, `switch.edge.color`), knob dimensions (`switch.track`, `switch.knob.*`), and derived press feedback all read `controls().switch` (`packages/ui/lib/look.ts`) so switching themes updates geometry and motion on the next frame:
+The track, border (`switch.edge.off`, `switch.edge.on`, `switch.edge.color`), knob dimensions (`switch.track`, `switch.knob.*`), and derived press feedback all read `control("switch")` (`@shadcn-nsh/theme`) so switching themes updates geometry and motion on the next frame:
 
 - **Apple** draws an oval knob on a borderless pill track (`54 × 24` with `31 × 20` knob on pointer; `63 × 28` with `37 × 24` on touch; `sm`: `40 × 18` with `23 × 14` on pointer).
 - **shadcn** draws a borderless pill track (`32 × 18` on pointer, `sm`: `24 × 14`; `44 × 24` / `36 × 20` on touch) with `--input` off track.
@@ -159,4 +159,4 @@ In `nsh-gallery` and `solid-glass`, that is 36 × 20 with a 16-point knob under 
 
 `SwitchSize` is `"sm" | "default"`.
 
-Off, the knob wears `finish.knob`; on, it reads `finish.knob.checkedBackground` / `checkedBorderColor` / `checkedGradient` (`packages/ui/switch.tsx`, `knobLook`).
+Off and on, the knob wears `control("switch").knobStyle(checked)` (`packages/ui/switch.tsx`, `knobLook`): the theme states its size, face, gradient and edge per state, and how it grows when pressed.

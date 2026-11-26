@@ -1,4 +1,4 @@
-import { colors, finish, rounded } from "@shadcn-nsh/theme";
+import { surface, colors, rounded } from "@shadcn-nsh/theme";
 // Accordion: the official gallery's scene (`references/nsh/examples/gallery/demos/AccordionDemo.tsx`)
 // with this library's parts — an FAQ that opens one answer at a time (gift wrap coming later), and
 // a settings page whose sections open together, with switches, a radio group and a nested accordion
@@ -131,10 +131,10 @@ function Faq(props: { log: (text: string) => void }) {
                       ...rounded(7),
                       alignItems: "center",
                       justifyContent: "center",
-                      backgroundColor: open().includes(q().value) ? colors.primary : colors.raised,
+                      backgroundColor: open().includes(q().value) ? colors.primary : colors.surface,
                       boxShadow: open().includes(q().value)
-                        ? finish.accent.boxShadow
-                        : finish.raised.boxShadow,
+                        ? surface("accent").style.boxShadow
+                        : surface("raised").style.boxShadow,
                     }}
                     class="transition-colors duration-200 motion-reduce:transition-none"
                   >

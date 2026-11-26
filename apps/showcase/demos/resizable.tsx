@@ -84,7 +84,7 @@ export function ResizableDemo() {
             maxSize={360}
             onResize={({ size }) => sidebar.set(size)}
           >
-            <View style={{ flex: 1, backgroundColor: colors.inset }}>
+            <View style={{ flex: 1, backgroundColor: colors.muted }}>
               <Pane
                 title="Files"
                 detail="120 to 360 pt"
@@ -107,7 +107,7 @@ export function ResizableDemo() {
                 visible={shown()}
                 onResize={({ size }) => consoleSize.set(size)}
               >
-                <View style={{ flex: 1, backgroundColor: colors.inset }}>
+                <View style={{ flex: 1, backgroundColor: colors.muted }}>
                   <Pane
                     title="Console"
                     detail="Keeps its size while hidden"

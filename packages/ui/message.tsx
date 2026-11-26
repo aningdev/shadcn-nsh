@@ -6,8 +6,8 @@ import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, token, View } from "nsh";
 
 import { Avatar, type AvatarProps } from "./avatar";
-import { AsText } from "./lib/as-text";
 import { density } from "./lib/surface";
+import { AsText } from "./lib/utils";
 
 /** Which side of the conversation a message sits on: `start` (what came in), `end` (what you send). */
 export type MessageAlign = "start" | "end";

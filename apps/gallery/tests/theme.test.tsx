@@ -3,7 +3,7 @@ import { expect, open, test } from "nsh/test";
 const find = (texts: string[], prefix: string) =>
   texts.find((t) => t.startsWith(prefix))?.slice(prefix.length);
 
-test("finish colors come from the shadow tokens and follow the appearance", async () => {
+test("surface colors come from the shadow tokens and follow the appearance", async () => {
   const light = await open("./theme.fixture.tsx", { colorScheme: "light" });
   const dark = await open("./theme.fixture.tsx", { colorScheme: "dark" });
   for (const prefix of ["raised=", "menu="]) {

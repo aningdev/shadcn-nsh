@@ -12,7 +12,7 @@ import {
 
 import { Button, buttonGlyph, buttonLabel, type ButtonVariant } from "./button";
 import { Icon } from "./lib/icons";
-import { type Live, read } from "./lib/live-value";
+import { type Live, read } from "./lib/utils";
 
 /** How much of a tone a solid tint carries: 10 % over a light base, 16 % over a dark one, where the
  * same mix would read fainter. */
@@ -24,7 +24,7 @@ const SOLID_TINT = { light: 10, dark: 16 } as const;
  * through. */
 const solidTint = (tone: Tone, base: string = colors.card) =>
   tone === "neutral"
-    ? colors.raised
+    ? colors.surface
     : `color-mix(in srgb, ${toneColor(tone)} ${isDark() ? SOLID_TINT.dark : SOLID_TINT.light}%, ${base})`;
 
 /** One action on a diff's change: a chip 20 points high, its label 11
@@ -80,20 +80,20 @@ const diffPad = 8;
 export function diffViewStyles() {
   return {
     get lineAdded() {
-      return { backgroundColor: solidTint("up") };
+      return { backgroundColor: solidTint("success") };
     },
     get lineDeleted() {
-      return { backgroundColor: solidTint("down") };
+      return { backgroundColor: solidTint("destructive") };
     },
     get wordAdded() {
-      return { backgroundColor: alpha(colors.up, 0.28) };
+      return { backgroundColor: alpha(colors.success, 0.28) };
     },
     get wordDeleted() {
       return { backgroundColor: alpha(colors.destructive, 0.28) };
     },
     // The classic `+` and `−` beside the numbers.
     get indicatorAdded() {
-      return { color: colors.up };
+      return { color: colors.success };
     },
     get indicatorDeleted() {
       return { color: colors.destructive };
@@ -109,9 +109,9 @@ export function diffViewStyles() {
 export function diffHunkTone(
   hunk: { oldLines: number; newLines: number },
   layout: "split" | "unified",
-): "up" | "down" | undefined {
-  if (layout === "unified") return hunk.oldLines > 0 ? "down" : "up";
-  return hunk.newLines > 0 ? "up" : undefined;
+): "success" | "destructive" | undefined {
+  if (layout === "unified") return hunk.oldLines > 0 ? "destructive" : "success";
+  return hunk.newLines > 0 ? "success" : undefined;
 }
 
 /**

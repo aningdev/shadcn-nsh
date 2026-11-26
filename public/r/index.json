@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "The design tokens (theme.json), standalone DTCG 2025.10 files (light.tokens.json, dark.tokens.json), the agent-readable design specification (DESIGN.md), the finishes (semantics.json), the platform materials (lib/ui/materials.ts) and the roles that read them (lib/ui/theme.ts).",
+      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,effects,paradigm,base,preset,theme}.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -14,24 +14,14 @@
           "target": "theme.json"
         },
         {
-          "path": "packages/theme/light.tokens.json",
-          "type": "registry:file",
-          "target": "light.tokens.json"
-        },
-        {
-          "path": "packages/theme/dark.tokens.json",
-          "type": "registry:file",
-          "target": "dark.tokens.json"
-        },
-        {
           "path": "packages/theme/DESIGN.md",
           "type": "registry:file",
           "target": "DESIGN.md"
         },
         {
-          "path": "packages/theme/semantics.json",
+          "path": "packages/theme/schema.ts",
           "type": "registry:lib",
-          "target": "lib/ui/semantics.json"
+          "target": "lib/ui/schema.ts"
         },
         {
           "path": "packages/theme/materials.ts",
@@ -39,9 +29,24 @@
           "target": "lib/ui/materials.ts"
         },
         {
-          "path": "packages/theme/finish-fields.ts",
+          "path": "packages/theme/effects.ts",
           "type": "registry:lib",
-          "target": "lib/ui/finish-fields.ts"
+          "target": "lib/ui/effects.ts"
+        },
+        {
+          "path": "packages/theme/paradigm.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/paradigm.ts"
+        },
+        {
+          "path": "packages/theme/themes/nsh-gallery/index.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/base.ts"
+        },
+        {
+          "path": "packages/theme/preset.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/preset.ts"
         },
         {
           "path": "packages/theme/theme.ts",
@@ -54,27 +59,12 @@
       "name": "theme-shadcn",
       "type": "registry:theme",
       "title": "Theme: shadcn neutral",
-      "description": "shadcn's neutral palette and flat finishes as one more theme, installed into themes/shadcn/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "shadcn neutral palette and flat surfaces (`themes/shadcn.ts`) for runtime switching (`selectTheme`), with root `theme.json` and `DESIGN.md` when initialized.",
       "files": [
         {
           "path": "packages/theme/themes/shadcn/theme.json",
           "type": "registry:file",
           "target": "themes/shadcn/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/shadcn/semantics.json",
-          "type": "registry:file",
-          "target": "themes/shadcn/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/shadcn/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/shadcn/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/shadcn/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/shadcn/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/shadcn/DESIGN.md",
@@ -84,7 +74,7 @@
         {
           "path": "packages/theme/themes/shadcn/index.ts",
           "type": "registry:lib",
-          "target": "themes/shadcn/index.ts"
+          "target": "themes/shadcn.ts"
         }
       ]
     },
@@ -92,27 +82,12 @@
       "name": "theme-solid-glass",
       "type": "registry:theme",
       "title": "Theme: Solid Glass",
-      "description": "Solid Glass (deeplethe/solid-glass, MIT) as one more theme: panes of thick smoky glass — a rim of light on each top edge, a hairline round it, a shadow underneath — installed into themes/solid-glass/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Solid Glass palette and smoky translucent surfaces (`themes/solid-glass.ts`) for runtime switching (`selectTheme`), with root `theme.json` and `DESIGN.md` when initialized.",
       "files": [
         {
           "path": "packages/theme/themes/solid-glass/theme.json",
           "type": "registry:file",
           "target": "themes/solid-glass/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/solid-glass/semantics.json",
-          "type": "registry:file",
-          "target": "themes/solid-glass/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/solid-glass/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/solid-glass/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/solid-glass/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/solid-glass/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/solid-glass/DESIGN.md",
@@ -122,7 +97,7 @@
         {
           "path": "packages/theme/themes/solid-glass/index.ts",
           "type": "registry:lib",
-          "target": "themes/solid-glass/index.ts"
+          "target": "themes/solid-glass.ts"
         }
       ]
     },
@@ -130,27 +105,12 @@
       "name": "theme-nsh-gallery",
       "type": "registry:theme",
       "title": "Theme: NSH Gallery",
-      "description": "The library's own theme (the build-time one) as one more theme, installed into themes/nsh-gallery/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) — what an app built on another theme switches back to with `selectTheme` while it runs.",
+      "description": "NSH Gallery palette and surfaces (`themes/nsh-gallery.ts`) for runtime switching (`selectTheme`) when another theme was selected at build time.",
       "files": [
         {
           "path": "packages/theme/themes/nsh-gallery/theme.json",
           "type": "registry:file",
           "target": "themes/nsh-gallery/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/nsh-gallery/semantics.json",
-          "type": "registry:file",
-          "target": "themes/nsh-gallery/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/nsh-gallery/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/nsh-gallery/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/nsh-gallery/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/nsh-gallery/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/nsh-gallery/DESIGN.md",
@@ -160,7 +120,7 @@
         {
           "path": "packages/theme/themes/nsh-gallery/index.ts",
           "type": "registry:lib",
-          "target": "themes/nsh-gallery/index.ts"
+          "target": "themes/nsh-gallery.ts"
         }
       ]
     },
@@ -168,27 +128,12 @@
       "name": "theme-apple",
       "type": "registry:theme",
       "title": "Theme: Apple",
-      "description": "Apple's system palette and HIG metrics as one more theme — capsule controls, continuous corners, systemBlue, and Liquid Glass on the glass, menu and raised finishes — installed into themes/apple/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Apple HIG palette, continuous corners, and Liquid Glass surfaces (`themes/apple.ts`) for runtime switching (`selectTheme`).",
       "files": [
         {
           "path": "packages/theme/themes/apple/theme.json",
           "type": "registry:file",
           "target": "themes/apple/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/apple/semantics.json",
-          "type": "registry:file",
-          "target": "themes/apple/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/apple/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/apple/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/apple/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/apple/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/apple/DESIGN.md",
@@ -198,7 +143,7 @@
         {
           "path": "packages/theme/themes/apple/index.ts",
           "type": "registry:lib",
-          "target": "themes/apple/index.ts"
+          "target": "themes/apple.ts"
         }
       ]
     },
@@ -206,27 +151,12 @@
       "name": "theme-material",
       "type": "registry:theme",
       "title": "Theme: Material",
-      "description": "Material 3 Expressive palette and metrics as one more theme — tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, press ripple, and expressive springs — installed into themes/material/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Material 3 Expressive palette, tonal surfaces, and state layers (`themes/material.ts`) for runtime switching (`selectTheme`).",
       "files": [
         {
           "path": "packages/theme/themes/material/theme.json",
           "type": "registry:file",
           "target": "themes/material/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/material/semantics.json",
-          "type": "registry:file",
-          "target": "themes/material/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/material/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/material/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/material/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/material/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/material/DESIGN.md",
@@ -236,7 +166,7 @@
         {
           "path": "packages/theme/themes/material/index.ts",
           "type": "registry:lib",
-          "target": "themes/material/index.ts"
+          "target": "themes/material.ts"
         }
       ]
     },
@@ -244,27 +174,12 @@
       "name": "theme-winui",
       "type": "registry:theme",
       "title": "Theme: WinUI 3",
-      "description": "WinUI 3 (Windows 11) palette and metrics as one more theme — WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, Consolas, double focus ring, timing motion, underline tabs/fields, and Windows blur material — installed into themes/winui/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "WinUI 3 palette, double focus ring, and Windows backdrop surfaces (`themes/winui.ts`) for runtime switching (`selectTheme`).",
       "files": [
         {
           "path": "packages/theme/themes/winui/theme.json",
           "type": "registry:file",
           "target": "themes/winui/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/winui/semantics.json",
-          "type": "registry:file",
-          "target": "themes/winui/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/winui/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/winui/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/winui/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/winui/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/winui/DESIGN.md",
@@ -274,7 +189,7 @@
         {
           "path": "packages/theme/themes/winui/index.ts",
           "type": "registry:lib",
-          "target": "themes/winui/index.ts"
+          "target": "themes/winui.ts"
         }
       ]
     },
@@ -292,36 +207,36 @@
       ]
     },
     {
-      "name": "indicator",
+      "name": "utils",
       "type": "registry:lib",
-      "title": "Indicator",
-      "description": "A field's frame from the theme's field: corners, edge widths, rest colors, ring, and the focus edge.",
+      "title": "Component utilities",
+      "description": "Shared class merging (`joinClass`, `mergeClasses`), reactive values (`Live`, `read`), and string-to-Text child wrapper (`AsText`).",
       "files": [
         {
-          "path": "packages/ui/lib/indicator.ts",
+          "path": "packages/ui/lib/utils.tsx",
           "type": "registry:lib",
-          "target": "lib/ui/indicator.ts"
+          "target": "lib/ui/utils.tsx"
         }
       ]
     },
     {
-      "name": "press",
+      "name": "state",
       "type": "registry:lib",
-      "title": "Press",
-      "description": "A press's feedback: the theme's sink and its ease.",
+      "title": "Composition state",
+      "description": "Shared reactive open state, part slots, item registry, and timed copy confirmation.",
       "files": [
         {
-          "path": "packages/ui/lib/press.ts",
+          "path": "packages/ui/lib/state.ts",
           "type": "registry:lib",
-          "target": "lib/ui/press.ts"
+          "target": "lib/ui/state.ts"
         }
       ]
     },
     {
       "name": "motion",
       "type": "registry:lib",
-      "title": "Motion",
-      "description": "A rejected field's shake, and a figure that rolls to its next value.",
+      "title": "Motion and press",
+      "description": "Shared CSS transitions, press sink feedback, touch hit-target slop, reject shake, and rolling counter.",
       "files": [
         {
           "path": "packages/ui/lib/motion.tsx",
@@ -331,54 +246,15 @@
       ]
     },
     {
-      "name": "live-value",
+      "name": "field-look",
       "type": "registry:lib",
-      "title": "Live value",
-      "description": "A look's value, read where it is applied: a prop or a function of the current state.",
+      "title": "Field frame",
+      "description": "The shared frame of every text-input control: corners, edges, resting line and focus ring.",
       "files": [
         {
-          "path": "packages/ui/lib/live-value.ts",
+          "path": "packages/ui/lib/field-look.ts",
           "type": "registry:lib",
-          "target": "lib/ui/live-value.ts"
-        }
-      ]
-    },
-    {
-      "name": "class-names",
-      "type": "registry:lib",
-      "title": "Class names",
-      "description": "How an app's part classes meet the look's: merged part by part, or joined after them.",
-      "files": [
-        {
-          "path": "packages/ui/lib/class-names.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/class-names.ts"
-        }
-      ]
-    },
-    {
-      "name": "as-text",
-      "type": "registry:lib",
-      "title": "As text",
-      "description": "A control's children drawn as its text: a string or number child in a Text, anything else as it is, where the control draws them.",
-      "files": [
-        {
-          "path": "packages/ui/lib/as-text.tsx",
-          "type": "registry:lib",
-          "target": "lib/ui/as-text.tsx"
-        }
-      ]
-    },
-    {
-      "name": "switch-geometry",
-      "type": "registry:lib",
-      "title": "Switch geometry",
-      "description": "A switch's sizes and the arithmetic of its knob.",
-      "files": [
-        {
-          "path": "packages/ui/lib/switch-geometry.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/switch-geometry.ts"
+          "target": "lib/ui/field-look.ts"
         }
       ]
     },
@@ -386,43 +262,12 @@
       "name": "icons",
       "type": "registry:lib",
       "title": "Icons",
-      "description": "The icon renderer: lucide's nodes on a canvas, the check mark as an SVG, and any icon as an image.",
+      "description": "Lucide icon rendering (`Icon`, `IconLabel`, `CheckMark`) and SVG data URL helper (`iconImage`).",
       "files": [
         {
           "path": "packages/ui/lib/icons.tsx",
           "type": "registry:lib",
           "target": "lib/ui/icons.tsx"
-        },
-        {
-          "path": "packages/ui/lib/icon-drawing.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/icon-drawing.ts"
-        }
-      ]
-    },
-    {
-      "name": "look",
-      "type": "registry:lib",
-      "title": "Look",
-      "description": "A control's form: one function per control dimension, the roles and scale keys it is drawn to, and the form's own numbers where the recipe states them.",
-      "files": [
-        {
-          "path": "packages/ui/lib/look.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/look.ts"
-        }
-      ]
-    },
-    {
-      "name": "track",
-      "type": "registry:lib",
-      "title": "Track",
-      "description": "A rail's face and its shadow: the track's colour, its 1-point edge, and the shade it hangs off.",
-      "files": [
-        {
-          "path": "packages/ui/lib/track.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/track.ts"
         }
       ]
     },
@@ -430,7 +275,7 @@
       "name": "popup",
       "type": "registry:lib",
       "title": "Popup",
-      "description": "The popup families' surface, motion and mark, and the scrim behind what is modal.",
+      "description": "Shared popup surface, scrim backdrop, enter motion, list spacing and menu checkmark.",
       "files": [
         {
           "path": "packages/ui/lib/popup.tsx",
@@ -443,7 +288,7 @@
       "name": "surface",
       "type": "registry:lib",
       "title": "Surface",
-      "description": "Density, section surfaces, and list rows whose hover fill bleeds.",
+      "description": "Shared density scale, section and inset surfaces, plain and bleed rows, and toolbar track.",
       "files": [
         {
           "path": "packages/ui/lib/surface.tsx",
@@ -453,28 +298,15 @@
       ]
     },
     {
-      "name": "open-state",
+      "name": "listbox",
       "type": "registry:lib",
-      "title": "Open state",
-      "description": "The controlled or uncontrolled open flag of a composition root.",
+      "title": "Listbox",
+      "description": "Shared popup listbox look, option rows, chevron, clear button and search filter.",
       "files": [
         {
-          "path": "packages/ui/lib/open-state.ts",
+          "path": "packages/ui/lib/listbox.tsx",
           "type": "registry:lib",
-          "target": "lib/ui/open-state.ts"
-        }
-      ]
-    },
-    {
-      "name": "copied",
-      "type": "registry:lib",
-      "title": "Copied",
-      "description": "The copied flag a copy button flips, cleared on a timer that goes with the component.",
-      "files": [
-        {
-          "path": "packages/ui/lib/copied.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/copied.ts"
+          "target": "lib/ui/listbox.tsx"
         }
       ]
     },
@@ -540,19 +372,6 @@
           "path": "packages/ui/dialog.tsx",
           "type": "registry:ui",
           "target": "components/ui/dialog.tsx"
-        }
-      ]
-    },
-    {
-      "name": "tool",
-      "type": "registry:lib",
-      "title": "Tool track",
-      "description": "The inset track a toolbar and a toggle group share.",
-      "files": [
-        {
-          "path": "packages/ui/lib/tool.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/tool.ts"
         }
       ]
     },
@@ -761,19 +580,6 @@
           "path": "packages/ui/context-menu.tsx",
           "type": "registry:ui",
           "target": "components/ui/context-menu.tsx"
-        }
-      ]
-    },
-    {
-      "name": "listbox",
-      "type": "registry:lib",
-      "title": "Listbox",
-      "description": "Shared list popup, rows, search and clear looks for select, combobox and date picker.",
-      "files": [
-        {
-          "path": "packages/ui/lib/listbox.tsx",
-          "type": "registry:lib",
-          "target": "lib/ui/listbox.tsx"
         }
       ]
     },

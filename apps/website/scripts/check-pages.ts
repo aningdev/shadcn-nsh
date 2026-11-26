@@ -451,10 +451,9 @@ for (const component of cat.components) {
 const THEME_OUTLINE = [
   "## Installation",
   "## Tokens",
-  "### The slots NSH resolves",
-  "### The library's own tokens",
+  "### The appearance roles",
   "### The shared values",
-  "## Finishes",
+  "## Surfaces",
 ];
 
 /** Headings in a markdown body, frontmatter stripped. The table of contents is this list. */
@@ -505,10 +504,9 @@ for (const palette of PALETTES) {
     `<ThemeIntro id="${palette.id}" />`,
     `<ThemeInstall id="${palette.id}" />`,
     `<ThemeTokenLead />`,
-    `<ThemeTokens id="${palette.id}" group="slots" />`,
-    `<ThemeTokens id="${palette.id}" group="extension" />`,
+    `<ThemeTokens id="${palette.id}" group="roles" />`,
     `<ThemeTokens id="${palette.id}" group="shared" />`,
-    `<ThemeFinishes id="${palette.id}" />`,
+    `<ThemeSurfaces id="${palette.id}" />`,
   ]) {
     if (!source.includes(part)) fail(`${where}: missing ${part}`);
   }

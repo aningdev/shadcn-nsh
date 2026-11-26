@@ -2,19 +2,7 @@
 // carousel.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  alpha,
-  colors,
-  dimmed,
-  finish,
-  focusRing,
-  hovered,
-  platformMaterial,
-  stateLayer,
-  style as themeStyle,
-  stroke,
-  terminal,
-} from "@shadcn-nsh/theme";
+import { alpha, colors, feedback, focusRing, stroke, surface, terminal } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -35,9 +23,9 @@ import {
   type CarouselProps as BaseCarouselProps,
 } from "nsh/base";
 
-import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
-import { pressSink, pressTransition } from "./lib/press";
+import { pressTransition } from "./lib/motion";
+import { joinClass } from "./lib/utils";
 
 /** A pointer, where a carousel's controls are compact; a touch screen gets roomier ones. */
 const pointer = platform.desktop;
@@ -91,30 +79,24 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
         alignItems: "center",
         justifyContent: "center",
         borderWidth: stroke.control,
-        ...(o?.glass ? finish.glass : finish.raised),
+        ...(o?.glass ? surface("glass").style : surface("raised").style),
         ...fade,
       };
     },
     get hoverStyle(): ViewStyle {
-      if (themeStyle().state.overlay.hover > 0) {
-        return hovered("foreground");
+      if (feedback.hoverOverlay > 0) {
+        return feedback.hoverStyle("foreground");
       }
-      return { ...finish.hover };
+      return o?.glass ? feedback.hoverStyle() : feedback.hoverSurface();
     },
     get activeStyle(): ViewStyle {
-      if (themeStyle().state.overlay.pressed > 0) {
-        return {
-          ...stateLayer("pressed", "foreground"),
-          ...pressSink(0.92).activeStyle,
-        };
-      }
-      return pressSink(0.92).activeStyle;
+      return feedback.press("surface", { scale: 0.92, ink: "foreground" }).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing(2);
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
   };
 }
@@ -289,7 +271,7 @@ export function CarouselPrevious(props: CarouselPreviousProps) {
   const look = carouselArrowLook({ glass: props.glass, side: props.side });
   return (
     <BasePrevious
-      {...(props.glass ? platformMaterial("glass") : {})}
+      {...(props.glass ? surface("glass").platformProps : {})}
       {...rest}
       accessibilityLabel={props.accessibilityLabel ?? "Previous slide"}
       class={props.class}
@@ -322,7 +304,7 @@ export function CarouselNext(props: CarouselNextProps) {
   const look = carouselArrowLook({ glass: props.glass, side: props.side });
   return (
     <BaseNext
-      {...(props.glass ? platformMaterial("glass") : {})}
+      {...(props.glass ? surface("glass").platformProps : {})}
       {...rest}
       accessibilityLabel={props.accessibilityLabel ?? "Next slide"}
       class={props.class}

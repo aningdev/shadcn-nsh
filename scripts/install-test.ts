@@ -405,39 +405,15 @@ async function onlyLibUi(dir: string) {
   }
 }
 
-/** Assert `<dir>/<targetSubdir>/{light,dark}.tokens.json` and `DESIGN.md` exist and match `<repo>/<sourceSubdir>`. */
-async function assertTokensJsonPair(dir: string, targetSubdir: string, sourceSubdir: string) {
-  for (const name of ["light.tokens.json", "dark.tokens.json"] as const) {
-    const rel = targetSubdir === "." ? name : path.posix.join(targetSubdir, name);
-    const installed = await fs.readFile(path.join(dir, rel), "utf8").catch(() => null);
-    if (installed == null) {
-      throw new StepFailure("theme", `      missing ${rel}`);
-    }
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(installed);
-    } catch (error) {
-      throw new StepFailure(
-        "theme",
-        `      ${rel} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-    if (!isRecord(parsed) || !isRecord(parsed.color)) {
-      throw new StepFailure("theme", `      ${rel} is not a DTCG token object`);
-    }
-    const source = await fs.readFile(path.join(repo, sourceSubdir, name), "utf8");
-    if (installed !== source) {
-      throw new StepFailure("theme", `      ${rel} does not match ${sourceSubdir}/${name}`);
-    }
-  }
-  const designRel = targetSubdir === "." ? "DESIGN.md" : path.posix.join(targetSubdir, "DESIGN.md");
-  const installedDesign = await fs.readFile(path.join(dir, designRel), "utf8").catch(() => null);
+/** Assert `<dir>/DESIGN.md` exists and matches `<repo>/<sourceSubdir>/DESIGN.md`. */
+async function assertRootDesignMd(dir: string, sourceSubdir: string) {
+  const installedDesign = await fs.readFile(path.join(dir, "DESIGN.md"), "utf8").catch(() => null);
   if (installedDesign == null) {
-    throw new StepFailure("theme", `      missing ${designRel}`);
+    throw new StepFailure("theme", "      missing DESIGN.md");
   }
   const sourceDesign = await fs.readFile(path.join(repo, sourceSubdir, "DESIGN.md"), "utf8");
   if (installedDesign !== sourceDesign) {
-    throw new StepFailure("theme", `      ${designRel} does not match ${sourceSubdir}/DESIGN.md`);
+    throw new StepFailure("theme", `      DESIGN.md does not match ${sourceSubdir}/DESIGN.md`);
   }
 }
 
@@ -445,7 +421,7 @@ async function installEveryItem(template: string, dir: string, items: Item[], ns
   await copyApp(template, dir);
   await step("add --all", "bun", [cli, "add", "--all"], dir);
   await onlyLibUi(dir);
-  await assertTokensJsonPair(dir, ".", "packages/theme");
+  await assertRootDesignMd(dir, "packages/theme");
   await fs.writeFile(path.join(dir, "All.tsx"), allPage(items));
   await fs.writeFile(path.join(dir, "All.test.tsx"), ALL_TEST);
   await step("nsh check", nsh, ["check", "."], dir);
@@ -476,19 +452,8 @@ async function installNeutralTheme(template: string, dir: string, items: Item[],
       "      theme.json is not packages/theme/themes/shadcn/theme.json after init --theme shadcn",
     );
   }
-  const installedSemantics = await fs.readFile(path.join(dir, "lib/ui/semantics.json"), "utf8");
-  const sourceSemantics = await fs.readFile(
-    path.join(repo, "packages/theme/themes/shadcn/semantics.json"),
-    "utf8",
-  );
-  if (installedSemantics !== sourceSemantics) {
-    throw new StepFailure(
-      "theme",
-      "      lib/ui/semantics.json is not packages/theme/themes/shadcn/semantics.json after init --theme shadcn",
-    );
-  }
-  await assertTokensJsonPair(dir, ".", "packages/theme/themes/shadcn");
-  await assertTokensJsonPair(dir, "themes/shadcn", "packages/theme/themes/shadcn");
+  await assertRootDesignMd(dir, "packages/theme/themes/shadcn");
+  await fs.access(path.join(dir, "themes/shadcn.ts"));
 }
 
 /**
@@ -567,14 +532,10 @@ mount(Page);
 async function installSecondTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
   const before = await fs.readFile(path.join(dir, "theme.json"), "utf8");
-  const beforeLight = await fs.readFile(path.join(dir, "light.tokens.json"), "utf8");
-  const beforeDark = await fs.readFile(path.join(dir, "dark.tokens.json"), "utf8");
   const beforeDesign = await fs.readFile(path.join(dir, "DESIGN.md"), "utf8");
   await step("add theme-nsh-gallery", "bun", [cli, "add", "theme-nsh-gallery"], dir);
   for (const [name, want] of [
     ["theme.json", before],
-    ["light.tokens.json", beforeLight],
-    ["dark.tokens.json", beforeDark],
     ["DESIGN.md", beforeDesign],
   ] as const) {
     const after = await fs.readFile(path.join(dir, name), "utf8");
@@ -582,55 +543,27 @@ async function installSecondTheme(template: string, dir: string, nsh: string) {
       throw new StepFailure("theme", `      add theme-nsh-gallery rewrote the build-time ${name}`);
     }
   }
-  const source = await fs.readFile(
-    path.join(repo, "packages/theme/themes/nsh-gallery/theme.json"),
-    "utf8",
-  );
-  const installed = await fs
-    .readFile(path.join(dir, "themes/nsh-gallery/theme.json"), "utf8")
+  const installedTs = await fs
+    .readFile(path.join(dir, "themes/nsh-gallery.ts"), "utf8")
     .catch(() => null);
-  if (installed !== source) {
-    throw new StepFailure(
-      "theme",
-      "      add theme-nsh-gallery wrote no themes/nsh-gallery/theme.json",
-    );
+  if (installedTs == null) {
+    throw new StepFailure("theme", "      add theme-nsh-gallery wrote no themes/nsh-gallery.ts");
   }
-  const sourceSemantics = await fs.readFile(
-    path.join(repo, "packages/theme/themes/nsh-gallery/semantics.json"),
-    "utf8",
-  );
-  const installedSemantics = await fs
-    .readFile(path.join(dir, "themes/nsh-gallery/semantics.json"), "utf8")
-    .catch(() => null);
-  if (installedSemantics !== sourceSemantics) {
-    throw new StepFailure(
-      "theme",
-      "      add theme-nsh-gallery wrote no themes/nsh-gallery/semantics.json",
-    );
-  }
-  await assertTokensJsonPair(dir, "themes/nsh-gallery", "packages/theme/themes/nsh-gallery");
   await fs.writeFile(path.join(dir, "Themes.tsx"), TWO_THEMES_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
 
 /**
  * One more theme, from the app's side: `add theme-shadcn` must leave the build-time `theme.json`
- * and `lib/ui/semantics.json` as `init` wrote them, add `themes/shadcn/`, and the page that lists it
- * must type check.
+ * and `DESIGN.md` as `init` wrote them, add `themes/shadcn.ts`, and type check.
  */
 async function installAnotherTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
   const before = await fs.readFile(path.join(dir, "theme.json"), "utf8");
-  const semantics = await fs.readFile(path.join(dir, "lib/ui/semantics.json"), "utf8");
-  const beforeLight = await fs.readFile(path.join(dir, "light.tokens.json"), "utf8");
-  const beforeDark = await fs.readFile(path.join(dir, "dark.tokens.json"), "utf8");
   const beforeDesign = await fs.readFile(path.join(dir, "DESIGN.md"), "utf8");
   await step("add theme-shadcn", "bun", [cli, "add", "theme-shadcn"], dir);
   for (const [name, want] of [
     ["theme.json", before],
-    ["lib/ui/semantics.json", semantics],
-    ["light.tokens.json", beforeLight],
-    ["dark.tokens.json", beforeDark],
     ["DESIGN.md", beforeDesign],
   ] as const) {
     const now = await fs.readFile(path.join(dir, name), "utf8");
@@ -638,27 +571,12 @@ async function installAnotherTheme(template: string, dir: string, nsh: string) {
       throw new StepFailure("theme", `      add theme-shadcn rewrote the build-time ${name}`);
     }
   }
-  const source = await fs.readFile(
-    path.join(repo, "packages/theme/themes/shadcn/theme.json"),
-    "utf8",
-  );
-  const installed = await fs
-    .readFile(path.join(dir, "themes/shadcn/theme.json"), "utf8")
+  const installedTs = await fs
+    .readFile(path.join(dir, "themes/shadcn.ts"), "utf8")
     .catch(() => null);
-  if (installed !== source) {
-    throw new StepFailure("theme", "      add theme-shadcn wrote no themes/shadcn/theme.json");
+  if (installedTs == null) {
+    throw new StepFailure("theme", "      add theme-shadcn wrote no themes/shadcn.ts");
   }
-  const sourceSemantics = await fs.readFile(
-    path.join(repo, "packages/theme/themes/shadcn/semantics.json"),
-    "utf8",
-  );
-  const installedSemantics = await fs
-    .readFile(path.join(dir, "themes/shadcn/semantics.json"), "utf8")
-    .catch(() => null);
-  if (installedSemantics !== sourceSemantics) {
-    throw new StepFailure("theme", "      add theme-shadcn wrote no themes/shadcn/semantics.json");
-  }
-  await assertTokensJsonPair(dir, "themes/shadcn", "packages/theme/themes/shadcn");
   await fs.writeFile(path.join(dir, "Themes.tsx"), THEMES_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -690,34 +608,19 @@ mount(Page);
  */
 async function installNativeTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
-  const apple = await fs.readFile(
-    path.join(repo, "packages/theme/themes/apple/theme.json"),
-    "utf8",
-  );
-  const material = await fs.readFile(
-    path.join(repo, "packages/theme/themes/material/theme.json"),
-    "utf8",
-  );
-  const winui = await fs.readFile(
-    path.join(repo, "packages/theme/themes/winui/theme.json"),
-    "utf8",
-  );
-  for (const [name, want] of [
-    ["themes/apple/theme.json", apple],
-    ["themes/material/theme.json", material],
-    ["themes/winui/theme.json", winui],
-    ["themes/nsh-gallery/theme.json", null],
-    ["themes/native/index.ts", null],
+  for (const name of [
+    "themes/apple.ts",
+    "themes/material.ts",
+    "themes/winui.ts",
+    "themes/nsh-gallery.ts",
+    "themes/native/index.ts",
   ] as const) {
     const now = await fs.readFile(path.join(dir, name), "utf8").catch(() => null);
-    if (now === null || (want !== null && now !== want)) {
+    if (now === null) {
       throw new StepFailure("theme", `      init --theme native wrote no ${name}`);
     }
   }
-  await assertTokensJsonPair(dir, ".", "packages/theme");
-  for (const id of ["apple", "material", "winui", "nsh-gallery"]) {
-    await assertTokensJsonPair(dir, `themes/${id}`, `packages/theme/themes/${id}`);
-  }
+  await assertRootDesignMd(dir, "packages/theme");
   await fs.writeFile(path.join(dir, "Native.tsx"), NATIVE_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -736,8 +639,8 @@ async function installAppleTheme(template: string, dir: string, nsh: string) {
       "      theme.json is not packages/theme/themes/apple/theme.json after init --theme apple",
     );
   }
-  await assertTokensJsonPair(dir, ".", "packages/theme/themes/apple");
-  await assertTokensJsonPair(dir, "themes/apple", "packages/theme/themes/apple");
+  await assertRootDesignMd(dir, "packages/theme/themes/apple");
+  await fs.access(path.join(dir, "themes/apple.ts"));
   await step("add --all", "bun", [cli, "add", "--all"], dir);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -756,8 +659,8 @@ async function installMaterialTheme(template: string, dir: string, nsh: string) 
       "      theme.json is not packages/theme/themes/material/theme.json after init --theme material",
     );
   }
-  await assertTokensJsonPair(dir, ".", "packages/theme/themes/material");
-  await assertTokensJsonPair(dir, "themes/material", "packages/theme/themes/material");
+  await assertRootDesignMd(dir, "packages/theme/themes/material");
+  await fs.access(path.join(dir, "themes/material.ts"));
   await step("add --all", "bun", [cli, "add", "--all"], dir);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -776,8 +679,8 @@ async function installWinuiTheme(template: string, dir: string, nsh: string) {
       "      theme.json is not packages/theme/themes/winui/theme.json after init --theme winui",
     );
   }
-  await assertTokensJsonPair(dir, ".", "packages/theme/themes/winui");
-  await assertTokensJsonPair(dir, "themes/winui", "packages/theme/themes/winui");
+  await assertRootDesignMd(dir, "packages/theme/themes/winui");
+  await fs.access(path.join(dir, "themes/winui.ts"));
   await step("add --all", "bun", [cli, "add", "--all"], dir);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -786,11 +689,11 @@ const MERGE_PAGE = `// Written by scripts/install-test.ts; this app is temporary
 import { mount, Text, View } from "nsh";
 
 import { Button } from "@/components/ui/button";
-import { finish, press } from "@/lib/ui/theme";
+import { press, surface } from "@/lib/ui/theme";
 
 function Page() {
   return (
-    <View style={{ ...finish.modal }}>
+    <View style={{ ...surface("modal").style }}>
       <Text>{String(press.scale)}</Text>
       <Button>OK</Button>
     </View>
@@ -801,43 +704,28 @@ mount(Page);
 `;
 
 /**
- * Upgrading an older app whose `semantics.json` lacks keys: `add` restores the missing style keys,
- * finish roles and finish fields while keeping values the app customized, and `nsh check` passes.
+ * Upgrading an older app whose `theme.json` lacks keys: `add` restores the missing keys while
+ * keeping values the app customized, and `nsh check` passes.
  */
-async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
+async function mergeThemeOnAdd(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
-  const semanticsPath = path.join(dir, "lib/ui/semantics.json");
-  const semantics = JSON.parse(await fs.readFile(semanticsPath, "utf8")) as {
-    state: { "press-scale": number };
-    shape: { curve?: string };
-    finishes: {
-      shared: Record<string, Record<string, unknown>>;
-      light: Record<string, Record<string, unknown>>;
-    };
+  const themePath = path.join(dir, "theme.json");
+  const themeJson = JSON.parse(await fs.readFile(themePath, "utf8")) as {
+    cssVars: { light: Record<string, string>; dark: Record<string, string> };
   };
-  semantics.state["press-scale"] = 1;
-  delete semantics.shape.curve;
-  delete semantics.finishes.shared.modal;
-  delete semantics.finishes.light.modal;
-  delete semantics.finishes.shared.card.elevation;
-  await fs.writeFile(semanticsPath, `${JSON.stringify(semantics, null, 2)}\n`);
+  themeJson.cssVars.light.primary = "oklch(0.5 0.2 250)";
+  delete themeJson.cssVars.light.brand;
+  delete themeJson.cssVars.dark.surface;
+  await fs.writeFile(themePath, `${JSON.stringify(themeJson, null, 2)}\n`);
 
   await step("add button", "bun", [cli, "add", "button"], dir);
 
-  const merged = JSON.parse(await fs.readFile(semanticsPath, "utf8")) as typeof semantics;
-  if (merged.state["press-scale"] !== 1) {
-    throw new StepFailure("semantics merge", "      add overwrote customized state.press-scale");
+  const merged = JSON.parse(await fs.readFile(themePath, "utf8")) as typeof themeJson;
+  if (merged.cssVars.light.primary !== "oklch(0.5 0.2 250)") {
+    throw new StepFailure("theme merge", "      add overwrote customized light.primary");
   }
-  if (
-    merged.shape.curve !== "continuous" ||
-    merged.finishes.shared.modal == null ||
-    merged.finishes.light.modal == null ||
-    !("elevation" in merged.finishes.shared.card)
-  ) {
-    throw new StepFailure(
-      "semantics merge",
-      "      add did not restore missing keys in lib/ui/semantics.json",
-    );
+  if (!merged.cssVars.light.brand || !merged.cssVars.dark.surface) {
+    throw new StepFailure("theme merge", "      add did not restore missing keys in theme.json");
   }
   await fs.writeFile(path.join(dir, "MergeCheck.tsx"), MERGE_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
@@ -1123,20 +1011,20 @@ async function main(): Promise<number> {
     }
 
     if (opts.filter == null) {
-      console.log("semantics merge, on add");
+      console.log("theme merge, on add");
       const startedMerge = performance.now();
       try {
-        await mergeSemanticsOnAdd(template, path.join(tmp, "semantics-merge"), nsh);
+        await mergeThemeOnAdd(template, path.join(tmp, "theme-merge"), nsh);
       } catch (thrown) {
         const failure = failureOf(thrown);
         console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedMerge)}`);
         console.error(failure.detail);
         console.error(
-          "\ninstall test: add does not restore missing keys in semantics.json, or the app does not type check",
+          "\ninstall test: add does not restore missing keys in theme.json, or the app does not type check",
         );
         return 1;
       }
-      const label = "add button restores missing semantics.json keys, keeps app values, nsh check";
+      const label = "add button restores missing theme.json keys, keeps app values, nsh check";
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedMerge)}\n`);
     }
 

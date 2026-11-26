@@ -6,9 +6,9 @@ import { ChevronRight, File, Folder, FolderOpen, type IconNode } from "lucide";
 import { platform, split, Text, View } from "nsh";
 import { Tree as BaseTree, type TreeEntry, type TreeProps as BaseTreeProps } from "nsh/base";
 
-import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
+import { joinClass } from "./lib/utils";
 
 const desktop = platform.desktop;
 const size = {
@@ -26,8 +26,8 @@ const size = {
  * scroll view clips what reaches past its sides.
  */
 export const treeItemClass =
-  "group rounded-(--radius-control) transition-colors duration-150 motion-reduce:transition-none hover:bg-hover active:opacity-70 " +
-  "selected:bg-brand-tint focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring disabled:opacity-50";
+  "group rounded-(--radius-control) transition-colors duration-150 motion-reduce:transition-none hover:bg-accent active:opacity-70 " +
+  "selected:bg-brand/15 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring disabled:opacity-50";
 
 /** How far each level is indented, in points. */
 const treeIndent = 14;

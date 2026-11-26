@@ -10,7 +10,7 @@ import {
   alpha,
   animate,
   colors,
-  finish,
+  surface,
   motion,
   rounded,
   shape,
@@ -325,13 +325,13 @@ function Split(props: Ctx) {
     state() === "busy" ? "Merging…" : state() === "done" ? strategy().done : strategy().label;
   const done = () => state() === "done";
   // Done, the pair turns the `up` tone: its tint under the word and the hairline.
-  const ink = () => (done() ? colors.up : colors.primaryForeground);
+  const ink = () => (done() ? colors.success : colors.primaryForeground);
   const doneFrame = () =>
     done()
       ? {
-          backgroundColor: tints.up,
+          backgroundColor: tints.success,
           backgroundImage: "none" as const,
-          borderColor: alpha(colors.up, 0.4),
+          borderColor: alpha(colors.success, 0.4),
           boxShadow: "none" as const,
         }
       : undefined;
@@ -339,7 +339,7 @@ function Split(props: Ctx) {
     <Card
       title="Split button"
       subtitle="The main action, its variants in a menu"
-      right={<Badge tone={done() ? "up" : "neutral"}>{done() ? "Merged" : "Open"}</Badge>}
+      right={<Badge tone={done() ? "success" : "neutral"}>{done() ? "Merged" : "Open"}</Badge>}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <SplitButton style={doneFrame()}>
@@ -361,7 +361,7 @@ function Split(props: Ctx) {
             <Text style={[buttonLabel("default"), { color: ink() }]}>{label()}</Text>
           </SplitButtonSegment>
           <SplitButtonDivider
-            style={done() ? { backgroundColor: alpha(colors.up, 0.3) } : undefined}
+            style={done() ? { backgroundColor: alpha(colors.success, 0.3) } : undefined}
           />
           <Menu open={open()} onOpenChange={({ open: o }) => open.set(o)}>
             <MenuTrigger>
@@ -505,7 +505,7 @@ function Loading(props: Ctx) {
           busy={progress() !== null}
           fill={fill}
           tone={tints.brand}
-          tint={doneUpload() ? colors.up : undefined}
+          tint={doneUpload() ? colors.success : undefined}
           onPress={runUpload}
         />
       </View>
@@ -712,8 +712,8 @@ function CopyCard(props: Ctx) {
         height: pointer ? 36 : 48,
         ...rounded(shape.control),
         borderWidth: 1,
-        backgroundColor: colors.field,
-        ...finish.inset,
+        backgroundColor: colors.card,
+        ...surface("inset").style,
         borderColor: colors.input,
       }}
     >

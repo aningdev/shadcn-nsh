@@ -3,7 +3,7 @@
 // pressed row opens, a layout animation between tree changes, an input accessory over the iOS
 // keyboard, a view that keeps clear of the keyboard, a dialog's platform options, and the
 // platform itself read from the app.
-import { colors, finish, tints, toneColor, toneTint, type Tone, shape } from "@shadcn-nsh/theme";
+import { surface, colors, tints, toneColor, toneTint, type Tone, shape } from "@shadcn-nsh/theme";
 import {
   announce,
   type InputRef,
@@ -48,7 +48,7 @@ const presets = [
   { value: "linear", label: "Linear" },
 ] as const;
 
-const tileTones: Tone[] = ["accent", "info", "warn", "up", "destructive"];
+const tileTones: Tone[] = ["accent", "info", "warning", "success", "destructive"];
 
 const behaviors = [
   { value: "padding", label: "padding" },
@@ -93,7 +93,7 @@ const tile = () => ({
   borderWidth: 1,
   borderColor: colors.border,
   backgroundColor: colors.card,
-  boxShadow: finish.raised.boxShadow,
+  boxShadow: surface("raised").style.boxShadow,
 });
 
 /**
@@ -116,14 +116,14 @@ function PressFeedback() {
         activeStyle={{ opacity: 0.4 }}
         onPress={() => pressed.set("Fading tile")}
       >
-        <Tile title="Fades while pressed" note="activeStyle={{ opacity: 0.4 }}" />
+        <Tile title="Fades while pressed" note="activeStyle={{opacity: 0.4}}" />
       </View>
       <View
         style={tile()}
-        activeStyle={{ backgroundColor: colors.raised }}
+        activeStyle={{ backgroundColor: colors.surface }}
         onPress={() => pressed.set("Underlay tile")}
       >
-        <Tile title="Lights up while pressed" note="activeStyle={{ backgroundColor }}" />
+        <Tile title="Lights up while pressed" note="activeStyle={{backgroundColor}}" />
       </View>
       <View
         style={tile()}
@@ -136,7 +136,7 @@ function PressFeedback() {
           title={disabled() ? "Takes no presses" : "Enabled"}
           note="disabled + disabled:opacity-50"
         >
-          <Badge tone={disabled() ? "neutral" : "up"}>{disabled() ? "Off" : "On"}</Badge>
+          <Badge tone={disabled() ? "neutral" : "success"}>{disabled() ? "Off" : "On"}</Badge>
         </Tile>
       </View>
       <View
@@ -167,7 +167,7 @@ function PressableSheet() {
         onPress={() => open.set(true)}
         role="button"
         accessibilityLabel="Open a sheet"
-        style={{ boxShadow: finish.accent.boxShadow }}
+        style={{ boxShadow: surface("accent").style.boxShadow }}
         class="bg-primary focus-visible:outline-ring h-12 flex-row items-center justify-center gap-2 rounded-[12px] transition focus-visible:outline-2 active:scale-[0.97] active:opacity-85 motion-reduce:transition-none"
       >
         <Text style={{ fontSize: 15, fontWeight: "600", color: colors.primaryForeground }}>

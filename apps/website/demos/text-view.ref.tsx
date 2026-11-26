@@ -213,7 +213,7 @@ function App() {
                     borderWidth: 1,
                     borderColor: ui().border,
                     borderRadius: 999,
-                    backgroundColor: colors.inset,
+                    backgroundColor: colors.muted,
                     verticalAlign: "middle",
                   }}
                 >

@@ -1,31 +1,27 @@
 /**
- * The values the five themes resolve to, as a page: `docs/specs/semantics-values.md`.
+ * The values the five platform themes resolve to, as a page: `docs/specs/semantics-values.md`.
  *
  *   bun run docs:semantics           # write the page
  *   bun run docs:semantics --check   # exit 1 when the page is stale
  *
- * One table per top-level group of `semantics.json` (typography, dimension, shape, state,
- * transition, motion, finishes, elevation), and one for the colour roles of `theme.json` before
- * them. A row is a field of the compiled values: the union across the five themes, so a field only
- * one theme states still has a row and the others show `—`.
- *
- * The compiled files split a value by appearance (`elevation`, colours) or by input tier
- * (`typography`, `dimension`), and `finishes` splits it into `shared` plus sparse per-appearance
- * overrides; a row therefore carries both sides, folded into one cell (`a / b`) when they differ.
- * Finishes are read through `mergeFinishes`, so a field stated in `shared` and one stated per
- * appearance list the same way.
- *
- * The `说明` column is Chinese and derived from the DTCG `$description`s in
- * `packages/theme/tokens/` and from `docs/specs/theme-roles.md`; `describe` holds those, and a
- * field it does not know is an error, so a new value cannot reach the page undescribed.
+ * Reads the compiled Theme v5 objects directly from `packages/theme/themes` (ADR 0020):
+ * 1. colours   (`theme.json` `cssVars`)
+ * 2. shape     (`tokens.radius`)
+ * 3. typography (`metrics.typography`)
+ * 4. metrics   (`metrics` dimensions, split by pointer/touch)
+ * 5. feedback  (`feedback` hover/press/focus/disabled/passive)
+ * 6. motion    (`motion` timings, spring, and presets)
+ * 7. surfaces  (11 surface roles, light/dark folded)
+ * 8. elevation (`elevation` shadow scales, light/dark folded)
+ * 9. controls  (13 sparse control recipes)
  */
 import fs from "node:fs";
 import path from "node:path";
 
-import { mergeFinishes, type SplitFinishes } from "./tokens";
+import type { AppTheme, SurfaceSpec } from "../../packages/theme/schema";
+import { ALL_THEMES } from "../../packages/theme/themes";
 
 const ROOT = path.resolve(import.meta.dir, "../..");
-const THEMES = path.join(ROOT, "packages/theme/themes");
 
 /** The page this script writes, relative to the repo root. */
 export const PAGE = "docs/specs/semantics-values.md";
@@ -34,8 +30,8 @@ export const PAGE = "docs/specs/semantics-values.md";
 export const MISSING = "—";
 
 /**
- * The themes the page lists, in column order. `solid-glass` is out on purpose: it is the glass
- * example theme, not one of the platforms this library answers to.
+ * The five platform themes in column order. `solid-glass` stays out on purpose: it is the glass
+ * example theme, not one of the baseline platforms.
  */
 export const COLUMNS = [
   { id: "nsh-gallery", label: "NSH Gallery" },
@@ -50,37 +46,58 @@ type Json = Record<string, unknown>;
 const isObject = (value: unknown): value is Json =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-/** A theme as the page reads it: its two compiled files. */
-export type Theme = {
-  /** The theme's id, as `packages/theme/themes/<id>/` names it. */
+/** Theme view consumed by `renderPage`. */
+export interface Theme {
   id: string;
-  /** The name its column carries. */
   label: string;
-  /** `theme.json`'s `cssVars`: the colour roles, shared and per appearance. */
   colours: Json;
-  /** `semantics.json`: the style groups, finishes and elevation. */
-  semantics: Json;
-};
+  spec: AppTheme["spec"];
+}
 
-/** A colour value: what `theme.json` stores for a colour role (`oklch(…)`, `var(--x)`, a mix). */
 const COLOUR = /^(?:oklch|rgba?|hsla?|hwb|lab|lch|color)\(|^#|^var\(--/;
 
 export function isColour(value: unknown): value is string {
   return typeof value === "string" && COLOUR.test(value);
 }
 
-/** A value as a cell: numbers and booleans as they are, strings in code spans, null as unset. */
+/** A value as a cell: numbers and booleans verbatim, strings in code spans, null/undefined as `—`. */
 export function format(value: unknown): string {
-  if (value === null) return MISSING;
+  if (value === null || value === undefined) return MISSING;
   if (typeof value === "number" || typeof value === "boolean") return String(value);
   if (typeof value === "string") return code(value);
+  if (isObject(value)) {
+    if (
+      "color" in value &&
+      typeof value.color === "string" &&
+      Object.keys(value).every((k) => k === "color" || k === "alpha")
+    ) {
+      return code(
+        "alpha" in value && value.alpha !== undefined
+          ? `${value.color}/${Math.round(Number(value.alpha) * 100)}`
+          : value.color,
+      );
+    }
+    if ("tint" in value && typeof value.tint === "string") {
+      return code(
+        "alpha" in value && value.alpha !== undefined
+          ? `tint(${value.tint},${Math.round(Number(value.alpha) * 100)}%)`
+          : `tint(${value.tint})`,
+      );
+    }
+    if (
+      "surface" in value &&
+      typeof value.surface === "string" &&
+      Object.keys(value).length === 1
+    ) {
+      return code(`surface(${value.surface})`);
+    }
+  }
   return code(JSON.stringify(value));
 }
 
-/** A cell's text inside a code span; a pipe would end the table cell, so it is escaped. */
 const code = (text: string) => `\`${text.replaceAll("|", "\\|")}\``;
 
-/** One row's cell: the same value in both sides is written once, two values as `a / b`. */
+/** Fold two values into one cell (`a` if equal, `a / b` if different). */
 export function fold(a: unknown, b: unknown): string {
   if (a === undefined) return b === undefined ? MISSING : format(b);
   if (b === undefined) return format(a);
@@ -88,41 +105,25 @@ export function fold(a: unknown, b: unknown): string {
 }
 
 const union = (a: readonly string[], b: readonly string[]): string[] => [...new Set([...a, ...b])];
-
-/** Every key of two objects, in the order the first one states them. */
 const keysOf = (a: Json, b: Json): string[] => union(Object.keys(a), Object.keys(b));
 
-/** A compiled value's fields, folded per appearance or tier, as `path → cell`. */
 type Cells = Map<string, string>;
 
-/** The five themes, `theme.json` and `semantics.json` read from the build. */
+/** Read the five platform themes from `ALL_THEMES`. */
 export function readThemes(): Theme[] {
   return COLUMNS.map(({ id, label }) => {
-    const dir = path.join(THEMES, id);
-    const colours = read(path.join(dir, "theme.json"), "cssVars");
-    const semantics = read(path.join(dir, "semantics.json"));
-    return { id, label, colours, semantics };
+    const found = ALL_THEMES.find((t) => t.id === id);
+    if (!found) throw new Error(`docs:semantics: missing theme ${id}`);
+    return {
+      id,
+      label,
+      colours: found.theme.cssVars as unknown as Json,
+      spec: found.spec,
+    };
   });
 }
 
-function read(file: string, key?: string): Json {
-  let value: unknown;
-  try {
-    value = JSON.parse(fs.readFileSync(file, "utf8"));
-  } catch (error) {
-    throw new Error(`${path.relative(ROOT, file)}: not JSON`, { cause: error });
-  }
-  if (key !== undefined) value = isObject(value) ? value[key] : undefined;
-  if (!isObject(value))
-    throw new Error(`${path.relative(ROOT, file)}: ${key ?? "the file"} is not an object`);
-  return value as Json;
-}
-
-/**
- * The colour roles of one theme: `light`/`dark` first, in the order the file states them, then the
- * colours both appearances share (`cssVars.theme`'s `scrim`, `media`, `on-media`). A token that is
- * not a colour (a radius, a font family) is not a role and stays out.
- */
+/** Colour roles in `theme.json` `cssVars`. */
 export function colourCells(theme: Theme): Cells {
   const vars = theme.colours;
   const light = isObject(vars.light) ? vars.light : {};
@@ -138,82 +139,94 @@ export function colourCells(theme: Theme): Cells {
   return cells;
 }
 
-/**
- * The fields of one `semantics.json` style group, its input tiers folded: a node that states
- * `pointer` and `touch` is one field whose cell reads `<pointer> / <touch>`.
- */
-export function styleCells(group: string, theme: Theme): Cells {
-  const node = theme.semantics[group];
-  const cells: Cells = new Map();
-  if (isObject(node)) walk(node, group, cells);
+const isExprLeaf = (value: unknown): boolean =>
+  isObject(value) &&
+  (("color" in value &&
+    typeof value.color === "string" &&
+    Object.keys(value).every((k) => k === "color" || k === "alpha")) ||
+    ("tint" in value && typeof value.tint === "string") ||
+    ("surface" in value && typeof value.surface === "string" && Object.keys(value).length === 1));
+
+const isModePair = (value: unknown): value is { light: unknown; dark: unknown } =>
+  isObject(value) && "light" in value && "dark" in value && Object.keys(value).length === 2;
+
+const isSurfaceSpec = (value: unknown): value is SurfaceSpec =>
+  isObject(value) &&
+  !("light" in value && Object.keys(value).length === 2 && "dark" in value) &&
+  ("background" in value ||
+    "foreground" in value ||
+    "gradient" in value ||
+    "border" in value ||
+    "borderTop" in value ||
+    "borderBottom" in value ||
+    "shadow" in value ||
+    "backdropFilter" in value ||
+    "material" in value ||
+    "effect" in value ||
+    "elevation" in value ||
+    ("light" in value && isObject(value.light)) ||
+    ("dark" in value && isObject(value.dark)));
+
+function resolveSurfaceSide(spec: SurfaceSpec, mode: "light" | "dark"): Json {
+  const out: Json = {};
+  for (const [k, v] of Object.entries(spec)) {
+    if (k === "light" || k === "dark") continue;
+    out[k] = v;
+  }
+  const override = spec[mode];
+  if (isObject(override)) {
+    for (const [k, v] of Object.entries(override)) {
+      if (v !== undefined) out[k] = v;
+    }
+  }
+  return out;
+}
+
+/** Walk a Theme v5 sub-object, folding `{ pointer, touch }`, `{ light, dark }`, and `SurfaceSpec`. */
+export function walkCells(node: unknown, prefix: string, cells: Cells = new Map()): Cells {
+  if (isObject(node)) {
+    if (isExprLeaf(node)) {
+      cells.set(prefix, format(node));
+      return cells;
+    }
+    if ("pointer" in node && "touch" in node && Object.keys(node).length === 2) {
+      foldTier(node, prefix, cells);
+      return cells;
+    }
+    if (isModePair(node)) {
+      pair(node.light, node.dark, prefix, cells);
+      return cells;
+    }
+    if (isSurfaceSpec(node)) {
+      const light = resolveSurfaceSide(node, "light");
+      const dark = resolveSurfaceSide(node, "dark");
+      for (const field of keysOf(light, dark)) {
+        cells.set(`${prefix}.${field}`, fold(light[field], dark[field]));
+      }
+      return cells;
+    }
+    for (const [key, child] of Object.entries(node)) {
+      if (child !== undefined) walkCells(child, `${prefix}.${key}`, cells);
+    }
+    return cells;
+  }
+  cells.set(prefix, format(node));
   return cells;
 }
 
-function walk(value: unknown, at: string, cells: Cells): void {
-  if (isObject(value)) {
-    if ("pointer" in value && "touch" in value) {
-      foldTier(value, at, cells);
-      return;
-    }
-    for (const [key, child] of Object.entries(value)) walk(child, `${at}.${key}`, cells);
-    return;
-  }
-  cells.set(at, format(value));
-}
-
-/** One tier-split node at `at`: a single value (`size.hit`) or fields under it (`size.height`). */
 function foldTier(tier: Json, at: string, cells: Cells): void {
-  const pointer = tier.pointer;
-  const touch = tier.touch;
+  const { pointer, touch } = tier;
   if (isObject(pointer) && isObject(touch)) {
-    for (const key of keysOf(pointer, touch))
+    for (const key of keysOf(pointer, touch)) {
       cells.set(`${at}.${key}`, fold(pointer[key], touch[key]));
+    }
     return;
   }
   cells.set(at, fold(pointer, touch));
 }
 
-/** A finish's fields, each appearance merged with `shared`, folded into one cell. */
-export function finishCells(theme: Theme): Cells {
-  const finishes = theme.semantics.finishes;
-  const cells: Cells = new Map();
-  if (!isObject(finishes)) return cells;
-  const split: SplitFinishes = {
-    shared: blocks(finishes.shared),
-    light: blocks(finishes.light),
-    dark: blocks(finishes.dark),
-  };
-  const light = mergeFinishes(split, "light");
-  const dark = mergeFinishes(split, "dark");
-  for (const role of union(Object.keys(light), Object.keys(dark))) {
-    const fields = keysOf(light[role] ?? {}, dark[role] ?? {});
-    for (const field of fields) {
-      cells.set(`finishes.${role}.${field}`, fold(light[role]?.[field], dark[role]?.[field]));
-    }
-  }
-  return cells;
-}
-
-/** The role → fields blocks of a compiled `finishes`; an entry that is not an object is dropped. */
-function blocks(value: unknown): Record<string, Record<string, unknown>> {
-  const out: Record<string, Record<string, unknown>> = {};
-  for (const [role, fields] of Object.entries(isObject(value) ? value : {})) {
-    if (isObject(fields)) out[role] = fields;
-  }
-  return out;
-}
-
-/** The shadow scale's fields, its two appearances folded into one cell. */
-export function elevationCells(theme: Theme): Cells {
-  const elevation = theme.semantics.elevation;
-  const cells: Cells = new Map();
-  if (!isObject(elevation)) return cells;
-  pair(elevation.light, elevation.dark, "elevation", cells);
-  return cells;
-}
-
 function pair(a: unknown, b: unknown, at: string, cells: Cells): void {
-  if (isObject(a) || isObject(b)) {
+  if ((isObject(a) && !isExprLeaf(a)) || (isObject(b) && !isExprLeaf(b))) {
     const left = isObject(a) ? a : {};
     const right = isObject(b) ? b : {};
     for (const key of keysOf(left, right)) pair(left[key], right[key], `${at}.${key}`, cells);
@@ -223,230 +236,314 @@ function pair(a: unknown, b: unknown, at: string, cells: Cells): void {
   cells.set(at, fold(a, b));
 }
 
-/** One table: the shape of its rows and how a theme states them. */
-export type Section = {
-  /** The `semantics.json` group, or `colours` for the table read from `theme.json`. */
+export function surfaceCells(theme: Theme): Cells {
+  const cells: Cells = new Map();
+  for (const [role, spec] of Object.entries(theme.spec.surfaces)) {
+    walkCells(spec, `surfaces.${role}`, cells);
+  }
+  return cells;
+}
+
+export function elevationCells(theme: Theme): Cells {
+  const cells: Cells = new Map();
+  pair(theme.spec.elevation.light, theme.spec.elevation.dark, "elevation", cells);
+  return cells;
+}
+
+export function metricsCells(theme: Theme): Cells {
+  const cells: Cells = new Map();
+  const { typography: _typography, ...rest } = theme.spec.metrics;
+  walkCells(rest, "metrics", cells);
+  return cells;
+}
+
+export interface Section {
   id: string;
-  /** The heading's text when the id alone does not say it (`colours`). */
   title?: string;
-  /** The first column's heading: 角色 for colours, 字段 for a path. */
   field: string;
-  /** A paragraph under the heading: what a row is and what `a / b` means. */
   note: string;
-  /** One theme's rows, in the order that theme states them. */
   rows: (theme: Theme) => Cells;
-};
+}
 
-const styleSection = (id: string, field: string, note: string): Section => ({
-  id,
-  field,
-  note,
-  rows: (theme) => styleCells(id, theme),
-});
-
-/** The tables, in the order the page writes them: colours first, then the groups of the file. */
 export const SECTIONS: Section[] = [
   {
     id: "colours",
     title: "颜色角色（`theme.json`）",
     field: "角色",
-    note: "`theme.json` 的 `cssVars`：`light` 与 `dark` 里的 A、B 两层颜色各写一份，两种外观共用的三个 C 层颜色（`scrim`、`media`、`on-media`）在表末。格子里是编译产物存的值：设了值的写 oklch，引用其他角色的写 `var(--…)`，叠色写 `color-mix(…)`。",
+    note: "`theme.json` 的 `cssVars`：21 个亮暗角色与 3 个外观无关角色（`scrim`、`media`、`on-media`）。省略的 `brand` 在导出层设为 `var(--primary)`。",
     rows: colourCells,
   },
-  styleSection(
-    "typography",
-    "字段",
-    "7 个字阶角色的字重与字距（共享字号与行高定义在 `theme.ts` 的 `SHARED_TYPE_SCALE`）。",
-  ),
-  styleSection(
-    "dimension",
-    "字段",
-    "`size.hit`、`size.density`、`size.item`、`size.control`、`size.height`、`icon` 分指针与触屏两档；`stroke` 与 `focus` 不随档位变。",
-  ),
-  styleSection("shape", "字段", "非尺寸的圆角决定：曲率（`continuous` 或 `circular`）。"),
-  styleSection("state", "字段", "交互状态的透明度、按下缩放与叠色。"),
-  styleSection(
-    "motion",
-    "字段",
-    "三档时间与状态淡变：每档是一个时长（`duration`）和一条曲线（`timingFunction`）。",
-  ),
   {
-    id: "finishes",
+    id: "shape",
     field: "字段",
-    note: "14 个 finish 角色，字段共 13 种（一个角色只用到其中几种）。编译产物把它分成 `shared` 与稀疏的 `light` / `dark`，本表列的是两者合并后的值，于是只有一种外观写了的字段也照样是一行。`{token}` 是对 `theme.json` 的引用，`null` 是该字段的中性值（见 `theme-roles.md` §2）。",
-    rows: finishCells,
+    note: "圆角刻度与圆角曲率（`continuous` 或 `circular`）。",
+    rows: (t) => walkCells(t.spec.tokens.radius, "shape"),
+  },
+  {
+    id: "typography",
+    field: "字段",
+    note: "7 个字阶角色的字重与字距（字号与行高共享于 `SHARED_TYPE_SCALE`）。",
+    rows: (t) => walkCells(t.spec.metrics.typography, "typography"),
+  },
+  {
+    id: "metrics",
+    field: "字段",
+    note: "指针（左）与触屏（右）两档的尺寸、密度、命中范围、图标与线宽。",
+    rows: metricsCells,
+  },
+  {
+    id: "feedback",
+    field: "字段",
+    note: "统一的交互反馈原语：hover、press、focus、disabled、passive。",
+    rows: (t) => walkCells(t.spec.feedback, "feedback"),
+  },
+  {
+    id: "motion",
+    field: "字段",
+    note: "三档过渡时长与缓动、可选弹性曲线（`spring`），以及入场预设。",
+    rows: (t) => walkCells(t.spec.motion, "motion"),
+  },
+  {
+    id: "surfaces",
+    field: "字段",
+    note: "11 个纯结构表面角色（`card`、`raised`、`inset`、`channel`、`plate`、`overlay`、`modal`、`inverse`、`glass`、`accent`、`fill`），亮暗差异折在一格。",
+    rows: surfaceCells,
   },
   {
     id: "elevation",
     field: "字段",
-    note: "每个外观的影子刻度：五档高度与两条边。finish 的 `shadow` 字段点名这里的几部分，所以同一步影子的面长得一样。",
+    note: "亮暗两套投影刻度与硬边高光。",
     rows: elevationCells,
+  },
+  {
+    id: "controls",
+    field: "字段",
+    note: "13 个控件组的稀疏配方，消除了布尔特征分支；零星保留项通过数值退化实现（如 `switch.knob.on` 与 `slider.mark`）。",
+    rows: (t) => walkCells(t.spec.controls, "controls"),
   },
 ];
 
-/**
- * The `说明` of one row, keyed by its path. The `$description`s of the DTCG sources
- * (`packages/theme/tokens/base/*.tokens.json`, `themes/<id>/*.tokens.json`) and
- * `docs/specs/theme-roles.md` are what these say, in one Chinese line each.
- */
 const DESCRIPTIONS: Record<string, string> = {
-  // theme.json: the colour roles.
+  // theme.json 21+3 colour roles
   background: "页面画布的底",
-  foreground: "页面上的正文与图标墨色",
-  card: "卡片的底，浮于页面一层",
-  "card-foreground": "卡片上的字与图标",
-  popover: "浮层的底：菜单、弹出层、提示",
-  "popover-foreground": "浮层上的字与图标",
+  card: "卡片与面板的底",
+  popover: "浮层与菜单的底",
+  muted: "弱化容器的底与浅底",
+  surface: "卡片上凸起的控件面底",
+  foreground: "页面与各类面上的默认正文及图标墨色",
+  "muted-foreground": "次要文字与图标",
+  faint: "更弱的字：占位、单位、次要标记",
   primary: "主操作的强调色填充",
   "primary-foreground": "主操作填充上的字与图标",
   secondary: "次操作控件的填充",
-  "secondary-foreground": "次操作控件上的字与图标",
-  muted: "压下去的容器底与浅底",
-  "muted-foreground": "次要文字与图标",
   accent: "悬停与选中项的浅高亮底",
-  "accent-foreground": "高亮底上的字与图标",
-  destructive: "危险操作与错误的语义色",
+  brand: "强调色作前景：链接、指示条、选中标记",
   border: "容器与控件的常规发丝线",
+  line: "井内与内容区的分隔发丝线",
   input: "表单字段与控件边的线",
   ring: "焦点环的线",
-  "chart-1": "第 1 条图表系列色",
-  "chart-2": "第 2 条图表系列色",
-  "chart-3": "第 3 条图表系列色",
-  "chart-4": "第 4 条图表系列色",
-  "chart-5": "第 5 条图表系列色",
-  sidebar: "侧栏面板的底",
-  "sidebar-foreground": "侧栏里的字与图标",
-  "sidebar-primary": "侧栏里的主操作高亮",
-  "sidebar-primary-foreground": "侧栏主操作高亮上的字与图标",
-  "sidebar-accent": "侧栏选中行的底",
-  "sidebar-accent-foreground": "侧栏选中行上的字与图标",
-  "sidebar-border": "侧栏分隔与工具条的发丝线",
-  "sidebar-ring": "侧栏里的焦点环",
-  inset: "卡片里凹下去的一层（井）",
-  raised: "卡片上凸起的一层：按钮、字段、轨道",
-  field: "输入井：比卡片和 inset 更下一层",
-  line: "井里的发丝线（分隔、网格）",
-  hover: "指针停在可点项上的叠色",
-  faint: "更弱的字：占位、单位、次要标记",
-  brand: "强调色作前景：字、图标、线",
-  "brand-edge": "强调色填充控件的发丝线",
-  "focus-inner": "焦点环里贴着控件的那道线",
-  track: "关着的开关、滑杆与进度条的底槽",
-  knob: "关着的开关圆点",
   info: "提示状态的语义色",
-  warn: "警告状态的语义色",
-  up: "增长（上涨）的语义色",
-  "brand-tint": "选中行与气泡的强调色淡底",
-  inverse: "toast 与 tooltip 的反色面",
-  "inverse-foreground": "反色面上的字",
-  "inverse-brand": "反色面上的强调色：toast 的操作",
-  "info-tint": "提示状态的淡底",
-  "warn-tint": "警告状态的淡底",
-  "destructive-tint": "危险状态的淡底",
-  "up-tint": "上涨的淡底",
+  success: "成功与增长（上涨）的语义色",
+  warning: "警告状态的语义色",
+  destructive: "危险操作与错误的语义色",
   scrim: "模态与抽屉背后的遮罩",
-  media: "照片与影片的底，不随外观翻转",
-  "on-media": "照片与深色媒体面上的白字，不随外观翻转",
+  media: "照片与媒体的底，不随外观翻转",
+  "on-media": "媒体面上的浅色字，不随外观翻转",
 
-  // dimension: the group descriptions, then the fields they do not cover one by one.
-  "dimension.size.hit": "触控目标的最小边长，0 表示不补点按范围",
-  "dimension.size.density.pad": "页面级的页边距",
-  "dimension.size.density.gap": "页面级的间隙",
-  "dimension.size.item.inset": "列表行到容器边的距离：行的填充往里缩多少",
-  "dimension.size.item.pad": "行填充边到文字的间距",
-  "dimension.size.control.padding": "控件内部的留白",
-  "dimension.size.control.gap": "控件内图标与字的间距",
-  "dimension.size.height.sm": "控件高度的小档",
-  "dimension.size.height.md": "控件高度的中档",
-  "dimension.size.height.lg": "控件高度的大档（也是列表行、标签页的高度）",
-  "dimension.icon.sm": "图标的小档",
-  "dimension.icon.md": "图标的中档",
-  "dimension.icon.lg": "图标的大档",
-  "dimension.stroke.hairline": "发丝线宽：分隔、表面边、描边变体",
-  "dimension.stroke.control": "可点控件的描边宽",
-  "dimension.focus.style": "焦点环的画法：晕、外框还是双线",
-  "dimension.focus.width": "焦点环的线宽",
-  "dimension.focus.offset": "焦点环从控件边界向外的偏移",
+  // shape
+  "shape.control": "常规控件圆角",
+  "shape.container": "卡片与面板容器圆角",
+  "shape.modal": "浮层与模态框圆角",
+  "shape.curve": "圆角曲率：连续曲线（Apple）还是圆弧",
 
-  // shape: what a theme decides about corners, off the size scales.
-  "shape.curve": "圆角的曲率：连续曲线（Apple）还是圆弧",
+  // metrics
+  "metrics.height.sm": "小档控件高度",
+  "metrics.height.md": "中档控件高度",
+  "metrics.height.lg": "大档控件与行高",
+  "metrics.icon.sm": "小档图标尺寸",
+  "metrics.icon.md": "中档图标尺寸",
+  "metrics.icon.lg": "大档图标尺寸",
+  "metrics.density.pad": "页面内边距",
+  "metrics.density.gap": "页面区块间距",
+  "metrics.control.padding": "控件水平内边距",
+  "metrics.control.gap": "控件内图标与文字间距",
+  "metrics.item.inset": "列表选中行相对容器边的缩进",
+  "metrics.item.pad": "列表行内边距",
+  "metrics.hit": "触控目标最小边长（0 表示不补范围）",
+  "metrics.stroke.hairline": "发丝线宽",
+  "metrics.stroke.control": "控件描边线宽",
 
-  // state: the interaction numbers.
-  "state.press-scale": "按下时的缩放倍数（1 为不缩放）",
-  "state.overlay.hover": "指针悬停的叠色透明度（0 为不叠色）",
-  "state.overlay.pressed": "按下的叠色透明度",
-  "state.pressed-opacity": "按下时内容的透明度",
-  "state.rest-opacity": "指示器静止时的透明度（滚动条滑块）",
-  "state.disabled.content": "禁用时内容的透明度（容器的槽写 `keep` 时用它）",
+  // feedback
+  "feedback.hover.overlay": "悬停状态的墨色叠层透明度（0 不叠层）",
+  "feedback.hover.fill": "通用悬停底色",
+  "feedback.press.scale": "按下缩放倍数（1 不缩放）",
+  "feedback.press.translateY": "按下垂直位移（pt）",
+  "feedback.press.overlay": "按下状态的墨色叠层透明度",
+  "feedback.press.accent.opacity": "强调面按下时的不透明度",
+  "feedback.press.accent.background": "强调面按下时换的底色",
+  "feedback.press.accent.foreground": "强调面按下时换的前景色",
+  "feedback.focus.style": "焦点环画法：halo / outline / double",
+  "feedback.focus.width": "焦点环线宽",
+  "feedback.focus.offset": "焦点环外扩偏移",
+  "feedback.focus.innerColor": "double 焦点环的内分隔线颜色",
+  "feedback.disabled.contentOpacity": "禁用态内容透明度",
+  "feedback.disabled.replaceFace": "禁用时是否整面替换为 disabled.surface",
+  "feedback.passive.restOpacity": "非交互指示器（如滚动条滑块）静止透明度",
+  "feedback.passive.pressedOpacity": "非交互指示器按下透明度",
 
-  // elevation: the shadow scale, one row per level and edge.
-  "elevation.sm": "控件的投影：落在它所在的那个面上",
-  "elevation.md": "卡片的投影：面离页面一步",
-  "elevation.lg": "浮层的投影：菜单浮在页面之上",
-  "elevation.xl": "对话框的投影：页面在它后面等",
-  "elevation.inset": "井的投影：光落进槽里",
-  "elevation.edge.surface": "凸起表面的硬边：它的高光与发丝线",
-  "elevation.edge.accent": "强调色填充的边：高光与自己的投影",
+  // motion
+  "motion.spring.stiffness": "物理弹性刚度",
+  "motion.spring.damping": "物理弹性阻尼",
+  "motion.spring.mass": "物理弹性质量",
+  "motion.presets.popoverEnter.fromScale": "弹出层入场初始缩放",
+  "motion.presets.popoverEnter.fromY": "弹出层入场初始 Y 偏移",
+  "motion.presets.popoverEnter.timing": "弹出层入场使用的时序档位",
+  "motion.presets.popoverEnter.spring": "弹出层入场是否启用主题物理弹簧",
+  "motion.presets.dialogEnter.fromScale": "对话框入场初始缩放",
+  "motion.presets.dialogEnter.fromY": "对话框入场初始 Y 偏移",
+  "motion.presets.dialogEnter.timing": "对话框入场使用的时序档位",
+  "motion.presets.dialogEnter.spring": "对话框入场是否启用主题物理弹簧",
+  "motion.presets.indicatorGlide.timing": "指示器/滑块滑动使用的时序档位",
+  "motion.presets.indicatorGlide.spring": "指示器/滑块滑动是否启用主题物理弹簧",
+  "motion.presets.themeSwitch.kind": "运行时切换主题的屏幕过渡方式",
+  "motion.presets.themeSwitch.duration": "运行时切换主题过渡时长",
+
+  // elevation
+  "elevation.sm": "控件投影",
+  "elevation.md": "卡片投影",
+  "elevation.lg": "浮层投影",
+  "elevation.xl": "模态框投影",
+  "elevation.inset": "凹槽内阴影",
+  "elevation.edgeSurface": "凸起表面的高光硬边",
+  "elevation.edgeAccent": "强调面的高光与投影边",
+
+  // controls
+  "controls.button.corner.sm": "小号按钮圆角策略",
+  "controls.button.corner.md": "中号按钮圆角策略",
+  "controls.button.corner.lg": "大号按钮圆角策略",
+  "controls.button.selected.face": "选中按钮的底面",
+  "controls.button.selected.ink": "选中按钮的前景色",
+  "controls.button.secondary.face": "次要按钮的底面",
+  "controls.button.secondary.edge": "次要按钮的描边",
+  "controls.button.outline.edge": "描边按钮的边",
+  "controls.button.destructive.edge": "危险按钮的边",
+  "controls.button.shade": "按钮使用的表面角色",
+  "controls.badge.corner": "徽章圆角策略",
+  "controls.field.ground": "输入框底色",
+  "controls.field.shade": "输入框表面角色",
+  "controls.field.edge.sides": "输入框是否绘制左右与上边框",
+  "controls.field.edge.color": "输入框四周边框色",
+  "controls.field.edge.bottom": "输入框底边颜色",
+  "controls.field.focus.line": "输入框获焦时是否加粗底线",
+  "controls.field.focus.width": "输入框获焦线宽",
+  "controls.field.focus.color": "输入框获焦高亮角色",
+  "controls.choice.size": "选择控件命中或视觉方框外尺寸",
+  "controls.choice.box": "选择控件框体尺寸",
+  "controls.choice.corner": "复选框圆角策略",
+  "controls.choice.face": "未选中选择框底色",
+  "controls.choice.shade": "选择框表面角色",
+  "controls.choice.edge.width": "选择框描边宽",
+  "controls.choice.edge.color": "选择框默认描边色",
+  "controls.choice.edge.disabled": "选择框禁用态描边色",
+  "controls.choice.checked.face": "复选框选中底面",
+  "controls.choice.radioChecked.face": "单选框选中面",
+  "controls.choice.mark": "单选框内圆点尺寸",
+  "controls.switch.track": "默认开关轨道宽高 `[w, h]`",
+  "controls.switch.trackOffFace": "开关关闭态轨道底色",
+  "controls.switch.small.track": "小号开关轨道宽高 `[w, h]`",
+  "controls.switch.small.knob": "小号开关滑块尺寸",
+  "controls.switch.edge.off": "开关关闭态边框宽",
+  "controls.switch.edge.on": "开关打开态边框宽",
+  "controls.switch.edge.color": "开关边框色",
+  "controls.switch.knob.size": "开关滑块常态尺寸",
+  "controls.switch.knob.on": "开关滑块打开态尺寸（`same` 表示不变，Material 为放大）",
+  "controls.switch.knob.pressed": "开关滑块按下态尺寸",
+  "controls.switch.knob.background": "开关滑块常态底色",
+  "controls.switch.knob.gradient": "开关滑块常态渐变",
+  "controls.switch.knob.border": "开关滑块常态边色",
+  "controls.switch.knob.shadow": "开关滑块投影",
+  "controls.switch.knob.checkedBackground": "开关滑块打开态底色",
+  "controls.switch.knob.checkedBorder": "开关滑块打开态边色",
+  "controls.switch.knob.checkedGradient": "开关滑块打开态渐变",
+  "controls.slider.rail": "滑杆轨道粗细",
+  "controls.slider.band": "滑杆容器高度",
+  "controls.slider.face": "滑杆未选轨道底色",
+  "controls.slider.shade": "滑杆轨道表面角色",
+  "controls.slider.edge.color": "滑杆轨道边色",
+  "controls.slider.edge.width": "滑杆轨道边宽",
+  "controls.slider.knob.size": "滑杆手柄尺寸",
+  "controls.slider.knob.pressed": "滑杆手柄按下尺寸",
+  "controls.slider.knob.background": "滑杆手柄底色",
+  "controls.slider.knob.gradient": "滑杆手柄渐变",
+  "controls.slider.knob.border": "滑杆手柄边色",
+  "controls.slider.knob.shadow": "滑杆手柄投影",
+  "controls.slider.mark": "滑杆手柄中心色点直径（WinUI 专用，其余为 0）",
+  "controls.progress.height": "进度条高度",
+  "controls.progress.face": "进度条未填轨道底色",
+  "controls.progress.shade": "进度条轨道表面角色",
+  "controls.progress.edge.color": "进度条轨道边色",
+  "controls.progress.edge.width": "进度条轨道边宽",
+  "controls.spinner.trackOpacity": "环形加载器底环透明度",
+  "controls.popup.corner": "弹出层圆角策略",
+  "controls.list.item.highlight": "列表选中/聚焦项高亮底色",
+  "controls.list.item.edge": "列表高亮项描边色",
+  "controls.tabs.track.face": "标签栏轨道底色",
+  "controls.tabs.track.edge": "标签栏轨道边色",
+  "controls.tabs.track.corner": "标签栏轨道圆角策略",
+  "controls.menubar.bar": "菜单栏底面样式",
+  "controls.well.edge": "输入井（Well）边框色",
 };
 
-/** The noun a section's rows are about, so a row reads `<noun>的<field>`. */
 const NOUNS: Record<string, string> = {
-  caption: "小号说明与分段计数",
-  detail: "侧栏分组名与计数",
+  caption: "小号说明",
+  detail: "分组标题",
   body: "正文",
-  label: "控件与表单的标签",
-  title: "卡片与区块标题",
+  label: "控件标签",
+  title: "区块标题",
   headline: "页面标题",
-  display: "大号数字与主视觉标题",
-  fast: "小控件开关",
+  display: "大号标题",
+  fast: "微交互",
   default: "日常反馈",
-  slow: "大表面移动",
+  slow: "大面过渡",
   state: "状态淡变",
-  card: "卡片与区块",
-  inset: "井",
-  channel: "分段轨道",
-  raised: "按钮与胶囊",
-  plate: "井里选中的一块",
-  overlay: "菜单与 toast",
-  modal: "对话框与抽屉",
+  card: "卡片面",
+  raised: "凸起控件面",
+  inset: "凹槽井面",
+  channel: "分段轨道面",
+  plate: "井内选中滑块面",
+  overlay: "菜单与浮层面",
+  modal: "对话框与抽屉面",
   inverse: "反色面",
   glass: "玻璃面",
-  accent: "强调面",
-  fill: "进度条、滑杆与开关选中的那段",
-  knob: "旋钮",
-  hover: "悬停中的控件",
-  pressed: "按下的控件",
-  disabled: "禁用的控件",
+  accent: "强调填充面",
+  fill: "进度与选中填充面",
 };
 
-/** The field's noun per section, so `caption` + `fontSize` reads `小号说明与分段计数的字号`. */
 const FIELD_NOUNS: Record<string, Record<string, string>> = {
   typography: { fontWeight: "字重", letterSpacing: "字距" },
-  motion: {
-    duration: "时长（ms）",
-    timingFunction: "曲线",
-  },
-  finishes: {
+  motion: { duration: "时长（ms）", easing: "缓动曲线" },
+  surfaces: {
     background: "底",
-    gradient: "叠在底上的渐变",
-    shadow: "影子",
-    foreground: "字与图标",
-    "pressed-background": "按下时换的底色",
-    "pressed-foreground": "按下时换的字色",
-    "pressed-opacity": "按下时的不透明度（强调面上的字与图标）",
-    "border-color": "边",
-    "border-top-color": "上边色",
-    "border-bottom-color": "下边色",
+    foreground: "前景色",
+    gradient: "渐变",
+    border: "边",
+    borderTop: "上边",
+    borderBottom: "下边",
+    shadow: "投影",
     backdropFilter: "背景模糊",
-    "checked-background": "打开时的底",
-    "checked-border-color": "打开时的边",
-    "checked-gradient": "打开时叠在底上的渐变",
     material: "材质",
-    elevation: "平台自己的高度（dp）",
+    effect: "GPU 表面着色",
+    elevation: "平台阴影高度（dp）",
   },
 };
 
-/** A row's `说明`, or an error naming the field no source describes. */
+const FEEDBACK_SURFACE_NOUNS: Record<string, string> = {
+  hover: "悬停表面",
+  press: "按下表面",
+  disabled: "禁用表面",
+};
+
+/** Resolve Chinese description for a row path, throwing on unknown keys. */
 export function meaning(at: string): string {
   const known = DESCRIPTIONS[at] ?? composed(at);
   if (known === undefined || known === "") {
@@ -455,34 +552,33 @@ export function meaning(at: string): string {
   return known;
 }
 
-/**
- * `<group>.<noun>.<field>`, for the three groups whose rows all read that way
- * (`typography.body.fontSize`, `motion.default.duration`, `finishes.card.background`).
- */
 function composed(at: string): string | undefined {
-  const [group, noun, field] = at.split(".");
-  if (group === undefined || noun === undefined || field === undefined) return undefined;
+  const parts = at.split(".");
+  if (parts[0] === "feedback" && parts[2] === "surface" && parts.length === 4) {
+    const owner = FEEDBACK_SURFACE_NOUNS[parts[1]!];
+    const leaf = FIELD_NOUNS.surfaces?.[parts[3]!];
+    if (owner && leaf) return `${owner}的${leaf}`;
+  }
+  const [group, noun, field] = parts;
+  if (group === undefined || noun === undefined || field === undefined || parts.length !== 3) {
+    return undefined;
+  }
   const owner = NOUNS[noun];
   const leaf = FIELD_NOUNS[group]?.[field];
   if (owner === undefined || leaf === undefined) return undefined;
   return `${owner}的${leaf}`;
 }
 
-/** The page's heading and the paragraph that says how to read it. */
 const INTRO = `# 每套主题解析后的值
 
-> 本页由 \`bun run docs:semantics\` 生成，请勿手改：改 \`packages/theme/tokens/\` 的源码或生成器 \`scripts/theme/semantics-table.ts\` 之后重新运行它。\`bun run check\` 里的 \`docs:semantics --check\` 会拦下没重建的提交。
+> 本页由 \`bun run docs:semantics\` 生成，请勿手改：修改 \`packages/theme/themes/\` 源码或生成器 \`scripts/theme/semantics-table.ts\` 后重新生成。\`bun run check\` 中的 \`docs:semantics --check\` 会校验一致性。
 
-本页列五套主题编译后的每一个字段：\`theme.json\` 的颜色角色，以及 \`semantics.json\` 的八组语义值。它是**值**的表，不是规则：每个角色、每个 finish 的含义与读者见 [\`theme-roles.md\`](theme-roles.md)，要决定什么见 [\`../theme-design.md\`](../theme-design.md)，一套值为什么这么定见 [\`native-themes.md\`](native-themes.md)。
+本页列出 Theme v5（\`docs/decisions/0020-theme-v5.md\`）下五套基准主题解析后的全部语义字段。颜色角标及结构设计含义见 [\`theme-roles.md\`](theme-roles.md)，控件槽位说明见 [\`theme-slots.md\`](theme-slots.md)，主题设计指南见 [\`../theme-design.md\`](../theme-design.md)。
 
-- 一行是一个字段：\`字段\` 列是编译产物里的路径（\`theme.json\` 的 \`cssVars.light\` / \`cssVars.dark\` / \`cssVars.theme\`，或 \`semantics.json\` 的同名路径）。行取五套主题的并集：只有一套主题写了的字段照样一行，其余四格是 \`—\`。
-- 五列是五套主题，\`nsh-gallery\` 一列写 NSH Gallery，其余按平台名。\`solid-glass\` 不在本页：它是玻璃的示例主题，不是本库要对齐的五套基线。
-- 行序取五套主题第一次写出这个字段的顺序：某套主题独有的字段排在后面。
-- 一格写 \`a / b\`，表示两种取值不同：颜色表与 \`elevation\` 是 light / dark，\`typography\`、\`dimension\` 是指针 / 触屏两档。只有一种取值时写一个。
-- 写 \`—\` 是这套主题不用这个字段（没有这个字段，或值为 \`null\`）；五套主题都不用的字段不列。反引号里的 \`none\` 是真正的 CSS 值。数字与布尔照写，字符串在反引号里，数组与对象写成紧凑 JSON。
+- **两值折叠**：\`a / b\` 表示两组取值不同（颜色与 \`surfaces\`/\`elevation\` 为 \`light / dark\`，\`metrics\` 为 \`pointer / touch\`）；一致时仅写一项。
+- **缺省标记**：\`—\` 表示该字段未设置或为 \`null\`。
 `;
 
-/** The page's markdown, built from the compiled themes. */
 export function renderPage(themes: Theme[] = readThemes()): string {
   const parts = [INTRO];
   SECTIONS.forEach((section, index) => {
@@ -493,10 +589,6 @@ export function renderPage(themes: Theme[] = readThemes()): string {
   return parts.join("\n");
 }
 
-/**
- * Every row of a section, one cell per theme, in the order the first theme states them. A row no
- * theme sets (every cell unset) is left out: the field is in the contract but nothing uses it.
- */
 function merged(perTheme: Cells[]): Map<string, string[]> {
   const out = new Map<string, string[]>();
   perTheme.forEach((cellsOfTheme, column) => {
@@ -524,7 +616,6 @@ function renderSection(
   return `## ${number} ${section.title ?? section.id}\n\n${section.note}\n\n${[head, rule, ...body].join("\n")}\n`;
 }
 
-/** How many rows the page has, for the script's report. */
 export function rowCount(themes: Theme[] = readThemes()): number {
   return SECTIONS.reduce((total, section) => total + merged(themes.map(section.rows)).size, 0);
 }

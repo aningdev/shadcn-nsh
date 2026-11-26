@@ -4,8 +4,7 @@
 import {
   colors,
   controlHeight,
-  dimmed,
-  focusRing,
+  feedback,
   font,
   iconSize,
   rounded,
@@ -21,9 +20,9 @@ import {
 } from "nsh/base";
 
 import type { CollapsibleOpenChangeReason, CollapsibleProps } from "./collapsible";
-import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
+import { AsText } from "./lib/utils";
 import { Spinner } from "./spinner";
 
 /** A line's state: `running` spins its icon and pulses its title, `pending` is dimmed, `error` takes the destructive role. */
@@ -93,7 +92,7 @@ export function traceLook(): TraceLook {
       return `group ${fade}`;
     },
     get focusVisible(): ViewStyle {
-      return focusRing(2);
+      return feedback.focusRing(2);
     },
     get icon(): ViewStyle {
       return {
@@ -363,7 +362,7 @@ export function TraceCollapsibleTrigger(props: TraceCollapsibleTriggerProps) {
       hoverStyle={props.hoverStyle}
       activeStyle={props.activeStyle}
       focusVisibleStyle={[traceLook().focusVisible, props.focusVisibleStyle ?? null]}
-      disabledStyle={[{ opacity: dimmed.disabled }, props.disabledStyle ?? null]}
+      disabledStyle={[{ opacity: feedback.disabled.contentOpacity }, props.disabledStyle ?? null]}
     >
       {props.children}
       <View style={[traceLook().icon, traceLook().chevron(ctx.open())]}>

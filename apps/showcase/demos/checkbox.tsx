@@ -223,7 +223,7 @@ export function CheckboxDemo() {
             What the release needs
           </Text>
           <Badge
-            tone={left() === 0 ? "up" : "neutral"}
+            tone={left() === 0 ? "success" : "neutral"}
           >{`${done().length} of ${TASKS.length}`}</Badge>
         </View>
         <View>

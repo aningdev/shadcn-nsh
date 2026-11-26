@@ -1,31 +1,21 @@
-import { currentTheme, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
+import { currentTheme, defineTheme, selectTheme } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
 import { Badge, Button, Label } from "../../../packages/ui";
 
-const { typography } = nshGallery.semantics;
-
-/** A temporary theme with another type scale: a larger, bolder label and a larger body. */
-const scaled: AppTheme = {
-  ...nshGallery,
+/** A temporary theme with another type scale: a bolder label and a spaced-out body. */
+const scaled = defineTheme({
+  extends: nshGallery.spec,
   id: "scaled",
   label: "Scaled",
-  semantics: {
-    ...nshGallery.semantics,
+  metrics: {
     typography: {
-      ...typography,
-      label: {
-        ...typography.label,
-        fontWeight: 700,
-      },
-      body: {
-        ...typography.body,
-        letterSpacing: 0.5,
-      },
+      label: { fontWeight: 700 },
+      body: { letterSpacing: 0.5 },
     },
   },
-};
+});
 
 function App() {
   return (
