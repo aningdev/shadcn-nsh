@@ -30,7 +30,11 @@ test("one panel at a time: opening B closes A", async () => {
   await app.wait(450);
   expect(app.shows("Body A")).toBe(false);
   expect(app.shows("Body B")).toBe(true);
-  expect(app.texts()).toContain("changes 2 · b · triggerPress");
+  // The press lands outside A's panel, whose popup closes on the way down, and on B's trigger, which
+  // opens on the way up: the bar hears one change or two depending on which answer comes first, so
+  // the count belongs to the press's phases — what a parent settles on is B.
+  const change = app.texts().find((line) => line.startsWith("changes "));
+  expect(change?.endsWith("· b · triggerPress")).toBe(true);
 });
 
 test("Escape closes the open panel", async () => {

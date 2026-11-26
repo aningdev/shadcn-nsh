@@ -7,7 +7,9 @@ import { OtpInput } from "../../../packages/ui/otp-input";
 
 // The motion an input takes: a rejected field shakes, a figure rolls, and less motion plays neither.
 // `playing` is the helper's own state, which a screenshot cannot time: the transform a shake sets
-// lands back at rest before the next frame is drawn.
+// lands back at rest before the next frame is drawn. A test cannot time it either — the shake can
+// start and end inside the press step — so `plays` counts what it played, which is the one fact
+// that does not depend on when a frame is looked at.
 function App() {
   const reject = signal(0);
   const amount = signal(10);
@@ -23,7 +25,7 @@ function App() {
       <Button testID="grow" onPress={() => amount.update((n) => n + 10)}>
         Grow
       </Button>
-      <Text>{`playing=${shake.playing() ? "yes" : "no"}`}</Text>
+      <Text>{`plays=${shake.plays()} playing=${shake.playing() ? "yes" : "no"}`}</Text>
       <Text>{`reject=${reject()} amount=${amount()}`}</Text>
     </View>
   );

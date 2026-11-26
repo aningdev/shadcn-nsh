@@ -38,14 +38,18 @@ export function cssMotion(m: Timing): {
  * It returns the style to call where the field draws it (`style={shake.style()}`): a component's
  * body runs once, so only the style an expression builds is read again when the shake starts and
  * ends. At rest it is `null`, so a quiet field has no transform at all. `playing()` says whether
- * it is under way, for a control that holds its press until the field has answered.
+ * it is under way, for a control that holds its press until the field has answered; `plays()` is
+ * how many it has played, for a test, which cannot time one — the shake can start and end inside
+ * the step that pressed.
  */
 export function createRejectShake(tick: () => number | undefined): {
   style: () => ViewStyle | null;
   playing: () => boolean;
+  plays: () => number;
 } {
   const motion = createMotion();
   const shaking = signal(false);
+  const played = signal(0);
   let seen: number | undefined;
   let ready = false;
   effect(() => {
@@ -62,11 +66,13 @@ export function createRejectShake(tick: () => number | undefined): {
     seen = next;
     if (reduceMotion()) return;
     shaking.set(true);
+    played.update((count) => count + 1);
     void Promise.resolve(motion.play("shake")).then(() => shaking.set(false));
   });
   return {
     style: () => (shaking() ? { transform: motion.transform } : null),
     playing: () => shaking(),
+    plays: () => played(),
   };
 }
 
