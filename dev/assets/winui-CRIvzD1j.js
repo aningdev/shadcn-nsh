@@ -1,4 +1,4 @@
-import{t as e}from"./jsx-runtime-LKYXHABd.js";import{t}from"./server.browser-CRtpYEZZ.js";import{a as n,i as r,n as i,r as a,t as o}from"./theme-sections-Bsg2VqYN.js";var s=e(),c={title:`WinUI 3`,description:`WinUI 3 (Windows 11): WinUI fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, and timing motion.`};function l(e){return t()?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(i,{id:`winui`}),`
+import{t as e}from"./jsx-runtime-LKYXHABd.js";import{t}from"./server.browser-CRtpYEZZ.js";import{a as n,i as r,n as i,r as a,t as o}from"./theme-sections-Cnxyv62X.js";var s=e(),c={title:`WinUI 3`,description:`WinUI 3 (Windows 11): WinUI fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, and timing motion.`};function l(e){return t()?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(i,{id:`winui`}),`
 
 ## Installation [#installation]
 
