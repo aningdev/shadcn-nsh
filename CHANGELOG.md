@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.11.0 — 2026-11-26
+
 ### Added
 
 - **L1 `ThemeParadigm` (`expandParadigm`).** Six optional axes (`depth`, `shape`, `stroke`, `motion`, `feedback`, `density`) expand into a sparse L2 patch inside `defineTheme`, after `extends` and before that call's own fields. The resolved `ThemeSpec` does not keep `paradigm`. The showcase page Theme Specimen switches the six built-in themes and an Editorial Paper example through `<ThemeTransition>` and `<ThemedSurface>`. Agents authoring a theme start from `.agents/skills/theme-designer/SKILL.md`.
