@@ -1232,7 +1232,7 @@ export function control<K extends keyof ThemeSpec["controls"]>(name: K): Resolve
           sl.edge.width,
         ),
         hasGrooveShade: sl.shade !== "none",
-        mark: sl.mark,
+        mark: readTiered(sl.mark),
       } as ResolvedControlMap[K];
     }
     case "progress": {

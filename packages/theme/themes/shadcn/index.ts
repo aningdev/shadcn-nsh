@@ -173,10 +173,10 @@ export const shadcn = defineTheme({
       focus: { color: "ring" },
     },
     choice: {
-      corner: 4,
+      corner: { pointer: 4, touch: 6 },
       shade: "none",
       radioChecked: { face: "none" },
-      mark: 8,
+      mark: { pointer: 8, touch: 10 },
     },
     switch: {
       track: { pointer: [32, 18], touch: [44, 24] },

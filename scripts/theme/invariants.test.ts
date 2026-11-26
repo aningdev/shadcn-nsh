@@ -75,6 +75,32 @@ describe("validateThemeInvariants", () => {
     expect(validateThemeInvariants(tinyChoice)).toContainEqual(
       expect.stringContaining("controls.choice.size.touch=16 must be >= 20"),
     );
+
+    const flatChoice = patch({
+      controls: {
+        choice: {
+          size: { pointer: 20, touch: 20 },
+          box: { pointer: 20, touch: 20 },
+          mark: { pointer: 10, touch: 10 },
+        },
+        switch: { track: { pointer: [40, 22], touch: [40, 22] } },
+      },
+    });
+    const flatOut = validateThemeInvariants(flatChoice);
+    expect(
+      flatOut.some((m) => m.includes("controls.choice.size.touch (20) must be > pointer")),
+    ).toBe(true);
+    expect(
+      flatOut.some((m) => m.includes("controls.choice.box.touch (20) must be > pointer")),
+    ).toBe(true);
+    expect(
+      flatOut.some((m) => m.includes("controls.choice.mark.touch (10) must be > pointer")),
+    ).toBe(true);
+    expect(
+      flatOut.some((m) =>
+        m.includes("controls.switch.track.touch must be strictly > pointer on both"),
+      ),
+    ).toBe(true);
   });
 
   test("rejects unstable physics springs, non-monotonic timings, and extreme press/fade feedback", () => {

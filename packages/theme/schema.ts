@@ -413,7 +413,7 @@ export interface ControlsSpec {
       readonly shadow: ShadowExpr;
     };
     /** Retained numeric degenerate slot: WinUI ring inner dot diameter (`0` elsewhere). */
-    readonly mark: number;
+    readonly mark: TieredOrFlat<number>;
   };
   readonly progress: {
     readonly height: number;

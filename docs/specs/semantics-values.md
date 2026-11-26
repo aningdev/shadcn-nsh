@@ -82,12 +82,12 @@
 | `metrics.icon.sm` | 小档图标尺寸 | 12 / 16 | 12 / 16 | 12 / 16 | 12 / 16 | 12 / 16 |
 | `metrics.icon.md` | 中档图标尺寸 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 |
 | `metrics.icon.lg` | 大档图标尺寸 | 20 / 24 | 20 / 24 | 20 / 24 | 20 / 24 | 20 / 24 |
-| `metrics.density.pad` | 页面内边距 | 12 | 12 | 16 | 16 | 12 |
-| `metrics.density.gap` | 页面区块间距 | 12 | 12 | 12 | 12 | 8 |
-| `metrics.control.padding` | 控件水平内边距 | 8 | 8 | 8 | 8 | 6 |
-| `metrics.control.gap` | 控件内图标与文字间距 | 8 | 8 | 8 | 8 | 8 |
-| `metrics.item.inset` | 列表选中行相对容器边的缩进 | 4 / 8 | 4 / 8 | 4 / 0 | 0 | 4 |
-| `metrics.item.pad` | 列表行内边距 | 8 | 8 | 8 / 16 | 12 | 11 |
+| `metrics.density.pad` | 页面内边距 | 12 | 12 | 16 | 16 | 12 / 16 |
+| `metrics.density.gap` | 页面区块间距 | 12 | 12 | 12 | 12 | 8 / 12 |
+| `metrics.control.padding` | 控件水平内边距 | 8 | 8 | 8 | 8 | 6 / 8 |
+| `metrics.control.gap` | 控件内图标与文字间距 | 8 | 8 | 8 | 8 | 8 / 12 |
+| `metrics.item.inset` | 列表选中行相对容器边的缩进 | 4 / 8 | 4 / 8 | 4 / 0 | 0 | 4 / 8 |
+| `metrics.item.pad` | 列表行内边距 | 8 | 8 | 8 / 16 | 12 | 11 / 12 |
 | `metrics.hit` | 触控目标最小边长（0 表示不补范围） | 0 / 44 | 0 / 44 | 0 / 44 | 0 / 48 | 0 / 44 |
 | `metrics.stroke.hairline` | 发丝线宽 | 1 | 1 | 0.5 | 1 | 1 |
 | `metrics.stroke.control` | 控件描边线宽 | 1 | 1 | 1 | 1 | 1 |
@@ -273,9 +273,9 @@
 | `controls.field.focus.line` | 输入框获焦时是否加粗底线 | false | false | false | true | true |
 | `controls.field.focus.width` | 输入框获焦线宽 | 3 | 3 | 3 | 2 | 2 |
 | `controls.field.focus.color` | 输入框获焦高亮角色 | `brand` | `ring` | `ring` | `brand` | `brand` |
-| `controls.choice.size` | 选择控件命中或视觉方框外尺寸 | 16 / 22 | 16 / 22 | 16 / 22 | 20 | 20 |
-| `controls.choice.box` | 选择控件框体尺寸 | 16 / 20 | 16 / 20 | 16 / 20 | 18 | 20 |
-| `controls.choice.corner` | 复选框圆角策略 | 5 / 7 | 4 | 4 / 7 | 2 | 4 |
+| `controls.choice.size` | 选择控件命中或视觉方框外尺寸 | 16 / 22 | 16 / 22 | 16 / 22 | 20 / 24 | 20 / 24 |
+| `controls.choice.box` | 选择控件框体尺寸 | 16 / 20 | 16 / 20 | 16 / 20 | 18 / 22 | 20 / 24 |
+| `controls.choice.corner` | 复选框圆角策略 | 5 / 7 | 4 / 6 | 4 / 7 | 2 / 3 | 4 / 6 |
 | `controls.choice.face` | 未选中选择框底色 | `card` / `input/30` | `card` / `input/30` | `card` / `surface` | `none` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
 | `controls.choice.shade` | 选择框表面角色 | `inset` | `none` | `none` | `none` | `none` |
 | `controls.choice.edge.width` | 选择框描边宽 | 1 | 1 | 1 | 2 | 1 |
@@ -283,24 +283,24 @@
 | `controls.choice.edge.disabled` | 选择框禁用态描边色 | `input` / `foreground/40` | `input` / `foreground/40` | `input` / `foreground/40` | `muted-foreground` | `input` |
 | `controls.choice.checked.face` | 复选框选中底面 | `surface(accent)` | `surface(accent)` | `surface(accent)` | `primary` | `primary` |
 | `controls.choice.radioChecked.face` | 单选框选中面 | `surface(accent)` | `none` | `surface(accent)` | `none` | `primary` |
-| `controls.choice.mark` | 单选框内圆点尺寸 | 6 / 8 | 8 | 6 / 8 | 10 | 12 |
-| `controls.switch.track` | 默认开关轨道宽高 `[w, h]` | `[36,20]` / `[44,24]` | `[32,18]` / `[44,24]` | `[54,24]` / `[63,28]` | `[40,24]` / `[52,32]` | `[40,20]` / `[44,22]` |
+| `controls.choice.mark` | 单选框内圆点尺寸 | 6 / 8 | 8 / 10 | 6 / 8 | 10 / 12 | 12 / 14 |
+| `controls.switch.track` | 默认开关轨道宽高 `[w, h]` | `[36,20]` / `[44,24]` | `[32,18]` / `[44,24]` | `[54,24]` / `[63,28]` | `[40,24]` / `[52,32]` | `[40,20]` / `[48,24]` |
 | `controls.switch.trackOffFace` | 开关关闭态轨道底色 | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `input` / `oklch(0.28969 0 0)` | `oklch(0.96743 0.00133 286.375)` / `oklch(0.29471 0.00718 285.951)` | `muted` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
-| `controls.switch.small.track` | 小号开关轨道宽高 `[w, h]` | `[28,16]` / `[36,20]` | `[24,14]` / `[36,20]` | `[40,18]` / `[48,22]` | `[32,20]` / `[40,24]` | `[32,16]` / `[36,18]` |
-| `controls.switch.small.knob` | 小号开关滑块尺寸 | 12 / 16 | 12 / 16 | `[23,14]` / `[28,18]` | 12 | 10 / 12 |
+| `controls.switch.small.track` | 小号开关轨道宽高 `[w, h]` | `[28,16]` / `[36,20]` | `[24,14]` / `[36,20]` | `[40,18]` / `[48,22]` | `[32,20]` / `[40,24]` | `[32,16]` / `[40,20]` |
+| `controls.switch.small.knob` | 小号开关滑块尺寸 | 12 / 16 | 12 / 16 | `[23,14]` / `[28,18]` | 12 / 16 | 10 / 14 |
 | `controls.switch.edge.off` | 开关关闭态边框宽 | 1 | 0 | 0 | 2 | 1 |
 | `controls.switch.edge.on` | 开关打开态边框宽 | 1 | 0 | 0 | 0 | 0 |
 | `controls.switch.edge.color` | 开关边框色 | `border` | `none` | `none` | `input` | `input` |
-| `controls.switch.knob.size` | 开关滑块常态尺寸 | `{"pointer":16,"touch":20}` | `{"pointer":16,"touch":20}` | `{"pointer":[31,20],"touch":[37,24]}` | 16 | `{"pointer":12,"touch":14}` |
+| `controls.switch.knob.size` | 开关滑块常态尺寸 | `{"pointer":16,"touch":20}` | `{"pointer":16,"touch":20}` | `{"pointer":[31,20],"touch":[37,24]}` | `{"pointer":16,"touch":20}` | `{"pointer":12,"touch":16}` |
 | `controls.switch.knob.on` | 开关滑块打开态尺寸（`same` 表示不变，Material 为放大） | `same` | `same` | `same` | `{"pointer":20,"touch":24}` | `same` |
-| `controls.switch.knob.pressed` | 开关滑块按下态尺寸 | `same` | `same` | `same` | `{"pointer":22,"touch":28}` | `{"pointer":[17,14],"touch":[19,16]}` |
+| `controls.switch.knob.pressed` | 开关滑块按下态尺寸 | `same` | `same` | `same` | `{"pointer":22,"touch":28}` | `{"pointer":[17,14],"touch":[22,18]}` |
 | `controls.switch.knob.background` | 开关滑块常态底色 | `{"light":"oklch(1 0 0)","dark":"oklch(0.92199 0.00419 271.367)"}` | `{"light":"background","dark":"foreground"}` | `primary-foreground` | `{"light":"muted-foreground","dark":"faint"}` | `{"light":"muted-foreground","dark":"muted-foreground"}` |
 | `controls.switch.knob.gradient` | 开关滑块常态渐变 | `{"light":"linear-gradient(180deg, oklch(1 0 0) 0%, {surface} 100%)","dark":"linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)"}` | — | — | — | — |
 | `controls.switch.knob.border` | 开关滑块常态边色 | `{"light":"input","dark":"oklch(0.8324 0.00597 264.528)"}` | `transparent` | `transparent` | `transparent` | `transparent` |
 | `controls.switch.knob.shadow` | 开关滑块投影 | `sm` | `sm` | `sm` | — | — |
 | `controls.switch.knob.checkedBackground` | 开关滑块打开态底色 | `{"light":"oklch(1 0 0)","dark":"oklch(1 0 0)"}` | `{"light":"background","dark":"primary-foreground"}` | `primary-foreground` | `primary-foreground` | `primary-foreground` |
 | `controls.switch.knob.checkedBorder` | 开关滑块打开态边色 | `{"light":"oklch(0.72099 0.15728 124.776)","dark":"oklch(0.71963 0.15821 125.456)"}` | `transparent` | `transparent` | `transparent` | `transparent` |
-| `controls.slider.rail` | 滑杆轨道粗细 | 6 / 8 | 6 / 8 | 4 / 6 | 4 | 4 / 6 |
+| `controls.slider.rail` | 滑杆轨道粗细 | 6 / 8 | 6 / 8 | 4 / 6 | 4 / 6 | 4 / 6 |
 | `controls.slider.band` | 滑杆容器高度 | 20 / 32 | 20 / 32 | 24 / 32 | 20 / 32 | 32 / 36 |
 | `controls.slider.face` | 滑杆未选轨道底色 | `oklch(0.93714 0.00417 271.368)` / `oklch(0.33232 0.01134 264.409)` | `muted` | `muted` / `oklch(0.34609 0.00689 286.034)` | `secondary` | `input` |
 | `controls.slider.shade` | 滑杆轨道表面角色 | `inset` | `none` | `none` | `none` | `none` |
@@ -312,7 +312,7 @@
 | `controls.slider.knob.gradient` | 滑杆手柄渐变 | `{"light":"linear-gradient(180deg, oklch(1 0 0) 0%, {surface} 100%)","dark":"linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)"}` | — | — | — | — |
 | `controls.slider.knob.border` | 滑杆手柄边色 | `{"light":"input","dark":"oklch(0.8324 0.00597 264.528)"}` | `primary` | `border` | `transparent` | `transparent` |
 | `controls.slider.knob.shadow` | 滑杆手柄投影 | `sm` | `sm` | `sm` | — | — |
-| `controls.slider.mark` | 滑杆手柄中心色点直径（WinUI 专用，其余为 0） | 0 | 0 | 0 | 0 | 12 |
+| `controls.slider.mark` | 滑杆手柄中心色点直径（WinUI 专用，其余为 0） | 0 | 0 | 0 | 0 | 12 / 16 |
 | `controls.progress.height` | 进度条高度 | 6 | 6 | 6 | 4 | 3 |
 | `controls.progress.face` | 进度条未填轨道底色 | `oklch(0.93714 0.00417 271.368)` / `oklch(0.33232 0.01134 264.409)` | `oklch(0.93714 0.00417 271.368)` / `oklch(0.33232 0.01134 264.409)` | `oklch(0.93714 0.00417 271.368)` / `oklch(0.33232 0.01134 264.409)` | `secondary` | `input` |
 | `controls.progress.shade` | 进度条轨道表面角色 | `inset` | `inset` | `inset` | `none` | `none` |

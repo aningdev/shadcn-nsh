@@ -190,8 +190,8 @@ export function validateThemeInvariants(entry: AppTheme): string[] {
   // 3. Control geometry invariants (pointer vs touch + non-overflowing switch knob)
   const swPtrTrack = readTier(spec.controls.switch.track, "pointer");
   const swTchTrack = readTier(spec.controls.switch.track, "touch");
-  if (swTchTrack[0] < swPtrTrack[0] || swTchTrack[1] < swPtrTrack[1]) {
-    fail("controls.switch.track.touch must be >= pointer on both width and height");
+  if (swTchTrack[0] <= swPtrTrack[0] || swTchTrack[1] <= swPtrTrack[1]) {
+    fail("controls.switch.track.touch must be strictly > pointer on both width and height");
   }
   if (swPtrTrack[1] < 16 || swPtrTrack[1] > 28) {
     fail(`controls.switch.track.pointer height=${swPtrTrack[1]} outside [16, 28]`);
@@ -225,7 +225,19 @@ export function validateThemeInvariants(entry: AppTheme): string[] {
   const chTch = readTier(spec.controls.choice.size, "touch");
   if (chPtr < 14 || chPtr > 24) fail(`controls.choice.size.pointer=${chPtr} outside [14, 24]`);
   if (chTch < 20) fail(`controls.choice.size.touch=${chTch} must be >= 20`);
-  if (chTch < chPtr) fail(`controls.choice.size.touch (${chTch}) < pointer (${chPtr})`);
+  if (chTch <= chPtr) fail(`controls.choice.size.touch (${chTch}) must be > pointer (${chPtr})`);
+
+  const boxPtr = readTier(spec.controls.choice.box, "pointer");
+  const boxTch = readTier(spec.controls.choice.box, "touch");
+  if (boxPtr < 14 || boxPtr > 24) fail(`controls.choice.box.pointer=${boxPtr} outside [14, 24]`);
+  if (boxTch < 20) fail(`controls.choice.box.touch=${boxTch} must be >= 20`);
+  if (boxTch <= boxPtr) fail(`controls.choice.box.touch (${boxTch}) must be > pointer (${boxPtr})`);
+
+  const markPtr = readTier(spec.controls.choice.mark, "pointer");
+  const markTch = readTier(spec.controls.choice.mark, "touch");
+  if (markTch <= markPtr) {
+    fail(`controls.choice.mark.touch (${markTch}) must be > pointer (${markPtr})`);
+  }
 
   // 4. Shared type scale monotonicity
   for (const tierName of ["pointer", "touch"] as const) {

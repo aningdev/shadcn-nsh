@@ -94,8 +94,8 @@ describe("Theme v5 theme definitions & exported theme.json", () => {
     // Material grows switch knob on checked; others degenerate to "same"
     expect(byId.material!.spec.controls.switch.knob.on).not.toBe("same");
     expect(byId.shadcn!.spec.controls.switch.knob.on).toBe("same");
-    // WinUI slider carries inner center dot diameter; others degenerate to 0
-    expect(byId.winui!.spec.controls.slider.mark).toBeGreaterThan(0);
+    // WinUI slider carries tiered inner center dot diameter; others degenerate to 0
+    expect(byId.winui!.spec.controls.slider.mark).toEqual({ pointer: 12, touch: 16 });
     expect(byId.shadcn!.spec.controls.slider.mark).toBe(0);
     // Double focus style uses innerColor only on WinUI
     expect(byId.winui!.spec.feedback.focus.style).toBe("double");

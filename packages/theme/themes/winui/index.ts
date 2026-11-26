@@ -83,9 +83,9 @@ export const winui = defineTheme({
       pointer: { sm: 24, md: 32, lg: 40 },
       touch: { sm: 32, md: 40, lg: 48 },
     },
-    density: { pointer: { pad: 12, gap: 8 }, touch: { pad: 12, gap: 8 } },
-    item: { pointer: { inset: 4, pad: 11 }, touch: { inset: 4, pad: 11 } },
-    control: { pointer: { padding: 6, gap: 8 }, touch: { padding: 6, gap: 8 } },
+    density: { pointer: { pad: 12, gap: 8 }, touch: { pad: 16, gap: 12 } },
+    item: { pointer: { inset: 4, pad: 11 }, touch: { inset: 8, pad: 12 } },
+    control: { pointer: { padding: 6, gap: 8 }, touch: { padding: 8, gap: 12 } },
     typography: {
       caption: { fontWeight: 400, letterSpacing: 0 },
       detail: { fontWeight: 400, letterSpacing: 0 },
@@ -304,27 +304,27 @@ export const winui = defineTheme({
       focus: { line: true, width: 2, color: "brand" },
     },
     choice: {
-      size: 20,
-      box: 20,
-      corner: 4,
+      size: { pointer: 20, touch: 24 },
+      box: { pointer: 20, touch: 24 },
+      corner: { pointer: 4, touch: 6 },
       face: { light: "oklch(0.94611 0 0)", dark: "oklch(0.23075 0 0)" },
       shade: "none",
       edge: { width: 1, color: "input", disabled: "input" },
       checked: { face: "primary" },
       radioChecked: { face: "primary" },
-      mark: 12,
+      mark: { pointer: 12, touch: 14 },
     },
     switch: {
-      track: { pointer: [40, 20], touch: [44, 22] },
+      track: { pointer: [40, 20], touch: [48, 24] },
       trackOffFace: { light: "oklch(0.94611 0 0)", dark: "oklch(0.23075 0 0)" },
       small: {
-        track: { pointer: [32, 16], touch: [36, 18] },
-        knob: { pointer: 10, touch: 12 },
+        track: { pointer: [32, 16], touch: [40, 20] },
+        knob: { pointer: 10, touch: 14 },
       },
       edge: { off: 1, on: 0, color: "input" },
       knob: {
-        size: { pointer: 12, touch: 14 },
-        pressed: { pointer: [17, 14], touch: [19, 16] },
+        size: { pointer: 12, touch: 16 },
+        pressed: { pointer: [17, 14], touch: [22, 18] },
         background: { light: "muted-foreground", dark: "muted-foreground" },
         gradient: null,
         border: "transparent",
@@ -347,7 +347,7 @@ export const winui = defineTheme({
         border: "transparent",
         shadow: null,
       },
-      mark: 12,
+      mark: { pointer: 12, touch: 16 },
     },
     progress: {
       height: 3,
@@ -385,9 +385,7 @@ export const winui = defineTheme({
     scaleCitations: {
       "metrics.control.pointer.padding":
         "WinUI 3 button padding 6px (`Button_themeresources.xaml`)",
-      "metrics.control.touch.padding": "WinUI 3 button padding 6px (`Button_themeresources.xaml`)",
       "metrics.item.pointer.pad": "WinUI 3 menu row padding 11px (`MenuFlyoutItemThemePadding`)",
-      "metrics.item.touch.pad": "WinUI 3 menu row padding 11px (consistent on touch)",
     },
   },
 });
