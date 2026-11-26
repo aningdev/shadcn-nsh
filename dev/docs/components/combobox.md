@@ -69,7 +69,12 @@ const assignee = signal<string | null>(null);
 </Combobox>;
 ```
 
-The trigger opens and closes the list. So does a press on the field's input, when the platform delivers it: `nsh/base` toggles on the input's press (`references/nsh/crates/nsh-base/src/combobox.rs`, the input's `on_press`). On macOS the field editor takes that click for the caret (`references/nsh/crates/nsh-platform-macos/src/text_input.rs`, `mouseDown`) and the press is never delivered, so a click focuses the field and does not open the list. Tabbing into the field does not open it either. Typing does.
+The trigger opens and closes the list. The field's input takes typing, and typing opens the list
+filtered as you type (`nsh/base` also toggles on the input's press — `references/nsh/crates/nsh-base/src/combobox.rs`,
+its `on_press` — but a click on macOS lands in the field editor for the caret,
+`references/nsh/crates/nsh-platform-macos/src/text_input.rs`, so with a pointer the arrow is the way
+in). Clicking the field puts the caret there and does not open the list; tabbing into it does not
+either.
 
 ### Several values [#several-values]
 
