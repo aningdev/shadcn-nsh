@@ -15,7 +15,7 @@ import {
   DisclosureChevron,
   type DisclosurePanelOptions,
 } from "./accordion";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
 import { RowDivider, RowLabel } from "./lib/surface";
 
 /** Why a collapsible opened or closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */

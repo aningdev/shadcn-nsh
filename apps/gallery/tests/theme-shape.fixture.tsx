@@ -1,90 +1,52 @@
 import {
+  activeSpec,
   buttonCorner,
   controlHeight,
   currentTheme,
-  dimmed,
+  defineTheme,
+  feedback,
   hitTarget,
   iconSize,
   rounded,
   selectTheme,
   shape,
   stroke,
-  style as themeStyle,
-  type AppTheme,
 } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
 import { Button, buttonLabel, buttonLook, dialogCard, inputLook } from "../../../packages/ui";
 
-const { dimension, state } = nshGallery.semantics;
-
 /** A temporary theme with other corner roles, control heights, line widths and fades. */
-const reshaped: AppTheme = {
-  ...nshGallery,
+const reshaped = defineTheme({
+  extends: nshGallery.spec,
   id: "reshaped",
   label: "Reshaped",
-  theme: {
-    ...nshGallery.theme,
-    cssVars: {
-      ...nshGallery.theme.cssVars,
-      theme: {
-        ...nshGallery.theme.cssVars?.theme,
-        "radius-control": "20px",
-        "radius-container": "28px",
-        "radius-modal": "30px",
-      },
-    },
+  tokens: {
+    radius: { control: 20, container: 28, modal: 30 },
   },
-  semantics: {
-    ...nshGallery.semantics,
-    dimension: {
-      ...dimension,
-      size: {
-        ...dimension.size,
-        hit: { pointer: 48, touch: 52 },
-        height: { pointer: { sm: 30, md: 36, lg: 44 }, touch: { sm: 40, md: 46, lg: 56 } },
-      },
-      stroke: { hairline: 2, control: 2 },
-      icon: { pointer: { sm: 16, md: 18, lg: 20 }, touch: { sm: 18, md: 20, lg: 22 } },
-    },
-    state: {
-      ...state,
-      "pressed-opacity": 0.5,
-      disabled: { content: 0.3 },
-    },
-    // A theme that swaps to a disabled face instead of fading the whole view (the slots every theme
-    // inherits name `keep`; this one names `finish.disabled`).
-    controls: {
-      ...nshGallery.semantics.controls,
-      disabled: {
-        face: { finish: "disabled" },
-        ink: { finish: "disabled", field: "foreground" },
-        edge: { finish: "disabled", field: "borderColor" },
-      },
-    },
+  metrics: {
+    hit: { pointer: 48, touch: 52 },
+    height: { pointer: { sm: 30, md: 36, lg: 44 }, touch: { sm: 40, md: 46, lg: 56 } },
+    stroke: { hairline: 2, control: 2 },
+    icon: { pointer: { sm: 16, md: 18, lg: 20 }, touch: { sm: 18, md: 20, lg: 22 } },
   },
-};
+  feedback: {
+    // A theme that swaps to a disabled face instead of fading the whole view.
+    disabled: { ...nshGallery.spec.feedback.disabled, contentOpacity: 0.3, replaceFace: true },
+    passive: { pressedOpacity: 0.5 },
+  },
+});
 
 /** Same radii as `reshaped`, with capsule button corners (`controls.button.corner.md: "full"`). */
-const capsuleButtons: AppTheme = {
-  ...reshaped,
+const capsuleButtons = defineTheme({
+  extends: reshaped.spec,
   id: "capsule-buttons",
   label: "Capsule",
-  semantics: {
-    ...reshaped.semantics,
-    controls: {
-      ...reshaped.semantics.controls,
-      button: {
-        ...reshaped.semantics.controls.button,
-        corner: {
-          ...reshaped.semantics.controls.button.corner,
-          md: "full",
-        },
-      },
-    },
+  controls: {
+    button: { corner: { md: "full" } },
   },
-};
+});
 
 function App() {
   const button = buttonLook("secondary");
@@ -96,7 +58,7 @@ function App() {
       <Text>{`field=${inputLook().style.borderRadius}|${inputLook().style.borderWidth}`}</Text>
       <Text>{`concentric=${rounded(shape.control, 3).borderRadius}|${rounded(shape.control, 99).borderRadius}`}</Text>
       <Text>{`button=${button.style.height}|${button.style.borderRadius}|${button.style.borderWidth}`}</Text>
-      <Text>{`fade=${dimmed.disabled}|${dimmed.pressed}|${String(themeStyle().controls.disabled.face !== "keep")}`}</Text>
+      <Text>{`fade=${feedback.disabled.contentOpacity}|${feedback.passive.pressedOpacity}|${String(activeSpec().feedback.disabled.replaceFace)}`}</Text>
       <Text>{`disabledMode=${button.disabledStyle.opacity === undefined ? "fill" : "fade"}|${String(disabledText.color === buttonLabel("secondary").color)}`}</Text>
       <Text>{`sizes=${controlHeight.sm}|${controlHeight.lg}|${iconSize.md}|${hitTarget()}|${stroke.hairline}|${stroke.control}`}</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>

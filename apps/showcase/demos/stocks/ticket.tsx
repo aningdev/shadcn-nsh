@@ -1,7 +1,7 @@
 import {
   alpha,
   colors,
-  finish,
+  surface,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
@@ -82,7 +82,7 @@ export function createBanner() {
           height: 34,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: message().side === "buy" ? colors.up : colors.destructive,
+          backgroundColor: message().side === "buy" ? colors.success : colors.destructive,
           borderRadius: 17,
         }}
       >
@@ -125,7 +125,7 @@ function Step(props: { plus: boolean; label: string; onPress: () => void }) {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: shape.control,
-          ...finish.raised,
+          ...surface("raised").style,
           borderWidth: 1,
         }}
       >
@@ -198,7 +198,7 @@ export function Ticket(props: {
     limit.set(
       Math.max(props.stock.tick, Math.round(limit() / props.stock.tick + steps) * props.stock.tick),
     );
-  const tone = () => (props.side() === "buy" ? colors.up : colors.destructive);
+  const tone = () => (props.side() === "buy" ? colors.success : colors.destructive);
   const verb = () => (props.side() === "buy" ? "Buy" : "Sell");
   return (
     <View style={{ gap: 16, paddingTop: terminal ? 0 : 4 }}>
@@ -242,7 +242,7 @@ export function Ticket(props: {
               alignItems: "center",
               justifyContent: "center",
               borderRadius: shape.control,
-              backgroundColor: colors.inset,
+              backgroundColor: colors.muted,
               borderWidth: 1,
               borderColor: colors.border,
             }}
@@ -283,7 +283,7 @@ export function Ticket(props: {
                       alignItems: "center",
                       justifyContent: "center",
                       borderRadius: shape.control,
-                      backgroundColor: quantity() === q() ? tints.brand : colors.raised,
+                      backgroundColor: quantity() === q() ? tints.brand : colors.surface,
                       borderWidth: 1,
                       borderColor: quantity() === q() ? colors.brand : colors.border,
                     }}
@@ -327,7 +327,7 @@ export function Ticket(props: {
               height: 6,
               overflow: "hidden",
               borderRadius: 3,
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
             }}
           >
             <View
@@ -357,7 +357,7 @@ export function Ticket(props: {
             borderRadius: shape.control,
             borderWidth: 1,
             borderColor: tone(),
-            backgroundColor: props.side() === "buy" ? tints.up : tints.destructive,
+            backgroundColor: props.side() === "buy" ? tints.success : tints.destructive,
           }}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

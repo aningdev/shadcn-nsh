@@ -2,7 +2,7 @@
 // log, segmented, desktop, wide).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha as tint, colors, finish, shape } from "@shadcn-nsh/theme";
+import { alpha as tint, colors, shape, surface } from "@shadcn-nsh/theme";
 import type { JSX as __JSX, ViewStyle } from "nsh";
 import { Text as __Text, View as __View } from "nsh";
 import { platform as __platform, token, windowSize as __windowSize } from "nsh";
@@ -250,7 +250,7 @@ export const buttonStyle = (style?: ViewStyle): ViewStyle => ({
  * The gallery's palette under the names its demos read (`ui()` in
  * `references/nsh/examples/nsh-gallery-ui/palette.ts`), in this library's theme roles, read
  * where they are drawn: `card` is a section's flat surface (`sectionSurface`), `inset` a well,
- * `raised` the raised finish, `primary` the main action's. A demo's own chrome reads them; the
+ * `raised` the raised surface, `primary` the main action's. A demo's own chrome reads them; the
  * library's look never does.
  */
 export const ui = () => ({
@@ -263,10 +263,10 @@ export const ui = () => ({
   accent: colors.brand,
   onAccent: colors.primaryForeground,
   onPrimary: colors.primaryForeground,
-  up: colors.up,
+  up: colors.success,
   down: colors.destructive,
   info: colors.info,
-  warn: colors.warn,
+  warn: colors.warning,
   danger: colors.destructive,
   // The ink of content drawn over a photograph, a caption or a chart's tile: `on-media`, the one
   // text role the theme keeps out of the appearance (a carousel's caption, a chart's label).
@@ -275,25 +275,10 @@ export const ui = () => ({
   row: { ...sectionSurface(), backgroundColor: colors.card },
   // Upstream's `ui().inset` is a well's colors, not a well: no corners, so a demo that has its
   // own (a row, a picture frame) keeps them (`insetSurface()` is a well with its corners).
-  inset: {
-    backgroundColor: colors.inset,
-    borderWidth: 1,
-    borderColor: colors.line,
-    ...finish.inset,
-  },
-  raised: {
-    backgroundColor: colors.raised,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...finish.raised,
-  },
-  primary: { backgroundColor: colors.primary, borderWidth: 1, ...finish.accent },
-  accentFill: {
-    backgroundColor: colors.primary,
-    borderWidth: 1,
-    borderColor: colors.brand,
-    ...finish.accent,
-  },
+  inset: { borderWidth: 1, ...surface("inset").style },
+  raised: { borderWidth: 1, ...surface("raised").style },
+  primary: { borderWidth: 1, ...surface("accent").style },
+  accentFill: { borderWidth: 1, ...surface("accent").style },
 });
 
 /**

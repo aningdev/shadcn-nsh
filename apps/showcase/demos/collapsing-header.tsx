@@ -113,7 +113,7 @@ export function CollapsingHeaderDemo() {
                 height: HEADING,
                 justifyContent: "center",
                 paddingHorizontal: GUTTER,
-                backgroundColor: colors.inset,
+                backgroundColor: colors.muted,
                 borderBottomWidth: 1,
                 borderBottomColor: colors.line,
               }}

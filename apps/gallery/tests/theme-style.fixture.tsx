@@ -1,10 +1,10 @@
 import {
   cornerCurve,
+  defineTheme,
   focusRing,
   follow,
   motion,
   selectTheme,
-  type AppTheme,
 } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
@@ -12,35 +12,31 @@ import { nshGallery } from "../../../packages/theme/themes/nsh-gallery/index";
 import { Button, controlSize, density, plainRow } from "../../../packages/ui";
 
 /** The build-time theme with other style data: a taller large step, roomier padding, a faster
- * timing, a wider focus ring and circular corners. Its colors and finishes are the build-time theme's. */
-const roomy: AppTheme = {
-  ...nshGallery,
+ * timing, a wider focus ring and circular corners. Its colors and surfaces are the build-time theme's. */
+const roomy = defineTheme({
+  extends: nshGallery.spec,
   id: "roomy",
   label: "roomy",
-  semantics: {
-    ...nshGallery.semantics,
-    dimension: {
-      ...nshGallery.semantics.dimension,
-      size: {
-        ...nshGallery.semantics.dimension.size,
-        height: {
-          pointer: { ...nshGallery.semantics.dimension.size.height.pointer, lg: 60 },
-          touch: { ...nshGallery.semantics.dimension.size.height.touch, lg: 60 },
-        },
-        control: {
-          pointer: { ...nshGallery.semantics.dimension.size.control.pointer, padding: 13 },
-          touch: { ...nshGallery.semantics.dimension.size.control.touch, padding: 13 },
-        },
-      },
-      focus: { ...nshGallery.semantics.dimension.focus, width: 5 },
-    },
-    motion: {
-      ...nshGallery.semantics.motion,
-      fast: { duration: 90, timingFunction: "decelerate" },
-    },
-    shape: { ...nshGallery.semantics.shape, curve: "circular" },
+  tokens: {
+    radius: { curve: "circular" },
   },
-};
+  metrics: {
+    height: {
+      pointer: { sm: 24, md: 28, lg: 60 },
+      touch: { sm: 32, md: 40, lg: 60 },
+    },
+    control: {
+      pointer: { padding: 13, gap: 8 },
+      touch: { padding: 13, gap: 8 },
+    },
+  },
+  feedback: {
+    focus: { style: "halo", width: 5, offset: 0 },
+  },
+  motion: {
+    fast: { duration: 90, easing: "decelerate" },
+  },
+});
 
 function App() {
   const on = signal(false);

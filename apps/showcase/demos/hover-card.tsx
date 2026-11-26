@@ -1,4 +1,4 @@
-import { alpha, colors, finish, focusRing, rounded, toneColor } from "@shadcn-nsh/theme";
+import { surface, alpha, colors, focusRing, rounded, toneColor } from "@shadcn-nsh/theme";
 // Hover card: the official gallery's scene (`references/nsh/examples/gallery/demos/HoverCardDemo.tsx`).
 // Mentions, link previews, live quotes, delays, and a card the app pins open. The card's surface is
 // `popoverLook` on a `PopIn`. The trigger is one of the scene's own views, handed to
@@ -269,7 +269,7 @@ function Mention(props: {
                 borderRadius: 6,
                 borderWidth: 2,
                 borderColor: colors.card,
-                backgroundColor: person.away ? colors.warn : colors.up,
+                backgroundColor: person.away ? colors.warning : colors.success,
               }}
             />
           </View>
@@ -441,8 +441,8 @@ function Preview(props: {
               borderWidth: 1,
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: colors.raised,
-              ...finish.raised,
+              backgroundColor: colors.surface,
+              ...surface("raised").style,
             }}
           >
             <Icon icon={site.icon} size={16} tint={colors.foreground} />
@@ -516,16 +516,16 @@ function Ticker(props: {
   const quote = props.quote;
   const price = signal(quote.price);
   const closes = signal(history(quote.symbol, quote.open, quote.price));
-  const flash = signal<"up" | "down" | null>(null);
+  const flash = signal<"success" | "destructive" | null>(null);
   const timer = signal<ReturnType<typeof setInterval> | undefined>(undefined);
   const step = signal(0);
   const change = () => price() - quote.open;
-  const tone = () => (change() >= 0 ? "up" : "down");
+  const tone = () => (change() >= 0 ? "success" : "destructive");
   const tick = () => {
     const index = step();
     step.set(index + 1);
     const next = Math.max(1, price() + steps[index % steps.length]! * quote.price * 0.001);
-    flash.set(next >= price() ? "up" : "down");
+    flash.set(next >= price() ? "success" : "destructive");
     price.set(Math.round(next * 100) / 100);
     closes.set([...closes().slice(1), price()]);
   };
@@ -589,7 +589,7 @@ function Ticker(props: {
             </Text>
             <Text style={{ fontSize: small, color: colors.mutedForeground }}>{quote.name}</Text>
           </View>
-          <Badge tone="up" variant="outline">
+          <Badge tone="success" variant="outline">
             Live
           </Badge>
         </View>
@@ -792,7 +792,7 @@ function Pinned(props: {
             width={pointer ? 220 : 240}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <Icon icon={CircleCheck} size={16} tint={colors.up} />
+              <Icon icon={CircleCheck} size={16} tint={colors.success} />
               <Text style={{ fontSize: body, fontWeight: "600", color: colors.foreground }}>
                 Passed in 4m 12s
               </Text>

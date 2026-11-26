@@ -81,7 +81,7 @@ export function Tape(props: { market: Market; stock: Stock }) {
       <View
         style={{ flexDirection: "row", flexWrap: "wrap", columnGap: 16, rowGap: terminal ? 0 : 6 }}
       >
-        <Legend color={colors.up} label="At ask" value={compact(stats().buys)} />
+        <Legend color={colors.success} label="At ask" value={compact(stats().buys)} />
         <Legend color={colors.destructive} label="At bid" value={compact(stats().sells)} />
         <Legend color={colors.brand} label="Blocks" value={`${stats().blocks}`} />
       </View>
@@ -108,7 +108,7 @@ export function Tape(props: { market: Market; stock: Stock }) {
             trades.forEach((t, i) => {
               const y = i * ROW + ROW / 2;
               const block = t.size >= BLOCK;
-              const color = t.side > 0 ? colors.up : colors.destructive;
+              const color = t.side > 0 ? colors.success : colors.destructive;
               if (block) {
                 cx.fillStyle = tints.brand;
                 cx.beginPath();
@@ -186,7 +186,7 @@ function TerminalTape(props: { stock: Stock; trades: Trade[] }) {
                 style={{
                   flex: 1,
                   fontSize: 14,
-                  color: trade().side > 0 ? colors.up : colors.destructive,
+                  color: trade().side > 0 ? colors.success : colors.destructive,
                   fontVariant: ["tabular-nums"],
                 }}
               >
@@ -242,7 +242,7 @@ function FlowRow(props: {
           {compact(props.sell())}
         </Text>
         <Text style={{ fontSize: 12, fontVariant: ["tabular-nums"], color: colors.faint }}>/</Text>
-        <Text style={{ fontSize: 12, fontVariant: ["tabular-nums"], color: colors.up }}>
+        <Text style={{ fontSize: 12, fontVariant: ["tabular-nums"], color: colors.success }}>
           {compact(props.buy())}
         </Text>
       </View>
@@ -268,7 +268,7 @@ function FlowRow(props: {
           <View style={{ flex: 1 }}>
             <SpringBar
               share={() => props.buy() / props.max()}
-              color={colors.up}
+              color={colors.success}
               height={10}
               radius={3}
             />
@@ -302,7 +302,7 @@ export function Flow(props: { market: Market }) {
             fontSize: 13,
             fontWeight: "400",
             fontVariant: ["tabular-nums"],
-            color: big() >= 0 ? colors.up : colors.destructive,
+            color: big() >= 0 ? colors.success : colors.destructive,
           }}
         >
           {" "}

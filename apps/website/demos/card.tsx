@@ -36,9 +36,9 @@ function Labeled(props: { label: string; children: JSX.Element }) {
 }
 
 const environments = [
-  { name: "Production", state: "Healthy", tone: "up" },
-  { name: "Staging", state: "Healthy", tone: "up" },
-  { name: "Preview", state: "Building", tone: "warn" },
+  { name: "Production", state: "Healthy", tone: "success" },
+  { name: "Staging", state: "Healthy", tone: "success" },
+  { name: "Preview", state: "Building", tone: "warning" },
 ] as const;
 
 function App() {

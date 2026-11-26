@@ -4,13 +4,12 @@
 import {
   colors,
   controlHeight,
-  finish,
-  focusRing,
+  feedback,
   rounded,
   font,
   shape,
   stroke,
-  dimmed,
+  surface,
 } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, signal, split, Text, View } from "nsh";
@@ -21,7 +20,7 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { type Live, read } from "./lib/live-value";
+import { type Live, read } from "./lib/utils";
 import { hoverOf, type TabLook, type TabState } from "./tabs";
 
 const pointer = platform.desktop;
@@ -44,7 +43,7 @@ export interface SegmentedLookOptions {
  * A segmented control's look. On a track (`style`, on `Tabs` or a `RadioGroup`): sunk, as wide as
  * its labels with a pointer (the theme's `height.md` high, 12-point labels, the thumb's corners a
  * step inside the track's), spanning the row on a touch screen or with `fill`; the selected
- * segment's thumb, standing off the track in both appearances (`finish.plate`: a labelled block
+ * segment's thumb, standing off the track in both appearances (`surface("plate")`: a labelled block
  * chosen inside a well), as `Tabs`' traveling `indicatorStyle` or as a `Radio`'s `checkedStyle`
  * (`thumbStyle`). Each segment's props (`segment(state)`: hover, the focus ring, dimmed while
  * disabled) and its label are the look's.
@@ -58,22 +57,24 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   // The theme's height scale, read where it is drawn: the middle step, or the small one for `sm`
   // (so a small control is as tall as a small button, and the two sit level in a row).
   const height = () => (small() ? controlHeight.sm : controlHeight.md);
-  const plateBorderWidth = () =>
-    finish.plate.borderColor === undefined || finish.plate.borderColor === "transparent"
-      ? 0
-      : stroke.control;
+  const plate = () => surface("plate").style;
+  const plateBorderWidth = () => {
+    const edge = plate().borderColor;
+    return edge === undefined || edge === "transparent" ? 0 : stroke.control;
+  };
   // The thumb: the track's raised plate, a segment's own box (the theme's `plate`: a labelled block
   // chosen inside a well).
   const thumb = (): ViewStyle => ({
     ...rounded(shape.control, inset),
     borderWidth: plateBorderWidth(),
-    // A face without an edge of its own draws none: `finish.plate` states the colour where it
+    // A face without an edge of its own draws none: `surface("plate")` states the colour where it
     // names one, and a border with no colour of its own draws black.
     borderColor: "transparent",
-    ...finish.plate,
+    ...plate(),
   });
   return {
     get style(): ViewStyle {
+      const channel = surface("channel").style;
       return {
         height: height(),
         flexDirection: "row",
@@ -82,8 +83,11 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         ...rounded(shape.control),
         // The channel the chosen block sits in (`channel`), not the switch's track: in dark a
         // switch's track is as raised as its thumb, which would hide the thumb.
-        ...finish.channel,
-        borderWidth: finish.channel.borderColor === "transparent" ? 0 : stroke.control,
+        ...channel,
+        borderWidth:
+          channel.borderColor === undefined || channel.borderColor === "transparent"
+            ? 0
+            : stroke.control,
       };
     },
     /** The thumb as `Tabs`' indicator, which the core springs to the selected tab. */
@@ -114,10 +118,10 @@ export function segmentedLook(o?: SegmentedLookOptions) {
           return hoverOf(state);
         },
         get focusVisibleStyle() {
-          return focusRing();
+          return feedback.focusRing();
         },
         get disabledStyle(): ViewStyle {
-          return { opacity: dimmed.disabled };
+          return { opacity: feedback.disabled.contentOpacity };
         },
       };
     },

@@ -30,7 +30,7 @@ function Card(props: { icon: IconNode; title: string; subtitle: string; children
   return (
     <View class="border-border bg-card rounded-2xl border p-[5px] shadow-sm">
       <View class="flex-row items-center gap-3 px-[11px] pt-[11px] pb-3">
-        <View class="border-border bg-raised size-10 items-center justify-center rounded-xl border">
+        <View class="border-border bg-surface size-10 items-center justify-center rounded-xl border">
           <Icon icon={props.icon} size={20} tint="muted" />
         </View>
         <View class="flex-1 gap-0.5">
@@ -43,7 +43,7 @@ function Card(props: { icon: IconNode; title: string; subtitle: string; children
           </Text>
         </View>
       </View>
-      <View class="border-line bg-inset gap-3 rounded-xl border p-3.5">{props.children}</View>
+      <View class="border-line bg-muted gap-3 rounded-xl border p-3.5">{props.children}</View>
     </View>
   );
 }
@@ -57,17 +57,17 @@ function Label(props: { children: string }) {
 /** A gradient hero lit by a citrus glow, with a big tabular figure and two badges. */
 function Hero(props: { count: number }) {
   return (
-    <View class="border-border from-card via-card to-inset overflow-hidden rounded-2xl border bg-linear-to-br p-5 shadow-[0_6px_20px_rgba(16,20,30,0.08)]">
+    <View class="border-border from-card via-card to-muted overflow-hidden rounded-2xl border bg-linear-to-br p-5 shadow-[0_6px_20px_rgba(16,20,30,0.08)]">
       <View class="from-primary/20 absolute -top-24 -right-20 size-72 rounded-full bg-radial to-transparent to-70%" />
       <View class="flex-row flex-wrap items-center gap-2">
-        <View class="bg-raised ring-line h-[26px] flex-row items-center gap-1.5 rounded-full px-2.5 ring-1 ring-inset">
+        <View class="bg-surface ring-line h-[26px] flex-row items-center gap-1.5 rounded-full px-2.5 ring-1 ring-inset">
           <View class="size-2 items-center justify-center">
             <View class="bg-primary absolute size-2 animate-ping rounded-full" />
             <View class="bg-primary size-1.5 rounded-full" />
           </View>
           <Text class="text-foreground text-xs font-medium">Resolved natively</Text>
         </View>
-        <View class="bg-raised h-[26px] justify-center rounded-full px-2.5">
+        <View class="bg-surface h-[26px] justify-center rounded-full px-2.5">
           <Text class="text-foreground font-mono text-xs">dark:</Text>
         </View>
       </View>
@@ -96,7 +96,7 @@ function Stats() {
       label: "Gradients",
       value: "4",
       note: "Linear, radial, conic",
-      tone: "text-up",
+      tone: "text-success",
     },
     {
       label: "Animations",
@@ -108,10 +108,10 @@ function Stats() {
       label: "Unknown classes",
       value: "0",
       note: "Checked at build",
-      tone: "text-warn",
+      tone: "text-warning",
     },
   ];
-  const legend = ["bg-primary", "bg-up", "bg-info", "bg-warn"];
+  const legend = ["bg-primary", "bg-success", "bg-info", "bg-warning"];
   return (
     <Card icon={LayoutGrid} title="Stat grid" subtitle="grid grid-cols-2 gap-2">
       <View class="grid grid-cols-2 gap-2">
@@ -152,7 +152,7 @@ function Buttons() {
       <View
         onPress={() => count.set(count() + 1)}
         role="button"
-        class="border-brand-edge bg-primary h-11 flex-row items-center justify-center rounded-[10px] border transition duration-150 active:scale-[0.97] active:opacity-90"
+        class="border-border bg-primary h-11 flex-row items-center justify-center rounded-[10px] border transition duration-150 active:scale-[0.97] active:opacity-90"
       >
         <Text class="text-primary-foreground text-[15px] font-semibold">{`Pressed ${count()}×`}</Text>
       </View>
@@ -160,7 +160,7 @@ function Buttons() {
         <View
           onPress={() => count.set(0)}
           role="button"
-          class="border-border bg-raised h-11 flex-1 items-center justify-center rounded-[10px] border transition active:scale-95 active:opacity-80"
+          class="border-border bg-surface h-11 flex-1 items-center justify-center rounded-[10px] border transition active:scale-95 active:opacity-80"
         >
           <Text class="text-foreground text-[15px] font-semibold">Reset</Text>
         </View>
@@ -168,7 +168,7 @@ function Buttons() {
           onPress={() => busy.set(!busy())}
           disabled={busy()}
           role="button"
-          class="border-brand-edge bg-primary h-11 flex-1 items-center justify-center rounded-[10px] border transition hover:opacity-90 active:scale-95 disabled:opacity-50"
+          class="border-border bg-primary h-11 flex-1 items-center justify-center rounded-[10px] border transition hover:opacity-90 active:scale-95 disabled:opacity-50"
         >
           <Text class="text-primary-foreground text-[15px] font-semibold">
             {busy() ? "Disabled" : "Disable me"}
@@ -178,7 +178,7 @@ function Buttons() {
       <View
         onPress={() => busy.set(false)}
         role="button"
-        class="active:bg-raised min-h-11 justify-center self-start rounded-lg px-1"
+        class="active:bg-surface min-h-11 justify-center self-start rounded-lg px-1"
       >
         <Text class="text-brand text-sm underline decoration-dotted underline-offset-4">
           Enable again
@@ -191,14 +191,14 @@ function Buttons() {
 /** Cards: a group press row, tinted badges, an inner ring. */
 function Cards() {
   const badges = [
-    "bg-up/15 text-up",
+    "bg-success/15 text-success",
     "bg-info/15 text-info",
-    "bg-warn/15 text-warn",
+    "bg-warning/15 text-warning",
     "border border-destructive text-destructive",
   ];
   return (
     <Card icon={Layers} title="Cards and badges" subtitle="group-active: ring-inset shadow-*">
-      <View class="group from-card to-inset ring-line flex-row items-center gap-3 rounded-xl bg-linear-to-b p-3 shadow-md ring-1 transition-transform duration-200 ring-inset active:scale-[0.98]">
+      <View class="group from-card to-muted ring-line flex-row items-center gap-3 rounded-xl bg-linear-to-b p-3 shadow-md ring-1 transition-transform duration-200 ring-inset active:scale-[0.98]">
         <Image src={photo} class="size-12 rounded-[10px]" />
         <View class="flex-1 gap-0.5">
           <Text class="text-foreground text-base font-semibold">Group press</Text>
@@ -230,7 +230,7 @@ function Layout() {
         <View class="bg-info size-10 rounded-lg" />
       </View>
       <View class="grid grid-cols-3 gap-2">
-        <View class="border-brand-edge bg-brand/15 col-span-2 h-12 items-center justify-center rounded-lg border">
+        <View class="border-border bg-brand/15 col-span-2 h-12 items-center justify-center rounded-lg border">
           <Text class="text-brand font-mono text-xs">col-span-2</Text>
         </View>
         <View class="bg-brand/25 h-12 rounded-lg" />
@@ -243,8 +243,8 @@ function Layout() {
         <View class="bg-brand/70 h-12 rounded-lg" />
       </View>
       <View class="flex-col gap-2 sm:flex-row">
-        <View class="bg-warn/30 h-8 flex-1 rounded-lg" />
-        <View class="bg-warn/60 h-8 flex-1 rounded-lg" />
+        <View class="bg-warning/30 h-8 flex-1 rounded-lg" />
+        <View class="bg-warning/60 h-8 flex-1 rounded-lg" />
       </View>
       <Label>The last row is a column on phones and a row from 640 pt up (sm:).</Label>
     </Card>
@@ -285,7 +285,7 @@ function Shadows() {
         <Each of={sizes}>
           {(s) => (
             <View class="items-center gap-2">
-              <View class={`bg-raised size-12 rounded-xl ${s()}`} />
+              <View class={`bg-surface size-12 rounded-xl ${s()}`} />
               <Label>{s().slice(7)}</Label>
             </View>
           )}
@@ -293,19 +293,19 @@ function Shadows() {
       </View>
       <View class="flex-row justify-between px-1 pb-1">
         <View class="items-center gap-2">
-          <View class="bg-inset ring-line size-12 rounded-xl ring-1 inset-shadow-sm ring-inset" />
+          <View class="bg-muted ring-line size-12 rounded-xl ring-1 inset-shadow-sm ring-inset" />
           <Label>Inset</Label>
         </View>
         <View class="items-center gap-2">
-          <View class="bg-raised ring-info ring-offset-card size-12 rounded-xl ring-2 ring-offset-2" />
+          <View class="bg-surface ring-info ring-offset-card size-12 rounded-xl ring-2 ring-offset-2" />
           <Label>Ring</Label>
         </View>
         <View class="items-center gap-2">
-          <View class="bg-raised outline-destructive size-12 rounded-full outline-2 outline-offset-2 outline-dashed" />
+          <View class="bg-surface outline-destructive size-12 rounded-full outline-2 outline-offset-2 outline-dashed" />
           <Label>Outline</Label>
         </View>
         <View class="items-center gap-2">
-          <View class="bg-up shadow-up/50 size-12 rounded-xl shadow-lg" />
+          <View class="bg-success shadow-success/50 size-12 rounded-xl shadow-lg" />
           <Label>Glow</Label>
         </View>
       </View>
@@ -317,8 +317,8 @@ function Gradients() {
   const kinds = [
     ["bg-linear-to-r from-info to-brand", "Linear"],
     ["bg-linear-45 from-destructive via-brand to-info", "45°"],
-    ["bg-radial from-warn to-destructive", "Radial"],
-    ["bg-conic from-brand via-up to-brand", "Conic"],
+    ["bg-radial from-warning to-destructive", "Radial"],
+    ["bg-conic from-brand via-success to-brand", "Conic"],
   ];
   return (
     <Card icon={Wand2} title="Gradients" subtitle="bg-linear-* bg-radial bg-conic">
@@ -387,7 +387,7 @@ function Effects() {
         <View class="absolute inset-x-3 bottom-3 rounded-lg border border-white/10 bg-black/40 px-3 py-2 backdrop-blur-md">
           <Text class="text-[13px] font-semibold text-white">backdrop-blur-md bg-black/40</Text>
         </View>
-        <View class="bg-warn absolute top-3 right-3 size-10 rounded-full mix-blend-multiply" />
+        <View class="bg-warning absolute top-3 right-3 size-10 rounded-full mix-blend-multiply" />
       </View>
     </Card>
   );
@@ -417,11 +417,11 @@ function Motion() {
           <Label>Pulse</Label>
         </View>
         <View class="items-center gap-2.5">
-          <View class="bg-warn size-8 animate-bounce rounded-full" />
+          <View class="bg-warning size-8 animate-bounce rounded-full" />
           <Label>Bounce</Label>
         </View>
         <View class="items-center gap-2.5">
-          <View class="bg-up size-8 scale-90 rotate-12 skew-x-6 rounded-lg" />
+          <View class="bg-success size-8 scale-90 rotate-12 skew-x-6 rounded-lg" />
           <Label>Transform</Label>
         </View>
       </View>
@@ -435,7 +435,7 @@ function Lists() {
       <View class="border-line overflow-hidden rounded-xl border">
         <Each of={["Inbox", "Drafts", "Sent", "Archive", "Trash"]}>
           {(item) => (
-            <View class="border-line even:bg-raised last:bg-destructive/10 last:text-destructive active:bg-brand/10 min-h-12 flex-row items-center justify-between border-t px-3.5 first:border-t-0">
+            <View class="border-line even:bg-surface last:bg-destructive/10 last:text-destructive active:bg-brand/10 min-h-12 flex-row items-center justify-between border-t px-3.5 first:border-t-0">
               {/* `last:` is the row's: the label inherits its color. */}
               <Text class="text-foreground text-[15px]">{item()}</Text>
               <Text class="text-faint text-base">›</Text>

@@ -1,10 +1,5 @@
 /**
- * The values page: how a compiled value becomes a cell, and that every cell on the page is
- * described.
- *
- * `docs:semantics --check` proves the page matches what the generator would write; this proves the
- * generator reads the two shapes it meets — a value split by input tier and one split by appearance,
- * with finishes further split into `shared` plus sparse overrides — the way the page claims.
+ * Tests for the Theme v5 resolved semantics table (`docs/specs/semantics-values.md`).
  */
 import { describe, expect, test } from "bun:test";
 
@@ -14,43 +9,42 @@ import {
   SECTIONS,
   colourCells,
   elevationCells,
-  finishCells,
   fold,
   format,
   meaning,
+  readThemes,
   renderPage,
   rowCount,
-  styleCells,
+  surfaceCells,
+  walkCells,
   type Theme,
 } from "./semantics-table";
 
 type Json = Record<string, unknown>;
 
-/** A theme built from the two objects the page reads, so a case states only what it is about. */
-const theme = (colours: Json = {}, semantics: Json = {}): Theme => ({
-  id: "fixture",
-  label: "Fixture",
-  colours,
-  semantics,
-});
+const themeFixture = (colours: Json = {}, specOverrides: Partial<Theme["spec"]> = {}): Theme => {
+  const base = readThemes()[0]!;
+  return {
+    id: "fixture",
+    label: "Fixture",
+    colours,
+    spec: { ...base.spec, ...specOverrides },
+  };
+};
 
 const cells = (read: Map<string, string>) => Object.fromEntries(read);
 
-describe("a value as a cell", () => {
-  test("numbers and booleans are written as they are", () => {
+describe("value formatting and folding", () => {
+  test("numbers and booleans format verbatim, pipes escape cleanly", () => {
     expect(format(0)).toBe("0");
     expect(format(0.97)).toBe("0.97");
     expect(format(false)).toBe("false");
-  });
-
-  test("a string sits in a code span, a pipe escaped so the cell survives", () => {
     expect(format("halo")).toBe("`halo`");
     expect(format("a|b")).toBe("`a\\|b`");
-  });
-
-  test("null reads as unset, an object as compact JSON", () => {
-    expect(format(null)).toBe("—");
-    expect(format({ a: 1, b: [2] })).toBe('`{"a":1,"b":[2]}`');
+    expect(format(null)).toBe(MISSING);
+    expect(format({ color: "primary", alpha: 0.15 })).toBe("`primary/15`");
+    expect(format({ tint: "brand" })).toBe("`tint(brand)`");
+    expect(format({ surface: "card" })).toBe("`surface(card)`");
   });
 
   test("two sides fold into one cell only when they differ", () => {
@@ -62,46 +56,26 @@ describe("a value as a cell", () => {
   });
 });
 
-describe("a value split by input tier", () => {
-  test("pointer and touch share one row, a leaf under either one row per key", () => {
-    const read = styleCells(
-      "dimension",
-      theme(
-        {},
-        {
-          dimension: {
-            size: { hit: { pointer: 0, touch: 44 }, height: { sm: { pointer: 24, touch: 32 } } },
-          },
-        },
-      ),
+describe("tiered metrics, colours, surfaces, elevation", () => {
+  test("walkCells folds pointer/touch tiers and preserves shared scalar values", () => {
+    const read = walkCells(
+      {
+        hit: { pointer: 0, touch: 44 },
+        height: { sm: { pointer: 24, touch: 32 } },
+        stroke: { hairline: 1 },
+      },
+      "metrics",
     );
     expect(cells(read)).toEqual({
-      "dimension.size.hit": "0 / 44",
-      "dimension.size.height.sm": "24 / 32",
+      "metrics.hit": "0 / 44",
+      "metrics.height.sm": "24 / 32",
+      "metrics.stroke.hairline": "1",
     });
   });
 
-  test("a value both tiers agree on is written once", () => {
-    const read = styleCells(
-      "dimension",
-      theme({}, { dimension: { focus: { width: { pointer: 3, touch: 3 } } } }),
-    );
-    expect(cells(read)).toEqual({ "dimension.focus.width": "3" });
-  });
-
-  test("a value with no tier is a row as it is", () => {
-    const read = styleCells(
-      "state",
-      theme({}, { state: { "press-scale": 1, overlay: { hover: 0 } } }),
-    );
-    expect(cells(read)).toEqual({ "state.press-scale": "1", "state.overlay.hover": "0" });
-  });
-});
-
-describe("the colour roles of theme.json", () => {
-  test("light and dark fold, a shared colour reads once, a radius is not a role", () => {
+  test("colourCells folds light/dark roles and leaves non-colour vars out", () => {
     const read = colourCells(
-      theme({
+      themeFixture({
         light: { background: "oklch(1 0 0)", ring: "var(--foreground)" },
         dark: { background: "oklch(0 0 0)", ring: "var(--foreground)" },
         theme: { scrim: "oklch(0 0 0 / 0.4)", radius: "8px" },
@@ -113,60 +87,54 @@ describe("the colour roles of theme.json", () => {
       scrim: "`oklch(0 0 0 / 0.4)`",
     });
   });
-});
 
-describe("finishes and elevation", () => {
-  test("shared values are merged with each appearance before folding", () => {
-    const read = finishCells(
-      theme(
-        {},
-        {
-          finishes: {
-            shared: { card: { background: "{card}", shadow: "0 1px 0 red", elevation: null } },
-            light: { card: { background: "{raised}" } },
-            dark: { card: { background: "{inset}" } },
+  test("surfaceCells resolves shared defaults with light/dark overrides before folding", () => {
+    const t = themeFixture();
+    const read = surfaceCells({
+      ...t,
+      spec: {
+        ...t.spec,
+        surfaces: {
+          ...t.spec.surfaces,
+          card: {
+            background: "card",
+            shadow: "md",
+            elevation: null,
+            light: { background: "surface" },
+            dark: { background: "inset" },
           },
         },
-      ),
-    );
-    expect(cells(read)).toEqual({
-      "finishes.card.background": "`{raised}` / `{inset}`",
-      "finishes.card.shadow": "`0 1px 0 red`",
-      "finishes.card.elevation": "—",
+      },
     });
+    expect(read.get("surfaces.card.background")).toBe("`surface` / `inset`");
+    expect(read.get("surfaces.card.shadow")).toBe("`md`");
+    expect(read.get("surfaces.card.elevation")).toBe("—");
   });
 
-  test("an elevation level is one row, its two appearances folded", () => {
-    const read = elevationCells(
-      theme(
-        {},
-        {
-          elevation: {
-            light: {
-              sm: "0 1px 0 red",
-              inset: "inset 0 1px 0 white",
-              edge: { surface: "0 0 0 1px red" },
-            },
-            dark: { sm: "0 1px 0 black", inset: "inset 0 1px 0 black" },
-          },
+  test("elevationCells folds light/dark scales", () => {
+    const t = themeFixture();
+    const read = elevationCells({
+      ...t,
+      spec: {
+        ...t.spec,
+        elevation: {
+          light: { sm: "0 1px 0 red", md: null, lg: null, xl: null, inset: null },
+          dark: { sm: "0 1px 0 black", md: null, lg: null, xl: null, inset: null },
         },
-      ),
-    );
-    expect(cells(read)).toEqual({
-      "elevation.sm": "`0 1px 0 red` / `0 1px 0 black`",
-      "elevation.inset": "`inset 0 1px 0 white` / `inset 0 1px 0 black`",
-      "elevation.edge.surface": "`0 0 0 1px red`",
+      },
     });
+    expect(read.get("elevation.sm")).toBe("`0 1px 0 red` / `0 1px 0 black`");
+    expect(read.get("elevation.md")).toBe(MISSING);
   });
 });
 
-describe("the page as the build writes it", () => {
+describe("rendered page", () => {
   const page = renderPage();
   const rows = page.split("\n").filter((line) => line.startsWith("| `"));
 
-  test("every field of the five themes has a row, described, with a cell per theme", () => {
+  test("every field has a row, Chinese description, and valid table columns", () => {
     expect(rows.length).toBe(rowCount());
-    expect(rows.length).toBeGreaterThan(COLUMNS.length * 35);
+    expect(rows.length).toBeGreaterThan(COLUMNS.length * 25);
     const unset = rows.filter((line) =>
       line
         .split(" | ")
@@ -183,17 +151,13 @@ describe("the page as the build writes it", () => {
     }
   });
 
-  test("each section is a table of its own, under its own heading", () => {
+  test("sections match SECTIONS order and unknown paths throw", () => {
     const headings = page.split("\n").filter((line) => line.startsWith("## "));
     expect(headings.length).toBe(SECTIONS.length);
     expect(headings[0]).toBe("## 1 颜色角色（`theme.json`）");
-    expect(headings.at(-1)).toBe(`## ${SECTIONS.length} elevation`);
-  });
-
-  test("a field no source describes is an error, not a blank cell", () => {
+    expect(headings.at(-1)).toBe(`## ${SECTIONS.length} controls`);
     expect(() => meaning("typography.body.fontWeight")).not.toThrow();
-    expect(() => meaning("dimension.size.hit")).not.toThrow();
-    expect(() => meaning("finishes.nothing.background")).toThrow(/no description/);
-    expect(() => meaning("typography.unknown.fontWeight")).toThrow(/no description/);
+    expect(() => meaning("metrics.hit")).not.toThrow();
+    expect(() => meaning("surfaces.nothing.background")).toThrow(/no description/);
   });
 });

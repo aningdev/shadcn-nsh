@@ -3,7 +3,8 @@
 import {
   alpha,
   colors,
-  finish,
+  control,
+  surface,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   terminal as terminalIdiom,
@@ -14,9 +15,8 @@ import type { ViewStyle } from "nsh";
 import { split } from "nsh";
 import { Terminal as BaseTerminal, type TerminalProps as BaseTerminalProps } from "nsh/base";
 
-import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/indicator";
-import { type Live, read } from "./lib/live-value";
-import { fieldLook, fillOf } from "./lib/look";
+import { fieldCorners, fieldDrawn, fieldEdgeWidths, fieldRestEdge } from "./lib/field-look";
+import { type Live, read } from "./lib/utils";
 
 /**
  * A terminal's variants: `default` is a well — the field's fill and edge, the theme's inner corners,
@@ -58,7 +58,7 @@ export function terminalLook(o?: TerminalLookOptions) {
       if (read(o?.variant) === "ghost") return { ...read(o?.style) };
       if (terminalIdiom) {
         return {
-          backgroundColor: colors.field,
+          backgroundColor: control("field").ground,
           borderWidth: stroke.hairline,
           borderColor: colors.border,
           paddingVertical: TERMINAL_ROW - 1,
@@ -69,13 +69,13 @@ export function terminalLook(o?: TerminalLookOptions) {
       // A well outside the terminal idiom is a field's: the recipe decides the fill, how many sides
       // carry an edge and in which colour, and the corners — so a terminal matches the fields and
       // selects beside it in every theme, and only its padding is the terminal's own.
-      const field = fieldLook();
+      const field = fieldDrawn(control("field"));
       return {
-        ...(field.ground ? fillOf(field.ground) : {}),
+        backgroundColor: field.ground,
         ...fieldEdgeWidths(field),
         ...fieldRestEdge(field),
         ...fieldCorners(field),
-        boxShadow: finish.inset.boxShadow,
+        boxShadow: surface("inset").style.boxShadow,
         paddingHorizontal: wellPad().x,
         paddingVertical: wellPad().y,
         ...read(o?.style),

@@ -162,7 +162,7 @@ function App() {
           <View style={{ flexDirection: "row", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
             <Badge>Neutral</Badge>
             <Badge tone="info">Info</Badge>
-            <Badge tone="warn" variant="outline">
+            <Badge tone="warning" variant="outline">
               Outline
             </Badge>
             <Avatar name="Ada Lovelace" style={{ width: 36, height: 36 }} />

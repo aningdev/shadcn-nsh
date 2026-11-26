@@ -4,30 +4,25 @@
 import {
   alpha,
   colors,
+  control,
   EDGE_WIDTH,
   fillStyle,
-  finish,
   outerEdge,
   stroke,
+  surface,
   tier,
-  type Tiered,
 } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewStyle } from "nsh";
 import { split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
-import { joinClass } from "./lib/class-names";
-import { edged, painted, sliderLook as sliderSlots, trackLook } from "./lib/look";
-import { railFace, railShadow } from "./lib/track";
+import { joinClass } from "./lib/utils";
 
 /** Default vertical slider rail length per tier. */
 const VERTICAL_LENGTH = { pointer: 128, touch: 144 } as const;
 
-/** The knob a slider draws: the theme's `slider.*` slots. */
-const knob = () => sliderSlots();
-
-/** The groove the knob runs in: the theme's groove slots, under a slider. */
-const groove = () => trackLook("slider");
+/** The knob and the groove a slider draws: the theme's `slider` recipe. */
+const slots = () => control("slider");
 
 /** Options of `sliderLook`. */
 export interface SliderLookOptions {
@@ -47,17 +42,13 @@ export const sliderValueClass = "w-[42px] text-right font-mono text-[11px] leadi
 export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.foreground, 0.6) });
 
 /**
- * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading its knob from the
- * theme's `slider.*` slots and its groove from its groove slots: the rail's thickness, the band
- * around it, the knob's size and its pressed size, and whether the groove is graved in with an edge.
+ * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading its knob and its groove
+ * from the theme's `slider` recipe: the rail's thickness, the band around it, the knob's size and
+ * its pressed size, and whether the groove is graved in with an edge.
  */
 export function sliderLook(o: SliderLookOptions = {}) {
   const vertical = !!o.vertical;
   const fade = "transition duration-150 motion-reduce:transition-none";
-  /** A number the theme states once, or once per input (a knob's band differs by input). */
-  const perTier = (v: Tiered<number> | number) => (typeof v === "number" ? v : v[tier]);
-  /** The knob's width: the disc's, which the theme states per input. */
-  const knobWidth = (h: ReturnType<typeof knob>) => h.knob[tier];
   return {
     // A vertical value sits above the rail (`flex-col-reverse`: the track is the first child).
     // It does not take `flex-1`: the rail keeps the height its band asks for.
@@ -70,12 +61,12 @@ export function sliderLook(o: SliderLookOptions = {}) {
     },
     // The band keeps half a knob free at each end, so the knob stays inside.
     get trackClass(): string {
-      const h = knob();
-      const pad = knobWidth(h) / 2;
+      const h = slots();
+      const pad = h.knobWidth / 2;
       const length = VERTICAL_LENGTH[tier];
       const bandClass = vertical
-        ? `w-[${perTier(h.band)}px] h-[${length}px] items-center py-[${pad}px]`
-        : `h-[${perTier(h.band)}px] justify-center px-[${pad}px]`;
+        ? `w-[${h.band}px] h-[${length}px] items-center py-[${pad}px]`
+        : `h-[${h.band}px] justify-center px-[${pad}px]`;
       return [
         bandClass,
         o.value && !vertical ? "flex-1" : "",
@@ -87,38 +78,32 @@ export function sliderLook(o: SliderLookOptions = {}) {
         .join(" ");
     },
     get indicatorClass(): string {
-      const h = knob();
-      const rail = vertical ? `w-[${perTier(h.rail)}px] h-full` : `h-[${perTier(h.rail)}px]`;
+      const h = slots();
+      const rail = vertical ? `w-[${h.rail}px] h-full` : `h-[${h.rail}px]`;
       return `${rail} rounded-full`;
     },
     get indicatorStyle(): ViewStyle {
-      const g = groove();
-      const face = railFace(g);
-      const shadow = railShadow(g);
+      const h = slots();
       return {
-        backgroundColor: face,
-        ...(shadow === undefined ? {} : { boxShadow: shadow }),
+        backgroundColor: h.grooveColor,
+        ...(h.grooveShadow === undefined ? {} : { boxShadow: h.grooveShadow }),
       };
     },
     rangeClass: "rounded-full",
     // The keyboard's ring on the thumb that has the focus (`focus-visible:`:
     // not after a press or a drag).
     get thumbClass(): string {
-      const h = knob();
+      const h = slots();
       const focusRingClass = "focus-visible:outline-3 focus-visible:outline-ring/50";
       // A press swells the knob (a touch screen's 20 points reach 32): as a transform, so the
       // thumb grows around its own middle and nothing re-measures the band.
-      const press = Number((h.knobPressed[tier] / h.knob[tier]).toFixed(4));
+      const press = Number((h.knobPressedWidth / h.knobWidth).toFixed(4));
       const pressMod = press === 1 ? "" : `active:scale-[${press}]`;
-      if (h.dot > 0) {
-        const outer = h.knob[tier] - 2 * EDGE_WIDTH;
-        const scale = h.knob[tier] / h.knob.pointer;
-        const scaled = (v: number) => (scale === 1 ? v : Math.round((v * scale) / 2) * 2);
-        const rim = (outer - scaled(h.dot)) / 2;
-        const hoverRim = (outer - scaled(h.dotHover)) / 2;
-        const pressRim = (outer - scaled(h.dotPressed)) / 2;
+      if (h.mark > 0) {
+        const outer = h.knobWidth - 2 * EDGE_WIDTH;
+        const rim = (outer - h.mark) / 2;
         return [
-          `w-[${outer}px] h-[${outer}px] rounded-full border-solid border-popover border-[${rim}px] hover:border-[${hoverRim}px] active:border-[${pressRim}px]`,
+          `w-[${outer}px] h-[${outer}px] rounded-full border-solid border-popover border-[${rim}px]`,
           fade,
           pressMod,
           focusRingClass,
@@ -126,33 +111,25 @@ export function sliderLook(o: SliderLookOptions = {}) {
           .filter(Boolean)
           .join(" ");
       }
-      const hoverMods = h.brightens
-        ? "hover:brightness-105 active:brightness-95 disabled:brightness-100"
-        : "";
-      return ["rounded-full", fade, hoverMods, pressMod, focusRingClass].filter(Boolean).join(" ");
+      return ["rounded-full", fade, pressMod, focusRingClass].filter(Boolean).join(" ");
     },
     get thumbStyle(): ViewStyle {
-      const h = knob();
-      if (h.dot > 0) {
+      const h = slots();
+      if (h.mark > 0) {
         return {
           backgroundColor: colors.primary,
-          boxShadow: outerEdge(finish.knob.borderColor, finish.knob.boxShadow, EDGE_WIDTH),
+          boxShadow: outerEdge(h.knobEdgeColor ?? undefined, h.knobShadow, EDGE_WIDTH),
         };
       }
-      const width = vertical ? h.knobHeight[tier] : h.knob[tier];
-      const height = vertical ? h.knob[tier] : h.knobHeight[tier];
-      const hasFinishEdge =
-        finish.knob.borderColor !== undefined && finish.knob.borderColor !== "transparent";
-      const edgeStyle: ViewStyle =
-        h.knobEdge !== null
-          ? { borderWidth: stroke.control, borderColor: edged(h.knobEdge) }
-          : { borderWidth: hasFinishEdge ? stroke.control : 0 };
+      const width = vertical ? h.knobHeight : h.knobWidth;
+      const height = vertical ? h.knobWidth : h.knobHeight;
       return {
         width,
         height,
-        ...finish.knob,
-        ...edgeStyle,
-        backgroundColor: painted(h.knobFace),
+        ...h.knobStyle,
+        ...(h.hasKnobEdge
+          ? { borderWidth: stroke.control, borderColor: h.knobEdgeColor ?? "transparent" }
+          : { borderWidth: 0 }),
       };
     },
   };
@@ -160,17 +137,18 @@ export function sliderLook(o: SliderLookOptions = {}) {
 
 /**
  * The `fill` finish's color and edge. A vertical rail turns the theme's gradient a quarter turn. A
- * groove that is graved in (`track.sunk`) edges its run, so the run sits in the hollow the rail is.
+ * groove that is graved in (`slider` recipe's shade) edges its run, so the run sits in the hollow
+ * the rail is.
  */
 function accentFill(vertical: boolean): ViewStyle {
   const fill = fillStyle();
-  const shade = groove().groove?.shade ?? null;
+  const graved = control("slider").hasGrooveShade;
   return {
     ...(vertical && fill.backgroundImage
       ? { ...fill, backgroundImage: fill.backgroundImage.replace("180deg", "90deg") }
       : fill),
-    ...(shade
-      ? { borderWidth: stroke.control, borderColor: finish.fill.borderColor }
+    ...(graved
+      ? { borderWidth: stroke.control, borderColor: surface("fill").style.borderColor }
       : { borderWidth: 0 }),
   };
 }

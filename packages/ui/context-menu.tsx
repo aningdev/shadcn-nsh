@@ -9,7 +9,7 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
 import { menuPopup } from "./menu";
 
 /** Why a context menu closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */

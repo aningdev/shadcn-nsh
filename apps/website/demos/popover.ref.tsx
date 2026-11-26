@@ -84,9 +84,14 @@ function App() {
                 </View>
                 <View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
                   <View
-                    style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.up }}
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      backgroundColor: colors.success,
+                    }}
                   />
-                  <Text style={{ fontSize: 12, color: colors.up }}>In transit</Text>
+                  <Text style={{ fontSize: 12, color: colors.success }}>In transit</Text>
                 </View>
               </PopIn>
             )}

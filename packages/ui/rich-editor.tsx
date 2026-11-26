@@ -10,7 +10,7 @@ import {
   type RichEditorProps as BaseRichEditorProps,
 } from "nsh/base";
 
-import { mergeClasses } from "./lib/class-names";
+import { mergeClasses } from "./lib/utils";
 
 /**
  * A `RichEditor`'s document (its `classes`): roomy padding inside the

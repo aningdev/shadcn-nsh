@@ -24,14 +24,14 @@ const FIGURES: { label: string; tone: Tone; value: string | Record<Period, strin
   },
   { label: "Latency", tone: "accent", value: "42 ms" },
   { label: "Queue", tone: "info", value: "3" },
-  { label: "Errors", tone: "warn", value: "0.2%" },
+  { label: "Errors", tone: "warning", value: "0.2%" },
   { label: "Failures", tone: "destructive", value: "2" },
   {
     label: "Growth",
-    tone: "up",
+    tone: "success",
     value: { today: "+2.4%", "7 days": "+8.1%", "30 days": "+22.6%" },
   },
-  { label: "Churn", tone: "down", value: "−1.2%" },
+  { label: "Churn", tone: "destructive", value: "−1.2%" },
 ];
 
 const valueOf = (value: string | Record<Period, string>, period: Period) =>
@@ -50,7 +50,7 @@ const INDEX_TODAY = (() => {
 })();
 const INDEX_NOW = INDEX_TODAY[INDEX_TODAY.length - 1].price;
 const INDEX_CHANGE = ((INDEX_NOW - INDEX_PREV) / INDEX_PREV) * 100;
-const INDEX_TONE: Tone = INDEX_CHANGE >= 0 ? "up" : "down";
+const INDEX_TONE: Tone = INDEX_CHANGE >= 0 ? "success" : "destructive";
 const INDEX_SIGNED = `${INDEX_CHANGE >= 0 ? "+" : "−"}${Math.abs(INDEX_CHANGE).toFixed(2)}%`;
 
 /** Today in 104 × 38: the line, a wash under it, yesterday's close dotted and the newest point
@@ -160,7 +160,7 @@ function App() {
           </View>
           <View style={{ height: 1, backgroundColor: ui().line }} />
           <StatGroup>
-            <Stat label="Revenue" value="4.2" unit="M" note="vs last month" tone="up" />
+            <Stat label="Revenue" value="4.2" unit="M" note="vs last month" tone="success" />
             <Stat label="Latency" value="42" unit="ms" note="p95" tone="accent" />
           </StatGroup>
           <View style={{ height: 1, backgroundColor: ui().line }} />

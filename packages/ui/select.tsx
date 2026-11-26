@@ -4,13 +4,14 @@
 
 import {
   colors,
-  finish,
+  control,
+  feedback,
   rounded,
   shape,
   stroke,
+  surface,
   terminal,
   TERMINAL_COLUMN,
-  dimmed,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -24,16 +25,17 @@ import {
 } from "nsh/base";
 
 import { fieldSize, insetShade } from "./input";
-import { Icon } from "./lib/icons";
 import {
   fieldCorners,
+  fieldDrawn,
   fieldEdgeWidths,
   fieldFocusEdge,
   fieldFocusTone,
   fieldHasUniformEdge,
   fieldRestEdge,
   fieldRing,
-} from "./lib/indicator";
+} from "./lib/field-look";
+import { Icon } from "./lib/icons";
 import {
   Chevron,
   clearButtonLook,
@@ -44,8 +46,6 @@ import {
   OptionRow,
   triggerPadding,
 } from "./lib/listbox";
-import { type Live, read } from "./lib/live-value";
-import { edged, fieldLook, fillOf, inked, outlineEdge } from "./lib/look";
 import {
   createItemRegistry,
   createOpenState,
@@ -53,8 +53,9 @@ import {
   type ItemRegistry,
   type OpenState,
   type Slot,
-} from "./lib/open-state";
+} from "./lib/state";
 import { controlSize } from "./lib/surface";
+import { type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -67,7 +68,7 @@ const triggerGap = 8;
 /** How long a trigger's edge fades: its border, its ring and its dimming. */
 const edgeFade = 120;
 
-/** A trigger's variants: `default` shadcn's field, `outline` an outline button of shadcn's, on the raised finish. */
+/** A trigger's variants: `default` shadcn's field, `outline` an outline button of shadcn's, on the raised surface. */
 export type PickerVariant = "default" | "outline";
 
 /** Options of `pickerLook`. */
@@ -85,7 +86,7 @@ export interface PickerLookOptions {
    * (the field fill, the input's edge), so it lines up with the text fields
    * of its form (a date picker's and a color picker's too: in dark
    * shadcn's outline button is the input's fill and edge as well); `outline`:
-   * an outline button on the raised finish, for a trigger that is not a
+   * an outline button on the raised surface, for a trigger that is not a
    * form's field.
    */
   variant?: PickerVariant;
@@ -94,11 +95,23 @@ export interface PickerLookOptions {
 }
 
 /**
+ * A raised face: the raised surface, its edge the outline button's when the surface draws none of its
+ * own (a translucent face carries a `backdropFilter` instead of an edge, and keeps it).
+ */
+function outlineFace(): ViewStyle {
+  const face = surface("raised").style;
+  const edge = face.borderColor;
+  const drawsEdge = edge !== undefined && edge !== "transparent";
+  if (drawsEdge || face.backdropFilter) return face;
+  return { ...face, borderColor: control("button").outlineEdge };
+}
+
+/**
  * A select's or date picker's trigger (spread it on the trigger's view): a
  * row as high as the controls around it (`controlSize.line`), on the field's
- * well (`default`) or the raised finish (`outline`), its edge stronger under
+ * well (`default`) or the raised surface (`outline`), its edge stronger under
  * the pointer and while the list is open, the danger tone while invalid (each
- * after the finish, which has an edge of its own), the fields' focus edge
+ * after the surface, which has an edge of its own), the fields' focus edge
  * while it has the keys, sunk to 70% while pressed, 50% while disabled.
  *
  * Dimmed through `disabledStyle`, on the trigger's own `disabled`. The open
@@ -112,10 +125,11 @@ export function pickerLook(o?: PickerLookOptions) {
   return {
     get style(): ViewStyle {
       const clearable = !!read(o?.clearable);
-      const field = fieldLook();
+      const field = fieldDrawn(control("field"));
       // A theme that states the ground a field that cannot be used turns over to paints the trigger
-      // in it, edge and all (the finish's own stroke), rather than fading it.
-      const off = !outline && read(o?.disabled) ? field.disabled : null;
+      // in it, edge and all (the surface's own stroke), rather than fading it.
+      const off =
+        !outline && read(o?.disabled) && feedback.disabled.replaceFace ? feedback.disabled : null;
       return {
         flexDirection: "row",
         alignItems: "center",
@@ -135,21 +149,16 @@ export function pickerLook(o?: PickerLookOptions) {
         ...(outline ? rounded(shape.control) : fieldCorners(field)),
         ...(outline ? { borderWidth: stroke.control } : fieldEdgeWidths(field)),
         ...(outline
-          ? {
-              backgroundColor: colors.raised,
-              ...finish.raised,
-              ...(finish.raised.borderColor === "transparent" && !finish.raised.backdropFilter
-                ? { borderColor: edged(outlineEdge()) }
-                : {}),
-            }
+          ? outlineFace()
           : off
-            ? fillOf(off)
-            : { ...(field.ground ? fillOf(field.ground) : {}), ...insetShade() }),
+            ? off.style
+            : { backgroundColor: field.ground, ...insetShade() }),
         ...(invalid()
           ? { borderColor: colors.destructive }
           : read(o?.open) &&
               (outline
-                ? finish.raised.borderTopColor === finish.raised.borderBottomColor
+                ? surface("raised").style.borderTopColor ===
+                  surface("raised").style.borderBottomColor
                 : fieldHasUniformEdge(field))
             ? { borderColor: colors.faint }
             : outline || off
@@ -166,25 +175,27 @@ export function pickerLook(o?: PickerLookOptions) {
     get hoverStyle(): ViewStyle | undefined {
       if (invalid()) return undefined;
       if (outline) {
-        const { borderTopColor, borderBottomColor } = { ...finish.raised };
+        const { borderTopColor, borderBottomColor } = surface("raised").style;
         return borderTopColor != null && borderTopColor !== borderBottomColor
-          ? { backgroundColor: finish.hover.backgroundColor }
+          ? feedback.hoverSurface()
           : { borderColor: colors.faint };
       }
-      return fieldHasUniformEdge(fieldLook()) ? { borderColor: colors.faint } : undefined;
+      return fieldHasUniformEdge(fieldDrawn(control("field")))
+        ? { borderColor: colors.faint }
+        : undefined;
     },
     get activeStyle(): ViewStyle {
-      return { opacity: dimmed.pressed };
+      return { opacity: feedback.passive.pressedOpacity };
     },
     // The border with the outline, which not every platform draws over it; `focus-visible` is above `hover` in the
     // states' order. Only for the keyboard: a click's focus, and the focus a closing list gives back, draw nothing.
     get focusVisibleStyle(): ViewStyle {
-      const field = fieldLook();
+      const field = fieldDrawn(control("field"));
       const tone = fieldFocusTone(field, invalid());
       return terminal ? { borderColor: tone } : fieldFocusEdge(field, tone);
     },
     get disabledStyle(): ViewStyle {
-      return fieldLook().disabled ? {} : { opacity: dimmed.disabled };
+      return feedback.disabled.replaceFace ? {} : { opacity: feedback.disabled.contentOpacity };
     },
   };
 }
@@ -679,9 +690,8 @@ export function SelectItem(props: SelectItemProps) {
   return null;
 }
 
-/** A trigger's title: the placeholder in the muted ink, the disabled theme's ink while disabled. */
+/** A trigger's title: the placeholder in the muted ink, the disabled surface's ink while disabled. */
 function titleInk(placeholder: boolean, disabled: boolean): string {
-  const off = disabled ? fieldLook().disabled : null;
-  if (off) return inked(off) ?? colors.mutedForeground;
+  if (disabled && feedback.disabled.replaceFace) return feedback.disabled.ink;
   return placeholder ? colors.mutedForeground : colors.foreground;
 }

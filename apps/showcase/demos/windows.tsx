@@ -236,7 +236,7 @@ function Draft() {
       icon={FileText}
       title="Draft"
       subtitle="Written in a window of its own"
-      right={<Badge tone={edited() ? "warn" : "neutral"}>{edited() ? "Edited" : "Saved"}</Badge>}
+      right={<Badge tone={edited() ? "warning" : "neutral"}>{edited() ? "Edited" : "Saved"}</Badge>}
     >
       <View style={{ gap: 4 }}>
         <Text
@@ -365,7 +365,7 @@ function WindowRow(props: { win: WindowRef; first: boolean }) {
             transitionProperty: "background-color",
             transitionDuration: 120,
           }}
-          hoverStyle={{ backgroundColor: colors.sidebarAccent }}
+          hoverStyle={{ backgroundColor: colors.accent }}
           activeStyle={{ backgroundColor: alpha(colors.foreground, 0.08) }}
           focusVisibleStyle={{ outlineColor: colors.brand, outlineWidth: 2, outlineOffset: 1 }}
         >
@@ -617,7 +617,7 @@ function Inspector() {
       style={{
         padding: 16,
         gap: 24,
-        backgroundColor: translucent() ? "transparent" : colors.sidebar,
+        backgroundColor: translucent() ? "transparent" : colors.background,
       }}
     >
       <Group title="Document">
@@ -656,7 +656,7 @@ function Inspector() {
           <Stat
             label="Status"
             value={edited() ? "Edited" : "Saved"}
-            tone={edited() ? "warn" : undefined}
+            tone={edited() ? "warning" : undefined}
             width="50%"
           />
         </View>
@@ -1065,7 +1065,7 @@ function DocumentWindow() {
           paddingHorizontal: 14,
           borderTopWidth: 1,
           borderTopColor: colors.line,
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
         }}
       >
         <Text

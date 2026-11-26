@@ -1,8 +1,17 @@
 // An item: the look (`itemLook`) and the ten parts that wear it.
 
-import { colors, rounded, TERMINAL_COLUMN, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
+import {
+  colors,
+  rounded,
+  surface,
+  TERMINAL_COLUMN,
+  terminal,
+  font,
+  shape,
+  stroke,
+} from "@shadcn-nsh/theme";
 import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
-import { split, Text, token, View } from "nsh";
+import { split, Text, View } from "nsh";
 
 import { controlSize, density } from "./lib/surface";
 
@@ -56,7 +65,7 @@ const rowBox = (size: ItemSize) =>
  * the title in the text colour at the labels' size and medium weight, the
  * description a step quieter and muted, wrapping to two lines. `default`
  * draws no surface, `outline` the hairline edge of a surface, and `muted` the
- * muted fill (`token("muted")`, shadcn's `bg-muted`): a well that reads on a
+ * muted fill (`colors.muted`, shadcn's `bg-muted`): a well that reads on a
  * card and on the page, in either appearance. An icon's tile is a control's box
  * plus 12, on the well with a hairline edge; an image's frame is a square that
  * clips. The terminal draws rows one row high, with no surface and no tile.
@@ -94,7 +103,7 @@ export function itemLook(): ItemLook {
             ...rounded(shape.control),
             borderWidth: stroke.hairline,
             borderColor: variant === "outline" ? colors.border : "transparent",
-            backgroundColor: variant === "muted" ? token("muted") : "transparent",
+            backgroundColor: variant === "muted" ? colors.muted : "transparent",
           },
     media: (variant: ItemMediaVariant): ViewStyle => {
       // A control's box plus 12; read here so a theme switch redraws the tile.
@@ -113,7 +122,7 @@ export function itemLook(): ItemLook {
               ...rounded(shape.control),
               borderWidth: stroke.hairline,
               borderColor: colors.border,
-              backgroundColor: colors.inset,
+              backgroundColor: surface("inset").style.backgroundColor,
             }
           : {
               flexShrink: 0,
@@ -123,7 +132,7 @@ export function itemLook(): ItemLook {
               justifyContent: "center",
               overflow: "hidden",
               ...rounded(shape.control),
-              backgroundColor: colors.inset,
+              backgroundColor: surface("inset").style.backgroundColor,
             };
     },
     get content(): ViewStyle {

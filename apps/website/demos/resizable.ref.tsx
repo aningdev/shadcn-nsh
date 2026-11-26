@@ -9,7 +9,7 @@ import { sectionSurface } from "@/packages/ui/lib/surface";
 import { resizableHandleLook } from "@/packages/ui/resizable";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 // The handles take the shared look: a hairline that stays as it is, and a thumb on it, a pill that
 // grows in under the pointer and further while dragged.
@@ -73,7 +73,14 @@ function App() {
               maxSize={320}
               onResize={({ size }) => sidebar.set(size)}
             >
-              <View style={{ flex: 1, padding: 14, gap: 10, backgroundColor: colors.inset }}>
+              <View
+                style={{
+                  flex: 1,
+                  padding: 14,
+                  gap: 10,
+                  backgroundColor: ui().inset.backgroundColor,
+                }}
+              >
                 {label("Files", `${Math.round(sidebar())} pt, 100 to 320`)}
               </View>
             </ResizablePanel>

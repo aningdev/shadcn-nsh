@@ -418,9 +418,9 @@ const column = defineExtension({
 /** The colors text takes (the `textStyle` mark's `color`), each a class of the theme's tokens. */
 const TEXT_COLORS: { name: string; label: string; class: string }[] = [
   { name: "gray", label: "Gray", class: "text-muted-foreground" },
-  { name: "red", label: "Red", class: "text-down" },
-  { name: "orange", label: "Orange", class: "text-warn" },
-  { name: "green", label: "Green", class: "text-up" },
+  { name: "red", label: "Red", class: "text-destructive" },
+  { name: "orange", label: "Orange", class: "text-warning" },
+  { name: "green", label: "Green", class: "text-success" },
   { name: "blue", label: "Blue", class: "text-info" },
   { name: "purple", label: "Brand", class: "text-brand" },
 ];

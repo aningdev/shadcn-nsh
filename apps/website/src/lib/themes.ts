@@ -1,58 +1,36 @@
 /**
- * The themes the docs site shows: each palette of the demos (`demos/palettes.ts`) with the theme
- * it draws — `packages/theme/themes/<id>/theme.json` and the `semantics.json` beside it — as the
- * build has them. `import.meta.glob` reads every theme file once, eagerly, so a theme page is
- * drawn from the same JSON at build time and in the browser — no `node:fs`, and the page prerenders
- * like any other. `check:pages` holds the registry items and the theme pages to the same list, so a
- * theme is never written twice here.
+ * The themes the docs site shows: each palette of the demos (`demos/palettes.ts`) with the theme it
+ * draws — `packages/theme/themes/<id>/index.ts` as `defineTheme()` compiled it (`ALL_THEMES`) and the
+ * `theme.json` that `bun run tokens:build` exports from the same spec. `ALL_THEMES` is imported
+ * once, eagerly, so a theme page is drawn from the same data at build time and in the browser — no
+ * `node:fs`, and the page prerenders like any other. `check:pages` holds the registry items and the
+ * theme pages to the same list, so a theme is never written twice here.
  *
- * What the page says about a token's layer and a finish's duty is the spec's, read as text
- * (`docs/specs/theme-roles.md` through `scripts/theme/spec.ts`), so the page keeps no second list:
- * the A layer is the spec's 31 slots, the C layer is `cssVars.theme`, the B layer is the light
- * tokens that are neither, and every finish is the spec's row.
+ * The spec is the single source (`docs/decisions/0020-theme-v5.md`): the appearance roles are
+ * `tokens.light`'s keys, the shared values are `cssVars.theme`, and the surfaces are `surfaces` —
+ * eleven structural roles (`SurfaceRole`), each with the ink it falls back to. What a surface is for
+ * is the one list this file keeps (`SURFACE_DUTIES`): the duties used to be read out of a spec page,
+ * which Theme v5 deleted.
  *
  * `theme.json`'s `name` is the theme's own name — the same one `AppTheme.label` carries in the
  * `index.ts` beside it. The palette's `label` is the switch's shorter name for the same theme.
  */
-import specText from "../../../../docs/specs/theme-roles.md?raw";
-import { specParts } from "../../../../scripts/theme/spec";
+import type {
+  AppTheme,
+  ColorExpr,
+  ElevationScale,
+  FaceExpr,
+  Mode,
+  ShadowExpr,
+  SurfaceRole,
+  SurfaceSpec,
+  ThemeSpec,
+} from "../../../../packages/theme/schema";
+import { ALL_THEMES } from "../../../../packages/theme/themes/index";
 import { PALETTES, type Palette, type PaletteId } from "../../demos/palettes";
 
 /** A theme file in shadcn's `cssVars` shape, as `theme.json` writes it. */
-export type ThemeFile = {
-  name: string;
-  cssVars: {
-    theme: Record<string, string>;
-    light: Record<string, string>;
-    dark: Record<string, string>;
-  };
-};
-
-/** The fields a finish may draw with, in `semantics.json`'s order. */
-export const FINISH_FIELDS = [
-  "background",
-  "gradient",
-  "shadow",
-  "border-color",
-  "border-top-color",
-  "border-bottom-color",
-  "backdropFilter",
-] as const;
-
-/** A finish as a theme file writes it: the fields it draws with; `null` clears a field the shared finish set. */
-type WrittenFinish = Partial<Record<(typeof FINISH_FIELDS)[number], string | null>>;
-
-/** A finish after merging: the fields it draws with, and nothing else. */
-export type Finish = Partial<Record<(typeof FINISH_FIELDS)[number], string>>;
-
-/** A theme's semantics, as `semantics.json` writes them. */
-export type SemanticsFile = {
-  finishes: {
-    shared: Record<string, WrittenFinish>;
-    light: Record<string, WrittenFinish>;
-    dark: Record<string, WrittenFinish>;
-  };
-};
+export type ThemeFile = AppTheme["theme"];
 
 /** One token, in both appearances: the value the theme writes and the one a swatch draws. */
 export type TokenRow = {
@@ -65,22 +43,19 @@ export type TokenRow = {
   aliasOf: string | null;
 };
 
-/** One layer of the spec: the shadcn slots, the library's own tokens, or the shared `theme` block. */
+/** One layer of `theme.json`: the roles that turn with the appearance, or the shared values. */
 export type TokenGroup = {
-  id: "slots" | "extension" | "shared";
+  id: "roles" | "shared";
   title: string;
   note: string;
   rows: TokenRow[];
 };
 
-/** One row of a theme's finish table: the spec's words, and the tokens the theme draws it from. */
-export type FinishRow = {
-  role: string;
-  /** What it draws, in the spec's words. */
+/** One row of a theme's surface table: what the role is for, and the tokens the theme draws it from. */
+export type SurfaceRow = {
+  role: SurfaceRole;
+  /** What it draws, and who reads it — this file's words (`SURFACE_DUTIES`). */
   draws: string;
-  /** The same in English: the spec's English column, which is what the page shows. */
-  drawsEn: string;
-  /** Who reads it: the components the spec names, or its dash for one the library leaves out. */
   reads: string;
   /** Every token any of its values names, in the order they appear. */
   tokens: string[];
@@ -93,84 +68,92 @@ export type ThemePage = {
   name: string;
   /** The registry item that installs it beside the build-time theme (`add <item>`). */
   item: string;
-  /** The theme's tokens, one group per layer of the spec. */
+  /** The theme's own one-line overview, when it wrote one (`ThemeSpec.meta.overview`). */
+  overview: string | null;
+  /** The theme's tokens: the appearance roles, then the shared values. */
   tokens: TokenGroup[];
-  /** The theme's finishes, in the spec's order. */
-  finishes: FinishRow[];
+  /** The theme's surfaces, in `SurfaceRole`'s order. */
+  surfaces: SurfaceRow[];
 };
 
-/** `packages/theme/themes/<id>/theme.json`, every one of them, as the build reads them. */
-const FILES = import.meta.glob("../../../../packages/theme/themes/*/theme.json", {
-  eager: true,
-  import: "default",
-}) as Record<string, ThemeFile>;
+/** What a surface is for: the library's words, one row per structural role. */
+const SURFACE_DUTIES: Record<SurfaceRole, { draws: string; reads: string }> = {
+  card: {
+    draws: "A section's ground: the theme's base surface, with its hairline and contact shadow.",
+    reads: "`Card`, `Panel`, `Table`",
+  },
+  raised: {
+    draws: "A tile standing on a card: the lifted face with a lit top edge and a soft shadow.",
+    reads: "`Button` (raised), `Segmented`, a tab's thumb",
+  },
+  inset: {
+    draws: "A well cut into a card: the recessed ground inputs and code sit in, shadow turned in.",
+    reads: "`Input`, `Textarea`, a code block",
+  },
+  channel: {
+    draws: "A narrow recess one step softer than a well: the groove a track or a divider sits in.",
+    reads: "A slider's rail, a progress track",
+  },
+  plate: {
+    draws: "A slim raised strip: the bar a toolbar or a row of tabs rests on.",
+    reads: "`Toolbar`, `Tabs`' list",
+  },
+  overlay: {
+    draws: "A floating panel above the page: the popover ground with the largest lift.",
+    reads: "`Popover`, `DropdownMenu`, `Select`",
+  },
+  modal: {
+    draws: "The heaviest floating ground: a dialog, a sheet, an alert.",
+    reads: "`Dialog`, `AlertDialog`, `Sheet`",
+  },
+  inverse: {
+    draws: "The flipped ground: dark on a light page, for a strip that has to stand apart.",
+    reads: "`Toast`, a caption over media",
+  },
+  glass: {
+    draws: "A translucent pane over content: blurred, tinted, lit along its top edge.",
+    reads: "A title bar, a floating toolbar",
+  },
+  accent: {
+    draws: "The accent fill and the ink that sits on it.",
+    reads: "A primary `Button`, `Badge` (accent)",
+  },
+  fill: {
+    draws: "The accent in its lit form: a gradient, a firm edge and a shadow under it.",
+    reads: "A primary `Button`, a switch's thumb (on)",
+  },
+};
 
-/** `packages/theme/themes/<id>/semantics.json`, every one of them. */
-const SEMANTICS = import.meta.glob("../../../../packages/theme/themes/*/semantics.json", {
-  eager: true,
-  import: "default",
-}) as Record<string, SemanticsFile>;
+/** The palettes' themes, by id: the one list the pages read. */
+const THEMES = new Map<string, AppTheme>(ALL_THEMES.map((theme) => [theme.id, theme]));
 
-/** The spec, as the page reads it: the A and C layers and every finish's row. */
-const SPEC = specParts(specText);
-
-/** The theme file of a palette: `themes/<id>/theme.json` below `packages/theme`. */
-function themeFile(id: string): ThemeFile {
-  const file = FILES[`../../../../packages/theme/themes/${id}/theme.json`];
-  if (!file) throw new Error(`no theme file for palette "${id}"`);
-  return file;
-}
-
-/** The semantics of a palette: `themes/<id>/semantics.json` below `packages/theme`. */
-function semanticsFile(id: string): SemanticsFile {
-  const file = SEMANTICS[`../../../../packages/theme/themes/${id}/semantics.json`];
-  if (!file) throw new Error(`no semantics file for palette "${id}"`);
-  return file;
-}
-
-/** Merge `shared` with one appearance's sparse overrides into a complete finish map. */
-function mergedFinishes(file: SemanticsFile, scheme: "light" | "dark"): Record<string, Finish> {
-  const overrides = file.finishes[scheme] ?? {};
-  const roles = [...new Set([...Object.keys(file.finishes.shared), ...Object.keys(overrides)])];
-  return Object.fromEntries(
-    roles.map((role) => [
-      role,
-      Object.fromEntries(
-        Object.entries({ ...file.finishes.shared[role], ...overrides[role] }).filter(
-          ([, value]) => value !== null,
-        ),
-      ) as Finish,
-    ]),
-  );
+/** The theme of a palette: `themes/<id>/index.ts` through `ALL_THEMES`. */
+function themeOf(id: PaletteId): AppTheme {
+  const theme = THEMES.get(id);
+  if (!theme) throw new Error(`no theme for palette "${id}"`);
+  return theme;
 }
 
 /**
- * A value with the theme's own references filled in (`var(--card)` in `theme.json`, `{card}` in
- * `semantics.json`), so a swatch can draw it: the appearance's map first, then the `theme` block.
- * Values the theme does not define are left as written.
+ * A value with the theme's own references filled in (`var(--card)` in `theme.json`), so a swatch can
+ * draw it: the appearance's map first, then the `theme` block. Values the theme does not define are
+ * left as written.
  */
 function filled(value: string, vars: Record<string, string>): string {
   let out = value;
   for (let depth = 0; depth < 4; depth += 1) {
-    const next = out
-      .replace(/\{([\w-]+)\}/g, (whole: string, name: string) => vars[name] ?? whole)
-      .replace(/var\(--([\w-]+)\)/g, (whole: string, name: string) => vars[name] ?? whole);
+    const next = out.replace(
+      /var\(--([\w-]+)\)/g,
+      (whole: string, name: string) => vars[name] ?? whole,
+    );
     if (next === out) break;
     out = next;
   }
-  // A relative colour — a token's own colour at another alpha (`oklch(from {card} l c h /
-  // 0.78)`) — is written out whole once its reference is filled in: `theme.ts` draws it as a
-  // concrete `oklch(L C H / a)` (NSH's parser reads no relative colour), and the sample should be
-  // the colour the theme draws, not one a browser alone can.
-  const relative = /^oklch\(from (oklch\([^)]*\)) l c h \/ ([\d.]+)\)$/.exec(out);
-  const channels = relative && /^oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/.exec(relative[1]!);
-  if (relative !== null && channels !== null)
-    out = `oklch(${channels[1]} ${channels[2]} ${channels[3]} / ${relative[2]})`;
   return out;
 }
 
 /** A theme's variables for one appearance: its `theme` block, then that appearance over it. */
-function varsOf(file: ThemeFile, scheme: "light" | "dark"): Record<string, string> {
+function varsOf(file: ThemeFile, scheme: Mode): Record<string, string> {
   return { ...file.cssVars.theme, ...file.cssVars[scheme] };
 }
 
@@ -187,7 +170,7 @@ function tokenRows(file: ThemeFile, names: string[], shared: boolean): TokenRow[
     const lightValue = shared ? file.cssVars.theme[name] : file.cssVars.light[name];
     const darkValue = shared ? file.cssVars.theme[name] : file.cssVars.dark[name];
     if (lightValue === undefined || darkValue === undefined)
-      throw new Error(`theme "${file.name}" states no "${name}", which the spec names`);
+      throw new Error(`theme "${file.name}" states no "${name}", which its spec names`);
     return {
       name,
       light: lightValue,
@@ -199,105 +182,132 @@ function tokenRows(file: ThemeFile, names: string[], shared: boolean): TokenRow[
   });
 }
 
-/** The tokens a finish names across its values, in the order they first appear. */
-function tokensOf(semantics: SemanticsFile, role: string): string[] {
-  const names = new Set<string>();
-  for (const scheme of ["light", "dark"] as const) {
-    const finish = mergedFinishes(semantics, scheme)[role];
-    if (!finish) continue;
-    for (const field of FINISH_FIELDS) {
-      const value = finish[field];
-      if (value === undefined) continue;
-      for (const match of value.matchAll(/\{([\w-]+)\}/g)) names.add(match[1]!);
+/** The tokens a surface names across its values, in the order they first appear. */
+function tokensOf(spec: ThemeSpec, role: SurfaceRole): string[] {
+  const roles = new Set(Object.keys(spec.tokens.light));
+  const names: string[] = [];
+  const add = (name: string) => {
+    if (roles.has(name) && !names.includes(name)) names.push(name);
+  };
+  const visit = (value: unknown) => {
+    if (typeof value === "string") return add(value);
+    if (Array.isArray(value)) return value.forEach(visit);
+    if (value === null || typeof value !== "object") return;
+    for (const [key, entry] of Object.entries(value)) {
+      // `{surface: "accent"}` is a reference to a surface, not to the accent role; `{tint: "brand"}`
+      // is the brand role at its tint alpha.
+      if (key === "surface") continue;
+      if (key === "tint" && typeof entry === "string") add(entry);
+      else visit(entry);
     }
-  }
-  return [...names];
+  };
+  visit(spec.surfaces[role]);
+  return names;
 }
 
-/** Every palette the demos offer, with its theme and semantics read. */
+/** Every palette the demos offer, with its theme read. */
 export function themePages(): ThemePage[] {
   return PALETTES.map((palette) => {
-    const file = themeFile(palette.id);
-    const semantics = semanticsFile(palette.id);
-    const extension = Object.keys(file.cssVars.light).filter((name) => !SPEC.slots.includes(name));
+    const { spec, label, theme: file } = themeOf(palette.id);
     return {
       palette,
-      name: file.name,
+      name: label,
       item: `theme-${palette.id}`,
+      overview: spec.meta?.overview ?? null,
       tokens: [
         {
-          id: "slots",
-          title: "The slots NSH resolves",
-          note: `shadcn's ${SPEC.slots.length}, the names an app's components ask the theme for.`,
-          rows: tokenRows(file, SPEC.slots, false),
-        },
-        {
-          id: "extension",
-          title: "The library's own tokens",
-          note: "What this library's components ask for beside the slots.",
-          rows: tokenRows(file, extension, false),
+          id: "roles",
+          title: "The appearance roles",
+          note: `shadcn's slots and this library's own, ${Object.keys(file.cssVars.light).length} of them, turning with the appearance.`,
+          rows: tokenRows(file, Object.keys(file.cssVars.light), false),
         },
         {
           id: "shared",
           title: "The shared values",
-          note: "The same in both appearances: a number, a font family, or a colour that does not turn.",
+          note: "The same in both appearances: the radii, the colours that do not turn, and the fonts when the theme sets them.",
           rows: tokenRows(file, Object.keys(file.cssVars.theme), true),
         },
       ],
-      finishes: SPEC.finishes.map(({ role, draws, drawsEn, reads }) => ({
-        role,
-        draws,
-        drawsEn,
-        reads,
-        tokens: tokensOf(semantics, role),
-      })),
+      surfaces: (Object.keys(SURFACE_DUTIES) as SurfaceRole[])
+        .filter((role) => spec.surfaces[role] !== undefined)
+        .map((role) => ({
+          role,
+          ...SURFACE_DUTIES[role],
+          tokens: tokensOf(spec, role),
+        })),
     };
   });
 }
 
+/** An appearance's layer of a surface: what the role shares, then that appearance over it. */
+function layerOf(surface: SurfaceSpec, scheme: Mode): SurfaceSpec {
+  return { ...surface, ...(surface[scheme] ?? {}) };
+}
+
+/** A shadow expression as CSS, through the theme's own elevation scale (`null` for none). */
+function shadowCss(theme: AppTheme, scheme: Mode, expression: ShadowExpr): string | null {
+  if (expression === null) return null;
+  const scale: ElevationScale = theme.spec.elevation[scheme];
+  const parts = Array.isArray(expression) ? expression : [expression];
+  const shadows = parts
+    .map((part) => (part in scale ? scale[part as keyof ElevationScale] : part))
+    .filter((value): value is string => typeof value === "string" && value !== "");
+  return shadows.length === 0 ? null : shadows.join(", ");
+}
+
+/** A colour expression as a CSS colour, with the theme's references filled in (`null` for a surface.) */
+function colorCss(theme: AppTheme, scheme: Mode, expression: ColorExpr | FaceExpr): string | null {
+  const vars = varsOf(theme.theme, scheme);
+  const base = (value: string) => filled(vars[value] ?? value, vars);
+  if (typeof expression === "string") return base(expression);
+  if ("surface" in expression) return null;
+  if ("tint" in expression) {
+    const alpha = expression.alpha ?? theme.spec.tokens.tintAlpha[scheme];
+    return `color-mix(in srgb, ${base(expression.tint)} ${Math.round(alpha * 100)}%, transparent)`;
+  }
+  const color = base(expression.color);
+  if (expression.alpha === undefined) return color;
+  return `color-mix(in srgb, ${color} ${Math.round(expression.alpha * 100)}%, transparent)`;
+}
+
 /**
- * The stylesheet the finish samples draw with: one rule per finish of every theme, its values
- * taken from that theme's `semantics.json` with the references filled in, and a ground of that
- * theme's `background` for the sample to sit on. Both follow `html.dark`, so a sample on the page
- * shows the theme it names in the appearance the site is in — not the site's own palette.
+ * The stylesheet the surface samples draw with: one rule per surface of every theme, its values
+ * taken from that theme's spec with the references filled in, and a ground of that theme's
+ * `background` for the sample to sit on. Both follow `html.dark`, so a sample on the page shows the
+ * theme it names in the appearance the site is in — not the site's own palette.
  */
-export function finishSampleCss(): string {
+export function surfaceSampleCss(): string {
   const rules: string[] = [];
   for (const palette of PALETTES) {
-    const file = themeFile(palette.id);
-    const semantics = semanticsFile(palette.id);
-    const ground = (scheme: "light" | "dark") => {
-      const vars = varsOf(file, scheme);
+    const theme = themeOf(palette.id);
+    const ground = (scheme: Mode) => {
+      const vars = varsOf(theme.theme, scheme);
       return `background-color:${filled(vars.background ?? "transparent", vars)};`;
     };
     rules.push(`[data-ground="${palette.id}"]{${ground("light")}}`);
     rules.push(`html.dark [data-ground="${palette.id}"]{${ground("dark")}}`);
     for (const scheme of ["light", "dark"] as const) {
-      const vars = varsOf(file, scheme);
       const prefix = scheme === "dark" ? "html.dark " : "";
-      for (const [role, finish] of Object.entries(mergedFinishes(semantics, scheme))) {
+      const surfaces = Object.entries(theme.spec.surfaces) as [SurfaceRole, SurfaceSpec][];
+      for (const [role, surface] of surfaces) {
+        const layer = layerOf(surface, scheme);
         const declarations: string[] = [];
-        const value = (field: (typeof FINISH_FIELDS)[number]) => {
-          const written = finish[field];
-          return written === undefined ? undefined : filled(written, vars);
+        const push = (name: string, value: string | null | undefined) => {
+          if (value !== null && value !== undefined && value !== "") {
+            declarations.push(`${name}:${value};`);
+          }
         };
-        const backgroundColor = value("background");
-        const backgroundImage = value("gradient");
-        const boxShadow = value("shadow");
-        const backdropFilter = value("backdropFilter");
-        const borderColor = value("border-color");
-        const borderTopColor = value("border-top-color");
-        const borderBottomColor = value("border-bottom-color");
-        if (backgroundColor !== undefined)
-          declarations.push(`background-color:${backgroundColor};`);
-        if (backgroundImage !== undefined)
-          declarations.push(`background-image:${backgroundImage};`);
-        if (boxShadow !== undefined) declarations.push(`box-shadow:${boxShadow};`);
-        if (backdropFilter !== undefined) declarations.push(`backdrop-filter:${backdropFilter};`);
-        if (borderColor !== undefined) declarations.push(`border:1px solid ${borderColor};`);
-        if (borderTopColor !== undefined) declarations.push(`border-top-color:${borderTopColor};`);
-        if (borderBottomColor !== undefined)
-          declarations.push(`border-bottom-color:${borderBottomColor};`);
+        push("background-color", layer.background && colorCss(theme, scheme, layer.background));
+        push("background-image", layer.gradient);
+        push("box-shadow", layer.shadow ? shadowCss(theme, scheme, layer.shadow) : null);
+        push("backdrop-filter", layer.backdropFilter);
+        const border = layer.border && colorCss(theme, scheme, layer.border);
+        push("border", border ? `1px solid ${border}` : null);
+        push("border-top-color", layer.borderTop && colorCss(theme, scheme, layer.borderTop));
+        push(
+          "border-bottom-color",
+          layer.borderBottom && colorCss(theme, scheme, layer.borderBottom),
+        );
         rules.push(`${prefix}[data-sample="${palette.id}-${role}"]{${declarations.join("")}}`);
       }
     }
@@ -305,48 +315,28 @@ export function finishSampleCss(): string {
   return rules.join("\n");
 }
 
-/**
- * The site's own colours (`--color-fd-<name>`, Fumadocs' names) and the theme token each one is
- * drawn from: the docs chrome is drawn in the palette the demos are. Mostly the token of the same
- * name; Fumadocs' primary is ink too (the current page's link, the outline's marker), so it is the
- * theme's `brand`, the accent that reads as text — the theme's `primary` is a fill (the default
- * theme's is a pale citrus no text could be on a light page) — and what sits on it is the page's
- * background.
- */
-const SITE_ROLES: [site: string, role: string][] = [
-  ["background", "background"],
-  ["foreground", "foreground"],
-  ["muted", "muted"],
-  ["muted-foreground", "muted-foreground"],
-  ["popover", "popover"],
-  ["popover-foreground", "popover-foreground"],
-  ["card", "card"],
-  ["card-foreground", "card-foreground"],
-  ["border", "border"],
-  ["primary", "brand"],
-  ["primary-foreground", "background"],
-  ["secondary", "secondary"],
-  ["secondary-foreground", "secondary-foreground"],
-  ["accent", "accent"],
-  ["accent-foreground", "accent-foreground"],
-  ["ring", "ring"],
-];
-
 /** The palette the site itself is drawn in, whatever the demos are switched to. */
 const SITE_PALETTE: PaletteId = "shadcn";
 
 /**
- * The stylesheet that draws the site: the Fumadocs colours from the shadcn theme's light tokens,
- * `.dark` from its dark ones. The sidebar is named too, since Fumadocs' preset sets a few of its
- * colours there again. The demo theme switch does not reach it: it changes the demos only.
+ * The stylesheet that draws the site: the Fumadocs colours (`--color-fd-<name>`) from the shadcn
+ * theme's own roles, `.dark` from the dark ones. A Fumadocs colour of the same name as a role is
+ * that role; Fumadocs' `primary` is ink where the theme's is a fill (the default theme's is a pale
+ * citrus no text could be on a light page), so it is the theme's `brand`, and what sits on it is the
+ * page's background. Fumadocs' `card-`, `popover-`, `secondary-` and `accent-foreground` are not
+ * written: Theme v5 keeps one ink role, so those names keep Fumadocs' own default, which is that ink.
+ * The demo theme switch does not reach the site: it changes the demos only.
  */
 export function sitePaletteCss(): string {
-  const file = themeFile(SITE_PALETTE);
-  const block = (scheme: "light" | "dark", selector: string) => {
+  const file = themeOf(SITE_PALETTE).theme;
+  const block = (scheme: Mode, selector: string) => {
     const vars = varsOf(file, scheme);
-    const lines = SITE_ROLES.filter(([, role]) => vars[role]).map(
-      ([site, role]) => `--color-fd-${site}:${filled(vars[role]!, vars)};`,
+    const lines = Object.entries(file.cssVars[scheme]).map(
+      ([name, value]) => `--color-fd-${name}:${filled(value, vars)};`,
     );
+    if (vars.brand) lines.push(`--color-fd-primary:${filled(vars.brand, vars)};`);
+    if (vars.background)
+      lines.push(`--color-fd-primary-foreground:${filled(vars.background, vars)};`);
     return `${selector},${selector} #nd-sidebar{${lines.join("")}}`;
   };
   return block("light", "html") + block("dark", "html.dark");

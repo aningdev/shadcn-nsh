@@ -1,7 +1,7 @@
 // A desktop window's title bar and the window controls it holds: the bar that drags a window whose
 // title bar is hidden, the window buttons of a frameless window, and the edges that resize it.
 
-import { alpha, colors, stroke, tints } from "@shadcn-nsh/theme";
+import { alpha, colors, stroke, surface, tints } from "@shadcn-nsh/theme";
 import { Plus, X } from "lucide";
 import type { ViewProps, ViewStyle } from "nsh";
 import { signal, split, View } from "nsh";
@@ -15,7 +15,7 @@ import {
 } from "nsh/desktop";
 
 import { Icon } from "./lib/icons";
-import { type Live, read } from "./lib/live-value";
+import { type Live, read } from "./lib/utils";
 
 /** How tall a title bar is when the window reports no height of its own. */
 export const TITLE_BAR_HEIGHT = 40;
@@ -149,7 +149,7 @@ export function titleBarLook(win?: WindowRef | null): TitleBarLook {
         gap: 8,
         paddingStart: area.left + barPad,
         paddingEnd: area.right + barPad,
-        backgroundColor: colors.inset,
+        backgroundColor: surface("inset").style.backgroundColor,
         borderBottomWidth: stroke.hairline,
         borderBottomColor: colors.line,
       };

@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "The design tokens (theme.json), standalone DTCG 2025.10 files (light.tokens.json, dark.tokens.json), the agent-readable design specification (DESIGN.md), the finishes (semantics.json), the platform materials (lib/ui/materials.ts) and the roles that read them (lib/ui/theme.ts).",
+      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,base,preset,theme}.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -14,24 +14,14 @@
           "target": "theme.json"
         },
         {
-          "path": "packages/theme/light.tokens.json",
-          "type": "registry:file",
-          "target": "light.tokens.json"
-        },
-        {
-          "path": "packages/theme/dark.tokens.json",
-          "type": "registry:file",
-          "target": "dark.tokens.json"
-        },
-        {
           "path": "packages/theme/DESIGN.md",
           "type": "registry:file",
           "target": "DESIGN.md"
         },
         {
-          "path": "packages/theme/semantics.json",
+          "path": "packages/theme/schema.ts",
           "type": "registry:lib",
-          "target": "lib/ui/semantics.json"
+          "target": "lib/ui/schema.ts"
         },
         {
           "path": "packages/theme/materials.ts",
@@ -39,9 +29,14 @@
           "target": "lib/ui/materials.ts"
         },
         {
-          "path": "packages/theme/finish-fields.ts",
+          "path": "packages/theme/themes/nsh-gallery/index.ts",
           "type": "registry:lib",
-          "target": "lib/ui/finish-fields.ts"
+          "target": "lib/ui/base.ts"
+        },
+        {
+          "path": "packages/theme/preset.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/preset.ts"
         },
         {
           "path": "packages/theme/theme.ts",
@@ -55,27 +50,12 @@
       "name": "theme-shadcn",
       "type": "registry:theme",
       "title": "Theme: shadcn neutral",
-      "description": "shadcn's neutral palette and flat finishes as one more theme, installed into themes/shadcn/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "shadcn neutral palette and flat surfaces (`themes/shadcn.ts`) for runtime switching (`selectTheme`), with root `theme.json` and `DESIGN.md` when initialized.",
       "files": [
         {
           "path": "packages/theme/themes/shadcn/theme.json",
           "type": "registry:file",
           "target": "themes/shadcn/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/shadcn/semantics.json",
-          "type": "registry:file",
-          "target": "themes/shadcn/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/shadcn/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/shadcn/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/shadcn/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/shadcn/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/shadcn/DESIGN.md",
@@ -85,36 +65,21 @@
         {
           "path": "packages/theme/themes/shadcn/index.ts",
           "type": "registry:lib",
-          "target": "themes/shadcn/index.ts"
+          "target": "themes/shadcn.ts"
         }
       ],
-      "registryDependencies": []
+      "registryDependencies": ["theme"]
     },
     {
       "name": "theme-solid-glass",
       "type": "registry:theme",
       "title": "Theme: Solid Glass",
-      "description": "Solid Glass (deeplethe/solid-glass, MIT) as one more theme: panes of thick smoky glass — a rim of light on each top edge, a hairline round it, a shadow underneath — installed into themes/solid-glass/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Solid Glass palette and smoky translucent surfaces (`themes/solid-glass.ts`) for runtime switching (`selectTheme`), with root `theme.json` and `DESIGN.md` when initialized.",
       "files": [
         {
           "path": "packages/theme/themes/solid-glass/theme.json",
           "type": "registry:file",
           "target": "themes/solid-glass/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/solid-glass/semantics.json",
-          "type": "registry:file",
-          "target": "themes/solid-glass/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/solid-glass/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/solid-glass/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/solid-glass/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/solid-glass/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/solid-glass/DESIGN.md",
@@ -124,36 +89,21 @@
         {
           "path": "packages/theme/themes/solid-glass/index.ts",
           "type": "registry:lib",
-          "target": "themes/solid-glass/index.ts"
+          "target": "themes/solid-glass.ts"
         }
       ],
-      "registryDependencies": []
+      "registryDependencies": ["theme"]
     },
     {
       "name": "theme-nsh-gallery",
       "type": "registry:theme",
       "title": "Theme: NSH Gallery",
-      "description": "The library's own theme (the build-time one) as one more theme, installed into themes/nsh-gallery/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) — what an app built on another theme switches back to with `selectTheme` while it runs.",
+      "description": "NSH Gallery palette and surfaces (`themes/nsh-gallery.ts`) for runtime switching (`selectTheme`) when another theme was selected at build time.",
       "files": [
         {
           "path": "packages/theme/themes/nsh-gallery/theme.json",
           "type": "registry:file",
           "target": "themes/nsh-gallery/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/nsh-gallery/semantics.json",
-          "type": "registry:file",
-          "target": "themes/nsh-gallery/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/nsh-gallery/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/nsh-gallery/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/nsh-gallery/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/nsh-gallery/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/nsh-gallery/DESIGN.md",
@@ -163,36 +113,21 @@
         {
           "path": "packages/theme/themes/nsh-gallery/index.ts",
           "type": "registry:lib",
-          "target": "themes/nsh-gallery/index.ts"
+          "target": "themes/nsh-gallery.ts"
         }
       ],
-      "registryDependencies": []
+      "registryDependencies": ["theme"]
     },
     {
       "name": "theme-apple",
       "type": "registry:theme",
       "title": "Theme: Apple",
-      "description": "Apple's system palette and HIG metrics as one more theme — capsule controls, continuous corners, systemBlue, and Liquid Glass on the glass, menu and raised finishes — installed into themes/apple/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Apple HIG palette, continuous corners, and Liquid Glass surfaces (`themes/apple.ts`) for runtime switching (`selectTheme`).",
       "files": [
         {
           "path": "packages/theme/themes/apple/theme.json",
           "type": "registry:file",
           "target": "themes/apple/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/apple/semantics.json",
-          "type": "registry:file",
-          "target": "themes/apple/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/apple/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/apple/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/apple/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/apple/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/apple/DESIGN.md",
@@ -202,36 +137,21 @@
         {
           "path": "packages/theme/themes/apple/index.ts",
           "type": "registry:lib",
-          "target": "themes/apple/index.ts"
+          "target": "themes/apple.ts"
         }
       ],
-      "registryDependencies": []
+      "registryDependencies": ["theme"]
     },
     {
       "name": "theme-material",
       "type": "registry:theme",
       "title": "Theme: Material",
-      "description": "Material 3 Expressive palette and metrics as one more theme — tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, press ripple, and expressive springs — installed into themes/material/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Material 3 Expressive palette, tonal surfaces, and state layers (`themes/material.ts`) for runtime switching (`selectTheme`).",
       "files": [
         {
           "path": "packages/theme/themes/material/theme.json",
           "type": "registry:file",
           "target": "themes/material/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/material/semantics.json",
-          "type": "registry:file",
-          "target": "themes/material/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/material/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/material/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/material/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/material/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/material/DESIGN.md",
@@ -241,36 +161,21 @@
         {
           "path": "packages/theme/themes/material/index.ts",
           "type": "registry:lib",
-          "target": "themes/material/index.ts"
+          "target": "themes/material.ts"
         }
       ],
-      "registryDependencies": []
+      "registryDependencies": ["theme"]
     },
     {
       "name": "theme-winui",
       "type": "registry:theme",
       "title": "Theme: WinUI 3",
-      "description": "WinUI 3 (Windows 11) palette and metrics as one more theme — WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, Consolas, double focus ring, timing motion, underline tabs/fields, and Windows blur material — installed into themes/winui/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "WinUI 3 palette, double focus ring, and Windows backdrop surfaces (`themes/winui.ts`) for runtime switching (`selectTheme`).",
       "files": [
         {
           "path": "packages/theme/themes/winui/theme.json",
           "type": "registry:file",
           "target": "themes/winui/theme.json"
-        },
-        {
-          "path": "packages/theme/themes/winui/semantics.json",
-          "type": "registry:file",
-          "target": "themes/winui/semantics.json"
-        },
-        {
-          "path": "packages/theme/themes/winui/light.tokens.json",
-          "type": "registry:file",
-          "target": "themes/winui/light.tokens.json"
-        },
-        {
-          "path": "packages/theme/themes/winui/dark.tokens.json",
-          "type": "registry:file",
-          "target": "themes/winui/dark.tokens.json"
         },
         {
           "path": "packages/theme/themes/winui/DESIGN.md",
@@ -280,10 +185,10 @@
         {
           "path": "packages/theme/themes/winui/index.ts",
           "type": "registry:lib",
-          "target": "themes/winui/index.ts"
+          "target": "themes/winui.ts"
         }
       ],
-      "registryDependencies": []
+      "registryDependencies": ["theme"]
     },
     {
       "name": "theme-native",
@@ -297,42 +202,51 @@
           "target": "themes/native/index.ts"
         }
       ],
-      "registryDependencies": ["theme-apple", "theme-material", "theme-winui", "theme-nsh-gallery"]
+      "registryDependencies": [
+        "theme",
+        "theme-apple",
+        "theme-material",
+        "theme-winui",
+        "theme-nsh-gallery"
+      ]
     },
     {
-      "name": "indicator",
+      "name": "utils",
       "type": "registry:lib",
-      "title": "Indicator",
-      "description": "A field's frame from the theme's field: corners, edge widths, rest colors, ring, and the focus edge.",
-      "registryDependencies": ["look", "theme"],
+      "title": "Component utilities",
+      "description": "Shared class merging (`joinClass`, `mergeClasses`), reactive values (`Live`, `read`), and string-to-Text child wrapper (`AsText`).",
+      "dependencies": [],
+      "registryDependencies": [],
       "files": [
         {
-          "path": "packages/ui/lib/indicator.ts",
+          "path": "packages/ui/lib/utils.tsx",
           "type": "registry:lib",
-          "target": "lib/ui/indicator.ts"
+          "target": "lib/ui/utils.tsx"
         }
       ]
     },
     {
-      "name": "press",
+      "name": "state",
       "type": "registry:lib",
-      "title": "Press",
-      "description": "A press's feedback: the theme's sink and its ease.",
-      "registryDependencies": ["live-value", "motion", "theme"],
+      "title": "Composition state",
+      "description": "Shared reactive open state, part slots, item registry, and timed copy confirmation.",
+      "dependencies": [],
+      "registryDependencies": [],
       "files": [
         {
-          "path": "packages/ui/lib/press.ts",
+          "path": "packages/ui/lib/state.ts",
           "type": "registry:lib",
-          "target": "lib/ui/press.ts"
+          "target": "lib/ui/state.ts"
         }
       ]
     },
     {
       "name": "motion",
       "type": "registry:lib",
-      "title": "Motion",
-      "description": "A rejected field's shake, and a figure that rolls to its next value.",
-      "registryDependencies": ["theme"],
+      "title": "Motion and press",
+      "description": "Shared CSS transitions, press sink feedback, touch hit-target slop, reject shake, and rolling counter.",
+      "dependencies": [],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/lib/motion.tsx",
@@ -342,57 +256,17 @@
       ]
     },
     {
-      "name": "live-value",
+      "name": "field-look",
       "type": "registry:lib",
-      "title": "Live value",
-      "description": "A look's value, read where it is applied: a prop or a function of the current state.",
-      "registryDependencies": [],
+      "title": "Field frame",
+      "description": "The shared frame of every text-input control: corners, edges, resting line and focus ring.",
+      "dependencies": [],
+      "registryDependencies": ["theme"],
       "files": [
         {
-          "path": "packages/ui/lib/live-value.ts",
+          "path": "packages/ui/lib/field-look.ts",
           "type": "registry:lib",
-          "target": "lib/ui/live-value.ts"
-        }
-      ]
-    },
-    {
-      "name": "class-names",
-      "type": "registry:lib",
-      "title": "Class names",
-      "description": "How an app's part classes meet the look's: merged part by part, or joined after them.",
-      "registryDependencies": [],
-      "files": [
-        {
-          "path": "packages/ui/lib/class-names.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/class-names.ts"
-        }
-      ]
-    },
-    {
-      "name": "as-text",
-      "type": "registry:lib",
-      "title": "As text",
-      "description": "A control's children drawn as its text: a string or number child in a Text, anything else as it is, where the control draws them.",
-      "files": [
-        {
-          "path": "packages/ui/lib/as-text.tsx",
-          "type": "registry:lib",
-          "target": "lib/ui/as-text.tsx"
-        }
-      ]
-    },
-    {
-      "name": "switch-geometry",
-      "type": "registry:lib",
-      "title": "Switch geometry",
-      "description": "A switch's sizes and the arithmetic of its knob.",
-      "registryDependencies": [],
-      "files": [
-        {
-          "path": "packages/ui/lib/switch-geometry.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/switch-geometry.ts"
+          "target": "lib/ui/field-look.ts"
         }
       ]
     },
@@ -400,47 +274,14 @@
       "name": "icons",
       "type": "registry:lib",
       "title": "Icons",
-      "description": "The icon renderer: lucide's nodes on a canvas, the check mark as an SVG, and any icon as an image.",
+      "description": "Lucide icon rendering (`Icon`, `IconLabel`, `CheckMark`) and SVG data URL helper (`iconImage`).",
+      "dependencies": ["lucide@^1.66.0"],
       "registryDependencies": ["theme"],
       "files": [
         {
           "path": "packages/ui/lib/icons.tsx",
           "type": "registry:lib",
           "target": "lib/ui/icons.tsx"
-        },
-        {
-          "path": "packages/ui/lib/icon-drawing.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/icon-drawing.ts"
-        }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
-    },
-    {
-      "name": "look",
-      "type": "registry:lib",
-      "title": "Look",
-      "description": "A control's form: one function per control dimension, the roles and scale keys it is drawn to, and the form's own numbers where the recipe states them.",
-      "registryDependencies": ["theme"],
-      "files": [
-        {
-          "path": "packages/ui/lib/look.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/look.ts"
-        }
-      ]
-    },
-    {
-      "name": "track",
-      "type": "registry:lib",
-      "title": "Track",
-      "description": "A rail's face and its shadow: the track's colour, its 1-point edge, and the shade it hangs off.",
-      "registryDependencies": ["look", "theme"],
-      "files": [
-        {
-          "path": "packages/ui/lib/track.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/track.ts"
         }
       ]
     },
@@ -448,8 +289,9 @@
       "name": "popup",
       "type": "registry:lib",
       "title": "Popup",
-      "description": "The popup families' surface, motion and mark, and the scrim behind what is modal.",
-      "registryDependencies": ["icons", "look", "theme"],
+      "description": "Shared popup surface, scrim backdrop, enter motion, list spacing and menu checkmark.",
+      "dependencies": [],
+      "registryDependencies": ["icons", "theme"],
       "files": [
         {
           "path": "packages/ui/lib/popup.tsx",
@@ -462,8 +304,9 @@
       "name": "surface",
       "type": "registry:lib",
       "title": "Surface",
-      "description": "Density, section surfaces, and list rows whose hover fill bleeds.",
-      "registryDependencies": ["live-value", "look", "theme"],
+      "description": "Shared density scale, section and inset surfaces, plain and bleed rows, and toolbar track.",
+      "dependencies": [],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/lib/surface.tsx",
@@ -473,30 +316,17 @@
       ]
     },
     {
-      "name": "open-state",
+      "name": "listbox",
       "type": "registry:lib",
-      "title": "Open state",
-      "description": "The controlled or uncontrolled open flag of a composition root.",
-      "registryDependencies": [],
+      "title": "Listbox",
+      "description": "Shared popup listbox look, option rows, chevron, clear button and search filter.",
+      "dependencies": ["lucide@^1.66.0"],
+      "registryDependencies": ["field-look", "icons", "popup", "surface", "theme"],
       "files": [
         {
-          "path": "packages/ui/lib/open-state.ts",
+          "path": "packages/ui/lib/listbox.tsx",
           "type": "registry:lib",
-          "target": "lib/ui/open-state.ts"
-        }
-      ]
-    },
-    {
-      "name": "copied",
-      "type": "registry:lib",
-      "title": "Copied",
-      "description": "The copied flag a copy button flips, cleared on a timer that goes with the component.",
-      "registryDependencies": [],
-      "files": [
-        {
-          "path": "packages/ui/lib/copied.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/copied.ts"
+          "target": "lib/ui/listbox.tsx"
         }
       ]
     },
@@ -505,7 +335,7 @@
       "type": "registry:ui",
       "title": "Spinner",
       "description": "A turning ring: work going on.",
-      "registryDependencies": ["look", "theme"],
+      "registryDependencies": ["theme"],
       "files": [
         {
           "path": "packages/ui/spinner.tsx",
@@ -519,7 +349,7 @@
       "type": "registry:ui",
       "title": "Badge",
       "description": "A small capsule label in neutral, toned, or outline styles.",
-      "registryDependencies": ["live-value", "look", "theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/badge.tsx",
@@ -533,15 +363,7 @@
       "type": "registry:ui",
       "title": "Button",
       "description": "A button, an icon button, a round button, and a split button.",
-      "registryDependencies": [
-        "as-text",
-        "icons",
-        "live-value",
-        "look",
-        "press",
-        "spinner",
-        "theme"
-      ],
+      "registryDependencies": ["icons", "motion", "spinner", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/button.tsx",
@@ -556,15 +378,7 @@
       "type": "registry:ui",
       "title": "Switch",
       "description": "A switch whose knob springs across a sunk track.",
-      "registryDependencies": [
-        "as-text",
-        "class-names",
-        "live-value",
-        "look",
-        "motion",
-        "switch-geometry",
-        "theme"
-      ],
+      "registryDependencies": ["motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/switch.tsx",
@@ -578,7 +392,7 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "A card dialog: Trigger, Content, Title, Description, Footer and Close.",
-      "registryDependencies": ["as-text", "button", "look", "open-state", "popup", "theme"],
+      "registryDependencies": ["button", "popup", "state", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/dialog.tsx",
@@ -588,25 +402,11 @@
       ]
     },
     {
-      "name": "tool",
-      "type": "registry:lib",
-      "title": "Tool track",
-      "description": "The inset track a toolbar and a toggle group share.",
-      "registryDependencies": ["theme"],
-      "files": [
-        {
-          "path": "packages/ui/lib/tool.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/tool.ts"
-        }
-      ]
-    },
-    {
       "name": "toggle",
       "type": "registry:ui",
       "title": "Toggle",
       "description": "A two-state button, bare or outlined, and a group of them on the inset track.",
-      "registryDependencies": ["live-value", "look", "press", "theme", "tool"],
+      "registryDependencies": ["motion", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/toggle.tsx",
@@ -620,16 +420,7 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "A sunk box that fills in citrus, with a check or a dash springing in.",
-      "registryDependencies": [
-        "as-text",
-        "class-names",
-        "icons",
-        "live-value",
-        "look",
-        "press",
-        "surface",
-        "theme"
-      ],
+      "registryDependencies": ["icons", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/checkbox.tsx",
@@ -643,8 +434,8 @@
       "name": "radio-group",
       "type": "registry:ui",
       "title": "Radio Group",
-      "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
-      "registryDependencies": ["as-text", "checkbox", "class-names", "look", "motion", "theme"],
+      "description": "A sunk ring that fills in citrus, with a dot growing in \u2014 alone or as a choice tile.",
+      "registryDependencies": ["checkbox", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",
@@ -658,7 +449,7 @@
       "type": "registry:ui",
       "title": "Toolbar",
       "description": "An inset track of tools, with groups, hairline separators and an overflow menu.",
-      "registryDependencies": ["icons", "menu", "open-state", "theme", "toggle", "tool"],
+      "registryDependencies": ["icons", "menu", "state", "surface", "theme", "toggle"],
       "files": [
         {
           "path": "packages/ui/toolbar.tsx",
@@ -672,8 +463,8 @@
       "name": "input",
       "type": "registry:ui",
       "title": "Input",
-      "description": "A text field — sunk, ghost, multiline, masked, or invalid.",
-      "registryDependencies": ["indicator", "live-value", "look", "motion", "theme"],
+      "description": "A text field \u2014 sunk, ghost, multiline, masked, or invalid.",
+      "registryDependencies": ["field-look", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/input.tsx",
@@ -686,8 +477,8 @@
       "name": "number-input",
       "type": "registry:ui",
       "title": "Number Input",
-      "description": "A sunk number field with − / + or stacked chevron steppers.",
-      "registryDependencies": ["icons", "indicator", "input", "live-value", "look", "theme"],
+      "description": "A sunk number field with \u2212 / + or stacked chevron steppers.",
+      "registryDependencies": ["field-look", "icons", "input", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/number-input.tsx",
@@ -702,7 +493,7 @@
       "type": "registry:ui",
       "title": "OTP Input",
       "description": "One-time code cells that lift out of sunk wells as digits fill in.",
-      "registryDependencies": ["indicator", "input", "live-value", "look", "motion", "theme"],
+      "registryDependencies": ["field-look", "input", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/otp-input.tsx",
@@ -730,7 +521,7 @@
       "type": "registry:ui",
       "title": "Tooltip",
       "description": "A popover-coloured hint bubble on any element's tooltip prop.",
-      "registryDependencies": ["as-text", "button", "look", "open-state", "theme"],
+      "registryDependencies": ["button", "state", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",
@@ -744,7 +535,7 @@
       "type": "registry:ui",
       "title": "Popover",
       "description": "A popup panel that grows from its trigger, on the shared menu surface.",
-      "registryDependencies": ["as-text", "button", "open-state", "popup"],
+      "registryDependencies": ["button", "popup", "state", "utils"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",
@@ -758,7 +549,7 @@
       "type": "registry:ui",
       "title": "Hover Card",
       "description": "A preview card that grows from its trigger, on the shared popover surface.",
-      "registryDependencies": ["button", "open-state", "popover", "popup"],
+      "registryDependencies": ["button", "popover", "popup", "state"],
       "files": [
         {
           "path": "packages/ui/hover-card.tsx",
@@ -772,15 +563,7 @@
       "type": "registry:ui",
       "title": "Sheet",
       "description": "A panel that slides in from an edge of the screen over a scrim.",
-      "registryDependencies": [
-        "as-text",
-        "button",
-        "dialog",
-        "look",
-        "open-state",
-        "popup",
-        "theme"
-      ],
+      "registryDependencies": ["button", "dialog", "popup", "state", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/sheet.tsx",
@@ -794,7 +577,7 @@
       "type": "registry:ui",
       "title": "Toast",
       "description": "A raised banner, and a toaster: toast(), update and dismiss on nsh/base's queue.",
-      "registryDependencies": ["button", "icons", "look", "press", "spinner", "theme"],
+      "registryDependencies": ["button", "icons", "motion", "spinner", "theme"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -809,7 +592,7 @@
       "type": "registry:ui",
       "title": "Alert Dialog",
       "description": "A confirmation of the platform's own: shadcn's parts over the system's alert (AlertDialog.show).",
-      "registryDependencies": ["button", "open-state"],
+      "registryDependencies": ["button", "state"],
       "files": [
         {
           "path": "packages/ui/alert-dialog.tsx",
@@ -823,7 +606,7 @@
       "type": "registry:ui",
       "title": "Menu",
       "description": "A menu of items, separators and submenus on the shared menu look.",
-      "registryDependencies": ["as-text", "button", "icons", "open-state", "popup", "theme"],
+      "registryDependencies": ["button", "icons", "popup", "state", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/menu.tsx",
@@ -838,7 +621,7 @@
       "type": "registry:ui",
       "title": "Context Menu",
       "description": "A menu at the pointer, on the shared menu look.",
-      "registryDependencies": ["menu", "open-state"],
+      "registryDependencies": ["menu", "state"],
       "files": [
         {
           "path": "packages/ui/context-menu.tsx",
@@ -848,35 +631,19 @@
       ]
     },
     {
-      "name": "listbox",
-      "type": "registry:lib",
-      "title": "Listbox",
-      "description": "Shared list popup, rows, search and clear looks for select, combobox and date picker.",
-      "registryDependencies": ["icons", "indicator", "look", "popup", "surface", "theme"],
-      "files": [
-        {
-          "path": "packages/ui/lib/listbox.tsx",
-          "type": "registry:lib",
-          "target": "lib/ui/listbox.tsx"
-        }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
-    },
-    {
       "name": "select",
       "type": "registry:ui",
       "title": "Select",
       "description": "A list of choices from a field trigger, on the shared listbox look.",
       "registryDependencies": [
+        "field-look",
         "icons",
-        "indicator",
         "input",
         "listbox",
-        "live-value",
-        "look",
-        "open-state",
+        "state",
         "surface",
-        "theme"
+        "theme",
+        "utils"
       ],
       "files": [
         {
@@ -894,15 +661,14 @@
       "description": "A searchable field with a list of choices and chips for the values chosen, on the shared listbox look.",
       "registryDependencies": [
         "button",
+        "field-look",
         "icons",
-        "indicator",
         "input",
         "listbox",
-        "live-value",
-        "look",
-        "open-state",
+        "state",
         "surface",
-        "theme"
+        "theme",
+        "utils"
       ],
       "files": [
         {
@@ -918,7 +684,7 @@
       "type": "registry:ui",
       "title": "Calendar",
       "description": "A month of days to pick a date or a range, on the shared calendar look.",
-      "registryDependencies": ["icons", "input", "look", "surface", "theme"],
+      "registryDependencies": ["icons", "input", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/calendar.tsx",
@@ -937,11 +703,11 @@
         "calendar",
         "input",
         "listbox",
-        "live-value",
-        "open-state",
         "popup",
         "select",
-        "theme"
+        "state",
+        "theme",
+        "utils"
       ],
       "files": [
         {
@@ -957,7 +723,7 @@
       "type": "registry:ui",
       "title": "Tabs",
       "description": "A pill track or underlined row with a traveling indicator.",
-      "registryDependencies": ["icons", "live-value", "look", "surface", "theme"],
+      "registryDependencies": ["icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/tabs.tsx",
@@ -972,7 +738,7 @@
       "type": "registry:ui",
       "title": "Segmented",
       "description": "A sunk track whose raised thumb springs to the selected segment.",
-      "registryDependencies": ["live-value", "tabs", "theme"],
+      "registryDependencies": ["tabs", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/segmented.tsx",
@@ -987,7 +753,7 @@
       "type": "registry:ui",
       "title": "Accordion",
       "description": "List rows that reveal panels with a turning chevron.",
-      "registryDependencies": ["class-names", "icons", "surface", "theme"],
+      "registryDependencies": ["icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/accordion.tsx",
@@ -1002,7 +768,7 @@
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "A disclosure row that reveals a panel beneath it.",
-      "registryDependencies": ["accordion", "open-state", "surface"],
+      "registryDependencies": ["accordion", "state", "surface"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",
@@ -1016,7 +782,7 @@
       "type": "registry:ui",
       "title": "Carousel",
       "description": "Snapping slides with round arrows and a traveling dot pill.",
-      "registryDependencies": ["class-names", "icons", "press", "theme"],
+      "registryDependencies": ["icons", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/carousel.tsx",
@@ -1061,15 +827,7 @@
       "type": "registry:ui",
       "title": "Progress",
       "description": "A determinate or indeterminate progress bar.",
-      "registryDependencies": [
-        "checkbox",
-        "class-names",
-        "live-value",
-        "look",
-        "surface",
-        "theme",
-        "track"
-      ],
+      "registryDependencies": ["checkbox", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/progress.tsx",
@@ -1083,7 +841,7 @@
       "type": "registry:ui",
       "title": "Stat",
       "description": "A label above a value for metric grids.",
-      "registryDependencies": ["live-value", "theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/stat.tsx",
@@ -1097,7 +855,7 @@
       "type": "registry:ui",
       "title": "Status",
       "description": "A dot and label for quiet row or header state.",
-      "registryDependencies": ["live-value", "theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/status.tsx",
@@ -1111,7 +869,7 @@
       "type": "registry:ui",
       "title": "Slider",
       "description": "A sunk rail with the theme's fill and a round thumb.",
-      "registryDependencies": ["class-names", "look", "theme", "track"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/slider.tsx",
@@ -1125,7 +883,7 @@
       "type": "registry:ui",
       "title": "Avatar",
       "description": "A round picture or named initials on the identity ring.",
-      "registryDependencies": ["class-names", "theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/avatar.tsx",
@@ -1139,7 +897,7 @@
       "type": "registry:ui",
       "title": "DataTable",
       "description": "A card-styled spreadsheet with sorting, selection, and resize.",
-      "registryDependencies": ["class-names", "theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/data-table.tsx",
@@ -1153,7 +911,7 @@
       "type": "registry:ui",
       "title": "Table",
       "description": "A composition table wearing the shared data-table classes.",
-      "registryDependencies": ["as-text", "class-names", "data-table"],
+      "registryDependencies": ["data-table", "utils"],
       "files": [
         {
           "path": "packages/ui/table.tsx",
@@ -1167,7 +925,7 @@
       "type": "registry:ui",
       "title": "Tree",
       "description": "A card-framed tree with chevron rows and folder icons.",
-      "registryDependencies": ["class-names", "icons", "surface", "theme"],
+      "registryDependencies": ["icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/tree.tsx",
@@ -1182,7 +940,7 @@
       "type": "registry:ui",
       "title": "Command",
       "description": "A command palette with search, groups, and shortcut keys.",
-      "registryDependencies": ["class-names", "icons", "kbd", "look", "popup", "surface", "theme"],
+      "registryDependencies": ["icons", "kbd", "popup", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/command.tsx",
@@ -1197,7 +955,7 @@
       "type": "registry:ui",
       "title": "Scrollbar",
       "description": "Hover-reveal scroll bars for scroll views and lists.",
-      "registryDependencies": ["class-names", "motion", "theme"],
+      "registryDependencies": ["motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/scrollbar.tsx",
@@ -1211,7 +969,7 @@
       "type": "registry:ui",
       "title": "Plot",
       "description": "Chart colors, grid, cross line and tooltip for nsh/base/plot.",
-      "registryDependencies": ["look", "theme"],
+      "registryDependencies": ["theme"],
       "files": [
         {
           "path": "packages/ui/plot.tsx",
@@ -1225,7 +983,7 @@
       "type": "registry:ui",
       "title": "Resizable",
       "description": "Resize handles with a quiet hairline and a growing thumb.",
-      "registryDependencies": ["class-names"],
+      "registryDependencies": ["utils"],
       "files": [
         {
           "path": "packages/ui/resizable.tsx",
@@ -1239,7 +997,7 @@
       "type": "registry:ui",
       "title": "DockArea",
       "description": "Dockable workspace chrome: tabs, splits, and edge docks.",
-      "registryDependencies": ["class-names", "resizable", "theme"],
+      "registryDependencies": ["resizable", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/dock-area.tsx",
@@ -1253,7 +1011,7 @@
       "type": "registry:ui",
       "title": "DiffView",
       "description": "Up/down tints for additions and deletions, with hunk actions.",
-      "registryDependencies": ["button", "icons", "live-value", "theme"],
+      "registryDependencies": ["button", "icons", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/diff-view.tsx",
@@ -1268,7 +1026,7 @@
       "type": "registry:ui",
       "title": "TextView",
       "description": "Brand links and a streaming caret for Markdown documents.",
-      "registryDependencies": ["class-names"],
+      "registryDependencies": ["utils"],
       "files": [
         {
           "path": "packages/ui/text-view.tsx",
@@ -1297,7 +1055,7 @@
       "type": "registry:ui",
       "title": "Rich Editor",
       "description": "Rich document typography and its session API, on nsh/base's RichEditor.",
-      "registryDependencies": ["class-names"],
+      "registryDependencies": ["utils"],
       "files": [
         {
           "path": "packages/ui/rich-editor.tsx",
@@ -1313,14 +1071,13 @@
       "description": "An editor on the field's well, with line numbers, diagnostics and a find bar.",
       "registryDependencies": [
         "button",
-        "class-names",
+        "field-look",
         "icons",
-        "indicator",
         "input-group",
-        "look",
         "popup",
         "theme",
-        "toggle"
+        "toggle",
+        "utils"
       ],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
@@ -1338,13 +1095,13 @@
       "description": "Area, sliders, joined fields, swatches, and popover trigger.",
       "registryDependencies": [
         "button",
-        "copied",
         "icons",
         "input",
         "menu",
         "popover",
         "popup",
         "select",
+        "state",
         "theme"
       ],
       "files": [
@@ -1403,7 +1160,7 @@
       "type": "registry:ui",
       "title": "Pressable",
       "description": "A region that takes presses and adds only the feedback: hover, the press's sink, the focus ring.",
-      "registryDependencies": ["as-text", "live-value", "press", "theme"],
+      "registryDependencies": ["motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/pressable.tsx",
@@ -1430,7 +1187,7 @@
       "name": "skeleton",
       "type": "registry:ui",
       "title": "Skeleton",
-      "description": "The shape of content that is still coming: a block in the theme’s accent fill that breathes.",
+      "description": "The shape of content that is still coming: a block in the theme\u2019s accent fill that breathes.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -1445,7 +1202,7 @@
       "type": "registry:ui",
       "title": "Kbd",
       "description": "A key of a shortcut: a small cap in the muted fill, alone or in a group.",
-      "registryDependencies": ["as-text", "theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/kbd.tsx",
@@ -1458,8 +1215,8 @@
       "name": "label",
       "type": "registry:ui",
       "title": "Label",
-      "description": "The visible name of a control: a row whose text is the control labels’ own type.",
-      "registryDependencies": ["as-text", "surface", "theme"],
+      "description": "The visible name of a control: a row whose text is the control labels\u2019 own type.",
+      "registryDependencies": ["surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/label.tsx",
@@ -1473,7 +1230,7 @@
       "type": "registry:ui",
       "title": "Alert",
       "description": "A notice of the whole page or form, read out when it appears.",
-      "registryDependencies": ["as-text", "surface", "theme"],
+      "registryDependencies": ["surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/alert.tsx",
@@ -1501,7 +1258,7 @@
       "type": "registry:ui",
       "title": "ButtonGroup",
       "description": "Buttons joined into one control, in a row or a column.",
-      "registryDependencies": ["as-text", "look", "separator", "surface", "theme"],
+      "registryDependencies": ["separator", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/button-group.tsx",
@@ -1514,8 +1271,8 @@
       "name": "input-group",
       "type": "registry:ui",
       "title": "InputGroup",
-      "description": "A field's frame around an input and what sits beside it — an icon, a unit, a button.",
-      "registryDependencies": ["as-text", "button", "input", "live-value", "theme"],
+      "description": "A field's frame around an input and what sits beside it \u2014 an icon, a unit, a button.",
+      "registryDependencies": ["button", "input", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/input-group.tsx",
@@ -1529,7 +1286,7 @@
       "type": "registry:ui",
       "title": "Breadcrumb",
       "description": "The trail from the app's root to the page it shows: links a chevron parts, the page itself last.",
-      "registryDependencies": ["as-text", "icons", "theme"],
+      "registryDependencies": ["icons", "theme", "utils"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -1558,15 +1315,7 @@
       "type": "registry:ui",
       "title": "Drawer",
       "description": "A panel from the bottom edge, with a grabber, that a swipe closes.",
-      "registryDependencies": [
-        "as-text",
-        "button",
-        "dialog",
-        "open-state",
-        "popup",
-        "sheet",
-        "theme"
-      ],
+      "registryDependencies": ["button", "dialog", "popup", "sheet", "state", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/drawer.tsx",
@@ -1580,7 +1329,7 @@
       "type": "registry:ui",
       "title": "Menubar",
       "description": "A row of menus whose triggers stand in one bar.",
-      "registryDependencies": ["as-text", "look", "menu", "open-state", "popup", "theme"],
+      "registryDependencies": ["menu", "popup", "state", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/menubar.tsx",
@@ -1594,7 +1343,7 @@
       "type": "registry:ui",
       "title": "Marker",
       "description": "A line in a conversation that is not a message: a status, a note, or a labeled separator.",
-      "registryDependencies": ["as-text", "icons", "surface", "theme"],
+      "registryDependencies": ["icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/marker.tsx",
@@ -1609,7 +1358,7 @@
       "type": "registry:ui",
       "title": "Bubble",
       "description": "The framed surface of one turn of a conversation, and the reactions that hang off it.",
-      "registryDependencies": ["as-text", "surface", "theme"],
+      "registryDependencies": ["surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/bubble.tsx",
@@ -1623,7 +1372,7 @@
       "type": "registry:ui",
       "title": "Message",
       "description": "One row of a conversation: the sender's avatar, who they are, the turn, and what is under it.",
-      "registryDependencies": ["as-text", "avatar", "surface", "theme"],
+      "registryDependencies": ["avatar", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/message.tsx",
@@ -1665,16 +1414,8 @@
       "name": "navigation-menu",
       "type": "registry:ui",
       "title": "NavigationMenu",
-      "description": "A row of triggers, each opening a panel of anything under the bar — one at a time.",
-      "registryDependencies": [
-        "as-text",
-        "icons",
-        "live-value",
-        "open-state",
-        "popup",
-        "press",
-        "theme"
-      ],
+      "description": "A row of triggers, each opening a panel of anything under the bar \u2014 one at a time.",
+      "registryDependencies": ["icons", "motion", "popup", "state", "theme", "utils"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -1690,18 +1431,17 @@
       "title": "Sidebar",
       "description": "An app's navigation column: groups of rows, folded to a strip of icons or sliding in as a sheet on a phone.",
       "registryDependencies": [
-        "as-text",
         "button",
         "icons",
         "input",
-        "live-value",
-        "press",
+        "motion",
         "separator",
         "sheet",
         "skeleton",
         "surface",
         "theme",
-        "tooltip"
+        "tooltip",
+        "utils"
       ],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
@@ -1717,7 +1457,7 @@
       "type": "registry:ui",
       "title": "Terminal",
       "description": "A program's output on the theme's field surface, the keys typed back to it.",
-      "registryDependencies": ["indicator", "live-value", "look", "theme"],
+      "registryDependencies": ["field-look", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/terminal.tsx",
@@ -1761,7 +1501,7 @@
       "type": "registry:ui",
       "title": "CodeBlock",
       "description": "Code, a command's output or a log in a block, with a title, a copy button, line numbers and a footer.",
-      "registryDependencies": ["as-text", "button", "copied", "icons", "surface", "theme"],
+      "registryDependencies": ["button", "icons", "state", "surface", "theme", "utils"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -1791,7 +1531,7 @@
       "type": "registry:ui",
       "title": "Trace",
       "description": "An agent's steps, one line each: reasoning, a tool call, a source, a failed step. A line can open onto what it did.",
-      "registryDependencies": ["as-text", "collapsible", "icons", "open-state", "spinner", "theme"],
+      "registryDependencies": ["collapsible", "icons", "spinner", "state", "theme", "utils"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -1821,7 +1561,7 @@
       "type": "registry:ui",
       "title": "TitleBar",
       "description": "The bar that drags a desktop window, the window buttons a frameless one draws for itself, and the edges that resize it.",
-      "registryDependencies": ["icons", "live-value", "theme"],
+      "registryDependencies": ["icons", "theme", "utils"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -1836,7 +1576,7 @@
       "type": "registry:ui",
       "title": "CollapsingHeader",
       "description": "A page's header that shrinks into a bar as the page scrolls, its picture sliding under the title.",
-      "registryDependencies": ["as-text", "surface", "theme"],
+      "registryDependencies": ["surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/collapsing-header.tsx",

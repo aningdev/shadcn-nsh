@@ -4,7 +4,7 @@
  * `props.children` builds the children again"), so a control reads them once, in the place where
  * the children go: the JSX that draws them, or the element it hands to the host that draws them.
  * What the control wants of them besides drawing — a string is its text, drawn in a `Text` — is
- * asked of that one read, through `AsText` (`packages/ui/lib/as-text.tsx`) where a `Text` is the
+ * asked of that one read, through `AsText` (`packages/ui/lib/utils.tsx`) where a `Text` is the
  * difference — a forward in the child position, `<AsText …>{props.children}</AsText>`, whose own
  * read is where it draws them — or a plain branch on the kind, which never changes (a child that
  * changes arrives as a function, drawn as given).

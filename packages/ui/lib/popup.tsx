@@ -3,22 +3,20 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
-  finish,
-  type ItemSpacing,
-  platformMaterial,
-  reactive,
+  colors,
+  control,
+  metrics,
   rounded,
   stroke,
-  style,
+  surface,
+  surfaceBorderWidth,
   terminal,
   TERMINAL_COLUMN,
-  tier,
 } from "@shadcn-nsh/theme";
 import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
-import { createMotion, Easing, reduceMotion, token, View } from "nsh";
+import { createMotion, Easing, reduceMotion, View } from "nsh";
 
 import { CheckMark } from "./icons";
-import { popupCorner, surfaceBorderWidth } from "./look";
 
 /**
  * The scrim behind what is modal (a sheet, a dialog, a menu's sheet on a
@@ -26,7 +24,7 @@ import { popupCorner, surfaceBorderWidth } from "./look";
  * it as the overlay's `backdropStyle`.
  */
 export function backdrop(): ViewStyle {
-  return { backgroundColor: token("scrim") };
+  return { backgroundColor: colors.scrim };
 }
 
 /** The side of its trigger a popup is on. */
@@ -51,20 +49,21 @@ const DOT = 6;
  * box there is its line or its fill.
  */
 export function popupSurface(): ViewStyle {
+  const overlay = surface("overlay");
   return (
     // A terminal draws a popup as its line alone, over no fill of its own.
     terminal
       ? {
-          ...rounded(popupCorner()),
+          ...rounded(control("popup").corner),
           borderWidth: stroke.hairline,
           padding: POPUP_PAD,
-          borderColor: finish.overlay.borderColor,
+          borderColor: overlay.style.borderColor as string | undefined,
         }
       : {
-          ...rounded(popupCorner()),
-          borderWidth: surfaceBorderWidth(finish.overlay.borderColor),
+          ...rounded(control("popup").corner),
+          borderWidth: surfaceBorderWidth(overlay.style.borderColor as string | undefined),
           padding: POPUP_PAD,
-          ...finish.overlay,
+          ...overlay.style,
         }
   );
 }
@@ -76,9 +75,14 @@ export function popupSurface(): ViewStyle {
  * their text one Cell in. A trigger whose chosen row lies over it (a select's)
  * sets its text `inset + pad` in, so title lies on title.
  */
-export const itemSpacing = reactive<ItemSpacing>(["inset", "pad"], () =>
-  terminal ? { inset: 0, pad: TERMINAL_COLUMN } : style().dimension.size.item[tier],
-);
+export const itemSpacing = {
+  get inset(): number {
+    return terminal ? 0 : metrics.item.inset;
+  },
+  get pad(): number {
+    return terminal ? TERMINAL_COLUMN : metrics.item.pad;
+  },
+};
 
 /** The room above and below a full-bleed list's rows (inset 0), so the first and last clear the
  * container's corners: Material 3's `DropdownMenuVerticalPadding`. */
@@ -113,7 +117,7 @@ export function listPadding(): ViewStyle {
  * at least 2), square when the container is or the row is full-bleed. */
 export function itemRadius(): number {
   const { inset } = itemSpacing;
-  const corner = popupCorner();
+  const corner = control("popup").corner;
   return inset === 0 || corner === 0 ? 0 : Math.max(2, corner - inset);
 }
 
@@ -188,7 +192,7 @@ export function PopIn(props: {
   const m = createMotion({ enter: popIn(props.side) });
   return (
     <View
-      {...platformMaterial("overlay")}
+      {...surface("overlay").platformProps}
       class={props.class}
       style={[
         props.style ?? null,

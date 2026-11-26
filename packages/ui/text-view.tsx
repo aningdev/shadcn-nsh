@@ -11,7 +11,7 @@ import {
   type TextViewRef,
 } from "nsh/base";
 
-import { mergeClasses } from "./lib/class-names";
+import { mergeClasses } from "./lib/utils";
 
 /** A `TextView`'s links (its `classes`): the brand color over a faint
  * underline of it. */

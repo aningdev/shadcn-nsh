@@ -13,7 +13,7 @@ import {
 } from "nsh/base";
 
 import { Action, type ActionProps } from "./button";
-import { createOpenState, type OpenState } from "./lib/open-state";
+import { createOpenState, type OpenState } from "./lib/state";
 
 /**
  * Why an alert's open state changed: pressed open by its trigger, closed with an action chosen

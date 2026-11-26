@@ -1,21 +1,18 @@
 // A toggle: the look (`toggleLook` and its companions), the `Toggle` that wears it, and
-// `ToggleGroup`, a row or column of them on the inset track (`toolbarTrack` in `lib/tool.ts`).
+// `ToggleGroup`, a row or column of them on the inset track (`toolbarTrack` in `lib/surface.tsx`).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
   buttonCorner,
   colors,
+  control,
   controlHeight,
-  focusRing,
-  hovered,
+  feedback,
   iconSize,
   rounded,
-  stateLayer,
-  style as themeStyle,
   terminal,
   font,
   stroke,
-  dimmed,
 } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text } from "nsh";
@@ -26,10 +23,9 @@ import {
   type ToggleProps as BaseToggleProps,
 } from "nsh/base";
 
-import { type Live, read } from "./lib/live-value";
-import { disabledLook, edged, fillOf, outlineEdge, selectedLook } from "./lib/look";
-import { pressSink, pressTransition, touchSlop } from "./lib/press";
-import { toolbarTrack } from "./lib/tool";
+import { pressSink, pressTransition, touchSlop } from "./lib/motion";
+import { toolbarTrack } from "./lib/surface";
+import { type Live, read } from "./lib/utils";
 
 /** A toggle's size: the theme's three heights, `default` the middle (`sm` and `lg` the steps under
  * and over it). */
@@ -69,8 +65,7 @@ export interface ToggleDimensions {
 
 /** The ground a toggle wears while on (`button.selected.face`), as the style that paints it. */
 function onFill(): ViewStyle {
-  const ground = selectedLook().face;
-  return ground === null ? {} : { borderColor: "transparent", ...fillOf(ground) };
+  return { borderColor: "transparent", ...control("button").selected.style };
 }
 
 /** The tier the theme measures at: a pointer's compact padding, a touch screen's roomier one. */
@@ -139,10 +134,10 @@ const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "defa
  * text, its corners a quarter of its side; a hit slop makes a touch target
  * 44 points. Off, a default toggle is bare and an `outline` sits on a
  * field's edge; on (`pressedStyle`), it takes the chosen ground
- * (`button.selected.face`, the accent unless a theme says otherwise) and its ink
- * (`button.selected.ink`), a fill that stands off its surface in both appearances,
+ * (`control("button").selected.style`, the accent unless a theme says otherwise) and its ink
+ * (`control("button").selected.ink`), a fill that stands off its surface in both appearances,
  * further than the hover's whisper of the text color. Pressed it sinks to 92% (none with reduced motion). Keyboard
- * focus: `focusRing(1)`. Disabled: 50%, no hover or press. Pair it with
+ * focus: `feedback.focusRing(1)`. Disabled: dimmed, no hover or press. Pair it with
  * `toggleLabel` for a label and `toggleGlyph` for an icon: muted while
  * off, the text's color while on.
  */
@@ -153,8 +148,8 @@ export function toggleLook(o?: ToggleLookOptions) {
       const dims = dimensions(o);
       const on = !!read(o?.on);
       const disabled = !!read(o?.disabled);
-      const off = disabled ? disabledLook() : null;
-      const split = off !== null && off.face !== null;
+      const off = disabled ? feedback.disabled : null;
+      const split = off !== null && off.replaceFace;
       return {
         // The terminal sizes it to its label, which it never breaks: a
         // track too narrow for its tools wraps them instead.
@@ -169,16 +164,19 @@ export function toggleLook(o?: ToggleLookOptions) {
         ...rounded(buttonCorner(read(o?.size) ?? "default")),
         borderWidth: stroke.control,
         ...(outline
-          ? { borderColor: edged(outlineEdge()), backgroundColor: "transparent" }
+          ? { borderColor: control("button").outlineEdge, backgroundColor: "transparent" }
           : { borderColor: "transparent" }),
         ...(on && !split ? onFill() : {}),
-        ...(split && off.face !== null
+        ...(off !== null && split
           ? on
-            ? fillOf(off.face)
+            ? off.style
             : outline
               ? {
                   backgroundColor: "transparent",
-                  borderColor: off.edge === null ? colors.border : edged(off.edge),
+                  borderColor:
+                    typeof off.style.borderColor === "string"
+                      ? off.style.borderColor
+                      : colors.border,
                   boxShadow: "none",
                 }
               : { backgroundColor: "transparent", borderColor: "transparent", boxShadow: "none" }
@@ -192,26 +190,26 @@ export function toggleLook(o?: ToggleLookOptions) {
     },
     get hoverStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
-      if (themeStyle().state.overlay.hover > 0) {
-        return read(o?.on) ? hovered("primary-foreground") : hovered();
+      if (feedback.hoverOverlay > 0) {
+        return read(o?.on) ? feedback.hoverStyle("primary-foreground") : feedback.hoverStyle();
       }
-      return read(o?.on) ? undefined : hovered();
+      return read(o?.on) ? undefined : feedback.hoverStyle();
     },
     get activeStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
-      if (themeStyle().state.overlay.pressed > 0) {
-        return {
-          ...stateLayer("pressed", read(o?.on) ? "primary-foreground" : "foreground"),
-          ...sink(0.92),
-        };
+      if (feedback.pressOverlay > 0) {
+        return feedback.press(read(o?.on) ? "accent" : "surface", {
+          scale: 0.92,
+          ink: read(o?.on) ? "primary-foreground" : "foreground",
+        }).activeStyle;
       }
       return sink(0.92);
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing(1);
+      return feedback.focusRing(1);
     },
     get disabledStyle(): ViewStyle {
-      return disabledLook().face === null ? { opacity: dimmed.disabled } : {};
+      return feedback.disabled.replaceFace ? {} : { opacity: feedback.disabled.contentOpacity };
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).side);
@@ -221,11 +219,10 @@ export function toggleLook(o?: ToggleLookOptions) {
 
 /** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
 const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
-  if (read(disabled)) {
-    const ink = disabledLook().ink;
-    if (ink !== null) return ink;
-  }
-  return read(pressed) ? (selectedLook().ink ?? colors.foreground) : colors.mutedForeground;
+  if (read(disabled)) return feedback.disabled.ink;
+  return read(pressed)
+    ? control("button").selected.ink || colors.foreground
+    : colors.mutedForeground;
 };
 
 /** The label of a `toggleLook` of the same options: the theme's `body` type role (`sm` `detail`, `lg` `label`), medium weight, muted while off. */

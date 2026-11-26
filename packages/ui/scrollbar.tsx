@@ -1,7 +1,7 @@
 // Scrollbar: `scrollbarTheme` and the `Scrollbar` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { dimmed, motion } from "@shadcn-nsh/theme";
+import { feedback, motion } from "@shadcn-nsh/theme";
 import { platform, reduceMotion, split } from "nsh";
 import {
   Scrollbar as BaseScrollbar,
@@ -9,8 +9,8 @@ import {
   type ScrollbarTheme,
 } from "nsh/base";
 
-import { joinClass } from "./lib/class-names";
 import { cssMotion } from "./lib/motion";
+import { joinClass } from "./lib/utils";
 
 /** Whether the screen is a finger's, which takes a thinner bar and its smaller inset. */
 const touch = !platform.desktop;
@@ -32,14 +32,14 @@ const thumbMotion = () => ({
   ...cssMotion(motion.fast),
 });
 
-/** The thumb's fill: the muted foreground at `state.rest-opacity`, so it sits quiet over the rows,
- * rising to `state.pressed-opacity` while the pointer is over it or it is dragged, which is the
+/** The thumb's fill: the muted foreground at `feedback.passive.restOpacity`, so it sits quiet over
+ * the rows, rising to `feedback.passive.pressedOpacity` while the pointer is over it or it is dragged, which is the
  * step an engaged control's content takes: every theme darkens it. Built in the class string
  * because a hover is the classes' (`hover:`), read on each render, so a theme with other opacities
  * repaints, and a role, so a switch of appearance recolours it. */
 const thumbFill = (): string => {
-  const rest = Math.round(dimmed.rest * 100);
-  const engaged = Math.round(dimmed.pressed * 100);
+  const rest = Math.round(feedback.passive.restOpacity * 100);
+  const engaged = Math.round(feedback.passive.pressedOpacity * 100);
   return `bg-muted-foreground/${rest} hover:bg-muted-foreground/${engaged} active:bg-muted-foreground/${engaged}`;
 };
 

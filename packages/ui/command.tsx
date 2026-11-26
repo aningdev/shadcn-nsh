@@ -1,7 +1,7 @@
 // Command: palette parts (`commandClasses`, `CommandRow`) and the `Command` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, rounded, terminal, font } from "@shadcn-nsh/theme";
+import { colors, control, rounded, terminal, font } from "@shadcn-nsh/theme";
 import { Check, Search, type IconNode } from "lucide";
 import type { InputStyle, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -15,11 +15,10 @@ import {
 } from "nsh/base";
 
 import { Kbd } from "./kbd";
-import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
-import { listItemHighlightClass } from "./lib/look";
 import { itemRadius, itemSpacing, listPadding, rowVerticalPad } from "./lib/popup";
 import { controlSize } from "./lib/surface";
+import { joinClass } from "./lib/utils";
 
 const desktop = platform.desktop;
 
@@ -64,7 +63,7 @@ export const commandClasses = {
   get item(): string {
     return (
       "group transition-colors duration-100 motion-reduce:transition-none " +
-      `hover:bg-hover ${listItemHighlightClass(false)} active:opacity-70 disabled:opacity-50`
+      `hover:bg-accent ${control("list").highlightClass(false)} active:opacity-70 disabled:opacity-50`
     );
   },
 };

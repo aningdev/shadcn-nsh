@@ -3,27 +3,24 @@
 
 import {
   colors,
-  finish,
-  focusRing,
-  reactive,
-  style,
-  tier,
+  control,
+  feedback,
+  font,
+  metrics,
+  rounded,
+  shape,
+  stroke,
+  surface,
+  surfaceBorderWidth,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
-  rounded,
-  type ControlMetrics,
-  font,
-  shape,
-  stroke,
-  dimmed,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
-import { computed, platform, Text, token, View, windowSize } from "nsh";
+import { computed, platform, Text, View, windowSize } from "nsh";
 
-import { type Live, read } from "./live-value";
-import { edged, surfaceBorderWidth, wellEdge } from "./look";
+import { type Live, read } from "./utils";
 
 const pointer = platform.desktop;
 
@@ -35,27 +32,32 @@ const pointer = platform.desktop;
  * its three heights, the rest its `dimension.size.density`; read from the
  * theme in use, so a theme switch redraws what reads them.
  */
-export const density = reactive<{
-  title: number;
-  note: number;
-  body: number;
-  row: number;
-  pad: number;
-  gap: number;
-}>(["title", "note", "body", "row", "pad", "gap"], () => {
-  const { dimension } = style();
-  return {
-    title: font.size("title"),
-    note: font.size("detail"),
-    body: font.size("body"),
-    row: dimension.size.height[tier].lg,
-    ...dimension.size.density[tier],
-  };
-});
+export const density = {
+  get title() {
+    return font.size("title");
+  },
+  get note() {
+    return font.size("detail");
+  },
+  get body() {
+    return font.size("body");
+  },
+  get row() {
+    return metrics.height.lg;
+  },
+  get pad() {
+    return metrics.density.pad;
+  },
+  get gap() {
+    return metrics.density.gap;
+  },
+};
 
 /** One tier's sizes of a list of controls (see `controlSize` for what each is). */
-interface ControlSizeSet extends ControlMetrics {
+interface ControlSizeSet {
   row: number;
+  padding: number;
+  gap: number;
   label: number;
   detail: number;
   control: number;
@@ -93,26 +95,38 @@ const terminalSizes: ControlSizeSet = {
  * theme in use (the terminal's are the grid's), so a theme switch redraws
  * what reads them.
  */
-export const controlSize = reactive<ControlSizeSet>(
-  ["row", "padding", "gap", "label", "detail", "control", "check", "tabs", "line", "clear"],
-  () => {
-    if (terminal) return terminalSizes;
-    const { dimension } = style();
-    const { height } = dimension.size;
-    const icons = dimension.icon;
-    return {
-      row: height[tier].lg,
-      line: height[tier].lg,
-      tabs: height[tier].lg,
-      control: icons[tier].md,
-      clear: icons[tier].md,
-      check: icons[tier].sm,
-      ...dimension.size.control[tier],
-      label: font.size("label"),
-      detail: font.size("detail"),
-    };
+export const controlSize = {
+  get row() {
+    return terminal ? terminalSizes.row : metrics.height.lg;
   },
-);
+  get padding() {
+    return terminal ? terminalSizes.padding : metrics.control.padding;
+  },
+  get gap() {
+    return terminal ? terminalSizes.gap : metrics.control.gap;
+  },
+  get label() {
+    return terminal ? terminalSizes.label : font.size("label");
+  },
+  get detail() {
+    return terminal ? terminalSizes.detail : font.size("detail");
+  },
+  get control() {
+    return terminal ? terminalSizes.control : metrics.icon.md;
+  },
+  get check() {
+    return terminal ? terminalSizes.check : metrics.icon.sm;
+  },
+  get tabs() {
+    return terminal ? terminalSizes.tabs : metrics.height.lg;
+  },
+  get line() {
+    return terminal ? terminalSizes.line : metrics.height.lg;
+  },
+  get clear() {
+    return terminal ? terminalSizes.clear : metrics.icon.md;
+  },
+};
 
 /** Options of `sectionSurface`. */
 export interface SectionSurfaceOptions {
@@ -138,12 +152,13 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
       paddingHorizontal: 2 * TERMINAL_COLUMN - 1,
     };
   }
+  const card = surface("card");
   return {
-    backgroundColor: finish.card.backgroundColor,
+    backgroundColor: card.style.backgroundColor,
     ...rounded(shape.container),
-    borderWidth: surfaceBorderWidth(finish.card.borderColor),
-    borderColor: finish.card.borderColor,
-    boxShadow: finish.card.boxShadow,
+    borderWidth: surfaceBorderWidth(card.style.borderColor as string | undefined),
+    borderColor: card.style.borderColor,
+    boxShadow: card.style.boxShadow,
     ...(o?.padded ? { padding: density.pad } : {}),
   };
 }
@@ -155,13 +170,14 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
  * ground alone marks it).
  */
 export function insetSurface(): ViewStyle {
-  const edge = edged(wellEdge());
+  const edge = control("well").edge ?? undefined;
+  const inset = surface("inset");
   return {
-    backgroundColor: colors.inset,
+    backgroundColor: inset.style.backgroundColor,
     borderWidth: surfaceBorderWidth(edge),
     borderColor: edge,
     ...rounded(shape.control),
-    boxShadow: finish.inset.boxShadow,
+    boxShadow: inset.style.boxShadow,
   };
 }
 
@@ -283,16 +299,16 @@ export function listRow(o?: ListRowOptions): ListRowLook {
       };
     },
     get hoverStyle(): ViewStyle | undefined {
-      return read(o?.disabled) ? undefined : { backgroundColor: token("accent") };
+      return read(o?.disabled) ? undefined : surface("accent").style;
     },
     get activeStyle(): ViewStyle {
-      return { opacity: dimmed.pressed };
+      return { opacity: feedback.passive.pressedOpacity };
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
   };
 }
@@ -386,4 +402,30 @@ export function RowLabel(props: {
       </If>
     </View>
   );
+}
+
+/** Options of `toolbarTrack`. */
+export interface ToolbarTrackOptions {
+  /** A column of tools (a `Toolbar`'s `axis="vertical"`). */
+  vertical?: boolean;
+}
+
+/**
+ * The inset track a toolbar or a `ToggleGroup` sits in: its tools in a row
+ * (a column when `vertical`) 2 points apart, 3 points inside its edge, on
+ * the inset with a hairline edge. A terminal sets each tool as its label
+ * two columns apart and wraps a row too narrow for them.
+ */
+export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
+  return {
+    flexDirection: o?.vertical ? "column" : "row",
+    alignItems: o?.vertical && terminal ? "flex-start" : "center",
+    gap: terminal ? TERMINAL_GAP : 2,
+    flexWrap: terminal && !o?.vertical ? "wrap" : undefined,
+    padding: 3,
+    ...rounded(shape.control),
+    borderWidth: stroke.control,
+    borderColor: colors.line,
+    backgroundColor: surface("inset").style.backgroundColor,
+  };
 }

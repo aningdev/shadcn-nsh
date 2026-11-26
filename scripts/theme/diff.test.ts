@@ -1,6 +1,8 @@
+/**
+ * Unit tests for Theme v5 diff classifier and contract gate (`scripts/theme/diff.ts`).
+ */
 import { describe, expect, test } from "bun:test";
 
-import { themeScope } from "../port/affected";
 import {
   classifyChanges,
   contractMoves,
@@ -9,235 +11,111 @@ import {
   flatten,
   gateVerdict,
   keyKind,
-  type ContractSource,
-  type Flat,
-  type ThemeChange,
   type ThemeDiff,
 } from "./diff";
 
-const theme = {
+const sampleTheme = (
+  overrides: { light?: Record<string, string>; theme?: Record<string, string> } = {},
+) => ({
+  name: "sample",
   cssVars: {
     theme: {
-      background: "oklch(1 0 0)",
-      primary: "oklch(0.2 0 0)",
-      radius: "0.625rem",
+      radius: "8px",
+      "radius-control": "8px",
+      "radius-container": "12px",
+      "radius-modal": "16px",
+      scrim: "oklch(0 0 0 / 0.45)",
+      media: "oklch(0.1 0 0)",
+      "on-media": "oklch(0.98 0 0)",
+      ...overrides.theme,
     },
-    light: {},
-    dark: {},
+    light: {
+      background: "oklch(1 0 0)",
+      primary: "oklch(0.5 0.2 150)",
+      brand: "var(--primary)",
+      ...overrides.light,
+    },
+    dark: {
+      background: "oklch(0.15 0 0)",
+      primary: "oklch(0.7 0.2 150)",
+      brand: "var(--primary)",
+    },
   },
-};
-
-const flat = (entries: [string, string][]): Flat => new Map(entries);
-
-describe("keyKind", () => {
-  test("a colour role is a colour; a dimension token sharing the prefix is a value", () => {
-    expect(keyKind("color.background", theme)).toBe("colour");
-    expect(keyKind("color.radius", theme)).toBe("value");
-  });
-
-  test("a finish field is a colour only when it paints one", () => {
-    expect(keyKind("finish.card.background", theme)).toBe("colour");
-    expect(keyKind("finish.card.gradient", theme)).toBe("colour");
-    expect(keyKind("finish.card.shadow", theme)).toBe("value");
-    expect(keyKind("dimension.control.md", theme)).toBe("value");
-  });
 });
 
 describe("flatten", () => {
-  test("resolves a var, a token reference and a relative colour in both appearances", () => {
-    const css = {
-      cssVars: {
-        theme: { card: "oklch(1 0 0)" },
-        light: { background: "oklch(0.5 0 0)", foreground: "oklch(0 0 0)" },
-        dark: { background: "oklch(0.2 0 0)" },
+  test("resolves var() and {token} references in both theme.json and semantics", () => {
+    const flat = flatten(
+      sampleTheme(),
+      {
+        surfaces: { card: { background: "{primary}" } },
+        metrics: { height: { md: 32 } },
       },
-    };
-    const semantics = {
-      finishes: {
-        shared: { menu: { background: "{card}", borderColor: "oklch(from {card} l c h / 0.8)" } },
-        light: {},
-        dark: {},
-      },
-      dimension: { control: { md: "32px" } },
-    };
-
-    const light = flatten(css, semantics, "light");
-    expect(light.get("color.background")).toBe("oklch(0.5 0 0)");
-    expect(light.get("finish.menu.background")).toBe("oklch(1 0 0)");
-    expect(light.get("finish.menu.borderColor")).toBe("alpha(oklch(1 0 0), 0.8)");
-    expect(light.get("dimension.control.md")).toBe("32px");
-
-    expect(flatten(css, semantics, "dark").get("color.background")).toBe("oklch(0.2 0 0)");
+      "light",
+    );
+    expect(flat.get("color.background")).toBe("oklch(1 0 0)");
+    expect(flat.get("color.brand")).toBe("oklch(0.5 0.2 150)");
+    expect(flat.get("color.radius")).toBe("8px");
+    expect(flat.get("surfaces.card.background")).toBe("oklch(0.5 0.2 150)");
+    expect(flat.get("metrics.height.md")).toBe("32");
   });
 });
 
-describe("classifyChanges", () => {
-  test("a changed colour, an unchanged value and an added key", () => {
-    const before = flat([
-      ["color.primary", "oklch(0.2 0 0)"],
-      ["dimension.control.md", "32px"],
-    ]);
-    const after = flat([
-      ["color.primary", "oklch(0.4 0 0)"],
-      ["dimension.control.md", "32px"],
-      ["color.background", "oklch(1 0 0)"],
-    ]);
-    const changes = classifyChanges(before, after, theme);
-    expect(changes).toEqual([
-      { key: "color.primary", kind: "colour", before: "oklch(0.2 0 0)", after: "oklch(0.4 0 0)" },
-      { key: "color.background", kind: "contract", after: "oklch(1 0 0)" },
-    ]);
+describe("keyKind and classifyChanges", () => {
+  test("distinguishes colours vs radii/metric values", () => {
+    const theme = sampleTheme();
+    expect(keyKind("color.background", theme)).toBe("colour");
+    expect(keyKind("color.scrim", theme)).toBe("colour");
+    expect(keyKind("color.radius", theme)).toBe("value");
+    expect(keyKind("surfaces.card.background", theme)).toBe("colour");
+    expect(keyKind("surfaces.card.borderTop", theme)).toBe("colour");
+    expect(keyKind("metrics.height.md", theme)).toBe("value");
   });
 
-  test("a changed dimension is a value", () => {
-    const before = flat([["dimension.control.md", "32px"]]);
-    const after = flat([["dimension.control.md", "36px"]]);
-    expect(classifyChanges(before, after, theme)).toEqual([
-      { key: "dimension.control.md", kind: "value", before: "32px", after: "36px" },
-    ]);
+  test("marks added or removed keys as contract changes", () => {
+    const t = sampleTheme();
+    const a = flatten(t, undefined, "light");
+    const b = flatten(
+      sampleTheme({ light: { background: "oklch(0.98 0 0)", extra: "oklch(0.6 0 0)" } }),
+      undefined,
+      "light",
+    );
+    const changes = classifyChanges(a, b, t);
+    expect(changes.find((c) => c.key === "color.background")?.kind).toBe("colour");
+    expect(changes.find((c) => c.key === "color.extra")?.kind).toBe("contract");
   });
 });
 
-describe("contractSources", () => {
-  test("the base tokens, the theme package's code, the material allow-lists and the build", () => {
-    const sources = contractSources([
-      "packages/theme/tokens/base/color.tokens.json",
+describe("contractSources and gateVerdict", () => {
+  test("flags core Theme v5 contract files and token exporter", () => {
+    const hits = contractSources([
+      "packages/theme/schema.ts",
       "packages/theme/theme.ts",
       "packages/theme/materials.ts",
-      "scripts/theme/material.ts",
-      "scripts/tokens/build.ts",
-      "packages/theme/themes/shadcn/theme.json",
-      "packages/theme/README.md",
+      "packages/theme/themes/nsh-gallery/index.ts",
+      "scripts/tokens/export.ts",
+      "packages/theme/themes/apple/index.ts",
     ]);
-    expect(sources.map(({ file }) => file)).toEqual([
-      "packages/theme/tokens/base/color.tokens.json",
+    expect(hits.map((h) => h.file)).toEqual([
+      "packages/theme/schema.ts",
       "packages/theme/theme.ts",
       "packages/theme/materials.ts",
-      "scripts/theme/material.ts",
-      "scripts/tokens/build.ts",
-    ]);
-  });
-});
-
-describe("themeScope", () => {
-  const pool = ["shadcn", "solid-glass", "apple", "material", "winui"];
-
-  test("a colour alone moves no page, and names the value checks", () => {
-    const scope = themeScope({ shadcn: ["colour"] }, [], pool);
-    expect(scope.ids).toBe("none");
-    expect(scope.themes).toEqual([]);
-    expect(scope.why.join(" ")).toContain("theme:diff");
-  });
-
-  test("a value moves every page in the themes that carry it", () => {
-    expect(themeScope({ shadcn: ["value"], apple: ["colour"] }, [], pool)).toEqual({
-      ids: "all",
-      themes: ["shadcn"],
-      why: ["shadcn: a dimension, type, shadow, material, state, motion or opacity changed"],
-    });
-  });
-
-  test("a value in a theme the pass does not draw moves nothing", () => {
-    const scope = themeScope({ "nsh-gallery": ["value"] }, [], pool);
-    expect(scope.ids).toBe("none");
-    expect(scope.themes).toEqual([]);
-    expect(scope.why.join(" ")).toContain("nsh-gallery");
-  });
-
-  test("an added or removed key moves every page in every theme", () => {
-    const scope = themeScope({ material: ["contract"] }, [], pool);
-    expect(scope.ids).toBe("all");
-    expect(scope.themes).toEqual(pool);
-    expect(scope.why.join(" ")).toContain("keys added or removed in material");
-  });
-
-  test("a changed source outside the values moves every page in every theme", () => {
-    const scope = themeScope({}, ["packages/theme/theme.ts (the theme's reader)"], pool);
-    expect(scope.ids).toBe("all");
-    expect(scope.themes).toEqual(pool);
-  });
-
-  test("nothing changed moves nothing", () => {
-    expect(themeScope({}, [], pool)).toEqual({ ids: "none", themes: [], why: [] });
-  });
-});
-
-describe("contractMoves", () => {
-  const diffOf = (
-    themes: Record<string, ThemeChange> = {},
-    contract: ContractSource[] = [],
-  ): ThemeDiff => ({ ref: "origin/main", base: "abcdef", files: [], contract, themes });
-
-  test("a shared source and an added key, named by theme and mode", () => {
-    const theme: ThemeChange = {
-      id: "nsh-gallery",
-      kinds: ["contract"],
-      modes: {
-        light: [{ key: "color.fill", kind: "contract", after: "oklch(1 0 0)" }],
-        dark: [{ key: "color.mark", kind: "contract" }],
-      },
-    };
-    expect(
-      contractMoves(
-        diffOf({ "nsh-gallery": theme }, [
-          { file: "packages/theme/theme.ts", why: "the theme's reader" },
-        ]),
-      ),
-    ).toEqual([
-      { where: "packages/theme/theme.ts", what: "the theme's reader" },
-      { where: "nsh-gallery light", what: "+ color.fill" },
-      { where: "nsh-gallery dark", what: "- color.mark" },
+      "packages/theme/themes/nsh-gallery/index.ts",
+      "scripts/tokens/export.ts",
     ]);
   });
 
-  test("a value change alone is not the contract", () => {
-    const theme: ThemeChange = {
-      id: "apple",
-      kinds: ["value"],
-      modes: {
-        light: [{ key: "color.primary", kind: "value", before: "a", after: "b" }],
-        dark: [],
-      },
+  test("requires an ADR file when contract changes are present", () => {
+    const diff: ThemeDiff = {
+      ref: "origin/main",
+      base: "abc",
+      files: ["packages/theme/schema.ts"],
+      contract: [{ file: "packages/theme/schema.ts", why: "contract" }],
+      themes: {},
     };
-    expect(contractMoves(diffOf({ apple: theme }))).toEqual([]);
-  });
-});
-
-describe("gateVerdict", () => {
-  const diffOf = (themes: Record<string, ThemeChange> = {}): ThemeDiff => ({
-    ref: "origin/main",
-    base: "abcdef",
-    files: [],
-    contract: [],
-    themes,
-  });
-  const added: ThemeChange = {
-    id: "nsh-gallery",
-    kinds: ["contract"],
-    modes: { light: [{ key: "color.fill", kind: "contract" }], dark: [] },
-  };
-
-  test("only the decision records a branch adds count", () => {
-    expect(
-      decisionRecords([
-        "docs/decisions/0005-fill-layer.md",
-        "docs/decisions/README.md",
-        "docs/specs/native-themes.md",
-        "packages/ui/button.tsx",
-      ]),
-    ).toEqual(["docs/decisions/0005-fill-layer.md"]);
-  });
-
-  test("nothing moved passes", () => {
-    expect(gateVerdict(diffOf(), []).passed).toBe(true);
-  });
-
-  test("a key without a record fails, with the record passes", () => {
-    expect(gateVerdict(diffOf({ "nsh-gallery": added }), []).passed).toBe(false);
-    expect(
-      gateVerdict(diffOf({ "nsh-gallery": added }), [
-        "docs/decisions/0004-theme-contract-freeze.md",
-      ]).passed,
-    ).toBe(true);
+    expect(contractMoves(diff)).toHaveLength(1);
+    expect(decisionRecords(["docs/decisions/0020-theme-v5.md"])).toHaveLength(1);
+    expect(gateVerdict(diff, []).passed).toBe(false);
+    expect(gateVerdict(diff, ["docs/decisions/0020-theme-v5.md"]).passed).toBe(true);
   });
 });

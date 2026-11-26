@@ -6,9 +6,9 @@ import type { IconNode } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
 
-import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
 import { density } from "./lib/surface";
+import { AsText } from "./lib/utils";
 
 /** A marker's layout: `default`, an inline line; `border`, the same line with a rule under it
  * (a row boundary); `separator`, the label between two rules (a date, a section break). */

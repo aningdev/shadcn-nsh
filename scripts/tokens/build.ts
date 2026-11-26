@@ -1,83 +1,43 @@
 /**
- * Build & check compiled theme runtime files (`theme.json`, `semantics.json`) and standalone
- * per-appearance DTCG 2025.10 Format files (`light.tokens.json`, `dark.tokens.json`) for every
- * theme whose source of truth lives in `packages/theme/tokens/themes/<id>/theme.resolver.json`.
+ * One-way compiler from Theme v5 TS specs (`packages/theme/themes/`) to:
+ * - `theme.json` (NSH runtime 25-key CSS vars + optional `font-sans`/`font-mono`)
+ * - `{light,dark}.tokens.json` (W3C DTCG 2025.10 exports)
+ * - `DESIGN.md` (Google Labs DESIGN.md spec)
  *
- *   bun run tokens:build          # write compiled files for every DTCG-sourced theme
- *   bun run tokens:build --check  # fail if any committed compiled file differs from its source
+ *   bun run tokens:build
+ *   bun run tokens:build --check
  */
 import fs from "node:fs";
 import path from "node:path";
 
-import { BASE_SLOTS } from "../theme/slots";
-import { slotsDoc } from "../theme/slots-dtcg";
-import { BUILD_ROOT_THEME } from "../theme/tokens";
-import { compileAppearanceTokensJson, compileSemanticsJson, compileThemeJson } from "./compile";
-import { compileDesignMd } from "./design-md";
-import { FORMAT_SCHEMA_URL } from "./types";
+import type { AppTheme } from "../../packages/theme/schema";
+import { ALL_THEMES, BUILD_ROOT_THEME } from "../../packages/theme/themes";
+import { exportDesignMd, exportDtcgTokens } from "./export";
 
 const defaultRepoRoot = path.resolve(import.meta.dir, "..", "..");
 
 export interface CompiledTarget {
-  /** Path relative to the repo root. */
-  relPath: string;
-  /** Canonical formatted JSON output (`\n`-terminated). */
-  content: string;
+  readonly relPath: string;
+  readonly content: string;
 }
 
-/** Discover every theme directory under `packages/theme/tokens/themes/` that has a resolver. */
-export function discoverDtcgThemes(repoRoot = defaultRepoRoot): string[] {
-  const themesDir = path.join(repoRoot, "packages/theme/tokens/themes");
-  if (!fs.existsSync(themesDir)) return [];
-  return fs
-    .readdirSync(themesDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .filter((name) => fs.existsSync(path.join(themesDir, name, "theme.resolver.json")))
-    .sort();
-}
-
-/**
- * The base slot source: the values every theme inherits (`scripts/theme/slots.ts` is their source, so
- * a slot is added in one place and lands in a DTCG file the same build writes).
- */
-export const BASE_SLOTS_PATH = "packages/theme/tokens/base/slots.tokens.json";
-
-/** The base slot group, as the DTCG source file every theme's resolver reads first. */
-export function baseSlotsTarget(): CompiledTarget {
-  return {
-    relPath: BASE_SLOTS_PATH,
-    content: `${JSON.stringify({ $schema: FORMAT_SCHEMA_URL, ...slotsDoc(BASE_SLOTS) }, null, 2)}\n`,
-  };
-}
-
-/** Compile a DTCG-sourced theme into all of its shipped runtime and DTCG targets. */
-export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): CompiledTarget[] {
-  const resolverPath = path.join(
-    repoRoot,
-    "packages/theme/tokens/themes",
-    themeId,
-    "theme.resolver.json",
-  );
-  const themeText = `${JSON.stringify(compileThemeJson(resolverPath), null, 2)}\n`;
-  const semanticsText = `${JSON.stringify(compileSemanticsJson(resolverPath), null, 2)}\n`;
-  const lightTokensText = `${JSON.stringify(compileAppearanceTokensJson(resolverPath, "light"), null, 2)}\n`;
-  const darkTokensText = `${JSON.stringify(compileAppearanceTokensJson(resolverPath, "dark"), null, 2)}\n`;
-  const designMdText = compileDesignMd(resolverPath);
+/** Build compiled targets for one `AppTheme`. */
+export function buildThemeTargets(entry: AppTheme): CompiledTarget[] {
+  const themeText = `${JSON.stringify(entry.theme, null, 2)}\n`;
+  const lightTokensText = `${JSON.stringify(exportDtcgTokens(entry, "light"), null, 2)}\n`;
+  const darkTokensText = `${JSON.stringify(exportDtcgTokens(entry, "dark"), null, 2)}\n`;
+  const designMdText = exportDesignMd(entry);
 
   const targets: CompiledTarget[] = [
-    { relPath: `packages/theme/themes/${themeId}/theme.json`, content: themeText },
-    { relPath: `packages/theme/themes/${themeId}/semantics.json`, content: semanticsText },
-    { relPath: `packages/theme/themes/${themeId}/light.tokens.json`, content: lightTokensText },
-    { relPath: `packages/theme/themes/${themeId}/dark.tokens.json`, content: darkTokensText },
-    { relPath: `packages/theme/themes/${themeId}/DESIGN.md`, content: designMdText },
+    { relPath: `packages/theme/themes/${entry.id}/theme.json`, content: themeText },
+    { relPath: `packages/theme/themes/${entry.id}/light.tokens.json`, content: lightTokensText },
+    { relPath: `packages/theme/themes/${entry.id}/dark.tokens.json`, content: darkTokensText },
+    { relPath: `packages/theme/themes/${entry.id}/DESIGN.md`, content: designMdText },
   ];
 
-  // The build root's pair lands at `packages/theme/` too: the artifacts an app installs.
-  if (themeId === BUILD_ROOT_THEME) {
+  if (entry.id === BUILD_ROOT_THEME) {
     targets.unshift(
       { relPath: "packages/theme/theme.json", content: themeText },
-      { relPath: "packages/theme/semantics.json", content: semanticsText },
       { relPath: "packages/theme/light.tokens.json", content: lightTokensText },
       { relPath: "packages/theme/dark.tokens.json", content: darkTokensText },
       { relPath: "packages/theme/DESIGN.md", content: designMdText },
@@ -87,23 +47,20 @@ export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): 
   return targets;
 }
 
-/** Every file the sources build: the base slot group, then each theme's runtime and DTCG outputs. */
-export function* allTargets(repoRoot = defaultRepoRoot): Generator<CompiledTarget> {
-  yield baseSlotsTarget();
-  for (const themeId of discoverDtcgThemes(repoRoot)) yield* buildThemeTargets(themeId, repoRoot);
+export function* allTargets(): Generator<CompiledTarget> {
+  for (const theme of ALL_THEMES) yield* buildThemeTargets(theme);
 }
 
-/** Write compiled runtime files for every DTCG-sourced theme. */
 export function buildAllTokens(repoRoot = defaultRepoRoot): {
   themes: string[];
   written: string[];
   unchanged: string[];
 } {
-  const themes = discoverDtcgThemes(repoRoot);
+  const themes = ALL_THEMES.map((t) => t.id);
   const written: string[] = [];
   const unchanged: string[] = [];
 
-  for (const target of allTargets(repoRoot)) {
+  for (const target of allTargets()) {
     const abs = path.join(repoRoot, target.relPath);
     const existing = fs.existsSync(abs) ? fs.readFileSync(abs, "utf8") : null;
     if (existing === target.content) {
@@ -118,22 +75,21 @@ export function buildAllTokens(repoRoot = defaultRepoRoot): {
   return { themes, written, unchanged };
 }
 
-/** Check every DTCG-sourced theme's compiled files match what its source builds. */
 export function checkAllTokens(repoRoot = defaultRepoRoot): {
   themes: string[];
   problems: string[];
 } {
-  const themes = discoverDtcgThemes(repoRoot);
+  const themes = ALL_THEMES.map((t) => t.id);
   const problems: string[] = [];
 
-  for (const target of allTargets(repoRoot)) {
+  for (const target of allTargets()) {
     const abs = path.join(repoRoot, target.relPath);
     if (!fs.existsSync(abs)) {
       problems.push(`${target.relPath} is missing`);
       continue;
     }
     if (fs.readFileSync(abs, "utf8") !== target.content) {
-      problems.push(`${target.relPath} differs from what packages/theme/tokens builds`);
+      problems.push(`${target.relPath} differs from what packages/theme/themes builds`);
     }
   }
 
@@ -146,17 +102,15 @@ if (import.meta.main) {
     const { themes, problems } = checkAllTokens();
     if (problems.length > 0) {
       for (const p of problems) console.error(`tokens:build: ${p}`);
-      console.error("tokens:build: run `bun run tokens:build` to regenerate compiled theme files");
+      console.error("tokens:build: run `bun run tokens:build` to regenerate theme artifacts");
       process.exit(1);
     }
-    console.log(
-      `tokens:build ok — ${themes.length} theme${themes.length === 1 ? "" : "s"} (${themes.join(", ")}) match DTCG sources`,
-    );
+    console.log(`tokens:build ok — ${themes.length} themes (${themes.join(", ")}) up to date`);
   } else {
     const { themes, written, unchanged } = buildAllTokens();
     for (const file of written) console.log(`tokens:build: wrote ${file}`);
     console.log(
-      `tokens:build ok — ${themes.length} theme${themes.length === 1 ? "" : "s"} (${themes.join(", ")}), ${written.length} written, ${unchanged.length} unchanged`,
+      `tokens:build ok — ${themes.length} themes (${themes.join(", ")}), ${written.length} written, ${unchanged.length} unchanged`,
     );
   }
 }

@@ -1,6 +1,6 @@
 // A toolbar: the hairline (`toolbarRule`), the inset track (`Toolbar`), groups (`ToolbarGroup`),
 // foldable tools (`ToolbarButton`), and the overflow menu (`ToolbarOverflow`).
-// The track (`toolbarTrack`) is shared with `ToggleGroup` and lives in `lib/tool.ts`.
+// The track (`toolbarTrack`) is shared with `ToggleGroup` and lives in `lib/surface.tsx`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { colors, stroke, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
@@ -17,8 +17,8 @@ import {
 } from "nsh/base";
 
 import { Icon } from "./lib/icons";
-import { createOpenState } from "./lib/open-state";
-import { toolbarTrack } from "./lib/tool";
+import { createOpenState } from "./lib/state";
+import { toolbarTrack } from "./lib/surface";
 import {
   Menu,
   MenuContent,

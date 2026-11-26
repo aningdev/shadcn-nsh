@@ -1,4 +1,4 @@
-import { colors, finish, type Tone, toneColor, toneTint, shape } from "@shadcn-nsh/theme";
+import { surface, colors, type Tone, toneColor, toneTint, shape } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Plus } from "lucide";
 // Lists: the official gallery's Lists scene (`references/nsh/examples/gallery/demos/Lists.tsx`)
 // in five tabs — a grid of columns with viewability, sticky contact sections, a chat, two lists
@@ -30,7 +30,7 @@ import { Api, Choice, Meter } from "./primitives-shared";
 
 const desk = platform.desktop;
 
-const tones: Tone[] = ["accent", "info", "warn", "up", "destructive"];
+const tones: Tone[] = ["accent", "info", "warning", "success", "destructive"];
 
 /** A small action for a list's header: a raised pill. */
 function Action(props: { label: string; icon?: "down"; onPress: () => void }) {
@@ -84,7 +84,7 @@ function Grid(props: { width: () => number }) {
         <View
           style={{
             backgroundColor: colors.card,
-            ...finish.card,
+            ...surface("card").style,
             borderRadius: shape.container,
             borderCurve: "continuous",
             borderWidth: 1,
@@ -143,8 +143,8 @@ function Grid(props: { width: () => number }) {
             borderCurve: "continuous",
             borderWidth: 1,
             borderColor: item().id === 60 ? toneColor("accent") : colors.border,
-            backgroundColor: colors.raised,
-            ...finish.raised,
+            backgroundColor: colors.surface,
+            ...surface("raised").style,
             padding: 12,
             justifyContent: "space-between",
           }}
@@ -367,7 +367,7 @@ function Chat() {
           paddingVertical: 8,
         }}
       >
-        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.up }} />
+        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.success }} />
         <Text style={{ flex: 1, fontSize: 13, color: colors.mutedForeground }}>Release room</Text>
         <Text style={{ fontSize: 13, color: colors.faint, fontVariant: ["tabular-nums"] }}>
           {messages().length} messages, {older()} older pages
@@ -465,10 +465,10 @@ function EntryRow(props: { entry: Entry; label: string }) {
         paddingHorizontal: 14,
         borderRadius: shape.control,
         borderCurve: "continuous",
-        backgroundColor: colors.raised,
+        backgroundColor: colors.surface,
         borderWidth: 1,
         borderColor: colors.border,
-        ...finish.raised,
+        ...surface("raised").style,
       }}
     >
       <View
@@ -789,8 +789,8 @@ function More() {
                       height: 124,
                       borderRadius: shape.control,
                       borderCurve: "continuous",
-                      backgroundColor: colors.raised,
-                      ...finish.raised,
+                      backgroundColor: colors.surface,
+                      ...surface("raised").style,
                       borderWidth: 1,
                       borderColor: colors.border,
                       padding: 12,
@@ -870,7 +870,7 @@ function More() {
               style={{
                 borderRadius: shape.control,
                 backgroundColor: colors.card,
-                ...finish.card,
+                ...surface("card").style,
                 borderWidth: 1,
                 borderColor: colors.line,
               }}
@@ -889,8 +889,8 @@ function More() {
                       height: 40,
                       borderRadius: 12,
                       borderCurve: "continuous",
-                      backgroundColor: colors.raised,
-                      ...finish.raised,
+                      backgroundColor: colors.surface,
+                      ...surface("raised").style,
                       borderWidth: 1,
                       borderColor: colors.border,
                       alignItems: "center",

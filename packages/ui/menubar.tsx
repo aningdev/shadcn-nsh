@@ -3,22 +3,22 @@
 
 import {
   colors,
+  control,
   controlHeight,
-  focusRing,
+  feedback,
   rounded,
   font,
   shape,
-  dimmed,
+  surfaceBorderWidth,
   tier,
 } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
 
-import { AsText } from "./lib/as-text";
-import { fillOf, menubarFace, surfaceBorderWidth } from "./lib/look";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import type { PopupSide } from "./lib/popup";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
+import { AsText } from "./lib/utils";
 import { menuHighlight, menuItemSize, menuPopup } from "./menu";
 
 const pointer = tier === "pointer";
@@ -55,8 +55,8 @@ export interface MenubarLook {
 export function menubarLook(): MenubarLook {
   return {
     get bar(): ViewStyle {
-      const face = menubarFace();
-      if (face === null) {
+      const bar = control("menubar");
+      if (bar.bar === "none") {
         return {
           flexDirection: "row",
           alignItems: "center",
@@ -67,8 +67,9 @@ export function menubarLook(): MenubarLook {
           borderWidth: 0,
         };
       }
-      const layer = fillOf(face);
-      const bw = surfaceBorderWidth(layer.borderColor as string | undefined);
+      const layer = bar.style;
+      const edge = typeof layer.borderColor === "string" ? layer.borderColor : undefined;
+      const bw = surfaceBorderWidth(edge);
       return {
         flexDirection: "row",
         alignItems: "center",
@@ -78,9 +79,9 @@ export function menubarLook(): MenubarLook {
         paddingHorizontal: barPadding,
         ...rounded(shape.control),
         borderWidth: bw,
-        borderColor: layer.borderColor as string | undefined,
-        backgroundColor: layer.backgroundColor as string | undefined,
-        boxShadow: layer.boxShadow as string | undefined,
+        borderColor: edge,
+        backgroundColor: layer.backgroundColor,
+        boxShadow: layer.boxShadow,
       };
     },
     get trigger(): ViewStyle {
@@ -120,16 +121,16 @@ export function menubarTriggerLook() {
       return menuHighlight();
     },
     get activeStyle(): ViewStyle {
-      return { opacity: dimmed.pressed };
+      return { opacity: feedback.passive.pressedOpacity };
     },
     get expandedStyle(): ViewStyle {
       return menuHighlight();
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
   };
 }

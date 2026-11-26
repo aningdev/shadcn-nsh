@@ -52,7 +52,7 @@ const AVERAGES = [
   {
     n: 20,
     get color() {
-      return colors.warn;
+      return colors.warning;
     },
   },
 ];
@@ -67,7 +67,7 @@ const GUTTER = 54;
 
 /** A drawn row: a candle, how it moved, its volume in each tone, and its averages. */
 type Row = Candle & {
-  dir: "up" | "down";
+  dir: "success" | "destructive";
   uv: number;
   dv: number;
   ma5: number;
@@ -125,7 +125,7 @@ function average(data: Candle[], i: number, n: number) {
 function rowsOf(data: Candle[]): Row[] {
   return data.map((c, i) => ({
     ...c,
-    dir: c.c >= c.o ? "up" : "down",
+    dir: c.c >= c.o ? "success" : "destructive",
     uv: c.c >= c.o ? c.v : 0,
     dv: c.c >= c.o ? 0 : c.v,
     ma5: average(data, i, 5),
@@ -214,7 +214,7 @@ export function Chart(props: { stock: Stock; height?: number }) {
         </If>
         <If when={intraday()}>
           <Legend color={tone(at())} label="Price" value={p(at().c)} />
-          <Legend color={colors.warn} label="Avg" value={p(at().a)} />
+          <Legend color={colors.warning} label="Avg" value={p(at().a)} />
           <Legend color={colors.faint} label="Vol" value={compact(at().v)} />
         </If>
       </View>
@@ -226,7 +226,7 @@ export function Chart(props: { stock: Stock; height?: number }) {
           colorScale={{
             type: "ordinal",
             domain: ["up", "down"],
-            range: [colors.up, colors.destructive],
+            range: [colors.success, colors.destructive],
           }}
           appearGeneration={period()}
           motion={motion}
@@ -285,7 +285,7 @@ export function Chart(props: { stock: Stock; height?: number }) {
               hoverDotStyle={plotHoverDot(tone(last()))}
             />
             {/* The day's average price. */}
-            <Line y="a" style={{ stroke: colors.warn, strokeWidth: 1.1 }} />
+            <Line y="a" style={{ stroke: colors.warning, strokeWidth: 1.1 }} />
           </If>
           <PlotAxis
             placement="right"
@@ -307,7 +307,7 @@ export function Chart(props: { stock: Stock; height?: number }) {
               fontSize: 10.5,
               fontFamily: "monospace",
               fontWeight: "600",
-              color: colors.inset,
+              color: colors.muted,
               fontVariant: ["tabular-nums"],
             }}
           />
@@ -330,7 +330,7 @@ export function Chart(props: { stock: Stock; height?: number }) {
             cornerRadii={{ topLeft: 1, topRight: 1 }}
             stagger={0.6}
             inactiveOpacity={0.3}
-            style={{ fill: alpha(colors.up, 0.45) }}
+            style={{ fill: alpha(colors.success, 0.45) }}
           />
           <Bar
             value="dv"

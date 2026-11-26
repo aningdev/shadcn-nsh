@@ -60,9 +60,9 @@ const PEOPLE: {
 }[] = [
   { value: "ada", title: "Ada Lovelace", role: "Engineering", tone: "accent" },
   { value: "grace", title: "Grace Hopper", role: "Platform", tone: "info" },
-  { value: "alan", title: "Alan Turing", role: "Research", tone: "warn" },
-  { value: "katherine", title: "Katherine Johnson", role: "Design", tone: "up" },
-  { value: "margaret", title: "Margaret Hamilton", role: "Mobile", tone: "down" },
+  { value: "alan", title: "Alan Turing", role: "Research", tone: "warning" },
+  { value: "katherine", title: "Katherine Johnson", role: "Design", tone: "success" },
+  { value: "margaret", title: "Margaret Hamilton", role: "Mobile", tone: "destructive" },
   { value: "linus", title: "Linus Torvalds", role: "Kernel", tone: "destructive" },
   {
     value: "dennis",
@@ -76,12 +76,12 @@ const MAX_PEOPLE = 4;
 
 const LABELS: { value: string; title: string; tone: Tone }[] = [
   { value: "bug", title: "bug", tone: "destructive" },
-  { value: "feature", title: "feature", tone: "up" },
+  { value: "feature", title: "feature", tone: "success" },
   { value: "docs", title: "docs", tone: "info" },
-  { value: "performance", title: "performance", tone: "warn" },
+  { value: "performance", title: "performance", tone: "warning" },
   { value: "good-first-issue", title: "good first issue", tone: "accent" },
 ];
-const NEW_TONES: Tone[] = ["accent", "info", "up", "warn", "down"];
+const NEW_TONES: Tone[] = ["accent", "info", "success", "warning", "destructive"];
 const NEW_LABEL = "new:";
 
 const MOD = platform.desktop ? "⌘" : "Ctrl";
@@ -310,7 +310,7 @@ export function ComboboxDemo() {
                       name={person(value).title}
                       tone={person(value).tone}
                       size={16}
-                      on={colors.field}
+                      on={colors.card}
                     />
                   }
                 />
@@ -328,7 +328,7 @@ export function ComboboxDemo() {
                       name={item.title}
                       tone={person(item.value).tone}
                       size={platform.desktop ? 24 : 30}
-                      on={colors.raised}
+                      on={colors.surface}
                     />
                   }
                   note={person(item.value).role}
@@ -347,7 +347,7 @@ export function ComboboxDemo() {
         </Row>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8 }}>
           <Badge
-            tone={full() ? "warn" : "neutral"}
+            tone={full() ? "warning" : "neutral"}
           >{`${people().length} of ${MAX_PEOPLE} assigned`}</Badge>
           <Text style={{ flex: 1, fontSize: controlSize.detail, color: colors.mutedForeground }}>
             {full() ? "Take one off to add another" : "Faces, chips and a search over the team"}
@@ -481,7 +481,7 @@ export function ComboboxDemo() {
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 10 }}>
           {chosen() ? (
             <>
-              <Icon icon={Check} size={14} tint={toneColor("up")} />
+              <Icon icon={Check} size={14} tint={toneColor("success")} />
               <Text style={{ fontSize: controlSize.detail, color: colors.mutedForeground }}>
                 {`Ran “${chosen()!.title}”`}
               </Text>

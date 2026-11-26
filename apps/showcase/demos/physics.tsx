@@ -2,7 +2,7 @@
 // A card dragged on the UI thread and released into a spring, a decay or the nearest corner,
 // with a canvas tether drawn from the same animated values. The segmented choices, the badge
 // and the figures are this library's; the spring, the decay and the pan are `nsh`'s.
-import { colors, finish, terminal, tints, shape } from "@shadcn-nsh/theme";
+import { surface, colors, terminal, tints, shape } from "@shadcn-nsh/theme";
 import { Hand, Orbit } from "lucide";
 import type { AnimatedValue, PanEvent } from "nsh";
 import { Canvas, computed, createAnimatedValue, Scroll, signal, Text, View, windowSize } from "nsh";
@@ -134,8 +134,8 @@ export function PhysicsDemo() {
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
-          backgroundColor: colors.inset,
-          ...finish.inset,
+          backgroundColor: colors.muted,
+          ...surface("inset").style,
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -228,7 +228,7 @@ export function PhysicsDemo() {
               inputRange: [0, 1],
               outputRange: [colors.primary, colors.info],
             }),
-            boxShadow: finish.accent.boxShadow,
+            boxShadow: surface("accent").style.boxShadow,
             transform: [
               ...follow,
               { scale: pressed.interpolate({ inputRange: [0, 1], outputRange: [1, 1.12] }) },
@@ -246,7 +246,7 @@ export function PhysicsDemo() {
       <View
         style={{
           backgroundColor: colors.card,
-          ...finish.card,
+          ...surface("card").style,
           borderRadius: shape.container,
           borderCurve: "continuous",
           borderWidth: 1,
@@ -275,7 +275,7 @@ export function PhysicsDemo() {
             width="34%"
             label="Speed"
             value={`${speed()} pt/s`}
-            tone={speed() > 1500 ? "warn" : undefined}
+            tone={speed() > 1500 ? "warning" : undefined}
           />
           <Stat
             width="36%"

@@ -197,9 +197,9 @@ const COUNTRIES: {
 const STATUSES: { value: string; title: string; tone: Tone | "faint" }[] = [
   { value: "backlog", title: "Backlog", tone: "faint" },
   { value: "todo", title: "To do", tone: "neutral" },
-  { value: "progress", title: "In progress", tone: "warn" },
+  { value: "progress", title: "In progress", tone: "warning" },
   { value: "review", title: "In review", tone: "info" },
-  { value: "done", title: "Done", tone: "up" },
+  { value: "done", title: "Done", tone: "success" },
   { value: "canceled", title: "Canceled", tone: "destructive" },
 ];
 const statusColor = (value: string | null) => {
@@ -681,7 +681,7 @@ export function SelectDemo() {
           </Button>
           {filed() > 0 ? (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-              <Icon icon={Check} size={14} tint={toneColor("up")} />
+              <Icon icon={Check} size={14} tint={toneColor("success")} />
               <Text
                 style={{
                   fontSize: controlSize.detail,

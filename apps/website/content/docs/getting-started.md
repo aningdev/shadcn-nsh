@@ -40,7 +40,7 @@ npx shadcn-nsh@latest add button --overwrite
 
 - A file the app does not have is written; one identical to the registry's is skipped.
 - A file the app changed is kept and reported: `kept components/ui/button.tsx, differs (run diff)`. `--overwrite` replaces it and prints the change: `overwrite components/ui/button.tsx (+2 -1)`.
-- `theme.json` and `lib/ui/semantics.json` are merged by key: the app keeps its colors and semantic values and gains any tokens, style keys, or finishes it lacks. Customized theme files stay as they are.
+- `theme.json` is merged by key: the app keeps its colors and gains any role it lacks. Customized theme values stay as they are.
 - `--all` adds every `registry:ui` item, dependencies included.
 - `--dry-run` writes nothing — not even `nsh-ui.json` or the theme — and prints what it would write.
 
@@ -85,7 +85,7 @@ bun run shadcn-nsh -- add button -c apps/web --registry "http://127.0.0.1:4173/{
 
 ## Theme
 
-The look is `theme.json` (base tokens: colors, three `radius-*` layer lengths, and fonts) and `lib/ui/semantics.json` (cross-platform semantics: style groups and `shared` + sparse `light`/`dark` finishes); `lib/ui/theme.ts` reads both. `init` installs them and points each `nsh.json` at `theme.json`; in a monorepo they live under `packages/ui`. See [Theme](./theme) for the keys, and [Customizing](./customizing) to change colors, one control's look, or its shell after copying.
+The look is `theme.json` (the roles of both appearances, three `radius-*` layer lengths, the fixed `scrim` / `media` / `on-media` values and any font families) plus `lib/ui/theme.ts`, the readers; the deeper half of a theme — surfaces, feedback, controls, metrics — is the spec in `lib/ui/themes/<id>.ts`, which `add theme-<id>` installs. `init` installs them and points each `nsh.json` at `theme.json`; in a monorepo they live under `packages/ui`. See [Theme](./theme) for the keys, and [Customizing](./customizing) to change colors, one control's look, or its shell after copying.
 
 ## Behavior, previews and native tests
 

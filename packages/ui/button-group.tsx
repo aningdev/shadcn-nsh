@@ -3,6 +3,7 @@
 import {
   buttonCorner,
   colors,
+  control,
   controlHeight,
   font,
   rounded,
@@ -13,11 +14,10 @@ import {
   terminal,
 } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, split, token, View } from "nsh";
+import { context, split, View } from "nsh";
 
-import { AsText } from "./lib/as-text";
-import { edged, outlineEdge } from "./lib/look";
 import { density } from "./lib/surface";
+import { AsText } from "./lib/utils";
 import { Separator } from "./separator";
 
 /** Which way a group runs: `horizontal`, a row (the default); `vertical`, a column. */
@@ -102,9 +102,9 @@ export function buttonGroupLook(): ButtonGroupLook {
       gap: 8,
       minHeight: terminal ? TERMINAL_ROW : controlHeight.md,
       paddingHorizontal: terminal ? TERMINAL_COLUMN : 12,
-      backgroundColor: token("muted"),
+      backgroundColor: colors.muted,
       borderWidth: terminal ? 0 : stroke.control,
-      borderColor: edged(outlineEdge()),
+      borderColor: control("button").outlineEdge,
       // The group's word sits between its buttons: one control, one corner.
       ...rounded(terminal ? 0 : buttonCorner("default")),
     }),
@@ -115,7 +115,7 @@ export function buttonGroupLook(): ButtonGroupLook {
       numberOfLines: 1,
     }),
     separator: (): ViewStyle => ({
-      backgroundColor: edged(outlineEdge()),
+      backgroundColor: control("button").outlineEdge,
     }),
   };
 }

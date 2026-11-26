@@ -49,8 +49,8 @@ export function flash(quote: () => Quote): () => AnimatedNode {
       outputRange: [
         alpha(colors.destructive, 0.34),
         alpha(colors.destructive, 0),
-        alpha(colors.up, 0),
-        alpha(colors.up, 0.34),
+        alpha(colors.success, 0),
+        alpha(colors.success, 0.34),
       ],
     });
 }

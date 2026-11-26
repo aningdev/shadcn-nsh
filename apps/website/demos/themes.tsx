@@ -58,9 +58,9 @@ function App() {
           <Badge>neutral</Badge>
           <Badge tone="accent">accent</Badge>
           <Badge tone="info">info</Badge>
-          <Badge tone="warn">warn</Badge>
+          <Badge tone="warning">warn</Badge>
           <Badge tone="destructive">danger</Badge>
-          <Badge tone="up">up</Badge>
+          <Badge tone="success">up</Badge>
         </DemoSection>
       </DemoCard>
 

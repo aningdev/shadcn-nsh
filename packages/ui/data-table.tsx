@@ -9,7 +9,7 @@ import {
   type DataTableProps as BaseDataTableProps,
 } from "nsh/base";
 
-import { mergeClasses } from "./lib/class-names";
+import { mergeClasses } from "./lib/utils";
 
 /** The chosen column's arrow: both directions print it at the same strength, so only the arrow's turn says which. */
 const sortChosen = "text-muted-foreground opacity-60 selected:text-foreground selected:opacity-100";

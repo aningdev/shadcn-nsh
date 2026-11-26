@@ -71,7 +71,7 @@ function SafeAreaDiagram() {
         borderCurve: "continuous",
         borderWidth: 1.5,
         borderColor: colors.border,
-        backgroundColor: colors.inset,
+        backgroundColor: colors.muted,
         overflow: "hidden",
       }}
     >
@@ -86,7 +86,7 @@ function SafeAreaDiagram() {
           borderStyle: "dashed",
         }}
       />
-      <View style={{ height: band(keyboardFrame().height), backgroundColor: tints.warn }} />
+      <View style={{ height: band(keyboardFrame().height), backgroundColor: tints.warning }} />
       <View style={{ height: band(safeArea().bottom), backgroundColor: tints.info }} />
     </View>
   );
@@ -103,7 +103,7 @@ function Environment() {
     <Card
       title="Environment"
       subtitle="Follows the window, insets and keyboard"
-      right={<Badge tone="up">Live</Badge>}
+      right={<Badge tone="success">Live</Badge>}
     >
       <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
         <SafeAreaDiagram />
@@ -121,7 +121,7 @@ function Environment() {
           label="Keyboard"
           value={String(Math.round(keyboardFrame().height))}
           unit="pt"
-          tone={keyboardFrame().height > 0 ? "warn" : undefined}
+          tone={keyboardFrame().height > 0 ? "warning" : undefined}
           width="50%"
         />
         <Stat label="Font scale" value={`${fontScale().toFixed(2)}×`} width="50%" />
@@ -142,9 +142,9 @@ function Environment() {
       <View style={{ height: 1, backgroundColor: colors.line }} />
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
         <Legend color={tints.info} label="Safe area" />
-        <Legend color={tints.warn} label="Keyboard" />
+        <Legend color={tints.warning} label="Keyboard" />
         <View style={{ flex: 1 }} />
-        <Badge variant="outline" tone={isDark() ? "info" : "warn"}>
+        <Badge variant="outline" tone={isDark() ? "info" : "warning"}>
           {isDark() ? "Dark scheme" : "Light scheme"}
         </Badge>
       </View>
@@ -275,7 +275,7 @@ function Dialogs() {
       <ActionRow
         first
         icon={Check}
-        tint={colors.up}
+        tint={colors.success}
         title="Alert"
         detail="One button"
         onPress={() => {
@@ -283,7 +283,7 @@ function Dialogs() {
             title: "Saved",
             description: "Your changes were saved.",
             actions: [{ label: "OK", id: "ok" }],
-          }).then(() => show("OK", "up"));
+          }).then(() => show("OK", "success"));
         }}
       />
       <ActionRow
@@ -350,7 +350,7 @@ function Dialogs() {
       />
       <ActionRow
         icon={Sparkles}
-        tint={colors.warn}
+        tint={colors.warning}
         title="Toast"
         detail="nsh/base's Toast, every platform"
         onPress={() =>
@@ -394,11 +394,12 @@ function ShareSheet() {
   const report = async (share: () => Promise<ShareResult>, unavailable = "No share sheet here") => {
     try {
       const { action, target } = await share();
-      if (action === "shared") show(target ? `Shared to ${targetName(target)}` : "Shared", "up");
+      if (action === "shared")
+        show(target ? `Shared to ${targetName(target)}` : "Shared", "success");
       else show("Dismissed", "neutral");
     } catch (error) {
       const failure = error as Error & { code?: string };
-      if (failure.code === "ERR_FEATURE_UNAVAILABLE_ON_PLATFORM") show(unavailable, "warn");
+      if (failure.code === "ERR_FEATURE_UNAVAILABLE_ON_PLATFORM") show(unavailable, "warning");
       else show(failure.message, "destructive");
     }
   };
@@ -412,7 +413,7 @@ function ShareSheet() {
       subtitle="Share.show · the system's own sheet"
       right={
         <If when={available() !== null}>
-          <Badge tone={available() ? "up" : undefined}>
+          <Badge tone={available() ? "success" : undefined}>
             {available() ? "Available" : "Not on this platform"}
           </Badge>
         </If>
@@ -422,7 +423,7 @@ function ShareSheet() {
         style={{
           borderRadius: 10,
           borderCurve: "continuous",
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
           paddingHorizontal: 12,
         }}
       >
@@ -474,7 +475,7 @@ function ShareSheet() {
         >
           <ActionRow
             icon={TextIcon}
-            tint={colors.warn}
+            tint={colors.warning}
             title="Only text"
             detail="A line of text, no link"
             onPress={() =>
@@ -562,7 +563,7 @@ function FramesAndTimers() {
             value={running() ? String(fps()) : "–"}
             unit="fps"
             note={running() ? "live" : "stopped"}
-            tone={running() ? "up" : "neutral"}
+            tone={running() ? "success" : "neutral"}
           />
         </View>
         <View style={{ width: 1, backgroundColor: colors.line }} />
@@ -588,7 +589,12 @@ function FramesAndTimers() {
           label="Share of 120 fps"
           note={running() ? `${Math.round((fps() / 120) * 100)}%` : "–"}
         />
-        <Progress height={8} tone="up" value={(running() ? fps() / 120 : 0) * 100} marker={50} />
+        <Progress
+          height={8}
+          tone="success"
+          value={(running() ? fps() / 120 : 0) * 100}
+          marker={50}
+        />
       </View>
       <Button variant="secondary" onPress={toggle}>
         {running() ? "Stop counting frames" : "Count frames"}
@@ -653,7 +659,7 @@ function Shortcuts() {
         </Each>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-        <Badge tone={on() ? "up" : undefined}>{on() ? "Light on" : "Light off"}</Badge>
+        <Badge tone={on() ? "success" : undefined}>{on() ? "Light on" : "Light off"}</Badge>
         <View style={{ flex: 1 }}>
           <Caption label={`Counted ${count()}`} note={last() || "–"} />
         </View>
@@ -723,7 +729,7 @@ function Network() {
     if (result.loading()) return { text: "loading…", tone: "neutral" };
     if (result.error()) return { text: String(result.error()), tone: "destructive" };
     const done = result();
-    return done ? { text: done.line, tone: done.ok ? "up" : "destructive" } : null;
+    return done ? { text: done.line, tone: done.ok ? "success" : "destructive" } : null;
   };
   const load = () => (asked() ? result.refetch() : asked.set(true));
   return (

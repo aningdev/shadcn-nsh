@@ -144,7 +144,7 @@ function App() {
             class="flex-row items-center gap-3"
             groupClass="flex-row gap-1.5"
             tone={() =>
-              status() === "wrong" ? "destructive" : status() === "right" ? "up" : undefined
+              status() === "wrong" ? "destructive" : status() === "right" ? "success" : undefined
             }
           />
           <Text style={{ fontSize: 12, color: message().color }}>{message().text}</Text>
@@ -171,7 +171,7 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Tone">
-          {(["neutral", "accent", "info", "warn", "destructive", "up", "down"] as const).map(
+          {(["neutral", "accent", "info", "warning", "success", "destructive"] as const).map(
             (tone) => (
               <OtpInput
                 length={1}

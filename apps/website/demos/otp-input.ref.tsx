@@ -13,7 +13,7 @@ import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split } from "./stage";
 
 const CODE = "246810";
-const TONES = ["neutral", "accent", "info", "warn", "destructive", "up", "down"] as const;
+const TONES = ["neutral", "accent", "info", "warning", "success", "destructive"] as const;
 type Tone = (typeof TONES)[number];
 
 /** A switch with its label, the row reversed so the track trails. */
@@ -67,11 +67,11 @@ function App() {
     ({
       typing: { text: `${code().length} of 6 digits`, color: colors.mutedForeground },
       checking: { text: "Checking…", color: colors.mutedForeground },
-      right: { text: "Verified", color: colors.up },
+      right: { text: "Verified", color: colors.success },
       wrong: { text: "That code is not right", color: colors.destructive },
     })[status()];
   const verdict = (): Tone | undefined =>
-    status() === "wrong" ? "destructive" : status() === "right" ? "up" : undefined;
+    status() === "wrong" ? "destructive" : status() === "right" ? "success" : undefined;
 
   return (
     <DemoPage title="OTP Input">

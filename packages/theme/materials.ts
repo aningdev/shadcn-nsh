@@ -2,12 +2,9 @@
 // none of them. From the NSH design guides; yours to change.
 import type { BackdropMaterial, WindowsBackdropMaterial } from "nsh";
 
-/**
- * The materials a finish can ask for: the platform's own glass or acrylic. `null` in
- * `Finish.material` asks nothing of the platform — the layer draws only itself — which is every
- * layer of the themes that imitate no platform.
- */
-export type FinishMaterial = "glass" | "acrylic";
+import type { FinishMaterial } from "./schema";
+
+export type { FinishMaterial };
 
 /**
  * What one material asks of NSH, and what it guarantees a platform that has none of it.

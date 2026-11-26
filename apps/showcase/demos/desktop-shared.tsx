@@ -50,7 +50,7 @@ export function DeskCard(props: {
               borderCurve: "continuous",
               borderWidth: 1,
               borderColor: colors.line,
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,

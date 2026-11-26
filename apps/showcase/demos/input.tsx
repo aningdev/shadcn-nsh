@@ -37,7 +37,7 @@ const rules: { label: string; test: (p: string) => boolean }[] = [
 ];
 const strength = (p: string) => (p.length === 0 ? 0 : rules.filter((r) => r.test(p)).length);
 const strengthLabel = ["Empty", "Weak", "Fair", "Good", "Strong"];
-const strengthTones: Tone[] = ["neutral", "destructive", "warn", "info", "up"];
+const strengthTones: Tone[] = ["neutral", "destructive", "warning", "info", "success"];
 
 const places = [
   { name: "Amsterdam", country: "Netherlands", zone: "UTC+1" },
@@ -94,9 +94,12 @@ function Field(props: {
         <Text style={{ fontSize: 12, color: tone }}>{props.error}</Text>
       ) : props.hint || props.valid ? (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          {props.valid ? <Icon icon={Check} size={12} tint={toneColor("up")} /> : null}
+          {props.valid ? <Icon icon={Check} size={12} tint={toneColor("success")} /> : null}
           <Text
-            style={{ fontSize: 12, color: props.valid ? toneColor("up") : colors.mutedForeground }}
+            style={{
+              fontSize: 12,
+              color: props.valid ? toneColor("success") : colors.mutedForeground,
+            }}
           >
             {props.hint ?? "Looks good"}
           </Text>
@@ -160,7 +163,7 @@ function Strength(props: { password: string }) {
                   style={{ width: 14, height: 14, alignItems: "center", justifyContent: "center" }}
                 >
                   {met ? (
-                    <Icon icon={Check} size={13} tint={toneColor("up")} />
+                    <Icon icon={Check} size={13} tint={toneColor("success")} />
                   ) : (
                     <View
                       style={{
@@ -398,7 +401,7 @@ export function InputDemo() {
                   flex: 1,
                   fontSize: controlSize.detail,
                   color: created()!.includes("created")
-                    ? toneColor("up")
+                    ? toneColor("success")
                     : toneColor("destructive"),
                 }}
               >
@@ -661,7 +664,7 @@ export function InputDemo() {
                       borderRadius: 6,
                       borderWidth: 1,
                       borderColor: colors.border,
-                      backgroundColor: colors.raised,
+                      backgroundColor: colors.surface,
                     }}
                   >
                     <Text style={{ fontSize: 12, color: colors.foreground }}>
@@ -724,7 +727,7 @@ export function InputDemo() {
                 notes().length >= 280
                   ? toneColor("destructive")
                   : notes().length > 250
-                    ? toneColor("warn")
+                    ? toneColor("warning")
                     : undefined
               }
             >
@@ -742,7 +745,7 @@ export function InputDemo() {
             <Progress
               value={(notes().length / 280) * 100}
               tone={
-                notes().length >= 280 ? "destructive" : notes().length > 250 ? "warn" : "accent"
+                notes().length >= 280 ? "destructive" : notes().length > 250 ? "warning" : "accent"
               }
             />
           </View>

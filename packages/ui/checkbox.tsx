@@ -3,40 +3,30 @@
 
 import {
   colors,
-  finish,
+  control,
+  feedback,
   focusRing,
   follow,
   press,
   rounded,
-  stateLayerColor,
+  stroke,
+  surface,
   terminal,
   TERMINAL_ROW,
-  tier,
-  shape,
-  stroke,
   tints,
-  dimmed,
 } from "@shadcn-nsh/theme";
+import type { ResolvedControlMap } from "@shadcn-nsh/theme";
 import { Check, Minus, type IconNode } from "lucide";
 import type { AnimatedValue, JSX, ViewStyle } from "nsh";
 import { reduceMotion, split, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
-import { AsText } from "./lib/as-text";
-import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
-import { type Live, read } from "./lib/live-value";
-import {
-  borderClass,
-  choiceBox,
-  choiceLook,
-  type ChoiceLook,
-  type Fill,
-  edged,
-  fillOf,
-} from "./lib/look";
-import { pressSink } from "./lib/press";
-import { controlSize } from "./lib/surface";
+import { pressSink } from "./lib/motion";
+import { AsText, joinClass, type Live, read } from "./lib/utils";
+
+/** A choice control resolved recipe (`control("choice")`). */
+export type ChoiceLook = ResolvedControlMap["choice"];
 
 /** What a checkbox's box shows: a check, a dash (indeterminate) or nothing. */
 export type CheckboxMarkKind = "check" | "dash" | null;
@@ -58,18 +48,21 @@ export interface ChoiceOptions {
 /** A box's or ring's size: `scale` times the page's; one row high in the
  * terminal, where it is a glyph three Cells wide. */
 const dims = (scale = 1) => ({
-  control: Math.round(choiceBox()[tier] * scale),
-  height: terminal ? TERMINAL_ROW : Math.round(choiceBox()[tier] * scale),
-  check: Math.round(controlSize.check * scale),
+  control: Math.round(control("choice").box * scale),
+  height: terminal ? TERMINAL_ROW : Math.round(control("choice").box * scale),
+  check: Math.round(control("choice").mark * scale),
 });
 
-/** The choice's corner in points, at this tier. */
-export const choiceCorner = (look: ChoiceLook): number => look.corner[tier];
+/** The choice resting recipe, read where the control is drawn so it follows `selectTheme`. */
+export const choiceLook = (): ChoiceLook => control("choice");
+
+/** The choice corner in points. */
+export const choiceCorner = (look: ChoiceLook): number => look.corner;
 
 /**
  * The edge's width a choice states: its own points, zero where the theme draws no edge.
  */
-export const choiceEdge = (look: ChoiceLook): number => look.edge?.width ?? 0;
+export const choiceEdge = (look: ChoiceLook): number => look.edgeWidth;
 
 /**
  * The fill of a box or ring that is off, as the theme's `choice.*` slots state it: a face where it
@@ -79,14 +72,11 @@ export const choiceEdge = (look: ChoiceLook): number => look.edge?.width ?? 0;
  */
 export const choiceWell = (o?: { disabled?: boolean; look?: ChoiceLook }): ViewStyle => {
   const look = o?.look ?? choiceLook();
-  const shade = look.shade === null ? "none" : finish[look.shade].boxShadow;
-  const edgeLook =
-    o?.disabled === true && look.edgeDisabled !== null ? look.edgeDisabled : look.edge;
   return {
-    ...(look.face === null ? { backgroundColor: "transparent" } : fillOf(look.face)),
+    backgroundColor: look.face ?? "transparent",
     backgroundImage: "none",
-    borderColor: edged(edgeLook?.fill ?? null),
-    boxShadow: shade,
+    borderColor: (o?.disabled === true ? look.disabledEdgeColor : look.edgeColor) ?? "transparent",
+    boxShadow: look.shadeShadow,
   };
 };
 
@@ -109,7 +99,7 @@ export function ChoiceTarget(props: {
         height: props.target,
         start: (props.innerW - props.target) / 2,
         top: (props.innerH - props.target) / 2,
-        backgroundColor: stateLayerColor("hover", props.checked ? "primary" : "foreground"),
+        backgroundColor: feedback.hoverLayerColor(props.checked ? "primary" : "foreground"),
       }}
     />
   );
@@ -153,21 +143,9 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
    * (`choice.checked.face`, an edge equal to the fill): the fill sits inside the edge, so an edge
    * left in the empty box's colour would ring it. A class, so the indicator's `checked` state drives it. */
   const lit = () => read(o?.lit);
-  const turned = (look: ChoiceLook): boolean =>
-    lit() === undefined &&
-    !read(o?.disabled) &&
-    look.checked?.kind === "color" &&
-    look.checked.alpha === undefined &&
-    look.edge?.fill.kind === "color" &&
-    look.edge.fill.alpha === undefined;
   return {
     get indicatorClass(): string {
-      const look = choiceLook();
-      const sink = press.scale < 1 ? choiceSink : "";
-      if (!turned(look)) return sink;
-      return [sink, borderClass(look.edge!.fill), `checked:${borderClass(look.checked)}`]
-        .filter(Boolean)
-        .join(" ");
+      return press.scale < 1 ? choiceSink : "";
     },
     get indicatorStyle(): ViewStyle {
       const { control: box, height } = dims(o?.scale);
@@ -181,11 +159,9 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
         justifyContent: "center",
         borderWidth: choiceEdge(look),
         ...choiceWell({ look, disabled: !!read(o?.disabled) }),
-        ...(lit() && !read(o?.disabled) && look.checked !== null
+        ...(lit() && !read(o?.disabled) && look.checkedStyle !== null
           ? { borderColor: "transparent" }
-          : turned(look)
-            ? { borderColor: undefined }
-            : {}),
+          : {}),
       };
     },
   };
@@ -205,11 +181,11 @@ export function ChoiceLight(props: {
   on: AnimatedValue;
   radius: number;
   border?: number;
-  /** The face the recipe turns over to (`ChoiceLook.checked`); the accent's where it states none. */
-  fill?: Fill;
+  /** The face the recipe turns over to (`ChoiceLook.checkedStyle`); the accent where it states none. */
+  fill?: ViewStyle | null;
 }) {
   const b = () => props.border ?? stroke.control;
-  const face = () => fillOf(props.fill ?? { kind: "finish", role: "accent" });
+  const face = () => props.fill ?? surface("accent").style;
   return (
     <View
       style={{
@@ -265,7 +241,7 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
         transform: [{ scale: amount.interpolate({ inputRange: [0, 1], outputRange: [0.75, 1] }) }],
       }}
     >
-      <Icon icon={icon} size={d().check} tint={colors.primaryForeground} weight={MARK_WEIGHT} />
+      <Icon icon={icon} size={d().check} tint={surface("accent").ink} weight={MARK_WEIGHT} />
     </View>
   );
   // One view as large as the box inside its border holds the layers: the
@@ -273,21 +249,13 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
   // absolutely made it 0 × 0 and the fill a speck at the box's middle.
   return (
     <View style={{ width: innerW(), height: innerH() }}>
-      {look().halo !== null ? (
-        <ChoiceTarget
-          target={Math.round((look().halo ?? 0) * (props.scale ?? 1))}
-          innerW={innerW()}
-          innerH={innerH()}
-          checked={!!props.mark}
-        />
-      ) : null}
       <ChoiceLight
         on={on}
         // `ChoiceLight` expands over the indicator's border (`top/left/right/bottom: -b`), so it
         // wears the outer box's corner radius rather than subtracting `border`.
         radius={radius()}
         border={border()}
-        fill={look().checked ?? undefined}
+        fill={look().checkedStyle}
       />
       {glyph(check, Check)}
       {glyph(dash, Minus)}
@@ -342,11 +310,11 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
         minWidth: 0,
         padding: 12,
         paddingTop: 14,
-        ...rounded(shape.control),
+        ...rounded(control("choice").corner),
         borderWidth: stroke.control,
         borderColor: on ? colors.brand : colors.border,
-        backgroundColor: on ? tints.brand : colors.raised,
-        boxShadow: on ? "none" : finish.raised.boxShadow,
+        backgroundColor: on ? tints.brand : colors.surface,
+        boxShadow: on ? "none" : surface("raised").style.boxShadow,
         transitionProperty: "transform, border-color, background-color, box-shadow",
         transitionDuration: reduceMotion() ? 0 : 150,
         transitionTimingFunction: "ease-out",
@@ -363,7 +331,7 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
   };
 }
@@ -412,7 +380,7 @@ export function Checkbox(props: CheckboxProps) {
       {...rest}
       class={joinClass("group", props.class)}
       focusVisibleStyle={[focusRing(), props.focusVisibleStyle ?? null]}
-      disabledStyle={props.disabledStyle ?? { opacity: dimmed.disabled }}
+      disabledStyle={props.disabledStyle ?? { opacity: feedback.disabled.contentOpacity }}
       indicatorClass={joinClass(look.indicatorClass, props.indicatorClass)}
       indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
       indicator={

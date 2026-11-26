@@ -1,6 +1,9 @@
-// The theme's roles, finishes, radii, focus and motion, read from `theme.json` and `semantics.json`.
-// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
-
+/**
+ * Theme v5 runtime: unified colors, shapes, metrics, surfaces, feedback, motion, and control recipes
+ * (`docs/decisions/0020-theme-v5.md`).
+ *
+ * Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+ */
 import type {
   AnimatedValue,
   BackdropMaterial,
@@ -24,943 +27,317 @@ import {
   token,
 } from "nsh";
 
+import { materials, type MaterialRecipe } from "./materials";
+import { presetTheme } from "./preset";
 import {
-  type FaceRole,
-  type FinishFieldList,
-  type FinishFieldName,
-  type FinishFields,
-  type FinishOf,
-  type FinishRole,
-} from "./finish-fields";
-import { materials, type FinishMaterial, type MaterialRecipe } from "./materials";
-import semantics from "./semantics.json";
+  EASING_BEZIERS,
+  SHARED_TYPE_SCALE,
+  type AnyColorKey,
+  type AppTheme,
+  type ColorExpr,
+  type CoreColorKey,
+  type ElevationScale,
+  type FaceExpr,
+  type Mode,
+  type ModeOrFlat,
+  type ShadowExpr,
+  type ShadowPart,
+  type SlotCorner,
+  type SlotSize,
+  type SurfaceLayer,
+  type SurfaceRole,
+  type SurfaceSpec,
+  type ThemeSpec,
+  type Tiered,
+  type TieredOrFlat,
+  type TimingSpec,
+  type ToneColorKey,
+  type TypeRole,
+} from "./schema";
 
-/**
- * The Terminal idiom (`nsh`'s internal module, so not a public API): a
- * terminal program leaves out what it cannot draw well (charts,
- * sparklines, decorative icons and art, window chrome), puts on one row
- * what other platforms stack, and spaces in whole rows.
- */
+export type {
+  AnyColorKey,
+  AppTheme,
+  ColorExpr,
+  CoreColorKey,
+  ElevationScale,
+  FaceExpr,
+  Mode,
+  SlotCorner,
+  SlotSize,
+  SurfaceRole,
+  SurfaceSpec,
+  ThemeSpec,
+  Tiered,
+  TimingSpec,
+  ToneColorKey,
+  TypeRole,
+};
+
+/** Terminal idiom metrics (`16x8` character grid points). */
 export const terminal = platform.idiom === "terminal";
-
-/**
- * One row and one column of the terminal grid, in points (a Cell is 16 by 8
- * points): the terminal's line height and its unit of spacing. This
- * library's own, over `nsh`'s internal Cell metrics; everywhere else the
- * grid keeps two columns to a Cell.
- */
 export const TERMINAL_ROW = 16;
 export const TERMINAL_COLUMN = 8;
-
-/** The gap the terminal's layout makes two columns (it makes any smaller
- * gap one): between neighbours that are words, such as icon buttons shown
- * as their labels, so they read apart. */
 export const TERMINAL_GAP = 24;
 
-/** Whether the app shows its dark palette; reactive: reading it subscribes. */
-export const isDark = () => colorScheme() !== "light";
-
-/**
- * The `finishes` block of `semantics.json`: fields shared by both appearances plus sparse light/dark
- * overrides. A role carries exactly the fields `finish-fields.ts` gives it, in every theme.
- */
-export interface SplitFinishes {
-  shared: { [R in FinishRole]: Partial<FinishOf<R>> };
-  light: Partial<{ [R in FinishRole]: Partial<FinishOf<R>> }>;
-  dark: Partial<{ [R in FinishRole]: Partial<FinishOf<R>> }>;
-}
-
-/**
- * What a component reads of a finish (`finish.overlay`): the style keys, spread into a `style`. A
- * finish whose `material` has `apple` also has `glassEffect` (and `glassTintColor`, unless its tint is
- * `null`); otherwise these keys are not there at all. `material` itself is never a style key.
- */
-interface FinishStyleFields {
-  backgroundColor?: string;
-  backgroundImage?: string;
-  boxShadow: string;
-  borderColor?: string;
-  borderTopColor?: string;
-  borderBottomColor?: string;
-  backdropFilter?: string;
-  /** The ink on this finish's surface, read by what draws text over it. */
-  foreground: string;
-  /**
-   * The fill and ink a theme paints instead of this finish's while a filled control is pressed, read
-   * by what draws the press; absent where the theme keeps the finish and dims it.
-   */
-  pressedBackground?: string;
-  pressedForeground?: string;
-  /** How far a filled control dims while it is pressed (`accent` states it; 1: no dimming). */
-  pressedOpacity?: number;
-  /**
-   * A knob's checked state, read by the control that draws the knob while the control is on: absent
-   * where the theme keeps the unchecked value, `checkedGradient` `null` where it paints the knob flat.
-   */
-  checkedBackground?: string;
-  checkedBorderColor?: string;
-  checkedGradient?: string | null;
-  glassEffect?: "regular" | "clear";
-  glassTintColor?: string;
-}
-
-/** The style key one finish field draws with; `never` for the fields read by name (the ink, the elevation). */
-type FinishStyleKey = {
-  background: "backgroundColor";
-  gradient: "backgroundImage";
-  shadow: "boxShadow";
-  "border-color": "borderColor";
-  "border-top-color": "borderTopColor";
-  "border-bottom-color": "borderBottomColor";
-  backdropFilter: "backdropFilter";
-  "pressed-background": "pressedBackground";
-  "pressed-foreground": "pressedForeground";
-  "pressed-opacity": "pressedOpacity";
-  "checked-background": "checkedBackground";
-  "checked-border-color": "checkedBorderColor";
-  "checked-gradient": "checkedGradient";
-  foreground: "foreground";
-  material: "glassEffect" | "glassTintColor";
-  elevation: never;
-};
-
-type FinishStyleKeys<R extends FinishRole> = {
-  [F in FinishFieldList<R>[number]]: FinishStyleKey[F];
-}[FinishFieldList<R>[number]];
-
-export type FinishStyle<R extends FinishRole = FinishRole> = Pick<
-  FinishStyleFields,
-  FinishStyleKeys<R>
->;
-
-/** The finishes' roles: the layers a surface can be (`FinishRole` in `finish-fields.ts`). A control that differs reads its control dimension (`control()`), not a finish. */
-export type { FaceRole, FinishRole };
-
-/** The shadow scale's levels: a control, a card, a floating panel, a dialog. */
-export type ElevationLevel = "sm" | "md" | "lg" | "xl";
-
-/**
- * One appearance's shadow scale, as `semantics.json` writes it: the steps a finish names, plus the
- * one `inset` and the two hard edges (`edge.surface`, `edge.accent`). A part a theme has no value
- * for is `null` — a finish that names it simply does not wear it.
- */
-export interface Elevation {
-  sm: string | null;
-  md: string | null;
-  lg: string | null;
-  xl: string | null;
-  inset: string | null;
-  edge?: { surface: string | null; accent: string | null };
-}
-
-/** What a theme's `semantics.json` holds: its style groups, its split finishes (`shared` + sparse `light`/`dark`) and the shadow scale per appearance. */
-export interface Semantics extends Style {
-  finishes: SplitFinishes;
-  elevation: { light: Elevation; dark: Elevation };
-}
-
-/** A value for each tier: a pointer's (a desktop) and a touch screen's. */
-export interface Tiered<T> {
-  pointer: T;
-  touch: T;
-}
-
-/** One typography role: numeric fontWeight (400..700), letterSpacing in points; sizes live in `SHARED_TYPE_SCALE`. */
-export interface TypographyRole {
-  fontWeight: number;
-  letterSpacing: number;
-}
-
-/** What a control's own spacing reads in one tier: the padding inside its box and the gap beside it. Rows and glyphs come from the height and icon scales, not from here. */
-export interface ControlMetrics {
-  padding: number;
-  gap: number;
-}
-
-/** A page's density in one tier: its padding and its gaps. Rows come from the height scale, a section's corners from `shape.container`. */
-export interface DensitySpacing {
-  pad: number;
-  gap: number;
-}
-
-/** A list's rows in one tier: `inset` from the container's edge to a row's fill, `pad` from the fill's edge to its text. A popup list, a menu and a palette read them. */
-export interface ItemSpacing {
-  inset: number;
-  pad: number;
-}
-
-/** Three steps of one size, small to large. */
-export interface Steps {
-  sm: number;
-  md: number;
-  lg: number;
-}
-
-/** A timing specification as written in `semantics.json`: duration in ms and a named timing curve. */
-export interface TimingSpec {
-  duration: number;
-  timingFunction: string;
-}
-
-/** A resolved timing configuration of `motion`, ready for `animate()` or `follow()`. */
-export interface Timing {
-  duration: number;
-  timingFunction: EasingCurve;
-}
-
-/** A face a slot paints: a color role, a tint, a finish field, nothing, or `keep` as it is. */
-export type SlotFace =
-  | { readonly color: string; readonly alpha?: number }
-  | { readonly tint: string; readonly alpha?: number }
-  | { readonly finish: string; readonly field?: string }
-  | "none"
-  | "keep";
-
-/** A corner a slot cuts: the theme's control radius, container radius, a capsule, or points. */
-export type SlotCorner = number | "control" | "container" | "full";
-
-/** A 2D box size: square points, `[width, height]`, or `"same"` to inherit the resting knob. */
-export type SlotSize = number | readonly number[] | "same";
-
-/** A stroke length: points, `"none"`, or `"control"` for the theme's `stroke.control`. */
-export type SlotLength = number | "none" | "control";
-
-/** An appearance pair: light vs dark. */
-export interface Appearance<T> {
-  readonly light: T;
-  readonly dark: T;
-}
-
-/** One slot's value: flat or varying along tier or appearance. */
-export type Slot<T> = T | Tiered<T> | Appearance<T>;
-
-/** What a theme's `controls` tree holds (`docs/specs/theme-slots.md`, ADR 0019): every theme states every leaf. */
-export interface Controls {
-  button: {
-    corner: { sm: Slot<SlotCorner>; md: Slot<SlotCorner>; lg: Slot<SlotCorner> };
-    selected: { face: Slot<SlotFace>; ink: Slot<SlotFace> };
-    secondary: {
-      face: Slot<SlotFace>;
-      ink: Slot<SlotFace>;
-      edge: Slot<SlotFace>;
-      hover: Slot<SlotFace>;
-    };
-    outline: { edge: Slot<SlotFace> };
-    destructive: { edge: Slot<SlotFace> };
-    shade: Slot<FinishRole | "none">;
-  };
-  badge: { corner: Slot<SlotCorner> };
-  field: {
-    edge: { sides: Slot<boolean>; color: Slot<SlotFace>; bottom: Slot<SlotFace> };
-    corner: { bottom: Slot<SlotCorner> };
-    focus: { line: Slot<boolean>; width: Slot<SlotLength>; color: Slot<SlotFace> };
-    disabled: { face: Slot<SlotFace> };
-  };
-  choice: {
-    size: Slot<number>;
-    box: Slot<number>;
-    corner: Slot<SlotCorner>;
-    face: Slot<SlotFace>;
-    shade: Slot<FinishRole | "none">;
-    edge: { width: Slot<SlotLength>; color: Slot<SlotFace>; disabled: Slot<SlotFace> };
-    checked: { face: Slot<SlotFace> };
-    radio: { checked: { face: Slot<SlotFace>; edge: Slot<SlotFace> } };
-    mark: { size: Slot<number>; hover: Slot<number | "none">; pressed: Slot<number | "none"> };
-    halo: Slot<number | "none">;
-  };
-  switch: {
-    track: Slot<SlotSize>;
-    small: { track: Slot<SlotSize>; knob: Slot<SlotSize> };
-    edge: { off: Slot<SlotLength>; on: Slot<SlotLength>; color: Slot<SlotFace> };
-    knob: {
-      size: Slot<SlotSize>;
-      on: Slot<SlotSize>;
-      hover: Slot<SlotSize>;
-      pressed: Slot<SlotSize>;
-    };
-  };
-  slider: {
-    rail: Slot<number>;
-    band: Slot<number>;
-    face: Slot<SlotFace>;
-    shade: Slot<FinishRole | "none">;
-    edge: { color: Slot<SlotFace>; width: Slot<SlotLength> };
-    knob: {
-      size: Slot<SlotSize>;
-      pressed: Slot<SlotSize>;
-      face: Slot<SlotFace>;
-      edge: Slot<SlotFace>;
-    };
-    mark: { size: Slot<number>; hover: Slot<number>; pressed: Slot<number> };
-    brightens: Slot<boolean>;
-  };
-  progress: {
-    height: Slot<number>;
-    line: Slot<number>;
-    face: Slot<SlotFace>;
-    shade: Slot<FinishRole | "none">;
-    edge: { color: Slot<SlotFace>; width: Slot<SlotLength> };
-  };
-  calendar: { today: { face: Slot<SlotFace>; ink: Slot<SlotFace> } };
-  spinner: { opacity: Slot<number>; spokes: Slot<boolean> };
-  popup: { corner: Slot<SlotCorner> };
-  tooltip: {
-    face: Slot<SlotFace>;
-    ink: Slot<SlotFace>;
-    edge: Slot<SlotFace>;
-    shade: Slot<FinishRole | "none">;
-  };
-  toast: { action: { face: Slot<SlotFace> } };
-  list: { item: { highlight: Slot<SlotFace>; edge: Slot<SlotFace> } };
-  menubar: { bar: Slot<SlotFace> };
-  tabs: { track: { face: Slot<SlotFace>; edge: Slot<SlotFace>; corner: Slot<SlotCorner> } };
-  well: { edge: Slot<SlotFace> };
-  disabled: { face: Slot<SlotFace>; ink: Slot<SlotFace>; edge: Slot<SlotFace> };
-}
-
-/**
- * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
- * the same keys in every theme (`check:theme`). A string that names one of a list (a curve, a
- * timingFunction) or numeric fontWeight is checked by `check:theme` (`scripts/theme/style.ts`).
- * `docs/specs/native-themes.md` §3.2 says what each key is.
- */
-export interface Style {
-  typography: {
-    caption: TypographyRole;
-    detail: TypographyRole;
-    body: TypographyRole;
-    label: TypographyRole;
-    title: TypographyRole;
-    headline: TypographyRole;
-    display: TypographyRole;
-  };
-  /** The typed control slots every theme states (`docs/specs/theme-slots.md`, ADR 0019). */
-  controls: Controls;
-  dimension: {
-    size: {
-      hit: Tiered<number>;
-      density: Tiered<DensitySpacing>;
-      item: Tiered<ItemSpacing>;
-      control: Tiered<ControlMetrics>;
-      height: Tiered<Steps>;
-    };
-    stroke: { hairline: number; control: number };
-    focus: { style: string; width: number; offset: number };
-    icon: Tiered<Steps>;
-  };
-  shape: {
-    curve: string;
-  };
-  state: {
-    "press-scale": number;
-    overlay: { hover: number; pressed: number };
-    /** Opacity of a passive indicator at rest (a scrollbar's thumb), `rest-opacity`. */
-    "rest-opacity": number;
-    "pressed-opacity": number;
-    disabled: { content: number };
-  };
-  motion: {
-    fast: TimingSpec;
-    default: TimingSpec;
-    slow: TimingSpec;
-    /** How fast a hover, a press or a choice comes and goes. */
-    state: TimingSpec;
-  };
-}
-
-/**
- * One theme an app can switch to while it runs (`selectTheme`): the id an
- * app stores to bring it back, the name a list of them shows, and the
- * content of the two files a theme is.
- */
-export interface AppTheme {
-  /** The id an app stores and compares: `"shadcn"`. */
-  id: string;
-  /** The name a list of themes shows: `"shadcn neutral"`. */
-  label: string;
-  /** `theme.json`'s content: the tokens `setTheme` takes. */
-  theme: Theme;
-  /** `semantics.json`'s content. */
-  semantics: Semantics;
-}
-
-/** The build-time semantics: `semantics.json` beside this file (the app's `nsh-ui.json` names the theme they belong to). */
-const builtIn = semantics as Semantics;
-
-/** The theme `selectTheme` put in; `null` while the app shows its build-time one. */
-const selected = signal<AppTheme | null>(null);
-
-/** The semantics in use: the selected theme's, else the build-time ones. Reactive: reading it subscribes. */
-const semanticsOf = (): Semantics => selected()?.semantics ?? builtIn;
-
-/**
- * The style in use (type, shape, size, motion…): the selected theme's, else the build-time one's.
- * Reactive: reading it in JSX, a `draw` or an effect follows `selectTheme`.
- */
-export const style = (): Style => semanticsOf();
-
-/**
- * An object whose properties are read from the style in use: one getter per key, so `density.row`
- * follows `selectTheme` as a plain value would not, and the object still spreads. Each key is a
- * `computed` made here, at import (one made inside a component would be disposed with it), so what
- * reads a key re-runs only when its value changes, not whenever a theme is selected.
- */
-export function reactive<T extends object>(keys: readonly (keyof T)[], read: () => T): T {
-  const out = {} as T;
-  for (const key of keys) {
-    const value = computed(() => read()[key]);
-    Object.defineProperty(out, key, { enumerable: true, get: () => value() });
-  }
-  return out;
-}
-
-/** The tier a pointer's screen (a desktop) or a touch screen reads: `platform.desktop`, fixed for the run. */
+/** Active input tier fixed for the run: `"pointer"` on desktop, `"touch"` elsewhere. */
 export const tier: "pointer" | "touch" = platform.desktop ? "pointer" : "touch";
 
-/** The one relative color a finish writes: a token's color at another alpha. */
-const relative = /oklch\(from \{([a-z0-9-]+)\} l c h \/ ([\d.]+)\)/g;
+/** Maximum radius rendered as a full capsule. */
+export const CAPSULE_RADIUS = 999;
 
-/** A token's color, `#rrggbbaa` as `token` gives it, at another alpha. */
-const atAlpha = (color: string, a: number) =>
-  `${color.slice(0, 7)}${Math.round(a * 255)
-    .toString(16)
-    .padStart(2, "0")}`;
+/** Default hairline edge width in points used by rail/knob edge shadow helpers. */
+export const EDGE_WIDTH = 1;
 
-/**
- * A finish's strings name the theme's tokens instead of writing their colors (`{raised}`, an
- * alias): the finishes keep one shape in every theme while the colors they draw are the theme's.
- * `token` reads the same token the rest of the theme does, so an alias follows the appearance,
- * the theme `selectTheme` put in, and host `setThemeOverrides`, and a `{token}` anywhere in a
- * gradient or a shadow resolves with it.
- *
- * A token named at another alpha (`oklch(from {card} l c h / 0.78)`, the one relative color a
- * finish writes) resolves to that token's color with the alpha replaced: NSH reads these strings
- * as plain CSS and has no relative color syntax. It goes through `token` rather than reading the
- * theme file, so this module imports nothing but `semantics.json`: it is `lib/ui/theme.ts` in an
- * app, whose `theme.json` sits at its root.
- */
-const alias = (value: string): string =>
-  value
-    .replace(relative, (whole, name: string, a: string) => {
-      const color = token(name as keyof Tokens);
-      return typeof color === "string" ? atAlpha(color, Number(a)) : whole;
-    })
-    .replace(/\{([a-z0-9-]+)\}/g, (whole, name: string) => {
-      const color = token(name as keyof Tokens);
-      return typeof color === "string" ? color : whole;
-    });
+/** Reactive dark-mode flag. */
+export const isDark = () => colorScheme() !== "light";
 
-/** Merge `shared` with the active appearance's sparse override for one finish role (reactive). */
-const finishOf = <R extends FinishRole>(role: R): FinishOf<R> => {
-  const { finishes } = semanticsOf();
-  const overrides = isDark() ? finishes.dark : finishes.light;
-  return { ...finishes.shared[role], ...overrides[role] } as FinishOf<R>;
-};
+const selected = signal<AppTheme | null>(null);
 
-/** A role's finish as the fields it may or may not carry: what the platform layer reads of every role. */
-const anyFieldOf = (role: FinishRole): Partial<FinishFields> => finishOf(role);
+/** Active runtime `AppTheme` (`selectTheme`), or the build-time preset when `null`. */
+export const activeTheme = (): AppTheme => selected() ?? presetTheme;
 
-/** A field every role carries (the table gives all fifteen `foreground` and `shadow`): read without a guard. */
-const sharedFieldOf = <F extends FinishFieldName>(role: FinishRole, field: F): FinishFields[F] =>
-  (anyFieldOf(role) as FinishFields)[field];
+/** Active `ThemeSpec` (reactive). */
+export const activeSpec = (): ThemeSpec => activeTheme().spec;
 
-/** The material one finish role asks for in the semantics in use, in the appearance shown (reactive). */
-const materialOf = (role: FinishRole): FinishMaterial | null => anyFieldOf(role).material ?? null;
-
-/** The recipe of the material a finish asks for, in the appearance shown (reactive); `undefined` for `null`. */
-const recipeOf = (role: FinishRole): MaterialRecipe | undefined => {
-  const material = materialOf(role);
-  return material === null ? undefined : materials[material];
-};
-
-/** The style keys a finish's glass adds: `glassEffect` and the layer's own colour as its tint. */
-const glassKeys = (role: FinishRole): readonly string[] => {
-  const recipe = recipeOf(role);
-  return recipe?.glassEffect === undefined ? [] : ["glassEffect", "glassTintColor"];
-};
-
-/**
- * An object whose getters read one finish role of the semantics in use, in
- * the appearance shown: shadows and gradients are no design tokens, so they
- * stay here while every color is the theme's, by alias. Reading one
- * subscribes to the appearance, to the theme `selectTheme` put in, and to
- * host token overrides.
- *
- * `material` and `elevation` are not among its keys: a glass material is two style keys instead
- * (NSH's `glassEffect` and `glassTintColor`), which the object has only while the finish asks for
- * them, so a finish with `material: null` spreads into exactly the keys it always had. The platform
- * props of the material (its `ios` and `windows` blurs, its `android` elevation) come from
- * `platformMaterial`.
- */
-const finishStyleKeys: { [F in FinishFieldName]?: keyof FinishStyleFields } = {
-  background: "backgroundColor",
-  gradient: "backgroundImage",
-  shadow: "boxShadow",
-  "border-color": "borderColor",
-  "border-top-color": "borderTopColor",
-  "border-bottom-color": "borderBottomColor",
-  backdropFilter: "backdropFilter",
-};
-
-const fieldOfStyleKey: Record<string, FinishFieldName> = Object.fromEntries(
-  Object.entries(finishStyleKeys).map(([field, key]) => [key, field as FinishFieldName]),
-);
-
-function themed<R extends FinishRole>(role: R): FinishStyle<R> {
-  const out = {} as FinishStyle<R>;
-  const builtInRole: Partial<FinishFields> = {
-    ...builtIn.finishes.shared[role],
-    ...builtIn.finishes.dark[role],
-    ...builtIn.finishes.light[role],
-  };
-  for (const [field, styleKey] of Object.entries(finishStyleKeys) as [
-    FinishFieldName,
-    keyof FinishStyleFields,
-  ][]) {
-    if (!(field in builtInRole)) continue;
-    Object.defineProperty(out, styleKey, {
-      enumerable: true,
-      configurable: true,
-      get: () => {
-        const value = anyFieldOf(role)[field];
-        if (field === "backdropFilter") {
-          // A material guarantees its blur: a platform that draws no glass nor the host's blur still
-          // blurs what is behind the layer, at the recipe's radius.
-          const recipe = recipeOf(role);
-          if (recipe !== undefined && (value === undefined || value === "none")) {
-            return `blur(${recipe.fallback.blur}px)`;
-          }
-        }
-        return typeof value === "string" ? alias(value) : undefined;
-      },
-    });
-  }
-  // The surface's ink is a color, not a style key: read it by name, and keep it out of a spread.
-  Object.defineProperty(out, "foreground", {
-    enumerable: false,
-    configurable: true,
-    get: () => alias(sharedFieldOf(role, "foreground")),
-  });
-  // The theme's own pressed fill and ink, where it states them; a spread never wears them.
-  Object.defineProperty(out, "pressedBackground", {
-    enumerable: false,
-    configurable: true,
-    get: () => {
-      const value = anyFieldOf(role)["pressed-background"];
-      return typeof value === "string" ? alias(value) : undefined;
-    },
-  });
-  Object.defineProperty(out, "pressedForeground", {
-    enumerable: false,
-    configurable: true,
-    get: () => {
-      const value = anyFieldOf(role)["pressed-foreground"];
-      return typeof value === "string" ? alias(value) : undefined;
-    },
-  });
-  Object.defineProperty(out, "pressedOpacity", {
-    enumerable: false,
-    configurable: true,
-    get: () => anyFieldOf(role)["pressed-opacity"],
-  });
-  // A knob's checked state, where the theme states it; a spread never wears these either.
-  Object.defineProperty(out, "checkedBackground", {
-    enumerable: false,
-    configurable: true,
-    get: () => {
-      const value = anyFieldOf(role)["checked-background"];
-      return typeof value === "string" ? alias(value) : undefined;
-    },
-  });
-  Object.defineProperty(out, "checkedBorderColor", {
-    enumerable: false,
-    configurable: true,
-    get: () => {
-      const value = anyFieldOf(role)["checked-border-color"];
-      return typeof value === "string" ? alias(value) : undefined;
-    },
-  });
-  Object.defineProperty(out, "checkedGradient", {
-    enumerable: false,
-    configurable: true,
-    get: () => {
-      const value = anyFieldOf(role)["checked-gradient"];
-      if (value === null) return null;
-      return typeof value === "string" ? alias(value) : undefined;
-    },
-  });
-  const glass = (key: string): string | undefined => {
-    const recipe = recipeOf(role);
-    if (recipe?.glassEffect === undefined) return undefined;
-    if (key === "glassEffect") return recipe.glassEffect;
-    const background = anyFieldOf(role).background;
-    return background === undefined ? undefined : alias(background);
-  };
-  // A field the theme in use states as `none` (`null`) is no key of the spread, so it never hands a
-  // component `borderBottomColor: undefined` over a value a slot drew; the theme that states it adds it.
-  const absent = (key: string | symbol): boolean => {
-    const field = typeof key === "string" ? fieldOfStyleKey[key] : undefined;
-    return field !== undefined && anyFieldOf(role)[field] == null;
-  };
-  return new Proxy(out, {
-    ownKeys: (target) => [
-      ...Reflect.ownKeys(target).filter((key) => !absent(key)),
-      ...glassKeys(role),
-    ],
-    getOwnPropertyDescriptor: (target, key) =>
-      typeof key === "string" && glassKeys(role).includes(key)
-        ? { value: glass(key), enumerable: true, configurable: true, writable: false }
-        : Reflect.getOwnPropertyDescriptor(target, key),
-    has: (target, key) =>
-      Reflect.has(target, key) || (typeof key === "string" && glassKeys(role).includes(key)),
-    get: (target, key, receiver) =>
-      typeof key === "string" && (key === "glassEffect" || key === "glassTintColor")
-        ? glass(key)
-        : Reflect.get(target, key, receiver),
-  });
-}
-
-/** What `platformMaterial` returns: the platform props a finish's material asks for. A platform it
- * asks nothing of has `undefined`; a role that has neither field has neither prop. */
-export type PlatformMaterial<R extends FinishRole = FinishRole> =
-  ("material" extends FinishFieldList<R>[number]
-    ? {
-        ios?: { backdropMaterial: BackdropMaterial };
-        windows?: { backdrop: { material: WindowsBackdropMaterial } };
-      }
-    : {}) &
-    ("elevation" extends FinishFieldList<R>[number] ? { android?: { elevation?: number } } : {});
-
-/**
- * The platform props of a finish's material, for the view that draws the finish: NSH's `ios`
- * backdrop material, the `windows` backdrop blur and Android's `elevation`. They are props, not
- * style keys, so a component spreads them on the same view that spreads `finish.<role>` into its
- * `style`:
- *
- *     <View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />
- *
- * Its keys are getters, so they follow `selectTheme` and the appearance as `finish` does, and a
- * finish whose `material` is `null` and whose `elevation` is `null` (every layer of the themes that
- * imitate no platform) gives `undefined` for all three: the view is drawn as it was. The Liquid
- * Glass of a glass material needs no prop: `glassEffect` and `glassTintColor` are in the style.
- */
-export function platformMaterial<R extends FinishRole>(role: R): PlatformMaterial<R> {
-  return {
-    get ios() {
-      return recipeOf(role)?.props.ios;
-    },
-    get windows() {
-      return recipeOf(role)?.props.windows;
-    },
-    get android() {
-      const { elevation } = anyFieldOf(role);
-      return typeof elevation === "number" ? { elevation } : undefined;
-    },
-  } as PlatformMaterial<R>;
-}
-
-/** The palette's roles: one color each, a token of the theme's `theme.json`. */
-export interface Palette {
-  /** The page behind the cards. */
-  background: string;
-  /** A card. */
-  card: string;
-  /** A surface inside a card. */
-  inset: string;
-  /** A control on a card (buttons, fields, tracks). */
-  raised: string;
-  /** A quiet fill one step off the surface under it: the grey block chosen inside a capsule (iOS's
-   * secondary fill), a segment's ground. */
-  muted: string;
-  /** An input's well: below the card and the insets it sits on. */
-  field: string;
-  /** An input's edge. */
-  input: string;
-  /** The hairline round what needs an edge (a card, a well, a divider). */
-  border: string;
-  /** Hairlines inside insets. */
-  line: string;
-  /** The edge a filled pane draws (a primary button, a chosen run, a chip): `border`. */
-  brandEdge: string;
-  /** Body text. */
-  foreground: string;
-  /** Secondary text: a detail, a caption. */
-  mutedForeground: string;
-  /** What recedes the furthest: a placeholder, an icon at rest. */
-  faint: string;
-  /** The accent as a foreground: text, icons, lines, small marks. */
-  brand: string;
-  /** The main action's fill (the theme's `primary`): the citrus, in both appearances. */
-  primary: string;
-  /** Text on `primary`. */
-  primaryForeground: string;
-  /** The quieter action's fill (the theme's `secondary`): a tonal button, a groove. */
-  secondary: string;
-  /** Text on `secondary`. */
-  secondaryForeground: string;
-  /** Highlight background for focused options and interactive items. */
-  accent: string;
-  /** Focus ring border/outline color. */
-  ring: string;
-  /** The app's sidebar, beside the page. */
-  sidebar: string;
-  /** The selected row of the sidebar. */
-  sidebarAccent: string;
-  /** The sidebar's edge and the toolbar's hairline. */
-  sidebarBorder: string;
-  /** A switch's track when off. */
-  track: string;
-  /** A switch's knob when off. */
-  knob: string;
-  /** The surface of a tip or a toast, read apart from the page's: a flat theme's popover, an inverted pane in Material. */
-  inverse: string;
-  /** Text on `inverse`. */
-  inverseForeground: string;
-  /** The accent on `inverse`: a toast's action. */
-  inverseBrand: string;
-  /** The tone colors: information, a warning, a failure, a gain, a loss. */
-  info: string;
-  warn: string;
-  destructive: string;
-  up: string;
-  /** The ground a photograph or a video sits on. It does not flip: dark in either appearance. */
-  media: string;
-  /** White ink on a photograph or any other surface that is not the theme's. It does not flip. */
-  onMedia: string;
-}
-
-/** An object whose getters read the theme's tokens: reads in a reactive
- * scope (JSX, a `draw`, an effect) follow the appearance and the theme. */
-function tokens<K extends string>(names: Record<K, keyof Tokens>): Record<K, string> {
-  const out = {} as Record<K, string>;
-  for (const key of Object.keys(names) as K[]) {
-    Object.defineProperty(out, key, { enumerable: true, get: () => token(names[key]) });
-  }
-  return out;
-}
-
-/**
- * The palette in use, read from the theme's tokens: reactive, so reading it
- * in JSX, a `draw` or an `effect` follows the appearance and the theme
- * `selectTheme` put in.
- */
-export const colors: Palette = tokens<keyof Palette>({
-  background: "background",
-  card: "card",
-  inset: "inset",
-  raised: "raised",
-  muted: "muted",
-  field: "field",
-  input: "input",
-  border: "border",
-  line: "line",
-  brandEdge: "brand-edge",
-  foreground: "foreground",
-  mutedForeground: "muted-foreground",
-  faint: "faint",
-  brand: "brand",
-  primary: "primary",
-  primaryForeground: "primary-foreground",
-  secondary: "secondary",
-  secondaryForeground: "secondary-foreground",
-  accent: "accent",
-  ring: "ring",
-  sidebar: "sidebar",
-  sidebarAccent: "sidebar-accent",
-  sidebarBorder: "sidebar-border",
-  track: "track",
-  knob: "knob",
-  info: "info",
-  warn: "warn",
-  destructive: "destructive",
-  up: "up",
-  media: "media",
-  onMedia: "on-media",
-  inverse: "inverse",
-  inverseForeground: "inverse-foreground",
-  inverseBrand: "inverse-brand",
-});
-
-/**
- * `color` at opacity `a` (0 to 1): a `color-mix` over nothing, for a fill or a text color that is
- * the theme's at a lighter weight. Clamped, so a ratio past its ends is still a color.
- */
-export function alpha(color: string, a: number): string {
-  return `color-mix(in srgb, ${color} ${Math.min(Math.max(a, 0), 1) * 100}%, transparent)`;
-}
-
-/** The charts' series colors, in order (`theme.json`'s `chart-1` to
- * `chart-5`): the brand's citrus first, then graphite from dark to light,
- * so one series leads and the rest stay as quiet as the interface. */
-export const chart = tokens({
-  chart1: "chart-1",
-  chart2: "chart-2",
-  chart3: "chart-3",
-  chart4: "chart-4",
-  chart5: "chart-5",
-});
-
-/** Translucent tints of the tones, for fills behind text. */
-export const tints = tokens({
-  brand: "brand-tint",
-  info: "info-tint",
-  warn: "warn-tint",
-  destructive: "destructive-tint",
-  up: "up-tint",
-});
-
-/**
- * Light and depth, kept quiet: a control on a card stands off it by a step (`raised`: a hard drop
- * below, a highlight above, a hairline), a card stands off the page by the next one (`card`), a
- * panel floats (`overlay`), a dialog waits above the page (`modal`). What is sunk (`inset`: a field,
- * a track, a groove) is drawn by an inner shade and an edge, never by a fill alone.
- *
- * The layers are what a surface is, not what draws it: `accent` is the accent's own face (a filled
- * button, a chosen switch's track), `fill` a run's filled part (a progress bar's bar, a slider's
- * range, a switch's open track), `inverse` the page's inverse (a toast, a tooltip),
- * `glass` a translucent pane, `knob` the small thing that moves (a switch's thumb, a slider's
- * handle; a theme may state its checked state, `checked-*`, for the switch that is on), `plate` the
- * labelled block chosen inside a well (the selected tab, a segmented
- * control's thumb), and `channel` the track such a block is chosen in (a segmented control's
- * track; a tab strip's track is a well, `inset`). `hover`, `pressed` and `disabled` are the steps a control takes — a control
- * that differs (a slider's thumb, a sheet's grabber) says so in its own
- * preset, not in a finish of its own.
- */
-export const finish: { [R in FinishRole]: FinishStyle<R> } = {
-  card: themed("card"),
-  inset: themed("inset"),
-  channel: themed("channel"),
-  raised: themed("raised"),
-  plate: themed("plate"),
-  overlay: themed("overlay"),
-  modal: themed("modal"),
-  inverse: themed("inverse"),
-  glass: themed("glass"),
-  accent: themed("accent"),
-  fill: themed("fill"),
-  knob: themed("knob"),
-  hover: themed("hover"),
-  pressed: themed("pressed"),
-  disabled: themed("disabled"),
-};
-
-/**
- * A step of the shadow scale, in the appearance shown (`semantics.json`'s `elevation`): `sm` a
- * control's cast, `md` a card's, `lg` an overlay's, `xl` a dialog's. A finish already wears the
- * steps it names, so a component reads this only where it draws a shadow without a finish; a theme
- * that has no value for a step gives `"none"`. Reactive: reading it follows `selectTheme`.
- */
-export function elevation(level: ElevationLevel): string {
-  const { elevation: scale } = semanticsOf();
-  return (isDark() ? scale.dark : scale.light)[level] ?? "none";
-}
-
-/**
- * How far a press sinks a control, as the theme in use says (`semantics.json`'s `state["press-scale"]`):
- * `0.97` where a press is a small sink, `1` where the theme draws none. A control that sinks
- * deeper than that names its own scale (`pressSink(0.9)`); a theme of `1` turns every sink off.
- * Reactive: reading it follows `selectTheme`.
- */
-export const press = {
-  get scale() {
-    return semanticsOf().state["press-scale"];
-  },
-};
-
-/**
- * Switch the app to `theme` while it runs: the tokens first (`setTheme`),
- * then its semantics, so every component on screen redraws with both on the
- * next frame. `null` goes back to the theme the app was built with
- * (`nsh.json`'s `theme.json`, and `semantics.json` beside this file).
- *
- * A theme NSH refuses to read (a color it does not know) throws
- * `TypeError` and leaves the app as it was: the semantics follow the tokens
- * only once they are in.
- */
+/** Switch the active theme at runtime (`null` restores the build-time preset). */
 export function selectTheme(theme: AppTheme | null): void {
-  setTheme(theme ? theme.theme : null);
+  setTheme(theme ? (theme.theme as unknown as Theme) : null);
   selected.set(theme);
 }
 
-/**
- * The `id` of the theme the app shows (`selectTheme`), or `null` while it
- * shows its build-time one — the runtime cannot read `nsh-ui.json`. Reactive:
- * reading it subscribes.
- */
+/** Current runtime theme ID, or `null` when showing the build-time preset. */
 export function currentTheme(): string | null {
   const theme = selected();
   return theme === null ? null : theme.id;
 }
 
-export type Tone = "neutral" | "accent" | "info" | "warn" | "destructive" | "up" | "down";
+/** Reactive token proxy object backed by NSH `token()`. */
+function tokenGetters<K extends string>(names: Record<K, keyof Tokens>): Record<K, string> {
+  const out = {} as Record<K, string>;
+  for (const key of Object.keys(names) as K[]) {
+    Object.defineProperty(out, key, {
+      enumerable: true,
+      get: () => token(names[key]) as string,
+    });
+  }
+  return out;
+}
 
-/**
- * The color of a tone. `accent` is the brand ink: the tone keeps its name, and the palette key is
- * the token (`brand`).
- */
-export const toneColor = (tone: Tone) =>
-  tone === "neutral"
-    ? colors.mutedForeground
-    : tone === "accent"
-      ? colors.brand
-      : tone === "down"
-        ? colors.destructive
-        : colors[tone];
+export interface Palette {
+  background: string;
+  card: string;
+  popover: string;
+  muted: string;
+  surface: string;
+  foreground: string;
+  mutedForeground: string;
+  faint: string;
+  primary: string;
+  primaryForeground: string;
+  secondary: string;
+  accent: string;
+  brand: string;
+  border: string;
+  line: string;
+  input: string;
+  ring: string;
+  info: string;
+  success: string;
+  warning: string;
+  destructive: string;
+  scrim: string;
+  media: string;
+  onMedia: string;
+}
 
-/**
- * The tint of a tone. `accent` reads `tints.brand` (the `brand-tint` token); `down` shares
- * `tints.destructive` just as `toneColor` shares `colors.destructive`.
- */
-export const toneTint = (tone: Tone) =>
-  tone === "neutral"
-    ? colors.raised
-    : tone === "accent"
-      ? tints.brand
-      : tone === "down"
-        ? tints.destructive
-        : tints[tone];
+/** Palette colors read reactively from active `theme.json` tokens. */
+export const colors: Palette = tokenGetters<keyof Palette>({
+  background: "background",
+  card: "card",
+  popover: "popover",
+  muted: "muted",
+  surface: "surface",
+  foreground: "foreground",
+  mutedForeground: "muted-foreground",
+  faint: "faint",
+  primary: "primary",
+  primaryForeground: "primary-foreground",
+  secondary: "secondary",
+  accent: "accent",
+  brand: "brand",
+  border: "border",
+  line: "line",
+  input: "input",
+  ring: "ring",
+  info: "info",
+  success: "success",
+  warning: "warning",
+  destructive: "destructive",
+  scrim: "scrim",
+  media: "media",
+  onMedia: "on-media",
+});
 
-/** A typography role of `semantics.json`'s `typography`: the seven text roles. */
-export type TypeName = keyof Style["typography"];
+/** Mix `color` with transparency (`0`–`1`) using CSS `color-mix`. */
+export function alpha(color: string, a: number): string {
+  return `color-mix(in srgb, ${color} ${Math.min(Math.max(a, 0), 1) * 100}%, transparent)`;
+}
 
-/**
- * Cross-theme shared font sizes and whole-point line heights per tier (`ADR 0009`, `ADR 0019`):
- * `semantics.json` carries only per-theme `fontWeight` and `letterSpacing`.
- */
-const SHARED_TYPE_SCALE: Record<
-  TypeName,
-  { readonly fontSize: Tiered<number>; readonly lineHeight: Tiered<number> }
-> = {
-  caption: { fontSize: { pointer: 11, touch: 12 }, lineHeight: { pointer: 16, touch: 16 } },
-  detail: { fontSize: { pointer: 12, touch: 13 }, lineHeight: { pointer: 16, touch: 20 } },
-  body: { fontSize: { pointer: 13, touch: 15 }, lineHeight: { pointer: 20, touch: 20 } },
-  label: { fontSize: { pointer: 14, touch: 15 }, lineHeight: { pointer: 20, touch: 20 } },
-  title: { fontSize: { pointer: 16, touch: 16 }, lineHeight: { pointer: 24, touch: 24 } },
-  headline: { fontSize: { pointer: 20, touch: 22 }, lineHeight: { pointer: 28, touch: 28 } },
-  display: { fontSize: { pointer: 26, touch: 28 }, lineHeight: { pointer: 32, touch: 36 } },
+const relativeAlpha = /oklch\(from \{([a-z0-9-]+)\} l c h \/ ([\d.]+)\)/g;
+
+const atAlpha = (color: string, a: number) =>
+  `${color.slice(0, 7)}${Math.round(a * 255)
+    .toString(16)
+    .padStart(2, "0")}`;
+
+function resolveTokenAliases(value: string): string {
+  return value
+    .replace(relativeAlpha, (whole, name: string, a: string) => {
+      const c = token(name as keyof Tokens);
+      return typeof c === "string" ? atAlpha(c, Number(a)) : whole;
+    })
+    .replace(/var\(--([a-z0-9-]+)\)/g, (whole, name: string) => {
+      const c = token(name as keyof Tokens);
+      return typeof c === "string" ? c : whole;
+    })
+    .replace(/\{([a-z0-9-]+)\}/g, (whole, name: string) => {
+      const c = token(name as keyof Tokens);
+      return typeof c === "string" ? c : whole;
+    });
+}
+
+function resolveTintValue(role: "brand" | ToneColorKey, customAlpha?: number): string {
+  const spec = activeSpec();
+  const mode: Mode = isDark() ? "dark" : "light";
+  if (customAlpha === undefined) {
+    const custom = spec.tokens.tints?.[mode]?.[role];
+    if (custom) return resolveTokenAliases(custom);
+  }
+  const base = colors[role];
+  return alpha(base, customAlpha ?? spec.tokens.tintAlpha[mode]);
+}
+
+/** Reactive translucent tints (`tints.brand`, `tints.info`, `tints.success`, `tints.warning`, `tints.destructive`). */
+export const tints: Record<"brand" | ToneColorKey, string> = {
+  get brand() {
+    return resolveTintValue("brand");
+  },
+  get info() {
+    return resolveTintValue("info");
+  },
+  get success() {
+    return resolveTintValue("success");
+  },
+  get warning() {
+    return resolveTintValue("warning");
+  },
+  get destructive() {
+    return resolveTintValue("destructive");
+  },
 };
 
-/**
- * One facet of a typography role: `size` and `lineHeight` read the shared scale for `tier`, while
- * `weight` and `letterSpacing` read the active theme's `semantics.json` reactively.
- */
-export const font = {
-  size: (role: TypeName) => SHARED_TYPE_SCALE[role].fontSize[tier],
-  lineHeight: (role: TypeName) => SHARED_TYPE_SCALE[role].lineHeight[tier],
-  weight: (role: TypeName) =>
-    style().typography[role].fontWeight as NonNullable<TextStyle["fontWeight"]>,
-  letterSpacing: (role: TypeName) => style().typography[role].letterSpacing,
+export type Tone = "neutral" | "accent" | ToneColorKey;
+
+/** Semantic text/border color for a UI tone. */
+export const toneColor = (tone: Tone): string =>
+  tone === "neutral" ? colors.mutedForeground : tone === "accent" ? colors.brand : colors[tone];
+
+/** Subtle background tint for a UI tone. */
+export const toneTint = (tone: Tone): string =>
+  tone === "neutral" ? colors.surface : tone === "accent" ? tints.brand : tints[tone];
+
+const THEME_COLOR_TOKENS = new Set<string>([
+  "background",
+  "card",
+  "popover",
+  "muted",
+  "surface",
+  "foreground",
+  "muted-foreground",
+  "faint",
+  "primary",
+  "primary-foreground",
+  "secondary",
+  "accent",
+  "brand",
+  "border",
+  "line",
+  "input",
+  "ring",
+  "info",
+  "success",
+  "warning",
+  "destructive",
+  "scrim",
+  "media",
+  "on-media",
+]);
+
+function readMode<T>(val: ModeOrFlat<T>): T {
+  if (typeof val === "object" && val !== null && "light" in val && "dark" in val) {
+    return isDark() ? val.dark : val.light;
+  }
+  return val as T;
+}
+
+function readTiered<T>(val: TieredOrFlat<T>): T {
+  if (typeof val === "object" && val !== null && "pointer" in val && "touch" in val) {
+    return val[tier];
+  }
+  return val as T;
+}
+
+/** Resolve any `ColorExpr` (or mode-wrapped color) to a CSS color string, or `null` for `"none"`. */
+export function resolveColor(
+  expr: ModeOrFlat<ColorExpr | "none" | null> | undefined,
+): string | null {
+  if (expr === undefined || expr === null) return null;
+  const unwrapped = readMode(expr);
+  if (unwrapped === null || unwrapped === "none") return null;
+  if (typeof unwrapped === "string") {
+    if (THEME_COLOR_TOKENS.has(unwrapped)) return token(unwrapped as keyof Tokens) as string;
+    return resolveTokenAliases(unwrapped);
+  }
+  if ("tint" in unwrapped) {
+    return resolveTintValue(unwrapped.tint, unwrapped.alpha);
+  }
+  if ("color" in unwrapped) {
+    const base = THEME_COLOR_TOKENS.has(unwrapped.color)
+      ? (token(unwrapped.color as keyof Tokens) as string)
+      : resolveTokenAliases(unwrapped.color);
+    return unwrapped.alpha === undefined ? base : alpha(base, unwrapped.alpha);
+  }
+  return null;
+}
+
+/** Reactive 5-series chart colors (defaults to `[brand, info, success, warning, destructive]`). */
+function chartAt(index: 0 | 1 | 2 | 3 | 4): string {
+  const mode: Mode = isDark() ? "dark" : "light";
+  const custom = activeSpec().tokens.chart?.[mode];
+  if (custom) return resolveColor(custom[index]) ?? colors.primary;
+  return [colors.brand, colors.info, colors.success, colors.warning, colors.destructive][index]!;
+}
+
+export const chart = {
+  get chart1() {
+    return chartAt(0);
+  },
+  get chart2() {
+    return chartAt(1);
+  },
+  get chart3() {
+    return chartAt(2);
+  },
+  get chart4() {
+    return chartAt(3);
+  },
+  get chart5() {
+    return chartAt(4);
+  },
 };
 
-/** The radius a `full` corner states: every renderer clamps a radius past half the box to a capsule. */
-export const CAPSULE_RADIUS = 999;
-
-/**
- * The corner radii by layer, read directly from `theme.json`'s `radius-*` tokens via `token()`:
- * `control` (in-page elements), `container` (cards, menus, popovers, tooltips, list panels,
- * toasts, frames), and `modal` (dialogs, sheets, drawers). Reactive: reading one in JSX, a `draw`
- * or an effect follows `selectTheme` and host token overrides.
- */
+/** Corner radii by layer, read reactively from `theme.json` + active `ThemeSpec`. */
 export const shape = {
   get control(): number {
     return token("radius-control") as number;
@@ -971,136 +348,109 @@ export const shape = {
   get modal(): number {
     return token("radius-modal") as number;
   },
-};
-
-/**
- * A button's corner at its size, as points (`semantics.json`'s `controls.button.corner.*` slots):
- * `shape.control` (`"control"`), `CAPSULE_RADIUS` (`"full"`), or the points it states. Reactive: a
- * reading in JSX, a `draw` or an effect follows `selectTheme`.
- */
-export function buttonCorner(size: "sm" | "default" | "lg"): number {
-  // A regular button is the scale's `md` step: its corner is `controls.button.corner.md`.
-  const step = size === "default" ? "md" : size;
-  const raw = controls().button.corner[step];
-  const corner = typeof raw === "object" && raw !== null && "pointer" in raw ? raw[tier] : raw;
-  if (corner === "full") return CAPSULE_RADIUS;
-  if (corner === "control") return shape.control;
-  if (typeof corner === "number") return corner;
-  throw new Error(`the theme states no \`button.corner.${step}\` corner: ${JSON.stringify(raw)}`);
-}
-
-/** Line widths in points (`semantics.json`'s `dimension.stroke`): `hairline` a divider's or a surface's edge (0 where surfaces stand by tone or shadow alone), `control` a control's edge. The focus ring's width is `dimension.focus.width`. */
-export const stroke = {
-  get hairline() {
-    return style().dimension.stroke.hairline;
-  },
-  get control() {
-    return style().dimension.stroke.control;
+  get curve(): "continuous" | "circular" {
+    return activeSpec().tokens.radius.curve;
   },
 };
 
-/**
- * How far a control fades (`semantics.json`'s `state`): `rest` is the opacity a passive indicator
- * sits at (`rest-opacity`), `pressed` that of a pressed control (`pressed-opacity`), `disabled` that of
- * a disabled control's content when drawn as one. How far a filled control dims while it is pressed
- * is the accent's own (`finish.accent.pressedOpacity`).
- */
-export const dimmed = {
-  get rest() {
-    return style().state["rest-opacity"];
-  },
-  get pressed() {
-    return style().state["pressed-opacity"];
-  },
-  get disabled() {
-    return style().state.disabled.content;
-  },
-};
-
-/**
- * The resolved overlay wash color (`atAlpha(token(ink), opacity)`) for a `state.overlay` role,
- * or `undefined` when the theme's overlay opacity is `<= 0`.
- */
-export function stateLayerColor(
-  kind: keyof Style["state"]["overlay"],
-  ink: keyof Tokens = "foreground",
-): string | undefined {
-  const opacity = style().state.overlay[kind];
-  if (opacity <= 0) return undefined;
-  return atAlpha(token(ink) as string, opacity);
-}
-
-/**
- * The state layer of a theme that draws its hover, focus, press and drag as a wash of `ink`
- * (default `"foreground"`) over the surface (`state.overlay`, an opacity; Material's): a gradient
- * of that one color. A theme whose overlay is 0 (the default: its states swap the surface's
- * finish) draws none, so this is an empty style.
- */
-export function stateLayer(
-  kind: keyof Style["state"]["overlay"],
-  ink: keyof Tokens = "foreground",
-): ViewStyle {
-  const wash = stateLayerColor(kind, ink);
-  if (!wash) return {};
-  return { backgroundImage: `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)` };
-}
-
-/** The smallest target a finger or a pointer gets (`dimension.size.hit` of the tier): 0 adds none. */
-export const hitTarget = (): number => style().dimension.size.hit[tier];
-
-/**
- * The controls tree in use (`semantics.json`'s `controls`), made once at import: every theme
- * states every leaf (`docs/specs/theme-slots.md`, ADR 0019), so a reader takes one directly.
- * Reactive: reading one in JSX, a `draw` or an effect follows `selectTheme`.
- */
-const controlValues = computed(() => style().controls);
-
-/** The typed control slots a theme states (`controls` in `semantics.json`). Reactive. */
-export const controls = (): Controls => controlValues();
-
-/** A button's height by size (`dimension.size.height` of the tier). */
-export const controlHeight = {
-  get sm() {
-    return style().dimension.size.height[tier].sm;
-  },
-  get md() {
-    return style().dimension.size.height[tier].md;
-  },
-  get lg() {
-    return style().dimension.size.height[tier].lg;
-  },
-};
-
-/** An icon's side by size (`dimension.icon` of the tier). */
-export const iconSize = {
-  get sm() {
-    return style().dimension.icon[tier].sm;
-  },
-  get md() {
-    return style().dimension.icon[tier].md;
-  },
-  get lg() {
-    return style().dimension.icon[tier].lg;
-  },
-};
-
-/** Every corner that reads a theme radius is continuous: the curve macOS
- * draws, not a circular arc. */
+/** Border curve matching active theme (`"continuous"` or `"circular"`). */
 export const cornerCurve: ViewStyle = {
   get borderCurve() {
-    return style().shape.curve === "circular" ? "circular" : "continuous";
+    return shape.curve;
   },
 };
 
-/**
- * A corner on one of the theme's radii, with the curve they all share. `inset` makes it concentric:
- * a surface drawn `inset` points inside another takes the outer radius less `inset`, never below 0.
- */
+/** Concentric rounded border radius (`Math.max(radius - inset, 0)`). */
 export function rounded(radius: number, inset = 0): ViewStyle {
   return { borderRadius: Math.max(radius - inset, 0), ...cornerCurve };
 }
 
-/** The system header's colors on every page (iOS, Android). */
+function resolveCorner(raw: SlotCorner): number {
+  if (raw === "full") return CAPSULE_RADIUS;
+  if (raw === "container") return shape.container;
+  if (raw === "control") return shape.control;
+  return raw;
+}
+
+/** Button corner radius for `"sm" | "default" | "lg"` at current tier. */
+export function buttonCorner(size: "sm" | "default" | "lg"): number {
+  const step = size === "default" ? "md" : size;
+  return resolveCorner(readTiered(activeSpec().controls.button.corner[step]));
+}
+
+/** Shared typography sizes + per-theme fontWeight/letterSpacing (`ADR 0009`). */
+export const font = {
+  size: (role: TypeRole) => SHARED_TYPE_SCALE[role].fontSize[tier],
+  lineHeight: (role: TypeRole) => SHARED_TYPE_SCALE[role].lineHeight[tier],
+  weight: (role: TypeRole) =>
+    activeSpec().metrics.typography[role].fontWeight as NonNullable<TextStyle["fontWeight"]>,
+  letterSpacing: (role: TypeRole) => activeSpec().metrics.typography[role].letterSpacing,
+};
+
+/** Stroke widths (`hairline`, `control`). */
+export const stroke = {
+  get hairline() {
+    return activeSpec().metrics.stroke.hairline;
+  },
+  get control() {
+    return activeSpec().metrics.stroke.control;
+  },
+};
+
+/** Control heights by size (`sm`, `md`, `lg`) at active tier. */
+export const controlHeight = {
+  get sm() {
+    return activeSpec().metrics.height[tier].sm;
+  },
+  get md() {
+    return activeSpec().metrics.height[tier].md;
+  },
+  get lg() {
+    return activeSpec().metrics.height[tier].lg;
+  },
+};
+
+/** Icon sizes by size (`sm`, `md`, `lg`) at active tier. */
+export const iconSize = {
+  get sm() {
+    return activeSpec().metrics.icon[tier].sm;
+  },
+  get md() {
+    return activeSpec().metrics.icon[tier].md;
+  },
+  get lg() {
+    return activeSpec().metrics.icon[tier].lg;
+  },
+};
+
+/** Minimum touch/pointer hit target size at active tier. */
+export const hitTarget = (): number => activeSpec().metrics.hit[tier];
+
+/** Grouped metrics namespace (`metrics.height`, `metrics.icon`, `metrics.stroke`, `metrics.font`, etc.). */
+export const metrics = {
+  get height() {
+    return activeSpec().metrics.height[tier];
+  },
+  get icon() {
+    return activeSpec().metrics.icon[tier];
+  },
+  get density() {
+    return activeSpec().metrics.density[tier];
+  },
+  get control() {
+    return activeSpec().metrics.control[tier];
+  },
+  get item() {
+    return activeSpec().metrics.item[tier];
+  },
+  get hit() {
+    return activeSpec().metrics.hit[tier];
+  },
+  stroke,
+  font,
+};
+
+/** System navigation header style across platforms. */
 export const header = {
   get headerStyle() {
     return {
@@ -1111,65 +461,222 @@ export const header = {
   },
 };
 
-/** The easings a theme names (`motion.<role>.timingFunction`): the curve is code, the name is data. */
-const easings: Record<string, EasingCurve> = {
+export type ElevationLevel = "sm" | "md" | "lg" | "xl";
+
+/** Active appearance shadow scale. */
+export function elevationScale(): ElevationScale {
+  const scale = activeSpec().elevation;
+  return isDark() ? scale.dark : scale.light;
+}
+
+/** Single shadow step (`sm | md | lg | xl`), or `"none"`. */
+export function elevation(level: ElevationLevel): string {
+  return elevationScale()[level] ?? "none";
+}
+
+function resolveShadow(shadow: ShadowExpr | undefined): string | undefined {
+  if (shadow === undefined) return undefined;
+  if (shadow === null) return "none";
+  if (typeof shadow === "string") {
+    if (shadow in elevationScale()) {
+      return elevationScale()[shadow as ShadowPart] ?? "none";
+    }
+    return resolveTokenAliases(shadow);
+  }
+  const scale = elevationScale();
+  const parts = shadow
+    .map((part) => scale[part])
+    .filter((s): s is string => typeof s === "string" && s.length > 0);
+  return parts.length > 0 ? parts.join(", ") : "none";
+}
+
+export interface PlatformMaterialProps {
+  readonly ios?: { backdropMaterial: BackdropMaterial };
+  readonly windows?: { backdrop: { material: WindowsBackdropMaterial } };
+  readonly android?: { elevation?: number };
+}
+
+export interface ResolvedSurface {
+  readonly style: ViewStyle;
+  readonly ink: string;
+  readonly platformProps: PlatformMaterialProps;
+}
+
+function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
+  const style: ViewStyle = {};
+  const bg = resolveColor(layer.background);
+  if (bg !== null) style.backgroundColor = bg;
+  if (layer.gradient) style.backgroundImage = resolveTokenAliases(layer.gradient);
+  const boxShadow = resolveShadow(layer.shadow);
+  if (boxShadow !== undefined) style.boxShadow = boxShadow;
+  const border = resolveColor(layer.border);
+  if (border !== null) style.borderColor = border;
+  const borderTop = resolveColor(layer.borderTop);
+  if (borderTop !== null) style.borderTopColor = borderTop;
+  const borderBottom = resolveColor(layer.borderBottom);
+  if (borderBottom !== null) style.borderBottomColor = borderBottom;
+
+  const recipe: MaterialRecipe | undefined = layer.material ? materials[layer.material] : undefined;
+  if (layer.backdropFilter) {
+    style.backdropFilter = layer.backdropFilter;
+  } else if (recipe) {
+    style.backdropFilter = `blur(${recipe.fallback.blur}px)`;
+  }
+  if (recipe?.glassEffect !== undefined) {
+    style.glassEffect = recipe.glassEffect;
+    if (bg !== null) style.glassTintColor = bg;
+  }
+
+  const ink = resolveColor(layer.foreground) ?? colors.foreground;
+  const platformProps: PlatformMaterialProps = {
+    ...(recipe?.props.ios ? { ios: recipe.props.ios } : {}),
+    ...(recipe?.props.windows ? { windows: recipe.props.windows } : {}),
+    ...(typeof layer.elevation === "number" ? { android: { elevation: layer.elevation } } : {}),
+  };
+
+  return { style, ink, platformProps };
+}
+
+function mergeSurfaceSpec(spec: SurfaceSpec): SurfaceLayer {
+  const mode: Mode = isDark() ? "dark" : "light";
+  return { ...spec, ...spec[mode] };
+}
+
+/** Resolve one named semantic surface (`card`, `raised`, `inset`, `overlay`, `modal`, `inverse`, `glass`, `accent`, `fill`, ...). */
+export function surface(role: SurfaceRole): ResolvedSurface {
+  return compileSurfaceLayer(mergeSurfaceSpec(activeSpec().surfaces[role]));
+}
+
+/** Width in points for a surface border (`0` when `"transparent"` or absent, else `stroke.hairline`). */
+export function surfaceBorderWidth(borderColor: string | undefined): number {
+  return !borderColor || borderColor === "transparent" ? 0 : stroke.hairline;
+}
+
+/** Resolved progress/slider run gradient + fallback solid background. */
+export function fillStyle(): ViewStyle {
+  const fill = surface("fill").style;
+  if (fill.backgroundImage) {
+    return fill.backgroundColor
+      ? { backgroundColor: fill.backgroundColor, backgroundImage: fill.backgroundImage }
+      : { backgroundImage: fill.backgroundImage };
+  }
+  if (typeof fill.backgroundColor !== "string") return {};
+  return {
+    backgroundImage: `linear-gradient(180deg, ${fill.backgroundColor} 0%, ${fill.backgroundColor} 100%)`,
+  };
+}
+
+function edgeShadow(
+  borderColor: string | undefined,
+  boxShadow: string | undefined,
+  width: number,
+  inset: boolean,
+): string {
+  const line =
+    borderColor && borderColor !== "transparent"
+      ? `${inset ? "inset " : ""}0 0 0 ${width}px ${borderColor}`
+      : undefined;
+  const shade = boxShadow && boxShadow !== "none" ? boxShadow : undefined;
+  const parts = [line, shade].filter((p): p is string => p !== undefined);
+  return parts.length === 0 ? "none" : parts.join(", ");
+}
+
+function optionalEdgeShadow(
+  borderColor: string | undefined,
+  boxShadow: string | undefined,
+  width: number,
+): string | undefined {
+  const resolved = edgeShadow(borderColor, boxShadow, width, true);
+  return resolved === "none" ? undefined : resolved;
+}
+
+/** Hairline inset shadow line inside a rail's own `boxShadow`. */
+export function insetEdge(
+  borderColor: string | undefined,
+  boxShadow: string | undefined,
+  width = EDGE_WIDTH,
+): string {
+  return edgeShadow(borderColor, boxShadow, width, true);
+}
+
+/** Hairline outer shadow line around a handle's `boxShadow`. */
+export function outerEdge(
+  borderColor: string | undefined,
+  boxShadow: string | undefined,
+  width = EDGE_WIDTH,
+): string {
+  return edgeShadow(borderColor, boxShadow, width, false);
+}
+
+/** Timing curve configuration ready for NSH `animate()` or CSS transitions. */
+export interface Timing {
+  readonly duration: number;
+  readonly timingFunction: EasingCurve;
+}
+
+const EASINGS: Record<keyof typeof EASING_BEZIERS, EasingCurve> = {
   "out-cubic": Easing.out(Easing.cubic),
   "in-cubic": Easing.in(Easing.cubic),
   "in-out-cubic": Easing.inOut(Easing.cubic),
-  // Material 3 (`md.sys.motion.easing.standard` / single-bezier `emphasized`) & NSH `snappy`
   standard: Easing.bezier(0.2, 0, 0, 1),
-  // Material 3 (`md.sys.motion.easing.emphasized-decelerate`)
   "emphasized-decelerate": Easing.bezier(0.05, 0.7, 0.1, 1),
-  // Material 3 (`md.sys.motion.easing.emphasized-accelerate`)
   "emphasized-accelerate": Easing.bezier(0.3, 0, 0.8, 0.15),
-  // WinUI 3 Fast Out, Slow In (`0,0,0,1`) & M3 `standard-decelerate`
   decelerate: Easing.bezier(0, 0, 0, 1),
-  // WinUI 3 Slow Out, Fast In (`1,0,1,1`)
   accelerate: Easing.bezier(1, 0, 1, 1),
-  // WinUI 3 Existing Elements / Point-to-Point (`0.55,0.55,0,1`, windows-dev-docs)
   "point-to-point": Easing.bezier(0.55, 0.55, 0, 1),
 };
 
-const resolveMotion = (raw: TimingSpec): Timing => ({
-  duration: raw.duration,
-  timingFunction: easings[raw.timingFunction],
-});
+function resolveTiming(spec: TimingSpec): Timing {
+  return {
+    duration: spec.duration,
+    timingFunction: EASINGS[spec.easing],
+  };
+}
 
-/**
- * A reactive proxy over a `Timing` motion role so controls created before `selectTheme`
- * dynamically pick up the new theme's duration and curve when they animate or render.
- */
 const motionRole = (read: () => TimingSpec): Timing => {
-  const current = computed(() => resolveMotion(read()));
-  return new Proxy({} as Timing, {
-    get: (_, key) => Reflect.get(current(), key),
-    has: (_, key) => key in current(),
-    ownKeys: () => Reflect.ownKeys(current()),
-    getOwnPropertyDescriptor: (_, key) => {
-      const value = current();
-      if (!(key in value)) return undefined;
-      return { enumerable: true, configurable: true, value: Reflect.get(value, key) };
+  const current = computed(() => resolveTiming(read()));
+  return {
+    get duration() {
+      return current().duration;
     },
-  });
+    get timingFunction() {
+      return current().timingFunction;
+    },
+  };
 };
 
-/**
- * The theme's motion roles: `fast` (a small control's state coming and going), `default` (the one
- * most feedback uses: a press, a release, a modest move), `slow` (a large surface or a
- * long-travel movement) and `state` (a hover, a press or a choice fading in and out). Each is a
- * duration and an easing, `{ duration, timingFunction }`.
- */
+export type MotionPresetName = keyof ThemeSpec["motion"]["presets"];
+
+/** Motion timing channels, optional spring, CSS transition helper, and enter presets. */
 export const motion = {
-  fast: motionRole(() => style().motion.fast),
-  default: motionRole(() => style().motion.default),
-  slow: motionRole(() => style().motion.slow),
-  state: motionRole(() => style().motion.state),
+  fast: motionRole(() => activeSpec().motion.fast),
+  default: motionRole(() => activeSpec().motion.default),
+  slow: motionRole(() => activeSpec().motion.slow),
+  state: motionRole(() => activeSpec().motion.state),
+  get spring() {
+    return activeSpec().motion.spring;
+  },
+  preset(name: MotionPresetName) {
+    const p = activeSpec().motion.presets[name];
+    return {
+      fromScale: reduceMotion() ? 1 : p.fromScale,
+      fromY: reduceMotion() ? 0 : p.fromY,
+      timing: motion[p.timing],
+    };
+  },
+  transition(properties: string, role: "state" | "fast" | "default" | "slow" = "state"): ViewStyle {
+    if (reduceMotion()) return { transitionProperty: "none" };
+    const spec = activeSpec().motion[role];
+    const [x1, y1, x2, y2] = EASING_BEZIERS[spec.easing];
+    return {
+      transitionProperty: properties,
+      transitionDuration: spec.duration,
+      transitionTimingFunction: `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`,
+    };
+  },
 };
 
-/**
- * Drive `value` to `to` over `config` (a theme `Timing`, `motion.default` by default). Lands
- * immediately when `reduceMotion()` is active.
- */
+/** Drive `AnimatedValue` toward `to` over `config` (lands immediately if `reduceMotion()`). */
 export function animate(
   value: AnimatedValue,
   to: number,
@@ -1182,13 +689,7 @@ export function animate(
   return value.timing(to, { duration: config.duration, easing: config.timingFunction });
 }
 
-/**
- * An animated value that times to `target` each time it changes (a
- * control's state: 1 while on, 0 while off), natively: JS only starts each
- * animation. A change mid-way turns it from where it is; with reduced motion it lands at once. For discrete changes only: what
- * the pointer drives (a dragged thumb, a hover's place) is set in the same
- * frame, never animated toward the pointer.
- */
+/** Reactive animated value that transitions whenever `target()` changes discreetly. */
 export function follow(target: () => number, config: Timing = motion.fast): AnimatedValue {
   const v = createAnimatedValue(target());
   let shown = target();
@@ -1201,112 +702,560 @@ export function follow(target: () => number, config: Timing = motion.fast): Anim
   return v;
 }
 
+function stateLayerColor(
+  kind: "hover" | "pressed",
+  ink: AnyColorKey = "foreground",
+): string | undefined {
+  const fb = activeSpec().feedback;
+  const opacity = kind === "hover" ? fb.hover.overlay : fb.press.overlay;
+  if (opacity <= 0) return undefined;
+  return alpha(resolveColor(ink) ?? colors.foreground, opacity);
+}
+
+function stateLayerStyle(kind: "hover" | "pressed", ink: AnyColorKey = "foreground"): ViewStyle {
+  const wash = stateLayerColor(kind, ink);
+  if (!wash) return {};
+  return { backgroundImage: `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)` };
+}
+
 /**
- * A pressable under the pointer (`hoverStyle`): when `state.overlay.hover` is 0 (the default:
- * swap fills), returns the theme's `hover` background; when `state.overlay.hover > 0`, returns a
- * state-layer wash of `ink` (default `"foreground"`). Leave it off a disabled control and, where a
- * theme uses swap fills, off a selected one whose own fill shows.
+ * Unified interaction feedback domain: hover, press, focus, disabled, passive opacities, and touchSlop.
  */
-export const hovered = (ink: keyof Tokens = "foreground"): ViewStyle => {
-  if (style().state.overlay.hover <= 0) {
-    return { backgroundColor: token("hover") };
+export const feedback = {
+  /** Generic hover fill or Material state-layer wash. */
+  hoverStyle(ink: AnyColorKey = "foreground"): ViewStyle {
+    const fb = activeSpec().feedback.hover;
+    if (fb.overlay > 0) return stateLayerStyle("hover", ink);
+    return { backgroundColor: resolveColor(fb.fill) ?? "transparent" };
+  },
+  /** Raised control hover surface (`backgroundColor`, `border*`, `boxShadow`). */
+  hoverSurface(ink: AnyColorKey = "foreground"): ViewStyle {
+    const fb = activeSpec().feedback.hover;
+    if (fb.overlay > 0) return stateLayerStyle("hover", ink);
+    return compileSurfaceLayer(mergeSurfaceSpec(fb.surface)).style;
+  },
+  /**
+   * Press interaction style (`activeStyle` + `transition`).
+   * Unifies press scale/translateY, Material state layer, secondary press surface swap, and accent press.
+   */
+  press(
+    intent: "surface" | "accent" | "ghost" | "outline" | "destructive" | "sinkOnly" = "surface",
+    o?: { scale?: number; also?: string; ink?: AnyColorKey; outlineBorder?: string },
+  ): { readonly activeStyle: ViewStyle; readonly transition: ViewStyle } {
+    const p = activeSpec().feedback.press;
+    const transform = (() => {
+      if (reduceMotion()) return undefined;
+      const list: NonNullable<ViewStyle["transform"]> = [];
+      if (p.scale < 1) list.push({ scale: o?.scale ?? p.scale });
+      if (p.translateY !== 0) list.push({ translateY: p.translateY });
+      return list.length > 0 ? list : undefined;
+    })();
+    const transitionProp = o?.also ? `${o.also}, transform` : "transform";
+    const transition = motion.transition(transitionProp, "state");
+
+    if (intent === "sinkOnly") {
+      return {
+        activeStyle: transform ? { transform } : {},
+        transition,
+      };
+    }
+
+    let shade: ViewStyle = {};
+    if (p.overlay > 0) {
+      shade = stateLayerStyle("pressed", o?.ink ?? "foreground");
+    } else if (intent === "accent") {
+      const pressedBg = resolveColor(p.accent.background);
+      if (pressedBg !== null) {
+        shade = {
+          ...surface("accent").style,
+          opacity: p.accent.opacity,
+          backgroundColor: pressedBg,
+          backgroundImage: "none",
+          borderColor: "transparent",
+          borderTopColor: "transparent",
+          borderBottomColor: "transparent",
+        };
+      } else {
+        shade = { ...surface("accent").style, opacity: p.accent.opacity };
+      }
+    } else if (intent === "destructive") {
+      shade = { backgroundColor: alpha(colors.destructive, 0.22), boxShadow: "none" };
+    } else if (intent === "outline") {
+      shade = {
+        ...compileSurfaceLayer(mergeSurfaceSpec(p.surface)).style,
+        ...(o?.outlineBorder ? { borderColor: o.outlineBorder } : {}),
+      };
+    } else {
+      shade = compileSurfaceLayer(mergeSurfaceSpec(p.surface)).style;
+    }
+
+    return {
+      activeStyle: transform ? { ...shade, transform } : shade,
+      transition,
+    };
+  },
+  /** Ink when accent or surface control is pressed. */
+  pressedInk(intent: "accent" | "surface"): string {
+    const p = activeSpec().feedback.press;
+    if (intent === "accent") {
+      return resolveColor(p.accent.foreground) ?? surface("accent").ink;
+    }
+    return compileSurfaceLayer(mergeSurfaceSpec(p.surface)).ink;
+  },
+  /** Keyboard focus ring (`halo`, `outline`, or `double`). */
+  focusRing(offset?: number): ViewStyle {
+    const f = activeSpec().feedback.focus;
+    const ring = colors.ring;
+    const base: ViewStyle = {
+      outlineStyle: "solid",
+      outlineWidth: f.width,
+      outlineColor: f.style === "halo" ? alpha(ring, 0.3) : ring,
+      outlineOffset: offset ?? f.offset,
+    };
+    if (f.style === "halo") return { borderColor: ring, ...base };
+    if (f.style === "double") {
+      const inner = resolveColor(f.innerColor) ?? colors.card;
+      return {
+        ...base,
+        outlineOffset: (offset ?? f.offset) + 1,
+        boxShadow: `0 0 0 1px ${inner}`,
+      };
+    }
+    return base;
+  },
+  /** Disabled appearance (`replaceFace`, `contentOpacity`, replacement `style` and `ink`). */
+  get disabled() {
+    const d = activeSpec().feedback.disabled;
+    const resolved = compileSurfaceLayer(mergeSurfaceSpec(d.surface));
+    return {
+      contentOpacity: d.contentOpacity,
+      replaceFace: d.replaceFace,
+      style: resolved.style,
+      ink: resolved.ink,
+    };
+  },
+  /** Passive indicator opacity (e.g. scrollbar thumb). */
+  get passive() {
+    return activeSpec().feedback.passive;
+  },
+  /** Touch hit expansion outside small controls on touch screens. */
+  touchSlop(side: number): number | undefined {
+    const hit = hitTarget();
+    if (terminal || side >= hit) return undefined;
+    return (hit - side) / 2;
+  },
+  /** Hover overlay opacity (`> 0` on Material). */
+  get hoverOverlay() {
+    return activeSpec().feedback.hover.overlay;
+  },
+  /** Press overlay opacity (`> 0` on Material). */
+  get pressOverlay() {
+    return activeSpec().feedback.press.overlay;
+  },
+  /** Hover overlay color helper for circular targets (checkbox/radio). */
+  hoverLayerColor: (ink: AnyColorKey = "foreground") => stateLayerColor("hover", ink),
+};
+
+export const focusRing = (offset?: number): ViewStyle => feedback.focusRing(offset);
+export const hovered = (ink?: AnyColorKey): ViewStyle => feedback.hoverStyle(ink);
+export const dimmed = {
+  get rest() {
+    return activeSpec().feedback.passive.restOpacity;
+  },
+  get pressed() {
+    return activeSpec().feedback.passive.pressedOpacity;
+  },
+  get disabled() {
+    return activeSpec().feedback.disabled.contentOpacity;
+  },
+};
+export const press = {
+  get scale() {
+    return activeSpec().feedback.press.scale;
+  },
+};
+
+/** Resolved face for a control slot (`style` when surface or color, plus resolved `backgroundColor` & `borderColor` & `ink`). */
+export interface ResolvedFace {
+  readonly kind: "surface" | "color";
+  readonly style: ViewStyle;
+  readonly color: string;
+  readonly borderColor?: string;
+  readonly ink?: string;
+}
+
+function resolveFaceExpr(expr: FaceExpr | "none" | null | undefined): ResolvedFace | null {
+  if (expr === undefined || expr === null || expr === "none") return null;
+  if (typeof expr === "object" && "surface" in expr) {
+    const s = surface(expr.surface);
+    return {
+      kind: "surface",
+      style: s.style,
+      color: (s.style.backgroundColor as string | undefined) ?? "transparent",
+      borderColor: s.style.borderColor as string | undefined,
+      ink: s.ink,
+    };
   }
-  return stateLayer("hover", ink);
+  const color = resolveColor(expr);
+  if (color === null) return null;
+  return { kind: "color", style: { backgroundColor: color }, color };
+}
+
+function resolveBoxSize(
+  raw: TieredOrFlat<SlotSize>,
+  fallback?: readonly [number, number],
+): readonly [number, number] {
+  const val = readTiered(raw);
+  if (val === "same") {
+    if (!fallback) throw new Error("`same` size requires a resting knob size");
+    return fallback;
+  }
+  return typeof val === "number" ? [val, val] : val;
+}
+
+const FOCUS_BG_MAP: Record<string, string> = {
+  brand: "focus:bg-brand/15",
+  accent: "focus:bg-accent",
 };
 
 /**
- * The keyboard focus (`focusVisibleStyle`: not after a click or a tap):
- * - `"halo"`: `borderColor` turns `ring` and a halo of `ring` at 30% (`focus.width` points, 3 by default) sits outside.
- * - `"outline"`: `borderColor` stays untouched; `outlineColor` is `ring`.
- * - `"double"`: `borderColor` stays untouched; a 1 px line of `focus-inner` hugs the edge (a spread shadow,
- *   which stands in for the surface's own shadow while focused) and the `focus.width` outline of `ring` lies just
- *   outside it, so the outline's offset grows by that 1 px (WinUI 3's `FocusStrokeColorInner` / `Outer`).
+ * Strongly typed reactive reader for every control group in `controls` (`docs/decisions/0020-theme-v5.md`).
  */
-export const focusRing = (offset?: number): ViewStyle => {
-  const { style: look, width, offset: base } = style().dimension.focus;
-  const ringOutline: ViewStyle = {
-    outlineStyle: "solid",
-    outlineWidth: width,
-    outlineColor: look === "halo" ? alpha(token("ring"), 0.3) : token("ring"),
-    outlineOffset: offset ?? base,
+export function control<K extends keyof ThemeSpec["controls"]>(name: K): ResolvedControlMap[K] {
+  const c = activeSpec().controls;
+  switch (name) {
+    case "button": {
+      const b = c.button;
+      const shadeStyle = b.shade === "none" ? "none" : (surface(b.shade).style.boxShadow ?? "none");
+      const secFace = resolveFaceExpr(b.secondary.face);
+      const secEdge =
+        b.secondary.edge === "none"
+          ? null
+          : typeof b.secondary.edge === "object" && "surface" in b.secondary.edge
+            ? (surface(b.secondary.edge.surface).style.borderColor ?? colors.border)
+            : resolveColor(b.secondary.edge);
+      const outEdge =
+        typeof b.outline.edge === "object" && "surface" in b.outline.edge
+          ? (surface(b.outline.edge.surface).style.borderColor ?? colors.border)
+          : (resolveColor(b.outline.edge) ?? colors.border);
+      const selFace = resolveFaceExpr(b.selected.face);
+      const desEdge = b.destructive.edge === "none" ? null : resolveColor(b.destructive.edge);
+      return {
+        corner: buttonCorner,
+        shade: shadeStyle,
+        selected: {
+          style: selFace?.style ?? {},
+          ink: resolveColor(b.selected.ink) ?? colors.primaryForeground,
+        },
+        secondary: {
+          style: {
+            ...(secFace?.style ?? {}),
+            borderColor: secEdge ?? "transparent",
+            boxShadow: shadeStyle,
+          } satisfies ViewStyle,
+        },
+        outlineEdge: outEdge,
+        destructive: {
+          edge: desEdge,
+          style: {
+            backgroundColor: tints.destructive,
+            borderColor: desEdge ?? "transparent",
+            ...(b.shade === "none" ? {} : { boxShadow: shadeStyle }),
+          } satisfies ViewStyle,
+          ink: colors.destructive,
+        },
+      } as ResolvedControlMap[K];
+    }
+    case "badge":
+      return { corner: resolveCorner(c.badge.corner) } as ResolvedControlMap[K];
+    case "field": {
+      const f = c.field;
+      const edges = f.edge.sides ? ("all" as const) : ("bottom" as const);
+      return {
+        edges,
+        width: stroke.control,
+        radius: shape.control,
+        // Structural rule: underline fields always have flat bottom corners (0).
+        bottomRadius: edges === "bottom" ? 0 : shape.control,
+        sideColor: edges === "all" ? (resolveColor(f.edge.color) ?? colors.input) : null,
+        sideClass:
+          edges === "all" && typeof f.edge.color === "string"
+            ? `border-${f.edge.color}`
+            : "border-transparent",
+        bottomColor: resolveColor(f.edge.bottom) ?? colors.input,
+        bottomClass:
+          typeof f.edge.bottom === "string" ? `border-b-${f.edge.bottom}` : "border-b-input",
+        ground: resolveColor(f.ground) ?? colors.card,
+        shadeShadow: f.shade === "none" ? "none" : (surface(f.shade).style.boxShadow ?? "none"),
+        focusLine: f.focus.line,
+        focusWidth: f.focus.width,
+        focusUsesRing: f.focus.color === "ring",
+      } as ResolvedControlMap[K];
+    }
+    case "choice": {
+      const ch = c.choice;
+      const size = readTiered(ch.size);
+      const box = readTiered(ch.box);
+      const corner = resolveCorner(readTiered(ch.corner));
+      const edgeW = ch.edge.width;
+      const edgeColor = resolveColor(ch.edge.color);
+      const disabledEdgeColor = resolveColor(ch.edge.disabled);
+      const checkedFace = resolveFaceExpr(ch.checked.face);
+      const radioCheckedFace = resolveFaceExpr(ch.radioChecked.face);
+      return {
+        size,
+        box,
+        corner,
+        face: resolveColor(ch.face),
+        shadeShadow: ch.shade === "none" ? "none" : (surface(ch.shade).style.boxShadow ?? "none"),
+        edgeWidth: edgeColor === null ? 0 : edgeW,
+        edgeColor,
+        disabledEdgeColor: disabledEdgeColor ?? edgeColor,
+        checkedStyle: checkedFace?.style ?? null,
+        radioCheckedStyle: radioCheckedFace?.style ?? null,
+        mark: readTiered(ch.mark),
+      } as ResolvedControlMap[K];
+    }
+    case "switch": {
+      const sw = c.switch;
+      const track = readTiered(sw.track);
+      const smallTrack = readTiered(sw.small.track);
+      const smallKnob = resolveBoxSize(sw.small.knob);
+      const knob = resolveBoxSize(sw.knob.size);
+      const knobOn = resolveBoxSize(sw.knob.on, knob);
+      const knobPressed = resolveBoxSize(sw.knob.pressed, knob);
+      const [bw, bh] = knob;
+      const [pw, ph] = knobPressed;
+      const feedbackKind =
+        pw === bw && ph === bh
+          ? ("none" as const)
+          : pw / bw > ph / bh
+            ? ("stretch" as const)
+            : ("expand" as const);
+      return {
+        width: track[0],
+        height: track[1],
+        smallWidth: smallTrack[0],
+        smallHeight: smallTrack[1],
+        trackOffFace: resolveColor(sw.trackOffFace) ?? colors.muted,
+        edgeOff: readTiered(sw.edge.off),
+        edgeOn: readTiered(sw.edge.on),
+        edgeColor: sw.edge.color === "none" ? null : resolveColor(sw.edge.color),
+        knobWidth: knob[0],
+        knobHeight: knob[1],
+        knobSmallWidth: smallKnob[0],
+        knobSmallHeight: smallKnob[1],
+        knobOnWidth: knobOn[0],
+        knobOnHeight: knobOn[1],
+        knobPressedWidth: knobPressed[0],
+        knobPressedHeight: knobPressed[1],
+        feedback: feedbackKind,
+        knobStyle(checked: boolean): ViewStyle {
+          const bg = resolveColor(
+            checked && sw.knob.checkedBackground ? sw.knob.checkedBackground : sw.knob.background,
+          );
+          const border = resolveColor(
+            checked && sw.knob.checkedBorder ? sw.knob.checkedBorder : sw.knob.border,
+          );
+          const grad =
+            checked && sw.knob.checkedGradient !== undefined
+              ? sw.knob.checkedGradient
+              : sw.knob.gradient;
+          const resolvedGrad = readMode(grad ?? null);
+          const shadow = resolveShadow(sw.knob.shadow);
+          return {
+            ...(bg !== null ? { backgroundColor: bg } : {}),
+            ...(border !== null ? { borderColor: border } : {}),
+            backgroundImage: resolvedGrad ? resolveTokenAliases(resolvedGrad) : "none",
+            ...(shadow !== undefined ? { boxShadow: shadow } : {}),
+          };
+        },
+      } as ResolvedControlMap[K];
+    }
+    case "slider": {
+      const sl = c.slider;
+      const knob = resolveBoxSize(sl.knob.size);
+      const pressed = resolveBoxSize(sl.knob.pressed, knob);
+      const grad = readMode(sl.knob.gradient ?? null);
+      const border = resolveColor(sl.knob.border);
+      const shadow = resolveShadow(sl.knob.shadow);
+      const grooveColor = resolveColor(sl.face) ?? colors.muted;
+      const shadeShadow =
+        sl.shade === "none" ? "none" : (surface(sl.shade).style.boxShadow ?? "none");
+      const edgeColor = sl.edge.color === "none" ? null : resolveColor(sl.edge.color);
+      return {
+        rail: readTiered(sl.rail),
+        band: readTiered(sl.band),
+        knobWidth: knob[0],
+        knobHeight: knob[1],
+        knobPressedWidth: pressed[0],
+        knobPressedHeight: pressed[1],
+        knobStyle: {
+          backgroundColor: resolveColor(sl.knob.background) ?? colors.card,
+          ...(grad ? { backgroundImage: resolveTokenAliases(grad) } : {}),
+          borderColor: border ?? "transparent",
+          ...(shadow !== undefined ? { boxShadow: shadow } : {}),
+        } satisfies ViewStyle,
+        hasKnobEdge: border !== null && border !== "transparent",
+        knobEdgeColor: border,
+        knobShadow: shadow,
+        grooveColor,
+        grooveShadow: optionalEdgeShadow(
+          edgeColor ?? undefined,
+          typeof shadeShadow === "string" ? shadeShadow : undefined,
+          sl.edge.width,
+        ),
+        hasGrooveShade: sl.shade !== "none",
+        mark: sl.mark,
+      } as ResolvedControlMap[K];
+    }
+    case "progress": {
+      const pr = c.progress;
+      const grooveColor = resolveColor(pr.face) ?? colors.muted;
+      const shadeShadow = pr.shade === "none" ? "none" : surface(pr.shade).style.boxShadow;
+      const edgeColor = pr.edge.color === "none" ? null : resolveColor(pr.edge.color);
+      return {
+        height: pr.height,
+        grooveColor,
+        grooveShadow: optionalEdgeShadow(
+          edgeColor ?? undefined,
+          typeof shadeShadow === "string" ? shadeShadow : undefined,
+          pr.edge.width,
+        ),
+      } as ResolvedControlMap[K];
+    }
+    case "spinner":
+      return { trackOpacity: c.spinner.trackOpacity } as ResolvedControlMap[K];
+    case "popup":
+      return { corner: resolveCorner(c.popup.corner) } as ResolvedControlMap[K];
+    case "list": {
+      const hl = c.list.item.highlight;
+      const key =
+        typeof hl === "string"
+          ? hl
+          : typeof hl === "object" && hl !== null && "tint" in hl
+            ? hl.tint
+            : "";
+      const bgCls = FOCUS_BG_MAP[key];
+      if (!bgCls) throw new Error(`unsupported list.item.highlight: ${JSON.stringify(hl)}`);
+      const hasEdge = c.list.item.edge !== "none";
+      return {
+        highlightClass: (withEdge = true) =>
+          withEdge && hasEdge ? `focus:border-brand/30 ${bgCls}` : bgCls,
+      } as ResolvedControlMap[K];
+    }
+    case "tabs": {
+      const tr = c.tabs.track;
+      return {
+        face: resolveColor(tr.face),
+        edge: tr.edge === "none" ? null : resolveColor(tr.edge),
+        corner: resolveCorner(tr.corner),
+      } as ResolvedControlMap[K];
+    }
+    case "menubar":
+      return {
+        bar: c.menubar.bar,
+        style: c.menubar.bar === "card" ? surface("card").style : {},
+      } as ResolvedControlMap[K];
+    case "well":
+      return {
+        edge: c.well.edge === "none" ? null : resolveColor(c.well.edge),
+      } as ResolvedControlMap[K];
+  }
+  throw new Error(`unknown control group: ${String(name)}`);
+}
+
+export interface ResolvedControlMap {
+  button: {
+    readonly corner: (size: "sm" | "default" | "lg") => number;
+    readonly shade: string;
+    readonly selected: { readonly style: ViewStyle; readonly ink: string };
+    readonly secondary: { readonly style: ViewStyle };
+    readonly outlineEdge: string;
+    readonly destructive: {
+      readonly edge: string | null;
+      readonly style: ViewStyle;
+      readonly ink: string;
+    };
   };
-  if (look === "halo") {
-    return {
-      borderColor: token("ring"),
-      ...ringOutline,
-    };
-  }
-  if (look === "double") {
-    return {
-      ...ringOutline,
-      outlineOffset: (offset ?? base) + 1,
-      boxShadow: `0 0 0 1px ${token("focus-inner")}`,
-    };
-  }
-  return ringOutline;
-};
-
-/*
- * Below: this library's own, with no upstream origin.
- */
-
-/**
- * A theme's fill for a run, a bar or a slider's range: the `fill` finish's gradient and the colour
- * under it. The gradient carries the colour where a theme has one; the colour under it shows
- * through the translucent stops, so the two never drift apart.
- *
- * A theme that draws its fill flat states no gradient, and the colour goes to both stops instead of
- * a background colour alone: a run is one gradient in every theme, so a vertical one can turn it.
- */
-export function fillStyle(): ViewStyle {
-  const face = finish.fill.backgroundColor;
-  const gradient = finish.fill.backgroundImage;
-  if (gradient !== undefined) {
-    return face === undefined
-      ? { backgroundImage: gradient }
-      : { backgroundColor: face, backgroundImage: gradient };
-  }
-  if (face === undefined) return {};
-  return { backgroundImage: `linear-gradient(180deg, ${face} 0%, ${face} 100%)` };
-}
-
-/** Default width in points of the hairline edge drawn by `insetEdge` and `outerEdge`. */
-export const EDGE_WIDTH = 1;
-
-function edgeShadow(
-  borderColor: string | undefined,
-  boxShadow: string | undefined,
-  width: number,
-  inset: boolean,
-): string {
-  const line = borderColor ? `${inset ? "inset " : ""}0 0 0 ${width}px ${borderColor}` : undefined;
-  const shade = boxShadow && boxShadow !== "none" ? boxShadow : undefined;
-  const parts = [line, shade].filter((part) => part !== undefined);
-  return parts.length === 0 ? "none" : parts.join(", ");
-}
-
-/**
- * A rail's edge: a `width`-point inset line of `borderColor` inside the theme's `boxShadow`,
- * whichever of the two the theme gives. `semantics.json` may write `shadow: "none"` or leave
- * the border color out, and a rail that joined the absent one after a comma would void the whole
- * declaration (`none, inset …` is not a shadow).
- */
-export function insetEdge(
-  borderColor: string | undefined,
-  boxShadow: string | undefined,
-  width = EDGE_WIDTH,
-): string {
-  return edgeShadow(borderColor, boxShadow, width, true);
-}
-
-/**
- * A handle's outer edge: a `width`-point outer line of `borderColor` around the theme's
- * `boxShadow`, sharing the same border/shadow normalization as `insetEdge`.
- */
-export function outerEdge(
-  borderColor: string | undefined,
-  boxShadow: string | undefined,
-  width = EDGE_WIDTH,
-): string {
-  return edgeShadow(borderColor, boxShadow, width, false);
+  badge: { readonly corner: number };
+  field: {
+    readonly edges: "all" | "bottom";
+    readonly width: number;
+    readonly radius: number;
+    readonly bottomRadius: number;
+    readonly sideColor: string | null;
+    readonly sideClass: string;
+    readonly bottomColor: string;
+    readonly bottomClass: string;
+    readonly ground: string;
+    readonly shadeShadow: string;
+    readonly focusLine: boolean;
+    readonly focusWidth: number;
+    readonly focusUsesRing: boolean;
+  };
+  choice: {
+    readonly size: number;
+    readonly box: number;
+    readonly corner: number;
+    readonly face: string | null;
+    readonly shadeShadow: string;
+    readonly edgeWidth: number;
+    readonly edgeColor: string | null;
+    readonly disabledEdgeColor: string | null;
+    readonly checkedStyle: ViewStyle | null;
+    readonly radioCheckedStyle: ViewStyle | null;
+    readonly mark: number;
+  };
+  switch: {
+    readonly width: number;
+    readonly height: number;
+    readonly smallWidth: number;
+    readonly smallHeight: number;
+    readonly trackOffFace: string;
+    readonly edgeOff: number;
+    readonly edgeOn: number;
+    readonly edgeColor: string | null;
+    readonly knobWidth: number;
+    readonly knobHeight: number;
+    readonly knobSmallWidth: number;
+    readonly knobSmallHeight: number;
+    readonly knobOnWidth: number;
+    readonly knobOnHeight: number;
+    readonly knobPressedWidth: number;
+    readonly knobPressedHeight: number;
+    readonly feedback: "none" | "expand" | "stretch";
+    readonly knobStyle: (checked: boolean) => ViewStyle;
+  };
+  slider: {
+    readonly rail: number;
+    readonly band: number;
+    readonly knobWidth: number;
+    readonly knobHeight: number;
+    readonly knobPressedWidth: number;
+    readonly knobPressedHeight: number;
+    readonly knobStyle: ViewStyle;
+    readonly hasKnobEdge: boolean;
+    readonly knobEdgeColor: string | null;
+    readonly knobShadow: string | undefined;
+    readonly grooveColor: string;
+    readonly grooveShadow: string | undefined;
+    readonly hasGrooveShade: boolean;
+    readonly mark: number;
+  };
+  progress: {
+    readonly height: number;
+    readonly grooveColor: string;
+    readonly grooveShadow: string | undefined;
+  };
+  spinner: { readonly trackOpacity: number };
+  popup: { readonly corner: number };
+  list: { readonly highlightClass: (withEdge?: boolean) => string };
+  tabs: {
+    readonly face: string | null;
+    readonly edge: string | null;
+    readonly corner: number;
+  };
+  menubar: { readonly bar: "card" | "none"; readonly style: ViewStyle };
+  well: { readonly edge: string | null };
 }

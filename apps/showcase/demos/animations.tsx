@@ -3,7 +3,7 @@
 // animation and a hiding header. The library has no motion API for a scene, so the motion runs
 // on `nsh` (`Animated`, `createMotion`, `LayoutAnimation`); the cards, buttons, badges and
 // segmented choices are this library's.
-import { alpha, colors, finish, isDark, tints, shape } from "@shadcn-nsh/theme";
+import { feedback, surface, alpha, colors, isDark, tints, shape } from "@shadcn-nsh/theme";
 import { Activity, Search, Star } from "lucide";
 import type {
   AnimatedNode,
@@ -164,9 +164,9 @@ function Hero() {
               justifyContent: "center",
               backgroundColor: breathe.interpolate({
                 inputRange: [0, 1],
-                outputRange: [colors.primary, colors.up],
+                outputRange: [colors.primary, colors.success],
               }),
-              boxShadow: finish.accent.boxShadow,
+              boxShadow: surface("accent").style.boxShadow,
               scale: breathe.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1.08] }),
             }}
           >
@@ -234,16 +234,16 @@ function PresetTile(props: { name: MotionName; tone: string; onPlay: (status: st
         flexGrow: 1,
         borderRadius: 14,
         borderCurve: "continuous",
-        backgroundColor: colors.raised,
-        ...finish.raised,
+        backgroundColor: colors.surface,
+        ...surface("raised").style,
         borderWidth: 1,
         borderColor: looping() ? props.tone : colors.border,
         transitionProperty: "background-color, transform",
         transitionDuration: 120,
       }}
       hoverStyle={{
-        ...finish.hover,
-        borderColor: looping() ? props.tone : finish.hover.borderColor,
+        ...feedback.hoverSurface(),
+        borderColor: looping() ? props.tone : feedback.hoverSurface().borderColor,
       }}
       activeStyle={{ transform: [{ scale: 0.97 }] }}
     >
@@ -398,7 +398,7 @@ function StaggeredEntrance() {
   return (
     <Scene
       title="Staggered entrance"
-      subtitle="createMotion({ enter, delay }) per item"
+      subtitle="createMotion({enter, delay}) per item"
       right={<StatusBadge label="70 ms apart" />}
     >
       <View style={{ height: 140, flexDirection: "row", alignItems: "flex-end", gap: 8 }}>
@@ -505,7 +505,7 @@ function Keyframes() {
               height: MOON,
               borderRadius: MOON / 2,
               overflow: "hidden",
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
             }}
           >
             <View style={{ flexDirection: "row", width: MOON * PHASES, translate: [sprite, 0] }}>
@@ -517,7 +517,7 @@ function Keyframes() {
                       height: MOON,
                       borderRadius: MOON / 2,
                       overflow: "hidden",
-                      backgroundColor: colors.warn,
+                      backgroundColor: colors.warning,
                     }}
                   >
                     <View
@@ -528,7 +528,7 @@ function Keyframes() {
                         width: MOON,
                         height: MOON,
                         borderRadius: MOON / 2,
-                        backgroundColor: colors.raised,
+                        backgroundColor: colors.surface,
                       }}
                     />
                   </View>
@@ -546,7 +546,7 @@ function Keyframes() {
               borderRadius: MOON / 2,
               borderWidth: 1.5,
               borderColor: colors.border,
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
             }}
           >
             <Each of={hours}>
@@ -601,13 +601,17 @@ function Keyframes() {
                 borderRadius: MOON / 2,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: liked() ? tints.warn : colors.raised,
+                backgroundColor: liked() ? tints.warning : colors.surface,
                 borderWidth: 1,
-                borderColor: liked() ? colors.warn : colors.border,
+                borderColor: liked() ? colors.warning : colors.border,
               }}
             >
               <View style={heart.style}>
-                <Icon icon={Star} size={24} tint={liked() ? colors.warn : colors.mutedForeground} />
+                <Icon
+                  icon={Star}
+                  size={24}
+                  tint={liked() ? colors.warning : colors.mutedForeground}
+                />
               </View>
             </View>
           </Pressable>
@@ -620,7 +624,7 @@ function Keyframes() {
               ...bubble.style,
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: "700", color: colors.warn }}>+1</Text>
+            <Text style={{ fontSize: 13, fontWeight: "700", color: colors.warning }}>+1</Text>
           </View>
           <Text
             style={{
@@ -643,7 +647,7 @@ function Keyframes() {
             borderRadius: 7,
             overflow: "hidden",
             backgroundColor: colors.background,
-            ...finish.inset,
+            ...surface("inset").style,
           }}
         >
           <View
@@ -653,7 +657,7 @@ function Keyframes() {
               top: 0,
               bottom: 0,
               width: width(),
-              backgroundImage: `linear-gradient(90deg, ${colors.up} 0%, ${colors.brand} 100%)`,
+              backgroundImage: `linear-gradient(90deg, ${colors.success} 0%, ${colors.brand} 100%)`,
               translate: [charge.mul(width()).add(-width()), 0],
             }}
           />
@@ -687,7 +691,7 @@ function Keyframes() {
       </View>
       <View style={{ gap: 8 }}>
         <Api label="A sprite sheet, frame by frame" api="Easing.steps(8)" />
-        <Api label="+1: three frames, one with its easing" api="play({ keyframes: [...] })" />
+        <Api label="+1: three frames, one with its easing" api="play({keyframes: [...]})" />
         <Api label="Like: pop in, then a heartbeat" api="await play(); play()" />
         <Api label="Charge in five jumps" api="value.keyframes([0, 1])" />
       </View>
@@ -728,7 +732,7 @@ const blobs: {
     top: 90,
     size: 270,
     duration: 8000,
-    color: () => colors.warn,
+    color: () => colors.warning,
     keyframes: { translateX: [0, 70], translateY: [0, -60], scale: [0.9, 1.2] },
   },
   {
@@ -736,7 +740,7 @@ const blobs: {
     top: 110,
     size: 210,
     duration: 6000,
-    color: () => colors.up,
+    color: () => colors.success,
     keyframes: { translateX: [0, -60], translateY: [0, -40], rotate: [0, 40], scale: [1, 1.25] },
   },
 ];
@@ -761,7 +765,7 @@ function Aurora() {
         style={{
           height: 260,
           overflow: "hidden",
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
         }}
       >
         <Each of={blobs}>
@@ -1053,7 +1057,7 @@ function EasingRace() {
                 onLayout={i() === 0 ? measure : undefined}
                 style={{ flex: 1, height: 12, justifyContent: "center" }}
               >
-                <View style={{ height: 2, borderRadius: 1, backgroundColor: colors.raised }} />
+                <View style={{ height: 2, borderRadius: 1, backgroundColor: colors.surface }} />
                 <View
                   style={{
                     position: "absolute",
@@ -1086,7 +1090,7 @@ function Composition() {
   const ys = tones().map(() => createAnimatedValue(0));
   const spin = createAnimatedValue(0);
   const fade = createAnimatedValue(1);
-  const state = signal<{ label: string; tone: "neutral" | "accent" | "warn" | "info" }>({
+  const state = signal<{ label: string; tone: "neutral" | "accent" | "warning" | "info" }>({
     label: "idle",
     tone: "neutral",
   });
@@ -1122,7 +1126,7 @@ function Composition() {
     void a.start().then(({ finished }) =>
       state.set({
         label: `${name} ${finished ? "finished" : "stopped"}`,
-        tone: finished ? "accent" : "warn",
+        tone: finished ? "accent" : "warning",
       }),
     );
   };
@@ -1202,7 +1206,7 @@ function Composition() {
 const SPRING_MS = 1800;
 const springs = [
   { label: "Gentle", stiffness: 120, damping: 14, color: () => colors.info },
-  { label: "Wobbly", stiffness: 180, damping: 8, color: () => colors.warn },
+  { label: "Wobbly", stiffness: 180, damping: 8, color: () => colors.warning },
   { label: "Stiff", stiffness: 400, damping: 30, color: () => colors.brand },
 ];
 
@@ -1318,7 +1322,7 @@ function Springs() {
                 justifyContent: "center",
                 borderRadius: 14,
                 backgroundColor: colors.background,
-                ...finish.inset,
+                ...surface("inset").style,
               }}
             >
               <View
@@ -1425,7 +1429,7 @@ function Interpolations() {
               height: 12,
               borderRadius: 6,
               backgroundColor: colors.primary,
-              ...finish.accent,
+              ...surface("accent").style,
             }}
           />
         </View>
@@ -1456,7 +1460,7 @@ function Interpolations() {
                 width: 52,
                 height: 52,
                 borderRadius: 26,
-                backgroundColor: colors.up,
+                backgroundColor: colors.success,
                 scale: t.interpolate({
                   inputRange: [0, 1],
                   outputRange: [0.6, 1.2],
@@ -1503,7 +1507,7 @@ function HidingHeader() {
           borderRadius: shape.control,
           overflow: "hidden",
           backgroundColor: colors.background,
-          ...finish.inset,
+          ...surface("inset").style,
         }}
       >
         <Scroll style={{ flex: 1 }} scrollValue={scroll}>
@@ -1539,7 +1543,7 @@ function HidingHeader() {
                       width: 40 + ((n() * 37) % 50),
                       height: 4,
                       borderRadius: 2,
-                      backgroundColor: n() % 3 === 0 ? colors.brand : colors.raised,
+                      backgroundColor: n() % 3 === 0 ? colors.brand : colors.surface,
                     }}
                   />
                 </View>
@@ -1558,8 +1562,8 @@ function HidingHeader() {
             alignItems: "center",
             gap: 10,
             paddingHorizontal: 14,
-            backgroundColor: colors.raised,
-            ...finish.raised,
+            backgroundColor: colors.surface,
+            ...surface("raised").style,
             borderBottomWidth: 1,
             borderBottomColor: colors.border,
             translate: [0, header.mul(-1)],
@@ -1614,7 +1618,7 @@ function BoundedDrag() {
           paddingHorizontal: 14,
           borderRadius: shape.control,
           backgroundColor: colors.background,
-          ...finish.inset,
+          ...surface("inset").style,
         }}
       >
         <View
@@ -1624,7 +1628,7 @@ function BoundedDrag() {
             width: KNOB + ranges.wide,
             height: 4,
             borderRadius: 2,
-            backgroundColor: colors.raised,
+            backgroundColor: colors.surface,
           }}
         />
         <View

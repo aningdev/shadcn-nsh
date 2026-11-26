@@ -1,14 +1,13 @@
 import {
   animate,
   colors,
-  finish,
+  defineTheme,
   focusRing,
   follow,
   hovered,
   motion,
-  platformMaterial,
   selectTheme,
-  type AppTheme,
+  surface,
 } from "@shadcn-nsh/theme";
 import { createAnimatedValue, mount, signal, Text, token, View } from "nsh";
 
@@ -25,46 +24,34 @@ import {
 } from "../../../packages/ui";
 import { Roll } from "../../../packages/ui/lib/motion";
 
-const { finishes } = nshGallery.semantics;
+const { spec } = nshGallery;
 
 /**
- * A synthetic theme exercising the Phase 3 cross-platform primitives:
+ * A synthetic theme exercising the cross-platform primitives:
  * `double` focus ring, timing motion roles with M3/WinUI 3 curves, state-layer overlays with
- * surface-matched ink, and a layer's `material` and `elevation`.
+ * surface-matched ink, and a surface's `material` and `elevation`.
  */
-const expressive: AppTheme = {
-  ...nshGallery,
+const expressive = defineTheme({
+  extends: spec,
   id: "expressive",
   label: "Expressive",
-  semantics: {
-    ...nshGallery.semantics,
-    dimension: {
-      ...nshGallery.semantics.dimension,
-      focus: { style: "double", width: 2, offset: 2 },
-    },
-    state: {
-      ...nshGallery.semantics.state,
-      overlay: { hover: 0.08, pressed: 0.1 },
-    },
-    motion: {
-      ...nshGallery.semantics.motion,
-      fast: { duration: 150, timingFunction: "emphasized-decelerate" },
-      default: { duration: 250, timingFunction: "decelerate" },
-      slow: { duration: 167, timingFunction: "accelerate" },
-    },
-    finishes: {
-      ...finishes,
-      light: {
-        ...finishes.light,
-        overlay: { ...finishes.light.overlay, material: "acrylic", elevation: 6 },
-      },
-      dark: {
-        ...finishes.dark,
-        overlay: { ...finishes.dark.overlay, material: "acrylic", elevation: 8 },
-      },
+  feedback: {
+    focus: { style: "double", width: 2, offset: 2 },
+    hover: { ...spec.feedback.hover, overlay: 0.08 },
+    press: { ...spec.feedback.press, overlay: 0.1 },
+  },
+  motion: {
+    fast: { duration: 150, easing: "emphasized-decelerate" },
+    default: { duration: 250, easing: "decelerate" },
+    slow: { duration: 167, easing: "accelerate" },
+  },
+  surfaces: {
+    overlay: {
+      light: { material: "acrylic", elevation: 6 },
+      dark: { material: "acrylic", elevation: 8 },
     },
   },
-};
+});
 
 const showMotion = (m: typeof motion.fast) =>
   `timing:${m.duration}:${JSON.stringify(m.timingFunction)}`;
@@ -95,8 +82,8 @@ function App() {
       <Text>{`toastHover=${JSON.stringify(toastClose.hoverStyle)}`}</Text>
       <Text>{`arrowHover=${JSON.stringify(arrow.hoverStyle)}`}</Text>
       <Text>{`bareHover=${JSON.stringify(hovered())}`}</Text>
-      <Text>{`menuMaterial=${JSON.stringify(platformMaterial("overlay"))}`}</Text>
-      <Text>{`tokens=${colors.primaryForeground}|${colors.inverseForeground}|${finish.accent.foreground}`}</Text>
+      <Text>{`menuMaterial=${JSON.stringify(surface("overlay").platformProps)}`}</Text>
+      <Text>{`tokens=${colors.primaryForeground}|${surface("inverse").ink}|${surface("accent").ink}`}</Text>
       <Roll value={step()}>{`roll=${step()}`}</Roll>
       <View
         style={{

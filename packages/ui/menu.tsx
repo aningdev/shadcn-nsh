@@ -6,15 +6,13 @@ import {
   colors,
   controlHeight,
   cornerCurve,
-  finish,
+  feedback,
   iconSize,
   rounded,
   font,
   shape,
-  dimmed,
-  stateLayer,
   stroke,
-  style,
+  surface,
 } from "@shadcn-nsh/theme";
 import { ChevronLeft, ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
@@ -41,9 +39,7 @@ import {
   buttonLook,
   type ButtonVariant,
 } from "./button";
-import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import {
   backdrop,
   MenuMark,
@@ -56,6 +52,8 @@ import {
   popupSurface,
   rowVerticalPad,
 } from "./lib/popup";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
+import { AsText } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -121,7 +119,7 @@ export const menuHighlight = (): ViewStyle => ({ backgroundColor: token("accent"
 /** A row pressed (`activeStyle`): the theme's press wash over the highlight, and on a theme
  * without one, a shade deeper than the highlight. */
 const menuPressed = (): ViewStyle => {
-  if (style().state.overlay.pressed > 0) return stateLayer("pressed");
+  if (feedback.pressOverlay > 0) return feedback.press("surface").activeStyle;
   return { backgroundColor: alpha(colors.foreground, 0.1) };
 };
 
@@ -169,7 +167,7 @@ export function menuItemLook(o?: MenuItemLookOptions) {
       return menuPressed();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
   };
 }
@@ -295,7 +293,7 @@ export function MenuLabel(props: MenuLabelProps) {
   );
 }
 
-/** A separator between a menu's groups (`<MenuSeparator style={menuSeparator()} />`): a groove, a hairline with a lip of light under it (`finish.inset`). */
+/** A separator between a menu's groups (`<MenuSeparator style={menuSeparator()} />`): a groove, a hairline with a lip of light under it (`surface("inset")`). */
 export function menuSeparator(): ViewStyle {
   return {
     height: stroke.hairline,
@@ -303,7 +301,7 @@ export function menuSeparator(): ViewStyle {
     marginBottom: 5,
     marginHorizontal: itemSpacing.inset,
     backgroundColor: colors.line,
-    boxShadow: finish.inset.boxShadow,
+    boxShadow: surface("inset").style.boxShadow,
   };
 }
 

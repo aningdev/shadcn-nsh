@@ -2,7 +2,7 @@ import {
   alpha,
   chart,
   colors,
-  finish,
+  surface,
   isDark,
   terminal,
   type Tone,
@@ -132,7 +132,7 @@ function Dial() {
   const a0 = 0.75 * Math.PI;
   const a1 = 2.25 * Math.PI;
   const angle = needle.interpolate({ inputRange: [0, 100], outputRange: [a0, a1] });
-  const zone = (): Tone => (load() >= 85 ? "destructive" : load() >= 60 ? "warn" : "up");
+  const zone = (): Tone => (load() >= 85 ? "destructive" : load() >= 60 ? "warning" : "success");
   return (
     <SceneCard
       title="Turbine 3 load"
@@ -188,14 +188,14 @@ function Dial() {
           const sweepRadius = r + 12;
           cx.lineWidth = 5;
           cx.lineCap = "round";
-          cx.strokeStyle = colors.raised;
+          cx.strokeStyle = colors.surface;
           cx.beginPath();
           cx.arc(centerX, centerY, sweepRadius, a0, a1);
           cx.stroke();
           const gradient = cx.createConicGradient(a0 - 0.2, centerX, centerY);
           gradient.addColorStop(0, colors.info);
           gradient.addColorStop(0.45, colors.brand);
-          gradient.addColorStop(0.75, colors.warn);
+          gradient.addColorStop(0.75, colors.warning);
           gradient.addColorStop(0.8, colors.destructive);
           cx.strokeStyle = gradient;
           cx.beginPath();
@@ -222,7 +222,7 @@ function Dial() {
           cx.closePath();
           cx.fill();
           cx.restore();
-          cx.fillStyle = colors.raised;
+          cx.fillStyle = colors.surface;
           cx.strokeStyle = colors.foreground;
           cx.lineWidth = 2;
           cx.beginPath();
@@ -235,7 +235,7 @@ function Dial() {
         <Stat
           width="33%"
           label="Zone"
-          value={zone() === "destructive" ? "Redline" : zone() === "warn" ? "High" : "Nominal"}
+          value={zone() === "destructive" ? "Redline" : zone() === "warning" ? "High" : "Nominal"}
           tone={zone()}
         />
         <Stat width="33%" label="Spool" value={`${(load() * 128).toLocaleString()} rpm`} />
@@ -276,7 +276,7 @@ function AreaChart() {
         value={`${last()}.${(last() * 7) % 10}`}
         unit="k/s"
         note={`${last() >= avg() ? "+" : "−"}${Math.abs(last() - avg())} vs. average`}
-        tone={last() >= avg() ? "up" : "down"}
+        tone={last() >= avg() ? "success" : "destructive"}
       />
       <Canvas
         style={{ height: 180 }}
@@ -302,9 +302,9 @@ function AreaChart() {
           cx.beginPath();
           cx.rect(windowX, pad.top, windowWidth, innerHeight);
           cx.clip();
-          hatch(cx, windowX, pad.top, windowWidth, innerHeight, alpha(colors.warn, 0.28), 6);
+          hatch(cx, windowX, pad.top, windowWidth, innerHeight, alpha(colors.warning, 0.28), 6);
           cx.restore();
-          cx.fillStyle = colors.warn;
+          cx.fillStyle = colors.warning;
           cx.textBaseline = "alphabetic";
           cx.fillText("deploy", windowX + 2, pad.top - 4);
           cx.fillStyle = colors.faint;
@@ -343,7 +343,7 @@ function AreaChart() {
           values.forEach((value, index) => {
             cx.beginPath();
             cx.arc(x(index), y(value), index === values.length - 1 ? 4.5 : 2.5, 0, TAU);
-            cx.fillStyle = colors.inset;
+            cx.fillStyle = colors.muted;
             cx.fill();
             cx.strokeStyle = colors.brand;
             cx.lineWidth = 1.5;
@@ -354,7 +354,7 @@ function AreaChart() {
           dashed(cx, pad.left, y(mean), width - pad.right, y(mean), colors.mutedForeground);
           const label = `avg ${mean}`;
           const textWidth = cx.measureText(label).width + 12;
-          cx.fillStyle = colors.raised;
+          cx.fillStyle = colors.surface;
           cx.beginPath();
           cx.roundRect(width - pad.right - textWidth, y(mean) - 9, textWidth, 18, 9);
           cx.fill();
@@ -366,7 +366,7 @@ function AreaChart() {
       <View style={{ flexDirection: "row", gap: 16 }}>
         <Legend color={colors.brand} label="Messages" />
         <Legend color={colors.mutedForeground} label="Average" />
-        <Legend color={colors.warn} label="Deploy" />
+        <Legend color={colors.warning} label="Deploy" />
       </View>
     </SceneCard>
   );
@@ -392,9 +392,9 @@ const ridgePeak = Math.max(...ridges.flat());
 /** Seven days, six hue roles: chart-1, up, info, warn, muted-foreground, destructive, then brand again. */
 const dayColors = [
   chart.chart1,
-  colors.up,
+  colors.success,
   colors.info,
-  colors.warn,
+  colors.warning,
   colors.mutedForeground,
   colors.destructive,
   colors.brand,
@@ -460,7 +460,7 @@ function Ridgeline() {
             cx.lineTo(x(24), base);
             cx.lineTo(x(0), base);
             cx.closePath();
-            cx.fillStyle = colors.inset;
+            cx.fillStyle = colors.muted;
             cx.fill();
             const fade = cx.createLinearGradient(0, base - amplitude, 0, base - amplitude * 0.3);
             fade.addColorStop(0, dayColor(day, 0.34));
@@ -487,7 +487,7 @@ function Ridgeline() {
   );
 }
 
-const levels = () => [colors.raised, accentA(0.22), accentA(0.45), accentA(0.7), colors.brand];
+const levels = () => [colors.surface, accentA(0.22), accentA(0.45), accentA(0.7), colors.brand];
 
 function DotMatrix() {
   const pulse = createAnimatedValue(0);
@@ -619,7 +619,7 @@ function Dumbbell() {
             cx.moveTo(x(route.before), centerY);
             cx.lineTo(after, centerY);
             cx.stroke();
-            cx.fillStyle = colors.inset;
+            cx.fillStyle = colors.muted;
             cx.strokeStyle = colors.mutedForeground;
             cx.lineWidth = 1.5;
             cx.beginPath();
@@ -735,7 +735,7 @@ const glyphs: { name: string; path: Path2D; color: Tone; stroke?: boolean }[] = 
     path: new Path2D(
       "M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 6.91-1.01z",
     ),
-    color: "warn",
+    color: "warning",
   },
   { name: "Bolt", path: new Path2D("M13 2L3 14h7l-1 8 10-12h-7z"), color: "info" },
   { name: "Check", path: new Path2D("M20 6L9 17l-5-5"), color: "accent", stroke: true },
@@ -757,8 +757,8 @@ function Glyphs() {
                         height: 60,
                         borderRadius: 18,
                         borderCurve: "continuous",
-                        backgroundColor: colors.raised,
-                        ...finish.raised,
+                        backgroundColor: colors.surface,
+                        ...surface("raised").style,
                         borderWidth: 1,
                         borderColor: colors.border,
                         alignItems: "center",
@@ -811,7 +811,7 @@ function Compositing() {
           cx.shadowColor = shadow;
           cx.shadowBlur = 16;
           cx.shadowOffsetY = 6;
-          cx.fillStyle = colors.raised;
+          cx.fillStyle = colors.surface;
           cx.beginPath();
           cx.arc(first, centerY, 40, 0, TAU);
           cx.fill();
@@ -821,8 +821,8 @@ function Compositing() {
           cx.arc(first, centerY, 40, 0, TAU);
           cx.clip();
           const disc = cx.createLinearGradient(first - 40, centerY - 40, first + 40, centerY + 40);
-          disc.addColorStop(0, colors.raised);
-          disc.addColorStop(1, colors.inset);
+          disc.addColorStop(0, colors.surface);
+          disc.addColorStop(1, colors.muted);
           cx.fillStyle = disc;
           cx.fillRect(first - 40, centerY - 40, 80, 80);
           cx.drawImage(logo, first - 46, centerY - 46, 92, 92);
@@ -844,7 +844,7 @@ function Compositing() {
             centerY + 36,
           );
           paper.addColorStop(0, colors.primary);
-          paper.addColorStop(1, colors.up);
+          paper.addColorStop(1, colors.success);
           cx.fillStyle = paper;
           cx.beginPath();
           cx.roundRect(second - 52, centerY - 36, 104, 72, 14);
@@ -868,15 +868,15 @@ function Compositing() {
           cx.globalCompositeOperation = "source-over";
           const third = (5 * width) / 6;
           const glow = cx.createRadialGradient(third, centerY, 22, third, centerY, 52);
-          glow.addColorStop(0, alpha(colors.warn, 0.32));
-          glow.addColorStop(1, alpha(colors.warn, 0));
+          glow.addColorStop(0, alpha(colors.warning, 0.32));
+          glow.addColorStop(1, alpha(colors.warning, 0));
           cx.fillStyle = glow;
           cx.beginPath();
           cx.arc(third, centerY, 52, 0, TAU);
           cx.fill();
           const lit = cx.createRadialGradient(third - 10, centerY - 12, 2, third, centerY, 30);
           lit.addColorStop(0, colors.primary);
-          lit.addColorStop(0.35, colors.warn);
+          lit.addColorStop(0.35, colors.warning);
           lit.addColorStop(0.75, colors.destructive);
           lit.addColorStop(1, colors.destructive);
           cx.fillStyle = lit;
@@ -884,13 +884,13 @@ function Compositing() {
           cx.arc(third, centerY, 30, 0, TAU);
           cx.fill();
           cx.setLineDash([3, 5]);
-          cx.strokeStyle = alpha(colors.warn, 0.6);
+          cx.strokeStyle = alpha(colors.warning, 0.6);
           cx.lineWidth = 1.25;
           cx.beginPath();
           cx.arc(third, centerY, 42, 0, TAU);
           cx.stroke();
           cx.setLineDash([]);
-          cx.fillStyle = colors.warn;
+          cx.fillStyle = colors.warning;
           cx.beginPath();
           cx.arc(third + 42 * Math.cos(-0.7), centerY + 42 * Math.sin(-0.7), 4, 0, TAU);
           cx.fill();
@@ -1064,7 +1064,7 @@ function SvgImage() {
       <Canvas
         style={{ height: 132 }}
         draw={(cx, { width, height }) => {
-          cx.fillStyle = colors.raised;
+          cx.fillStyle = colors.surface;
           cx.beginPath();
           cx.roundRect(12, 12, width - 24, height - 24, shape.container);
           cx.fill();

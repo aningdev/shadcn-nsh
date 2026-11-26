@@ -227,7 +227,7 @@ whose `Retry` button asks for the turn again.
     </Bubble>
     <If when={turn() === "waiting"}>
       <MessageFooter>
-        <Spinner size="sm" tint={colors.warn} />
+        <Spinner size="sm" tint={colors.warning} />
         <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
           Waiting for a connection
         </Text>

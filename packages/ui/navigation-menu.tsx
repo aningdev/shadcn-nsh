@@ -5,14 +5,11 @@ import {
   alpha,
   colors,
   controlHeight,
-  focusRing,
+  feedback,
   iconSize,
   rounded,
   font,
   shape,
-  dimmed,
-  stateLayer,
-  style as themeStyle,
   tier,
 } from "@shadcn-nsh/theme";
 import { ChevronDown } from "lucide";
@@ -26,12 +23,11 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
-import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
-import { type Live, read } from "./lib/live-value";
-import { createSlot, type Slot } from "./lib/open-state";
+import { pressSink, pressTransition } from "./lib/motion";
 import { itemSpacing, PopIn, popupSurface, type PopupSide } from "./lib/popup";
-import { pressSink, pressTransition } from "./lib/press";
+import { createSlot, type Slot } from "./lib/state";
+import { AsText, type Live, read } from "./lib/utils";
 
 /** A pointer's compact bar; a touch screen's roomier one, a finger's target in every trigger. */
 const pointer = tier === "pointer";
@@ -192,16 +188,16 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
       return highlight();
     },
     get activeStyle(): ViewStyle {
-      if (themeStyle().state.overlay.pressed > 0) {
-        return { ...stateLayer("pressed"), ...pressSink(sink).activeStyle };
+      if (feedback.pressOverlay > 0) {
+        return { ...feedback.press("surface").activeStyle, ...pressSink(sink).activeStyle };
       }
       return pressSink(sink).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
     /** Its name's type: the `body` type, medium, one line. */
     get text(): TextStyle {
@@ -259,16 +255,16 @@ export function navigationMenuLinkLook(o?: NavigationMenuLinkLookOptions) {
     },
     get activeStyle(): ViewStyle | undefined {
       if (disabled()) return undefined;
-      if (themeStyle().state.overlay.pressed > 0) {
-        return { ...stateLayer("pressed"), ...pressSink(sink).activeStyle };
+      if (feedback.pressOverlay > 0) {
+        return { ...feedback.press("surface").activeStyle, ...pressSink(sink).activeStyle };
       }
       return pressSink(sink).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
     /** Its name's type: `navigationMenuLook().linkText`. */
     get text(): TextStyle {

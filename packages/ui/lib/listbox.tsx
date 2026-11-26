@@ -3,22 +3,22 @@
 
 import {
   colors,
+  control,
   cornerCurve,
-  finish,
   rounded,
   terminal,
   font,
   shape,
   stroke,
+  surface,
 } from "@shadcn-nsh/theme";
 import { Check, ChevronRight, X } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, Text, View } from "nsh";
 import type { SelectEntry, SelectGroup } from "nsh/base";
 
+import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./field-look";
 import { Icon } from "./icons";
-import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./indicator";
-import { fieldLook, fillOf, listItemHighlightClass } from "./look";
 import {
   backdrop,
   itemRadius,
@@ -88,8 +88,8 @@ export function listboxPopupStarting(): ViewStyle | undefined {
 const OPTION_BASE =
   "group border border-transparent transition-colors duration-100 motion-reduce:transition-none active:opacity-70 disabled:opacity-50";
 
-/** Default option row class (brand tint with brand edge); `listboxProps()` picks the theme's variant from `listItemHighlightClass()`, read where the list is drawn, which a class fixed at import cannot. */
-export const optionClass = `${OPTION_BASE} focus:border-brand/30 focus:bg-brand-tint`;
+/** Default option row class (brand tint with brand edge); `listboxProps()` picks the theme's variant from `control("list").highlightClass()`, read where the list is drawn, which a class fixed at import cannot. */
+export const optionClass = `${OPTION_BASE} focus:border-brand/30 focus:bg-brand/15`;
 
 /**
  * What a select's or combobox's list takes besides its items (spread it):
@@ -110,7 +110,7 @@ export function listboxProps(o?: ListboxPopupOptions) {
       return backdrop();
     },
     get itemClass(): string {
-      return `${OPTION_BASE} ${listItemHighlightClass(true)}`;
+      return `${OPTION_BASE} ${control("list").highlightClass(true)}`;
     },
     get itemStyle(): ViewStyle {
       return rounded(itemRadius());
@@ -165,7 +165,7 @@ export interface ClearButtonOptions {
 export function clearButtonLook(o?: ClearButtonOptions) {
   return {
     clearButtonClass:
-      "items-center justify-center rounded-full enabled:hover:bg-foreground/8 active:bg-track",
+      "items-center justify-center rounded-full enabled:hover:bg-foreground/8 active:bg-surface",
     get clearButtonStyle(): ViewStyle | undefined {
       return terminal
         ? undefined
@@ -328,16 +328,16 @@ export function listboxSearch() {
     get searchStyle(): ViewStyle {
       // The field's own well: its fill, its edge (the theme decides how many sides it draws and in
       // which colour) and its corners, so a list's search reads as the field it is.
-      const field = fieldLook();
+      const field = control("field");
       return {
         height: pointer ? 32 : 40,
         paddingHorizontal: itemSpacing.pad,
         marginBottom: 6,
-        ...(field.ground ? fillOf(field.ground) : {}),
+        backgroundColor: field.ground,
         ...fieldEdgeWidths(field),
         ...fieldRestEdge(field),
         ...fieldCorners(field),
-        boxShadow: finish.inset.boxShadow,
+        boxShadow: surface("inset").style.boxShadow,
       };
     },
   };

@@ -5,7 +5,7 @@ import { colors, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
 import { context, split, Text, View } from "nsh";
 import type { ViewProps } from "nsh";
 
-import { type Live, read } from "./lib/live-value";
+import { type Live, read } from "./lib/utils";
 
 /** Whether a `Stat` is inside a `StatGroup` (it then shares the row). */
 const StatGroupContext = context(false);

@@ -361,7 +361,7 @@ function Workspace(props: {
           ...rounded(shape.container),
         }}
       >
-        <View style={{ flex: 1, backgroundColor: colors.inset }}>
+        <View style={{ flex: 1, backgroundColor: colors.muted }}>
           <DockArea
             ref={(r) => props.area.set(r)}
             style={{ flex: 1 }}

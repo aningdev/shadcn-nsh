@@ -1,4 +1,4 @@
-import { alpha, colors, finish, type Tone, toneColor, shape } from "@shadcn-nsh/theme";
+import { surface, alpha, colors, type Tone, toneColor, shape } from "@shadcn-nsh/theme";
 // Scroll: the official gallery's Scrolling scene
 // (`references/nsh/examples/gallery/demos/Scrolling.tsx`): paging with parallax, snapping cards,
 // pinch zoom, the events and switches around a scroll view, NEW posts arriving on top, and taps
@@ -26,7 +26,7 @@ import { Api, Choice, Figure, Meter, SwitchRow } from "./primitives-shared";
 
 const desk = platform.desktop;
 
-const tones: Tone[] = ["accent", "info", "warn", "up", "destructive"];
+const tones: Tone[] = ["accent", "info", "warning", "success", "destructive"];
 
 /** A soft wave along a page's lower part, its fill fading downward: a page's backdrop. */
 function Backdrop(props: { tone: Tone; seed: number }) {
@@ -81,8 +81,8 @@ function Backdrop(props: { tone: Tone; seed: number }) {
 const pages = [
   { title: "Revenue", value: "48.2k", note: "+12 %", tone: "accent" },
   { title: "Sessions", value: "9,410", note: "+3 %", tone: "info" },
-  { title: "Latency", value: "142", note: "ms p95", tone: "warn" },
-  { title: "Uptime", value: "99.98", note: "%", tone: "up" },
+  { title: "Latency", value: "142", note: "ms p95", tone: "warning" },
+  { title: "Uptime", value: "99.98", note: "%", tone: "success" },
   { title: "Errors", value: "17", note: "−40 %", tone: "destructive" },
 ] as const;
 
@@ -105,7 +105,7 @@ function Pager() {
           height: 160,
           ...circle(shape.control),
           backgroundColor: colors.card,
-          ...finish.card,
+          ...surface("card").style,
           borderWidth: 1,
           borderColor: colors.line,
         }}
@@ -238,9 +238,9 @@ function Cards() {
                   width: card,
                   height,
                   ...circle(shape.control + 4),
-                  backgroundColor: colors.raised,
+                  backgroundColor: colors.surface,
                   backgroundImage: `linear-gradient(145deg, ${alpha(toneColor(tone()), 0.2)} 0%, ${alpha(toneColor(tone()), 0)} 62%)`,
-                  ...finish.raised,
+                  ...surface("raised").style,
                   borderWidth: 1,
                   borderColor: colors.border,
                   padding: 16,
@@ -344,7 +344,7 @@ function Events() {
           height: 180,
           ...circle(shape.control),
           backgroundColor: colors.card,
-          ...finish.card,
+          ...surface("card").style,
           borderWidth: 1,
           borderColor: colors.line,
         }}
@@ -354,9 +354,9 @@ function Events() {
         scrollEventThrottle={Number(throttle())}
         onScroll={(v) => offset.set(v)}
         onScrollDragStart={note("begin drag", "accent")}
-        onScrollDragEnd={note("end drag", "warn")}
+        onScrollDragEnd={note("end drag", "warning")}
         onMomentumStart={note("momentum begin", "info")}
-        onMomentumEnd={note("momentum end", "up")}
+        onMomentumEnd={note("momentum end", "success")}
       >
         <View style={{ paddingVertical: 6 }}>
           <Each of={Array.from({ length: 30 }, (_, i) => i + 1)}>
@@ -508,7 +508,7 @@ function Zoom() {
           height: 240,
           ...circle(shape.control),
           backgroundColor: colors.card,
-          ...finish.card,
+          ...surface("card").style,
           borderWidth: 1,
           borderColor: colors.line,
         }}
@@ -614,7 +614,7 @@ function Feed() {
           height: 240,
           ...circle(shape.control),
           backgroundColor: colors.card,
-          ...finish.card,
+          ...surface("card").style,
           borderWidth: 1,
           borderColor: colors.line,
         }}
@@ -636,7 +636,7 @@ function Feed() {
                 width: 8,
                 height: 8,
                 borderRadius: 4,
-                backgroundColor: p().fresh ? colors.brand : colors.raised,
+                backgroundColor: p().fresh ? colors.brand : colors.surface,
               }}
             />
             <Text

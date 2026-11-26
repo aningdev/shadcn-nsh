@@ -68,7 +68,7 @@ function JumpMenu(props: {
         <View
           accessibilityLabel={`Pages ${grouped(props.start)} to ${grouped(props.end - 1)}`}
           // The whole item, its padding too, opens the menu: 44 points on a touch screen.
-          class={`${pointer ? "min-w-8" : "min-w-11"} hover:bg-hover -mx-2 items-center justify-center self-stretch rounded-md px-2`}
+          class={`${pointer ? "min-w-8" : "min-w-11"} hover:bg-accent -mx-2 items-center justify-center self-stretch rounded-md px-2`}
         >
           <Text style={{ color: colors.mutedForeground, fontSize: 13 }}>…</Text>
         </View>

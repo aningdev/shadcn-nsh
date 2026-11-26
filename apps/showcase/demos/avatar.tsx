@@ -39,9 +39,9 @@ type Presence = "online" | "away" | "busy" | "offline";
 const PRESENCE: Presence[] = ["online", "away", "busy", "offline"];
 const presenceColor = (presence: Presence) =>
   presence === "online"
-    ? colors.up
+    ? colors.success
     : presence === "away"
-      ? colors.warn
+      ? colors.warning
       : presence === "busy"
         ? colors.destructive
         : colors.faint;
@@ -176,7 +176,7 @@ function Team(props: { last: { (): string; set: (value: string) => void } }) {
     <SceneCard
       title="Team"
       subtitle="Presence dots; press one to change theirs"
-      right={<Badge tone="up">{`${online()} online`}</Badge>}
+      right={<Badge tone="success">{`${online()} online`}</Badge>}
     >
       <View>
         <Each of={TEAM}>
@@ -263,7 +263,7 @@ function Stacked(props: { last: { (): string; set: (value: string) => void } }) 
             width: side,
             height: side,
             borderColor: colors.card,
-            backgroundColor: colors.raised,
+            backgroundColor: colors.surface,
           }}
           overflowAccessibilityLabel={`${more()} more people`}
           overflow={
@@ -332,7 +332,7 @@ function Stacked(props: { last: { (): string; set: (value: string) => void } }) 
         overflowStyle={{
           height: 28,
           borderColor: colors.card,
-          backgroundColor: colors.raised,
+          backgroundColor: colors.surface,
         }}
         overflowAccessibilityLabel="1,281 more viewers"
         overflow={<AvatarGroupCount style={{ fontSize: 11 }}>+1.3k</AvatarGroupCount>}
@@ -414,7 +414,7 @@ function Profile(props: { last: { (): string; set: (value: string) => void } }) 
     <SceneCard
       title="Profile header"
       subtitle="Fades in on a change; initials without one"
-      right={status() === "loaded" ? <Badge tone="up">Loaded</Badge> : undefined}
+      right={status() === "loaded" ? <Badge tone="success">Loaded</Badge> : undefined}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
         <Person

@@ -10,7 +10,6 @@ const dir = fs.mkdtempSync(path.join(os.tmpdir(), "registry-deps-"));
 fs.mkdirSync(path.join(dir, "lib"));
 fs.writeFileSync(path.join(dir, "lib/format.ts"), "export const format = 1;\n");
 fs.writeFileSync(path.join(dir, "picker.tsx"), 'import { format } from "./lib/format";\n');
-// A package the app installs, and the runtime the baseline supplies.
 fs.writeFileSync(path.join(dir, "clock.tsx"), 'import { Clock } from "lucide";\n');
 fs.writeFileSync(
   path.join(dir, "label.tsx"),
@@ -19,14 +18,29 @@ fs.writeFileSync(
 
 afterAll(() => fs.rmSync(dir, { recursive: true, force: true }));
 
-// Two themes: the same `lib/ui/theme.ts` beside a `lib/ui/semantics.json` each, as the registry ships them.
-fs.mkdirSync(path.join(dir, "theme"));
-fs.mkdirSync(path.join(dir, "themes", "shadcn"), { recursive: true });
-fs.writeFileSync(path.join(dir, "theme/theme.ts"), 'import finishes from "./semantics.json";\n');
-fs.writeFileSync(path.join(dir, "theme/semantics.json"), "{}\n");
-fs.writeFileSync(path.join(dir, "themes/shadcn/theme.json"), "{}\n");
-fs.writeFileSync(path.join(dir, "themes/shadcn/semantics.json"), "{}\n");
-// A component, whose theme comes from the package the theme items ship.
+// Theme v5 layout: `theme` ships schema.ts, nsh-gallery/index.ts (`base.ts`), preset.ts, and theme.ts;
+// `theme-shadcn` ships sparse override under `themes/shadcn/index.ts` importing `../../schema` and `../nsh-gallery`.
+fs.mkdirSync(path.join(dir, "theme/themes/nsh-gallery"), { recursive: true });
+fs.mkdirSync(path.join(dir, "theme/themes/shadcn"), { recursive: true });
+fs.writeFileSync(
+  path.join(dir, "theme/schema.ts"),
+  "export const defineTheme = (x: unknown) => x;\n",
+);
+fs.writeFileSync(
+  path.join(dir, "theme/themes/nsh-gallery/index.ts"),
+  'import { defineTheme } from "../../schema";\nexport const base = defineTheme({});\nexport default base;\n',
+);
+fs.writeFileSync(
+  path.join(dir, "theme/preset.ts"),
+  'export { base as presetTheme } from "./themes/nsh-gallery";\n',
+);
+fs.writeFileSync(path.join(dir, "theme/theme.ts"), "export const colors = {};\n");
+fs.writeFileSync(path.join(dir, "theme/themes/shadcn/theme.json"), "{}\n");
+fs.writeFileSync(path.join(dir, "theme/themes/shadcn/DESIGN.md"), "# shadcn\n");
+fs.writeFileSync(
+  path.join(dir, "theme/themes/shadcn/index.ts"),
+  'import { defineTheme } from "../../schema";\nimport { base } from "../nsh-gallery";\nexport default defineTheme({ base });\n',
+);
 fs.writeFileSync(path.join(dir, "themed.tsx"), 'import { colors } from "@shadcn-nsh/theme";\n');
 
 const picker = {
@@ -39,8 +53,14 @@ const libraryTheme = {
   name: "theme",
   type: "registry:theme",
   files: [
+    { path: "theme/schema.ts", type: "registry:lib", target: "lib/ui/schema.ts" },
+    {
+      path: "theme/themes/nsh-gallery/index.ts",
+      type: "registry:lib",
+      target: "lib/ui/base.ts",
+    },
+    { path: "theme/preset.ts", type: "registry:lib", target: "lib/ui/preset.ts" },
     { path: "theme/theme.ts", type: "registry:lib", target: "lib/ui/theme.ts" },
-    { path: "theme/semantics.json", type: "registry:lib", target: "lib/ui/semantics.json" },
   ],
 };
 
@@ -48,10 +68,23 @@ const neutralTheme = {
   name: "theme-shadcn",
   type: "registry:theme",
   files: [
-    { path: "themes/shadcn/theme.json", type: "registry:file", target: "theme.json" },
-    { path: "themes/shadcn/semantics.json", type: "registry:lib", target: "lib/ui/semantics.json" },
-    { path: "theme/theme.ts", type: "registry:lib", target: "lib/ui/theme.ts" },
+    {
+      path: "theme/themes/shadcn/theme.json",
+      type: "registry:file",
+      target: "themes/shadcn/theme.json",
+    },
+    {
+      path: "theme/themes/shadcn/DESIGN.md",
+      type: "registry:file",
+      target: "themes/shadcn/DESIGN.md",
+    },
+    {
+      path: "theme/themes/shadcn/index.ts",
+      type: "registry:lib",
+      target: "themes/shadcn.ts",
+    },
   ],
+  registryDependencies: ["theme"],
 };
 
 const themed = {
@@ -142,7 +175,7 @@ describe("checkRegistryDependencies", () => {
     expect(await checkRegistryDependencies(registry, dir)).toEqual([]);
   });
 
-  test("a second theme ships lib/ui/theme.ts beside its own finishes, and needs no dependency", async () => {
+  test("a second theme importing schema/base resolves cleanly against theme", async () => {
     const registry: Registry = {
       name: "t",
       homepage: "",

@@ -5,8 +5,8 @@ import { colors, rounded, tints, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, effect, platform, signal, split, Text, token, View } from "nsh";
 
-import { AsText } from "./lib/as-text";
 import { density, PILL_RADIUS } from "./lib/surface";
+import { AsText } from "./lib/utils";
 
 /**
  * A bubble's fill: `default`, the accent's fill (what you send); `secondary`, the raised neutral
@@ -99,7 +99,7 @@ function ink(variant: BubbleVariant): string {
     case "destructive":
       return colors.destructive;
     case "tinted":
-      return token("accent-foreground");
+      return colors.foreground;
     case "secondary":
     case "muted":
     case "outline":

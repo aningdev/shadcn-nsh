@@ -1,4 +1,4 @@
-import { currentTheme, selectTheme, shape, type AppTheme } from "@shadcn-nsh/theme";
+import { currentTheme, selectTheme, shape } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
@@ -6,10 +6,10 @@ import { Button, dialogCard } from "../../../packages/ui";
 
 /**
  * Simulates a host override of `radius-modal` through `selectTheme` (which calls `setTheme`):
- * the semantic layer references `{radius-modal}`, so the shape roles reach components on the
- * next frame without editing `semantics.json` values directly.
+ * the spec's `shape.modal` reads the compiled `theme.json`, so the corner reaches components on
+ * the next frame without editing the theme's own tokens.
  */
-const hostOverridden: AppTheme = {
+const hostOverridden = {
   ...nshGallery,
   id: "host-overridden",
   label: "Host Overridden",

@@ -8,7 +8,7 @@ import { mount, signal, Text, token, View } from "nsh";
 import { AlertDialog as BaseAlertDialog, type AlertDialogOptions } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";

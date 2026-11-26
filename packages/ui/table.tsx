@@ -22,8 +22,7 @@ import {
 } from "nsh/base";
 
 import { dataTableClasses } from "./data-table";
-import { AsText } from "./lib/as-text";
-import { joinClass } from "./lib/class-names";
+import { AsText, joinClass } from "./lib/utils";
 
 /** Rows ease their fill. `motion-reduce` drops it. */
 export const tableRowClass = "transition-colors duration-150 motion-reduce:transition-none";

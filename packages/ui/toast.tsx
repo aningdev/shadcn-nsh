@@ -3,14 +3,12 @@
 
 import {
   alpha,
-  platformMaterial,
   colors,
-  finish,
-  focusRing,
-  hovered,
+  control,
+  feedback,
   rounded,
-  stateLayer,
-  style as themeStyle,
+  surface,
+  surfaceBorderWidth,
   terminal,
   font,
   shape,
@@ -28,43 +26,44 @@ import {
 
 import { Button, buttonLabel, buttonLook, type ButtonLookOptions } from "./button";
 import { Icon } from "./lib/icons";
-import { popupCorner, surfaceBorderWidth, toastActionFace } from "./lib/look";
-import { pressSink, pressTransition } from "./lib/press";
+import { pressSink, pressTransition } from "./lib/motion";
 import { Spinner } from "./spinner";
 
 const pointer = platform.desktop;
 
 /**
- * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the inverse finish (`finish.inverse`),
- * the theme's `popup.corner`, edge width following `finish.inverse.borderColor` (zero where
- * transparent), 12 by 14 points of padding. Its title takes `toastTitle`,
+ * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the inverse surface
+ * (`surface("inverse")`), the theme's `popup.corner`, edge width following the surface's border (zero
+ * where transparent), 12 by 14 points of padding. Its title takes `toastTitle`,
  * its description `toastText`.
  */
 export function toastLook(): ViewStyle {
+  const inverse = surface("inverse").style;
+  const edge = inverse.borderColor;
   return {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    ...rounded(popupCorner()),
-    borderWidth: surfaceBorderWidth(finish.inverse.borderColor),
-    ...finish.inverse,
+    ...rounded(control("popup").corner),
+    borderWidth: surfaceBorderWidth(typeof edge === "string" ? edge : undefined),
+    ...inverse,
   };
 }
 
 /** A toast's title: 14 points semibold. */
 export function toastTitle(): TextStyle {
   // No type role has this size: a toast's title is 14 in both tiers.
-  return { fontSize: 14, fontWeight: font.weight("title"), color: finish.inverse.foreground };
+  return { fontSize: 14, fontWeight: font.weight("title"), color: surface("inverse").ink };
 }
 
-/** A toast's description: 13 points in the inverse finish's ink, its figures tabular. */
+/** A toast's description: 13 points in the inverse surface's ink, its figures tabular. */
 export function toastText(): TextStyle {
   // No type role has this size: a toast's description is 13 in both tiers.
   return {
     fontSize: 13,
-    color: finish.inverse.foreground,
+    color: surface("inverse").ink,
     fontVariant: ["tabular-nums"],
   };
 }
@@ -78,27 +77,11 @@ const toastActionSize: ButtonLookOptions = pointer
   : { size: "sm" };
 
 /**
- * A toast's action (an Undo, a Retry), spread on a `Button` or a pressable view: a filled
- * primary button where `toast.action.face` names one, or a borderless text button on the
- * inverse surface (`toast.action.face === null`) for Material Snackbars. Its label takes `toastActionLabel`.
+ * A toast's action (an Undo, a Retry), spread on a `Button` or a pressable view: the theme's
+ * primary button, its fill and ink from `control("button")`. Its label takes `toastActionLabel`.
  */
 export function toastActionLook() {
-  if (toastActionFace() !== null) return buttonLook("default", toastActionSize);
-  const ghost = buttonLook("ghost", toastActionSize);
-  return {
-    ...ghost,
-    get hoverStyle(): ViewStyle {
-      return hovered("inverse-foreground");
-    },
-    get activeStyle(): ViewStyle {
-      return {
-        ...(themeStyle().state.overlay.pressed > 0
-          ? stateLayer("pressed", "inverse-foreground")
-          : { backgroundColor: alpha(finish.inverse.foreground, 0.1) }),
-        ...pressSink(0.96).activeStyle,
-      };
-    },
-  };
+  return buttonLook("default", toastActionSize);
 }
 
 /** The label of a `toastActionLook` (`buttonLabel("default")`). */
@@ -106,7 +89,7 @@ export function toastActionLabel(): TextStyle {
   const label = buttonLabel("default", toastActionSize);
   return {
     get color() {
-      return colors.inverseBrand;
+      return control("button").selected.ink;
     },
     get fontSize() {
       return label.fontSize;
@@ -120,7 +103,7 @@ export function toastActionLabel(): TextStyle {
 /** A toast's close button (its cross): a circle 24 points across (the theme's
  * `radius-container` corners, half its side in the NSH Gallery theme), bare until the
  * pointer is over it, sinking to 90% while pressed (none with reduced
- * motion); keyboard focus `focusRing()`. */
+ * motion); keyboard focus `feedback.focusRing()`. */
 export function toastCloseLook() {
   return {
     style: {
@@ -132,18 +115,18 @@ export function toastCloseLook() {
       ...pressTransition("background-color"),
     } as ViewStyle,
     get hoverStyle(): ViewStyle {
-      return hovered("inverse-foreground");
+      return feedback.hoverStyle("foreground");
     },
     get activeStyle(): ViewStyle {
       return {
-        ...(themeStyle().state.overlay.pressed > 0
-          ? stateLayer("pressed", "inverse-foreground")
-          : { backgroundColor: alpha(finish.inverse.foreground, 0.1) }),
+        ...(feedback.pressOverlay > 0
+          ? feedback.press("surface", { ink: "foreground" }).activeStyle
+          : { backgroundColor: alpha(surface("inverse").ink, 0.1) }),
         ...pressSink(0.9).activeStyle,
       };
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
   };
 }
@@ -169,7 +152,7 @@ export function Toast(props: ToastProps) {
   const [, rest] = split(props, ["title", "description", "children", "style"]);
   return (
     <BaseToast
-      {...platformMaterial("inverse")}
+      {...surface("inverse").platformProps}
       {...rest}
       style={[toastLook(), props.style ?? null]}
     >
@@ -242,9 +225,9 @@ interface ToastRecord {
 }
 
 const kinds: Record<Exclude<ToastType, "loading">, { icon: IconNode; tint: () => string }> = {
-  success: { icon: CircleCheck, tint: () => colors.up },
+  success: { icon: CircleCheck, tint: () => colors.success },
   error: { icon: CircleX, tint: () => colors.destructive },
-  warning: { icon: TriangleAlert, tint: () => colors.warn },
+  warning: { icon: TriangleAlert, tint: () => colors.warning },
   info: { icon: Info, tint: () => colors.info },
 };
 
@@ -421,7 +404,7 @@ function closeLabel(value: boolean | string | undefined): string | undefined {
 
 /** The mark of a type: a spinner while loading, a lucide glyph otherwise. */
 function KindMark(props: { type: ToastType }) {
-  if (props.type === "loading") return <Spinner side={18} tint={finish.inverse.foreground} />;
+  if (props.type === "loading") return <Spinner side={18} tint={surface("inverse").ink} />;
   const spec = kinds[props.type];
   return <Icon icon={spec.icon} size={18} tint={spec.tint()} />;
 }
@@ -458,7 +441,7 @@ function ToastItem(props: { entry: ToastEntry }) {
               marginTop: 6,
               borderRadius: 2,
               overflow: "hidden",
-              backgroundColor: colors.track,
+              backgroundColor: control("progress").grooveColor,
             }}
           >
             <View
@@ -468,7 +451,7 @@ function ToastItem(props: { entry: ToastEntry }) {
               style={{
                 height: 4,
                 borderRadius: 2,
-                backgroundColor: type() === "success" ? colors.up : colors.primary,
+                backgroundColor: type() === "success" ? colors.success : colors.primary,
                 transform: [{ scaleX: Math.max(0, Math.min(1, progress() ?? 0)) }],
               }}
             />
@@ -491,7 +474,7 @@ function ToastItem(props: { entry: ToastEntry }) {
           onPress={() => toast.dismiss(props.entry.id)}
           {...toastCloseLook()}
         >
-          <Icon icon={X} size={14} tint={finish.inverse.foreground} />
+          <Icon icon={X} size={14} tint={surface("inverse").ink} />
         </View>
       </If>
     </Toast>

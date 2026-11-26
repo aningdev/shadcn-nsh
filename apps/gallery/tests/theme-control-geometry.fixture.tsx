@@ -1,9 +1,12 @@
 import {
+  activeSpec,
   colors,
+  control,
   currentTheme,
   EDGE_WIDTH,
   insetEdge,
   outerEdge,
+  resolveColor,
   selectTheme,
   tints,
 } from "@shadcn-nsh/theme";
@@ -24,7 +27,20 @@ import {
   switchLook,
   underlineTabsLook,
 } from "../../../packages/ui";
-import { choiceLook } from "../../../packages/ui/lib/look";
+
+/** The theme's own unchecked face, resolved for the appearance in use. */
+const choiceFace = () => control("choice").face ?? "transparent";
+
+/** The theme's slider band (`slider.face`), resolved for the appearance in use. */
+const sliderFace = () => resolveColor(activeSpec().controls.slider.face);
+
+/** The face a checked box takes: a named surface or a palette role. */
+const checkedFace = () => {
+  const face = activeSpec().controls.choice.checked.face;
+  if (typeof face === "string") return face;
+  if (face && typeof face === "object" && "surface" in face) return face.surface;
+  return "color";
+};
 
 const cb = checkboxLook();
 const cbLit = checkboxLook({ lit: () => true });
@@ -38,8 +54,8 @@ function App() {
     <View>
       <Text>{`switch=${sw.trackStyle.width}x${sw.trackStyle.height}|${sw.trackStyle.borderWidth}|${sw.thumbStyle.width}|${sw.thumbClass}`}</Text>
       <Text>{`small=${swSmall.trackStyle.width}x${swSmall.trackStyle.height}|${swSmall.thumbStyle.width}|${swSmall.thumbClass}`}</Text>
-      <Text>{`slider=${sl.indicatorClass}|${sl.trackClass}|${Boolean(sl.indicatorStyle.boxShadow)}|${sl.thumbClass}|${sl.indicatorStyle.backgroundColor === colors.track}|${sl.indicatorStyle.backgroundColor === tints.brand}|${sl.indicatorStyle.backgroundColor === colors.input}|${sl.indicatorStyle.backgroundColor === colors.secondary}`}</Text>
-      <Text>{`checkbox=${cb.indicatorStyle.borderWidth}|${cb.indicatorStyle.backgroundColor === "transparent"}|${cb.indicatorStyle.backgroundColor === colors.track}|${cbLit.indicatorStyle.borderColor === "transparent"}|${choiceLook().checked?.kind === "color" ? choiceLook().checked?.role : choiceLook().checked?.kind}`}</Text>
+      <Text>{`slider=${sl.indicatorClass}|${sl.trackClass}|${Boolean(sl.indicatorStyle.boxShadow)}|${sl.thumbClass}|${sl.indicatorStyle.backgroundColor === sliderFace()}|${sl.indicatorStyle.backgroundColor === tints.brand}|${sl.indicatorStyle.backgroundColor === colors.input}|${sl.indicatorStyle.backgroundColor === colors.secondary}`}</Text>
+      <Text>{`checkbox=${cb.indicatorStyle.borderWidth}|${cb.indicatorStyle.backgroundColor === "transparent"}|${cb.indicatorStyle.backgroundColor === choiceFace()}|${cbLit.indicatorStyle.borderColor === "transparent"}|${checkedFace()}`}</Text>
       <Text>{`progress=${progressRail().height}/${progressRail().backgroundImage ? "gradient" : "solid"}/${Boolean(progressRail().boxShadow)}`}</Text>
       <Text>{`tabs=${underline.indicatorStyle.marginHorizontal ?? 0}/${underline.indicatorStyle.borderTopLeftRadius ?? underline.indicatorStyle.borderRadius}`}</Text>
       <Text>{`tabs-indicator=${underline.indicatorStyle.height}`}</Text>

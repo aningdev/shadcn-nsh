@@ -5,8 +5,7 @@ import { alpha } from "@shadcn-nsh/theme";
 import { Canvas, mount, signal, Text, View } from "nsh";
 import { Toggle, ToggleGroup } from "nsh/base";
 
-import { sectionSurface } from "@/packages/ui/lib/surface";
-import { toolbarTrack } from "@/packages/ui/lib/tool";
+import { sectionSurface, toolbarTrack } from "@/packages/ui/lib/surface";
 import { toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
 import { toolbarRule } from "@/packages/ui/toolbar";
 

@@ -31,7 +31,9 @@ export function GlobalShortcutDemo() {
         title="Ctrl+Alt+K"
         subtitle={isAvailable ? "Pressed from any app" : "Desktops only"}
         right={
-          <Badge tone={status() === "on" ? "up" : status() === "refused" ? "warn" : undefined}>
+          <Badge
+            tone={status() === "on" ? "success" : status() === "refused" ? "warning" : undefined}
+          >
             {{ off: "Not registered", on: "Registered", refused: "Refused" }[status()]}
           </Badge>
         }

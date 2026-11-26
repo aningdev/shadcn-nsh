@@ -37,7 +37,7 @@ function Launches(props: { launches: Accessor<number | null> }) {
     <Card
       title="Launches"
       subtitle="Counted each time this demo opens"
-      right={<Badge tone="up">Kept</Badge>}
+      right={<Badge tone="success">Kept</Badge>}
     >
       <Figure
         value={props.launches() === null ? "–" : String(props.launches())}
@@ -60,7 +60,7 @@ function NoteCard(props: {
     props.saved() === "failed"
       ? colors.destructive
       : props.saved() === "saved"
-        ? colors.up
+        ? colors.success
         : colors.faint;
   return (
     <Card title="Note" subtitle="Saved as you type, back when the demo opens again">
@@ -74,7 +74,7 @@ function NoteCard(props: {
       />
       <View style={{ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 16 }}>
         <If when={props.saved() === "saved"}>
-          <Icon icon={Check} size={14} tint={colors.up} />
+          <Icon icon={Check} size={14} tint={colors.success} />
         </If>
         <Text style={{ flex: 1, fontSize: 12, color: hintTint() }}>{hint()}</Text>
         <Text style={{ fontSize: 12, color: colors.faint, fontVariant: ["tabular-nums"] }}>

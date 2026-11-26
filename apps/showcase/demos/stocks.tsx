@@ -1,7 +1,8 @@
 import {
   alpha,
   colors,
-  finish,
+  feedback,
+  surface,
   focusRing,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
@@ -29,7 +30,7 @@ import {
 } from "nsh";
 
 import { Icon } from "@/packages/ui/lib/icons";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 
 import { desktop, paneWidth } from "./apps-shared";
@@ -97,7 +98,7 @@ function SectorBar(props: { label: string; change: () => number; scale: () => nu
           <View style={{ flex: 1 }}>
             <SpringBar
               share={() => (props.change() > 0 ? share() : 0)}
-              color={colors.up}
+              color={colors.success}
               height={8}
               radius={2}
             />
@@ -145,13 +146,15 @@ function Breadth(props: { market: Market }) {
           <View
             style={{ flexDirection: "row", height: 6, overflow: "hidden", gap: 2, borderRadius: 3 }}
           >
-            <View style={{ flex: b().up, backgroundColor: colors.up }} />
+            <View style={{ flex: b().up, backgroundColor: colors.success }} />
             <View style={{ flex: b().flat, backgroundColor: colors.faint }} />
             <View style={{ flex: b().down, backgroundColor: colors.destructive }} />
           </View>
         </If>
         <View style={{ flexDirection: "row" }}>
-          <Text style={{ flex: 1, fontSize: 12, fontVariant: ["tabular-nums"], color: colors.up }}>
+          <Text
+            style={{ flex: 1, fontSize: 12, fontVariant: ["tabular-nums"], color: colors.success }}
+          >
             {b().up} up
           </Text>
           <Text style={{ fontSize: 12, fontVariant: ["tabular-nums"], color: colors.faint }}>
@@ -289,7 +292,7 @@ function MarketStrip(props: { market: Market }) {
             role="button"
             hitSlop={6}
             accessibilityLabel={pauseLabel()}
-            hoverStyle={running() ? finish.hover : { opacity: 0.94 }}
+            hoverStyle={running() ? feedback.hoverSurface() : { opacity: 0.94 }}
             activeStyle={pressSink(0.97).activeStyle}
             focusVisibleStyle={focusRing()}
             style={{
@@ -299,7 +302,7 @@ function MarketStrip(props: { market: Market }) {
               justifyContent: "center",
               borderWidth: 1,
               borderRadius: 16,
-              ...(running() ? finish.raised : finish.accent),
+              ...(running() ? surface("raised").style : surface("accent").style),
             }}
           >
             <Icon

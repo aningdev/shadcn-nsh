@@ -4,27 +4,70 @@
 import {
   alpha,
   colors,
-  dimmed,
-  finish,
-  focusRing,
+  control,
+  feedback,
   hitTarget,
   motion,
+  surface,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   stroke,
-  tier,
 } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { reduceMotion, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
-import { AsText } from "./lib/as-text";
-import { joinClass } from "./lib/class-names";
-import { type Live, read } from "./lib/live-value";
-import { disabledLook, edged, painted, switchLook as switchSlots } from "./lib/look";
 import { cssMotion } from "./lib/motion";
-import { type SwitchGeometry, knobOffset, knobTravel, switchSlop } from "./lib/switch-geometry";
+import { AsText, joinClass, type Live, read } from "./lib/utils";
+
+/** A switch's track and knob, in points. */
+export interface SwitchGeometry {
+  /** The track's outer width. */
+  width: number;
+  /** The track's outer height. */
+  height: number;
+  /** The track's border, on every side. */
+  border: number;
+  /** The track's padding, between its border and the knob, on every side. */
+  inset: number;
+  /** The knob's diameter (or width when oval). */
+  knob: number;
+  /** The knob's height when oval (defaults to `knob` for a circular knob). */
+  knobHeight?: number;
+}
+
+/** Distance from the track's inner border edge to the knob's leading and top edges. */
+export const knobOffset = (g: SwitchGeometry, border: number = g.border): number =>
+  (g.height - (g.knobHeight ?? g.knob)) / 2 - border;
+
+/**
+ * How far the knob travels from off to on. Off, it rests at the start of the
+ * track's content box, `border + inset` from the leading edge; on, it must
+ * end the same `border + inset` from the trailing edge. So it travels the
+ * width less the knob and that gap at both ends.
+ */
+export const knobTravel = (g: SwitchGeometry): number =>
+  g.width - 2 * (g.border + g.inset) - g.knob;
+
+/**
+ * How far presses count past a switch whose track makes up its height, so a
+ * finger gets `size.hit` points on each axis without the track looking
+ * bigger.
+ */
+export function switchSlop(
+  g: SwitchGeometry,
+  hit: number,
+): {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+} {
+  const v = Math.max(0, (hit - g.height) / 2);
+  const h = Math.max(0, (hit - g.width) / 2);
+  return { top: v, bottom: v, left: h, right: h };
+}
 
 /**
  * A switch's size: `default` draws the theme's standard knob and track, `sm` draws the compact
@@ -39,8 +82,9 @@ export interface SwitchLookOptions {
   /** Whether the switch is disabled (either a boolean or reactive getter). */
   disabled?: Live<boolean>;
   /**
-   * Whether the theme's `state.disabled.*` surface replaces the track and knob when disabled.
-   * Defaults to true; set false when an enclosing row (such as `listRow`) already dims the whole row.
+   * Whether the theme's disabled surface (`feedback.disabled`) replaces the track and knob when
+   * disabled. Defaults to true; set false when an enclosing row (such as `listRow`) already dims the
+   * whole row.
    */
   disabledSurface?: boolean;
 }
@@ -52,7 +96,8 @@ export interface SwitchLook {
   readonly trackStyle: ViewStyle;
   readonly thumbClass: string;
   readonly thumbStyle: ViewStyle;
-  /** Root disabled opacity when the theme dims rather than replacing `state.disabled.face`. */
+  /** Root disabled opacity when the theme dims rather than replacing the disabled surface
+   * (`feedback.disabled`). */
   readonly disabledStyle: ViewStyle;
 }
 
@@ -66,16 +111,15 @@ interface ResolvedSwitchGeometry extends SwitchGeometry {
   readonly onBorder: number;
   readonly onKnobWidth: number;
   readonly onKnobHeight: number;
-  readonly knobHover: number;
   readonly knobPressedWidth: number;
   readonly knobPressedHeight: number;
   readonly knobFeedback: KnobFeedback;
 }
 
 /**
- * The track and knob of a size: the theme's `switch.*` slots at this tier, or the terminal's own —
- * a shell's switch is its grid's, whatever the theme says. A small switch scales the knob's hover
- * and press by the knob's own shrink, so a theme whose small knob is its knob keeps its feedback.
+ * The track and knob of a size: the theme's `switch` recipe at this tier, or the terminal's own —
+ * a shell's switch is its grid's, whatever the theme says. A small switch scales the knob's press
+ * by the knob's own shrink, so a theme whose small knob is its knob keeps its feedback.
  */
 function geometry(size: SwitchSize): ResolvedSwitchGeometry {
   if (terminal)
@@ -89,58 +133,46 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       onBorder: 1,
       onKnobWidth: TERMINAL_ROW,
       onKnobHeight: TERMINAL_ROW,
-      knobHover: TERMINAL_ROW,
       knobPressedWidth: TERMINAL_ROW,
       knobPressedHeight: TERMINAL_ROW,
       knobFeedback: "none",
     };
-  const look = switchSlots();
+  const look = control("switch");
   const small = size === "sm";
-  const knob = small ? look.knobSmall[tier] : look.knob[tier];
-  const knobHeight = small ? look.knobSmallHeight[tier] : look.knobHeight[tier];
-  const ratioW = knob / look.knob[tier];
-  const ratioH = knobHeight / look.knobHeight[tier];
-  const border = look.edge.off[tier];
-  const height = small ? look.smallHeight[tier] : look.height[tier];
+  const knob = small ? look.knobSmallWidth : look.knobWidth;
+  const knobHeight = small ? look.knobSmallHeight : look.knobHeight;
+  const ratioW = knob / look.knobWidth;
+  const ratioH = knobHeight / look.knobHeight;
+  const border = look.edgeOff;
+  const height = small ? look.smallHeight : look.height;
   return {
-    width: small ? look.smallWidth[tier] : look.width[tier],
+    width: small ? look.smallWidth : look.width,
     height,
     border,
     inset: Math.max(0, (height - knobHeight) / 2 - border),
     knob,
     knobHeight,
-    onBorder: look.edge.on[tier],
-    onKnobWidth: look.knobOn[tier] * ratioW,
-    onKnobHeight: look.knobOnHeight[tier] * ratioH,
-    knobHover: look.knobHover[tier] * ratioW,
-    knobPressedWidth: look.knobPressed[tier] * ratioW,
-    knobPressedHeight: look.knobPressedHeight[tier] * ratioH,
+    onBorder: look.edgeOn,
+    onKnobWidth: look.knobOnWidth * ratioW,
+    onKnobHeight: look.knobOnHeight * ratioH,
+    knobPressedWidth: look.knobPressedWidth * ratioW,
+    knobPressedHeight: look.knobPressedHeight * ratioH,
     knobFeedback: look.feedback,
   };
 }
 
 /**
- * A switch's knob: the `knob` layer, and on an open switch its checked state — the fill, the edge
- * and the gradient the theme states in `checked-*`, which a field it leaves out keeps from the
- * unchecked knob.
+ * A switch's knob: the `switch` recipe's knob style, the theme stating an open switch's background,
+ * edge and gradient in its own words (a field it leaves out keeps the unchecked knob's).
  */
 function knobLook(on: boolean): ViewStyle {
-  const checked: ViewStyle = { ...finish.knob };
-  if (!on) return checked;
-  const background = finish.knob.checkedBackground;
-  if (background !== undefined) checked.backgroundColor = background;
-  const border = finish.knob.checkedBorderColor;
-  if (border !== undefined) checked.borderColor = border;
-  const gradient = finish.knob.checkedGradient;
-  if (gradient === null) delete checked.backgroundImage;
-  else if (gradient !== undefined) checked.backgroundImage = gradient;
-  return checked;
+  return control("switch").knobStyle(on);
 }
 
 /**
  * The knob's size feedback, as transform classes: the knob's box never takes a new size, so a
- * hover, a press and the open state scale it — built from the geometry, so a family that brings a
- * recipe and the library's circle take the same path.
+ * press and the open state scale it — built from the geometry, so a family that brings a recipe and
+ * the library's circle take the same path.
  * A knob that stretches (WinUI) reaches toward the track's centre as it grows: a `shift` past the
  * box it grew from, and `travel - shift` back once it is open — the same pixels as today's box,
  * without moving `transformOrigin`, which a press would jump.
@@ -168,9 +200,8 @@ function knobFeedbackClasses(
   }
   if (disabled) return [];
   const pressed = under("active", scale(g.knobPressedWidth, g.knobPressedHeight));
-  const shift = (g.knobPressedWidth - g.knobHover) / 2;
+  const shift = (g.knobPressedWidth - g.knob) / 2;
   return [
-    ...under("hover", scale(g.knobHover, g.knobHover)),
     ...pressed,
     ...under("active", [`translate-x-[${shift}px]`]),
     ...under("checked:active", [`translate-x-[${travel - shift}px]`]),
@@ -205,13 +236,17 @@ export function switchLook(
     get trackStyle(): ViewStyle {
       const g = geometry(resolveSize());
       const checked = on();
-      const look = switchSlots();
-      const off = disabledLook();
-      const offSurface = disabledSurface && isDisabled() && off.face !== null;
-      const disabledEdge = offSurface
-        ? look.edgeColor
-          ? alpha(edged(look.edgeColor), dimmed.disabled)
-          : edged(off.edge)
+      const look = control("switch");
+      const off = feedback.disabled;
+      const offSurface = disabledSurface && isDisabled() && off.replaceFace;
+      const disabledEdge = off.style.borderColor;
+      const disabledBorder = offSurface
+        ? alpha(
+            (typeof disabledEdge === "string" ? disabledEdge : undefined) ??
+              look.edgeColor ??
+              colors.input,
+            off.contentOpacity,
+          )
         : undefined;
       return {
         width: g.width,
@@ -219,17 +254,21 @@ export function switchLook(
         borderRadius: g.height / 2,
         padding: g.inset,
         backgroundColor: offSurface
-          ? painted(off.face)
+          ? (off.style.backgroundColor ?? colors.muted)
           : checked
-            ? finish.accent.backgroundColor
-            : colors.track,
+            ? surface("accent").style.backgroundColor
+            : look.trackOffFace,
         borderWidth: offSurface ? g.border : checked ? g.onBorder : g.border,
         borderColor: offSurface
-          ? disabledEdge
+          ? disabledBorder
           : checked
-            ? finish.fill.borderColor
-            : edged(look.edgeColor),
-        boxShadow: offSurface ? "none" : checked ? finish.fill.boxShadow : finish.inset.boxShadow,
+            ? surface("fill").style.borderColor
+            : (look.edgeColor ?? "transparent"),
+        boxShadow: offSurface
+          ? "none"
+          : checked
+            ? surface("fill").style.boxShadow
+            : surface("inset").style.boxShadow,
         transitionProperty: reduceMotion() ? "none" : "background-color, border-color, box-shadow",
         ...cssMotion(motion.fast),
       };
@@ -245,13 +284,13 @@ export function switchLook(
     get thumbStyle(): ViewStyle {
       const g = geometry(resolveSize());
       const checked = on();
-      const off = disabledLook();
-      const offSurface = disabledSurface && isDisabled() && off.face !== null;
+      const off = feedback.disabled;
+      const offSurface = disabledSurface && isDisabled() && off.replaceFace;
       const border = offSurface ? g.border : checked ? g.onBorder : g.border;
       const pad = knobOffset(g, border);
       const knob = offSurface
         ? ({
-            backgroundColor: off.ink ?? colors.mutedForeground,
+            backgroundColor: off.ink,
             boxShadow: "none",
             borderColor: "transparent",
           } satisfies ViewStyle)
@@ -272,14 +311,15 @@ export function switchLook(
       };
     },
     get disabledStyle(): ViewStyle {
-      return disabledLook().face === null ? { opacity: dimmed.disabled } : {};
+      const off = feedback.disabled;
+      return off.replaceFace ? {} : { opacity: off.contentOpacity };
     },
   };
 }
 
 /** Capsule focus ring matching the switch track (for a standalone switch). */
 export function switchFocusStyle(size: SwitchSize = "default"): ViewStyle {
-  return { borderRadius: geometry(size).height / 2, ...focusRing() };
+  return { borderRadius: geometry(size).height / 2, ...feedback.focusRing() };
 }
 
 /**
@@ -336,7 +376,7 @@ export function Switch(props: SwitchProps) {
       {...rest}
       hitSlop={props.hitSlop ?? (alone ? switchHitSlop(size()) : undefined)}
       focusVisibleStyle={[
-        alone ? switchFocusStyle(size()) : focusRing(),
+        alone ? switchFocusStyle(size()) : feedback.focusRing(),
         props.focusVisibleStyle ?? null,
       ]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}

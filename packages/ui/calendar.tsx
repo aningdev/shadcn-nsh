@@ -24,7 +24,6 @@ import {
 
 import { timeFieldClass } from "./input";
 import { Icon } from "./lib/icons";
-import { calendarTodayLook } from "./lib/look";
 import { controlSize } from "./lib/surface";
 
 const pointer = platform.desktop;
@@ -235,13 +234,13 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
   );
   // The theme's today: the class its fill is drawn in and the role its number is inked in. Today
   // takes no hover fill.
-  const today = () => calendarTodayLook();
+  const today = () => ({ face: "bg-brand/15", ink: "text-brand" });
   const boxClass = () => {
     const restBase = props.item.today
       ? `${today().face} border-transparent`
       : "border-transparent group-disabled:bg-transparent";
     const hoverCls = props.item.today ? "" : quietHover;
-    return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent group-data-range-preview-middle:bg-transparent group-data-range-preview-middle:group-focus-visible:bg-brand-tint`;
+    return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary group-focus-visible:border-brand/30 group-focus-visible:bg-brand/15 group-data-range-middle:group-focus-visible:bg-brand/15 group-data-range-middle:bg-transparent group-data-range-preview-middle:bg-transparent group-data-range-preview-middle:group-focus-visible:bg-brand/15`;
   };
   const textClass = () =>
     `${props.item.today ? today().ink : own()} font-normal group-aria-selected:text-primary-foreground group-disabled:text-muted-foreground group-disabled:opacity-50`;
@@ -269,7 +268,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
         <View
           class={
             pointer
-              ? "group-data-range-preview-end:bg-raised"
+              ? "group-data-range-preview-end:bg-surface"
               : "group-data-range-preview-end:bg-card"
           }
           style={{ maxWidth: "100%", ...rounded(dayRadius()) }}

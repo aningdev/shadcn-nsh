@@ -2,7 +2,16 @@
 // Pan, pinch and rotation on one photo, a PanResponder ball, hover, wheel, raw touches, press
 // events, hit slop, pointer events and accessibility. Recognizers and the responder system are
 // `nsh`'s; buttons, badges, stats and press targets are this library's.
-import { alpha, colors, finish, focusRing, terminal, tints, shape } from "@shadcn-nsh/theme";
+import {
+  feedback,
+  surface,
+  alpha,
+  colors,
+  focusRing,
+  terminal,
+  tints,
+  shape,
+} from "@shadcn-nsh/theme";
 import { Bell, Play, Star, type IconNode } from "lucide";
 import type { GestureResponderEvent, JSX, MouseButton } from "nsh";
 import {
@@ -21,7 +30,7 @@ import { Animated } from "nsh";
 import { Button } from "@/packages/ui/button";
 import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import { density } from "@/packages/ui/lib/surface";
 import { Pressable } from "@/packages/ui/pressable";
 import { Stat } from "@/packages/ui/stat";
@@ -101,7 +110,7 @@ function Transformable() {
             overflow: "hidden",
             borderWidth: 1,
             borderColor: colors.border,
-            backgroundColor: colors.raised,
+            backgroundColor: colors.surface,
             transform: [{ translateX: x }, { translateY: y }, { scale }, { rotate: angle }],
           }}
         >
@@ -132,7 +141,7 @@ function Transformable() {
 /** A ball dragged with a PanResponder (positions go through JS). Its responder blocks the page from scrolling while it is dragged. */
 function Ball() {
   const pos = signal({ x: 0, y: 0 });
-  const state = signal<{ label: string; tone: "neutral" | "accent" | "info" | "warn" }>({
+  const state = signal<{ label: string; tone: "neutral" | "accent" | "info" | "warning" }>({
     label: "Idle",
     tone: "neutral",
   });
@@ -152,7 +161,7 @@ function Ball() {
     },
     onPanResponderTerminate: () => {
       void grab.spring(0);
-      state.set({ label: "Taken over", tone: "warn" });
+      state.set({ label: "Taken over", tone: "warning" });
     },
   });
   return (
@@ -422,7 +431,7 @@ function PressEvents() {
           borderCurve: "continuous",
           borderWidth: 1,
           backgroundColor: colors.primary,
-          ...finish.accent,
+          ...surface("accent").style,
           alignItems: "center",
           justifyContent: "center",
           transitionProperty: "opacity, transform",
@@ -481,8 +490,8 @@ function PressEvents() {
           onPress={() => fire("ripple")}
           onLongPress={() => fire("fast long press")}
           delayLongPress={250}
-          hoverStyle={{ ...finish.hover }}
-          activeStyle={{ ...finish.pressed }}
+          hoverStyle={{ ...feedback.hoverSurface() }}
+          activeStyle={{ ...feedback.press().activeStyle }}
           android={{ ripple: { color: alpha(colors.primary, 0.25) } }}
           role="button"
           style={{
@@ -491,8 +500,8 @@ function PressEvents() {
             borderRadius: shape.control,
             borderCurve: "continuous",
             borderWidth: 1,
-            backgroundColor: colors.raised,
-            ...finish.raised,
+            backgroundColor: colors.surface,
+            ...surface("raised").style,
             flexDirection: "row",
             alignItems: "center",
             paddingHorizontal: 12,
@@ -513,8 +522,8 @@ function PressEvents() {
         <View
           onPress={() => fire("borderless")}
           android={{ ripple: { borderless: true, radius: 40 } }}
-          hoverStyle={{ ...finish.hover }}
-          activeStyle={{ ...finish.pressed }}
+          hoverStyle={{ ...feedback.hoverSurface() }}
+          activeStyle={{ ...feedback.press().activeStyle }}
           role="button"
           accessibilityLabel="Star"
           style={{
@@ -523,15 +532,15 @@ function PressEvents() {
             borderRadius: shape.control,
             borderCurve: "continuous",
             borderWidth: 1,
-            backgroundColor: colors.raised,
-            ...finish.raised,
+            backgroundColor: colors.surface,
+            ...surface("raised").style,
             alignItems: "center",
             justifyContent: "center",
             transitionProperty: "background-color, border-color, box-shadow",
             transitionDuration: 120,
           }}
         >
-          <Icon icon={Star} size={18} tint={colors.warn} />
+          <Icon icon={Star} size={18} tint={colors.warning} />
         </View>
       </View>
       <Text
@@ -626,7 +635,7 @@ function PointerEvents() {
     <Scene
       title="Pointer events"
       subtitle={hint("An overlay that lets taps through", "An overlay that lets clicks through")}
-      right={<StatusBadge label={`${through()}`} tone="up" />}
+      right={<StatusBadge label={`${through()}`} tone="success" />}
     >
       <View style={{ height: 88 }}>
         <View
@@ -642,14 +651,14 @@ function PointerEvents() {
               flex: 1,
               borderRadius: shape.control,
               borderCurve: "continuous",
-              backgroundColor: tints.up,
+              backgroundColor: tints.success,
               borderWidth: 1,
-              borderColor: colors.up,
+              borderColor: colors.success,
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 15, fontWeight: "600", color: colors.up }}>
+            <Text style={{ fontSize: 15, fontWeight: "600", color: colors.success }}>
               Button under an overlay
             </Text>
           </View>
@@ -668,7 +677,7 @@ function PointerEvents() {
             cx.beginPath();
             cx.rect(width * 0.18, 0, width * 0.64, height);
             cx.clip();
-            cx.strokeStyle = alpha(colors.warn, 0.28);
+            cx.strokeStyle = alpha(colors.warning, 0.28);
             cx.lineWidth = 1;
             cx.beginPath();
             for (let i = -height; i < width; i += 8) {
@@ -678,7 +687,7 @@ function PointerEvents() {
             cx.stroke();
             cx.restore();
             cx.setLineDash([4, 4]);
-            cx.strokeStyle = colors.warn;
+            cx.strokeStyle = colors.warning;
             cx.beginPath();
             cx.roundRect(width * 0.18 + 0.5, 0.5, width * 0.64 - 1, height - 1, 10);
             cx.stroke();

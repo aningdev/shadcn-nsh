@@ -4,7 +4,8 @@
 import {
   alpha,
   colors,
-  finish,
+  surface,
+  control,
   isDark,
   motion,
   terminal,
@@ -35,20 +36,20 @@ export const pointer = platform.desktop;
 
 /** The five tones a demo's dots and tiles cycle through. Call it where the color is drawn. */
 export const tones = () =>
-  [colors.brand, colors.info, colors.warn, colors.destructive, colors.up] as const;
+  [colors.brand, colors.info, colors.warning, colors.destructive, colors.success] as const;
 
 /**
  * Ink on a saturated tone fill. Light, the knob (white); dark, the ink that sits on the brand
  * fill. There is no role for ink on an arbitrary tone — the gallery uses `#ffffff` in the light.
  */
-export const onTone = () => (isDark() ? colors.primaryForeground : colors.knob);
+export const onTone = () => (isDark() ? colors.primaryForeground : colors.card);
 
 /** A tone's raised fill: the color, a soft top light (the knob, the lightest neutral) and the knob's drop. */
 export function toneFill(color: string): ViewStyle {
   return {
     backgroundColor: color,
-    backgroundImage: `linear-gradient(180deg, ${alpha(colors.knob, 0.22)} 0%, ${alpha(colors.knob, 0)} 100%)`,
-    boxShadow: finish.knob.boxShadow,
+    backgroundImage: `linear-gradient(180deg, ${alpha(colors.card, 0.22)} 0%, ${alpha(colors.card, 0)} 100%)`,
+    boxShadow: control("switch").knobStyle(false).boxShadow,
   };
 }
 
@@ -61,13 +62,13 @@ export function stage(): ViewStyle {
     backgroundColor: colors.background,
     borderWidth: 1,
     borderColor: colors.line,
-    ...finish.inset,
+    ...surface("inset").style,
   };
 }
 
 /** The drop under a small colored knob: a switch knob's, its fill left to the knob's own color. */
 export function knobDrop(): ViewStyle {
-  return { boxShadow: finish.knob.boxShadow };
+  return { boxShadow: control("switch").knobStyle(false).boxShadow };
 }
 
 /**
@@ -184,7 +185,7 @@ export function Appear(props: { index?: number; flex?: boolean; children: JSX.El
 /** A status capsule in the card's trailing slot. */
 export function StatusBadge(props: {
   label: string;
-  tone?: "neutral" | "accent" | "info" | "warn" | "up";
+  tone?: "neutral" | "accent" | "info" | "warning" | "success";
 }) {
   return <Badge tone={props.tone ?? "neutral"}>{props.label}</Badge>;
 }

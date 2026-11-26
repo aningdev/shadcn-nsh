@@ -100,7 +100,7 @@ function App() {
           <DemoSection title="Surface">
             {/* Three fixed 88-point surfaces: they wrap in a card narrower than the row. */}
             <View style={{ flexDirection: "row", flexWrap: "wrap", maxWidth: "100%", gap: 12 }}>
-              <Surface style={{ backgroundColor: colors.raised }}>
+              <Surface style={{ backgroundColor: colors.surface }}>
                 <Spinner size="default" tint={colors.foreground} />
               </Surface>
               <Surface style={insetSurface()}>

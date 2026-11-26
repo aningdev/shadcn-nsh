@@ -255,7 +255,7 @@ function App() {
               <Column>
                 <If when={phase() === "stopped"} else={<Head>Assistant</Head>}>
                   <Head>
-                    <Badge tone="warn" size="sm">
+                    <Badge tone="warning" size="sm">
                       Stopped
                     </Badge>
                   </Head>

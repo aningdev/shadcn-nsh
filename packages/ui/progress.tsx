@@ -4,11 +4,11 @@
 import {
   animate,
   colors,
+  control,
   fillStyle,
   follow,
   motion,
   stroke,
-  tier,
   type Tone,
   toneColor,
 } from "@shadcn-nsh/theme";
@@ -27,12 +27,9 @@ import {
 } from "nsh";
 import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } from "nsh/base";
 
-import { CheckboxMark, choiceWell } from "./checkbox";
-import { joinClass } from "./lib/class-names";
-import { type Live, read } from "./lib/live-value";
-import { choiceLook, trackLook } from "./lib/look";
+import { CheckboxMark } from "./checkbox";
 import { controlSize } from "./lib/surface";
-import { railFace, railShadow } from "./lib/track";
+import { joinClass, type Live, read } from "./lib/utils";
 
 /**
  * A determinate fill's classes: the whole track's width, slid back by what
@@ -46,29 +43,21 @@ export const progressGlide =
 /** A determinate fill's `translate` for `value` percent (0 to 100). */
 export const progressRemaining = (value: number) => `${Math.max(0, Math.min(100, value)) - 100}% 0`;
 
-/** A bar's rail, `height` points tall (default the theme's `progress.height` slot): the groove the
- * theme states — its face, its edge, its shade, and, where it states a line, a line inside a taller
- * box — so the slots settle the rail's look instead of a per-theme table. */
+/** The `progress` recipe's rail height (points), unless a caller states one. */
+const progressHeight = (): number => control("progress").height;
+
+/** A bar's rail, `height` points tall (default the `progress` recipe's height): the groove the theme
+ * states — its face, its edge and its shade — so the recipe settles the rail's look instead of a
+ * per-theme table. */
 export function progressRail(height?: number): ViewStyle {
-  const look = trackLook("progress");
-  const h = height ?? look.progress.height;
-  const line = look.progress.line;
-  const face = railFace(look);
-  const shadow = railShadow(look);
-  const band = line === null ? 0 : (h - line) / 2;
-  const trackFill: ViewStyle =
-    line === null
-      ? { backgroundColor: face }
-      : {
-          backgroundColor: "transparent",
-          backgroundImage: `linear-gradient(180deg, transparent 0px, transparent ${band}px, ${face} ${band}px, ${face} ${band + line}px, transparent ${band + line}px, transparent ${h}px)`,
-        };
+  const h = height ?? progressHeight();
+  const pr = control("progress");
   return {
     height: h,
     borderRadius: h / 2,
     overflow: "hidden",
-    ...trackFill,
-    ...(shadow === undefined ? {} : { boxShadow: shadow }),
+    backgroundColor: pr.grooveColor,
+    ...(pr.grooveShadow === undefined ? {} : { boxShadow: pr.grooveShadow }),
   };
 }
 
@@ -77,7 +66,7 @@ export function progressRail(height?: number): ViewStyle {
  * `warn`, `destructive`; `accent` is the run). Neither has an edge, so a tone's bar and the run
  * read as one kind of bar. */
 export function progressFill(height?: number, tone?: Tone): ViewStyle {
-  const h = height ?? trackLook("progress").progress.height;
+  const h = height ?? progressHeight();
   const fill = tone && tone !== "accent" ? { backgroundColor: toneColor(tone) } : fillStyle();
   return { height: h, borderRadius: h / 2, ...fill };
 }
@@ -87,7 +76,7 @@ export function progressFill(height?: number, tone?: Tone): ViewStyle {
  * hairline is a view of its own on the bar's frame: the rail comes first in the bar's row, a
  * label after it. */
 export function progressMarker(value: number, height?: number): ViewStyle {
-  const h = height ?? trackLook("progress").progress.height;
+  const h = height ?? progressHeight();
   return {
     position: "absolute",
     // physical: the fill is a full-width bar slid by a translate, which keeps the physical left; the
@@ -160,7 +149,7 @@ export interface ProgressLookOptions {
  * following `sweep`.
  */
 export function progressLook(value: Live<number>, o?: ProgressLookOptions) {
-  const height = () => o?.height ?? trackLook("progress").progress.height;
+  const height = () => o?.height ?? progressHeight();
   const indeterminate = () => !!read(o?.indeterminate);
   return {
     get trackStyle(): ViewStyle {
@@ -218,9 +207,7 @@ export function Progress(props: ProgressProps) {
     sweep: props.sweep,
   });
   return (
-    <ProgressContext.Provider
-      value={{ height: () => props.height ?? trackLook("progress").progress.height }}
-    >
+    <ProgressContext.Provider value={{ height: () => props.height ?? progressHeight() }}>
       <BaseProgress
         {...rest}
         value={props.value}
@@ -281,6 +268,7 @@ export interface ProgressStepsLook {
 
 /** The look of the steps on a bar. */
 export function progressStepsLook(): ProgressStepsLook {
+  const choiceW = control("choice");
   return {
     steps: (height: number): ViewStyle => ({
       alignSelf: "stretch",
@@ -301,13 +289,18 @@ export function progressStepsLook(): ProgressStepsLook {
       alignItems: "center",
       justifyContent: "center",
       borderWidth: stroke.control,
-      ...choiceWell(),
+      // Sunk like a choice's well: the `choice` recipe's face, an edge in the colour the theme
+      // gives it, and the shade its face hangs off.
+      backgroundColor: choiceW.face ?? "transparent",
+      backgroundImage: "none",
+      borderColor: choiceW.edgeColor ?? "transparent",
+      boxShadow: choiceW.shadeShadow,
       // The step's state is the app's (`done` / `current` / `upcoming`), not a press or hover `nsh`
       // draws, so it is read here rather than said in a state style.
       ...(state === "current" ? { borderColor: colors.brand } : {}),
     }),
     get dot(): ViewStyle {
-      const size = choiceLook().dot[tier];
+      const size = control("choice").mark;
       return {
         position: "absolute",
         width: size,
@@ -386,7 +379,7 @@ export type ProgressStepsProps = ViewProps;
  */
 export function ProgressSteps(props: ProgressStepsProps) {
   const [, rest] = split(props, ["children", "style"]);
-  const height = () => ProgressContext()?.height() ?? trackLook("progress").progress.height;
+  const height = () => ProgressContext()?.height() ?? progressHeight();
   // Each step takes its place in the row as it is made; the count tells which is last.
   const count = signal(0);
   const made = { count: 0 };

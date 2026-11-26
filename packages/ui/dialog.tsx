@@ -2,7 +2,16 @@
 // wear it below. `nsh/base`'s `Dialog` is the box; what this file adds is its card.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, finish, rounded, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
+import {
+  colors,
+  rounded,
+  surface,
+  surfaceBorderWidth,
+  terminal,
+  font,
+  shape,
+  stroke,
+} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, safeArea, Scroll, signal, split, View, windowSize } from "nsh";
 import type { Signal } from "nsh";
@@ -13,10 +22,9 @@ import {
 } from "nsh/base";
 
 import { Action, type ButtonVariant } from "./button";
-import { AsText } from "./lib/as-text";
-import { surfaceBorderWidth } from "./lib/look";
-import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
+import { createOpenState, type OpenState } from "./lib/state";
+import { AsText } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -41,16 +49,18 @@ export function dialogCard(width?: number): ViewStyle {
   return {
     ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
     ...rounded(shape.modal),
-    borderWidth: terminal ? stroke.hairline : surfaceBorderWidth(finish.modal.borderColor),
+    borderWidth: terminal
+      ? stroke.hairline
+      : surfaceBorderWidth(surface("modal").style.borderColor as string | undefined),
     padding: 20,
     gap: 12,
     maxHeight: windowSize().height - safeArea().top - safeArea().bottom - 48,
     ...(terminal
       ? { borderColor: colors.border }
       : {
-          backgroundColor: finish.modal.backgroundColor,
-          boxShadow: finish.modal.boxShadow,
-          borderColor: finish.modal.borderColor,
+          backgroundColor: surface("modal").style.backgroundColor,
+          boxShadow: surface("modal").style.boxShadow,
+          borderColor: surface("modal").style.borderColor,
         }),
   };
 }

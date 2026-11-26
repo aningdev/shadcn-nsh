@@ -6,18 +6,14 @@ import {
   alpha,
   colors,
   controlHeight,
-  finish,
-  focusRing,
-  hovered,
+  feedback,
   iconSize,
-  stateLayer,
-  style as themeStyle,
+  surface,
   terminal,
   rounded,
   font,
   shape,
   stroke,
-  dimmed,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
@@ -40,11 +36,10 @@ import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/b
 
 import { IconButton, iconButtonGlyph, type IconButtonProps } from "./button";
 import { Input, type InputProps } from "./input";
-import { AsText } from "./lib/as-text";
 import { IconLabel } from "./lib/icons";
-import { type Live, read } from "./lib/live-value";
-import { pressSink, pressTransition } from "./lib/press";
+import { pressSink, pressTransition } from "./lib/motion";
 import { controlSize, narrowWindow } from "./lib/surface";
+import { AsText, type Live, read } from "./lib/utils";
 import { Separator, type SeparatorProps } from "./separator";
 import { Sheet, SheetContent } from "./sheet";
 import { Skeleton } from "./skeleton";
@@ -305,7 +300,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
         minWidth: 0,
         flexDirection: side() === "right" ? "row-reverse" : "row",
         alignItems: "stretch",
-        backgroundColor: card() || variant() === "inset" ? colors.sidebar : colors.background,
+        backgroundColor: card() || variant() === "inset" ? colors.background : colors.background,
       };
     },
     get frame(): ViewStyle {
@@ -325,8 +320,8 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
         height: "100%",
         flexDirection: "column",
         overflow: "hidden",
-        backgroundColor: colors.sidebar,
-        borderColor: colors.sidebarBorder,
+        backgroundColor: colors.background,
+        borderColor: colors.line,
         ...(flat
           ? // physical: the column's side is the window edge it stands on; the edge that faces the page keeps the hairline in either direction.
             side() === "left"
@@ -335,7 +330,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
           : {
               borderWidth: stroke.hairline,
               ...rounded(shape.container),
-              boxShadow: finish.card.boxShadow,
+              boxShadow: surface("card").style.boxShadow,
             }),
       };
     },
@@ -354,7 +349,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
               borderWidth: stroke.hairline,
               borderColor: colors.line,
               ...rounded(shape.container),
-              boxShadow: finish.card.boxShadow,
+              boxShadow: surface("card").style.boxShadow,
               overflow: "hidden",
             }
           : {}),
@@ -378,7 +373,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
         width: RAIL_LINE,
         height: "100%",
         borderRadius: 1,
-        backgroundColor: colors.sidebarBorder,
+        backgroundColor: colors.line,
         ...(reduceMotion() ? {} : { transitionProperty: "opacity", transitionDuration: 150 }),
       };
     },
@@ -408,7 +403,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
       return {
         marginHorizontal: sidebarSize.padding,
         width: "auto",
-        backgroundColor: colors.sidebarBorder,
+        backgroundColor: colors.line,
       };
     },
   };
@@ -468,7 +463,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
       };
     },
     get actionHover(): ViewStyle {
-      return { backgroundColor: colors.sidebarAccent };
+      return { backgroundColor: colors.accent };
     },
     get content(): ViewStyle {
       return { width: "100%", flexDirection: "column" };
@@ -526,30 +521,30 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
           ? {
               backgroundColor: colors.background,
               borderWidth: stroke.hairline,
-              borderColor: colors.sidebarBorder,
+              borderColor: colors.line,
             }
           : {}),
         // The selected row's fill.
-        ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
+        ...(active() ? { backgroundColor: colors.accent } : {}),
         ...pressTransition("background-color"),
       };
     },
     get hoverStyle(): ViewStyle | undefined {
       if (disabled() || active()) return undefined;
-      return hovered();
+      return feedback.hoverStyle();
     },
     get activeStyle(): ViewStyle | undefined {
       if (disabled()) return undefined;
-      if (themeStyle().state.overlay.pressed > 0) {
-        return { ...stateLayer("pressed"), ...pressSink(0.98).activeStyle };
+      if (feedback.pressOverlay > 0) {
+        return { ...feedback.press("surface").activeStyle, ...pressSink(0.98).activeStyle };
       }
       return pressSink(0.98).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
     /** Its name: `rowLabel`'s size, medium on the page the app is on, one line, the text clipped
      * when the column is folded. */
@@ -600,10 +595,10 @@ export function sidebarMenuActionLook(o?: SidebarMenuActionLookOptions) {
       };
     },
     get hoverStyle(): ViewStyle {
-      return { backgroundColor: colors.sidebarAccent };
+      return { backgroundColor: colors.accent };
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
     /** Its glyph: 16 points in the muted ink. */
     get glyph(): { size: number; tint: string } {
@@ -657,7 +652,7 @@ export function sidebarMenuSubLook(o?: SidebarFoldOptions) {
       return {
         marginStart: sidebarSize.sub,
         borderStartWidth: stroke.hairline,
-        borderColor: colors.sidebarBorder,
+        borderColor: colors.line,
         paddingStart: sidebarSize.subPadding,
         paddingVertical: 2,
         gap: sidebarSize.menuGap,
@@ -704,26 +699,26 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
         paddingHorizontal: sidebarSize.padding,
         overflow: "hidden",
         ...rounded(shape.control),
-        ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
+        ...(active() ? { backgroundColor: colors.accent } : {}),
         ...pressTransition("background-color"),
       };
     },
     get hoverStyle(): ViewStyle | undefined {
       if (disabled() || active()) return undefined;
-      return hovered();
+      return feedback.hoverStyle();
     },
     get activeStyle(): ViewStyle | undefined {
       if (disabled()) return undefined;
-      if (themeStyle().state.overlay.pressed > 0) {
-        return { ...stateLayer("pressed"), ...pressSink(0.98).activeStyle };
+      if (feedback.pressOverlay > 0) {
+        return { ...feedback.press("surface").activeStyle, ...pressSink(0.98).activeStyle };
       }
       return pressSink(0.98).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
-      return focusRing();
+      return feedback.focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return { opacity: feedback.disabled.contentOpacity };
     },
     /** Its name: `subRowLabel`'s size, one line, the text clipped by a tight row. */
     get label(): TextStyle {
@@ -1072,8 +1067,8 @@ export function Sidebar(props: SidebarProps) {
                 borderTopRightRadius: 0,
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
-                backgroundColor: colors.sidebar,
-                borderColor: colors.sidebarBorder,
+                backgroundColor: colors.background,
+                borderColor: colors.line,
               },
             ]}
           >
@@ -1214,8 +1209,8 @@ export function SidebarGroupAction(props: SidebarGroupActionProps) {
         style={[look.action, props.style ?? null]}
         hoverStyle={[look.actionHover, props.hoverStyle ?? null]}
         activeStyle={props.activeStyle ?? null}
-        focusVisibleStyle={[focusRing(), props.focusVisibleStyle ?? null]}
-        disabledStyle={[{ opacity: dimmed.disabled }, props.disabledStyle ?? null]}
+        focusVisibleStyle={[feedback.focusRing(), props.focusVisibleStyle ?? null]}
+        disabledStyle={[{ opacity: feedback.disabled.contentOpacity }, props.disabledStyle ?? null]}
       >
         <AsText style={look.label}>{props.children}</AsText>
       </BaseButton>
@@ -1441,7 +1436,7 @@ export function SidebarMenuAction(props: SidebarMenuActionProps) {
         hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
         activeStyle={props.activeStyle ?? null}
         focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
-        disabledStyle={[{ opacity: dimmed.disabled }, props.disabledStyle ?? null]}
+        disabledStyle={[{ opacity: feedback.disabled.contentOpacity }, props.disabledStyle ?? null]}
       >
         <AsText style={{ fontSize: look.glyph.size, color: look.glyph.tint }}>
           {props.children}

@@ -5,7 +5,7 @@ import { runList } from "./list";
 
 const fixture = (files?: Record<string, string>): Fixture =>
   makeFixture({
-    items: ["theme", "press", "spinner", "as-text", "icons", "button", "live-value", "look"],
+    items: ["theme", "motion", "spinner", "utils", "icons", "button"],
     files,
   });
 
@@ -26,16 +26,18 @@ describe("list", () => {
       true,
     );
     expect(out.text).toContain("A button, an icon button");
-    expect(out.text).toContain("8 items, 0 installed");
+    expect(out.text).toContain("6 items, 0 installed");
     expect(out.lines.some((line) => line.startsWith("✓"))).toBe(false);
   });
 
   test("marks an item the app has a file of", async () => {
-    current = fixture({ "lib/ui/press.ts": "// the app's press\n" });
+    current = fixture({ "lib/ui/motion.tsx": "// the app's motion\n" });
     const out = await captured(() => runList({ cwd: current!.app, registry: current!.url }));
 
-    const press = out.lines.find((line) => line.includes("press") && line.includes("registry:lib"));
-    expect(press?.startsWith("✓ press")).toBe(true);
+    const motion = out.lines.find(
+      (line) => line.includes("motion") && line.includes("registry:lib"),
+    );
+    expect(motion?.startsWith("✓ motion")).toBe(true);
     expect(out.text).toContain("1 installed");
   });
 
@@ -50,13 +52,11 @@ describe("list", () => {
 
     expect(catalog.items.map((item) => item.name)).toEqual([
       "theme",
-      "press",
+      "motion",
       "spinner",
-      "as-text",
+      "utils",
       "icons",
       "button",
-      "live-value",
-      "look",
     ]);
     expect(catalog.items.find((item) => item.name === "button")?.installed).toBe(true);
     expect(catalog.items.find((item) => item.name === "spinner")?.installed).toBe(false);

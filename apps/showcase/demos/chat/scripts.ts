@@ -151,8 +151,12 @@ If the ball is *x*, the bat is *x* + 1.00, so 2*x* + 1.00 = 1.10 and *x* = 0.05.
           sources: [
             { title: "Harbor 4.2 release notes", site: "harbor.dev", tone: "accent" },
             { title: "What's new in the Harbor scheduler", site: "blog.harbor.dev", tone: "info" },
-            { title: "Benchmarks: Harbor 4.1 vs 4.2", site: "perfweekly.io", tone: "warn" },
-            { title: "Migrating to the new config format", site: "docs.harbor.dev", tone: "up" },
+            { title: "Benchmarks: Harbor 4.1 vs 4.2", site: "perfweekly.io", tone: "warning" },
+            {
+              title: "Migrating to the new config format",
+              site: "docs.harbor.dev",
+              tone: "success",
+            },
           ],
         },
         ms: 1600,

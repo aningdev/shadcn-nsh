@@ -6,17 +6,11 @@ const rules = (source: string, file = "packages/ui/example.tsx") =>
   violations(source, file).map((problem) => problem.rule);
 
 describe("ui rules", () => {
-  test("flags a theme's whole control geometry and its type", () => {
+  test("allows direct imports of control, surface, feedback, motion from theme", () => {
     expect(
-      rules(`const presets: Record<Controls, number> = { base: 1 };
-import type { Controls } from "@shadcn-nsh/theme";
-const at = presets[controls()];`),
-    ).toEqual(["controls", "controls", "controls"]);
-  });
-
-  test("leaves a component's own method named controls alone", () => {
-    expect(rules(`  controls(variant: WindowControlsVariant): ViewStyle;`)).toEqual([]);
-    expect(rules(`style={look.controls("caption")}`)).toEqual([]);
+      rules(`import { control, surface, feedback, motion } from "@shadcn-nsh/theme";
+const btn = control("button");`),
+    ).toEqual([]);
   });
 
   test("flags a theme id compared by name", () => {

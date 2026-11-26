@@ -190,7 +190,7 @@ cleanup(() => clearTimeout(closeTimer));
             <Text
               style={{
                 fontSize: 12,
-                color: diagnostic.severity === "warning" ? colors.warn : colors.destructive,
+                color: diagnostic.severity === "warning" ? colors.warning : colors.destructive,
               }}
             >
               {`${diagnostic.severity ?? "error"}: ${diagnostic.message}`}

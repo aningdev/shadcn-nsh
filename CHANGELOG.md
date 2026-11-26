@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Changed
+
+- **BREAKING: Theme v5 architecture (`docs/decisions/0020-theme-v5.md`).** Replaced authored DTCG sources and `semantics.json` with a single TypeScript `base` theme (`nsh-gallery`) plus sparse `defineTheme()` overrides (`shadcn`, `solid-glass`, `apple`, `material`, `winui`); `bun run tokens:build` now exports `theme.json`, W3C DTCG 2025.10 `{light,dark}.tokens.json`, and `DESIGN.md` one way.
+  - **25-key `theme.json` + optional fonts**: removed `sidebar-*`, redundant `*-foreground`, static `*-tint` (computed reactively via `tints.*`), required `chart-1..5`, and single-use surface/control tokens; standardized `up`/`warn`/`raised` to `success`/`warning`/`surface`, and added optional `tokens.font.{sans,mono}`.
+  - **Four orthogonal runtime layers without Proxy**: unified `surface(role)` (11 structural `SurfaceSpec` roles), `feedback` (`hover`/`press`/`focus`/`disabled`/`passive`), `motion`, `metrics`, and 13 strongly typed `control(name)` recipes; dropped `lib/look.ts` and single-theme outlier branches (`spinner.spokes`, `progress.line`, `tooltip` / `toast` / `calendar` / `disabled` control groups, `choice.halo`, etc.) while keeping `switch.knob.on` (Material) and `slider.mark` (WinUI).
+  - **Lean CLI copy-into-app & consolidated `packages/ui/lib`**: `init --theme <id>` writes `theme.json` and `DESIGN.md` at app root alongside `lib/ui/{schema,materials,base,preset,theme}.ts` (no `semantics.json` or `.tokens.json` copied into apps), `add theme-<id>` installs a single `themes/<id>.ts` module, and shared `packages/ui/lib` helpers are consolidated from 16 files down to 8 (`utils.tsx`, `state.ts`, `motion.tsx`, `surface.tsx`, `field-look.ts`, `icons.tsx`, `popup.tsx`, `listbox.tsx`; removing `track.ts` and folding `switch-geometry.ts` into `switch.tsx`).
+
 ### Added
 
 - **`AlertDialogContent` takes an `input` (#122).** One text field in the platform's alert (`defaultValue`, `placeholder`, `selectTextOnFocus`, `required`); `onAction` reports its text as `value` beside the chosen `action`. Windows, Linux and the terminal show no field, and `value` is `null` there. Needs NSH v0.7.0.

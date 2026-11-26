@@ -53,8 +53,10 @@ test("a disabled ToggleGroup locks every toggle in it", async () => {
 });
 
 /** Channel 0–255 of a `#rrggbb` / `#rrggbbaa` color. */
-function red(hex: string) {
-  return parseInt(hex.slice(1, 3), 16);
+/** The lightness of the theme's `oklch()` colour, 0–1; a value the engine resolves, not a hex. */
+function lightness(color: string) {
+  const match = /^oklch\(\s*([\d.]+)/.exec(color);
+  return match ? Number(match[1]) : Number.NaN;
 }
 
 test("Toolbar ink follows the scheme, the track stays light-on-dark, and Site is a link", async () => {
@@ -75,8 +77,8 @@ test("Toolbar ink follows the scheme, the track stays light-on-dark, and Site is
     expect(bold.toLowerCase().startsWith(ink)).toBe(true);
     // Site is a link: primary ink, not the button's foreground, and it flips with the scheme.
     expect(site).not.toBe(bold);
-    // `muted` track. Near-white in light (#f5f5f5), the dark step in dark. A snapshot stays one of them.
-    expect(red(track) > 200).toBe(scheme === "light");
+    // The track is the theme's own quiet fill: near-white in light, the dark step in dark.
+    expect(lightness(track) > 0.9).toBe(scheme === "light");
   }
   expect(tracks[0]).not.toBe(tracks[1]);
 });

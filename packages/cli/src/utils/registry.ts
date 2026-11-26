@@ -66,53 +66,60 @@ export async function cacheIndex(config: NshUiConfig, registryOverride?: string)
   }
 }
 
-/** `theme.json`, `semantics.json`, standalone `.tokens.json`, and `DESIGN.md`: the data files a theme carries. */
-const THEME_DATA = new Set([
-  "theme.json",
-  "semantics.json",
-  "light.tokens.json",
-  "dark.tokens.json",
-  "DESIGN.md",
-]);
+/** `theme.json` and `DESIGN.md`: the build-time data files a theme carries. */
+const THEME_DATA = new Set(["theme.json", "DESIGN.md"]);
 
-/** A theme item's look without its data: the roles module (`lib/ui/theme.ts`), which every app has once. */
+const isCodeThemeItem = (name: string) => name.startsWith("theme-") && name !== NATIVE_THEME;
+
+/** A theme item's core lib files without its build-time data (`theme.json`, `DESIGN.md`) or `preset.ts`. */
 function rolesOnly(item: RegistryItem): RegistryItem {
+  return {
+    ...item,
+    files: item.files.filter((file) => {
+      const base = path.posix.basename(file.path);
+      return !THEME_DATA.has(base) && base !== "preset.ts";
+    }),
+  };
+}
+
+/** A `theme-<id>` item's TS module alone (`themes/<id>.ts`), stripping `theme.json` & `DESIGN.md`. */
+function codeOnly(item: RegistryItem): RegistryItem {
   return {
     ...item,
     files: item.files.filter((file) => !THEME_DATA.has(path.posix.basename(file.path))),
   };
 }
 
-/** A theme item's data at the app's build-time paths: `theme.json`, `.tokens.json`, and `DESIGN.md` at root, and `semantics.json` in the lib alias. */
+/** A theme item's build-time files at app root (`theme.json`, `DESIGN.md`) plus `lib/ui/preset.ts` pointing at `themes/<id>`. */
 function atBuildTime(item: RegistryItem, config: NshUiConfig): RegistryItem {
   const lib = config.aliases.lib.replace(/^\.\//, "");
-  return {
-    ...item,
-    files: item.files.flatMap((file) => {
-      const name = path.posix.basename(file.path);
-      if (
-        name === "theme.json" ||
-        name === "light.tokens.json" ||
-        name === "dark.tokens.json" ||
-        name === "DESIGN.md"
-      ) {
-        return [{ ...file, target: name }];
-      }
-      if (name === "semantics.json") return [{ ...file, target: path.posix.join(lib, name) }];
-      return [];
-    }),
-  };
+  const themeTs = item.files.find((file) => file.type === "registry:lib");
+  const files = item.files.flatMap((file) => {
+    const name = path.posix.basename(file.path);
+    if (name === "theme.json" || name === "DESIGN.md") {
+      return [{ ...file, target: name }];
+    }
+    return [];
+  });
+  if (themeTs) {
+    const presetTarget = path.posix.join(lib, "preset.ts");
+    const themeTarget = themeTs.target ?? themeTs.path;
+    let rel = path.posix
+      .relative(path.posix.dirname(`/${presetTarget}`), `/${themeTarget}`)
+      .replace(/\.(tsx?|jsx?)$/, "");
+    if (!rel.startsWith(".")) rel = `./${rel}`;
+    files.push({
+      path: "packages/theme/preset.ts",
+      type: "registry:lib",
+      target: presetTarget,
+      content: `/**\n * Build-time theme preset (\`init --theme\`).\n */\nexport { default as presetTheme } from "${rel}";\n`,
+    });
+  }
+  return { ...item, files };
 }
 
 /**
  * Fetch items and their `registryDependencies`, recursively (depth-first, deduped).
- *
- * `theme` — named, or the dependency every component has — is the app's build-time theme,
- * `nsh-ui.json`'s `theme`. For the library's own that is the `theme` item as it is. For another
- * (`theme-shadcn`) it is the roles module (`lib/ui/theme.ts`) from `theme`, that theme in
- * `themes/<name>/` for `selectTheme`, and its data at the build-time paths `nsh.json` points at:
- * what `init --theme <name>` wrote, so `add` and `add --overwrite` never write the default colors
- * over it. Naming the other theme's item (`add theme-shadcn`) installs `themes/<name>/` alone.
  */
 export async function resolveTree(
   config: NshUiConfig,
@@ -121,13 +128,21 @@ export async function resolveTree(
 ): Promise<RegistryItem[]> {
   const seen = new Set<string>();
   const out: RegistryItem[] = [];
+  const rawCache = new Map<string, RegistryItem>();
+
+  async function load(name: string): Promise<RegistryItem> {
+    const cached = rawCache.get(name);
+    if (cached) return cached;
+    const fetched = await fetchItem(config, name, registryOverride);
+    rawCache.set(name, fetched);
+    return fetched;
+  }
 
   async function walk(name: string) {
     if (seen.has(name)) return;
     seen.add(name);
-    const item = await fetchItem(config, name, registryOverride);
+    const item = await load(name);
     if (name === DEFAULT_THEME && config.theme === NATIVE_THEME) {
-      // Built on the theme `nsh-ui.json` records as a single theme, with the others beside it.
       for (const dep of item.registryDependencies ?? []) await walk(dep);
       out.push(item);
       await walk(config.theme);
@@ -136,7 +151,7 @@ export async function resolveTree(
     if (name === DEFAULT_THEME && config.theme !== DEFAULT_THEME) {
       out.push(rolesOnly(item));
       await walk(config.theme);
-      const chosen = out.find((found) => found.name === config.theme);
+      const chosen = rawCache.get(config.theme);
       if (chosen == null) throw new Error(`The registry has no item ${config.theme}.`);
       out.push(atBuildTime(chosen, config));
       return;
@@ -144,7 +159,7 @@ export async function resolveTree(
     for (const dep of item.registryDependencies ?? []) {
       await walk(dep);
     }
-    out.push(item);
+    out.push(isCodeThemeItem(name) ? codeOnly(item) : item);
   }
 
   for (const name of names) {
@@ -184,13 +199,16 @@ export async function checkRegistryDependencies(
   registry: Registry,
   baseDir: string,
 ): Promise<string[]> {
-  const owner = new Map<string, string>();
-  /** The targets each item ships: two theme items land at the same paths, as alternatives. */
+  const owners = new Map<string, Set<string>>();
+  /** The targets each item ships: two theme items may share a target as alternatives. */
   const targets = new Map<string, Set<string>>();
   for (const item of registry.items) {
     const own = new Set<string>();
     for (const file of item.files) {
-      owner.set(path.resolve(baseDir, file.path), item.name);
+      const abs = path.resolve(baseDir, file.path);
+      const set = owners.get(abs) ?? new Set<string>();
+      set.add(item.name);
+      owners.set(abs, set);
       if (file.target) own.add(file.target);
     }
     targets.set(item.name, own);
@@ -203,7 +221,7 @@ export async function checkRegistryDependencies(
 
   const problems: string[] = [];
   for (const item of registry.items) {
-    const used = new Set<string>();
+    const usedSets: Set<string>[] = [];
     const own = targets.get(item.name) ?? new Set<string>();
     /** The packages its files import that the runtime does not supply. */
     const packages = new Set<string>();
@@ -214,12 +232,8 @@ export async function checkRegistryDependencies(
       for (const match of source.matchAll(IMPORT_RE)) {
         const spec = match[1] ?? match[2];
         if (spec === THEME_PACKAGE && (hasTheme || themeItems.has(item.name))) {
-          // A theme item ships the theme it is; a component wants the app's theme item, which
-          // `add` picks from `nsh-ui.json` (`resolveTree`).
-          used.add(themeItems.has(item.name) ? item.name : DEFAULT_THEME);
+          usedSets.push(new Set([themeItems.has(item.name) ? item.name : DEFAULT_THEME]));
         } else if (spec.startsWith(".")) {
-          // Settled at the target first: a theme item ships `lib/ui/theme.ts` beside its own
-          // `lib/ui/semantics.json`, two themes sharing those paths.
           const beside = file.target
             ? RESOLVE_SUFFIXES.map(
                 (suffix) =>
@@ -230,23 +244,29 @@ export async function checkRegistryDependencies(
 
           const target = RESOLVE_SUFFIXES.map(
             (x) => path.resolve(path.dirname(abs), spec) + x,
-          ).find((candidate) => owner.has(candidate));
-          if (target) used.add(owner.get(target)!);
-          // A relative import no item ships would be missing in the app it is copied into.
+          ).find((candidate) => owners.has(candidate));
+          if (target) usedSets.push(owners.get(target)!);
           else problems.push(`${item.name}: imports "${spec}", which no registry item ships`);
         }
         // A package the app installs: the item says which, and `add` runs the install.
         else if (spec !== THEME_PACKAGE && !fromRuntime(spec)) packages.add(packageOf(spec));
       }
     }
-    used.delete(item.name);
     const declared = new Set(item.registryDependencies ?? []);
-    for (const dep of used) {
-      if (!declared.has(dep))
-        problems.push(`${item.name}: imports "${dep}" but does not declare it`);
+    const satisfiedDeps = new Set<string>();
+    for (const candidateSet of usedSets) {
+      if (candidateSet.has(item.name)) continue;
+      const hit = [...candidateSet].filter((c) => declared.has(c));
+      if (hit.length > 0) {
+        for (const h of hit) satisfiedDeps.add(h);
+      } else {
+        const preferred = [...candidateSet][0]!;
+        problems.push(`${item.name}: imports "${preferred}" but does not declare it`);
+      }
     }
     for (const dep of declared) {
-      if (!used.has(dep)) problems.push(`${item.name}: declares "${dep}" but never imports it`);
+      if (!satisfiedDeps.has(dep))
+        problems.push(`${item.name}: declares "${dep}" but never imports it`);
     }
 
     const installed = new Map(

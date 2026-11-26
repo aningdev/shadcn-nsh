@@ -1,4 +1,4 @@
-import { finish, platformMaterial, selectTheme } from "@shadcn-nsh/theme";
+import { selectTheme, surface } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import { nativeTheme } from "../../../packages/theme/themes/native";
@@ -14,13 +14,13 @@ function App() {
   return (
     <View>
       <Text>{`native=${nativeTheme().id}`}</Text>
-      <Text>{`menu=${glassKeys(finish.overlay)}`}</Text>
-      <Text>{`menuEffect=${finish.overlay.glassEffect ?? "none"}`}</Text>
-      <Text>{`glassEffect=${finish.glass.glassEffect ?? "none"}`}</Text>
-      <Text>{`raisedEffect=${finish.raised.glassEffect ?? "none"}`}</Text>
-      <Text>{`card=${glassKeys(finish.card)}|${JSON.stringify(platformMaterial("card"))}`}</Text>
-      {/* What a popover draws: PopIn spreads platformMaterial("menu") and the menu finish's keys. */}
-      <PopIn style={{ ...finish.overlay }}>
+      <Text>{`menu=${glassKeys(surface("overlay").style)}`}</Text>
+      <Text>{`menuEffect=${surface("overlay").style.glassEffect ?? "none"}`}</Text>
+      <Text>{`glassEffect=${surface("glass").style.glassEffect ?? "none"}`}</Text>
+      <Text>{`raisedEffect=${surface("raised").style.glassEffect ?? "none"}`}</Text>
+      <Text>{`card=${glassKeys(surface("card").style)}|${JSON.stringify(surface("card").platformProps)}`}</Text>
+      {/* What a popover draws: PopIn spreads surface("overlay").platformProps and the surface's style. */}
+      <PopIn style={{ ...surface("overlay").style }}>
         <Text>popover</Text>
       </PopIn>
       <Button onPress={() => selectTheme(nativeTheme())}>Native</Button>

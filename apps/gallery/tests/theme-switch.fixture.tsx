@@ -37,12 +37,19 @@ const rail = () => {
 /** A style value as the page reads it out: the string it is, or its JSON. */
 const shown = (value: unknown) => (typeof value === "string" ? value : JSON.stringify(value));
 
-/** A theme NSH cannot read (a color that is none), on the neutral theme's finishes. */
+/** A theme NSH cannot read (a color that is none), on the neutral theme's surfaces. */
 const broken: AppTheme = {
+  ...shadcn,
   id: "broken",
   label: "broken",
-  theme: { cssVars: { light: { primary: "#zz" }, dark: { primary: "#zz" } } },
-  semantics: shadcn.semantics,
+  theme: {
+    name: "broken",
+    cssVars: {
+      theme: shadcn.theme.cssVars.theme,
+      light: { primary: "#zz" },
+      dark: { primary: "#zz" },
+    },
+  },
 };
 
 function App() {

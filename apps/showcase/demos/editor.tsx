@@ -175,7 +175,7 @@ const pointer = platform.desktop;
 function severityColor(severity: EditorDiagnostic["severity"]) {
   switch (severity) {
     case "warning":
-      return colors.warn;
+      return colors.warning;
     case "info":
       return colors.info;
     case "hint":
@@ -733,7 +733,9 @@ function StatusBar() {
       >
         {plural(m.count("error"), "error")}
       </Text>
-      <Text style={{ fontFamily: "monospace", fontSize: 11, color: colors.warn, numberOfLines: 1 }}>
+      <Text
+        style={{ fontFamily: "monospace", fontSize: 11, color: colors.warning, numberOfLines: 1 }}
+      >
         {plural(m.count("warning"), "warning")}
       </Text>
       <Text style={{ fontFamily: "monospace", fontSize: 11, color: colors.info, numberOfLines: 1 }}>
@@ -936,8 +938,8 @@ export function EditorDemo() {
     });
     const out: EditorDecoration[] = [];
     const modified = Math.min(removed, added);
-    if (modified > 0) out.push(mark(head, head + modified, "bg-warn"));
-    if (added > removed) out.push(mark(head + modified, head + added, "bg-up"));
+    if (modified > 0) out.push(mark(head, head + modified, "bg-warning"));
+    if (added > removed) out.push(mark(head + modified, head + added, "bg-success"));
     if (removed > added) {
       out.push({
         range: {
@@ -957,7 +959,7 @@ export function EditorDemo() {
         range: diagnostic.range,
         overviewRuler: {
           lane: "right" as const,
-          class: (diagnostic.severity ?? "error") === "error" ? "bg-destructive" : "bg-warn",
+          class: (diagnostic.severity ?? "error") === "error" ? "bg-destructive" : "bg-warning",
         },
       })),
     ];

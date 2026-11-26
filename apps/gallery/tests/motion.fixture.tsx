@@ -43,7 +43,7 @@ function App() {
     optionClass,
     "transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none",
     "transition-transform duration-150 motion-reduce:transition-none",
-    "group rounded-md transition-colors duration-150 motion-reduce:transition-none hover:bg-hover active:opacity-70",
+    "group rounded-md transition-colors duration-150 motion-reduce:transition-none hover:bg-accent active:opacity-70",
     commandClasses.item,
     paginationItemClass(),
     edgeClass({ rest: "border-input", hover: "border-faint" }),

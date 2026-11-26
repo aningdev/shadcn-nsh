@@ -322,7 +322,7 @@ function Chart(props: { source: string }) {
         ...rounded(shape.control),
         borderWidth: 1,
         borderColor: colors.border,
-        backgroundColor: colors.inset,
+        backgroundColor: colors.muted,
         padding: 12,
       }}
     >
@@ -392,11 +392,11 @@ function renderExtension(node: TextViewCustomNode) {
             flexDirection: "row",
             gap: 12,
             ...rounded(shape.control),
-            backgroundColor: tints.up,
+            backgroundColor: tints.success,
             padding: 12,
           }}
         >
-          <Text style={{ color: colors.up }}>✦</Text>
+          <Text style={{ color: colors.success }}>✦</Text>
           <TextView document={{ blocks: node.children ?? [] }} style={{ flex: 1 }} />
         </View>
       );
@@ -451,7 +451,7 @@ function InlineChips() {
                 borderRadius: 999,
                 borderWidth: 1,
                 borderColor: colors.border,
-                backgroundColor: colors.inset,
+                backgroundColor: colors.muted,
                 paddingHorizontal: 8,
               }}
             >
@@ -460,7 +460,7 @@ function InlineChips() {
                   width: 6,
                   height: 6,
                   borderRadius: 3,
-                  backgroundColor: node.name === "task" ? colors.info : colors.up,
+                  backgroundColor: node.name === "task" ? colors.info : colors.success,
                 }}
               />
               <Text
@@ -655,7 +655,7 @@ function SelectionRead() {
             </Each>
           </SegmentedList>
         </Segmented>
-        <View style={{ ...rounded(shape.control), backgroundColor: colors.inset, padding: 12 }}>
+        <View style={{ ...rounded(shape.control), backgroundColor: colors.muted, padding: 12 }}>
           <Text
             style={{
               fontFamily: "monospace",

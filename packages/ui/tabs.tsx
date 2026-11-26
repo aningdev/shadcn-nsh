@@ -4,17 +4,16 @@
 import {
   CAPSULE_RADIUS,
   colors,
-  finish,
-  focusRing,
+  control,
+  feedback,
   follow,
-  hovered,
   motion,
   terminal,
   rounded,
   font,
   shape,
   stroke,
-  dimmed,
+  surface,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -27,9 +26,8 @@ import {
 } from "nsh/base";
 
 import { Icon } from "./lib/icons";
-import { type Live, read } from "./lib/live-value";
-import { edged, painted, tabsTrackLook } from "./lib/look";
 import { controlSize } from "./lib/surface";
+import { type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -53,7 +51,7 @@ export interface TabLook {
  * segmented control, which wears a `TabLook` and marks its own selected segment the same way.
  */
 export const hoverOf = (state: TabState) =>
-  read(state.selected) || read(state.disabled) ? undefined : hovered();
+  read(state.selected) || read(state.disabled) ? undefined : feedback.hoverStyle();
 
 /** Options of `tabsLook`. */
 export interface TabsLookOptions {
@@ -66,7 +64,7 @@ const spreadOf = (o?: TabsLookOptions) => !pointer || !!read(o?.fill);
 
 /**
  * A tab strip's look: a track `controlSize.tabs` high (the theme's tallest control) sunk into the
- * surface with a hairline edge, and the selected tab a capsule inside it reading `finish.plate`
+ * surface with a hairline edge, and the selected tab a capsule inside it reading `surface("plate")`
  * (the theme's labelled block chosen inside a well), the mark and the track concentric — the
  * capsule one step inside the track's capsule. The track is as wide as its tabs with a pointer,
  * the tabs at their labels; `fill` spans the row, the tabs sharing it (as a touch screen always
@@ -81,17 +79,18 @@ export function tabsLook(o?: TabsLookOptions) {
   // The track's corner, and the mark's one step inside it — concentric: `tabs.track.corner` (`full`
   // snaps to half the strip's height), with the curve the theme states for corners (`shape.curve`).
   const radius = () => {
-    const c = tabsTrackLook().corner;
+    const c = control("tabs").corner;
     return c === CAPSULE_RADIUS ? controlSize.tabs / 2 : c;
   };
   const corners = (step = 0) => rounded(radius(), step);
-  const plateBorderWidth = () =>
-    finish.plate.borderColor === undefined || finish.plate.borderColor === "transparent"
-      ? 0
-      : stroke.control;
+  const plate = () => surface("plate").style;
+  const plateBorderWidth = () => {
+    const edge = plate().borderColor;
+    return edge === undefined || edge === "transparent" ? 0 : stroke.control;
+  };
   return {
     get style(): ViewStyle {
-      const track = tabsTrackLook();
+      const track = control("tabs");
       return {
         height: controlSize.tabs,
         flexDirection: "row",
@@ -100,9 +99,9 @@ export function tabsLook(o?: TabsLookOptions) {
         padding: inset,
         ...corners(),
         borderWidth: track.edge === null ? 0 : stroke.control,
-        borderColor: track.edge === null ? "transparent" : edged(track.edge),
-        backgroundColor: painted(track.face),
-        boxShadow: finish.inset.boxShadow,
+        borderColor: track.edge ?? "transparent",
+        backgroundColor: track.face ?? "transparent",
+        boxShadow: surface("inset").style.boxShadow,
       };
     },
     get indicatorStyle(): ViewStyle {
@@ -114,7 +113,7 @@ export function tabsLook(o?: TabsLookOptions) {
         bottom: inset,
         ...corners(inset),
         borderWidth: plateBorderWidth(),
-        ...finish.plate,
+        ...plate(),
       };
     },
     tab(state: TabState): TabLook {
@@ -135,10 +134,10 @@ export function tabsLook(o?: TabsLookOptions) {
           return hoverOf(state);
         },
         get focusVisibleStyle() {
-          return focusRing();
+          return feedback.focusRing();
         },
         get disabledStyle(): ViewStyle {
-          return { opacity: dimmed.disabled };
+          return { opacity: feedback.disabled.contentOpacity };
         },
       };
     },
@@ -201,13 +200,13 @@ export function underlineTabsLook() {
           return hoverOf(state);
         },
         get activeStyle(): ViewStyle {
-          return { opacity: dimmed.pressed };
+          return { opacity: feedback.passive.pressedOpacity };
         },
         get focusVisibleStyle() {
-          return focusRing();
+          return feedback.focusRing();
         },
         get disabledStyle(): ViewStyle {
-          return { opacity: dimmed.disabled };
+          return { opacity: feedback.disabled.contentOpacity };
         },
       };
     },
@@ -287,7 +286,7 @@ export function TabTitle(props: {
             ...rounded(shape.control),
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: colors.inset,
+            backgroundColor: surface("inset").style.backgroundColor,
             borderWidth: stroke.control,
             borderColor: colors.line,
           }}

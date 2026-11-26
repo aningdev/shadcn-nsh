@@ -97,7 +97,7 @@ const glossary = () => readFileSync(new URL("docs/GLOSSARY.md", root), "utf8");
 /**
  * The components that take the theme's `Tone` (`docs/specs/api-unify.md` §4.3 R9): one type, one
  * writing on a prop, a value or a function read where the control draws (`Live<Tone>`, which
- * `lib/live-value` defines as `Tone | (() => Tone)`). `otp-input` reads a verdict that may be absent,
+ * `lib/utils` defines as `Tone | (() => Tone)`). `otp-input` reads a verdict that may be absent,
  * so a tone a look or a prop may not have is `Live<Tone | undefined>` (§4.4).
  */
 const TONE_WRITERS = ["badge", "stat", "status", "progress", "diff-view"];

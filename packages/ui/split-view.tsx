@@ -48,23 +48,21 @@ export function splitViewLook() {
 }
 
 /**
- * A column's page. The sidebar stands on `colors.sidebar` with `colors.sidebarBorder` after it;
- * the content column stands on the page's fill with `colors.line` after it; the detail has no
- * trailing hairline. iOS draws the columns' own edges, so the hairline is omitted there. The page
- * fills the column and shrinks with it.
+ * A column's page: the page's fill, with a `colors.line` hairline after it — but none after the
+ * detail column, and none on iOS, which draws the columns' own edges. The page fills the column and
+ * shrinks with it.
  */
 export function splitViewColumnLook(column: SplitViewColumn) {
-  const sidebar = column === "sidebar";
   return {
     page: (): ViewStyle => ({
       flex: 1,
       minWidth: 0,
-      backgroundColor: sidebar ? colors.sidebar : colors.background,
+      backgroundColor: colors.background,
       ...(platform.os === "ios" || column === "detail"
         ? {}
         : {
             borderEndWidth: stroke.hairline,
-            borderEndColor: sidebar ? colors.sidebarBorder : colors.line,
+            borderEndColor: colors.line,
           }),
     }),
   };
@@ -72,8 +70,8 @@ export function splitViewColumnLook(column: SplitViewColumn) {
 
 /**
  * The header bar the desktops and the web draw, the gallery's page header: 44 points, the title 15
- * semibold. The sidebar's bar is the sidebar's fill, with no hairline; the others are the page's
- * fill, with `colors.line` under them.
+ * semibold, on the page's fill. The sidebar's bar carries no hairline; the others have `colors.line`
+ * under them.
  */
 export function splitViewHeaderLook(column: SplitViewColumn = "content") {
   const sidebar = column === "sidebar";
@@ -85,7 +83,7 @@ export function splitViewHeaderLook(column: SplitViewColumn = "content") {
       alignItems: "center",
       gap: 8,
       paddingHorizontal: 12,
-      backgroundColor: sidebar ? colors.sidebar : colors.background,
+      backgroundColor: colors.background,
       borderBottomWidth: sidebar ? 0 : 1,
       borderBottomColor: colors.line,
     }),

@@ -141,7 +141,7 @@ export function Depth(props: { market: Market; stock: Stock }) {
               cx.lineWidth = 1.5;
               cx.stroke();
             };
-            side(b.bids, bids, colors.up, -1);
+            side(b.bids, bids, colors.success, -1);
             side(b.asks, asks, colors.destructive, 1);
             cx.strokeStyle = colors.mutedForeground;
             cx.setLineDash([2, 3]);
@@ -166,7 +166,7 @@ export function Depth(props: { market: Market; stock: Stock }) {
       <View
         style={{ flexDirection: "row", flexWrap: "wrap", columnGap: 16, rowGap: terminal ? 0 : 6 }}
       >
-        <Legend color={colors.up} label="Bids" value={compact(totals().bids)} />
+        <Legend color={colors.success} label="Bids" value={compact(totals().bids)} />
         <Legend color={colors.destructive} label="Asks" value={compact(totals().asks)} />
         <Legend
           color={colors.border}
@@ -190,7 +190,7 @@ function LevelRow(props: {
   n: number;
   max: () => number;
 }) {
-  const tint = () => alpha(props.side === "bid" ? colors.up : colors.destructive, 0.1);
+  const tint = () => alpha(props.side === "bid" ? colors.success : colors.destructive, 0.1);
   const share = () => Math.min(1, props.total() / props.max());
   return (
     <View style={{ height: ROW, flexDirection: "row", alignItems: "center", gap: COLUMN_GAP }}>
@@ -306,7 +306,7 @@ export function OrderBook(props: { market: Market; stock: Stock }) {
               height: terminal ? TERMINAL_ROW : 30,
               paddingHorizontal: terminal ? TERMINAL_COLUMN : 12,
               justifyContent: "center",
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
               borderRadius: shape.control,
             }}
           >
@@ -334,11 +334,13 @@ export function OrderBook(props: { market: Market; stock: Stock }) {
               borderRadius: 3,
             }}
           >
-            <SpringBar share={share} color={colors.up} height={6} radius={0} />
+            <SpringBar share={share} color={colors.success} height={6} radius={0} />
           </View>
         </If>
         <View style={{ flexDirection: "row" }}>
-          <Text style={{ flex: 1, fontSize: 12, color: colors.up, fontVariant: ["tabular-nums"] }}>
+          <Text
+            style={{ flex: 1, fontSize: 12, color: colors.success, fontVariant: ["tabular-nums"] }}
+          >
             BID {(share() * 100).toFixed(0)}%
           </Text>
           <Text style={{ fontSize: 12, color: colors.faint, fontVariant: ["tabular-nums"] }}>

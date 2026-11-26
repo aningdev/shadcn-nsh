@@ -1,7 +1,16 @@
 // A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, colors, cornerCurve, finish, shape, stroke, terminal } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  cornerCurve,
+  shape,
+  stroke,
+  surface,
+  surfaceBorderWidth,
+  terminal,
+} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { cleanup, context, keyboardFrame, safeArea, signal, split, View, windowSize } from "nsh";
 import {
@@ -12,17 +21,16 @@ import {
 
 import { Action, type ButtonVariant } from "./button";
 import { dialogText, dialogTitle } from "./dialog";
-import { AsText } from "./lib/as-text";
-import { surfaceBorderWidth } from "./lib/look";
-import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
+import { createOpenState, type OpenState } from "./lib/state";
+import { AsText } from "./lib/utils";
 
 /** The edge of the screen a sheet comes from. */
 export type SheetSide = "bottom" | "top" | "left" | "right";
 
 /**
- * A sheet's panel (`nsh/base`'s `Sheet`'s `popupStyle`): the modal finish's
- * surface (`finish.modal`), shadow and edge (only along the inner side facing
+ * A sheet's panel (`nsh/base`'s `Sheet`'s `popupStyle`): the modal surface's
+ * face (`surface("modal")`), shadow and edge (only along the inner side facing
  * the screen, never along the screen edge). At the bottom (or the top) it spans
  * the width, its two inner corners on `shape.modal`, 16 points of padding at
  * its sides and its rows 14 apart, kept above the home indicator (the sheet
@@ -33,18 +41,16 @@ export type SheetSide = "bottom" | "top" | "left" | "right";
  * points of padding inside the safe area.
  */
 export function sheetPanel(side: SheetSide): ViewStyle {
-  const edgeWidth = terminal ? stroke.hairline : surfaceBorderWidth(finish.modal.borderColor);
-  const surface: ViewStyle = terminal
-    ? { borderColor: colors.border }
-    : {
-        backgroundColor: finish.modal.backgroundColor,
-        boxShadow: finish.modal.boxShadow,
-        borderColor: finish.modal.borderColor,
-      };
+  const modal = surface("modal").style;
+  const edge = modal.borderColor;
+  const edgeWidth = terminal
+    ? stroke.hairline
+    : surfaceBorderWidth(typeof edge === "string" ? edge : undefined);
+  const face: ViewStyle = terminal ? { borderColor: colors.border } : { ...modal };
   if (side === "bottom" || side === "top") {
     const bottom = side === "bottom";
     return {
-      ...surface,
+      ...face,
       ...(bottom
         ? {
             borderTopWidth: edgeWidth,
@@ -75,7 +81,7 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     };
   }
   return {
-    ...surface,
+    ...face,
     width: Math.min(360, windowSize().width - 48),
     paddingHorizontal: 20,
     paddingTop: safeArea().top + 16,

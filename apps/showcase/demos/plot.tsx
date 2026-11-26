@@ -163,7 +163,7 @@ function Live() {
   const last = () => points()[points().length - 1];
   const shown = () => (hover() == null ? last() : points()[hover()!]);
   const change = () => shown().price - OPEN;
-  const tone = (): Tone => (change() >= 0 ? "up" : "down");
+  const tone = (): Tone => (change() >= 0 ? "success" : "destructive");
   const grid = () => ticks(domain()[0], domain()[1]);
   /** Where a price sits in the plot's height. */
   const y = (price: number) => {
@@ -194,7 +194,7 @@ function Live() {
                   width: 6,
                   height: 6,
                   borderRadius: 3,
-                  backgroundColor: alpha(toneColor("up"), 0.5),
+                  backgroundColor: alpha(toneColor("success"), 0.5),
                 }}
               />
             </If>
@@ -206,7 +206,7 @@ function Live() {
                 width: 6,
                 height: 6,
                 borderRadius: 3,
-                backgroundColor: running() ? toneColor("up") : colors.faint,
+                backgroundColor: running() ? toneColor("success") : colors.faint,
               }}
             />
           </View>
@@ -513,7 +513,12 @@ function Depth() {
           tooltipOffset={6}
           tooltipContent={
             <View style={tipCard()}>
-              <Text style={{ ...tipTitle(), color: toneColor(side() === "bid" ? "up" : "down") }}>
+              <Text
+                style={{
+                  ...tipTitle(),
+                  color: toneColor(side() === "bid" ? "success" : "destructive"),
+                }}
+              >
                 {side() === "bid"
                   ? `BIDS ≥ ${fixed(shown().price)}`
                   : `ASKS ≤ ${fixed(shown().price)}`}
@@ -553,26 +558,26 @@ function Depth() {
           <Area
             y1="bid"
             curve="stepAfter"
-            backgroundStyle={wash(toneColor("up"), 0.22)}
+            backgroundStyle={wash(toneColor("success"), 0.22)}
             hoverDotClass="hidden"
           />
           <Area
             y1="ask"
             curve="stepAfter"
-            backgroundStyle={wash(toneColor("down"), 0.22)}
+            backgroundStyle={wash(toneColor("destructive"), 0.22)}
             hoverDotClass="hidden"
           />
           <Line
             y="bid"
             curve="stepAfter"
-            style={{ stroke: toneColor("up"), strokeWidth: 1.5 }}
-            hoverDotStyle={dot("bid", "up")}
+            style={{ stroke: toneColor("success"), strokeWidth: 1.5 }}
+            hoverDotStyle={dot("bid", "success")}
           />
           <Line
             y="ask"
             curve="stepAfter"
-            style={{ stroke: toneColor("down"), strokeWidth: 1.5 }}
-            hoverDotStyle={dot("ask", "down")}
+            style={{ stroke: toneColor("destructive"), strokeWidth: 1.5 }}
+            hoverDotStyle={dot("ask", "destructive")}
           />
           <Grid y={[0]} style={plotBaseline()} />
           {/* The prices at the ends, and the middle a shade firmer. */}
@@ -587,16 +592,20 @@ function Depth() {
       {/* The balance: each side's share of what the book holds in view. */}
       <View style={{ marginTop: size.gap + 4, gap: 8 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ fontSize: 12, color: toneColor("up"), fontVariant: "tabular-nums" }}>
+          <Text style={{ fontSize: 12, color: toneColor("success"), fontVariant: "tabular-nums" }}>
             {`Bids ${fixed((bids() / (bids() + asks())) * 100, 0)}%`}
           </Text>
-          <Text style={{ fontSize: 12, color: toneColor("down"), fontVariant: "tabular-nums" }}>
+          <Text
+            style={{ fontSize: 12, color: toneColor("destructive"), fontVariant: "tabular-nums" }}
+          >
             {`${fixed((asks() / (bids() + asks())) * 100, 0)}% Asks`}
           </Text>
         </View>
         <View style={{ flexDirection: "row", gap: 3, height: 4 }}>
-          <View style={{ flex: bids(), borderRadius: 2, backgroundColor: toneColor("up") }} />
-          <View style={{ flex: asks(), borderRadius: 2, backgroundColor: toneColor("down") }} />
+          <View style={{ flex: bids(), borderRadius: 2, backgroundColor: toneColor("success") }} />
+          <View
+            style={{ flex: asks(), borderRadius: 2, backgroundColor: toneColor("destructive") }}
+          />
         </View>
       </View>
       <View
@@ -897,7 +906,11 @@ function Drawdown() {
         </Plot>
       </View>
       <StatGroup class="border-line border-t pt-3">
-        <Stat label="Return" value={`${signed(total, 1)}%`} tone={total >= 0 ? "up" : "down"} />
+        <Stat
+          label="Return"
+          value={`${signed(total, 1)}%`}
+          tone={total >= 0 ? "success" : "destructive"}
+        />
         <Stat label="Worst" value={`${signed(TROUGH.drawdown, 1)}%`} tone="destructive" />
         <Stat label="Recovery" value={RECOVERED ? `${RECOVERED.day - TROUGH.day} days` : "—"} />
         <Stat label="Underwater" value={`${fixed(UNDERWATER * 100, 0)}%`} />
@@ -1598,7 +1611,7 @@ function Bridge() {
   const margin = (v: number) => `${fixed((v / revenue()) * 100, 1)}%`;
   const shown = () => (hover() == null ? undefined : steps()[hover()!]);
   const toneOf = (s: Step): Tone =>
-    s.kind === "increase" ? "up" : s.kind === "decrease" ? "down" : "neutral";
+    s.kind === "increase" ? "success" : s.kind === "decrease" ? "destructive" : "neutral";
   const labelStyle = {
     fontSize: 10.5,
     fontFamily: "monospace",
@@ -1640,7 +1653,7 @@ function Bridge() {
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 16, marginTop: 8 }}>
         <Key color={chart.chart2} label="Total" />
-        <Key color={colors.up} label="Adds" />
+        <Key color={colors.success} label="Adds" />
         <Key color={colors.destructive} label="Takes" />
       </View>
       <View
@@ -1655,7 +1668,7 @@ function Bridge() {
           colorScale={{
             type: "ordinal",
             domain: ["total", "increase", "decrease"],
-            range: [chart.chart2, colors.up, colors.destructive],
+            range: [chart.chart2, colors.success, colors.destructive],
           }}
           appearGeneration={1}
           motion={{
@@ -1718,7 +1731,7 @@ function Bridge() {
           <Stat label="Revenue" value={millions(revenue())} />
           <Stat label="Gross" value={margin(steps()[2].end)} />
           <Stat label="Operating" value={margin(operating())} />
-          <Stat label="Net" value={margin(net())} tone="up" />
+          <Stat label="Net" value={margin(net())} tone="success" />
         </StatGroup>
       </View>
       <View
@@ -2068,7 +2081,7 @@ function Funnel() {
                     ...axis(),
                     fontSize: 10,
                     paddingRight: 6,
-                    color: leak().name === name() ? toneColor("down") : colors.faint,
+                    color: leak().name === name() ? toneColor("destructive") : colors.faint,
                     ...dim(k() + 1),
                   }}
                 >
@@ -2081,9 +2094,9 @@ function Funnel() {
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
         <StatGroup class="border-line border-t pt-3">
-          <Stat label="Overall" value={percentOf(overall())} tone="up" />
+          <Stat label="Overall" value={percentOf(overall())} tone="success" />
           <Stat label="Biggest drop" value={leak().name} />
-          <Stat label="Lost there" value={`−${percentOf(1 - leak().kept)}`} tone="down" />
+          <Stat label="Lost there" value={`−${percentOf(1 - leak().kept)}`} tone="destructive" />
         </StatGroup>
       </View>
       <View
@@ -2139,7 +2152,7 @@ type Candle = {
   low: number;
   close: number;
   volume: number;
-  dir: "up" | "down";
+  dir: "success" | "destructive";
   upVolume?: number;
   downVolume?: number;
 };
@@ -2157,7 +2170,7 @@ const CANDLES: Candle[] = (() => {
     const low = Math.min(open, close) * (1 - r() * 0.011);
     const volume =
       Math.round((6 + r() * 6) * (1 + (Math.abs(close - open) / open) * 30) * 100) / 100;
-    const dir: Candle["dir"] = close >= open ? "up" : "down";
+    const dir: Candle["dir"] = close >= open ? "success" : "destructive";
     const candle: Candle = {
       date,
       open: cents(open),
@@ -2167,7 +2180,7 @@ const CANDLES: Candle[] = (() => {
       volume,
       dir,
     };
-    if (dir === "up") candle.upVolume = volume;
+    if (dir === "success") candle.upVolume = volume;
     else candle.downVolume = volume;
     return candle;
   });
@@ -2209,7 +2222,7 @@ function Candles() {
     return i > 0 ? CANDLES[i - 1].close : c.open;
   };
   const change = () => shown().close - before(shown());
-  const tone = (): Tone => (change() >= 0 ? "up" : "down");
+  const tone = (): Tone => (change() >= 0 ? "success" : "destructive");
   const domain = (): [number, number] => {
     const lo = Math.min(...rows().map((c) => c.low));
     const hi = Math.max(...rows().map((c) => c.high));
@@ -2220,7 +2233,7 @@ function Candles() {
   const y = (v: number) => (1 - (v - domain()[0]) / (domain()[1] - domain()[0])) * PRICE_HEIGHT;
   const topVolume = () => Math.max(...rows().map((c) => c.volume)) * 1.12;
   const total = () => (last().close / rows()[0].open - 1) * 100;
-  const ups = () => rows().filter((c) => c.dir === "up").length;
+  const ups = () => rows().filter((c) => c.dir === "success").length;
   const dates = () => {
     const n = rows().length - 1;
     return [0, Math.round(n / 3), Math.round((2 * n) / 3), n];
@@ -2312,7 +2325,7 @@ function Candles() {
           colorScale={{
             type: "ordinal",
             domain: ["up", "down"],
-            range: [colors.up, colors.destructive],
+            range: [colors.success, colors.destructive],
           }}
           appearGeneration={span()}
           // No pointer spring: the other plot marks the same day at once, so both move together.
@@ -2403,7 +2416,7 @@ function Candles() {
             cornerRadii={{ topLeft: 1, topRight: 1 }}
             stagger={0.6}
             inactiveOpacity={0.3}
-            style={{ fill: alpha(colors.up, 0.45) }}
+            style={{ fill: alpha(colors.success, 0.45) }}
           />
           <Bar
             value="downVolume"
@@ -2431,7 +2444,7 @@ function Candles() {
           <Stat
             label="Change"
             value={`${signed(total(), 1)}%`}
-            tone={total() >= 0 ? "up" : "down"}
+            tone={total() >= 0 ? "success" : "destructive"}
           />
           <Stat label="Up days" value={`${ups()} / ${rows().length}`} />
         </StatGroup>
@@ -2870,7 +2883,11 @@ function RiskReturn() {
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
         <StatGroup class="border-line border-t pt-3">
-          <Stat label="Best Sharpe" value={`${best().ticker} ${fixed(sharpe(best()))}`} tone="up" />
+          <Stat
+            label="Best Sharpe"
+            value={`${best().ticker} ${fixed(sharpe(best()))}`}
+            tone="success"
+          />
           <Stat label="S&P 500" value={pct(index().ret)} />
           <Stat label="Ahead" value={`${ahead()} / ${HOLDINGS.length}`} />
         </StatGroup>
@@ -2950,7 +2967,7 @@ type Target = {
   highUp: number;
   priorUp: number;
   revised: number;
-  dir: "up" | "down";
+  dir: "success" | "destructive";
 };
 const upside = (target: number, price: number) => (target / price - 1) * 100;
 /** A list's stocks, the most upside first. */
@@ -2966,7 +2983,7 @@ const targets = (c: Coverage): Target[] =>
       highUp: upside(high, price),
       priorUp: upside(prior, price),
       revised: (mean / prior - 1) * 100,
-      dir: (mean >= price ? "up" : "down") as Target["dir"],
+      dir: (mean >= price ? "success" : "destructive") as Target["dir"],
     }))
     .sort((a, b) => b.meanUp - a.meanUp);
 const UPSIDE_DOMAIN: [number, number] = [-55, 85];
@@ -3048,7 +3065,7 @@ function Targets() {
           marginTop: 10,
         }}
       >
-        <DotKey color={colors.up} label="Mean target" />
+        <DotKey color={colors.success} label="Mean target" />
         <DotKey color={colors.mutedForeground} label="3 months ago" hollow size={7} />
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <View
@@ -3071,7 +3088,7 @@ function Targets() {
           colorScale={{
             type: "ordinal",
             domain: ["up", "down"],
-            range: [colors.up, colors.destructive],
+            range: [colors.success, colors.destructive],
           }}
           appearGeneration={1}
           motion={{
@@ -3199,7 +3216,13 @@ const TAPE = (() => {
     return { date, close, volume };
   });
 })();
-type Session = { label: string; title: string; close: number; volume: number; dir: "up" | "down" };
+type Session = {
+  label: string;
+  title: string;
+  close: number;
+  volume: number;
+  dir: "success" | "destructive";
+};
 /** `n` rows of `size` days each, the latest last: the last day's close, the
  * days' volume summed, up or down from the row before. */
 function sessions(n: number, size: number, name: (d: Date) => [string, string]): Session[] {
@@ -3215,7 +3238,7 @@ function sessions(n: number, size: number, name: (d: Date) => [string, string]):
       title,
       close: lastDay.close,
       volume: Math.round(days.reduce((sum, d) => sum + d.volume, 0) * 10) / 10,
-      dir: lastDay.close >= prior ? "up" : "down",
+      dir: lastDay.close >= prior ? "success" : "destructive",
     });
   }
   return out;
@@ -3312,7 +3335,7 @@ function VolumePrice() {
             style={{
               fontSize: 12,
               fontWeight: "500",
-              color: toneColor(change() >= 0 ? "up" : "down"),
+              color: toneColor(change() >= 0 ? "success" : "destructive"),
               fontVariant: "tabular-nums",
             }}
           >
@@ -3355,7 +3378,7 @@ function VolumePrice() {
         colorScale={{
           type: "ordinal",
           domain: ["up", "down"],
-          range: [alpha(colors.up, 0.5), alpha(colors.destructive, 0.5)],
+          range: [alpha(colors.success, 0.5), alpha(colors.destructive, 0.5)],
         }}
         appearGeneration={span()}
         motion={{
@@ -3423,7 +3446,7 @@ function VolumePrice() {
           <Stat
             label="Change"
             value={`${signed(total(), 1)}%`}
-            tone={total() >= 0 ? "up" : "down"}
+            tone={total() >= 0 ? "success" : "destructive"}
           />
           <Stat label={`Avg / ${spec().unit}`} value={shares(average())} />
           <Stat label="High" value={`$${fixed(Math.max(...rows().map((d) => d.close)))}`} />
@@ -3619,12 +3642,12 @@ function Margins() {
           <Stat
             label="Best margin"
             value={`${signed(Math.max(...rows().map((d) => d.margin)), 1)}%`}
-            tone="up"
+            tone="success"
           />
           <Stat
             label="Loss quarters"
             value={`${losses()} / ${rows().length}`}
-            tone={losses() > 0 ? "down" : undefined}
+            tone={losses() > 0 ? "destructive" : undefined}
           />
         </StatGroup>
       </View>
@@ -3837,7 +3860,11 @@ function Factors() {
             <Key color={colors.mutedForeground} label={benchName()} value={fixed(theirs(), 1)} />
           </View>
           <StatGroup class="border-line border-t pt-3">
-            <Stat label="Spread" value={signed(spread(), 1)} tone={spread() >= 0 ? "up" : "down"} />
+            <Stat
+              label="Spread"
+              value={signed(spread(), 1)}
+              tone={spread() >= 0 ? "success" : "destructive"}
+            />
             <Stat label="Lead" value={lead.name} />
           </StatGroup>
         </View>
@@ -4076,7 +4103,7 @@ function Correlation() {
           <Stat
             label="Best hedge"
             value={`${hedge().a}·${hedge().b} ${coefficient(hedge().r)}`}
-            tone={hedge().r < 0 ? "down" : undefined}
+            tone={hedge().r < 0 ? "destructive" : undefined}
           />
           <Stat label="Mean" value={fixed(mean())} />
         </StatGroup>
@@ -4186,7 +4213,7 @@ function Seasonality() {
   // A phone's narrow card: smaller labels, the returns left out of cells too small for them.
   const compact = () => width() > 0 && width() < 340;
   const tick = () => ({ ...axis(), fontSize: compact() ? 9 : 10.5 });
-  const ramp = () => [colors.destructive, colors.line, colors.up];
+  const ramp = () => [colors.destructive, colors.line, colors.success];
   const gutter = () => (compact() ? 34 : 36);
   const totals = () => (compact() ? 46 : 54);
   return (
@@ -4203,7 +4230,9 @@ function Seasonality() {
               fontSize: 22,
               fontWeight: "600",
               letterSpacing: -0.4,
-              color: shown() ? toneColor(shown()!.ret >= 0 ? "up" : "down") : colors.foreground,
+              color: shown()
+                ? toneColor(shown()!.ret >= 0 ? "success" : "destructive")
+                : colors.foreground,
               fontVariant: "tabular-nums",
             }}
           >
@@ -4295,12 +4324,12 @@ function Seasonality() {
           <Stat
             label="Best month"
             value={`${best().month} ${best().year} ${pct(best().ret)}`}
-            tone="up"
+            tone="success"
           />
           <Stat
             label="Worst month"
             value={`${worst().month} ${worst().year} ${pct(worst().ret)}`}
-            tone="down"
+            tone="destructive"
           />
           <Stat label="Up months" value={`${gains()} / ${rows().length}`} />
         </StatGroup>
@@ -4715,7 +4744,7 @@ function Flows() {
           <Stat label="Revenue" value={billions(revenue())} />
           <Stat label="Gross margin" value={margin(3)} />
           <Stat label="Operating" value={margin(5)} />
-          <Stat label="Net margin" value={margin(7)} tone="up" />
+          <Stat label="Net margin" value={margin(7)} tone="success" />
         </StatGroup>
       </View>
       <View
@@ -4878,7 +4907,7 @@ function MarketMap() {
       note: `${r.parent} · ${capOf(r.cap!)} market cap`,
     };
   };
-  const tone = (v: number): Tone => (v > 0 ? "up" : v < 0 ? "down" : "neutral");
+  const tone = (v: number): Tone => (v > 0 ? "success" : v < 0 ? "destructive" : "neutral");
   return (
     <ChartCard title="Market map" subtitle="The largest stocks by sector, sized by market cap">
       <View style={{ gap: 4 }}>
@@ -4912,7 +4941,7 @@ function MarketMap() {
         colorScale={{
           type: "diverging",
           domain: [-range(), range()],
-          range: [colors.destructive, colors.inset, colors.up],
+          range: [colors.destructive, colors.muted, colors.success],
         }}
         appearGeneration={1}
         motion={{
@@ -4966,7 +4995,7 @@ function MarketMap() {
           width: pointer ? 260 : undefined,
         }}
       >
-        <View class="from-down via-inset to-up h-2 rounded-full bg-linear-to-r" />
+        <View class="from-destructive via-surface to-success h-2 rounded-full bg-linear-to-r" />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Each of={[-range(), -range() / 2, 0, range() / 2, range()]}>
             {(v) => (
@@ -5234,7 +5263,7 @@ function Watchlist() {
   const closes = (w: Watched) => w.closes[span()];
   const change = (w: Watched) =>
     (closes(w)[closes(w).length - 1].close / closes(w)[0].close - 1) * 100;
-  const tone = (w: Watched): Tone => (change(w) >= 0 ? "up" : "down");
+  const tone = (w: Watched): Tone => (change(w) >= 0 ? "success" : "destructive");
   return (
     <ChartCard title="Watchlist" subtitle="Sparklines that draw in once and stay whole">
       <PlotAppearScope id="watchlist">

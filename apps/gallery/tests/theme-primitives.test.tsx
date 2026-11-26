@@ -1,9 +1,8 @@
 import { expect, open, test } from "nsh/test";
 
-const atAlpha = (hex: string, a: number) =>
-  `${hex.slice(0, 7)}${Math.round(a * 255)
-    .toString(16)
-    .padStart(2, "0")}`;
+/** The wash `feedback.hover` lays over a fill: a `color-mix()` of the ink at the theme's overlay. */
+const wash = (ink: string, a: number) =>
+  `color-mix(in srgb, ${ink} ${Math.round(a * 100)}%, transparent)`;
 
 test("double focus, timing motion, state-layer inks and platform material follow selectTheme", async () => {
   const app = await open("./theme-primitives.fixture.tsx", {
@@ -56,9 +55,9 @@ test("double focus, timing motion, state-layer inks and platform material follow
 
   // State-layer hover omits backgroundColor: token("hover") and lays the ink wash over the fill.
   const [primaryForeground, inverseForeground, selectedInk] = read("tokens").split("|");
-  const expectedPrimaryFgHover = atAlpha(primaryForeground, 0.08);
-  const expectedInverseFgHover = atAlpha(inverseForeground, 0.08);
-  const expectedSelectedFgHover = atAlpha(selectedInk, 0.08);
+  const expectedPrimaryFgHover = wash(primaryForeground, 0.08);
+  const expectedInverseFgHover = wash(inverseForeground, 0.08);
+  const expectedSelectedFgHover = wash(selectedInk, 0.08);
 
   const btnHover = readJson<Record<string, unknown>>("btnHover");
   expect(btnHover.backgroundColor).toBeUndefined();

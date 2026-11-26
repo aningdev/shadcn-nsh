@@ -497,7 +497,7 @@ function DocumentPanel(props: {
           paddingVertical: 6,
           borderBottomWidth: 1,
           borderColor: colors.border,
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
         }}
       >
         <Toolbar
@@ -584,7 +584,7 @@ const QUOTES: Record<string, Quote> = {
 };
 
 const percent = (change: number) => `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`;
-const tone = (change: number) => (change >= 0 ? colors.up : colors.destructive);
+const tone = (change: number) => (change >= 0 ? colors.success : colors.destructive);
 
 function StockTag(props: RichNodeViewProps) {
   const quote = () => QUOTES[props.node.attrs.symbol as string];

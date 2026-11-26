@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/packages/ui/alert-dialog";
 import { Button } from "@/packages/ui/button";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";

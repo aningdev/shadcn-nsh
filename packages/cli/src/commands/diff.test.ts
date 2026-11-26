@@ -9,18 +9,7 @@ import { DIFF_SKIPPED, runDiff } from "./diff";
 
 const fixture = (): Fixture =>
   makeFixture({
-    items: [
-      "theme",
-      "switch-geometry",
-      "press",
-      "motion",
-      "spinner",
-      "as-text",
-      "icons",
-      "button",
-      "live-value",
-      "look",
-    ],
+    items: ["theme", "motion", "spinner", "utils", "icons", "button"],
     installed: true,
   });
 
@@ -97,37 +86,13 @@ describe("diff", () => {
     expect(missing.text).toContain("  theme.json");
   });
 
-  test("compares semantics.json by key: customized values stay, missing keys differ", async () => {
+  test("compares DESIGN.md by content like any other registry:file", async () => {
     current = await installed();
-    const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
-      state: { "press-scale": number };
-      finishes: { shared: Record<string, Record<string, unknown>> };
-    };
-    semantics.state["press-scale"] = 1;
-    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
-
-    const same = await captured(() => runDiff([], { cwd: current!.app, registry: current!.url }));
-    expect(same.result).toBe(0);
-
-    delete semantics.finishes.shared.modal;
-    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
-    const missing = await captured(() =>
-      runDiff([], { cwd: current!.app, registry: current!.url }),
-    );
-    expect(missing.result).toBe(1);
-    expect(missing.text).toContain("theme (+");
-    expect(missing.text).toContain("  lib/ui/semantics.json");
-  });
-
-  test("compares .tokens.json and DESIGN.md by content like any other registry:file", async () => {
-    current = await installed();
-    current.write("light.tokens.json", `${current.read("light.tokens.json")}// edited\n`);
     current.write("DESIGN.md", `${current.read("DESIGN.md")}// edited\n`);
 
     const out = await captured(() => runDiff([], { cwd: current!.app, registry: current!.url }));
     expect(out.result).toBe(1);
     expect(out.text).toContain("theme (+");
-    expect(out.text).toContain("  light.tokens.json");
     expect(out.text).toContain("  DESIGN.md");
   });
 

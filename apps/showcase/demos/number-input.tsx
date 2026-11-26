@@ -103,8 +103,8 @@ export function NumberInputDemo() {
     const t = temperature();
     if (t === null) return { label: "Not set", tone: "neutral" as const };
     if (t < 19) return { label: "Cool", tone: "info" as const };
-    if (t > 23) return { label: "Warm", tone: "warn" as const };
-    return { label: "Comfortable", tone: "up" as const };
+    if (t > 23) return { label: "Warm", tone: "warning" as const };
+    return { label: "Comfortable", tone: "success" as const };
   });
 
   return (
@@ -200,7 +200,7 @@ export function NumberInputDemo() {
                     <Text
                       style={{
                         fontSize: controlSize.detail,
-                        color: atStock() ? toneColor("warn") : colors.mutedForeground,
+                        color: atStock() ? toneColor("warning") : colors.mutedForeground,
                       }}
                     >
                       {atStock()
@@ -238,15 +238,15 @@ export function NumberInputDemo() {
           <Progress
             value={reached()}
             height={4}
-            tone={toFree() === 0 ? "up" : undefined}
+            tone={toFree() === 0 ? "success" : undefined}
             accessibilityLabel="Toward free shipping"
           />
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            {toFree() === 0 ? <Icon icon={Check} size={14} tint={toneColor("up")} /> : null}
+            {toFree() === 0 ? <Icon icon={Check} size={14} tint={toneColor("success")} /> : null}
             <Text
               style={{
                 fontSize: controlSize.detail,
-                color: toFree() === 0 ? toneColor("up") : colors.mutedForeground,
+                color: toFree() === 0 ? toneColor("success") : colors.mutedForeground,
               }}
             >
               {toFree() === 0

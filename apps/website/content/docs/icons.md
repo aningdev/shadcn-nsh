@@ -11,7 +11,7 @@ The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/ui
 npx shadcn-nsh@latest add icons
 ```
 
-This copies `lib/ui/icons.tsx` and `lib/icon-drawing.ts` (the drawing and the image form, apart from NSH so a unit test reads them) and installs `lucide`. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings them when it is added. `button`, `alert`, `empty` and the other components that take an icon as a child do not: add `icons` once before writing the examples on their pages.
+This copies `lib/ui/icons.tsx` and installs `lucide`. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings them when it is added. `button`, `alert`, `empty` and the other components that take an icon as a child do not: add `icons` once before writing the examples on their pages.
 
 ## Usage
 

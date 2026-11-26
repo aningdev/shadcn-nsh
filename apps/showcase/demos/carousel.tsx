@@ -147,13 +147,13 @@ const STEPS: { icon: IconNode; title: string; body: string; tone: () => string }
     icon: Share2,
     title: "Share with your team",
     body: "Invite people to a notebook; edits sync as they type.",
-    tone: () => colors.up,
+    tone: () => colors.success,
   },
   {
     icon: BellRing,
     title: "Stay in the loop",
     body: "Get a nudge when someone mentions you or a task is due.",
-    tone: () => colors.warn,
+    tone: () => colors.warning,
   },
 ];
 
@@ -211,10 +211,10 @@ const BANNERS: { tag: string; title: string; body: string; name: PhotoName }[] =
 
 const COLLECTIONS: { name: string; count: number; icon: IconNode; tone: () => string }[] = [
   { name: "Reading list", count: 24, icon: FileText, tone: () => chart.chart1 },
-  { name: "Recipes", count: 61, icon: Coffee, tone: () => colors.warn },
+  { name: "Recipes", count: 61, icon: Coffee, tone: () => colors.warning },
   { name: "Trips", count: 9, icon: MapPin, tone: () => colors.info },
   { name: "Inbox", count: 132, icon: Inbox, tone: () => chart.chart3 },
-  { name: "Design", count: 47, icon: Palette, tone: () => colors.up },
+  { name: "Design", count: 47, icon: Palette, tone: () => colors.success },
   { name: "Archive", count: 512, icon: Archive, tone: () => chart.chart4 },
   { name: "Ideas", count: 18, icon: Sparkles, tone: () => colors.destructive },
 ];
@@ -260,7 +260,7 @@ function Onboarding(props: { log: (text: string) => void }) {
       style={{ gap: 12 }}
     >
       <View style={{ alignSelf: "flex-end" }}>
-        <Badge tone={done() ? "up" : "neutral"}>
+        <Badge tone={done() ? "success" : "neutral"}>
           {done() ? "Done" : `Step ${step() + 1} of ${STEPS.length}`}
         </Badge>
       </View>
@@ -283,12 +283,12 @@ function Onboarding(props: { log: (text: string) => void }) {
                 borderRadius: 26,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: alpha(colors.up, 0.16),
+                backgroundColor: alpha(colors.success, 0.16),
                 borderWidth: 1,
-                borderColor: alpha(colors.up, 0.4),
+                borderColor: alpha(colors.success, 0.4),
               }}
             >
-              <Icon icon={Check} size={24} tint={colors.up} />
+              <Icon icon={Check} size={24} tint={colors.success} />
             </View>
             <Text style={{ fontSize: size.title, fontWeight: "600", color: colors.foreground }}>
               You are all set
@@ -445,7 +445,7 @@ function Product(props: { log: (text: string) => void }) {
               aspectRatio: 4 / 3,
               ...rounded(shape.control),
               borderCurve: "continuous",
-              backgroundColor: colors.raised,
+              backgroundColor: colors.surface,
             }}
           >
             <Each of={PHOTOS_LIST}>
@@ -456,7 +456,7 @@ function Product(props: { log: (text: string) => void }) {
                 >
                   <Image
                     src={photoUrl(p().name)}
-                    style={{ width: "100%", height: "100%", backgroundColor: colors.raised }}
+                    style={{ width: "100%", height: "100%", backgroundColor: colors.surface }}
                   />
                 </CarouselItem>
               )}
@@ -519,7 +519,7 @@ function Product(props: { log: (text: string) => void }) {
               >
                 <Image
                   src={photoUrl(p().name, "360x360")}
-                  style={{ flex: 1, ...rounded(5), backgroundColor: colors.raised }}
+                  style={{ flex: 1, ...rounded(5), backgroundColor: colors.surface }}
                 />
               </CarouselPaginationItem>
             )}
@@ -600,7 +600,7 @@ function Banners(props: { log: (text: string) => void }) {
                     padding: pointer ? 18 : 20,
                     justifyContent: "flex-end",
                     gap: 4,
-                    backgroundColor: colors.raised,
+                    backgroundColor: colors.surface,
                   }}
                 >
                   <Image
@@ -797,7 +797,7 @@ function Collections(props: { log: (text: string) => void }) {
                     borderCurve: "continuous",
                     borderWidth: 1,
                     borderColor: colors.line,
-                    backgroundColor: colors.inset,
+                    backgroundColor: colors.muted,
                   }}
                 >
                   <View

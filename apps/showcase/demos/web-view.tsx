@@ -1,4 +1,4 @@
-import { colors, finish, isDark, shape } from "@shadcn-nsh/theme";
+import { surface, colors, isDark, shape } from "@shadcn-nsh/theme";
 import { ChevronLeft, ChevronRight } from "lucide";
 // Web view: the official gallery's Media scene
 // (`references/nsh/examples/gallery/demos/Media.tsx`) — inline HTML that messages the app both
@@ -17,19 +17,19 @@ import { Choice } from "./primitives-shared";
 const page =
   () => `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-  html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; padding: 16px; background: ${colors.inset}; color: ${colors.foreground}; font-family: -apple-system, system-ui, sans-serif; font-size: 15px; line-height: 1.4; }
-  h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
-  p { margin: 0 0 12px; color: ${colors.mutedForeground}; font-size: 15px; }
-  button { height: 44px; padding: 0 18px; border: 0; border-radius: 10px; background: ${colors.primary}; color: ${colors.primaryForeground}; font-family: inherit; font-size: 15px; font-weight: 600; box-shadow: inset 0 1px 0 rgba(255,255,255,${isDark() ? 0.45 : 0.6}); }
-  #got { margin-top: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid ${colors.border}; color: ${colors.mutedForeground}; font-size: 15px; }
+  html {-webkit-text-size-adjust: 100%;}
+  body {margin: 0; padding: 16px; background: ${colors.muted}; color: ${colors.foreground}; font-family: -apple-system, system-ui, sans-serif; font-size: 15px; line-height: 1.4;}
+  h3 {margin: 0 0 4px; font-size: 17px; font-weight: 600;}
+  p {margin: 0 0 12px; color: ${colors.mutedForeground}; font-size: 15px;}
+  button {height: 44px; padding: 0 18px; border: 0; border-radius: 10px; background: ${colors.primary}; color: ${colors.primaryForeground}; font-family: inherit; font-size: 15px; font-weight: 600; box-shadow: inset 0 1px 0 rgba(255,255,255,${isDark() ? 0.45 : 0.6});}
+  #got {margin-top: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid ${colors.border}; color: ${colors.mutedForeground}; font-size: 15px;}
 </style></head>
 <body>
 <h3>An inline page</h3>
 <p>HTML from a string. It sends messages to the app and receives them.</p>
 <button onclick="window.nsh.postMessage('hello from the page')">Post to the app</button>
 <div id="got">No message from the app yet.</div>
-<script>window.addEventListener('message', (e) => { document.getElementById('got').textContent = 'From the app: ' + e.data; });</script>
+<script>window.addEventListener('message', (e) => {document.getElementById('got').textContent = 'From the app: ' + e.data;});</script>
 </body></html>`;
 
 const frame = () =>
@@ -50,7 +50,7 @@ function Messaging() {
       <WebView
         ref={(node) => web.set(node)}
         html={page()}
-        style={{ height: 360, backgroundColor: colors.inset, ...frame() }}
+        style={{ height: 360, backgroundColor: colors.muted, ...frame() }}
         onMessage={(e) => message.set(e.data)}
       />
       <Caption>{`From the page: ${message() || "—"}`}</Caption>
@@ -81,7 +81,7 @@ function Site() {
         <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
           {state()?.title || "Navigation state, back and forward"}
         </Text>
-        <Badge tone={state()?.loading ? "warn" : "up"}>
+        <Badge tone={state()?.loading ? "warning" : "success"}>
           {state()?.loading ? "Loading" : "Loaded"}
         </Badge>
       </View>
@@ -93,8 +93,8 @@ function Site() {
           gap: 8,
           paddingHorizontal: 14,
           borderRadius: 20,
-          backgroundColor: colors.inset,
-          ...finish.inset,
+          backgroundColor: colors.muted,
+          ...surface("inset").style,
           borderWidth: 1,
           borderColor: colors.border,
         }}
@@ -104,7 +104,7 @@ function Site() {
             width: 7,
             height: 7,
             borderRadius: 3.5,
-            backgroundColor: state()?.loading ? colors.warn : colors.up,
+            backgroundColor: state()?.loading ? colors.warning : colors.success,
           }}
         />
         <Text
@@ -124,7 +124,7 @@ function Site() {
         src="https://nsh.dev"
         style={{
           height: 560,
-          backgroundColor: colors.inset,
+          backgroundColor: colors.muted,
           ...frame(),
         }}
         onNavigationStateChange={(v) => state.set(v)}

@@ -209,7 +209,7 @@ function App() {
               <MessageContent>
                 <If when={phase() === "stopped"} else={<MessageHeader>Assistant</MessageHeader>}>
                   <MessageHeader>
-                    <Badge tone="warn" size="sm">
+                    <Badge tone="warning" size="sm">
                       Stopped
                     </Badge>
                   </MessageHeader>

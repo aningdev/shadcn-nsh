@@ -17,7 +17,7 @@ import {
 
 import { Button } from "@/packages/ui/button";
 import { Dialog, DialogClose, DialogContent } from "@/packages/ui/dialog";
-import { pressSink } from "@/packages/ui/lib/press";
+import { pressSink } from "@/packages/ui/lib/motion";
 import { createNavStack, NavPage, NavStack } from "@/packages/ui/nav-stack";
 import { Switch } from "@/packages/ui/switch";
 
@@ -228,7 +228,7 @@ function Glow() {
           source={GLOW}
           uniforms={{
             a: colors.destructive,
-            b: colors.up,
+            b: colors.success,
             c: colors.info,
             base: colors.media,
             pointer: [x, y],
@@ -250,7 +250,7 @@ function Plasma() {
       <View style={{ gap: 10 }}>
         <Shader
           source={PLASMA}
-          uniforms={{ pointer: [x, y], a: colors.info, b: colors.up, c: colors.warn }}
+          uniforms={{ pointer: [x, y], a: colors.info, b: colors.success, c: colors.warning }}
           style={{ height: 200, borderRadius: 14 }}
           {...drag((px, py) => {
             x.set(px);
@@ -288,7 +288,7 @@ function Ripple() {
           uniforms={{
             center: [center.x, center.y],
             wave,
-            tintA: colors.up,
+            tintA: colors.success,
             tintB: colors.brand,
             head: colors.onMedia,
             ground: colors.media,
@@ -312,7 +312,7 @@ function Ripple() {
               paddingVertical: 4,
               borderRadius: 2,
               borderWidth: 1,
-              borderColor: alpha(colors.up, 0.5),
+              borderColor: alpha(colors.success, 0.5),
               backgroundColor: alpha(colors.media, 0.85),
             }}
             onStartShouldSetResponder={() => true}
@@ -332,7 +332,7 @@ function Ripple() {
                 >
                   <Text
                     style={{
-                      color: speed() === value() ? colors.onMedia : colors.up,
+                      color: speed() === value() ? colors.onMedia : colors.success,
                       fontFamily: "monospace",
                       fontSize: 12,
                       fontWeight: speed() === value() ? "700" : "400",
@@ -378,7 +378,7 @@ function Holo() {
           source={HOLO}
           uniforms={{
             a: colors.brand,
-            b: colors.up,
+            b: colors.success,
             c: colors.info,
             base: colors.media,
             tilt,
@@ -555,7 +555,7 @@ function Screen() {
     <SceneCard title="Screen effect" subtitle="The whole surface through a shader">
       <View style={{ gap: 10 }}>
         <If when={on()}>
-          <ScreenEffect source={DUOTONE} uniforms={{ a: colors.up, b: colors.warn }} />
+          <ScreenEffect source={DUOTONE} uniforms={{ a: colors.success, b: colors.warning }} />
         </If>
         <Switch
           checked={on()}

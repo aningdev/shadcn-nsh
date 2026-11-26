@@ -4,10 +4,10 @@ const find = (texts: string[], prefix: string) =>
   texts.find((t) => t.startsWith(prefix))?.slice(prefix.length);
 
 /**
- * A finish's `material` reaches the view on the next frame: its recipe's `glassEffect` and the
- * layer's own fill as `glassTintColor` ride in the finish's style, the platform props come from
- * `platformMaterial`, and a finish that asks for nothing (`material: "none"`, every shipped layer of
- * the build-time theme) keeps exactly the keys it had.
+ * A surface's `material` reaches the view on the next frame: its recipe's `glassEffect` and the
+ * layer's own fill as `glassTintColor` ride in `surface(role).style`, the platform props come from
+ * `surface(role).platformProps`, and a surface that asks for nothing (`material: null`, every
+ * shipped layer of the build-time theme) keeps exactly the keys it had.
  */
 test("a theme's material shows in the style and the platform props, and goes with the theme", async () => {
   const app = await open("./theme-material.fixture.tsx", {

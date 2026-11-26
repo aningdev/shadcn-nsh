@@ -1,7 +1,7 @@
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) at the top, and the parts below.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { finish, platformMaterial } from "@shadcn-nsh/theme";
+import { surface, surfaceBorderWidth } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -11,9 +11,8 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { AsText } from "./lib/as-text";
-import { edged, painted, surfaceBorderWidth, tooltipSlotLook } from "./lib/look";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
+import { AsText } from "./lib/utils";
 
 /** Options of `tooltipLook`. */
 export interface TooltipLookOptions {
@@ -23,8 +22,8 @@ export interface TooltipLookOptions {
 
 /**
  * A tooltip's bubble (`class` and `style`, on the view inside `nsh/base`'s `Tooltip`):
- * read from the theme's `tooltip.*` slots (`face`, `edge`, `shade`), plus backdrop blur where
- * the face names a translucent finish. One line: a row 8 points apart, 8 by 4 points of padding,
+ * the theme's inverse surface (`surface("inverse")`), its face, shadow, edge and backdrop blur.
+ * One line: a row 8 points apart, 8 by 4 points of padding,
  * the theme's control corners (`radius-control`); `rich`: a column, 10 points of padding, the
  * theme's container corners (`radius-container`).
  * Its text takes `tooltipTextStyle()`, a shortcut or a note `tooltipNote()`.
@@ -36,23 +35,20 @@ export function tooltipLook(o?: TooltipLookOptions) {
       : "flex-row items-center gap-2 rounded-(--radius-control) px-2 py-1",
     style: {
       get backgroundColor() {
-        return painted(tooltipSlotLook().face);
+        return surface("inverse").style.backgroundColor;
       },
       get boxShadow() {
-        const shade = tooltipSlotLook().shade;
-        return shade === null ? "none" : finish[shade].boxShadow;
+        return surface("inverse").style.boxShadow ?? "none";
       },
       get borderColor() {
-        return edged(tooltipSlotLook().edge);
+        return surface("inverse").style.borderColor;
       },
       get borderWidth() {
-        return surfaceBorderWidth(edged(tooltipSlotLook().edge));
+        const edge = surface("inverse").style.borderColor;
+        return surfaceBorderWidth(typeof edge === "string" ? edge : undefined);
       },
       get backdropFilter() {
-        const face = tooltipSlotLook().face;
-        return face?.kind === "finish"
-          ? ({ ...finish[face.role] } as { backdropFilter?: string }).backdropFilter
-          : undefined;
+        return (surface("inverse").style as { backdropFilter?: string }).backdropFilter;
       },
     } satisfies ViewStyle,
   };
@@ -65,14 +61,14 @@ export const tooltipText = "text-xs";
 export const tooltipTextStyle = (): TextStyle => ({
   fontSize: 12,
   lineHeight: 16,
-  color: tooltipSlotLook().ink ?? finish.inverse.foreground,
+  color: surface("inverse").ink,
 });
 
 /** A tooltip's quieter text (`style`): a shortcut's keys, a time, 12 points over 16 in the tooltip's ink. */
 export const tooltipNote = (): TextStyle => ({
   fontSize: 12,
   lineHeight: 16,
-  color: tooltipSlotLook().ink ?? finish.inverse.foreground,
+  color: surface("inverse").ink,
 });
 
 /** Why a tooltip closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
@@ -161,10 +157,9 @@ function useTooltip() {
 function Bubble(props: TooltipContentProps) {
   const [, rest] = split(props, ["children", "rich", "class"]);
   const look = tooltipLook({ rich: props.rich });
-  const usesInverseMaterial = () => tooltipSlotLook().face?.kind === "finish";
   return (
     <BaseTooltip
-      {...(usesInverseMaterial() ? platformMaterial("inverse") : {})}
+      {...surface("inverse").platformProps}
       {...rest}
       class={props.class ? `${look.class} ${props.class}` : look.class}
       style={[look.style, props.style ?? null]}

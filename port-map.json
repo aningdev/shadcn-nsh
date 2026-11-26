@@ -62,10 +62,10 @@
       "to": "packages/theme/theme.ts"
     },
     "look/press.ts": {
-      "to": "packages/ui/lib/press.ts"
+      "to": "packages/ui/lib/motion.tsx"
     },
     "look/switch-geometry.ts": {
-      "to": "packages/ui/lib/switch-geometry.ts"
+      "to": "packages/ui/switch.tsx"
     },
     "look/button.ts": {
       "to": "packages/ui/button.tsx"
@@ -111,7 +111,7 @@
       "exclude": {
         "hint": "demo kit helper",
         "bindRefresh": "demo kit helper",
-        "Press": "demo kit pressable; pressSink lives in ui/lib/press",
+        "Press": "demo kit pressable; pressSink lives in ui/lib/motion",
         "tabPress": "demo kit helper",
         "Appear": "demo kit enter animation",
         "IconTile": "demo kit decoration",
@@ -198,8 +198,8 @@
         "ChoiceLight": "packages/ui/checkbox.tsx",
         "MARK_WEIGHT": "packages/ui/checkbox.tsx",
         "CheckboxMark": "packages/ui/checkbox.tsx",
-        "Live": "packages/ui/lib/live-value.ts",
-        "read": "packages/ui/lib/live-value.ts",
+        "Live": "packages/ui/lib/utils.tsx",
+        "read": "packages/ui/lib/utils.tsx",
         "RadioRing": "packages/ui/radio-group.tsx",
         "ChoiceTileOptions": "packages/ui/checkbox.tsx",
         "ChoiceTileLook": "packages/ui/checkbox.tsx",
@@ -225,8 +225,8 @@
           "packages/ui/number-input.tsx",
           "packages/ui/otp-input.tsx"
         ],
-        "Live": "packages/ui/lib/live-value.ts",
-        "read": "packages/ui/lib/live-value.ts",
+        "Live": "packages/ui/lib/utils.tsx",
+        "read": "packages/ui/lib/utils.tsx",
         "fieldSize": "packages/ui/input.tsx",
         "FieldLookOptions": "packages/ui/input.tsx",
         "EdgeOptions": "packages/ui/input.tsx",
@@ -257,8 +257,8 @@
           "packages/ui/combobox.tsx",
           "packages/ui/calendar.tsx"
         ],
-        "Live": "packages/ui/lib/live-value.ts",
-        "read": "packages/ui/lib/live-value.ts",
+        "Live": "packages/ui/lib/utils.tsx",
+        "read": "packages/ui/lib/utils.tsx",
         "ListboxPopupOptions": "packages/ui/lib/listbox.tsx",
         "listboxPopup": "packages/ui/lib/listbox.tsx",
         "listboxPopupStarting": "packages/ui/lib/listbox.tsx",
@@ -333,8 +333,8 @@
         "progressSweep": "packages/ui/progress.tsx",
         "ProgressLookOptions": "packages/ui/progress.tsx",
         "progressLook": "packages/ui/progress.tsx",
-        "Live": "packages/ui/lib/live-value.ts",
-        "read": "packages/ui/lib/live-value.ts"
+        "Live": "packages/ui/lib/utils.tsx",
+        "read": "packages/ui/lib/utils.tsx"
       }
     },
     "look/nav.tsx": {
@@ -382,30 +382,30 @@
         "SegmentedLookOptions": "packages/ui/segmented.tsx",
         "segmentedLook": "packages/ui/segmented.tsx",
         "pointer": "packages/ui/segmented.tsx",
-        "Live": "packages/ui/lib/live-value.ts",
-        "read": "packages/ui/lib/live-value.ts"
+        "Live": "packages/ui/lib/utils.tsx",
+        "read": "packages/ui/lib/utils.tsx"
       }
     },
     "look/tool.ts": {
       "symbols": {
         "ToggleSize": "packages/ui/toggle.tsx",
-        "Live": "packages/ui/lib/live-value.ts",
+        "Live": "packages/ui/lib/utils.tsx",
         "ToggleLookOptions": "packages/ui/toggle.tsx",
         "ToggleDimensions": "packages/ui/toggle.tsx",
         "pointer": "packages/ui/toggle.tsx",
         "toggleSizes": "packages/ui/toggle.tsx",
-        "TOUCH_TARGET": "packages/ui/lib/switch-geometry.ts",
-        "slop": "packages/ui/lib/press.ts",
+        "TOUCH_TARGET": "packages/ui/switch.tsx",
+        "slop": "packages/ui/lib/motion.tsx",
         "sink": "packages/ui/toggle.tsx",
         "transition": "packages/ui/toggle.tsx",
-        "read": "packages/ui/lib/live-value.ts",
+        "read": "packages/ui/lib/utils.tsx",
         "dimensions": "packages/ui/toggle.tsx",
         "toggleLook": "packages/ui/toggle.tsx",
         "ink": "packages/ui/toggle.tsx",
         "toggleLabel": "packages/ui/toggle.tsx",
         "toggleGlyph": "packages/ui/toggle.tsx",
-        "ToolbarTrackOptions": "packages/ui/lib/tool.ts",
-        "toolbarTrack": "packages/ui/lib/tool.ts",
+        "ToolbarTrackOptions": "packages/ui/lib/surface.tsx",
+        "toolbarTrack": "packages/ui/lib/surface.tsx",
         "toolbarRule": "packages/ui/toolbar.tsx"
       }
     },

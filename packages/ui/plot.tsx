@@ -2,11 +2,18 @@
 // and category colors, grid, baseline, cross line, hover dot, wash, axis text, tooltip), plus `Legend`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, chart, colors, finish, rounded, terminal } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  chart,
+  colors,
+  control,
+  rounded,
+  surface,
+  surfaceBorderWidth,
+  terminal,
+} from "@shadcn-nsh/theme";
 import { Text, View } from "nsh";
 import type { TextStyle, ViewStyle } from "nsh";
-
-import { popupCorner, surfaceBorderWidth } from "./lib/look";
 
 // Every mark, so a chart asks one module for its parts and their look.
 export {
@@ -33,7 +40,7 @@ export {
 /** The series' colors, in order (`theme.json`'s `chart-1` to `chart-5`):
  * the brand's citrus first, then graphite from dark to light, so one series
  * leads and the rest stay as quiet as the interface. Rises and falls take
- * `colors.up` / `colors.destructive`. */
+ * `colors.success` / `colors.destructive`. */
 export const seriesColors = (): string[] => [
   chart.chart1,
   chart.chart2,
@@ -57,8 +64,8 @@ export const categoryColors = (): string[] => {
   for (const c of [
     chart.chart1,
     colors.info,
-    colors.warn,
-    colors.up,
+    colors.warning,
+    colors.success,
     chart.chart3,
     chart.chart2,
     chart.chart4,
@@ -108,7 +115,7 @@ export const plotDotClass = "size-2.5 rounded-full border-2";
  * the inset's, so it cuts out of the line. */
 export const plotHoverDot = (color: string): ViewStyle => ({
   backgroundColor: color,
-  borderColor: colors.inset,
+  borderColor: surface("inset").style.backgroundColor,
 });
 
 /** A wash under a line (an `Area`'s `backgroundStyle`): `color` at `top`
@@ -127,15 +134,19 @@ export const plotAxisText = (): TextStyle => ({
   fontVariant: ["tabular-nums"],
 });
 
-/** A floating tooltip's card: the menu's surface, the popup corner radius. */
-export const plotTooltip = (): ViewStyle => ({
-  ...finish.overlay,
-  borderWidth: surfaceBorderWidth(finish.overlay.borderColor),
-  ...rounded(popupCorner()),
-  paddingHorizontal: 10,
-  paddingVertical: 8,
-  gap: 6,
-});
+/** A floating tooltip's card: the inverse surface's ink, the popup corner radius. */
+export const plotTooltip = (): ViewStyle => {
+  const face = surface("overlay").style;
+  const edge = face.borderColor;
+  return {
+    ...face,
+    borderWidth: surfaceBorderWidth(typeof edge === "string" ? edge : undefined),
+    ...rounded(control("popup").corner),
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    gap: 6,
+  };
+};
 
 /** A tooltip's title over its values: a small, monospaced, muted label. */
 export const plotTooltipTitle = (): TextStyle => ({

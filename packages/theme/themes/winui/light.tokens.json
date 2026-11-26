@@ -1,323 +1,414 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "WinUI 3 (light appearance, pointer tier) — standalone W3C DTCG 2025.10 tokens.",
-  "$extensions": {
-    "dev.aning.shadcn-nsh": {
-      "designMd": {
-        "sharedDos": [
-          "Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.",
-          "Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.",
-          "Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls."
+  "$description": "WinUI 3 (light, pointer tier) W3C DTCG 2025.10 export.",
+  "color": {
+    "$type": "color",
+    "$description": "WinUI 3 (light) palette colors.",
+    "background": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.96415,
+          0,
+          0
         ],
-        "sharedDonts": [
-          "Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.",
-          "Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.",
-          "Never add a finish field a role does not use: the fields of `finish.<role>` are the ones `packages/theme/finish-fields.ts` lists, and every theme states them the same way."
+        "hex": "#f3f3f3"
+      }
+    },
+    "card": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98809,
+          0,
+          0
         ],
-        "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
-        "overview": "WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, double focus strokes, and deterministic timing curves.",
-        "elevation": "WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStrokeColorDefault` / `SurfaceStrokeColorDefault` borders and `material.windows` blur on `glass`, `menu`, and `tooltip` (`AcrylicInAppFillColorDefault` 0.85 light / 0.96 dark).",
-        "dos": [
-          "Use `4px` `ControlCornerRadius` for `control` and `8px` `OverlayCornerRadius` for `container` and `modal` with `shape.curve: \"circular\"`.",
-          "Use `focus.style: \"double\"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).",
-          "Use underlined tabs and fields with leading navigation bar indicators."
+        "hex": "#fbfbfb"
+      }
+    },
+    "popover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98212,
+          0,
+          0
         ],
-        "donts": [
-          "Do not substitute continuous squircle corners for WinUI 3's circular corners."
-        ]
-      },
-      "contrast": {
-        "waivers": [
-          {
-            "fg": "finish.accent.pressed-foreground",
-            "bg": "finish.accent.pressed-background",
-            "source": "WinUI TextOnAccentFillColorSecondary on AccentFillColorTertiary, while pressed"
-          }
-        ]
-      },
-      "scales": {
-        "citations": {
-          "dimension.size.control.pointer.padding": "WinUI 3 button padding 6px (`Button_themeresources.xaml`)",
-          "dimension.size.control.touch.padding": "WinUI 3 button padding 6px (`Button_themeresources.xaml`)",
-          "dimension.size.item.pointer.pad": "WinUI 3 menu row text padding 11px (`MenuFlyoutItemThemePadding` 11,8,11,9, `MenuFlyout_themeresources.xaml`)",
-          "dimension.size.item.touch.pad": "WinUI 3 menu row text padding 11px (the same padding on touch)"
-        }
-      }
-    }
-  },
-  "cubicBezier": {
-    "$type": "cubicBezier",
-    "$description": "Named timing curves shared across themes.",
-    "out-cubic": {
-      "$value": [
-        0.333333,
-        1,
-        0.666667,
-        1
-      ],
-      "$description": "Exact cubic-bezier equivalent of NSH Easing.out(Easing.cubic).",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "nshEasing": "out-cubic"
-        }
+        "hex": "#f9f9f9"
       }
     },
-    "in-cubic": {
-      "$value": [
-        0.333333,
-        0,
-        0.666667,
-        0
-      ],
-      "$description": "Exact cubic-bezier equivalent of NSH Easing.in(Easing.cubic).",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "nshEasing": "in-cubic"
-        }
+    "muted": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.94912,
+          0,
+          0
+        ],
+        "hex": "#eeeeee"
       }
     },
-    "in-out-cubic": {
-      "$value": [
-        0.65,
-        0,
-        0.35,
-        1
-      ],
-      "$description": "Cubic approximation of NSH Easing.inOut(Easing.cubic).",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "nshEasing": "in-out-cubic"
-        }
+    "surface": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98809,
+          0,
+          0
+        ],
+        "hex": "#fbfbfb"
       }
     },
-    "standard": {
-      "$value": [
-        0.2,
-        0,
-        0,
-        1
-      ],
-      "$description": "Material 3 md.sys.motion.easing.standard."
+    "foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.21779,
+          0,
+          0
+        ],
+        "hex": "#1a1a1a"
+      }
     },
-    "emphasized-decelerate": {
-      "$value": [
-        0.05,
-        0.7,
-        0.1,
-        1
-      ],
-      "$description": "Material 3 emphasized-decelerate curve."
+    "muted-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.47478,
+          0,
+          0
+        ],
+        "hex": "#5c5c5c"
+      }
     },
-    "emphasized-accelerate": {
-      "$value": [
-        0.3,
-        0,
-        0.8,
-        0.15
-      ],
-      "$description": "Material 3 emphasized-accelerate curve."
+    "faint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.62006,
+          0,
+          0
+        ],
+        "hex": "#868686"
+      }
     },
-    "decelerate": {
-      "$value": [
-        0,
-        0,
-        0,
-        1
-      ],
-      "$description": "WinUI 3 Fast Out, Slow In curve (entering elements)."
+    "primary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.49147,
+          0.15959,
+          254.594
+        ],
+        "hex": "#005fb8"
+      }
     },
-    "accelerate": {
-      "$value": [
-        1,
-        0,
-        1,
-        1
-      ],
-      "$description": "WinUI 3 Slow Out, Fast In curve (exiting elements)."
+    "primary-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "hex": "#ffffff"
+      }
     },
-    "point-to-point": {
-      "$value": [
-        0.55,
-        0.55,
-        0,
-        1
-      ],
-      "$description": "WinUI 3 Point-to-Point motion curve."
+    "secondary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98809,
+          0,
+          0
+        ],
+        "hex": "#fbfbfb"
+      }
+    },
+    "accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.93705,
+          0,
+          0
+        ],
+        "hex": "#eaeaea"
+      }
+    },
+    "brand": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.38687,
+          0.14996,
+          259
+        ],
+        "hex": "#003e92"
+      }
+    },
+    "border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.92191,
+          0,
+          0
+        ],
+        "hex": "#e5e5e5"
+      }
+    },
+    "line": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.92191,
+          0,
+          0
+        ],
+        "hex": "#e5e5e5"
+      }
+    },
+    "input": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.62006,
+          0,
+          0
+        ],
+        "hex": "#868686"
+      }
+    },
+    "ring": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.21779,
+          0,
+          0
+        ],
+        "hex": "#1a1a1a"
+      }
+    },
+    "info": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.56769,
+          0.16654,
+          251.313
+        ],
+        "hex": "#0078d4"
+      }
+    },
+    "success": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.50725,
+          0.16489,
+          142.658
+        ],
+        "hex": "#0f7b0f"
+      }
+    },
+    "warning": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.53885,
+          0.12069,
+          65.216
+        ],
+        "hex": "#9d5d00"
+      }
+    },
+    "destructive": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.53615,
+          0.19119,
+          30.071
+        ],
+        "hex": "#c42b1c"
+      }
+    },
+    "scrim": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0,
+          0,
+          0
+        ],
+        "alpha": 0.302,
+        "hex": "#000000"
+      }
+    },
+    "media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.1869,
+          0.0151,
+          266.766
+        ],
+        "hex": "#10131a"
+      }
+    },
+    "on-media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "hex": "#ffffff"
+      }
     }
   },
   "typography": {
     "$type": "typography",
-    "$description": "WinUI 3 type weights (400 and 600 only); sizes follow the shared scale (ADR 0009).",
+    "$description": "Pointer-tier typography roles.",
     "caption": {
       "$value": {
         "fontFamily": "system-ui",
-        "fontSize": "{font.size.caption}",
+        "fontSize": {
+          "value": 11,
+          "unit": "px"
+        },
         "fontWeight": 400,
-        "lineHeight": "{font.line-height.caption}",
+        "lineHeight": 1.4545,
         "letterSpacing": {
           "value": 0,
           "unit": "px"
         }
-      },
-      "$description": "Small captions and segmented counter labels."
+      }
     },
     "detail": {
       "$value": {
         "fontFamily": "system-ui",
-        "fontSize": "{font.size.detail}",
+        "fontSize": {
+          "value": 12,
+          "unit": "px"
+        },
         "fontWeight": 400,
-        "lineHeight": "{font.line-height.detail}",
+        "lineHeight": 1.3333,
         "letterSpacing": {
           "value": 0,
           "unit": "px"
         }
-      },
-      "$description": "Sidebar section labels, counts, and supporting metadata."
+      }
     },
     "body": {
       "$value": {
         "fontFamily": "system-ui",
-        "fontSize": "{font.size.body}",
+        "fontSize": {
+          "value": 13,
+          "unit": "px"
+        },
         "fontWeight": 400,
-        "lineHeight": "{font.line-height.body}",
+        "lineHeight": 1.5385,
         "letterSpacing": {
           "value": 0,
           "unit": "px"
         }
-      },
-      "$description": "Standard body copy, list rows, and dialog content."
+      }
     },
     "label": {
       "$value": {
         "fontFamily": "system-ui",
-        "fontSize": "{font.size.label}",
+        "fontSize": {
+          "value": 14,
+          "unit": "px"
+        },
         "fontWeight": 400,
-        "lineHeight": "{font.line-height.label}",
+        "lineHeight": 1.4286,
         "letterSpacing": {
           "value": 0,
           "unit": "px"
         }
-      },
-      "$description": "Control labels, form labels, and interactive triggers."
+      }
     },
     "title": {
       "$value": {
         "fontFamily": "system-ui",
-        "fontSize": "{font.size.title}",
+        "fontSize": {
+          "value": 16,
+          "unit": "px"
+        },
         "fontWeight": 600,
-        "lineHeight": "{font.line-height.title}",
+        "lineHeight": 1.5,
         "letterSpacing": {
           "value": 0,
           "unit": "px"
         }
-      },
-      "$description": "Card and section headings."
+      }
     },
     "headline": {
       "$value": {
         "fontFamily": "system-ui",
-        "fontSize": "{font.size.headline}",
+        "fontSize": {
+          "value": 20,
+          "unit": "px"
+        },
         "fontWeight": 600,
-        "lineHeight": "{font.line-height.headline}",
+        "lineHeight": 1.4,
         "letterSpacing": {
           "value": 0,
           "unit": "px"
         }
-      },
-      "$description": "Page-level headings."
+      }
     },
     "display": {
       "$value": {
         "fontFamily": "system-ui",
-        "fontSize": "{font.size.display}",
+        "fontSize": {
+          "value": 26,
+          "unit": "px"
+        },
         "fontWeight": 600,
-        "lineHeight": "{font.line-height.display}",
+        "lineHeight": 1.2308,
         "letterSpacing": {
           "value": 0,
           "unit": "px"
         }
-      },
-      "$description": "Large display numerals and hero headings."
+      }
     }
   },
   "dimension": {
     "$type": "dimension",
-    "$description": "Desktop pointer layout density, control geometry, and icon sizes.",
-    "stroke": {
-      "$description": "Border stroke widths.",
-      "hairline": {
-        "$value": {
-          "value": 1,
-          "unit": "px"
-        },
-        "$description": "Hairline width for dividers, container edges (cards, drawers, overlays) and outlined variants."
-      },
-      "control": {
-        "$value": {
-          "value": 1,
-          "unit": "px"
-        },
-        "$description": "Interactive control border width."
-      }
-    },
-    "focus": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "style": "double"
-        }
-      },
-      "$description": "WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).",
-      "width": {
-        "$value": {
-          "value": 2,
-          "unit": "px"
-        },
-        "$description": "2px outer focus stroke width per WinUI 3."
-      },
-      "offset": {
-        "$value": {
-          "value": 0,
-          "unit": "px"
-        },
-        "$description": "Focus ring outward offset from control bounds."
-      }
-    },
     "radius": {
-      "$type": "dimension",
-      "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).",
       "control": {
         "$value": {
           "value": 4,
           "unit": "px"
-        },
-        "$description": "Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd."
+        }
       },
       "container": {
         "$value": {
           "value": 8,
           "unit": "px"
-        },
-        "$description": "Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames."
+        }
       },
       "modal": {
         "$value": {
           "value": 8,
           "unit": "px"
-        },
-        "$description": "Corner radius for dialogs, sheets, and drawers."
+        }
       }
     },
     "size": {
-      "$description": "Ergonomic sizing scales for pointer input.",
       "hit": {
         "$value": {
           "value": 0,
           "unit": "px"
-        },
-        "$description": "Minimum hit target size (0 disables padding expansion)."
+        }
       },
       "density": {
-        "$description": "Page-level padding and gap.",
         "pad": {
           "$value": {
             "value": 12,
@@ -332,7 +423,6 @@
         }
       },
       "item": {
-        "$description": "WinUI 3 menu rows: the fill 4px in from the flyout's edge (MenuFlyoutItemMargin 4,2,4,2) and the text 11px inside it (MenuFlyoutItemThemePadding 11,8,11,9; ComboBoxItemThemePadding 11,5,11,7), the same with a pen or a finger (microsoft-ui-xaml MenuFlyout_themeresources.xaml).",
         "inset": {
           "$value": {
             "value": 4,
@@ -347,7 +437,6 @@
         }
       },
       "control": {
-        "$description": "Control internal spacing.",
         "padding": {
           "$value": {
             "value": 6,
@@ -362,7 +451,6 @@
         }
       },
       "height": {
-        "$description": "Standard control heights (sm, md, lg).",
         "sm": {
           "$value": {
             "value": 24,
@@ -384,7 +472,6 @@
       }
     },
     "icon": {
-      "$description": "Standard icon dimensions (sm, md, lg).",
       "sm": {
         "$value": {
           "value": 12,
@@ -403,2750 +490,108 @@
           "unit": "px"
         }
       }
-    }
-  },
-  "shape": {
-    "$description": "Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md).",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "curve": "circular"
-      }
-    }
-  },
-  "state": {
-    "$type": "number",
-    "$description": "Interaction state opacities and press scale.",
-    "press-scale": {
-      "$value": 1,
-      "$description": "Scale factor applied while pressed (1 disables press shrinking; WinUI 3 swaps fill brushes instead)."
     },
-    "overlay": {
-      "$description": "State-layer ink opacities for hover and pressed states.",
-      "hover": {
-        "$value": 0
+    "stroke": {
+      "hairline": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        }
       },
-      "pressed": {
-        "$value": 0
+      "control": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        }
       }
     },
-    "pressed-opacity": {
-      "$value": 1,
-      "$description": "Content stays full opacity when pressed (1; fill brush swap shows press)."
-    },
-    "rest-opacity": {
-      "$value": 0.5,
-      "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
-    },
-    "disabled": {
-      "$description": "WinUI 3 disabled styling: 0.36 content opacity, the disabled finish as their face and its TextFillColorDisabled as their ink.",
-      "content": {
-        "$value": 0.36
+    "focus": {
+      "width": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        }
+      },
+      "offset": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        }
       }
     }
   },
   "motion": {
-    "$description": "Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.",
+    "$type": "transition",
     "fast": {
-      "$description": "WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).",
-      "timing": {
-        "$type": "transition",
-        "$value": {
-          "duration": {
-            "value": 83,
-            "unit": "ms"
-          },
-          "delay": {
-            "value": 0,
-            "unit": "ms"
-          },
-          "timingFunction": "{cubicBezier.decelerate}"
+      "$value": {
+        "duration": {
+          "value": 83,
+          "unit": "ms"
         },
-        "$description": "Timing curve and duration for fast."
+        "delay": {
+          "value": 0,
+          "unit": "ms"
+        },
+        "timingFunction": [
+          0,
+          0,
+          0,
+          1
+        ]
       }
     },
     "default": {
-      "$description": "WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).",
-      "timing": {
-        "$type": "transition",
-        "$value": {
-          "duration": {
-            "value": 167,
-            "unit": "ms"
-          },
-          "delay": {
-            "value": 0,
-            "unit": "ms"
-          },
-          "timingFunction": "{cubicBezier.decelerate}"
+      "$value": {
+        "duration": {
+          "value": 167,
+          "unit": "ms"
         },
-        "$description": "Timing curve and duration for default."
+        "delay": {
+          "value": 0,
+          "unit": "ms"
+        },
+        "timingFunction": [
+          0,
+          0,
+          0,
+          1
+        ]
       }
     },
     "slow": {
-      "$description": "WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).",
-      "timing": {
-        "$type": "transition",
-        "$value": {
-          "duration": {
-            "value": 250,
-            "unit": "ms"
-          },
-          "delay": {
-            "value": 0,
-            "unit": "ms"
-          },
-          "timingFunction": "{cubicBezier.decelerate}"
+      "$value": {
+        "duration": {
+          "value": 250,
+          "unit": "ms"
         },
-        "$description": "Timing curve and duration for slow."
+        "delay": {
+          "value": 0,
+          "unit": "ms"
+        },
+        "timingFunction": [
+          0,
+          0,
+          0,
+          1
+        ]
       }
     },
     "state": {
-      "$description": "WinUI 3 ControlFasterAnimationDuration (83ms) with ControlFastOutSlowInKeySpline (Common_themeresources_any.xaml).",
-      "timing": {
-        "$type": "transition",
-        "$value": {
-          "duration": {
-            "value": 83,
-            "unit": "ms"
-          },
-          "delay": {
-            "value": 0,
-            "unit": "ms"
-          },
-          "timingFunction": "{cubicBezier.decelerate}"
+      "$value": {
+        "duration": {
+          "value": 83,
+          "unit": "ms"
         },
-        "$description": "Timing curve and duration for state."
-      }
-    }
-  },
-  "finish": {
-    "$description": "The neutral of each field a finish role can have, written once for the roles that have it: a flat surface states no gradient, an opaque one no backdrop blur and no material, a layer no height of its own, a press that keeps the resting colours states no swap, and a top or bottom edge with no colour of its own takes the role's border color. A theme that states one writes the token (its own finishes.shared, or an appearance's) and it wins; the extension only says what the neutral is where no token states it, and a role carries only the fields it lists in `finishFields`.",
-    "card": {
-      "$description": "A surface that holds content: a card, a section.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "elevation": null
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.card}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}"
+        "delay": {
+          "value": 0,
+          "unit": "ms"
+        },
+        "timingFunction": [
+          0,
+          0,
+          0,
+          1
         ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      }
-    },
-    "inset": {
-      "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "border-bottom-color": "none"
-        }
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.inset}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.447,
-          "hex": "#000000"
-        }
-      }
-    },
-    "channel": {
-      "$description": "The channel a group of choices sits in: a segmented control's track.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.inset}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.line}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.inset}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      }
-    },
-    "raised": {
-      "$description": "A control on a surface: a button, a chip, a pill.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "material": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.raised}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.161,
-          "hex": "#000000"
-        }
-      }
-    },
-    "plate": {
-      "$description": "A labelled block chosen inside a well: the selected tab, a segmented control's thumb.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "elevation": null
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.card}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      }
-    },
-    "overlay": {
-      "$description": "A panel floating over the page: a menu, a toast.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "elevation": null,
-          "material": "acrylic"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.98212,
-            0,
-            0
-          ],
-          "alpha": 0.85,
-          "hex": "#f9f9f9"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "colorOp": {
-              "op": "alpha",
-              "color": "{color.popover}",
-              "alpha": 0.85
-            }
-          }
-        }
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.lg}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      }
-    },
-    "modal": {
-      "$description": "A surface the page waits for: a dialog, a sheet.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "elevation": null
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.background}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.xl}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.5624,
-            0,
-            0
-          ],
-          "alpha": 0.4,
-          "hex": "#757575"
-        }
-      }
-    },
-    "inverse": {
-      "$description": "The page's inverse: an inverse surface, a tooltip.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "none",
-          "elevation": null,
-          "material": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.inverse}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.line}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.md}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.inverse-foreground}"
-      }
-    },
-    "glass": {
-      "$description": "A translucent surface: what is behind it shows through.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "backdropFilter": "blur(30px)",
-          "elevation": null,
-          "material": "none"
-        }
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.line}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "background": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.98212,
-            0,
-            0
-          ],
-          "alpha": 0.85,
-          "hex": "#f9f9f9"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "colorOp": {
-              "op": "alpha",
-              "color": "{color.popover}",
-              "alpha": 0.85
-            }
-          }
-        }
-      }
-    },
-    "accent": {
-      "$description": "The accent's own surface, with its ink.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "border-bottom-color": "none",
-          "pressed-background": "none",
-          "pressed-foreground": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.primary}"
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": "{color.brand-edge}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.accent}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.primary-foreground}"
-      },
-      "pressed-opacity": {
-        "$type": "number",
-        "$value": 1
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.52768,
-            0.14982,
-            252.341
-          ],
-          "hex": "#146cbe"
-        }
-      },
-      "pressed-background": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.5773,
-            0.13223,
-            250.006
-          ],
-          "hex": "#317dc4"
-        }
-      },
-      "pressed-foreground": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.87245,
-            0.03754,
-            247.003
-          ],
-          "hex": "#c2d8ed"
-        }
-      }
-    },
-    "fill": {
-      "$description": "A run's fill: a progress bar's bar, a slider's range, a meter's column.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "gradient": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.primary}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.52768,
-            0.14982,
-            252.341
-          ],
-          "hex": "#146cbe"
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.accent}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.primary-foreground}"
-      }
-    },
-    "knob": {
-      "$description": "A knob: a switch's thumb, a slider's handle. Its checked state, `checked-*`, is the knob while its control is on.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "gradient": "none"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.knob}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0,
-          "hex": "#000000"
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "transparentKeyword": true
-          }
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "checked-background": {
-        "$type": "color",
-        "$value": "{color.primary-foreground}"
-      }
-    },
-    "hover": {
-      "$description": "A control under the pointer.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "border-bottom-color": "none",
-          "border-top-color": "none",
-          "elevation": null
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.hover}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.foreground}"
-      },
-      "border-top-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      },
-      "border-bottom-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.161,
-          "hex": "#000000"
-        }
-      }
-    },
-    "pressed": {
-      "$description": "A control held down.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "elevation": null
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": "{color.muted}"
-      },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.line}"
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.inset}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": "{color.muted-foreground}"
-      }
-    },
-    "disabled": {
-      "$description": "A control that cannot be used.",
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0,
-            0,
-            0
-          ],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          "{shadow.edge.surface}",
-          "{shadow.sm}"
-        ]
-      },
-      "foreground": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.68949,
-            0,
-            0
-          ],
-          "hex": "#9b9b9b"
-        }
-      },
-      "background": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.97015,
-            0,
-            0
-          ],
-          "hex": "#f5f5f5"
-        }
-      }
-    }
-  },
-  "slot": {
-    "$description": "Control slots: the values every component draws its control from (docs/specs/theme-slots.md). A theme overrides the ones it answers differently.",
-    "button": {
-      "corner": {
-        "sm": {
-          "$value": "control",
-          "$description": "A small button's corner: the control radius, `full` for a capsule, or points."
-        },
-        "md": {
-          "$value": "control",
-          "$description": "A regular button's corner: the control radius, `full` for a capsule, or points."
-        },
-        "lg": {
-          "$value": "control",
-          "$description": "A large button's corner: the control radius, `full` for a capsule, or points."
-        }
-      },
-      "selected": {
-        "face": {
-          "$value": "finish:accent",
-          "$description": "The ground a chosen control turns over to: a toggle that is on, a tool that is picked, a button that is selected."
-        },
-        "ink": {
-          "$value": "color:primary-foreground",
-          "$description": "What a chosen control's label and glyph are drawn in."
-        }
-      },
-      "secondary": {
-        "face": {
-          "$value": "finish:raised",
-          "$description": "The ground of a secondary button: the ordinary visible action."
-        },
-        "ink": {
-          "$value": "color:foreground",
-          "$description": "What a secondary button's label and glyph are drawn in."
-        },
-        "edge": {
-          "$value": "finish:raised:border-color",
-          "$description": "What a secondary button's edge is drawn in, or `none` where it draws none."
-        },
-        "hover": {
-          "$value": "finish:hover",
-          "$description": "The ground a secondary button turns over to under the pointer."
-        }
-      },
-      "outline": {
-        "edge": {
-          "$value": "finish:raised:border-color",
-          "$description": "What an outline button's edge is drawn in."
-        }
-      },
-      "destructive": {
-        "edge": {
-          "$value": "none",
-          "$description": "What a destructive button's edge is drawn in, or `none` where it draws none."
-        }
-      },
-      "shade": {
-        "$value": "shade:raised",
-        "$description": "The finish whose shade a secondary or destructive button wears, or `none` where it stands flat."
-      }
-    },
-    "badge": {
-      "corner": {
-        "$value": "control",
-        "$description": "A badge's corner: the control radius, `full` for a capsule, or points."
-      }
-    },
-    "field": {
-      "edge": {
-        "sides": {
-          "$value": "yes",
-          "$description": "Whether a field draws the sides and top of its edge, or only the line under its text."
-        },
-        "color": {
-          "$value": "color:line",
-          "$description": "What a field's sides and top are drawn in."
-        },
-        "bottom": {
-          "$value": "color:input",
-          "$description": "What the line under a field's text is drawn in."
-        }
-      },
-      "corner": {
-        "bottom": {
-          "$value": "control",
-          "$description": "A field's bottom corners: `0` where the line under it is its edge."
-        }
-      },
-      "focus": {
-        "line": {
-          "$value": "yes",
-          "$description": "Whether focus lights the bottom line alone (a field whose edge is that line), or the whole edge inside a ring."
-        },
-        "width": {
-          "$type": "dimension",
-          "$value": {
-            "value": 2,
-            "unit": "px"
-          },
-          "$description": "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring."
-        },
-        "color": {
-          "$value": "color:brand",
-          "$description": "What a field's focus edge and ring are drawn in (`color:brand` for a crisp accent ring, `color:ring` for the theme's `focus.style` halo)."
-        }
-      },
-      "disabled": {
-        "face": {
-          "$value": "finish:disabled",
-          "$description": "The ground and edge a field that cannot be used turns over to, or `keep` where it keeps its own and fades instead."
-        }
-      }
-    },
-    "choice": {
-      "size": {
-        "$type": "dimension",
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
-        "$description": "A radio's box, per input: its diameter.",
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "touch": {
-              "value": 20,
-              "unit": "px"
-            }
-          }
-        }
-      },
-      "box": {
-        "$type": "dimension",
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
-        "$description": "A checkbox's box, per input: the side of its square (`choice.size` is a radio's across).",
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "touch": {
-              "value": 20,
-              "unit": "px"
-            }
-          }
-        }
-      },
-      "corner": {
-        "$type": "dimension",
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "A choice's corner, per input: a quarter of its box where it is a square, half of it where it is a circle.",
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "touch": {
-              "value": 4,
-              "unit": "px"
-            }
-          }
-        }
-      },
-      "face": {
-        "$value": "color:track",
-        "$description": "The ground an unchosen box lies on."
-      },
-      "shade": {
-        "$value": "none",
-        "$description": "The finish whose shade an unchosen box wears, or `none`."
-      },
-      "edge": {
-        "width": {
-          "$type": "dimension",
-          "$value": {
-            "value": 1,
-            "unit": "px"
-          },
-          "$description": "How thick a box's edge is."
-        },
-        "color": {
-          "$value": "color:input",
-          "$description": "What a box's edge is drawn in."
-        },
-        "disabled": {
-          "$value": "color:input",
-          "$description": "What a disabled box's edge is drawn in, where it is drawn stronger than an enabled one."
-        }
-      },
-      "checked": {
-        "face": {
-          "$value": "color:primary",
-          "$description": "The layer a chosen box turns over to, or `none` where it keeps its ground and draws a mark alone."
-        }
-      },
-      "radio": {
-        "checked": {
-          "face": {
-            "$value": "color:primary",
-            "$description": "The layer a chosen radio turns over to, or `none` where it keeps its ground and draws a ring and dot."
-          },
-          "edge": {
-            "$value": "none",
-            "$description": "What a chosen ring-only radio's border is drawn in, or `none` to keep its resting edge."
-          }
-        }
-      },
-      "mark": {
-        "size": {
-          "$type": "dimension",
-          "$value": {
-            "value": 12,
-            "unit": "px"
-          },
-          "$description": "A radio's dot, per input.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 12,
-                "unit": "px"
-              }
-            }
-          }
-        },
-        "hover": {
-          "$type": "dimension",
-          "$value": {
-            "value": 14,
-            "unit": "px"
-          },
-          "$description": "The dot's diameter under the pointer, where it grows (`none` where it does not)."
-        },
-        "pressed": {
-          "$type": "dimension",
-          "$value": {
-            "value": 10,
-            "unit": "px"
-          },
-          "$description": "The dot's diameter while pressed, where it shrinks (`none` where it does not)."
-        }
-      },
-      "halo": {
-        "$value": "none",
-        "$description": "The state layer's diameter round a box, or `none` where the form draws none."
-      }
-    },
-    "switch": {
-      "track": {
-        "$value": "40x20",
-        "$description": "An off switch's track, per input: `[width, height]`.",
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "touch": "44x22"
-          }
-        }
-      },
-      "small": {
-        "track": {
-          "$value": "32x16",
-          "$description": "A small switch's track, per input: `[width, height]`.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": "36x18"
-            }
-          }
-        },
-        "knob": {
-          "$type": "dimension",
-          "$value": {
-            "value": 10,
-            "unit": "px"
-          },
-          "$description": "A small switch's knob, per input: side or `[width, height]`.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 12,
-                "unit": "px"
-              }
-            }
-          }
-        }
-      },
-      "edge": {
-        "off": {
-          "$type": "dimension",
-          "$value": {
-            "value": 1,
-            "unit": "px"
-          },
-          "$description": "How thick an off switch's track edge is."
-        },
-        "on": {
-          "$type": "dimension",
-          "$value": {
-            "value": 0,
-            "unit": "px"
-          },
-          "$description": "How thick an on switch's track edge is."
-        },
-        "color": {
-          "$value": "color:input",
-          "$description": "What an off switch's track edge is drawn in, or `none` where the track has no border."
-        }
-      },
-      "knob": {
-        "size": {
-          "$type": "dimension",
-          "$value": {
-            "value": 12,
-            "unit": "px"
-          },
-          "$description": "An off switch's knob, per input: diameter or `[width, height]`.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 14,
-                "unit": "px"
-              }
-            }
-          }
-        },
-        "on": {
-          "$value": "same",
-          "$description": "An on switch's knob, per input, or `same` to keep the resting knob size."
-        },
-        "hover": {
-          "$type": "dimension",
-          "$value": {
-            "value": 14,
-            "unit": "px"
-          },
-          "$description": "The knob size under the pointer, or `same` where hovering changes nothing.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 16,
-                "unit": "px"
-              }
-            }
-          }
-        },
-        "pressed": {
-          "$value": "17x14",
-          "$description": "The knob size while pressed, or `same` where pressing changes nothing; widening past its height stretches toward the edge it heads for.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": "19x16"
-            }
-          }
-        }
-      }
-    },
-    "slider": {
-      "rail": {
-        "$type": "dimension",
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "A slider's rail, per input: its thickness.",
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "touch": {
-              "value": 6,
-              "unit": "px"
-            }
-          }
-        }
-      },
-      "band": {
-        "$type": "dimension",
-        "$value": {
-          "value": 32,
-          "unit": "px"
-        },
-        "$description": "The band a slider keeps around its rail, per input.",
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "touch": {
-              "value": 36,
-              "unit": "px"
-            }
-          }
-        }
-      },
-      "face": {
-        "$value": "color:input",
-        "$description": "What a slider's rail is filled with."
-      },
-      "shade": {
-        "$value": "none",
-        "$description": "The finish whose shade a slider's rail wears, or `none`."
-      },
-      "edge": {
-        "color": {
-          "$value": "none",
-          "$description": "What a slider's rail edge is drawn in, or `none` where it draws none."
-        },
-        "width": {
-          "$type": "dimension",
-          "$value": {
-            "value": 0,
-            "unit": "px"
-          },
-          "$description": "How thick a slider's rail edge is; `control` is the theme's `stroke.control`."
-        }
-      },
-      "knob": {
-        "size": {
-          "$type": "dimension",
-          "$value": {
-            "value": 18,
-            "unit": "px"
-          },
-          "$description": "A slider's knob, per input: diameter or `[width, height]` (`0` where the theme draws only a mark).",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 24,
-                "unit": "px"
-              }
-            }
-          }
-        },
-        "pressed": {
-          "$type": "dimension",
-          "$value": {
-            "value": 18,
-            "unit": "px"
-          },
-          "$description": "The knob size while pressed, per input, or `same` to keep the resting knob size.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 36,
-                "unit": "px"
-              }
-            }
-          }
-        },
-        "face": {
-          "$value": "finish:knob",
-          "$description": "What a slider's knob is filled with."
-        },
-        "edge": {
-          "$value": "none",
-          "$description": "What a solid slider knob's border is drawn in, or `none` where it wears only the knob finish's own edge."
-        }
-      },
-      "mark": {
-        "size": {
-          "$type": "dimension",
-          "$value": {
-            "value": 12,
-            "unit": "px"
-          },
-          "$description": "The knob's inner dot, per input: `0` where the knob is a solid disc."
-        },
-        "hover": {
-          "$type": "dimension",
-          "$value": {
-            "value": 14,
-            "unit": "px"
-          },
-          "$description": "The inner dot's diameter under the pointer, where the knob is a ring."
-        },
-        "pressed": {
-          "$type": "dimension",
-          "$value": {
-            "value": 10,
-            "unit": "px"
-          },
-          "$description": "The inner dot's diameter while pressed, where the knob is a ring."
-        }
-      },
-      "brightens": {
-        "$value": "no",
-        "$description": "Whether a solid knob brightens under the pointer and dims while pressed, rather than rescaling."
-      }
-    },
-    "progress": {
-      "height": {
-        "$type": "dimension",
-        "$value": {
-          "value": 3,
-          "unit": "px"
-        },
-        "$description": "A progress bar's height."
-      },
-      "line": {
-        "$type": "dimension",
-        "$value": {
-          "value": 1,
-          "unit": "px"
-        },
-        "$description": "The run's height inside the groove, or `0` where the run fills it."
-      },
-      "face": {
-        "$value": "color:input",
-        "$description": "What a progress bar's groove is filled with."
-      },
-      "shade": {
-        "$value": "none",
-        "$description": "The finish whose shade a progress bar's groove wears, or `none`."
-      },
-      "edge": {
-        "color": {
-          "$value": "none",
-          "$description": "What a progress bar's groove edge is drawn in, or `none`."
-        },
-        "width": {
-          "$type": "dimension",
-          "$value": {
-            "value": 0,
-            "unit": "px"
-          },
-          "$description": "How thick a progress bar's groove edge is; `control` is the theme's `stroke.control`."
-        }
-      }
-    },
-    "calendar": {
-      "today": {
-        "face": {
-          "$value": "color:foreground@0.08",
-          "$description": "The fill under a calendar's today, or `none` where it draws none."
-        },
-        "ink": {
-          "$value": "color:foreground",
-          "$description": "What a calendar's today number is drawn in (`color:foreground`, `color:brand`)."
-        }
-      }
-    },
-    "spinner": {
-      "opacity": {
-        "$type": "number",
-        "$value": 0,
-        "$description": "How faintly the spinner's groove shows, or `0` where it draws none."
-      },
-      "spokes": {
-        "$value": "no",
-        "$description": "Whether an indeterminate spinner turns Apple's eight tapered rays instead of a turning arc."
-      }
-    },
-    "popup": {
-      "corner": {
-        "$value": "container",
-        "$description": "A popup's surface corner (a menu's, a select's list, a calendar's): `container` is the theme's `shape.container`."
-      }
-    },
-    "tooltip": {
-      "face": {
-        "$value": "finish:inverse",
-        "$description": "What a tooltip bubble is filled with."
-      },
-      "ink": {
-        "$value": "finish:inverse:foreground",
-        "$description": "What a tooltip bubble's text is drawn in."
-      },
-      "edge": {
-        "$value": "finish:inverse:border-color",
-        "$description": "What a tooltip bubble's border is drawn in, or `none` where it draws none."
-      },
-      "shade": {
-        "$value": "shade:inverse",
-        "$description": "The finish whose elevation shadow a tooltip bubble wears, or `none`."
-      }
-    },
-    "toast": {
-      "action": {
-        "face": {
-          "$value": "finish:accent",
-          "$description": "The ground a toast's action button wears, or `none` for a borderless text button on the inverse surface."
-        }
-      }
-    },
-    "list": {
-      "item": {
-        "highlight": {
-          "$value": "color:accent",
-          "$description": "What a listbox or command option's focused background is drawn in (`tint:brand`, `color:accent`)."
-        },
-        "edge": {
-          "$value": "none",
-          "$description": "What a listbox option's focused border is drawn in (`color:brand@0.3`, `none`)."
-        }
-      }
-    },
-    "menubar": {
-      "bar": {
-        "$value": "none",
-        "$description": "The surface a menubar frames its triggers on (`finish:card`, or `none` for a borderless transparent strip)."
-      }
-    },
-    "tabs": {
-      "track": {
-        "face": {
-          "$value": "color:inset",
-          "$description": "The ground a tab strip's track lies on, or `none` where the surface behind it shows through."
-        },
-        "edge": {
-          "$value": "color:line",
-          "$description": "What a tab strip's track edge is drawn in, or `none` where it draws no border."
-        },
-        "corner": {
-          "$value": "control",
-          "$description": "A tab strip's track corner: `full` for a capsule, `control`, or points."
-        }
-      }
-    },
-    "well": {
-      "edge": {
-        "$value": "color:border",
-        "$description": "What a sunk well's edge is drawn in, or `none` where it draws no border."
-      }
-    },
-    "disabled": {
-      "face": {
-        "$value": "finish:disabled",
-        "$description": "The ground a disabled control turns over to, or `keep` where it keeps its own and fades instead."
-      },
-      "ink": {
-        "$value": "finish:disabled:foreground",
-        "$description": "What a disabled control's label is drawn in, or `keep`."
-      },
-      "edge": {
-        "$value": "finish:disabled:border-color",
-        "$description": "What a disabled control's edge is drawn in, or `keep`."
-      }
-    }
-  },
-  "color": {
-    "$type": "color",
-    "$description": "Adaptive A-layer and B-layer color roles for light appearance.",
-    "scrim": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "alpha": 0.302,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Translucent backdrop scrim behind modals and overlays (WinUI SmokeFillColorDefault #4D000000)."
-    },
-    "media": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.1869,
-          0.0151,
-          266.766
-        ],
-        "hex": "#10131a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Ground behind photographs and videos; invariant across appearances."
-    },
-    "on-media": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
-    },
-    "background": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.96415,
-          0,
-          0
-        ],
-        "hex": "#f3f3f3"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Window base surface (WinUI SolidBackgroundFillColorBase)."
-    },
-    "foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.21779,
-          0,
-          0
-        ],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Primary text and icon ink (WinUI TextFillColorPrimary composited over base)."
-    },
-    "card": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.98809,
-          0,
-          0
-        ],
-        "hex": "#fbfbfb"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Elevated card background (WinUI CardBackgroundFillColorDefault composited over base)."
-    },
-    "card-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.21779,
-          0,
-          0
-        ],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink",
-          "source": "WinUI 3 theme resources: TextFillColorPrimary"
-        }
-      },
-      "$description": "Primary ink on card surfaces (WinUI TextFillColorPrimary)."
-    },
-    "popover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.98212,
-          0,
-          0
-        ],
-        "hex": "#f9f9f9"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: AcrylicInAppFillColorDefault"
-        }
-      },
-      "$description": "Acrylic flyout/popover fallback surface (WinUI AcrylicInAppFillColorDefaultFallback)."
-    },
-    "popover-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.21779,
-          0,
-          0
-        ],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink",
-          "source": "WinUI 3 theme resources: TextFillColorPrimary"
-        }
-      },
-      "$description": "Primary ink on popover surfaces (WinUI TextFillColorPrimary)."
-    },
-    "primary": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.49147,
-          0.15959,
-          254.594
-        ],
-        "hex": "#005fb8"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Accent button fill (WinUI AccentFillColorDefault: Dark1 light / Light2 dark from SystemAccentColor)."
-    },
-    "primary-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Ink on accent fills (WinUI TextOnAccentFillColorPrimary)."
-    },
-    "secondary": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.98809,
-          0,
-          0
-        ],
-        "hex": "#fbfbfb"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Standard control fill (WinUI ControlFillColorDefault composited over base)."
-    },
-    "secondary-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.21779,
-          0,
-          0
-        ],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink",
-          "source": "WinUI 3 theme resources: TextFillColorPrimary"
-        }
-      },
-      "$description": "Ink on secondary controls (WinUI TextFillColorPrimary)."
-    },
-    "muted": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.94912,
-          0,
-          0
-        ],
-        "hex": "#eeeeee"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Recessed neutral surface (WinUI SolidBackgroundFillColorSecondary composited over base)."
-    },
-    "muted-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.47478,
-          0,
-          0
-        ],
-        "hex": "#5c5c5c"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Secondary label ink (WinUI TextFillColorSecondary composited over base)."
-    },
-    "accent": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.93705,
-          0,
-          0
-        ],
-        "hex": "#eaeaea"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: SubtleFillColorSecondary over base (light) / ControlFillColorSecondary over base (dark)"
-        }
-      },
-      "$description": "Subtle hover/selection fill (WinUI SubtleFillColorSecondary over the base in light; in dark, where that step sits under the fill floor, ControlFillColorSecondary)."
-    },
-    "accent-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.21779,
-          0,
-          0
-        ],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink",
-          "source": "WinUI 3 theme resources: TextFillColorPrimary"
-        }
-      },
-      "$description": "Ink on subtle accent fills (WinUI TextFillColorPrimary)."
-    },
-    "destructive": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.53615,
-          0.19119,
-          30.071
-        ],
-        "hex": "#c42b1c"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      },
-      "$description": "Critical/error status ink (WinUI SystemFillColorCritical)."
-    },
-    "border": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.92191,
-          0,
-          0
-        ],
-        "hex": "#e5e5e5"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base)."
-    },
-    "input": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.62006,
-          0,
-          0
-        ],
-        "hex": "#868686"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "source": "WinUI 3 theme resources: ControlStrongStrokeColorDefault"
-        }
-      },
-      "$description": "Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base)."
-    },
-    "ring": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.21779,
-          0,
-          0
-        ],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "source": "WinUI 3 theme resources: FocusStrokeColorOuter"
-        }
-      },
-      "$description": "Outer keyboard focus stroke (WinUI FocusStrokeColorOuter)."
-    },
-    "chart-1": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.49147,
-          0.15959,
-          254.594
-        ],
-        "hex": "#005fb8"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: AccentFillColorDefault"
-        }
-      },
-      "$description": "First chart series color matching WinUI primary accent."
-    },
-    "chart-2": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.50725,
-          0.16489,
-          142.658
-        ],
-        "hex": "#0f7b0f"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: SystemFillColorSuccess"
-        }
-      },
-      "$description": "Second chart series color (WinUI SystemFillColorSuccess)."
-    },
-    "chart-3": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.53885,
-          0.12069,
-          65.216
-        ],
-        "hex": "#9d5d00"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: SystemFillColorCaution"
-        }
-      },
-      "$description": "Third chart series color (WinUI SystemFillColorCaution)."
-    },
-    "chart-4": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.53615,
-          0.19119,
-          30.071
-        ],
-        "hex": "#c42b1c"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: SystemFillColorCritical"
-        }
-      },
-      "$description": "Fourth chart series color (WinUI SystemFillColorCritical)."
-    },
-    "chart-5": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.62006,
-          0,
-          0
-        ],
-        "hex": "#868686"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: ControlStrongFillColorDefault"
-        }
-      },
-      "$description": "Fifth chart series color (WinUI ControlStrongFillColorDefault)."
-    },
-    "sidebar": {
-      "$value": "{color.background}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "NavigationView expanded pane background matching window base."
-    },
-    "sidebar-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Sidebar primary ink (WinUI TextFillColorPrimary)."
-    },
-    "sidebar-primary": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Sidebar primary accent matching AccentFillColorDefault."
-    },
-    "sidebar-primary-foreground": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Sidebar primary ink matching TextOnAccentFillColorPrimary."
-    },
-    "sidebar-accent": {
-      "$value": "{color.accent}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Sidebar active item fill (WinUI SubtleFillColorSecondary)."
-    },
-    "sidebar-accent-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Sidebar active item ink (WinUI TextFillColorPrimary)."
-    },
-    "sidebar-border": {
-      "$value": "{color.line}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Sidebar separator stroke (WinUI DividerStrokeColorDefault)."
-    },
-    "sidebar-ring": {
-      "$value": "{color.ring}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Sidebar focus stroke (WinUI FocusStrokeColorOuter)."
-    },
-    "inset": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.94611,
-          0,
-          0
-        ],
-        "hex": "#ededed"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: ControlAltFillColorSecondary over base"
-        }
-      },
-      "$description": "Inset well fill (WinUI ControlAltFillColorSecondary composited over base)."
-    },
-    "raised": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.98809,
-          0,
-          0
-        ],
-        "hex": "#fbfbfb"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: ControlFillColorDefault over base"
-        }
-      },
-      "$description": "Raised control fill (WinUI ControlFillColorDefault composited over base)."
-    },
-    "field": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.98809,
-          0,
-          0
-        ],
-        "hex": "#fbfbfb"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: ControlFillColorDefault over base"
-        }
-      },
-      "$description": "Text input surface (WinUI ControlFillColorDefault composited over base)."
-    },
-    "line": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.92191,
-          0,
-          0
-        ],
-        "hex": "#e5e5e5"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Hairline divider stroke (WinUI DividerStrokeColorDefault)."
-    },
-    "hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.97315,
-          0,
-          0
-        ],
-        "hex": "#f6f6f6"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: ControlFillColorSecondary over base"
-        }
-      },
-      "$description": "Pointer hover fill (WinUI ControlFillColorSecondary composited over base)."
-    },
-    "faint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.62006,
-          0,
-          0
-        ],
-        "hex": "#868686"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Tertiary label ink (WinUI TextFillColorTertiary composited over base)."
-    },
-    "brand": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.38687,
-          0.14996,
-          259
-        ],
-        "hex": "#003e92"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand",
-          "source": "WinUI 3 theme resources: AccentTextFillColorPrimary"
-        }
-      },
-      "$description": "Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark)."
-    },
-    "brand-edge": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.34485,
-          0.10621,
-          252.962
-        ],
-        "hex": "#00396e"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand",
-          "source": "WinUI 3 theme resources: ControlStrokeColorOnAccentSecondary over the accent fill"
-        }
-      },
-      "$description": "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary)."
-    },
-    "focus-inner": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "source": "WinUI 3 theme resources: FocusStrokeColorInner"
-        }
-      },
-      "$description": "The line inside a focus ring, hugging the control (WinUI FocusStrokeColorInner: white in light, 70% black over the base in dark)."
-    },
-    "track": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.94611,
-          0,
-          0
-        ],
-        "hex": "#ededed"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: ControlAltFillColorSecondary over base"
-        }
-      },
-      "$description": "Switch and slider track (WinUI ControlAltFillColorSecondary)."
-    },
-    "knob": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.47478,
-          0,
-          0
-        ],
-        "hex": "#5c5c5c"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: TextFillColorSecondary"
-        }
-      },
-      "$description": "Unchecked switch thumb (WinUI TextFillColorSecondary)."
-    },
-    "info": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.56769,
-          0.16654,
-          251.313
-        ],
-        "hex": "#0078d4"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      },
-      "$description": "Informational semantic color (WinUI SystemFillColorAttentionBrush)."
-    },
-    "warn": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.53885,
-          0.12069,
-          65.216
-        ],
-        "hex": "#9d5d00"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      },
-      "$description": "Caution semantic color (WinUI SystemFillColorCaution)."
-    },
-    "up": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.50725,
-          0.16489,
-          142.658
-        ],
-        "hex": "#0f7b0f"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      },
-      "$description": "Success semantic color (WinUI SystemFillColorSuccess)."
-    },
-    "brand-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.91469,
-          0.01564,
-          247.999
-        ],
-        "hex": "#dbe4ed"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand",
-          "source": "WinUI 3 theme resources: AccentFillColorDefault at 10% over base"
-        }
-      },
-      "$description": "10% accent wash composited opaque over window base."
-    },
-    "inverse": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.98212,
-          0,
-          0
-        ],
-        "hex": "#f9f9f9"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface",
-          "source": "WinUI 3 theme resources: SolidBackgroundFillColorTertiary over base"
-        }
-      },
-      "$description": "TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base)."
-    },
-    "inverse-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.21779,
-          0,
-          0
-        ],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink",
-          "source": "WinUI 3 theme resources: TextFillColorPrimary"
-        }
-      },
-      "$description": "Ink on inverse surface (WinUI TextFillColorPrimary)."
-    },
-    "inverse-brand": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand",
-          "source": "WinUI 3 theme resources: TextOnAccentFillColorPrimary"
-        }
-      },
-      "$description": "Action ink on inverse surface matching TextOnAccentFillColorPrimary."
-    },
-    "info-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.97015,
-          0,
-          0
-        ],
-        "hex": "#f5f5f5"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: SystemFillColorAttentionBackground over base"
-        }
-      },
-      "$description": "Informational wash (WinUI SystemFillColorAttentionBackground composited over base)."
-    },
-    "warn-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.96621,
-          0.05066,
-          93.747
-        ],
-        "hex": "#fff4ce"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: SystemFillColorCautionBackground over base"
-        }
-      },
-      "$description": "Caution wash (WinUI SystemFillColorCautionBackground composited over base)."
-    },
-    "destructive-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.9462,
-          0.02418,
-          11.286
-        ],
-        "hex": "#fde7e9"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: SystemFillColorCriticalBackground over base"
-        }
-      },
-      "$description": "Critical wash (WinUI SystemFillColorCriticalBackground composited over base)."
-    },
-    "up-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.94958,
-          0.04104,
-          143.026
-        ],
-        "hex": "#dff6dd"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: SystemFillColorSuccessBackground over base"
-        }
-      },
-      "$description": "Success wash (WinUI SystemFillColorSuccessBackground composited over base)."
-    }
-  },
-  "shadow": {
-    "sm": {
-      "$description": "A control's cast shadow, on the surface it sits on.",
-      "$type": "shadow",
-      "$value": [
-        {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 0,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        }
-      ],
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "none": true
-        }
-      }
-    },
-    "md": {
-      "$description": "A card's cast shadow: the surface is one step off the page.",
-      "$type": "shadow",
-      "$value": [
-        {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0.12,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 2,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        },
-        {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0.14,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 4,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 8,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        }
-      ]
-    },
-    "lg": {
-      "$description": "An overlay's shadow: a menu floats well above the page.",
-      "$type": "shadow",
-      "$value": [
-        {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0.12,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 8,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        },
-        {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0.14,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 16,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 32,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        }
-      ]
-    },
-    "xl": {
-      "$description": "A dialog's shadow: the page waits behind it.",
-      "$type": "shadow",
-      "$value": [
-        {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0.12,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 8,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        },
-        {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0.14,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 64,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 128,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        }
-      ]
-    },
-    "inset": {
-      "$description": "A well's shadow: light falls into a groove.",
-      "$type": "shadow",
-      "$value": [
-        {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 0,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        }
-      ],
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "none": true
-        }
-      }
-    },
-    "edge": {
-      "surface": {
-        "$description": "The hard edge of a raised surface: its highlight, its hairline. (the accent's).",
-        "$type": "shadow",
-        "$value": [
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "alpha": 0,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 0,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 0,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "none": true
-          }
-        }
-      },
-      "accent": {
-        "$description": "The accent fill's edge: its highlight and its own cast. (the accent's).",
-        "$type": "shadow",
-        "$value": [
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "alpha": 0,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 0,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 0,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "none": true
-          }
-        }
-      }
-    }
-  },
-  "font": {
-    "$description": "Desktop pointer typography metrics.",
-    "size": {
-      "$type": "dimension",
-      "$description": "Font sizes per type role for pointer input.",
-      "caption": {
-        "$value": {
-          "value": 11,
-          "unit": "px"
-        }
-      },
-      "detail": {
-        "$value": {
-          "value": 12,
-          "unit": "px"
-        }
-      },
-      "body": {
-        "$value": {
-          "value": 13,
-          "unit": "px"
-        }
-      },
-      "label": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        }
-      },
-      "title": {
-        "$value": {
-          "value": 16,
-          "unit": "px"
-        }
-      },
-      "headline": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        }
-      },
-      "display": {
-        "$value": {
-          "value": 26,
-          "unit": "px"
-        }
-      }
-    },
-    "line-height": {
-      "$type": "number",
-      "$description": "Line heights per type role, as a multiple of the role's font size (DTCG's unitless lineHeight); `tokens:build` states the whole points it works out to.",
-      "caption": {
-        "$value": 1.454545
-      },
-      "detail": {
-        "$value": 1.333333
-      },
-      "body": {
-        "$value": 1.538462
-      },
-      "label": {
-        "$value": 1.428571
-      },
-      "title": {
-        "$value": 1.5
-      },
-      "headline": {
-        "$value": 1.4
-      },
-      "display": {
-        "$value": 1.230769
       }
     }
   }
