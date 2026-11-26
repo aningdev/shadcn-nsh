@@ -108,4 +108,33 @@ describe("validateThemeInvariants", () => {
     expect(fbOut.some((m) => m.includes("feedback.press.scale=0.7"))).toBe(true);
     expect(fbOut.some((m) => m.includes("feedback.disabled.contentOpacity=0.1"))).toBe(true);
   });
+
+  test("rejects material blur, minOpacity and effect intensity outside their bounds", () => {
+    const wideBlur = patch({
+      surfaces: {
+        glass: { material: { kind: "blur", blur: 80, minOpacity: 0.7 } },
+      },
+    });
+    expect(validateThemeInvariants(wideBlur)).toContainEqual(
+      expect.stringContaining("blur=80 outside [4, 60]"),
+    );
+
+    const thin = patch({
+      surfaces: {
+        glass: { material: { kind: "blur", minOpacity: 0.4 } },
+      },
+    });
+    expect(validateThemeInvariants(thin)).toContainEqual(
+      expect.stringContaining("minOpacity=0.4 outside [0.55, 1]"),
+    );
+
+    const hot = patch({
+      surfaces: {
+        glass: { effect: { kind: "paper-grain", intensity: 1.5 } },
+      },
+    });
+    expect(validateThemeInvariants(hot)).toContainEqual(
+      expect.stringContaining("effect paper-grain intensity=1.5 outside (0, 1]"),
+    );
+  });
 });

@@ -113,6 +113,30 @@ export interface ElevationScale {
 export type ShadowPart = keyof ElevationScale;
 export type ShadowExpr = ShadowPart | readonly ShadowPart[] | (string & {}) | null;
 
+/** Parameterized optical backdrop/specular material configuration for a surface layer. */
+export interface MaterialSpec {
+  readonly kind: "glass" | "acrylic" | "blur";
+  readonly blur?: number;
+  readonly saturate?: number;
+  readonly minOpacity?: number;
+  readonly specular?: ColorExpr | null;
+}
+
+/** Material request on a surface layer: built-in platform preset name or parameterized spec. */
+export type SurfaceMaterial = FinishMaterial | MaterialSpec;
+
+/** Built-in GPU WGSL surface texture/optics shader presets matching major platform aesthetics. */
+export type SurfaceEffectKind = "liquid-glass" | "acrylic-noise" | "specular-rim" | "paper-grain";
+
+/** Optional GPU surface shader effect with automatic fallback when shaders are unavailable. */
+export interface SurfaceEffectSpec {
+  readonly kind: SurfaceEffectKind;
+  /** Effect strength in (0, 1]; defaults per kind. */
+  readonly intensity?: number;
+  /** Optional custom WGSL `fn shade(uv: vec2f) -> vec4f` source overriding the built-in shader. */
+  readonly wgsl?: string;
+}
+
 /** The 11 pure structural surfaces (`hover`, `pressed`, `disabled` live in `feedback`; `knob` in controls). */
 export type SurfaceRole =
   | "card"
@@ -136,7 +160,8 @@ export interface SurfaceLayer {
   readonly borderBottom?: ColorExpr | null;
   readonly shadow?: ShadowExpr;
   readonly backdropFilter?: string | null;
-  readonly material?: FinishMaterial | null;
+  readonly material?: SurfaceMaterial | null;
+  readonly effect?: SurfaceEffectSpec | null;
   readonly elevation?: number | null;
 }
 
@@ -453,6 +478,8 @@ export type DeepPartial<T> = T extends readonly unknown[]
           | { readonly surface: SurfaceRole }
           | { readonly duration: number; readonly easing: string }
           | MotionSpringSpec
+          | MaterialSpec
+          | SurfaceEffectSpec
       ? T
       : T extends object
         ? { readonly [K in keyof T]?: DeepPartial<T[K]> }
@@ -488,7 +515,20 @@ export interface AppTheme {
 const isPlainObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
 
+/** Material and surface-effect specs replace as a whole so a patch cannot leave a half-merged kind. */
+const isMaterialOrEffect = (v: Record<string, unknown>): boolean =>
+  "kind" in v &&
+  typeof v.kind === "string" &&
+  (v.kind === "glass" ||
+    v.kind === "acrylic" ||
+    v.kind === "blur" ||
+    v.kind === "liquid-glass" ||
+    v.kind === "acrylic-noise" ||
+    v.kind === "specular-rim" ||
+    v.kind === "paper-grain");
+
 const isAtomicObject = (v: Record<string, unknown>): boolean =>
+  isMaterialOrEffect(v) ||
   ("color" in v &&
     typeof v.color === "string" &&
     "alpha" in v &&

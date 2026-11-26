@@ -29,6 +29,7 @@ describe("view", () => {
     expect(out.text).toContain("file lib/ui/utils.tsx");
     expect(out.text).toContain("file lib/ui/motion.tsx");
     expect(out.text).toContain("file lib/ui/theme.ts");
+    expect(out.text).toContain("file lib/ui/effects.ts");
     // The app's layout decides the import: `@shadcn-nsh/theme` → `lib/ui/theme` two levels up.
     expect(out.text).not.toContain('"@shadcn-nsh/theme"');
     expect(out.text).toContain('from "../../lib/ui/theme"');

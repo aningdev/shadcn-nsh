@@ -149,6 +149,7 @@ export const apple = defineTheme({
       border: "transparent",
       backdropFilter: "blur(30px)",
       material: "glass",
+      effect: { kind: "liquid-glass", intensity: 0.35 },
       light: { shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)" },
       dark: { shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)" },
     },
@@ -169,6 +170,7 @@ export const apple = defineTheme({
     glass: {
       backdropFilter: "blur(30px)",
       material: "glass",
+      effect: { kind: "liquid-glass", intensity: 0.35 },
       light: {
         background: { color: "popover", alpha: 0.72 },
         shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)",

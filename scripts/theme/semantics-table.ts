@@ -162,6 +162,7 @@ const isSurfaceSpec = (value: unknown): value is SurfaceSpec =>
     "shadow" in value ||
     "backdropFilter" in value ||
     "material" in value ||
+    "effect" in value ||
     "elevation" in value ||
     ("light" in value && isObject(value.light)) ||
     ("dark" in value && isObject(value.dark)));
@@ -531,6 +532,7 @@ const FIELD_NOUNS: Record<string, Record<string, string>> = {
     shadow: "投影",
     backdropFilter: "背景模糊",
     material: "材质",
+    effect: "GPU 表面着色",
     elevation: "平台阴影高度（dp）",
   },
 };

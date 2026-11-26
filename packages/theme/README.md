@@ -7,7 +7,8 @@ Theme v5 runtime and theme definitions (`docs/decisions/0020-theme-v5.md`). One 
 | File                                    | Role                                                                                                                                                             |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `schema.ts`                             | Contracts (`ThemeSpec`, `ThemePatch`), `SHARED_TYPE_SCALE`, `EASING_BEZIERS`, `defineTheme()`, and `compileNshTheme()`                                           |
-| `materials.ts`                          | Platform glass and acrylic material recipes                                                                                                                      |
+| `materials.ts`                          | Platform glass and acrylic material recipes, plus `resolveMaterial()` for a parameterized spec                                                                   |
+| `effects.ts`                            | Built-in WGSL surface and theme-switch shaders (`SURFACE_SHADERS`, `TRANSITION_SHADERS`)                                                                         |
 | `themes/nsh-gallery/index.ts`           | Complete `base` theme spec (`baseSpec`, `base`, `nshGallery`)                                                                                                    |
 | `themes/<id>/index.ts`                  | Sparse overrides (`shadcn`, `solid-glass`, `apple`, `material`, `winui`) and `themes/native/`                                                                    |
 | `preset.ts`                             | Build-time preset re-export (replaced by `init --theme <id>` with the chosen theme)                                                                              |
@@ -31,4 +32,4 @@ Theme v5 runtime and theme definitions (`docs/decisions/0020-theme-v5.md`). One 
 ## Authoring & Runtime Switching
 
 - Build and validate after theme changes: `bun run tokens:build && bun run check:theme && bun run theme:contrast && bun run theme:parity`
-- App initialization (`shadcn-nsh init --theme <id>`) installs `theme.json` and `DESIGN.md` at the app root alongside `lib/ui/{schema,materials,base,preset,theme}.ts`. Adding another theme (`shadcn-nsh add theme-<id>`) copies `themes/<id>.ts` for `selectTheme()`.
+- App initialization (`shadcn-nsh init --theme <id>`) installs `theme.json` and `DESIGN.md` at the app root alongside `lib/ui/{schema,materials,effects,base,preset,theme}.ts`. Adding another theme (`shadcn-nsh add theme-<id>`) copies `themes/<id>.ts` for `selectTheme()`.

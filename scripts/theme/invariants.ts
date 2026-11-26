@@ -1,15 +1,17 @@
 /**
  * Theme v5 structural, pointer/touch ergonomic, and physics motion invariants (`scripts/theme-lint.ts`).
  */
-import { materials } from "../../packages/theme/materials";
+import { resolveMaterial } from "../../packages/theme/materials";
 import {
   SHARED_TYPE_SCALE,
   type AppTheme,
+  type SurfaceLayer,
+  type SurfaceMaterial,
   type SurfaceRole,
   type TieredOrFlat,
   type TypeRole,
 } from "../../packages/theme/schema";
-import { parseColor } from "./oklch";
+import { resolveColour, varsOf } from "./css-colour";
 
 export const ALLOWED_SPACING = new Set([4, 8, 12, 16, 24, 32]);
 
@@ -50,6 +52,37 @@ function asBox(
 ): readonly [number, number] {
   if (v === "same") return fallback;
   return typeof v === "number" ? [v, v] : v;
+}
+
+function materialLabel(material: SurfaceMaterial): string {
+  return typeof material === "string" ? material : material.kind;
+}
+
+function cssAlpha(expr: string, entry: AppTheme, mode: "light" | "dark"): number | undefined {
+  const cssVars = { ...entry.theme.cssVars.theme, ...entry.theme.cssVars[mode] };
+  const raw = expr in cssVars ? cssVars[expr]! : expr;
+  try {
+    const rgb = resolveColour(raw, varsOf(cssVars));
+    return rgb.a ?? 1;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Effective opacity of a layer fill: a color-key's own alpha, or that alpha times a spec's `alpha`. */
+function backgroundAlpha(
+  bg: SurfaceLayer["background"],
+  entry: AppTheme,
+  mode: "light" | "dark",
+): number | undefined {
+  if (bg === undefined || bg === null) return undefined;
+  if (typeof bg === "string") return cssAlpha(bg, entry, mode);
+  if ("color" in bg) {
+    const base = cssAlpha(bg.color, entry, mode) ?? 1;
+    return base * bg.alpha;
+  }
+  if ("tint" in bg) return bg.alpha ?? entry.spec.tokens.tintAlpha[mode];
+  return undefined;
 }
 
 /**
@@ -281,29 +314,51 @@ export function validateThemeInvariants(entry: AppTheme): string[] {
     fail('motion.presets.themeSwitch.duration must be 0 when kind is "none"');
   }
 
-  // 7. Material fallback opacity floor
+  // 7. Material fallback opacity floor, parameterized bounds, and effect strength
   for (const role of SURFACE_ROLES) {
     const s = spec.surfaces[role];
     for (const mode of ["light", "dark"] as const) {
       const merged = { ...s, ...s[mode] };
-      if (!merged.material) continue;
-      const minOpacity = materials[merged.material].fallback.minOpacity;
-      const bg = merged.background;
-      if (
-        typeof bg === "object" &&
-        bg !== null &&
-        "alpha" in bg &&
-        bg.alpha !== undefined &&
-        bg.alpha < minOpacity
-      ) {
-        fail(
-          `surfaces.${role}.${mode} material ${merged.material} alpha ${bg.alpha} < ${minOpacity}`,
-        );
-      } else if (typeof bg === "string" && bg.startsWith("oklch(")) {
-        const rgb = parseColor(bg);
-        if ((rgb.a ?? 1) < minOpacity) {
+      if (merged.material) {
+        const label = materialLabel(merged.material);
+        if (typeof merged.material === "object") {
+          const specMaterial = merged.material;
+          if (
+            specMaterial.blur !== undefined &&
+            (specMaterial.blur < 4 || specMaterial.blur > 60)
+          ) {
+            fail(
+              `surfaces.${role}.${mode} material ${label} blur=${specMaterial.blur} outside [4, 60]`,
+            );
+          }
+          if (
+            specMaterial.saturate !== undefined &&
+            (specMaterial.saturate < 0.8 || specMaterial.saturate > 2.5)
+          ) {
+            fail(
+              `surfaces.${role}.${mode} material ${label} saturate=${specMaterial.saturate} outside [0.8, 2.5]`,
+            );
+          }
+          if (
+            specMaterial.minOpacity !== undefined &&
+            (specMaterial.minOpacity < 0.55 || specMaterial.minOpacity > 1)
+          ) {
+            fail(
+              `surfaces.${role}.${mode} material ${label} minOpacity=${specMaterial.minOpacity} outside [0.55, 1]`,
+            );
+          }
+        }
+        const minOpacity = resolveMaterial(merged.material).minOpacity;
+        const alpha = backgroundAlpha(merged.background, entry, mode);
+        if (alpha !== undefined && alpha < minOpacity) {
+          fail(`surfaces.${role}.${mode} material ${label} alpha ${alpha} < ${minOpacity}`);
+        }
+      }
+      if (merged.effect) {
+        const intensity = merged.effect.intensity;
+        if (!(intensity === undefined || (intensity > 0 && intensity <= 1))) {
           fail(
-            `surfaces.${role}.${mode} material ${merged.material} alpha ${rgb.a} < ${minOpacity}`,
+            `surfaces.${role}.${mode} effect ${merged.effect.kind} intensity=${String(intensity)} outside (0, 1]`,
           );
         }
       }

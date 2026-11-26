@@ -94,7 +94,7 @@ test("double focus, timing motion, state-layer inks and platform material follow
     pop: { scale: 0.96, y: 0, spring: null },
     dlg: { scale: 0.96, y: 0, spring: null },
     glide: { dur: 150, spring: null },
-    switch: { kind: "fade", duration: 200 },
+    switch: { kind: "fade", duration: 200, shader: null },
   });
 
   await app.press("text:Apple");
@@ -102,7 +102,7 @@ test("double focus, timing motion, state-layer inks and platform material follow
     pop: { scale: 0.96, y: 0, spring: { stiffness: 340, damping: 30, mass: 1 } },
     dlg: { scale: 0.96, y: 0, spring: { stiffness: 340, damping: 30, mass: 1 } },
     glide: { dur: 150, spring: { stiffness: 340, damping: 30, mass: 1 } },
-    switch: { kind: "dissolve", duration: 240 },
+    switch: { kind: "dissolve", duration: 240, shader: "shader" },
   });
 
   await app.press("text:Material");
@@ -110,7 +110,7 @@ test("double focus, timing motion, state-layer inks and platform material follow
     pop: { scale: 0.96, y: -4, spring: { stiffness: 380, damping: 32, mass: 1 } },
     dlg: { scale: 0.94, y: 8, spring: { stiffness: 380, damping: 32, mass: 1 } },
     glide: { dur: 150, spring: { stiffness: 380, damping: 32, mass: 1 } },
-    switch: { kind: "radial-wipe", duration: 320 },
+    switch: { kind: "radial-wipe", duration: 320, shader: "shader" },
   });
 
   await app.press("text:WinUI");
@@ -118,7 +118,7 @@ test("double focus, timing motion, state-layer inks and platform material follow
     pop: { scale: 1, y: -6, spring: null },
     dlg: { scale: 1.04, y: 0, spring: null },
     glide: { dur: 83, spring: null },
-    switch: { kind: "fade", duration: 167 },
+    switch: { kind: "fade", duration: 167, shader: null },
   });
 
   // Switch back to the build-time theme cleanly.

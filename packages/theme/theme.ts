@@ -28,7 +28,12 @@ import {
   token,
 } from "nsh";
 
-import { materials, type MaterialRecipe } from "./materials";
+import {
+  resolveSurfaceEffect,
+  resolveTransitionShader,
+  type ResolvedSurfaceEffect,
+} from "./effects";
+import { resolveMaterial, type ResolvedMaterial } from "./materials";
 import { presetTheme } from "./preset";
 import {
   EASING_BEZIERS,
@@ -39,6 +44,7 @@ import {
   type CoreColorKey,
   type ElevationScale,
   type FaceExpr,
+  type MaterialSpec,
   type Mode,
   type ModeOrFlat,
   type MotionSpringSpec,
@@ -46,7 +52,10 @@ import {
   type ShadowPart,
   type SlotCorner,
   type SlotSize,
+  type SurfaceEffectKind,
+  type SurfaceEffectSpec,
   type SurfaceLayer,
+  type SurfaceMaterial,
   type SurfaceRole,
   type SurfaceSpec,
   type ThemeSpec,
@@ -65,11 +74,16 @@ export type {
   CoreColorKey,
   ElevationScale,
   FaceExpr,
+  MaterialSpec,
   Mode,
   ModeOrFlat,
   MotionSpringSpec,
+  ResolvedSurfaceEffect,
   SlotCorner,
   SlotSize,
+  SurfaceEffectKind,
+  SurfaceEffectSpec,
+  SurfaceMaterial,
   SurfaceRole,
   SurfaceSpec,
   ThemeSpec,
@@ -79,6 +93,14 @@ export type {
   ToneColorKey,
   TypeRole,
 };
+
+export {
+  SURFACE_SHADERS,
+  TRANSITION_SHADERS,
+  resolveSurfaceEffect,
+  resolveTransitionShader,
+} from "./effects";
+export { resolveMaterial } from "./materials";
 
 /** Terminal idiom metrics (`16x8` character grid points). */
 export const terminal = platform.idiom === "terminal";
@@ -506,6 +528,14 @@ export interface ResolvedSurface {
   readonly style: ViewStyle;
   readonly ink: string;
   readonly platformProps: PlatformMaterialProps;
+  /** GPU surface shader, or `null` in the terminal, under reduced motion, or when the layer asks for none. */
+  readonly effect: ResolvedSurfaceEffect | null;
+}
+
+function backdropFilterFor(resolved: ResolvedMaterial): string {
+  const blur = `blur(${resolved.blur}px)`;
+  if (resolved.saturate === undefined) return blur;
+  return `${blur} saturate(${Math.round(resolved.saturate * 100)}%)`;
 }
 
 function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
@@ -522,25 +552,40 @@ function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
   const borderBottom = resolveColor(layer.borderBottom);
   if (borderBottom !== null) style.borderBottomColor = borderBottom;
 
-  const recipe: MaterialRecipe | undefined = layer.material ? materials[layer.material] : undefined;
-  if (layer.backdropFilter) {
-    style.backdropFilter = layer.backdropFilter;
-  } else if (recipe) {
-    style.backdropFilter = `blur(${recipe.fallback.blur}px)`;
+  const resolved = layer.material ? resolveMaterial(layer.material) : undefined;
+  if (layer.backdropFilter !== undefined) {
+    if (layer.backdropFilter !== null) style.backdropFilter = layer.backdropFilter;
+  } else if (resolved) {
+    style.backdropFilter = backdropFilterFor(resolved);
   }
-  if (recipe?.glassEffect !== undefined) {
-    style.glassEffect = recipe.glassEffect;
+  if (resolved?.glassEffect !== undefined) {
+    style.glassEffect = resolved.glassEffect;
     if (bg !== null) style.glassTintColor = bg;
+  }
+  if (resolved?.specular) {
+    const specColor = resolveColor(resolved.specular);
+    if (specColor) {
+      const highlight = `inset 0 1px 0 ${specColor}`;
+      const existing = style.boxShadow;
+      if (typeof existing === "string" && existing !== "none") {
+        style.boxShadow = `${highlight}, ${resolveTokenAliases(existing)}`;
+      } else if (Array.isArray(existing)) {
+        style.boxShadow = [{ x: 0, y: 1, color: specColor, inset: true }, ...existing];
+      } else {
+        style.boxShadow = highlight;
+      }
+    }
   }
 
   const ink = resolveColor(layer.foreground) ?? colors.foreground;
   const platformProps: PlatformMaterialProps = {
-    ...(recipe?.props.ios ? { ios: recipe.props.ios } : {}),
-    ...(recipe?.props.windows ? { windows: recipe.props.windows } : {}),
+    ...(resolved?.props.ios ? { ios: resolved.props.ios } : {}),
+    ...(resolved?.props.windows ? { windows: resolved.props.windows } : {}),
     ...(typeof layer.elevation === "number" ? { android: { elevation: layer.elevation } } : {}),
   };
+  const effect = terminal || reduceMotion() ? null : resolveSurfaceEffect(layer.effect);
 
-  return { style, ink, platformProps };
+  return { style, ink, platformProps, effect };
 }
 
 function mergeSurfaceSpec(spec: SurfaceSpec): SurfaceLayer {
@@ -716,9 +761,18 @@ export const motion = {
     };
   },
   /** Transition policy when switching runtime themes (`selectTheme`). */
-  get themeSwitch(): { readonly kind: ThemeSwitchKind; readonly duration: number } {
-    if (reduceMotion()) return { kind: "none", duration: 0 };
-    return activeSpec().motion.presets.themeSwitch;
+  get themeSwitch(): {
+    readonly kind: ThemeSwitchKind;
+    readonly duration: number;
+    readonly shader: string | null;
+  } {
+    if (reduceMotion()) return { kind: "none", duration: 0, shader: null };
+    const sw = activeSpec().motion.presets.themeSwitch;
+    return {
+      kind: sw.kind,
+      duration: sw.duration,
+      shader: resolveTransitionShader(sw.kind),
+    };
   },
   transition(properties: string, role: "state" | "fast" | "default" | "slow" = "state"): ViewStyle {
     if (reduceMotion()) return { transitionProperty: "none" };

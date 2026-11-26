@@ -7,7 +7,8 @@ Theme v5 主题契约与运行时读取层（决策见 [`docs/decisions/0020-the
 | 文件                                    | 职责                                                                                                                                                     |
 | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `schema.ts`                             | 契约类型（`ThemeSpec`、`ThemePatch`）、`SHARED_TYPE_SCALE`、`EASING_BEZIERS`、`defineTheme()`、`compileNshTheme()`                                       |
-| `materials.ts`                          | 平台玻璃与亚克力材质配方                                                                                                                                 |
+| `materials.ts`                          | 平台玻璃与亚克力材质配方，以及参数化材质的 `resolveMaterial()`                                                                                           |
+| `effects.ts`                            | 内置 WGSL 表面与主题切换着色器（`SURFACE_SHADERS`、`TRANSITION_SHADERS`）                                                                                |
 | `themes/nsh-gallery/index.ts`           | 完整 `base` 主题源码（`baseSpec`、`base`、`nshGallery`）                                                                                                 |
 | `themes/<id>/index.ts`                  | 稀疏覆写主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）与 `themes/native/`                                                                 |
 | `preset.ts`                             | 构建时预设导出（`init --theme <id>` 时指向所选主题）                                                                                                     |
@@ -34,4 +35,4 @@ Theme v5 主题契约与运行时读取层（决策见 [`docs/decisions/0020-the
 bun run tokens:build && bun run check:theme && bun run theme:contrast && bun run theme:parity
 ```
 
-应用通过 `shadcn-nsh init --theme <id>` 初始化后，会在项目根目录写入 `theme.json` 与 `DESIGN.md`，并在 `lib/ui/` 下写入精简源码（`schema.ts`、`materials.ts`、`base.ts`、`preset.ts`、`theme.ts`）。执行 `shadcn-nsh add theme-<id>` 时仅复制 `themes/<id>.ts` 供 `selectTheme()` 运行时切换。
+应用通过 `shadcn-nsh init --theme <id>` 初始化后，会在项目根目录写入 `theme.json` 与 `DESIGN.md`，并在 `lib/ui/` 下写入精简源码（`schema.ts`、`materials.ts`、`effects.ts`、`base.ts`、`preset.ts`、`theme.ts`）。执行 `shadcn-nsh add theme-<id>` 时仅复制 `themes/<id>.ts` 供 `selectTheme()` 运行时切换。

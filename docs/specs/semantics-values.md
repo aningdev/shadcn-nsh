@@ -220,9 +220,11 @@
 | `surfaces.raised.material` | 凸起控件面的材质 | — | — | `glass` | — | — |
 | `surfaces.overlay.backdropFilter` | 菜单与浮层面的背景模糊 | — | — | `blur(30px)` | — | — |
 | `surfaces.overlay.material` | 菜单与浮层面的材质 | — | — | `glass` | — | `acrylic` |
+| `surfaces.overlay.effect` | 菜单与浮层面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.35}` | — | `{"kind":"acrylic-noise","intensity":0.035}` |
 | `surfaces.inverse.backdropFilter` | 反色面的背景模糊 | — | — | `blur(30px)` | — | — |
 | `surfaces.inverse.material` | 反色面的材质 | — | — | `glass` | — | — |
-| `surfaces.glass.material` | 玻璃面的材质 | — | — | `glass` | — | — |
+| `surfaces.glass.material` | 玻璃面的材质 | — | — | `glass` | — | `acrylic` |
+| `surfaces.glass.effect` | 玻璃面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.35}` | — | `{"kind":"acrylic-noise","intensity":0.035}` |
 | `surfaces.card.elevation` | 卡片面的平台阴影高度（dp） | — | — | — | 1 | — |
 | `surfaces.raised.elevation` | 凸起控件面的平台阴影高度（dp） | — | — | — | 1 | — |
 | `surfaces.plate.elevation` | 井内选中滑块面的平台阴影高度（dp） | — | — | — | 0 | — |

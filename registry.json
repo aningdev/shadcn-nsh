@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,base,preset,theme}.ts).",
+      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,effects,base,preset,theme}.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -27,6 +27,11 @@
           "path": "packages/theme/materials.ts",
           "type": "registry:lib",
           "target": "lib/ui/materials.ts"
+        },
+        {
+          "path": "packages/theme/effects.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/effects.ts"
         },
         {
           "path": "packages/theme/themes/nsh-gallery/index.ts",

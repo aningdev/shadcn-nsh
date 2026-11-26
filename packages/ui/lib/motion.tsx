@@ -2,9 +2,17 @@
 // rolling counters, press sink transforms, and touch hit-target expansion.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { feedback, motion as themeMotion, press, type Timing } from "@shadcn-nsh/theme";
+import { feedback, motion as themeMotion, press, terminal, type Timing } from "@shadcn-nsh/theme";
 import type { MotionSpec as NshMotionSpec, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { createMotion, effect, reduceMotion, signal, Text } from "nsh";
+import {
+  createMotion,
+  effect,
+  reduceMotion,
+  ScreenTransition,
+  shadersAvailable,
+  signal,
+  Text,
+} from "nsh";
 
 import { type Live, read } from "./utils";
 
@@ -164,5 +172,49 @@ export function Roll(props: { value: number; style?: StyleProp<TextStyle>; child
     <Text style={[props.style ?? null, { transform: motion.transform, opacity: motion.opacity }]}>
       {props.children}
     </Text>
+  );
+}
+
+/**
+ * Props of `ThemeTransition`. `value` is what `ScreenTransition` watches: a string, a number or a
+ * boolean, because that is the identity a screen transition compares.
+ */
+export interface ThemeTransitionProps {
+  /** Identity of the screen being shown. A change runs the active theme's switch. */
+  readonly value: string | number | boolean;
+  /** Length of the transition in milliseconds. Defaults to the theme's `themeSwitch.duration`. */
+  readonly duration?: number;
+}
+
+/**
+ * The active theme's screen transition when `value` changes. A theme that switches with `"none"`,
+ * and the terminal, draw nothing. Where a GPU shader is available the theme's WGSL runs; otherwise
+ * the platform cross-fades.
+ */
+export function ThemeTransition(props: ThemeTransitionProps) {
+  return (
+    <>
+      {() => {
+        const sw = themeMotion.themeSwitch;
+        if (sw.kind === "none" || terminal) return null;
+        if (sw.shader && shadersAvailable()) {
+          return (
+            <ScreenTransition
+              value={props.value}
+              source={sw.shader}
+              duration={props.duration ?? sw.duration}
+              fallback="fade"
+            />
+          );
+        }
+        return (
+          <ScreenTransition
+            value={props.value}
+            duration={props.duration ?? sw.duration}
+            fallback="fade"
+          />
+        );
+      }}
+    </>
   );
 }

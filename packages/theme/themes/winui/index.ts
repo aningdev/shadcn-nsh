@@ -161,6 +161,7 @@ export const winui = defineTheme({
     },
     overlay: {
       material: "acrylic",
+      effect: { kind: "acrylic-noise", intensity: 0.035 },
       light: {
         background: { color: "popover", alpha: 0.85 },
         border: "oklch(0 0 0 / 0.059)",
@@ -186,6 +187,8 @@ export const winui = defineTheme({
       border: "line",
       shadow: null,
       backdropFilter: "blur(30px)",
+      material: "acrylic",
+      effect: { kind: "acrylic-noise", intensity: 0.035 },
       light: { background: { color: "popover", alpha: 0.85 } },
       dark: { background: { color: "popover", alpha: 0.96 } },
     },

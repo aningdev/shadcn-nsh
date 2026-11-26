@@ -16,9 +16,10 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
+  type SurfaceRole,
 } from "@shadcn-nsh/theme";
-import type { ViewStyle } from "nsh";
-import { computed, platform, Text, View, windowSize } from "nsh";
+import type { JSX, StyleProp, ViewStyle } from "nsh";
+import { computed, platform, ShaderEffect, shadersAvailable, Text, View, windowSize } from "nsh";
 
 import { type Live, read } from "./utils";
 
@@ -179,6 +180,55 @@ export function insetSurface(): ViewStyle {
     ...rounded(shape.control),
     boxShadow: inset.style.boxShadow,
   };
+}
+
+/** Props of `ThemedSurface`. */
+export interface ThemedSurfaceProps {
+  /** Semantic surface the view paints (`surface(role)`). */
+  readonly role: SurfaceRole;
+  /** Extra classes on the view. */
+  readonly class?: string;
+  /** Style laid over the surface's own style. */
+  readonly style?: StyleProp<ViewStyle>;
+  /** Content drawn in the surface. Read once and passed to whichever view paints it. */
+  readonly children?: JSX.Element;
+}
+
+/**
+ * A view painted with one semantic surface. When that surface asks for a GPU effect and this
+ * device can draw shaders, the effect samples the children; otherwise the same props paint a
+ * plain view, including in the terminal and wherever shaders are unavailable.
+ */
+export function ThemedSurface(props: ThemedSurfaceProps) {
+  // Read once in the body (`check:children`); reactive render reads `surface(role)` on theme switches.
+  const kids = props.children;
+  return (
+    <>
+      {() => {
+        const s = surface(props.role);
+        const style = [s.style, props.style ?? null];
+        if (s.effect && shadersAvailable() && !terminal) {
+          return (
+            <ShaderEffect
+              source={s.effect.source}
+              uniforms={s.effect.uniforms}
+              maxSampleOffset={s.effect.maxSampleOffset}
+              {...s.platformProps}
+              class={props.class}
+              style={style}
+            >
+              {kids}
+            </ShaderEffect>
+          );
+        }
+        return (
+          <View {...s.platformProps} class={props.class} style={style}>
+            {kids}
+          </View>
+        );
+      }}
+    </>
+  );
 }
 
 /** A pill's corners: half the tallest it gets, so any height rounds to a pill. */

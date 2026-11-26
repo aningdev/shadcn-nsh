@@ -78,6 +78,7 @@ describe("init --theme", () => {
     expect(current.read("lib/ui/preset.ts")).toContain('from "../../themes/shadcn"');
     expect(current.exists("lib/ui/schema.ts")).toBe(true);
     expect(current.exists("lib/ui/materials.ts")).toBe(true);
+    expect(current.exists("lib/ui/effects.ts")).toBe(true);
     expect(current.exists("lib/ui/base.ts")).toBe(true);
     expect(current.exists("lib/ui/theme.ts")).toBe(true);
     expect(recordedTheme(current)).toBe("theme-shadcn");

@@ -1,3 +1,4 @@
+export * from "./effects";
 export * from "./materials";
 export * from "./preset";
 export * from "./schema";

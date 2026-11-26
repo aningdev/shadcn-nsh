@@ -68,7 +68,7 @@ const showPresets = () => {
     pop: { scale: pop.fromScale, y: pop.fromY, spring: pop.spring ?? null },
     dlg: { scale: dlg.fromScale, y: dlg.fromY, spring: dlg.spring ?? null },
     glide: { dur: glide.timing.duration, spring: glide.spring ?? null },
-    switch: sw,
+    switch: { kind: sw.kind, duration: sw.duration, shader: sw.shader ? "shader" : null },
   });
 };
 

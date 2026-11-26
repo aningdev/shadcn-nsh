@@ -134,8 +134,12 @@ export const solidGlass = defineTheme({
     glass: {
       background: "surface",
       border: "line",
+      material: { kind: "blur", blur: 14, saturate: 1.8, minOpacity: 0.55 },
+      effect: { kind: "specular-rim", intensity: 0.4 },
       light: { background: "surface", backdropFilter: "blur(14px) saturate(180%)" },
-      dark: { background: "surface", backdropFilter: "blur(14px)" },
+      // Dark `surface` is white at 0.07. The blur floor is 0.55, so this face uses the
+      // dark card at 0.72 instead of raising the shared `surface` token.
+      dark: { background: { color: "card", alpha: 0.72 }, backdropFilter: "blur(14px)" },
     },
     accent: {
       light: {
