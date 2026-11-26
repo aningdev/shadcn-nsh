@@ -1,0 +1,18 @@
+const host=globalThis.__nsh_browser_realm.modules;
+let e0=host.get("nsh")["Easing"];export{e0 as "Easing"};
+let e1=host.get("nsh")["Storage"];export{e1 as "Storage"};
+let e2=host.get("nsh")["Text"];export{e2 as "Text"};
+let e3=host.get("nsh")["View"];export{e3 as "View"};
+let e4=host.get("nsh")["colorScheme"];export{e4 as "colorScheme"};
+let e5=host.get("nsh")["computed"];export{e5 as "computed"};
+let e6=host.get("nsh")["context"];export{e6 as "context"};
+let e7=host.get("nsh")["effect"];export{e7 as "effect"};
+let e8=host.get("nsh")["mount"];export{e8 as "mount"};
+let e9=host.get("nsh")["platform"];export{e9 as "platform"};
+let e10=host.get("nsh")["reduceMotion"];export{e10 as "reduceMotion"};
+let e11=host.get("nsh")["setTheme"];export{e11 as "setTheme"};
+let e12=host.get("nsh")["signal"];export{e12 as "signal"};
+let e13=host.get("nsh")["split"];export{e13 as "split"};
+let e14=host.get("nsh")["token"];export{e14 as "token"};
+let e15=host.get("nsh")["windowSize"];export{e15 as "windowSize"};
+globalThis.__nsh_browser_realm.watch(()=>{e0=host.get("nsh")["Easing"];e1=host.get("nsh")["Storage"];e2=host.get("nsh")["Text"];e3=host.get("nsh")["View"];e4=host.get("nsh")["colorScheme"];e5=host.get("nsh")["computed"];e6=host.get("nsh")["context"];e7=host.get("nsh")["effect"];e8=host.get("nsh")["mount"];e9=host.get("nsh")["platform"];e10=host.get("nsh")["reduceMotion"];e11=host.get("nsh")["setTheme"];e12=host.get("nsh")["signal"];e13=host.get("nsh")["split"];e14=host.get("nsh")["token"];e15=host.get("nsh")["windowSize"];});

@@ -1,1 +1,0 @@
-import{cleanup as e,signal as t}from"./facades/nsh.40a708e4ce.js";function n(){let n=t(!1),r;return e(()=>clearTimeout(r)),{copied:n,mark:()=>{n.set(!0),clearTimeout(r),r=setTimeout(()=>n.set(!1),2e3)}}}export{n as t};

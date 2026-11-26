@@ -10,18 +10,14 @@
 
 <ThemeTokenLead />
 
-### The slots NSH resolves [#the-slots-nsh-resolves]
+### The appearance roles [#the-appearance-roles]
 
-<ThemeTokens id="apple" group="slots" />
-
-### The library's own tokens [#the-librarys-own-tokens]
-
-<ThemeTokens id="apple" group="extension" />
+<ThemeTokens id="apple" group="roles" />
 
 ### The shared values [#the-shared-values]
 
 <ThemeTokens id="apple" group="shared" />
 
-## Finishes [#finishes]
+## Surfaces [#surfaces]
 
-<ThemeFinishes id="apple" />
+<ThemeSurfaces id="apple" />

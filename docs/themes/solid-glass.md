@@ -10,18 +10,14 @@
 
 <ThemeTokenLead />
 
-### The slots NSH resolves [#the-slots-nsh-resolves]
+### The appearance roles [#the-appearance-roles]
 
-<ThemeTokens id="solid-glass" group="slots" />
-
-### The library's own tokens [#the-librarys-own-tokens]
-
-<ThemeTokens id="solid-glass" group="extension" />
+<ThemeTokens id="solid-glass" group="roles" />
 
 ### The shared values [#the-shared-values]
 
 <ThemeTokens id="solid-glass" group="shared" />
 
-## Finishes [#finishes]
+## Surfaces [#surfaces]
 
-<ThemeFinishes id="solid-glass" />
+<ThemeSurfaces id="solid-glass" />

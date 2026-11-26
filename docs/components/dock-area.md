@@ -54,7 +54,7 @@ Leave the render props out and the area uses `DockTab` and `DockDragPreview`; `d
 
 `DockArea` spreads `dockClasses` and default tab/panel renderers. Every prop of [`nsh/base` DockArea](https://nsh.dev/elements/dock) passes through, and so do the types those props, its ref and its callbacks name — a call site reads them from this file, not from `nsh/base`: `DockAreaProps`, `DockAreaRef`, `DockAreaLayout`, `DockRegion`, `DockNode`, `DockPlacement`, `DockPanel`, `DockPanelOptions`, `DockTarget`, `DockDropIndicator` and `DockInfo`.
 
-`groupClass` is applied after the look's `flex-1 bg-inset`. A later background utility replaces the fill, so `groupClass="bg-card"` draws card-colored groups without `groupStyle`.
+`groupClass` is applied after the look's `flex-1 bg-muted`. A later background utility replaces the fill, so `groupClass="bg-card"` draws card-colored groups without `groupStyle`.
 
 A tab as `renderTab` and `renderDragPreview` receive it is `DockTabValue`: `nsh/base`'s `DockTab`, named so here because `DockTab` is the component the tab is drawn with.
 

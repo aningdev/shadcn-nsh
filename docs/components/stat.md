@@ -81,9 +81,9 @@ trend without axes or a pointer — `interactive={false}`.
       interactive={false}
       style={{ width: 104, height: 38 }}
     >
-      <Area curve="natural" backgroundStyle={plotWash(colors.up, 0.2)} />
+      <Area curve="natural" backgroundStyle={plotWash(colors.success, 0.2)} />
       <Grid y={[previousClose]} style={plotReference(colors.mutedForeground)} />
-      <Line curve="natural" style={{ stroke: colors.up, strokeWidth: 1.75 }} />
+      <Line curve="natural" style={{ stroke: colors.success, strokeWidth: 1.75 }} />
     </Plot>
     <View
       style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, pointerEvents: "none" }}
@@ -98,9 +98,9 @@ trend without axes or a pointer — `interactive={false}`.
         <Dot
           value="price"
           r={5.5}
-          style={{ fill: "transparent", stroke: alpha(colors.up, 0.4), strokeWidth: 1.5 }}
+          style={{ fill: "transparent", stroke: alpha(colors.success, 0.4), strokeWidth: 1.5 }}
         />
-        <Dot value="price" r={2.5} style={{ fill: colors.up }} />
+        <Dot value="price" r={2.5} style={{ fill: colors.success }} />
       </Plot>
     </View>
   </View>

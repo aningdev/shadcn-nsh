@@ -138,10 +138,12 @@ const CHIP_EXTENSIONS = [
   extensions={CHIP_EXTENSIONS}
   styles={{ root: { fontSize: 17, lineHeight: 26 } }}
   renderCustom={(node) => (
-    <View class="border-border bg-inset h-5 flex-row items-center gap-1.5 rounded-full border px-2 align-middle">
+    <View class="border-border bg-muted h-5 flex-row items-center gap-1.5 rounded-full border px-2 align-middle">
       <View
         class={
-          node.name === "task" ? "bg-info size-1.5 rounded-full" : "bg-up size-1.5 rounded-full"
+          node.name === "task"
+            ? "bg-info size-1.5 rounded-full"
+            : "bg-success size-1.5 rounded-full"
         }
       />
       <Text class="font-mono text-[13px] leading-4">{node.text}</Text>

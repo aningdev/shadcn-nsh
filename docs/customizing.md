@@ -2,27 +2,27 @@
 
 `init` and `add` copy files into the app; after that they are the app's own. There are three places to change them.
 
-| Change                 | Where                                                    | Reaches                                   |
-| ---------------------- | -------------------------------------------------------- | ----------------------------------------- |
-| Colors, radii, shadows | `theme.json`, `lib/ui/semantics.json`                    | every component                           |
-| One control's look     | its `*Look` function in `components/ui/<id>.tsx`         | that control's variants, sizes and states |
-| Structure or API       | the component and parts after the look, in the same file | that component's props and parts          |
+| Change                  | Where                                                    | Reaches                                   |
+| ----------------------- | -------------------------------------------------------- | ----------------------------------------- |
+| Colors, radii, surfaces | `theme.json` (and `lib/ui/themes/<id>.ts` for the rest)  | every component                           |
+| One control's look      | its `*Look` function in `components/ui/<id>.tsx`         | that control's variants, sizes and states |
+| Structure or API        | the component and parts after the look, in the same file | that component's props and parts          |
 
 In a monorepo, every path starts at `packages/ui/` instead of the app root.
 
 ## Colors, radii and shadows [#colors-radii-and-shadows]
 
-`theme.json` holds the colors for both appearances, the three `radius-*` layer lengths, and font families; `lib/ui/semantics.json` holds style groups and surface finishes (`shared` + sparse `light`/`dark`), referencing tokens with `{token}`. Every component reads them through `lib/ui/theme.ts`.
+`theme.json` holds the colors for both appearances, the three `radius-*` layer lengths, the fixed `scrim` / `media` / `on-media` values and, if the app has its own, the font families. Every component reads them through `lib/ui/theme.ts`.
 
 ```sh
-theme.json               # base tokens: colors, 3 radii, fonts
-lib/ui/semantics.json    # style groups and surface finishes
-lib/ui/theme.ts          # colors, finish, shape, font, control, focusRing, alpha
+theme.json               # the roles of both appearances, 3 radii, fonts
+lib/ui/theme.ts          # colors, surface, control, feedback, shape, font, focusRing, alpha
+lib/ui/themes/<id>.ts    # the spec itself: surfaces, metrics, motion — add theme-<id>
 ```
 
-Edit the values and keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape. This is the change that reaches every component at once. [Theme](./theme) lists the roles.
+Edit the values and keep the keys: components and surfaces refer to them by name, and both appearances need the same set. This is the change that reaches every component at once. [Theme](./theme) lists the roles.
 
-A copied `semantics.json` writes every field of every finish, so nothing here is guessed: a field the theme does not care about carries its neutral value — `material: null`, `backdropFilter: "none"`, `elevation: null`, `gradient: null` (a flat fill), the pressed pair `null` (pressing only dims), and no colour of its own on the top or bottom edge, which then takes the finish's `border-color`. In the library's own sources those neutrals are written once in `packages/theme/tokens/base/style.shared.tokens.json`; in a copied app they are simply there. If you add a finish role, copy every field of a neighbouring role and change the ones that differ, and state device-dependent sizes twice, under `pointer` and `touch`, with the same keys.
+What `theme.json` does not carry is the spec's own depth: the eleven `surfaces` (fill, gradient, shadow, edges, material), `feedback` (hover, press, focus, disabled, passive), `controls` (a switch's track, a field's focus line) and `metrics` (sizes per input tier). Those live in `lib/ui/themes/<id>.ts`, which `add theme-<id>` installs and which `defineTheme()` compiles: a field a surface leaves out is a neutral (no gradient, no material, no shadow), and a shadow names the parts of the theme's own `elevation` scale rather than writing one. If you add a surface, copy every field of a neighbouring one and change the ones that differ, and state device-dependent sizes twice, under `pointer` and `touch`, with the same keys.
 
 ```json
 {
@@ -41,7 +41,7 @@ A copied `semantics.json` writes every field of every finish, so nothing here is
 
 ## One control's look [#one-controls-look]
 
-The look is the function that turns a `variant` (shadcn's word: `default`, `secondary`, `ghost`, `destructive`), a `size` (`sm`, `default`, `lg`), a `tone` (the theme's `Tone`: `neutral`, `accent`, `info`, `warn`, `destructive`, `up`, `down`) and a state into the props `nsh/base` draws with. It sits at the top of a copied component, above the component itself.
+The look is the function that turns a `variant` (shadcn's word: `default`, `secondary`, `ghost`, `destructive`), a `size` (`sm`, `default`, `lg`), a `tone` (the theme's `Tone`: `neutral`, `accent`, `info`, `success`, `warning`, `destructive`) and a state into the props `nsh/base` draws with. It sits at the top of a copied component, above the component itself.
 
 ```tsx
 // components/ui/button.tsx
@@ -60,7 +60,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
 }
 ```
 
-Change the values in that function — a height, a radius, a hover fill — and the shell below still spreads the result. Keep the props it returns; they are what the base control reads. `buttonLook` is one; `iconButtonLook`, `roundButtonLook` and `splitButtonLook` live in the same file, and other components name theirs the same way (`switchLook`, `checkboxLook`). Controls whose shape and dimensions vary by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/indicator.ts` for fields) read the four control dimensions the theme states through `control()`; the per-component geometry that hangs off them stays right inside those component or lib files.
+Change the values in that function — a height, a radius, a hover fill — and the shell below still spreads the result. Keep the props it returns; they are what the base control reads. `buttonLook` is one; `iconButtonLook`, `roundButtonLook` and `splitButtonLook` live in the same file, and other components name theirs the same way (`switchLook`, `checkboxLook`). Controls whose shape and dimensions vary by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/field-look.ts` for fields) read the theme's control geometry through `control("switch")`, `control("slider")`, `control("choice")` and `control("field")`; the per-component geometry that hangs off them stays right inside those component or lib files.
 
 ## Structure and API [#structure-and-api]
 
@@ -83,4 +83,4 @@ Change the shell to change which props a component takes, which parts it exports
 
 ## After an update [#after-an-update]
 
-`add` keeps a file the app changed and reports it; `diff` shows the lines; `add --overwrite` replaces it. `theme.json` and `semantics.json` are the exceptions: one with missing keys is merged, and customized values are kept unless `--overwrite`.
+`add` keeps a file the app changed and reports it; `diff` shows the lines; `add --overwrite` replaces it. `theme.json` is the exception: one with missing keys is merged, and customized values are kept unless `--overwrite`.

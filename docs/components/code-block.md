@@ -131,7 +131,9 @@ passed to `wrap`. There is no floating placement: the actions belong in a `CodeB
   <CodeBlockContent wrap>{output}</CodeBlockContent>
   <CodeBlockFooter>
     Output
-    <Text style={{ flexGrow: 1, fontFamily: "monospace", color: colors.up }}>2 pass, 0 fail</Text>
+    <Text style={{ flexGrow: 1, fontFamily: "monospace", color: colors.success }}>
+      2 pass, 0 fail
+    </Text>
     <Text style={{ color: colors.faint }}>exit 0 · 12 ms</Text>
   </CodeBlockFooter>
 </CodeBlock>

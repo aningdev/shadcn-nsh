@@ -86,7 +86,7 @@ The trigger's edge takes the danger tone.
 
 ### Outline trigger, and a width [#outline-trigger-and-a-width]
 
-`variant="outline"` is a trigger that is not a form's field: the raised finish instead of the
+`variant="outline"` is a trigger that is not a form's field: the `raised` surface instead of the
 field's well.
 
 ```tsx

@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 
 ```tsx
 <Switch checked={on()} onChange={({ checked }) => on.set(checked)}>
-  <Text>Wi-Fi</Text>
+  Wi-Fi
 </Switch>
 ```
 
@@ -22,8 +22,7 @@ import { Switch } from "@/components/ui/switch";
 
 ### Size [#size]
 
-`size` is the knob: `default` takes the theme's `icon.md`, `sm` its `icon.sm`, and the track is
-that knob plus 2 points of room on every side.
+`size` switches between the theme's standard (`default`) and compact (`sm`) switch geometry in `switch.*` and `switch.small.*` (with pointer vs touch scales applied automatically via the active input `tier`; WinUI 3 uses `44 × 22` / `sm 36 × 18` on touch).
 
 ```tsx
 <Switch size="sm" checked={on()} onChange={({ checked }) => on.set(checked)} />
@@ -135,27 +134,24 @@ Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes throug
 
 ### Where the numbers come from [#where-the-numbers-come-from]
 
-A switch's knob is a circle on every theme: WinUI's `ring` handle still gives its switch a round
-knob, and the family whose numbers it uses is the theme's own — the library's disc (above) or
-WinUI's stretching knob, with Material's growing knob wherever the theme tints its track (`tint`).
-The look reads `control()` where it draws, so switching the theme redraws the track and the knob on
-the next frame.
+The track, border (`switch.edge.off`, `switch.edge.on`, `switch.edge.color`), knob dimensions (`switch.track`, `switch.knob.*`), and derived press feedback all read `control("switch")` (`@shadcn-nsh/theme`) so switching themes updates geometry and motion on the next frame:
+
+- **Apple** draws an oval knob on a borderless pill track (`54 × 24` with `31 × 20` knob on pointer; `63 × 28` with `37 × 24` on touch; `sm`: `40 × 18` with `23 × 14` on pointer).
+- **shadcn** draws a borderless pill track (`32 × 18` on pointer, `sm`: `24 × 14`; `44 × 24` / `36 × 20` on touch) with `--input` off track.
+- **Material 3** draws a `40 × 24` (`52 × 32` touch; `sm`: `32 × 20` / `40 × 24`) track with an `outline` border when off and an expanding circle knob (`16 → 20 / 24` on, `22 / 28` pressed; `sm`: `12pt` rest).
+- **WinUI 3** draws a `40 × 20` (`44 × 22` touch; `sm`: `32 × 16` / `36 × 18` touch) track with a strong off border (`ControlStrongStrokeColorDefault`) and a `12pt` (`14pt` touch; `sm`: `10pt` / `12pt`) circle knob that enlarges on hover and stretches while pressed.
+
+A standalone switch adds `focusRing()` shaped to the capsule track and handles disabled appearance directly (dimming via `dimmed.disabled` when `controls.disabled.face` is `keep`, or switching to `disabled.*` surface/ink/edge on Material 3 and WinUI 3).
 
 ### Sizes [#sizes]
 
-| Size      | Track                                      | Knob      |
+| Size      | Track (`nsh-gallery` / `solid-glass`)      | Knob      |
 | --------- | ------------------------------------------ | --------- |
 | `default` | `icon.md` + 4 high, 2 × `icon.md` + 4 long | `icon.md` |
 | `sm`      | `icon.sm` + 4 high, 2 × `icon.sm` + 4 long | `icon.sm` |
 
-In the library's own themes that is 36 × 20 with a 16-point knob under a pointer and 44 × 24 with
-20 on a touch screen (`sm`: 28 × 16 with 12, 36 × 20 with 16): 2 points of track above, below and
-at each end, so the knob travels its own width — as far from the end on as off. A theme whose
-form brings its own switch draws that recipe at either size and on either tier: Material's track
-is 52 × 32 with a 16-point knob that grows to 24 when on and 28 under a press, WinUI's is 40 × 20
-with a 12-point knob, 14 under a hover and 17 × 14 under a press.
+In `nsh-gallery` and `solid-glass`, that is 36 × 20 with a 16-point knob under a pointer and 44 × 24 with 20 on a touch screen (`sm`: 28 × 16 with 12, 36 × 20 with 16): 2 points of track above, below and at each end, so the knob travels its own width — as far from the end on as off.
 
 `SwitchSize` is `"sm" | "default"`.
 
-The knob keeps its size on and off: off it is `finish.knob`, and on it takes the accent's own ink
-(`finish.accent.foreground`), as the switch's preset (`packages/ui/switch.tsx`, `knobLook`).
+Off and on, the knob wears `control("switch").knobStyle(checked)` (`packages/ui/switch.tsx`, `knobLook`): the theme states its size, face, gradient and edge per state, and how it grows when pressed.
