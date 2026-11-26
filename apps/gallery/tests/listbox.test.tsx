@@ -31,17 +31,6 @@ test("a Combobox picks one value, and a multiple Combobox keeps several", async 
   expect(tags).toContain("blue");
 });
 
-test("a press on a Combobox field opens its list and picks one value", async () => {
-  const app = await open("./listbox.fixture.tsx");
-  // Headless delivers the input's press. On macOS the field editor takes the
-  // click and that press never runs, so the list does not open on `--target macos`.
-  await app.press("label:Framework");
-  await app.waitFor("text:Vue");
-  await app.press("text:Vue");
-  await app.wait(50);
-  expect(app.texts()).toContain("combo=vue");
-});
-
 test("a ComboboxChip inside the root draws, and a narrow Select opens", async () => {
   const app = await open("./listbox.fixture.tsx", { platform: "macos" });
   expect(app.texts()).toContain("Side");

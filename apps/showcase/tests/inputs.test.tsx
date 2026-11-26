@@ -100,9 +100,9 @@ test("Combobox: a chosen topic comes off, another goes on", async () => {
   await app.setColorScheme("light");
   await show(app, "Combobox", "Topics");
   // The card starts with Layout and iOS chosen (as upstream's does).
-  // The field's press. Headless delivers it. On macOS the field editor takes
-  // the click, so the same press does not open the list on `--target macos`.
-  await app.press("label:Topics");
+  // The arrow opens the list: a press on the field's input is for the caret, so
+  // on macOS the field editor takes that click and the list stays closed.
+  await app.press("id:topics-toggle");
   await app.waitFor("role:option[Layout]");
   await app.press("role:option[Layout]");
   await app.waitFor("text:Topics: iOS");

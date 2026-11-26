@@ -241,7 +241,7 @@ export function ComboboxDemo() {
                 last.set(`Topics: ${names(TOPICS, value).join(", ") || "none"}`);
               }}
             >
-              <ComboboxTrigger />
+              <ComboboxTrigger testID="topics-toggle" />
               <ComboboxContent items={TOPICS} accessibilityLabel="Topics" minWidth={220}>
                 <Each of={["Core", "Platforms"]}>
                   {(group) => (

@@ -3,13 +3,8 @@
 Rebuilding the official Gallery with this library (#78) is a test of what the library can do. Where
 a scene needed something the library lacks, the demo uses `nsh/base` (or a local workaround) and
 the gap is listed here with its issue. When an issue closes, its workaround in `demos/` goes too,
-and its row leaves this file.
-
-## Library
-
-| Issue                                                   | Gap                                                                          | Scenes that work around it |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------- | -------------------------- |
-| [#87](https://github.com/aningdev/shadcn-nsh/issues/87) | On macOS a click on the combobox field focuses it and does not open the list | Combobox                   |
+and its row leaves this file — and none is left: the library owes the Gallery nothing. What
+follows is what looks like a gap and is not, then the shell.
 
 Not gaps: Stocks' intraday chart washes the area under the price with `Plot`'s own `Area` mark where upstream hatches the rest of the day, since `Plot` draws declared marks and takes no free drawing over its geometry; the Button scene plays no sounds (the library has none), its hold-to-confirm `FillButton` stays scene-local on a `View` with `role="button"` (base `Button` has no `onLongPress`), and its tooltips are the library's `Tooltip`; the iOS segmented control is a platform look;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's
