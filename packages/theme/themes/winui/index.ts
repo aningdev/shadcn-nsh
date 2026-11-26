@@ -315,16 +315,16 @@ export const winui = defineTheme({
       mark: { pointer: 12, touch: 14 },
     },
     switch: {
-      track: { pointer: [40, 20], touch: [48, 24] },
+      track: { pointer: [40, 20], touch: [44, 22] },
       trackOffFace: { light: "oklch(0.94611 0 0)", dark: "oklch(0.23075 0 0)" },
       small: {
-        track: { pointer: [32, 16], touch: [40, 20] },
-        knob: { pointer: 10, touch: 14 },
+        track: { pointer: [32, 16], touch: [36, 18] },
+        knob: { pointer: 10, touch: 12 },
       },
       edge: { off: 1, on: 0, color: "input" },
       knob: {
-        size: { pointer: 12, touch: 16 },
-        pressed: { pointer: [17, 14], touch: [22, 18] },
+        size: { pointer: 12, touch: 14 },
+        pressed: { pointer: [17, 14], touch: [19, 16] },
         background: { light: "muted-foreground", dark: "muted-foreground" },
         gradient: null,
         border: "transparent",

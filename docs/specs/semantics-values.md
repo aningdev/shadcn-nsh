@@ -284,16 +284,16 @@
 | `controls.choice.checked.face` | 复选框选中底面 | `surface(accent)` | `surface(accent)` | `surface(accent)` | `primary` | `primary` |
 | `controls.choice.radioChecked.face` | 单选框选中面 | `surface(accent)` | `none` | `surface(accent)` | `none` | `primary` |
 | `controls.choice.mark` | 单选框内圆点尺寸 | 6 / 8 | 8 / 10 | 6 / 8 | 10 / 12 | 12 / 14 |
-| `controls.switch.track` | 默认开关轨道宽高 `[w, h]` | `[36,20]` / `[44,24]` | `[32,18]` / `[44,24]` | `[54,24]` / `[63,28]` | `[40,24]` / `[52,32]` | `[40,20]` / `[48,24]` |
+| `controls.switch.track` | 默认开关轨道宽高 `[w, h]` | `[36,20]` / `[44,24]` | `[32,18]` / `[44,24]` | `[54,24]` / `[63,28]` | `[40,24]` / `[52,32]` | `[40,20]` / `[44,22]` |
 | `controls.switch.trackOffFace` | 开关关闭态轨道底色 | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `input` / `oklch(0.28969 0 0)` | `oklch(0.96743 0.00133 286.375)` / `oklch(0.29471 0.00718 285.951)` | `muted` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
-| `controls.switch.small.track` | 小号开关轨道宽高 `[w, h]` | `[28,16]` / `[36,20]` | `[24,14]` / `[36,20]` | `[40,18]` / `[48,22]` | `[32,20]` / `[40,24]` | `[32,16]` / `[40,20]` |
-| `controls.switch.small.knob` | 小号开关滑块尺寸 | 12 / 16 | 12 / 16 | `[23,14]` / `[28,18]` | 12 / 16 | 10 / 14 |
+| `controls.switch.small.track` | 小号开关轨道宽高 `[w, h]` | `[28,16]` / `[36,20]` | `[24,14]` / `[36,20]` | `[40,18]` / `[48,22]` | `[32,20]` / `[40,24]` | `[32,16]` / `[36,18]` |
+| `controls.switch.small.knob` | 小号开关滑块尺寸 | 12 / 16 | 12 / 16 | `[23,14]` / `[28,18]` | 12 / 16 | 10 / 12 |
 | `controls.switch.edge.off` | 开关关闭态边框宽 | 1 | 0 | 0 | 2 | 1 |
 | `controls.switch.edge.on` | 开关打开态边框宽 | 1 | 0 | 0 | 0 | 0 |
 | `controls.switch.edge.color` | 开关边框色 | `border` | `none` | `none` | `input` | `input` |
-| `controls.switch.knob.size` | 开关滑块常态尺寸 | `{"pointer":16,"touch":20}` | `{"pointer":16,"touch":20}` | `{"pointer":[31,20],"touch":[37,24]}` | `{"pointer":16,"touch":20}` | `{"pointer":12,"touch":16}` |
+| `controls.switch.knob.size` | 开关滑块常态尺寸 | `{"pointer":16,"touch":20}` | `{"pointer":16,"touch":20}` | `{"pointer":[31,20],"touch":[37,24]}` | `{"pointer":16,"touch":20}` | `{"pointer":12,"touch":14}` |
 | `controls.switch.knob.on` | 开关滑块打开态尺寸（`same` 表示不变，Material 为放大） | `same` | `same` | `same` | `{"pointer":20,"touch":24}` | `same` |
-| `controls.switch.knob.pressed` | 开关滑块按下态尺寸 | `same` | `same` | `same` | `{"pointer":22,"touch":28}` | `{"pointer":[17,14],"touch":[22,18]}` |
+| `controls.switch.knob.pressed` | 开关滑块按下态尺寸 | `same` | `same` | `same` | `{"pointer":22,"touch":28}` | `{"pointer":[17,14],"touch":[19,16]}` |
 | `controls.switch.knob.background` | 开关滑块常态底色 | `{"light":"oklch(1 0 0)","dark":"oklch(0.92199 0.00419 271.367)"}` | `{"light":"background","dark":"foreground"}` | `primary-foreground` | `{"light":"muted-foreground","dark":"faint"}` | `{"light":"muted-foreground","dark":"muted-foreground"}` |
 | `controls.switch.knob.gradient` | 开关滑块常态渐变 | `{"light":"linear-gradient(180deg, oklch(1 0 0) 0%, {surface} 100%)","dark":"linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)"}` | — | — | — | — |
 | `controls.switch.knob.border` | 开关滑块常态边色 | `{"light":"input","dark":"oklch(0.8324 0.00597 264.528)"}` | `transparent` | `transparent` | `transparent` | `transparent` |
