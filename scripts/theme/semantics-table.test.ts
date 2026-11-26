@@ -166,7 +166,7 @@ describe("the page as the build writes it", () => {
 
   test("every field of the five themes has a row, described, with a cell per theme", () => {
     expect(rows.length).toBe(rowCount());
-    expect(rows.length).toBeGreaterThan(COLUMNS.length * 40);
+    expect(rows.length).toBeGreaterThan(COLUMNS.length * 35);
     const unset = rows.filter((line) =>
       line
         .split(" | ")
@@ -191,9 +191,9 @@ describe("the page as the build writes it", () => {
   });
 
   test("a field no source describes is an error, not a blank cell", () => {
-    expect(() => meaning("typography.body.fontSize")).not.toThrow();
+    expect(() => meaning("typography.body.fontWeight")).not.toThrow();
     expect(() => meaning("dimension.size.hit")).not.toThrow();
     expect(() => meaning("finishes.nothing.background")).toThrow(/no description/);
-    expect(() => meaning("typography.unknown.fontSize")).toThrow(/no description/);
+    expect(() => meaning("typography.unknown.fontWeight")).toThrow(/no description/);
   });
 });

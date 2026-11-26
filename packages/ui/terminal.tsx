@@ -7,8 +7,6 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   terminal as terminalIdiom,
-  rounded,
-  shape,
   stroke,
   tier,
 } from "@shadcn-nsh/theme";
@@ -16,7 +14,9 @@ import type { ViewStyle } from "nsh";
 import { split } from "nsh";
 import { Terminal as BaseTerminal, type TerminalProps as BaseTerminalProps } from "nsh/base";
 
+import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/indicator";
 import { type Live, read } from "./lib/live-value";
+import { fieldLook, fillOf } from "./lib/look";
 
 /**
  * A terminal's variants: `default` is a well — the field's fill and edge, the theme's inner corners,
@@ -66,12 +66,16 @@ export function terminalLook(o?: TerminalLookOptions) {
           ...read(o?.style),
         };
       }
+      // A well outside the terminal idiom is a field's: the recipe decides the fill, how many sides
+      // carry an edge and in which colour, and the corners — so a terminal matches the fields and
+      // selects beside it in every theme, and only its padding is the terminal's own.
+      const field = fieldLook();
       return {
-        backgroundColor: colors.field,
-        ...finish.inset,
-        borderWidth: stroke.hairline,
-        borderColor: colors.input,
-        ...rounded(shape.control),
+        ...(field.ground ? fillOf(field.ground) : {}),
+        ...fieldEdgeWidths(field),
+        ...fieldRestEdge(field),
+        ...fieldCorners(field),
+        boxShadow: finish.inset.boxShadow,
         paddingHorizontal: wellPad().x,
         paddingVertical: wellPad().y,
         ...read(o?.style),

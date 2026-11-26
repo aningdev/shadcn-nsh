@@ -7,7 +7,7 @@ import { Switch } from "nsh/base";
 
 import { fieldFamilyLook } from "@/packages/ui/field";
 import { listRow, RowDivider, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
-import { switchHitSlop, switchLook, type SwitchSize } from "@/packages/ui/switch";
+import { switchFocusStyle, switchHitSlop, switchLook, type SwitchSize } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split } from "./stage";
@@ -20,6 +20,10 @@ function Alone(props: {
   disabled?: boolean;
   onChange: (event: { checked: boolean }) => void;
 }) {
+  const look = switchLook(() => props.checked, {
+    size: () => props.size,
+    disabled: () => !!props.disabled,
+  });
   return (
     <Switch
       accessibilityLabel={props.label}
@@ -27,7 +31,8 @@ function Alone(props: {
       disabled={props.disabled}
       onChange={props.onChange}
       hitSlop={switchHitSlop(props.size)}
-      {...switchLook(() => props.checked, props.size)}
+      focusVisibleStyle={switchFocusStyle(props.size)}
+      {...look}
     />
   );
 }
@@ -108,8 +113,8 @@ function App() {
           <Switch
             checked={wifi()}
             onChange={change("Wi-Fi", (next) => wifi.set(next))}
+            {...switchLook(() => wifi(), { disabledSurface: false })}
             {...listRow({ first: true, style: { flexDirection: "row-reverse" } })}
-            {...switchLook(() => wifi())}
           >
             <RowDivider show={false} />
             <RowLabel label="Wi-Fi" detail={wifi() ? "Connected to Studio" : "Off"} />
@@ -118,8 +123,11 @@ function App() {
             checked={ask()}
             disabled={!wifi()}
             onChange={change("Ask to join", (next) => ask.set(next))}
+            {...switchLook(() => ask(), {
+              disabled: () => !wifi(),
+              disabledSurface: false,
+            })}
             {...listRow({ disabled: () => !wifi(), style: { flexDirection: "row-reverse" } })}
-            {...switchLook(() => ask())}
           >
             <RowDivider show />
             <RowLabel
@@ -130,8 +138,8 @@ function App() {
           <Switch
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
+            {...switchLook(() => bluetooth(), { disabledSurface: false })}
             {...listRow({ style: { flexDirection: "row-reverse" } })}
-            {...switchLook(() => bluetooth())}
           >
             <RowDivider show />
             <RowLabel label="Bluetooth" detail={bluetooth() ? "Discoverable as “Desk”" : "Off"} />

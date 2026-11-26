@@ -14,35 +14,6 @@
             "unit": "px"
           }
         }
-      },
-      "control": {
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "switch": "regular"
-          }
-        },
-        "$description": "Control internal spacing and switch size tier."
-      },
-      "height": {
-        "$description": "Standard control heights (sm, md, lg).",
-        "sm": {
-          "$value": {
-            "value": 20,
-            "unit": "px"
-          }
-        },
-        "md": {
-          "$value": {
-            "value": 24,
-            "unit": "px"
-          }
-        },
-        "lg": {
-          "$value": {
-            "value": 28,
-            "unit": "px"
-          }
-        }
       }
     }
   }

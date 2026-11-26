@@ -1,3 +1,4 @@
+import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, type InputRef } from "nsh";
 
 import { Button } from "../../../packages/ui";
@@ -20,9 +21,9 @@ const control = inputGroupControlLook();
 const said = (value: string | number | undefined) =>
   value === undefined || value === null ? "—" : `${value}`;
 const frame = [
-  `edge=${group.class.includes("border-input") ? "yes" : "—"}`,
-  `focus-edge=${group.class.includes("focus-within:border-brand") ? "yes" : "—"}`,
-  `focus-ring=${group.class.includes("focus-within:outline-brand") ? "yes" : "—"}`,
+  `edge=${group.style.borderColor === colors.input ? "yes" : "—"}`,
+  `focus-edge=${group.focusWithinStyle.borderColor === colors.brand ? "yes" : "—"}`,
+  `focus-ring=${group.focusWithinStyle.outlineColor === colors.brand && group.focusWithinStyle.outlineWidth === 2 ? "yes" : "—"}`,
   `radius=${said(group.style.borderRadius)}`,
 ].join(" ");
 const inside = [
@@ -86,8 +87,8 @@ function App() {
       <Text>{`frame ${frame}`}</Text>
       <Text>{`inside ${inside}`}</Text>
       <Text>{`value=${query() || "—"}`}</Text>
-      <Text>{`disabled-edge=${off.class.includes("border-line") ? "flat" : "rest"}`}</Text>
-      <Text>{`resting-edge=${resting.class.includes("border-input") ? "rest" : "flat"}`}</Text>
+      <Text>{`disabled-edge=${off.style.borderColor === colors.line ? "flat" : "rest"}`}</Text>
+      <Text>{`resting-edge=${resting.style.borderColor === colors.input ? "rest" : "flat"}`}</Text>
     </>
   );
 }

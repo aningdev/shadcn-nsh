@@ -37,10 +37,16 @@ import {
 } from "lucide";
 import type { JSX } from "nsh";
 import { keymap, LayoutAnimation, platform, reduceMotion, signal, Text, token, View } from "nsh";
-import { ContextMenu, type OpenChangeReason, Toolbar } from "nsh/base";
+import { Toolbar } from "nsh/base";
 import { SegmentedControl } from "nsh/mobile";
 
 import { Button } from "@/packages/ui/button";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  type ContextMenuOpenChangeReason,
+  ContextMenuTrigger,
+} from "@/packages/ui/context-menu";
 import { Kbd } from "@/packages/ui/kbd";
 import { Icon } from "@/packages/ui/lib/icons";
 import {
@@ -342,7 +348,7 @@ export function MenuDemo() {
   const isOpen = (menu: string) => shown() === menu;
   const changed =
     (menu: string) =>
-    ({ open, reason }: { open: boolean; reason: OpenChangeReason }) => {
+    ({ open, reason }: { open: boolean; reason: ContextMenuOpenChangeReason }) => {
       if (open) shown.set(menu);
       else if (shown() === menu) shown.set(null);
       log(`${menu} ${open ? "opened" : "closed"} · ${reason}`);
@@ -365,7 +371,9 @@ export function MenuDemo() {
 
 function MenuBar(props: {
   log: (line: string) => void;
-  changed: (menu: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (
+    menu: string,
+  ) => (event: { open: boolean; reason: ContextMenuOpenChangeReason }) => void;
   isOpen: (menu: string) => boolean;
 }) {
   const { log, changed, isOpen } = props;
@@ -561,7 +569,9 @@ function MenuBar(props: {
 
 function Rows(props: {
   log: (line: string) => void;
-  changed: (menu: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (
+    menu: string,
+  ) => (event: { open: boolean; reason: ContextMenuOpenChangeReason }) => void;
   isOpen: (menu: string) => boolean;
 }) {
   const { log, changed } = props;
@@ -624,11 +634,8 @@ function Rows(props: {
         <View>
           <Each of={files()} key={(file) => file.id}>
             {(file, i) => (
-              <ContextMenu
-                margin={8}
-                {...menuPopup()}
-                onOpenChange={changed(file().name)}
-                trigger={
+              <ContextMenu onOpenChange={changed(file().name)}>
+                <ContextMenuTrigger>
                   <View
                     focusable
                     style={{
@@ -695,9 +702,10 @@ function Rows(props: {
                       </MenuContent>
                     </Menu>
                   </View>
-                }
-              >
-                {actions(file)}
+                </ContextMenuTrigger>
+                <ContextMenuContent margin={8} {...menuPopup()}>
+                  {actions(file)}
+                </ContextMenuContent>
               </ContextMenu>
             )}
           </Each>
@@ -709,7 +717,9 @@ function Rows(props: {
 
 function Placement(props: {
   log: (line: string) => void;
-  changed: (menu: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (
+    menu: string,
+  ) => (event: { open: boolean; reason: ContextMenuOpenChangeReason }) => void;
   isOpen: (menu: string) => boolean;
 }) {
   const { log, changed, isOpen } = props;
@@ -776,7 +786,9 @@ function Placement(props: {
 }
 
 function LongList(props: {
-  changed: (menu: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (
+    menu: string,
+  ) => (event: { open: boolean; reason: ContextMenuOpenChangeReason }) => void;
   isOpen: (menu: string) => boolean;
 }) {
   const { changed, isOpen } = props;
@@ -865,7 +877,9 @@ function Commands(props: {
 
 function SystemMenu(props: {
   log: (line: string) => void;
-  changed: (menu: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (
+    menu: string,
+  ) => (event: { open: boolean; reason: ContextMenuOpenChangeReason }) => void;
   isOpen: (menu: string) => boolean;
 }) {
   const { log, changed, isOpen } = props;
@@ -927,37 +941,8 @@ function SystemMenu(props: {
           <Chip label={`Sorted by ${sort()}`} icon={terminal ? undefined : ListFilter} />
         </MenuButton>
       </View>
-      <ContextMenu
-        margin={8}
-        {...menuPopup()}
-        title={`${note}.key`}
-        items={[
-          {
-            id: "star",
-            label: starred() ? "Unstar" : "Star",
-            icon: starred() ? "star.slash" : "star",
-          },
-          { id: "share", label: "Share", icon: "square.and.arrow.up" },
-          {
-            id: "",
-            label: "Move to",
-            icon: "folder",
-            items: (["Documents", "Archive"] as const).map((to) => ({
-              id: `move:${to}`,
-              label: to,
-              checked: folder() === to,
-            })),
-          },
-          {
-            id: "",
-            label: "",
-            inline: true,
-            items: [{ id: "delete", label: "Delete", icon: "trash", destructive: true }],
-          },
-        ]}
-        onSelect={({ id }) => choose(id)}
-        onOpenChange={changed(note)}
-        trigger={
+      <ContextMenu onOpenChange={changed(note)}>
+        <ContextMenuTrigger>
           <View
             focusable
             accessibilityLabel={`${note}, in ${folder()}`}
@@ -1006,26 +991,56 @@ function SystemMenu(props: {
               </Text>
             </View>
           </View>
-        }
-      >
-        <MarkItem label="Starred" checked={starred()} onSelect={() => choose("star")} />
-        <Item label="Share" icon={Share2} onSelect={() => choose("share")} />
-        <SubmenuOf label="Move to" icon={FolderInput}>
-          <MarkItem
-            label="Documents"
-            radio
-            checked={folder() === "Documents"}
-            onSelect={() => choose("move:Documents")}
-          />
-          <MarkItem
-            label="Archive"
-            radio
-            checked={folder() === "Archive"}
-            onSelect={() => choose("move:Archive")}
-          />
-        </SubmenuOf>
-        <MenuSeparator />
-        <Item label="Delete" icon={Trash2} danger onSelect={() => choose("delete")} />
+        </ContextMenuTrigger>
+        <ContextMenuContent
+          margin={8}
+          {...menuPopup()}
+          title={`${note}.key`}
+          items={[
+            {
+              id: "star",
+              label: starred() ? "Unstar" : "Star",
+              icon: starred() ? "star.slash" : "star",
+            },
+            { id: "share", label: "Share", icon: "square.and.arrow.up" },
+            {
+              id: "",
+              label: "Move to",
+              icon: "folder",
+              items: (["Documents", "Archive"] as const).map((to) => ({
+                id: `move:${to}`,
+                label: to,
+                checked: folder() === to,
+              })),
+            },
+            {
+              id: "",
+              label: "",
+              inline: true,
+              items: [{ id: "delete", label: "Delete", icon: "trash", destructive: true }],
+            },
+          ]}
+          onSelect={({ id }) => choose(id)}
+        >
+          <MarkItem label="Starred" checked={starred()} onSelect={() => choose("star")} />
+          <Item label="Share" icon={Share2} onSelect={() => choose("share")} />
+          <SubmenuOf label="Move to" icon={FolderInput}>
+            <MarkItem
+              label="Documents"
+              radio
+              checked={folder() === "Documents"}
+              onSelect={() => choose("move:Documents")}
+            />
+            <MarkItem
+              label="Archive"
+              radio
+              checked={folder() === "Archive"}
+              onSelect={() => choose("move:Archive")}
+            />
+          </SubmenuOf>
+          <MenuSeparator />
+          <Item label="Delete" icon={Trash2} danger onSelect={() => choose("delete")} />
+        </ContextMenuContent>
       </ContextMenu>
       <Caption>
         {ios

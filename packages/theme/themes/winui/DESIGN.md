@@ -22,7 +22,7 @@ colors:
     accent: "#eaeaea"
     accent-foreground: "#1a1a1a"
     destructive: "#c42b1c"
-    border: "#868686"
+    border: "#e5e5e5"
     input: "#868686"
     ring: "#1a1a1a"
     chart-1: "#005fb8"
@@ -60,7 +60,6 @@ colors:
     warn-tint: "#fff4ce"
     destructive-tint: "#fde7e9"
     up-tint: "#dff6dd"
-    down-tint: "#fde7e9"
   dark:
     background: "#202020"
     foreground: "#ffffff"
@@ -77,7 +76,7 @@ colors:
     accent: "#323232"
     accent-foreground: "#ffffff"
     destructive: "#ff99a4"
-    border: "#9a9a9a"
+    border: "#303030"
     input: "#9a9a9a"
     ring: "#ffffff"
     chart-1: "#60cdff"
@@ -115,7 +114,6 @@ colors:
     warn-tint: "#433519"
     destructive-tint: "#442726"
     up-tint: "#393d1b"
-    down-tint: "#442726"
 typography:
   caption:
     fontSize: 11px
@@ -167,7 +165,6 @@ spacing:
   control:
     padding: 6px
     gap: 8px
-    dot: 12px
   height:
     sm: 24px
     md: 32px
@@ -183,10 +180,6 @@ spacing:
     md: 16px
     lg: 20px
 motion:
-  enter:
-    duration: 250ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0, 0, 0, 1)"
   fast:
     duration: 83ms
     delay: 0ms
@@ -367,11 +360,10 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`warn-tint`** (light `#fff4ce`, dark `#433519`): Caution wash (WinUI SystemFillColorCautionBackground composited over base).
 - **`destructive-tint`** (light `#fde7e9`, dark `#442726`): Critical wash (WinUI SystemFillColorCriticalBackground composited over base).
 - **`up-tint`** (light `#dff6dd`, dark `#393d1b`): Success wash (WinUI SystemFillColorSuccessBackground composited over base).
-- **`down-tint`** (light `#fde7e9`, dark `#442726`): Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base).
 
 ### Chrome
 
-- **`border`** (light `#868686`, dark `#9a9a9a`): Standard control hairline border (WinUI ControlStrongStrokeColorDefault composited over base: this theme's hairline takes the stroke a field's edge draws).
+- **`border`** (light `#e5e5e5`, dark `#303030`): Standard control hairline border (WinUI ControlStrokeColorDefault composited over base).
 - **`input`** (light `#868686`, dark `#9a9a9a`): Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base).
 - **`ring`** (light `#1a1a1a`, dark `#ffffff`): Outer keyboard focus stroke (WinUI FocusStrokeColorOuter).
 - **`sidebar-border`** (light `#e5e5e5`, dark `#323232`): Sidebar separator stroke (WinUI DividerStrokeColorDefault).
@@ -400,13 +392,12 @@ Ergonomic sizing scales for pointer input.
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding and gap.
 - **List rows:** WinUI 3 menu rows: the fill 4px in from the flyout's edge (MenuFlyoutItemMargin 4,2,4,2) and the text 11px inside it (MenuFlyoutItemThemePadding 11,8,11,9; ComboBoxItemThemePadding 11,5,11,7), the same with a pen or a finger (microsoft-ui-xaml MenuFlyout_themeresources.xaml).
-- **Control geometry:** Control internal spacing and switch size tier.
+- **Control geometry:** Control internal spacing.
 - **Control heights:** Standard control heights (sm, md, lg).
-- **Switch size tier (pointer):** `regular`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
 
 - **Pointer tier:** WinUI 3 desktop pointer input-tier overrides (Standard 40px ListViewItemMinHeight, 32px controls, 12/16/20px icons).
-- **Touch tier:** WinUI 3 touch input-tier overrides (40px hit target and controls, 16/20/24px icons).
+- **Touch tier:** WinUI 3 touch input-tier overrides (44px hit target, 40px controls, 16/20/24px icons).
 
 ## Elevation & Depth
 
@@ -418,25 +409,22 @@ WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStroke
 - **Focus indicator (`style: "double"`):** WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).
   - `focus.width` (2px): 2px outer focus stroke width per WinUI 3.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
-- **State overlays (hover=0, focus=0, pressed=0, dragged=0):** State-layer ink opacities for hover, focus, pressed, and dragged states.
+- **State overlays (hover=0, pressed=0):** State-layer ink opacities for hover and pressed states.
 
 ## Shapes
 
 WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).
 
-Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md). (`curve: "circular"`, `corners.button: "{dimension.radius.control}"`).
+Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md). (`curve: "circular"`).
 
-Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
-
-- **`control`** (4px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
-- **`container`** (8px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
-- **`modal`** (8px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
+- **`control`** (4px): Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (8px): Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (8px): Corner radius for dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
 Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
-- **`enter`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).
 - **`fast`** (83ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).
 - **`default`** (167ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).
 - **`slow`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).

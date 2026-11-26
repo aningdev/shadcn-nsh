@@ -277,10 +277,26 @@
       "$description": "Accent ink for text, icons, and active rules."
     },
     "brand-edge": {
-      "$value": "{color.border}",
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.49606, 0.08609, 123.685],
+        "hex": "#586a30"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "brand"
+          "role": "brand",
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.primary}",
+            "percent": 45,
+            "b": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            }
+          },
+          "source": "nsh-gallery-ui finishes.json: accent.borderColor (derived from primary)"
         }
       },
       "$description": "Hairline border on primary accent-filled controls."
@@ -500,21 +516,6 @@
         }
       },
       "$description": "Translucent positive trend background tint."
-    },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.70034, 0.19197, 18.007],
-        "alpha": 0.16,
-        "hex": "#ff6170"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "nsh-gallery-ui theme.json: down-tint"
-        }
-      },
-      "$description": "Translucent negative trend background tint."
     },
     "card-foreground": {
       "$value": "{color.foreground}",

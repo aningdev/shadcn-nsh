@@ -22,9 +22,10 @@ test("a ColorPicker swatch, slider drag and plane change the color, and a disabl
 });
 
 test("a ColorField keeps the field transition, including under reduced motion", async () => {
-  const app = await open("./rich.fixture.tsx", { platform: "macos", reducedMotion: true });
-  expect(find(app.texts(), "motion=")).toContain("motion-reduce:transition-none");
-  expect(find(app.texts(), "motion=")).toContain("duration-150");
+  const normal = await open("./rich.fixture.tsx", { platform: "macos", reducedMotion: false });
+  expect(find(normal.texts(), "motion=")).toBe("border-color, opacity|150");
+  const reduced = await open("./rich.fixture.tsx", { platform: "macos", reducedMotion: true });
+  expect(find(reduced.texts(), "motion=")).toBe("border-color, opacity|0");
 });
 
 test("a TextView reports a link press", async () => {

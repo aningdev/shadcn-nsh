@@ -404,16 +404,16 @@
     "field": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.95241, 0.00133, 286.375],
-        "hex": "#efeff0"
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface",
-          "source": "Apple HIG system colours: tertiarySystemFill over the card"
+          "source": "Apple HIG system colours: systemBackground (light) / tertiarySystemFill over the card (dark)"
         }
       },
-      "$description": "Form input background (UIKit tertiarySystemFill composited over card)."
+      "$description": "Form input background (UIKit systemBackground in light for grouped-canvas separation; tertiarySystemFill over card in dark)."
     },
     "line": {
       "$value": {
@@ -539,8 +539,8 @@
     "warn": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.76524, 0.17521, 62.574],
-        "hex": "#ff9500"
+        "components": [0.54737, 0.14708, 48.886],
+        "hex": "#b25000"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -552,8 +552,8 @@
     "up": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.73032, 0.19438, 147.444],
-        "hex": "#34c759"
+        "components": [0.55845, 0.14614, 147.502],
+        "hex": "#248a3d"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -634,9 +634,9 @@
     "warn-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.76524, 0.17521, 62.574],
+        "components": [0.54737, 0.14708, 48.886],
         "alpha": 0.12,
-        "hex": "#ff9500"
+        "hex": "#b25000"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -676,9 +676,9 @@
     "up-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.73032, 0.19438, 147.444],
+        "components": [0.55845, 0.14614, 147.502],
         "alpha": 0.12,
-        "hex": "#34c759"
+        "hex": "#248a3d"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -693,27 +693,6 @@
         }
       },
       "$description": "Translucent positive wash (12% up over transparent)."
-    },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.65421, 0.23214, 28.659],
-        "alpha": 0.12,
-        "hex": "#ff3b30"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 12,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Translucent negative wash (12% destructive over transparent)."
     }
   },
   "shadow": {
@@ -725,7 +704,7 @@
           "color": {
             "colorSpace": "oklch",
             "components": [0, 0, 0],
-            "alpha": 0.2,
+            "alpha": 0.12,
             "hex": "#000000"
           },
           "offsetX": {
@@ -737,7 +716,7 @@
             "unit": "px"
           },
           "blur": {
-            "value": 3,
+            "value": 2,
             "unit": "px"
           },
           "spread": {
@@ -826,7 +805,7 @@
             "unit": "px"
           },
           "blur": {
-            "value": 30,
+            "value": 24,
             "unit": "px"
           },
           "spread": {
@@ -868,7 +847,7 @@
           "color": {
             "colorSpace": "oklch",
             "components": [0, 0, 0],
-            "alpha": 0.14,
+            "alpha": 0.2,
             "hex": "#000000"
           },
           "offsetX": {
@@ -876,11 +855,11 @@
             "unit": "px"
           },
           "offsetY": {
-            "value": 8,
+            "value": 18,
             "unit": "px"
           },
           "blur": {
-            "value": 30,
+            "value": 48,
             "unit": "px"
           },
           "spread": {
@@ -1069,6 +1048,26 @@
               "op": "alpha",
               "color": "{color.popover}",
               "alpha": 0.72
+            }
+          }
+        }
+      }
+    },
+    "pressed": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.16,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.foreground}",
+              "alpha": 0.16
             }
           }
         }

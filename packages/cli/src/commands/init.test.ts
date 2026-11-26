@@ -54,6 +54,7 @@ const fixture = (): Fixture =>
       "theme-native",
       "switch-geometry",
       "press",
+      "motion",
       "spinner",
       "as-text",
       "icons",

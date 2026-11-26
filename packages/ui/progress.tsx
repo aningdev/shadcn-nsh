@@ -8,6 +8,7 @@ import {
   follow,
   motion,
   stroke,
+  tier,
   type Tone,
   toneColor,
 } from "@shadcn-nsh/theme";
@@ -29,7 +30,7 @@ import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } fro
 import { CheckboxMark, choiceWell } from "./checkbox";
 import { joinClass } from "./lib/class-names";
 import { type Live, read } from "./lib/live-value";
-import { trackLook } from "./lib/look";
+import { choiceLook, trackLook } from "./lib/look";
 import { controlSize } from "./lib/surface";
 import { railFace, railShadow } from "./lib/track";
 
@@ -306,11 +307,12 @@ export function progressStepsLook(): ProgressStepsLook {
       ...(state === "current" ? { borderColor: colors.brand } : {}),
     }),
     get dot(): ViewStyle {
+      const size = choiceLook().dot[tier];
       return {
         position: "absolute",
-        width: controlSize.dot,
-        height: controlSize.dot,
-        borderRadius: controlSize.dot / 2,
+        width: size,
+        height: size,
+        borderRadius: size / 2,
         backgroundColor: colors.brand,
       };
     },

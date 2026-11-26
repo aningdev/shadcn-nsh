@@ -44,7 +44,7 @@
       "sidebar-ring": "var(--ring)",
       "inset": "oklch(0.96743 0.00133 286.375)",
       "raised": "oklch(0.95241 0.00133 286.375)",
-      "field": "oklch(0.95241 0.00133 286.375)",
+      "field": "oklch(1 0 0)",
       "line": "oklch(0.89478 0.00135 286.373)",
       "hover": "color-mix(in srgb, var(--foreground) 6%, transparent)",
       "faint": "oklch(0.82403 0.00276 286.339)",
@@ -54,8 +54,8 @@
       "track": "oklch(0.93459 0.00268 286.348)",
       "knob": "oklch(1 0 0)",
       "info": "oklch(0.60276 0.21771 257.424)",
-      "warn": "oklch(0.76524 0.17521 62.574)",
-      "up": "oklch(0.73032 0.19438 147.444)",
+      "warn": "oklch(0.54737 0.14708 48.886)",
+      "up": "oklch(0.55845 0.14614 147.502)",
       "brand-tint": "color-mix(in srgb, var(--brand) 12%, transparent)",
       "inverse": "var(--popover)",
       "inverse-foreground": "var(--foreground)",
@@ -63,8 +63,7 @@
       "info-tint": "color-mix(in srgb, var(--info) 12%, transparent)",
       "warn-tint": "color-mix(in srgb, var(--warn) 12%, transparent)",
       "destructive-tint": "color-mix(in srgb, var(--destructive) 12%, transparent)",
-      "up-tint": "color-mix(in srgb, var(--up) 12%, transparent)",
-      "down-tint": "color-mix(in srgb, var(--destructive) 12%, transparent)"
+      "up-tint": "color-mix(in srgb, var(--up) 12%, transparent)"
     },
     "dark": {
       "background": "oklch(0 0 0)",
@@ -101,7 +100,6 @@
       "warn-tint": "color-mix(in srgb, var(--warn) 12%, transparent)",
       "destructive-tint": "color-mix(in srgb, var(--destructive) 12%, transparent)",
       "up-tint": "color-mix(in srgb, var(--up) 12%, transparent)",
-      "down-tint": "color-mix(in srgb, var(--destructive) 12%, transparent)",
       "card-foreground": "var(--foreground)",
       "popover-foreground": "var(--foreground)",
       "accent-foreground": "var(--foreground)",

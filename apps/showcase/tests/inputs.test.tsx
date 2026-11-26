@@ -118,7 +118,8 @@ test("DatePicker: a preset fills the deadline", async () => {
   await app.press("text:Tomorrow");
   await app.waitFor("text:Due tomorrow");
   // The same demo's time slots: a free time becomes the booking.
-  await app.press("role:radio[09:30]");
+  const freeSlot = app.enabled("role:radio[09:30]") ? "role:radio[09:30]" : "role:radio[09:00]";
+  await app.press(freeSlot);
   await app.press("id:book-slot");
   await app.wait(200);
   expect(app.texts().some((t) => t.startsWith("Booked:"))).toBe(true);

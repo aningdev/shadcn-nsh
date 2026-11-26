@@ -47,6 +47,12 @@ export function inputGroupLook(o?: InputGroupLookOptions) {
         ...read(o?.style),
       };
     },
+    get hoverStyle(): ViewStyle | undefined {
+      return field.hoverStyle;
+    },
+    get focusWithinStyle(): ViewStyle {
+      return field.focusWithinStyle;
+    },
     get disabledStyle(): ViewStyle {
       return field.disabledStyle;
     },

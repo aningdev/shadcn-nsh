@@ -1,9 +1,9 @@
-// shadcn's button-group scenes with this library's parts: a row of three buttons joined into one
-// control, a column of them, and a word with a divider between two buttons.
+// shadcn's button-group scenes with this library's parts: a row of outline buttons joined into
+// one control, a column of them, a row of filled buttons divided by separators, and a text addon.
 import { ArrowLeft, ArrowRight } from "lucide";
-import { mount, Text, View } from "nsh";
+import { mount, Text } from "nsh";
 
-import { Button, buttonLabel } from "@/packages/ui/button";
+import { Button, buttonGlyph, buttonLabel } from "@/packages/ui/button";
 import {
   ButtonGroup,
   ButtonGroupSeparator,
@@ -25,42 +25,60 @@ function App() {
       <DemoCard>
         <DemoSection title="A row">
           <ButtonGroup>
-            <Button variant="secondary" style={buttonGroupLook().item("horizontal", "first")}>
-              <Icon icon={ArrowLeft} size={14} tint={ui().text} />
-              <Text style={buttonLabel("secondary")}>Back</Text>
+            <Button
+              variant="outline"
+              icon={ArrowLeft}
+              style={buttonGroupLook().item("horizontal", "first")}
+            >
+              Back
             </Button>
-            <Button variant="secondary" style={buttonGroupLook().item("horizontal", "middle")}>
-              <Text style={buttonLabel("secondary")}>Archive</Text>
+            <Button variant="outline" style={buttonGroupLook().item("horizontal", "middle")}>
+              Archive
             </Button>
-            <Button variant="secondary" style={buttonGroupLook().item("horizontal", "last")}>
-              <Text style={buttonLabel("secondary")}>Next</Text>
-              <Icon icon={ArrowRight} size={14} tint={ui().text} />
+            <Button variant="outline" style={buttonGroupLook().item("horizontal", "last")}>
+              <Text style={buttonLabel("outline")}>Next</Text>
+              <Icon icon={ArrowRight} {...buttonGlyph("outline")} />
             </Button>
           </ButtonGroup>
         </DemoSection>
 
         <DemoSection title="A column">
           <ButtonGroup orientation="vertical">
-            <Button variant="secondary" style={buttonGroupLook().item("vertical", "first")}>
-              <Text style={buttonLabel("secondary")}>Copy the path</Text>
+            <Button variant="outline" style={buttonGroupLook().item("vertical", "first")}>
+              Copy the path
             </Button>
-            <Button variant="secondary" style={buttonGroupLook().item("vertical", "middle")}>
-              <Text style={buttonLabel("secondary")}>Open in a new window</Text>
+            <Button variant="outline" style={buttonGroupLook().item("vertical", "middle")}>
+              Open in a new window
             </Button>
-            <Button variant="secondary" style={buttonGroupLook().item("vertical", "last")}>
-              <Text style={buttonLabel("secondary")}>Reveal in the file manager</Text>
+            <Button variant="outline" style={buttonGroupLook().item("vertical", "last")}>
+              Reveal in the file manager
             </Button>
           </ButtonGroup>
         </DemoSection>
 
-        <DemoSection title="A word and a divider">
+        <DemoSection title="With a separator">
+          <ButtonGroup>
+            <Button variant="secondary" style={buttonGroupLook().item("horizontal", "first")}>
+              Cut
+            </Button>
+            <ButtonGroupSeparator />
+            <Button variant="secondary" style={buttonGroupLook().item("horizontal", "middle")}>
+              Copy
+            </Button>
+            <ButtonGroupSeparator />
+            <Button variant="secondary" style={buttonGroupLook().item("horizontal", "last")}>
+              Paste
+            </Button>
+          </ButtonGroup>
+        </DemoSection>
+
+        <DemoSection title="With a text addon">
           <ButtonGroup>
             <ButtonGroupText style={buttonGroupLook().item("horizontal", "first")}>
               Path
             </ButtonGroupText>
-            <ButtonGroupSeparator />
-            <Button variant="secondary" style={buttonGroupLook().item("horizontal", "last")}>
-              <Text style={buttonLabel("secondary")}>Copy</Text>
+            <Button variant="outline" style={buttonGroupLook().item("horizontal", "last")}>
+              Copy
             </Button>
           </ButtonGroup>
         </DemoSection>

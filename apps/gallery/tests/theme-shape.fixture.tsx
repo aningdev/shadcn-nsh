@@ -1,4 +1,5 @@
 import {
+  buttonCorner,
   controlHeight,
   currentTheme,
   dimmed,
@@ -54,25 +55,33 @@ const reshaped: AppTheme = {
     },
     // A theme that swaps to a disabled face instead of fading the whole view (the slots every theme
     // inherits name `keep`; this one names `finish.disabled`).
-    slots: {
-      ...nshGallery.semantics.slots,
-      "state.disabled.face": { finish: "disabled" },
-      "state.disabled.ink": { finish: "disabled", field: "foreground" },
-      "state.disabled.edge": { finish: "disabled", field: "borderColor" },
+    controls: {
+      ...nshGallery.semantics.controls,
+      disabled: {
+        face: { finish: "disabled" },
+        ink: { finish: "disabled", field: "foreground" },
+        edge: { finish: "disabled", field: "borderColor" },
+      },
     },
   },
 };
 
-/** Same radii as `reshaped`, with `shape.corners.button: "full"` for capsule buttons. */
+/** Same radii as `reshaped`, with capsule button corners (`controls.button.corner.md: "full"`). */
 const capsuleButtons: AppTheme = {
   ...reshaped,
   id: "capsule-buttons",
   label: "Capsule",
   semantics: {
     ...reshaped.semantics,
-    shape: {
-      ...reshaped.semantics.shape,
-      corners: { button: "full" },
+    controls: {
+      ...reshaped.semantics.controls,
+      button: {
+        ...reshaped.semantics.controls.button,
+        corner: {
+          ...reshaped.semantics.controls.button.corner,
+          md: "full",
+        },
+      },
     },
   },
 };
@@ -82,12 +91,12 @@ function App() {
   const disabledText = buttonLabel("secondary", { disabled: true });
   return (
     <View>
-      <Text>{`roles=${shape.control}|${shape.container}|${shape.modal}|${shape.button}`}</Text>
+      <Text>{`roles=${shape.control}|${shape.container}|${shape.modal}|${buttonCorner("default")}`}</Text>
       <Text>{`dialog=${dialogCard().borderRadius}|${dialogCard().borderWidth}`}</Text>
       <Text>{`field=${inputLook().style.borderRadius}|${inputLook().style.borderWidth}`}</Text>
       <Text>{`concentric=${rounded(shape.control, 3).borderRadius}|${rounded(shape.control, 99).borderRadius}`}</Text>
       <Text>{`button=${button.style.height}|${button.style.borderRadius}|${button.style.borderWidth}`}</Text>
-      <Text>{`fade=${dimmed.disabled}|${dimmed.pressed}|${String(themeStyle().slots["state.disabled.face"] !== "keep")}`}</Text>
+      <Text>{`fade=${dimmed.disabled}|${dimmed.pressed}|${String(themeStyle().controls.disabled.face !== "keep")}`}</Text>
       <Text>{`disabledMode=${button.disabledStyle.opacity === undefined ? "fill" : "fade"}|${String(disabledText.color === buttonLabel("secondary").color)}`}</Text>
       <Text>{`sizes=${controlHeight.sm}|${controlHeight.lg}|${iconSize.md}|${hitTarget()}|${stroke.hairline}|${stroke.control}`}</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>

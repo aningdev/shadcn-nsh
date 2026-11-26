@@ -9,7 +9,7 @@ import { Tooltip } from "nsh/base";
 
 import { Button, IconButton, iconButtonGlyph } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { tooltipLook, tooltipText } from "@/packages/ui/tooltip";
+import { tooltipLook, tooltipTextStyle } from "@/packages/ui/tooltip";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, ui, wide } from "./stage";
@@ -41,8 +41,8 @@ function Tool(props: {
                 props.onOpenChange(event);
               }}
             >
-              <View class={tooltipLook().class}>
-                <Text class={tooltipText}>{props.hint}</Text>
+              <View class={tooltipLook().class} style={tooltipLook().style}>
+                <Text style={tooltipTextStyle()}>{props.hint}</Text>
               </View>
             </Tooltip>
           }
@@ -104,8 +104,8 @@ function App() {
       <View
         tooltip={
           <Tooltip>
-            <View class={tooltipLook().class}>
-              <Text class={tooltipText}>Shows every tooltip without a pointer</Text>
+            <View class={tooltipLook().class} style={tooltipLook().style}>
+              <Text style={tooltipTextStyle()}>Shows every tooltip without a pointer</Text>
             </View>
           </Tooltip>
         }

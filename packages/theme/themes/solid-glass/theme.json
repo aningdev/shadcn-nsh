@@ -63,8 +63,7 @@
       "info-tint": "color-mix(in srgb, var(--info) 10%, transparent)",
       "warn-tint": "color-mix(in srgb, var(--warn) 10%, transparent)",
       "destructive-tint": "color-mix(in srgb, var(--destructive) 10%, transparent)",
-      "up-tint": "color-mix(in srgb, var(--up) 10%, transparent)",
-      "down-tint": "color-mix(in srgb, var(--destructive) 10%, transparent)"
+      "up-tint": "color-mix(in srgb, var(--up) 10%, transparent)"
     },
     "dark": {
       "background": "oklch(0.16 0 0)",
@@ -101,7 +100,6 @@
       "warn-tint": "color-mix(in srgb, var(--warn) 10%, transparent)",
       "destructive-tint": "color-mix(in srgb, var(--destructive) 10%, transparent)",
       "up-tint": "color-mix(in srgb, var(--up) 10%, transparent)",
-      "down-tint": "color-mix(in srgb, var(--destructive) 10%, transparent)",
       "card-foreground": "var(--foreground)",
       "popover-foreground": "var(--foreground)",
       "accent-foreground": "var(--foreground)",

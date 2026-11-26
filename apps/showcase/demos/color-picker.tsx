@@ -4,9 +4,15 @@ import { colors } from "@shadcn-nsh/theme";
 // field that opens the picker in a popover, and an overlay read over artwork.
 import type { JSX } from "nsh";
 import { signal, Text, View } from "nsh";
-import { type ColorFormat, ColorPicker } from "nsh/base";
+import { ColorPicker } from "nsh/base";
 
-import { ColorPanel, ColorPopover, formatColor, inkOn } from "@/packages/ui/color-picker";
+import {
+  ColorPanel,
+  ColorPopover,
+  formatColor,
+  inkOn,
+  type ColorFormat,
+} from "@/packages/ui/color-picker";
 import { insetSurface } from "@/packages/ui/lib/surface";
 
 import { Caption, DemoCard, DemoPage } from "../kit";

@@ -2,9 +2,11 @@
 // and category colors, grid, baseline, cross line, hover dot, wash, axis text, tooltip), plus `Legend`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, chart, colors, finish, rounded, terminal, shape, stroke } from "@shadcn-nsh/theme";
+import { alpha, chart, colors, finish, rounded, terminal } from "@shadcn-nsh/theme";
 import { Text, View } from "nsh";
 import type { TextStyle, ViewStyle } from "nsh";
+
+import { popupCorner, surfaceBorderWidth } from "./lib/look";
 
 // Every mark, so a chart asks one module for its parts and their look.
 export {
@@ -49,13 +51,28 @@ export const seriesColor = (i: number): string => {
 /** Colors for categories that must read apart at a glance (sectors,
  * regions, platforms), in order: the citrus lead, then the theme's info,
  * warn and up, and a graphite. */
-export const categoryColors = (): string[] => [
-  chart.chart1,
-  colors.info,
-  colors.warn,
-  colors.up,
-  chart.chart3,
-];
+export const categoryColors = (): string[] => {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const c of [
+    chart.chart1,
+    colors.info,
+    colors.warn,
+    colors.up,
+    chart.chart3,
+    chart.chart2,
+    chart.chart4,
+    chart.chart5,
+    colors.destructive,
+  ]) {
+    if (!seen.has(c)) {
+      seen.add(c);
+      out.push(c);
+      if (out.length === 5) break;
+    }
+  }
+  return out;
+};
 
 /** A grid's hairlines (`<Grid style={plotGrid()}>`): the theme's line. */
 export const plotGrid = () => ({ stroke: colors.line });
@@ -110,11 +127,11 @@ export const plotAxisText = (): TextStyle => ({
   fontVariant: ["tabular-nums"],
 });
 
-/** A floating tooltip's card: the menu's surface, the theme's `radius` corners. */
+/** A floating tooltip's card: the menu's surface, the popup corner radius. */
 export const plotTooltip = (): ViewStyle => ({
   ...finish.overlay,
-  borderWidth: stroke.hairline,
-  ...rounded(shape.container),
+  borderWidth: surfaceBorderWidth(finish.overlay.borderColor),
+  ...rounded(popupCorner()),
   paddingHorizontal: 10,
   paddingVertical: 8,
   gap: 6,

@@ -45,7 +45,7 @@ colors:
     hover: "#1013190d"
     faint: "#9a9da3"
     brand: "#4a840a"
-    brand-edge: "#cacbcd"
+    brand-edge: "#9aba53"
     focus-inner: "#ffffff"
     track: "#e9eaed"
     knob: "#ffffff"
@@ -60,7 +60,6 @@ colors:
     warn-tint: "#b26a001c"
     destructive-tint: "#d43a4a1a"
     up-tint: "#138a5a1a"
-    down-tint: "#d43a4a1a"
   dark:
     background: "#16191f"
     foreground: "#eeeff1"
@@ -100,7 +99,7 @@ colors:
     hover: "#eeeff10d"
     faint: "#6b6f76"
     brand: "#c8f26d"
-    brand-edge: "#31343a"
+    brand-edge: "#586a30"
     focus-inner: "#1f2228"
     track: "#33363c"
     knob: "#e4e5e8"
@@ -115,7 +114,6 @@ colors:
     warn-tint: "#ffb54729"
     destructive-tint: "#ff617029"
     up-tint: "#45d49a29"
-    down-tint: "#ff617029"
 typography:
   caption:
     fontSize: 11px
@@ -167,7 +165,6 @@ spacing:
   control:
     padding: 8px
     gap: 8px
-    dot: 6px
   height:
     sm: 24px
     md: 28px
@@ -183,10 +180,6 @@ spacing:
     md: 16px
     lg: 20px
 motion:
-  enter:
-    duration: 420ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
   fast:
     duration: 150ms
     delay: 0ms
@@ -347,7 +340,7 @@ NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`)
 - **`sidebar-primary`** (light `#c6ef6a`, dark `#c4ec6a`): Primary action highlight color in the sidebar.
 - **`sidebar-primary-foreground`** (`#13160c`): Text and icon ink on sidebar-primary highlights.
 - **`brand`** (light `#4a840a`, dark `#c8f26d`): Accent ink for text, icons, and active rules.
-- **`brand-edge`** (light `#cacbcd`, dark `#31343a`): Hairline border on primary accent-filled controls.
+- **`brand-edge`** (light `#9aba53`, dark `#586a30`): Hairline border on primary accent-filled controls.
 - **`brand-tint`** (light `#8cc01d29`, dark `#c8f26d24`): Translucent brand-accent wash behind selected rows and tinted bubbles.
 - **`inverse-brand`** (`#13160c`): Accent action color on inverse surfaces.
 
@@ -366,7 +359,6 @@ NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`)
 - **`warn-tint`** (light `#b26a001c`, dark `#ffb54729`): Translucent warning status background tint.
 - **`destructive-tint`** (light `#d43a4a1a`, dark `#ff617029`): Translucent destructive status background tint.
 - **`up-tint`** (light `#138a5a1a`, dark `#45d49a29`): Translucent positive trend background tint.
-- **`down-tint`** (light `#d43a4a1a`, dark `#ff617029`): Translucent negative trend background tint.
 
 ### Chrome
 
@@ -399,9 +391,8 @@ Ergonomic sizing scales for pointer input.
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding and gap.
 - **List rows:** A list's rows in a popup or a palette: inset, the container's edge to the row's fill; pad, the fill's edge to its text. shadcn's select and menus: 4 (SelectContent p-1) and 8 (SelectItem pl-2).
-- **Control geometry:** Control internal spacing and switch size tier.
+- **Control geometry:** Control internal spacing.
 - **Control heights:** Standard control heights (sm, md, lg).
-- **Switch size tier (pointer):** `small`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
 
 - **Pointer tier:** Default pointer input-tier metrics.
@@ -417,25 +408,22 @@ Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline bor
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
-- **State overlays (hover=0, focus=0, pressed=0, dragged=0):** State-layer ink opacities for hover, focus, pressed, and dragged states.
+- **State overlays (hover=0, pressed=0):** State-layer ink opacities for hover and pressed states.
 
 ## Shapes
 
 Corner radius roles by layer (8px control, 12px container, 14px modal) referenced by semantic shape roles.
 
-Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "{dimension.radius.control}"`).
+Non-dimensional corner curve. (`curve: "continuous"`).
 
-Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
-
-- **`control`** (8px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
-- **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
-- **`modal`** (14px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
+- **`control`** (8px): Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (12px): Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (14px): Corner radius for dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
 Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
-- **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
 - **`fast`** (150ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Quickest response: small control toggles and thumbs.
 - **`default`** (250ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Everyday feedback: presses, releases and modest movement.
 - **`slow`** (350ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Slowest: large surfaces and long-travel layout movement.

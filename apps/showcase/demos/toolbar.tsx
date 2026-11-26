@@ -11,7 +11,6 @@ import {
   chart,
   colors,
   finish,
-  focusRing,
   hovered,
   motion,
   terminal,
@@ -58,22 +57,15 @@ import {
   View,
   type ViewStyle,
 } from "nsh";
-import {
-  Button as BaseButton,
-  MenuItem as BaseMenuItem,
-  Link as BaseLink,
-  Slider,
-  Toggle,
-} from "nsh/base";
+import { Button as BaseButton, Slider, Toggle } from "nsh/base";
 
 import { Badge } from "@/packages/ui/badge";
 import { RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
-import { MenuMark, menuIndicator } from "@/packages/ui/lib/popup";
 import { toolbarTrack } from "@/packages/ui/lib/tool";
-import { Menu, MenuContent, MenuTrigger } from "@/packages/ui/menu";
-import { menuItemLook, menuPopup } from "@/packages/ui/menu";
+import { Link } from "@/packages/ui/link";
+import { Menu, MenuContent, MenuItem, MenuTrigger, menuPopup } from "@/packages/ui/menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/packages/ui/popover";
 import { sliderFill, sliderLook } from "@/packages/ui/slider";
 import {
@@ -410,20 +402,13 @@ function Item(props: {
   disabled?: boolean;
 }) {
   return (
-    <BaseMenuItem
+    <MenuItem
       onSelect={props.onSelect}
       disabled={props.disabled}
       checked={props.checked}
       role={
         props.checked === undefined ? undefined : props.check ? "menuitemcheckbox" : "menuitemradio"
       }
-      indicatorClass={menuIndicator}
-      indicator={
-        props.checked === undefined ? undefined : (
-          <MenuMark kind={props.check ? "check" : "dot"} size={TOOL.icon} tint={colors.brand} />
-        )
-      }
-      {...menuItemLook()}
     >
       <If when={props.icon}>
         <Icon icon={props.icon!} size={TOOL.icon} tint={colors.mutedForeground} />
@@ -431,7 +416,7 @@ function Item(props: {
       <Text style={{ flexGrow: 1, fontSize: pointer ? 13 : 16, color: colors.foreground }}>
         {props.label}
       </Text>
-    </BaseMenuItem>
+    </MenuItem>
   );
 }
 
@@ -1271,28 +1256,13 @@ function Disabled() {
           />
         </ToolbarGroup>
         <View style={{ flex: 1 }} />
-        <BaseLink
+        <Link
           href="https://nsh.dev/docs/review"
           openWith="app"
-          style={{
-            paddingHorizontal: 8,
-            height: TOOL.side,
-            justifyContent: "center",
-            borderRadius: 6,
-            borderWidth: 1,
-            borderColor: "transparent",
-            ...transition(),
-          }}
-          hoverStyle={hovered()}
-          focusVisibleStyle={focusRing(1)}
           onOpen={({ href }) => last.set(`Open: ${href}`)}
         >
-          <Text
-            style={{ fontSize: TOOL.text, color: colors.brand, textDecorationLine: "underline" }}
-          >
-            Review guide
-          </Text>
-        </BaseLink>
+          Review guide
+        </Link>
       </Toolbar>
       <CaptionRow
         label={

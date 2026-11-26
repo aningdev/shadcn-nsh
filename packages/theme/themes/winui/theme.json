@@ -26,7 +26,7 @@
       "accent": "oklch(0.93705 0 0)",
       "accent-foreground": "oklch(0.21779 0 0)",
       "destructive": "oklch(0.53615 0.19119 30.071)",
-      "border": "oklch(0.62006 0 0)",
+      "border": "oklch(0.92191 0 0)",
       "input": "oklch(0.62006 0 0)",
       "ring": "oklch(0.21779 0 0)",
       "chart-1": "oklch(0.49147 0.15959 254.594)",
@@ -63,8 +63,7 @@
       "info-tint": "oklch(0.97015 0 0)",
       "warn-tint": "oklch(0.96621 0.05066 93.747)",
       "destructive-tint": "oklch(0.9462 0.02418 11.286)",
-      "up-tint": "oklch(0.94958 0.04104 143.026)",
-      "down-tint": "oklch(0.9462 0.02418 11.286)"
+      "up-tint": "oklch(0.94958 0.04104 143.026)"
     },
     "dark": {
       "background": "oklch(0.24353 0 0)",
@@ -77,7 +76,7 @@
       "muted-foreground": "oklch(0.84522 0 0)",
       "accent": "oklch(0.31714 0 0)",
       "destructive": "oklch(0.79111 0.12251 13.299)",
-      "border": "oklch(0.68622 0 0)",
+      "border": "oklch(0.30919 0 0)",
       "input": "oklch(0.68622 0 0)",
       "inset": "oklch(0.23075 0 0)",
       "raised": "oklch(0.29716 0 0)",
@@ -101,7 +100,6 @@
       "warn-tint": "oklch(0.33731 0.04713 83.238)",
       "destructive-tint": "oklch(0.30954 0.04407 22.054)",
       "up-tint": "oklch(0.34726 0.05298 114.732)",
-      "down-tint": "oklch(0.30954 0.04407 22.054)",
       "card-foreground": "oklch(1 0 0)",
       "popover-foreground": "oklch(1 0 0)",
       "accent-foreground": "oklch(1 0 0)",

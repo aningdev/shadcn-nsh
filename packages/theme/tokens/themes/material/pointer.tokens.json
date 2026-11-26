@@ -30,20 +30,6 @@
           }
         }
       },
-      "control": {
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "switch": "regular"
-          }
-        },
-        "$description": "Control internal spacing and switch size tier.",
-        "dot": {
-          "$value": {
-            "value": 10,
-            "unit": "px"
-          }
-        }
-      },
       "height": {
         "$description": "Desktop control heights one step below the touch scale (24, 32, 40dp against M3's 32, 40, 56dp): the library's own desktop sizing, not an M3 density step (docs/decisions/0003-material-desktop-tier.md).",
         "md": {

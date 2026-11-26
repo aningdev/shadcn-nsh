@@ -41,24 +41,24 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 这些是 shadcn 没有、本库的组件要用的 token。加一个之前先看第 9 节。
 
-| token                    | 管什么                                                                                        | 谁读                                                                         |
-| ------------------------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `inset`                  | 卡片里凹下去的一层（井）                                                                      | `lib/surface`、`otp-input`、`sidebar`、`menu`、`dock-area`                   |
-| `raised`                 | 卡片上凸起的一层：按钮、字段、轨道                                                            | `button`、`select`、`radio-group`、`carousel`、`dock-area`                   |
-| `field`                  | 输入井：比卡片和 inset 更下一层                                                               | `input`、`select`、`checkbox`、`combobox`、`editor`                          |
-| `hover`                  | 指针停在可点项上的那一步                                                                      | `button`、`select`、`input`、`command`、`tree`、`menu`                       |
-| `line`                   | 井里的发丝线（分隔、网格）                                                                    | `tabs`、`otp-input`、`number-input`、`input`、`lib/surface`                  |
-| `faint`                  | 更弱的字：占位、单位、次要标记                                                                | `input`、`combobox`、`number-input`                                          |
-| `brand`                  | 强调色作为前景：字、图标、线                                                                  | `input`、`calendar`、`command`、`otp-input`、`lib/listbox`                   |
-| `brand-edge`             | 强调色填充的那条边：主按钮的发丝线（WinUI 下作 `AccentControlElevationBorderBrush` 下边斜角） | `theme.ts` 的 `colors.brandEdge`、`finish.accent`（引用 `border`）           |
-| `focus-inner`            | 焦点环里贴着控件的那道线（WinUI 的 `FocusStrokeColorInner`；其余主题取面自身的颜色）          | `theme.ts` 的 `focusRing("double")` 内环                                     |
-| `track`                  | 关着的开关、滑杆与进度条的底槽（后两者按控件预设也可读 `brand-tint` / `input`）               | `switch`、`slider`、`progress`、`tabs`、`listbox`                            |
-| `knob`                   | 关着的开关圆点（`finish.knob` 的白底）                                                        | `theme.ts` 的 `colors.knob`                                                  |
-| `info` / `warn` / `up`   | 三状态色：提示、警告、增长；下降读 `destructive`                                              | `progress`、`diff-view`、`editor`、`status`                                  |
-| `brand-tint` 等 `*-tint` | 状态色的淡底（`info`、`warn`、`destructive`、`up` 各一，另留 `down-tint` 给数据的下降）       | `theme.ts` 的 `colors` 映射；`brand-tint` 另见 `calendar`、`tree`、`command` |
-| `inverse`                | 提示与 toast 的反色面（今天的主题与浮层同色）                                                 | `toast`、`tooltip`（经 `finish.inverse`）                                    |
-| `inverse-foreground`     | `inverse` 上的字                                                                              | `toast`、`tooltip`                                                           |
-| `inverse-brand`          | `inverse` 上的强调色：toast 的操作                                                            | `toast`                                                                      |
+| token                    | 管什么                                                                                        | 谁读                                                                        |
+| ------------------------ | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `inset`                  | 卡片里凹下去的一层（井）                                                                      | `lib/surface`、`otp-input`、`sidebar`、`menu`、`dock-area`                  |
+| `raised`                 | 卡片上凸起的一层：按钮、字段、轨道                                                            | `button`、`select`、`radio-group`、`carousel`、`dock-area`                  |
+| `field`                  | 输入井：比卡片和 inset 更下一层                                                               | `input`、`select`、`checkbox`、`combobox`、`editor`                         |
+| `hover`                  | 指针停在可点项上的那一步                                                                      | `button`、`select`、`input`、`command`、`tree`、`menu`                      |
+| `line`                   | 井里的发丝线（分隔、网格）                                                                    | `tabs`、`otp-input`、`number-input`、`input`、`lib/surface`                 |
+| `faint`                  | 更弱的字：占位、单位、次要标记                                                                | `input`、`combobox`、`number-input`                                         |
+| `brand`                  | 强调色作为前景：字、图标、线                                                                  | `input`、`calendar`、`command`、`otp-input`、`lib/listbox`                  |
+| `brand-edge`             | 强调色填充的那条边：主按钮的发丝线（WinUI 下作 `AccentControlElevationBorderBrush` 下边斜角） | `theme.ts` 的 `colors.brandEdge`、`finish.accent`（引用 `border`）          |
+| `focus-inner`            | 焦点环里贴着控件的那道线（WinUI 的 `FocusStrokeColorInner`；其余主题取面自身的颜色）          | `theme.ts` 的 `focusRing("double")` 内环                                    |
+| `track`                  | 关着的开关、滑杆与进度条的底槽（后两者按控件预设也可读 `brand-tint` / `input`）               | `switch`、`slider`、`progress`、`tabs`、`listbox`                           |
+| `knob`                   | 关着的开关圆点（`finish.knob` 的白底）                                                        | `theme.ts` 的 `colors.knob`                                                 |
+| `info` / `warn` / `up`   | 三状态色：提示、警告、增长；下降读 `destructive`                                              | `progress`、`diff-view`、`editor`、`status`                                 |
+| `brand-tint` 等 `*-tint` | 状态色的淡底（`info`、`warn`、`destructive`、`up` 各一；下跌同 `destructive-tint`）           | `theme.ts` 的 `tints` 映射；`brand-tint` 另见 `calendar`、`tree`、`command` |
+| `inverse`                | 提示与 toast 的反色面（今天的主题与浮层同色）                                                 | `toast`、`tooltip`（经 `finish.inverse`）                                   |
+| `inverse-foreground`     | `inverse` 上的字                                                                              | `toast`、`tooltip`                                                          |
+| `inverse-brand`          | `inverse` 上的强调色：toast 的操作                                                            | `toast`                                                                     |
 
 `destructive` 本身是 A 层（shadcn 的），本库的 `colors.destructive` 指向它；数据的下降也读它（`toneColor("down")`），不再单设 `down` 角色，`down-tint` 仍作为下降的淡底保留。
 
@@ -107,7 +107,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | finish     | 字段                                                                                                                                |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `card`     | `background` `shadow` `border-color` `foreground` `elevation`                                                                       |
-| `inset`    | `shadow` `border-color` `border-top-color` `border-bottom-color` `foreground`                                                       |
+| `inset`    | `shadow` `border-color` `border-bottom-color` `foreground`                                                                          |
 | `channel`  | `background` `shadow` `border-color` `foreground`                                                                                   |
 | `raised`   | `background` `shadow` `border-color` `border-top-color` `border-bottom-color` `backdropFilter` `foreground` `material`              |
 | `plate`    | `background` `shadow` `border-color` `foreground` `elevation`                                                                       |
@@ -128,19 +128,19 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 2b 风格数据
 
-`semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（7 个字体角色，含 `fontSize`、整数点数 `lineHeight`、数值 `fontWeight` 与 `letterSpacing`）、`dimension`（`shape`、`size`、`stroke`、`focus`、`icon`）、`slot`（控件槽，扁平的点分键，[`theme-slots.md`](theme-slots.md) 是清单）、`shape`（`curve`、`corners.button`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"rest-opacity"`、叠色、水波开关、禁用透明度与禁用面）、`elevation`（每个外观的影子刻度：`sm`、`md`、`lg`、`xl`、`inset`，可选的两条边）、`transition`（`enter`）、`motion`（四档：`fast`、`default`、`slow` 三档弹簧与 `state` 状态淡变，timing 用 `timingFunction`）。它们与 finish 无关：一个主题写一份，light 和 dark 共用（`elevation` 例外，每个外观一份）；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
+`semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（7 个字体角色，只存每套主题自己的数值 `fontWeight` 与 `letterSpacing`；共用字号与整点行高定义在 `packages/theme/theme.ts` 的 `SHARED_TYPE_SCALE`）、`dimension`（`size`、`stroke`、`focus`、`icon`）、`controls`（强类型嵌套控件槽，[`theme-slots.md`](theme-slots.md)、[ADR 0019](../decisions/0019-theme-contract-v4.md)）、`shape`（`curve`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"rest-opacity"`、`overlay.{hover,pressed}`、`disabled.content`）、`elevation`（每个外观的影子刻度：`sm`、`md`、`lg`、`xl`、`inset`，可选的两条边）、`motion`（四档：`fast`、`default`、`slow` 与 `state` 状态淡变，timing 用 `timingFunction`）。它们与 finish 无关：一个主题写一份，light 和 dark 共用（`elevation` 例外，每个外观一份）；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
 
 - **键集合相同。** 所有主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
 - **枚举取白名单。** 字重（数值 `400`–`700`）、曲线、焦点样式、`timingFunction` 的值都取下表的枚举清单：`scripts/theme/enums.ts` 在模块加载时读这张表，`check:theme` 再核对表里的键在主题里真的存在。
-- **`{token}` 引用按 DTCG `$type` 校验。** `dimension.shape` 的 3 个层圆角（`control`、`container`、`modal`）必须是 `"{radius-…}"`（`dimension` 类型），不允许写数字字面量；主题不带字体家族：7 个字阶复合 token 的 `fontFamily` 一律是占位字面量 `system-ui`（DTCG 复合类型的必填字段，没有组件读它），真正的家族归应用的 `font-sans`。
-- **两档齐全**（`checkTiers`）：随设备变的值分 `pointer` / `touch` 两档，一个值要么两档都给、要么两档都不给（继承 `tokens/base/style.{pointer,touch}.tokens.json`），且两档的键相同。分档的键是这些：`dimension.size.height`（`sm`/`md`/`lg`）、`dimension.icon`（`sm`/`md`/`lg`）、`dimension.size.density`（`pad`/`gap`）、`dimension.size.item`（`inset`/`pad`）、`dimension.size.control`（`padding`/`gap`/`dot`/`switch`）、`dimension.size.hit`，以及 `typography.<role>` 的 `fontSize` / `lineHeight`（7 个角色）。主题在 `tokens/themes/<id>/` 下写 `pointer.tokens.json` / `touch.tokens.json` 就多一套自己的档位值，只写一个档是错的；不写这两个文件就完全继承 base。
-- **尺寸落在三把尺子上**（`checkScales`）：高度与图标各三个台阶，逐档递增、都是 4 的整数倍；间距（`density.pad` / `density.gap` / `control.padding` / `control.gap`）取自 `4, 8, 12, 16, 24, 32`，每档最多三个值；列表行的 `item.inset` / `item.pad` 也取这些台阶（`inset` 可为 0，即填充铺满容器），`pad` 不小于 `inset`，不计入每档三个值；字号按 `caption → display` 不递减，行高是不小于字号的整数点数；touch 档的点按区 `dimension.size.hit` 不小于 44（Apple HIG 的最小点按区，WCAG 2.2 SC 2.5.5）。平台自己规定的例外值写在各自主题的 `$extensions` 里点名，附出处；没出处的值一个都不许。
+- **字体家族与字阶共用。** 源码里 7 个字阶复合 token 的 `fontFamily` 一律是占位字面量 `system-ui`（DTCG 复合类型的必填字段，没有组件读它），真正的家族归应用的 `font-sans`。
+- **两档齐全**（`checkTiers`）：随设备变的值分 `pointer` / `touch` 两档，一个值要么两档都给、要么两档都不给（继承 `tokens/base/style.{pointer,touch}.tokens.json`），且两档的键相同。分档的键是：`dimension.size.height`（`sm`/`md`/`lg`）、`dimension.icon`（`sm`/`md`/`lg`）、`dimension.size.density`（`pad`/`gap`）、`dimension.size.item`（`inset`/`pad`）、`dimension.size.control`（`padding`/`gap`）、`dimension.size.hit`。主题在 `tokens/themes/<id>/` 下写 `pointer.tokens.json` / `touch.tokens.json` 就多一套自己的档位值，只写一个档是错的；不写这两个文件就完全继承 base。
+- **尺寸落在三把尺子上**（`checkScales`）：高度与图标各三个台阶，逐档递增、都是 4 的整数倍；间距（`density.pad` / `density.gap` / `control.padding` / `control.gap`）取自 `4, 8, 12, 16, 24, 32`，每档最多三个值；列表行的 `item.inset` / `item.pad` 也取这些台阶（`inset` 可为 0，即填充铺满容器），`pad` 不小于 `inset`，不计入每档三个值；源码里的字阶按 `caption → display` 不递减、行高是不小于字号的整数点数；touch 档的点按区 `dimension.size.hit` 不小于 44（Apple HIG 的最小点按区，WCAG 2.2 SC 2.5.5）。平台自己规定的例外值写在各自主题的 `$extensions` 里点名，附出处；没出处的值一个都不许。
 
-**不在格子上的值写在哪。** 只有平台自己规定、且不在上面的尺子上的值需要出处，出处随主题走：`packages/theme/tokens/themes/<id>/theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].scales.citations` 是一张表，键是 token 路径（如 `dimension.size.hit.touch`），值是平台的出处（页面链接或资源文件名）。`check:theme` 拿它与每套主题编译后的 `semantics.json` 逐条对账：键必须在（写错路径就点名），值确实还不在格子上（值改了、落回尺子就报“出处不再需要”）。今天只有 winui 写这张表：按钮内边距 6 px（`Button_themeresources.xaml`）、菜单行内边距 11 px（`MenuFlyoutItemThemePadding` 11,8,11,9，`MenuFlyout_themeresources.xaml`）、触控目标 40×40 epx（Windows [Touch interactions](https://learn.microsoft.com/en-us/windows/apps/design/input/touch-interactions) 的 “Target size”）。
+**不在格子上的值写在哪。** 只有平台自己规定、且不在上面的尺子上的值需要出处，出处随主题走：`packages/theme/tokens/themes/<id>/theme.tokens.json` 的 `$extensions["dev.aning.shadcn-nsh"].scales.citations` 是一张表，键是 token 路径（如 `dimension.size.control.pointer.padding`），值是平台的出处（页面链接或资源文件名）。`check:theme` 拿它与每套主题编译后的 `semantics.json` 逐条对账：键必须在（写错路径就点名），值确实还不在格子上（值改了、落回尺子就报“出处不再需要”）。今天只有 winui 写这张表：按钮内边距 6 px（`Button_themeresources.xaml`）、菜单行内边距 11 px（`MenuFlyoutItemThemePadding` 11,8,11,9，`MenuFlyout_themeresources.xaml`）。
 
-**`theme.json` 与 `dimension.shape` 的分工。** 全部 3 个层圆角值（`radius-control`、`radius-container`、`radius-modal`）由 DTCG 源码编译进 `theme.json` 的 `cssVars.theme` 中（同时编译出等于 `radius-control` 的 A 层 `radius` 槽）；`semantics.json` 的 `dimension.shape.{control,container,modal}` 通过 `{radius-…}` 引用它们，外加非 token 的 `shape.curve`；`shape.corners.button` 自己是 token，值是 `{dimension.radius.control}`、`full` 或点数。`theme.ts` 的 `shape.*` 经 `token()` 响应式解析这些引用，因此换主题或宿主覆写圆角 token 都会立即到达组件。
+**`theme.json` 与 `shape` 的分工。** 全部 3 个层圆角值（`radius-control`、`radius-container`、`radius-modal`）由 DTCG 源码编译进 `theme.json` 的 `cssVars.theme` 中（同时编译出等于 `radius-control` 的 A 层 `radius` 槽）。`theme.ts` 的 `shape.{control,container,modal}` 直接经 `token("radius-*")` 响应式解析它们，按钮按尺寸读 `buttonCorner(size)`（解析 `controls().button.corner`），因此换主题或宿主覆写圆角 token 都会立即到达组件。
 
-组件经 `style()`（响应式）和保持原形状的 `density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 读风格数据，换主题后下一帧重画。terminal 档的尺寸由字符格决定，留在代码里，不进主题。
+组件经 `style()` / `controls()`（响应式）和保持原形状的 `density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 读风格数据，换主题后下一帧重画。terminal 档的尺寸由字符格决定，留在代码里，不进主题。
 
 **组件怎么读 `typography`。** 组件取字号、字重、行高、字距用 `font.size(role)`、`font.weight(role)`、`font.lineHeight(role)`、`font.letterSpacing(role)`（`theme.ts`，响应式，`size` 与 `lineHeight` 按 `tier` 取 pointer / touch 档；`lineHeight()` 返回整数点数，源码里的 DTCG 倍率已在 `tokens:build` 时乘回点数）：只取组件原来写了的那几项，所以没写字重的文字仍继承周围的字重。对应关系：控件上的字（按钮、标签、表单、菜单、标签页）取 `label` 的字重（500）、卡片与区块标题取 `title` 的字重（600）、正文类取 `body`；`body` 的字号（13 / 15）给面包屑、导航菜单、树、命令面板的行与对话框正文，`detail`（12 / 13）给侧栏的分组与计数，`caption`（11 / 12）给分段控件的数量，`label`（14 / 15）给输入框（`fieldSize.font`）。`body` 的行高（20 / 20）给对话框正文。**没有角色对得上的字号留在代码里**，各处有一行注释：按钮、徽标、侧栏档位的 12 / 13 / 14，对话框与卡片标题的 17 / 20、`body + 2`，日历格的 12.8 / 14 / 16，图表轴的 10 / 10.5，命令面板分组名的 11 加 0.6 字距，气泡与空状态说明的 1.5 倍行高（取整后 20 / 20，与 `body` 的 20 同值），以及写在 Tailwind 类里的 `text-sm` / `text-base` / `text-xs`、`font-semibold`（类名读不了 getter）。
 
@@ -156,19 +156,18 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- theme-lint: enums -->
 
-| 键                                | 取值                                                                                                                                        | 管什么                                          |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `typography.*.fontWeight`         | `400` `500` `600` `700`                                                                                                                     | 字重                                            |
-| `shape.curve`                     | `continuous` `circular`                                                                                                                     | 圆角的曲率（Apple 是连续曲线）                  |
-| `dimension.size.control.*.switch` | `small` `regular`                                                                                                                           | 开关的钮取哪一档                                |
-| `dimension.focus.style`           | `halo` `outline` `double`                                                                                                                   | 焦点环的画法                                    |
-| `transition.enter.timingFunction` | `out-cubic` `in-cubic` `in-out-cubic` `standard` `emphasized-decelerate` `emphasized-accelerate` `decelerate` `accelerate` `point-to-point` | 表面进场用的缓动名（引用 `cubicBezier.<name>`） |
+| 键                        | 取值                                                                                                                                        | 管什么                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `typography.*.fontWeight` | `400` `500` `600` `700`                                                                                                                     | 字重                                            |
+| `shape.curve`             | `continuous` `circular`                                                                                                                     | 圆角的曲率（Apple 是连续曲线）                  |
+| `dimension.focus.style`   | `halo` `outline` `double`                                                                                                                   | 焦点环的画法                                    |
+| `motion.*.timingFunction` | `out-cubic` `in-cubic` `in-out-cubic` `standard` `emphasized-decelerate` `emphasized-accelerate` `decelerate` `accelerate` `point-to-point` | 动画角色用的缓动名（引用 `cubicBezier.<name>`） |
 
 <!-- /theme-lint: enums -->
 
 `finish` 的 `material`（`none` `glass` `acrylic`）不在这张表里：它是 finish 的字段，由 `scripts/theme/dtcg.ts` 在生成时校验。
 
-**控件的外观是值，不是枚举。** 六套主题在同一个位置写同一个值：控件槽（`slot.*`，[`theme-slots.md`](theme-slots.md) 是清单）。形态由值自己说出：边宽 0 或边色与面同色是没有边的井，侧边与上边宽 0 是下划线井，钮宽等于高是圆钮、不等是椭圆，角等于半高是胶囊，影子 `none` 是平的，内点 0 是没有点。主题要做的只是把自己的数字、颜色角色与圆角写进 `theme.tokens.json` 的 `slot` 组，没有槽的主题什么都不写、继承 base，编译后六套 `semantics.json` 的 `slots` 键集合一致，`check:theme` 逐键对账（[决策 0013](../decisions/0013-one-contract-value-slots.md)）。
+控件的外观是值，不是枚举。六套主题在同一个位置写同一个值：控件槽（`slot.*` 编译成 `controls` 嵌套树，[`theme-slots.md`](theme-slots.md)、[ADR 0019](../decisions/0019-theme-contract-v4.md)）。形态由值自己说出：边宽 0 或边色与面同色是没有边的井，侧边与上边宽 0 是下划线井，钮宽等于高是圆钮、不等是椭圆（`size` 槽），角等于半高是胶囊，影子 `none` 是平的，内点 0 是没有点。主题要做的只是把自己的数字、颜色角色、尺寸与圆角写进 `theme.tokens.json` 的 `slot` 组，没有槽的主题什么都不写、继承 base，编译后六套 `semantics.json` 的 `controls` 树键集合一致，`check:theme` 逐叶对账（[决策 0013](../decisions/0013-one-contract-value-slots.md)）。
 
 ## 3 固定形状
 

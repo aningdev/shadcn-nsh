@@ -5,7 +5,7 @@
 import { Redo2, Undo2 } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 
-import { Button } from "@/packages/ui/button";
+import { Button, buttonGlyph } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { toolbarTrack } from "@/packages/ui/lib/tool";
@@ -19,7 +19,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@/packages/ui/menu";
-import { Toggle, ToggleGroup, toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
+import { Toggle, ToggleGroup, toggleLabel, toggleLook } from "@/packages/ui/toggle";
 import {
   Toolbar,
   ToolbarGroup,
@@ -169,7 +169,10 @@ function App() {
                 log("Undo");
               }}
             >
-              <Icon icon={Undo2} {...toggleGlyph(() => true)} />
+              <Icon
+                icon={Undo2}
+                {...buttonGlyph("ghost", { disabled: () => history().length === 0 })}
+              />
             </Button>
           </ToolbarGroup>
           <ToolbarSeparator style={toolbarRule()} />
@@ -278,7 +281,10 @@ function App() {
                 disabled={past().length === 0}
                 onPress={undo}
               >
-                <Icon icon={Undo2} {...toggleGlyph(() => true)} />
+                <Icon
+                  icon={Undo2}
+                  {...buttonGlyph("ghost", { disabled: () => past().length === 0 })}
+                />
               </Button>
               <Button
                 variant="ghost"
@@ -286,7 +292,10 @@ function App() {
                 disabled={future().length === 0}
                 onPress={redo}
               >
-                <Icon icon={Redo2} {...toggleGlyph(() => true)} />
+                <Icon
+                  icon={Redo2}
+                  {...buttonGlyph("ghost", { disabled: () => future().length === 0 })}
+                />
               </Button>
             </ToolbarGroup>
             <ToolbarSeparator style={toolbarRule()} />
@@ -298,11 +307,18 @@ function App() {
                   accessibilityState={{ expanded: blockOpen() }}
                   {...toggleLook({ on: blockOpen, text: true })}
                 >
-                  <Text style={{ fontSize: 14, color: ui().text }}>
+                  <Text style={{ ...toggleLabel(blockOpen), fontSize: 14 }}>
                     {blocks.find((b) => b.value === doc().block)!.glyph}
                   </Text>
                   {wide() ? <Text style={toggleLabel(blockOpen)}>{doc().block}</Text> : null}
-                  <Text style={{ fontSize: 9, color: ui().faint }}>{blockOpen() ? "▴" : "▾"}</Text>
+                  <Text
+                    style={{
+                      fontSize: 9,
+                      color: blockOpen() ? toggleLabel(blockOpen).color : ui().faint,
+                    }}
+                  >
+                    {blockOpen() ? "▴" : "▾"}
+                  </Text>
                 </View>
               </MenuTrigger>
               <MenuContent>
@@ -406,7 +422,10 @@ function App() {
                     disabled={past().length === 0}
                     onPress={undo}
                   >
-                    <Icon icon={Undo2} {...toggleGlyph(() => true)} />
+                    <Icon
+                      icon={Undo2}
+                      {...buttonGlyph("ghost", { disabled: () => past().length === 0 })}
+                    />
                   </Button>
                 </ToolbarButton>
                 <ToolbarButton
@@ -423,7 +442,10 @@ function App() {
                     disabled={future().length === 0}
                     onPress={redo}
                   >
-                    <Icon icon={Redo2} {...toggleGlyph(() => true)} />
+                    <Icon
+                      icon={Redo2}
+                      {...buttonGlyph("ghost", { disabled: () => future().length === 0 })}
+                    />
                   </Button>
                 </ToolbarButton>
               </ToolbarGroup>
@@ -439,10 +461,17 @@ function App() {
                       accessibilityState={{ expanded: overflowBlockOpen() }}
                       {...toggleLook({ on: overflowBlockOpen })}
                     >
-                      <Text style={{ fontSize: 14, color: ui().text }}>
+                      <Text style={{ ...toggleLabel(overflowBlockOpen), fontSize: 14 }}>
                         {blocks.find((b) => b.value === doc().block)!.glyph}
                       </Text>
-                      <Text style={{ fontSize: 9, color: ui().faint }}>
+                      <Text
+                        style={{
+                          fontSize: 9,
+                          color: overflowBlockOpen()
+                            ? toggleLabel(overflowBlockOpen).color
+                            : ui().faint,
+                        }}
+                      >
                         {overflowBlockOpen() ? "▴" : "▾"}
                       </Text>
                     </View>

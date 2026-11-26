@@ -318,7 +318,7 @@
       "type": "registry:lib",
       "title": "Press",
       "description": "A press's feedback: the theme's sink and its ease.",
-      "registryDependencies": ["live-value", "theme"],
+      "registryDependencies": ["live-value", "motion", "theme"],
       "files": [
         {
           "path": "packages/ui/lib/press.ts",
@@ -519,7 +519,7 @@
       "type": "registry:ui",
       "title": "Badge",
       "description": "A small capsule label in neutral, toned, or outline styles.",
-      "registryDependencies": ["live-value", "theme"],
+      "registryDependencies": ["live-value", "look", "theme"],
       "files": [
         {
           "path": "packages/ui/badge.tsx",
@@ -556,7 +556,15 @@
       "type": "registry:ui",
       "title": "Switch",
       "description": "A switch whose knob springs across a sunk track.",
-      "registryDependencies": ["class-names", "look", "motion", "switch-geometry", "theme"],
+      "registryDependencies": [
+        "as-text",
+        "class-names",
+        "live-value",
+        "look",
+        "motion",
+        "switch-geometry",
+        "theme"
+      ],
       "files": [
         {
           "path": "packages/ui/switch.tsx",
@@ -570,7 +578,7 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "A card dialog: Trigger, Content, Title, Description, Footer and Close.",
-      "registryDependencies": ["as-text", "button", "open-state", "popup", "theme"],
+      "registryDependencies": ["as-text", "button", "look", "open-state", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/dialog.tsx",
@@ -679,7 +687,7 @@
       "type": "registry:ui",
       "title": "Number Input",
       "description": "A sunk number field with − / + or stacked chevron steppers.",
-      "registryDependencies": ["icons", "indicator", "input", "look", "theme"],
+      "registryDependencies": ["icons", "indicator", "input", "live-value", "look", "theme"],
       "files": [
         {
           "path": "packages/ui/number-input.tsx",
@@ -722,7 +730,7 @@
       "type": "registry:ui",
       "title": "Tooltip",
       "description": "A popover-coloured hint bubble on any element's tooltip prop.",
-      "registryDependencies": ["as-text", "button", "open-state", "theme"],
+      "registryDependencies": ["as-text", "button", "look", "open-state", "theme"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",
@@ -764,7 +772,15 @@
       "type": "registry:ui",
       "title": "Sheet",
       "description": "A panel that slides in from an edge of the screen over a scrim.",
-      "registryDependencies": ["as-text", "button", "dialog", "open-state", "popup", "theme"],
+      "registryDependencies": [
+        "as-text",
+        "button",
+        "dialog",
+        "look",
+        "open-state",
+        "popup",
+        "theme"
+      ],
       "files": [
         {
           "path": "packages/ui/sheet.tsx",
@@ -778,7 +794,7 @@
       "type": "registry:ui",
       "title": "Toast",
       "description": "A raised banner, and a toaster: toast(), update and dismiss on nsh/base's queue.",
-      "registryDependencies": ["button", "icons", "press", "spinner", "theme"],
+      "registryDependencies": ["button", "icons", "look", "press", "spinner", "theme"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -836,7 +852,7 @@
       "type": "registry:lib",
       "title": "Listbox",
       "description": "Shared list popup, rows, search and clear looks for select, combobox and date picker.",
-      "registryDependencies": ["icons", "popup", "surface", "theme"],
+      "registryDependencies": ["icons", "indicator", "look", "popup", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/lib/listbox.tsx",
@@ -1166,7 +1182,7 @@
       "type": "registry:ui",
       "title": "Command",
       "description": "A command palette with search, groups, and shortcut keys.",
-      "registryDependencies": ["class-names", "icons", "kbd", "popup", "surface", "theme"],
+      "registryDependencies": ["class-names", "icons", "kbd", "look", "popup", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/command.tsx",
@@ -1195,7 +1211,7 @@
       "type": "registry:ui",
       "title": "Plot",
       "description": "Chart colors, grid, cross line and tooltip for nsh/base/plot.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["look", "theme"],
       "files": [
         {
           "path": "packages/ui/plot.tsx",
@@ -1485,7 +1501,7 @@
       "type": "registry:ui",
       "title": "ButtonGroup",
       "description": "Buttons joined into one control, in a row or a column.",
-      "registryDependencies": ["as-text", "separator", "surface", "theme"],
+      "registryDependencies": ["as-text", "look", "separator", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/button-group.tsx",
@@ -1564,7 +1580,7 @@
       "type": "registry:ui",
       "title": "Menubar",
       "description": "A row of menus whose triggers stand in one bar.",
-      "registryDependencies": ["as-text", "menu", "open-state", "popup", "theme"],
+      "registryDependencies": ["as-text", "look", "menu", "open-state", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/menubar.tsx",
@@ -1701,7 +1717,7 @@
       "type": "registry:ui",
       "title": "Terminal",
       "description": "A program's output on the theme's field surface, the keys typed back to it.",
-      "registryDependencies": ["live-value", "theme"],
+      "registryDependencies": ["indicator", "live-value", "look", "theme"],
       "files": [
         {
           "path": "packages/ui/terminal.tsx",

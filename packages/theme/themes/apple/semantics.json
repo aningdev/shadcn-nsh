@@ -1,96 +1,35 @@
 {
   "typography": {
     "caption": {
-      "fontSize": {
-        "pointer": 11,
-        "touch": 12
-      },
-      "lineHeight": {
-        "pointer": 16,
-        "touch": 16
-      },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "detail": {
-      "fontSize": {
-        "pointer": 12,
-        "touch": 13
-      },
-      "lineHeight": {
-        "pointer": 16,
-        "touch": 20
-      },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "body": {
-      "fontSize": {
-        "pointer": 13,
-        "touch": 15
-      },
-      "lineHeight": {
-        "pointer": 20,
-        "touch": 20
-      },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "label": {
-      "fontSize": {
-        "pointer": 14,
-        "touch": 15
-      },
-      "lineHeight": {
-        "pointer": 20,
-        "touch": 20
-      },
       "fontWeight": 500,
       "letterSpacing": 0
     },
     "title": {
-      "fontSize": {
-        "pointer": 16,
-        "touch": 16
-      },
-      "lineHeight": {
-        "pointer": 24,
-        "touch": 24
-      },
       "fontWeight": 600,
       "letterSpacing": 0
     },
     "headline": {
-      "fontSize": {
-        "pointer": 20,
-        "touch": 22
-      },
-      "lineHeight": {
-        "pointer": 28,
-        "touch": 28
-      },
       "fontWeight": 600,
       "letterSpacing": 0
     },
     "display": {
-      "fontSize": {
-        "pointer": 26,
-        "touch": 28
-      },
-      "lineHeight": {
-        "pointer": 32,
-        "touch": 36
-      },
       "fontWeight": 600,
       "letterSpacing": 0
     }
   },
   "dimension": {
-    "shape": {
-      "control": "{radius-control}",
-      "container": "{radius-container}",
-      "modal": "{radius-modal}"
-    },
     "size": {
       "hit": {
         "pointer": 0,
@@ -119,22 +58,18 @@
       "control": {
         "pointer": {
           "padding": 8,
-          "gap": 8,
-          "dot": 6,
-          "switch": "regular"
+          "gap": 8
         },
         "touch": {
           "padding": 8,
-          "gap": 8,
-          "dot": 8,
-          "switch": "regular"
+          "gap": 8
         }
       },
       "height": {
         "pointer": {
-          "sm": 20,
-          "md": 24,
-          "lg": 28
+          "sm": 24,
+          "md": 28,
+          "lg": 32
         },
         "touch": {
           "sm": 32,
@@ -165,243 +100,352 @@
       }
     }
   },
-  "slots": {
-    "button.corner.sm": 5,
-    "button.corner.md": 6,
-    "button.corner.lg": "full",
-    "button.selected.face": {
-      "tint": "brand"
-    },
-    "button.selected.ink": {
-      "colour": "brand"
-    },
-    "button.secondary.face": {
-      "finish": "raised"
-    },
-    "button.secondary.ink": {
-      "colour": "foreground"
-    },
-    "button.secondary.edge": "none",
-    "button.secondary.shade": "raised",
-    "button.secondary.hover": {
-      "colour": "muted"
-    },
-    "button.destructive.face": {
-      "tint": "destructive"
-    },
-    "button.destructive.ink": {
-      "colour": "destructive"
-    },
-    "button.destructive.edge": "none",
-    "button.destructive.shade": "none",
-    "field.face": {
-      "colour": "field"
-    },
-    "field.shade": "inset",
-    "field.edge.width": "control",
-    "field.edge.sides": true,
-    "field.edge.colour": {
-      "colour": "input"
-    },
-    "field.edge.bottom": {
-      "colour": "input"
-    },
-    "field.corner.top": "control",
-    "field.corner.bottom": "control",
-    "field.focus.line": false,
-    "field.focus.width": 3,
-    "field.disabled.face": "keep",
-    "choice.size": {
-      "pointer": 16,
-      "touch": 22
-    },
-    "choice.box": {
-      "pointer": 16,
-      "touch": 20
-    },
-    "choice.corner": {
-      "pointer": 4,
-      "touch": 7
-    },
-    "choice.face": {
-      "light": {
-        "colour": "card"
+  "controls": {
+    "button": {
+      "corner": {
+        "sm": {
+          "pointer": 5,
+          "touch": "full"
+        },
+        "md": {
+          "pointer": 6,
+          "touch": "full"
+        },
+        "lg": {
+          "pointer": 8,
+          "touch": "full"
+        }
       },
-      "dark": {
-        "colour": "raised"
+      "selected": {
+        "face": {
+          "tint": "brand"
+        },
+        "ink": {
+          "color": "brand"
+        }
+      },
+      "secondary": {
+        "face": {
+          "color": "raised"
+        },
+        "ink": {
+          "color": "foreground"
+        },
+        "edge": "none",
+        "hover": {
+          "light": {
+            "color": "muted"
+          },
+          "dark": {
+            "color": "track"
+          }
+        }
+      },
+      "outline": {
+        "edge": {
+          "color": "border"
+        }
+      },
+      "destructive": {
+        "edge": "none"
+      },
+      "shade": "none"
+    },
+    "badge": {
+      "corner": "full"
+    },
+    "field": {
+      "edge": {
+        "sides": true,
+        "color": {
+          "color": "input"
+        },
+        "bottom": {
+          "color": "input"
+        }
+      },
+      "corner": {
+        "bottom": "control"
+      },
+      "focus": {
+        "line": false,
+        "width": 3,
+        "color": {
+          "color": "ring"
+        }
+      },
+      "disabled": {
+        "face": "keep"
       }
     },
-    "choice.shade": "none",
-    "choice.edge.width": 1,
-    "choice.edge.colour": {
-      "light": {
-        "colour": "input"
+    "choice": {
+      "size": {
+        "pointer": 16,
+        "touch": 22
       },
-      "dark": {
-        "colour": "foreground",
-        "alpha": 0.2
+      "box": {
+        "pointer": 16,
+        "touch": 20
+      },
+      "corner": {
+        "pointer": 4,
+        "touch": 7
+      },
+      "face": {
+        "light": {
+          "color": "card"
+        },
+        "dark": {
+          "color": "raised"
+        }
+      },
+      "shade": "none",
+      "edge": {
+        "width": 1,
+        "color": {
+          "light": {
+            "color": "input"
+          },
+          "dark": {
+            "color": "foreground",
+            "alpha": 0.2
+          }
+        },
+        "disabled": {
+          "light": {
+            "color": "input"
+          },
+          "dark": {
+            "color": "foreground",
+            "alpha": 0.4
+          }
+        }
+      },
+      "checked": {
+        "face": {
+          "finish": "accent"
+        }
+      },
+      "radio": {
+        "checked": {
+          "face": {
+            "finish": "accent"
+          },
+          "edge": "none"
+        }
+      },
+      "mark": {
+        "size": {
+          "pointer": 6,
+          "touch": 8
+        },
+        "hover": "none",
+        "pressed": "none"
+      },
+      "halo": "none"
+    },
+    "switch": {
+      "track": {
+        "pointer": [
+          54,
+          24
+        ],
+        "touch": [
+          63,
+          28
+        ]
+      },
+      "small": {
+        "track": {
+          "pointer": [
+            40,
+            18
+          ],
+          "touch": [
+            48,
+            22
+          ]
+        },
+        "knob": {
+          "pointer": [
+            23,
+            14
+          ],
+          "touch": [
+            28,
+            18
+          ]
+        }
+      },
+      "edge": {
+        "off": 0,
+        "on": 0,
+        "color": "none"
+      },
+      "knob": {
+        "size": {
+          "pointer": [
+            31,
+            20
+          ],
+          "touch": [
+            37,
+            24
+          ]
+        },
+        "on": "same",
+        "hover": "same",
+        "pressed": "same"
       }
     },
-    "choice.edge.disabled": {
-      "light": {
-        "colour": "input"
+    "slider": {
+      "rail": {
+        "pointer": 4,
+        "touch": 6
       },
-      "dark": {
-        "colour": "foreground",
-        "alpha": 0.4
+      "band": {
+        "pointer": 24,
+        "touch": 32
+      },
+      "face": {
+        "color": "track"
+      },
+      "shade": "none",
+      "edge": {
+        "color": {
+          "color": "border"
+        },
+        "width": 0
+      },
+      "knob": {
+        "size": {
+          "pointer": [
+            20,
+            16
+          ],
+          "touch": [
+            37,
+            24
+          ]
+        },
+        "pressed": {
+          "pointer": [
+            20,
+            16
+          ],
+          "touch": [
+            49,
+            32
+          ]
+        },
+        "face": {
+          "finish": "knob"
+        },
+        "edge": {
+          "color": "border"
+        }
+      },
+      "mark": {
+        "size": 0,
+        "hover": 0,
+        "pressed": 0
+      },
+      "brightens": true
+    },
+    "progress": {
+      "height": 6,
+      "line": 0,
+      "face": {
+        "color": "track"
+      },
+      "shade": "inset",
+      "edge": {
+        "color": {
+          "color": "border"
+        },
+        "width": "control"
       }
     },
-    "choice.checked.face": {
-      "finish": "accent"
+    "calendar": {
+      "today": {
+        "face": "none",
+        "ink": {
+          "color": "brand"
+        }
+      }
     },
-    "choice.mark.size": {
-      "pointer": 6,
-      "touch": 8
+    "spinner": {
+      "opacity": 0,
+      "spokes": true
     },
-    "choice.mark.hover": "none",
-    "choice.mark.pressed": "none",
-    "choice.halo": "none",
-    "switch.width": {
-      "pointer": 54,
-      "touch": 63
+    "popup": {
+      "corner": "container"
     },
-    "switch.height": {
-      "pointer": 24,
-      "touch": 28
+    "tooltip": {
+      "face": {
+        "finish": "inverse"
+      },
+      "ink": {
+        "finish": "inverse",
+        "field": "foreground"
+      },
+      "edge": {
+        "finish": "inverse",
+        "field": "borderColor"
+      },
+      "shade": "plate"
     },
-    "switch.small.width": {
-      "pointer": 28,
-      "touch": 36
+    "toast": {
+      "action": {
+        "face": {
+          "finish": "accent"
+        }
+      }
     },
-    "switch.small.height": {
-      "pointer": 16,
-      "touch": 20
+    "list": {
+      "item": {
+        "highlight": {
+          "tint": "brand"
+        },
+        "edge": "none"
+      }
     },
-    "switch.small.knob.width": {
-      "pointer": 12,
-      "touch": 16
+    "menubar": {
+      "bar": "none"
     },
-    "switch.small.knob.height": {
-      "pointer": 12,
-      "touch": 16
+    "tabs": {
+      "track": {
+        "face": {
+          "color": "inset"
+        },
+        "edge": {
+          "color": "border"
+        },
+        "corner": "full"
+      }
     },
-    "switch.edge.off": 0,
-    "switch.edge.on": 0,
-    "switch.knob.width": {
-      "pointer": 31,
-      "touch": 37
+    "well": {
+      "edge": "none"
     },
-    "switch.knob.height": {
-      "pointer": 20,
-      "touch": 24
-    },
-    "switch.knob.on.width": {
-      "pointer": 31,
-      "touch": 37
-    },
-    "switch.knob.on.height": {
-      "pointer": 20,
-      "touch": 24
-    },
-    "switch.knob.hover": {
-      "pointer": 31,
-      "touch": 37
-    },
-    "switch.knob.pressed.width": {
-      "pointer": 31,
-      "touch": 37
-    },
-    "switch.knob.pressed.height": {
-      "pointer": 20,
-      "touch": 24
-    },
-    "switch.feedback": "none",
-    "slider.rail": {
-      "pointer": 4,
-      "touch": 6
-    },
-    "slider.band": {
-      "pointer": 24,
-      "touch": 32
-    },
-    "slider.vertical": {
-      "pointer": 128,
-      "touch": 144
-    },
-    "slider.face": {
-      "colour": "track"
-    },
-    "slider.shade": "none",
-    "slider.edge.colour": {
-      "colour": "border"
-    },
-    "slider.edge.width": 0,
-    "slider.knob.size": {
-      "pointer": 20,
-      "touch": 37
-    },
-    "slider.knob.height": {
-      "pointer": 16,
-      "touch": 24
-    },
-    "slider.knob.pressed.size": {
-      "pointer": 20,
-      "touch": 37
-    },
-    "slider.knob.face": {
-      "finish": "knob"
-    },
-    "slider.mark.size": 0,
-    "slider.mark.hover": 0,
-    "slider.mark.pressed": 0,
-    "slider.brightens": true,
-    "progress.height": 6,
-    "progress.line": 0,
-    "progress.face": {
-      "colour": "track"
-    },
-    "progress.shade": "inset",
-    "progress.edge.colour": {
-      "colour": "border"
-    },
-    "progress.edge.width": "control",
-    "calendar.today.face": "none",
-    "calendar.today.ink": "brand",
-    "spinner.opacity": 0,
-    "spinner.spokes": true,
-    "popup.corner": "container",
-    "tabs.track.face": {
-      "colour": "inset"
-    },
-    "well.edge": "none",
-    "state.disabled.face": "keep",
-    "state.disabled.ink": "keep",
-    "state.disabled.edge": "keep"
+    "disabled": {
+      "face": "keep",
+      "ink": "keep",
+      "edge": "keep"
+    }
   },
   "shape": {
-    "curve": "continuous",
-    "corners": {
-      "button": "{radius-control}"
-    }
+    "curve": "continuous"
   },
   "state": {
     "press-scale": 1,
     "overlay": {
       "hover": 0,
-      "focus": 0,
-      "pressed": 0,
-      "dragged": 0
+      "pressed": 0
     },
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
     "disabled": {
       "content": 0.4
-    }
-  },
-  "transition": {
-    "enter": {
-      "duration": 420,
-      "timingFunction": "out-cubic"
     }
   },
   "motion": {
@@ -435,14 +479,12 @@
         "shadow": "none",
         "foreground": "{foreground}",
         "border-color": "{input}",
-        "border-top-color": null,
         "border-bottom-color": null
       },
       "channel": {
-        "background": "{card}",
-        "shadow": "0 1px 3px oklch(0 0 0 / 0.2)",
+        "shadow": "none",
         "foreground": "{foreground}",
-        "border-color": "{border}"
+        "border-color": "transparent"
       },
       "raised": {
         "background": "oklch(from {raised} l c h / 0.72)",
@@ -469,7 +511,7 @@
       "modal": {
         "background": "{card}",
         "foreground": "{foreground}",
-        "border-color": "{border}",
+        "border-color": "transparent",
         "elevation": null
       },
       "inverse": {
@@ -494,7 +536,7 @@
         "foreground": "{primary-foreground}",
         "border-color": "transparent",
         "border-bottom-color": "transparent",
-        "pressed-opacity": 0.88,
+        "pressed-opacity": 0.72,
         "pressed-background": null,
         "pressed-foreground": null
       },
@@ -506,7 +548,6 @@
         "border-color": "transparent"
       },
       "knob": {
-        "shadow": "0 1px 3px oklch(0 0 0 / 0.2)",
         "foreground": "{foreground}",
         "background": "{knob}",
         "gradient": null,
@@ -524,7 +565,6 @@
       "pressed": {
         "shadow": "none",
         "foreground": "{foreground}",
-        "background": "{muted}",
         "border-color": "transparent",
         "elevation": null
       },
@@ -535,66 +575,84 @@
       }
     },
     "light": {
+      "channel": {
+        "background": "{raised}"
+      },
       "raised": {
-        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)"
       },
       "plate": {
         "background": "{card}",
-        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)"
       },
       "overlay": {
-        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)"
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)"
       },
       "modal": {
-        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)"
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 18px 48px oklch(0 0 0 / 0.2)"
       },
       "inverse": {
-        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)"
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)"
       },
       "glass": {
-        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)"
+      },
+      "knob": {
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.12)"
       },
       "hover": {
-        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)"
+      },
+      "pressed": {
+        "background": "oklch(from {foreground} l c h / 0.16)"
       },
       "disabled": {
-        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)"
       }
     },
     "dark": {
+      "channel": {
+        "background": "{inset}"
+      },
       "raised": {
-        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)"
       },
       "plate": {
         "background": "{raised}",
-        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)"
       },
       "overlay": {
-        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 30px oklch(0 0 0 / 0.4)"
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)"
       },
       "modal": {
-        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 30px oklch(0 0 0 / 0.4)"
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 18px 48px oklch(0 0 0 / 0.5)"
       },
       "inverse": {
-        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 30px oklch(0 0 0 / 0.4)"
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)"
       },
       "glass": {
-        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)"
+      },
+      "knob": {
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.2)"
       },
       "hover": {
-        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)"
+      },
+      "pressed": {
+        "background": "oklch(from {foreground} l c h / 0.2)"
       },
       "disabled": {
-        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 3px oklch(0 0 0 / 0.2)"
+        "shadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)"
       }
     }
   },
   "elevation": {
     "light": {
-      "sm": "0 1px 3px oklch(0 0 0 / 0.2)",
+      "sm": "0 1px 2px oklch(0 0 0 / 0.12)",
       "md": null,
-      "lg": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)",
-      "xl": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)",
+      "lg": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)",
+      "xl": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 18px 48px oklch(0 0 0 / 0.2)",
       "inset": null,
       "edge": {
         "surface": "0 0 0 0.5px oklch(0 0 0 / 0.08)",
@@ -602,10 +660,10 @@
       }
     },
     "dark": {
-      "sm": "0 1px 3px oklch(0 0 0 / 0.2)",
+      "sm": "0 1px 2px oklch(0 0 0 / 0.2)",
       "md": null,
-      "lg": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 30px oklch(0 0 0 / 0.4)",
-      "xl": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 30px oklch(0 0 0 / 0.4)",
+      "lg": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)",
+      "xl": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 18px 48px oklch(0 0 0 / 0.5)",
       "inset": null,
       "edge": {
         "surface": "0 0 0 0.5px oklch(1 0 0 / 0.1)",

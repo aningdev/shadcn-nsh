@@ -17,13 +17,11 @@ const scaled: AppTheme = {
       ...typography,
       label: {
         ...typography.label,
-        fontSize: { pointer: 21, touch: 23 },
         fontWeight: 700,
       },
       body: {
         ...typography.body,
-        fontSize: { pointer: 19, touch: 21 },
-        lineHeight: { pointer: 25 / 19, touch: 27 / 21 },
+        letterSpacing: 0.5,
       },
     },
   },

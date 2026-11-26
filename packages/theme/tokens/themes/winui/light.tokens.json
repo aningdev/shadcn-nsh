@@ -208,15 +208,15 @@
     "border": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.62006, 0, 0],
-        "hex": "#868686"
+        "components": [0.92191, 0, 0],
+        "hex": "#e5e5e5"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
         }
       },
-      "$description": "Standard control hairline border (WinUI ControlStrongStrokeColorDefault composited over base: this theme's hairline takes the stroke a field's edge draws)."
+      "$description": "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base)."
     },
     "input": {
       "$value": {
@@ -690,20 +690,6 @@
         }
       },
       "$description": "Success wash (WinUI SystemFillColorSuccessBackground composited over base)."
-    },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.9462, 0.02418, 11.286],
-        "hex": "#fde7e9"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "WinUI 3 theme resources: SystemFillColorCriticalBackground over base"
-        }
-      },
-      "$description": "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base)."
     }
   },
   "shadow": {
@@ -804,7 +790,7 @@
           "color": {
             "colorSpace": "oklch",
             "components": [0, 0, 0],
-            "alpha": 0.2,
+            "alpha": 0.12,
             "hex": "#000000"
           },
           "offsetX": {
@@ -828,7 +814,7 @@
           "color": {
             "colorSpace": "oklch",
             "components": [0, 0, 0],
-            "alpha": 0.24,
+            "alpha": 0.14,
             "hex": "#000000"
           },
           "offsetX": {
@@ -858,7 +844,7 @@
           "color": {
             "colorSpace": "oklch",
             "components": [0, 0, 0],
-            "alpha": 0.2,
+            "alpha": 0.12,
             "hex": "#000000"
           },
           "offsetX": {
@@ -882,7 +868,7 @@
           "color": {
             "colorSpace": "oklch",
             "components": [0, 0, 0],
-            "alpha": 0.24,
+            "alpha": 0.14,
             "hex": "#000000"
           },
           "offsetX": {
@@ -1073,17 +1059,6 @@
         }
       }
     },
-    "plate": {
-      "border-color": {
-        "$type": "color",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0, 0, 0],
-          "alpha": 0.059,
-          "hex": "#000000"
-        }
-      }
-    },
     "overlay": {
       "background": {
         "$type": "color",
@@ -1107,9 +1082,9 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.5624, 0, 0],
-          "alpha": 0.4,
-          "hex": "#757575"
+          "components": [0, 0, 0],
+          "alpha": 0.059,
+          "hex": "#000000"
         }
       }
     },

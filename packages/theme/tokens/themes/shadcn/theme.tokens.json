@@ -59,6 +59,242 @@
       }
     }
   },
+  "slot": {
+    "badge": {
+      "corner": {
+        "$value": "full",
+        "$description": "A badge's corner: the control radius, `full` for a capsule, or points."
+      }
+    },
+    "button": {
+      "selected": {
+        "face": {
+          "$value": "color:track",
+          "$description": "The ground a chosen control turns over to: a toggle that is on, a tool that is picked, a button that is selected."
+        },
+        "ink": {
+          "$value": "color:foreground",
+          "$description": "What a chosen control's label and glyph are drawn in."
+        }
+      },
+      "destructive": {
+        "edge": {
+          "$value": "none",
+          "$description": "What a destructive button's edge is drawn in, or `none` where it draws none."
+        }
+      }
+    },
+    "field": {
+      "focus": {
+        "color": {
+          "$value": "color:ring",
+          "$description": "What a field's focus edge and ring are drawn in (`color:brand` for a crisp accent ring, `color:ring` for the theme's `focus.style` halo)."
+        }
+      }
+    },
+    "list": {
+      "item": {
+        "highlight": {
+          "$value": "color:accent",
+          "$description": "What a listbox or command option's focused background is drawn in (`tint:brand`, `color:accent`)."
+        },
+        "edge": {
+          "$value": "none",
+          "$description": "What a listbox option's focused border is drawn in (`color:brand@0.3`, `none`)."
+        }
+      }
+    },
+    "popup": {
+      "corner": {
+        "$value": "control",
+        "$description": "A popup's surface corner (a menu's, a select's list, a calendar's): `container` is the theme's `shape.container`."
+      }
+    },
+    "tooltip": {
+      "face": {
+        "$value": "color:foreground",
+        "$description": "What a tooltip bubble is filled with."
+      },
+      "ink": {
+        "$value": "color:background",
+        "$description": "What a tooltip bubble's text is drawn in."
+      },
+      "edge": {
+        "$value": "none",
+        "$description": "What a tooltip bubble's border is drawn in, or `none` where it draws none."
+      },
+      "shade": {
+        "$value": "none",
+        "$description": "The finish whose elevation shadow a tooltip bubble wears, or `none`."
+      }
+    },
+    "tabs": {
+      "track": {
+        "edge": {
+          "$value": "none",
+          "$description": "What a tab strip's track edge is drawn in, or `none` where it draws no border."
+        },
+        "corner": {
+          "$value": "control",
+          "$description": "A tab strip's track corner: `full` for a capsule, `control`, or points."
+        }
+      }
+    },
+    "choice": {
+      "corner": {
+        "$type": "dimension",
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "A choice's corner, per input: a quarter of its box where it is a square, half of it where it is a circle.",
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "touch": {
+              "value": 4,
+              "unit": "px"
+            }
+          }
+        }
+      },
+      "shade": {
+        "$value": "none",
+        "$description": "The finish whose shade an unchosen box wears, or `none`."
+      },
+      "radio": {
+        "checked": {
+          "face": {
+            "$value": "none",
+            "$description": "The layer a chosen radio turns over to, or `none` where it keeps its ground and draws a ring and dot."
+          }
+        }
+      },
+      "mark": {
+        "size": {
+          "$type": "dimension",
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          },
+          "$description": "A radio's dot, per input.",
+          "$extensions": {
+            "dev.aning.shadcn-nsh": {
+              "touch": {
+                "value": 8,
+                "unit": "px"
+              }
+            }
+          }
+        }
+      }
+    },
+    "slider": {
+      "face": {
+        "$value": "color:muted",
+        "$description": "What a slider's rail is filled with."
+      },
+      "shade": {
+        "$value": "none",
+        "$description": "The finish whose shade a slider's rail wears, or `none`."
+      },
+      "edge": {
+        "color": {
+          "$value": "none",
+          "$description": "What a slider's rail edge is drawn in, or `none` where it draws none."
+        },
+        "width": {
+          "$type": "dimension",
+          "$value": {
+            "value": 0,
+            "unit": "px"
+          },
+          "$description": "How thick a slider's rail edge is; `control` is the theme's `stroke.control`."
+        }
+      },
+      "knob": {
+        "size": {
+          "$type": "dimension",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
+          "$description": "A slider's knob, per input: diameter or `[width, height]` (`0` where the theme draws only a mark).",
+          "$extensions": {
+            "dev.aning.shadcn-nsh": {
+              "touch": {
+                "value": 20,
+                "unit": "px"
+              }
+            }
+          }
+        },
+        "pressed": {
+          "$type": "dimension",
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          },
+          "$description": "The knob size while pressed, per input, or `same` to keep the resting knob size.",
+          "$extensions": {
+            "dev.aning.shadcn-nsh": {
+              "touch": {
+                "value": 32,
+                "unit": "px"
+              }
+            }
+          }
+        },
+        "edge": {
+          "$value": "color:primary",
+          "$description": "What a solid slider knob's border is drawn in, or `none` where it wears only the knob finish's own edge."
+        }
+      }
+    },
+    "switch": {
+      "track": {
+        "$value": "32x18",
+        "$description": "An off switch's track, per input: `[width, height]`.",
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "touch": "44x24"
+          }
+        }
+      },
+      "small": {
+        "track": {
+          "$value": "24x14",
+          "$description": "A small switch's track, per input: `[width, height]`.",
+          "$extensions": {
+            "dev.aning.shadcn-nsh": {
+              "touch": "36x20"
+            }
+          }
+        }
+      },
+      "edge": {
+        "off": {
+          "$type": "dimension",
+          "$value": {
+            "value": 0,
+            "unit": "px"
+          },
+          "$description": "How thick an off switch's track edge is."
+        },
+        "on": {
+          "$type": "dimension",
+          "$value": {
+            "value": 0,
+            "unit": "px"
+          },
+          "$description": "How thick an on switch's track edge is."
+        },
+        "color": {
+          "$value": "none",
+          "$description": "What an off switch's track edge is drawn in, or `none` where the track has no border."
+        }
+      }
+    }
+  },
   "color": {
     "$type": "color",
     "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",

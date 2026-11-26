@@ -200,10 +200,10 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface",
-          "source": "Apple HIG system colours: tertiarySystemFill over the card"
+          "source": "Apple HIG system colours: systemBackground (light) / tertiarySystemFill over the card (dark)"
         }
       },
-      "$description": "Form input background (UIKit tertiarySystemFill composited over card)."
+      "$description": "Form input background (UIKit systemBackground in light for grouped-canvas separation; tertiarySystemFill over card in dark)."
     },
     "line": {
       "$value": {
@@ -484,27 +484,6 @@
       },
       "$description": "Translucent positive wash (12% up over transparent)."
     },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.6633, 0.22361, 28.292],
-        "alpha": 0.12,
-        "hex": "#ff453a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 12,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Translucent negative wash (12% destructive over transparent)."
-    },
     "card-foreground": {
       "$value": "{color.foreground}",
       "$extensions": {
@@ -737,7 +716,7 @@
             "unit": "px"
           },
           "blur": {
-            "value": 3,
+            "value": 2,
             "unit": "px"
           },
           "spread": {
@@ -814,7 +793,7 @@
           "color": {
             "colorSpace": "oklch",
             "components": [0, 0, 0],
-            "alpha": 0.4,
+            "alpha": 0.38,
             "hex": "#000000"
           },
           "offsetX": {
@@ -826,7 +805,7 @@
             "unit": "px"
           },
           "blur": {
-            "value": 30,
+            "value": 24,
             "unit": "px"
           },
           "spread": {
@@ -868,7 +847,7 @@
           "color": {
             "colorSpace": "oklch",
             "components": [0, 0, 0],
-            "alpha": 0.4,
+            "alpha": 0.5,
             "hex": "#000000"
           },
           "offsetX": {
@@ -876,11 +855,11 @@
             "unit": "px"
           },
           "offsetY": {
-            "value": 8,
+            "value": 18,
             "unit": "px"
           },
           "blur": {
-            "value": 30,
+            "value": 48,
             "unit": "px"
           },
           "spread": {
@@ -994,6 +973,12 @@
     }
   },
   "finish": {
+    "channel": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.inset}"
+      }
+    },
     "raised": {
       "background": {
         "$type": "color",
@@ -1075,6 +1060,26 @@
               "op": "alpha",
               "color": "{color.popover}",
               "alpha": 0.72
+            }
+          }
+        }
+      }
+    },
+    "pressed": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [1, 0, 0],
+          "alpha": 0.2,
+          "hex": "#ffffff"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.foreground}",
+              "alpha": 0.2
             }
           }
         }

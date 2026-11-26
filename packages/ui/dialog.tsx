@@ -14,6 +14,7 @@ import {
 
 import { Action, type ButtonVariant } from "./button";
 import { AsText } from "./lib/as-text";
+import { surfaceBorderWidth } from "./lib/look";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
 
@@ -40,7 +41,7 @@ export function dialogCard(width?: number): ViewStyle {
   return {
     ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
     ...rounded(shape.modal),
-    borderWidth: stroke.hairline,
+    borderWidth: terminal ? stroke.hairline : surfaceBorderWidth(finish.modal.borderColor),
     padding: 20,
     gap: 12,
     maxHeight: windowSize().height - safeArea().top - safeArea().bottom - 48,

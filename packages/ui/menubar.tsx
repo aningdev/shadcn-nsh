@@ -8,7 +8,6 @@ import {
   rounded,
   font,
   shape,
-  stroke,
   dimmed,
   tier,
 } from "@shadcn-nsh/theme";
@@ -17,6 +16,7 @@ import { context, split, View } from "nsh";
 import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
+import { fillOf, menubarFace, surfaceBorderWidth } from "./lib/look";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import type { PopupSide } from "./lib/popup";
 import { menuHighlight, menuItemSize, menuPopup } from "./menu";
@@ -30,9 +30,6 @@ const barGap = pointer ? 4 : 6;
 
 /** A trigger's height: the theme's height step under a row (shadcn's `h-7`). */
 const triggerHeight = () => controlHeight.md;
-
-/** A bar's height: its triggers, the room either side of them and its own 1-point edge. */
-const barHeight = () => triggerHeight() + 2 * barPadding + 2 * stroke.control;
 
 /** A trigger's inset from its sides (shadcn's `px-2`). */
 const triggerPad = 8;
@@ -58,17 +55,32 @@ export interface MenubarLook {
 export function menubarLook(): MenubarLook {
   return {
     get bar(): ViewStyle {
+      const face = menubarFace();
+      if (face === null) {
+        return {
+          flexDirection: "row",
+          alignItems: "center",
+          alignSelf: "flex-start",
+          gap: barGap,
+          height: triggerHeight(),
+          backgroundColor: "transparent",
+          borderWidth: 0,
+        };
+      }
+      const layer = fillOf(face);
+      const bw = surfaceBorderWidth(layer.borderColor as string | undefined);
       return {
         flexDirection: "row",
         alignItems: "center",
         alignSelf: "flex-start",
         gap: barGap,
-        height: barHeight(),
+        height: triggerHeight() + 2 * barPadding + 2 * bw,
         paddingHorizontal: barPadding,
         ...rounded(shape.control),
-        borderWidth: stroke.control,
-        borderColor: colors.border,
-        backgroundColor: colors.card,
+        borderWidth: bw,
+        borderColor: layer.borderColor as string | undefined,
+        backgroundColor: layer.backgroundColor as string | undefined,
+        boxShadow: layer.boxShadow as string | undefined,
       };
     },
     get trigger(): ViewStyle {

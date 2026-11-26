@@ -256,16 +256,15 @@ export const SECTIONS: Section[] = [
   styleSection(
     "typography",
     "字段",
-    "7 个字阶角色的字号、行高、字重与字距；`fontSize` 与 `lineHeight` 分指针与触屏两档，`fontWeight` 与 `letterSpacing` 两档同值。行高是整数点数（源码里的倍率已在 `tokens:build` 时乘回）。",
+    "7 个字阶角色的字重与字距（共享字号与行高定义在 `theme.ts` 的 `SHARED_TYPE_SCALE`）。",
   ),
   styleSection(
     "dimension",
     "字段",
-    "`shape` 的 3 个层圆角以 `{radius-…}` 引用 `theme.json` 的圆角 token；`size.hit`、`size.density`、`size.item`、`size.control`、`size.height`、`icon` 分指针与触屏两档；`stroke`、`focus` 与 `control` 的六个控件维度不随档位变。",
+    "`size.hit`、`size.density`、`size.item`、`size.control`、`size.height`、`icon` 分指针与触屏两档；`stroke` 与 `focus` 不随档位变。",
   ),
-  styleSection("shape", "字段", "非尺寸的圆角决定：曲率，以及按钮的角取圆角刻度还是胶囊。"),
+  styleSection("shape", "字段", "非尺寸的圆角决定：曲率（`continuous` 或 `circular`）。"),
   styleSection("state", "字段", "交互状态的透明度、按下缩放与叠色。"),
-  styleSection("transition", "字段", "表面进场动画的时长与曲线（曲线名引用 `cubicBezier` 组）。"),
   styleSection(
     "motion",
     "字段",
@@ -345,15 +344,11 @@ const DESCRIPTIONS: Record<string, string> = {
   "warn-tint": "警告状态的淡底",
   "destructive-tint": "危险状态的淡底",
   "up-tint": "上涨的淡底",
-  "down-tint": "下跌的淡底",
   scrim: "模态与抽屉背后的遮罩",
   media: "照片与影片的底，不随外观翻转",
   "on-media": "照片与深色媒体面上的白字，不随外观翻转",
 
   // dimension: the group descriptions, then the fields they do not cover one by one.
-  "dimension.shape.control": "页内元素的圆角：输入框、行、徽标、标签、井、色区、kbd",
-  "dimension.shape.container": "容器与浮层的圆角：卡片、菜单、弹出层、提示、列表面板、toast",
-  "dimension.shape.modal": "模态面的圆角：对话框、抽屉、底部面板",
   "dimension.size.hit": "触控目标的最小边长，0 表示不补点按范围",
   "dimension.size.density.pad": "页面级的页边距",
   "dimension.size.density.gap": "页面级的间隙",
@@ -361,8 +356,6 @@ const DESCRIPTIONS: Record<string, string> = {
   "dimension.size.item.pad": "行填充边到文字的间距",
   "dimension.size.control.padding": "控件内部的留白",
   "dimension.size.control.gap": "控件内图标与字的间距",
-  "dimension.size.control.dot": "指示点的直径：开关的点、选择器的点",
-  "dimension.size.control.switch": "开关的钮取哪一档",
   "dimension.size.height.sm": "控件高度的小档",
   "dimension.size.height.md": "控件高度的中档",
   "dimension.size.height.lg": "控件高度的大档（也是列表行、标签页的高度）",
@@ -377,21 +370,14 @@ const DESCRIPTIONS: Record<string, string> = {
 
   // shape: what a theme decides about corners, off the size scales.
   "shape.curve": "圆角的曲率：连续曲线（Apple）还是圆弧",
-  "shape.corners.button": "按钮的角：取圆角刻度，还是胶囊",
 
   // state: the interaction numbers.
   "state.press-scale": "按下时的缩放倍数（1 为不缩放）",
   "state.overlay.hover": "指针悬停的叠色透明度（0 为不叠色）",
-  "state.overlay.focus": "获得焦点的叠色透明度",
   "state.overlay.pressed": "按下的叠色透明度",
-  "state.overlay.dragged": "拖动的叠色透明度",
   "state.pressed-opacity": "按下时内容的透明度",
   "state.rest-opacity": "指示器静止时的透明度（滚动条滑块）",
   "state.disabled.content": "禁用时内容的透明度（容器的槽写 `keep` 时用它）",
-
-  // transition: the one named preset.
-  "transition.enter.duration": "表面进场的时长（ms）",
-  "transition.enter.timingFunction": "表面进场的曲线（`cubicBezier` 组里的名字）",
 
   // elevation: the shadow scale, one row per level and edge.
   "elevation.sm": "控件的投影：落在它所在的那个面上",
@@ -435,7 +421,7 @@ const NOUNS: Record<string, string> = {
 
 /** The field's noun per section, so `caption` + `fontSize` reads `小号说明与分段计数的字号`. */
 const FIELD_NOUNS: Record<string, Record<string, string>> = {
-  typography: { fontSize: "字号", lineHeight: "行高", fontWeight: "字重", letterSpacing: "字距" },
+  typography: { fontWeight: "字重", letterSpacing: "字距" },
   motion: {
     duration: "时长（ms）",
     timingFunction: "曲线",

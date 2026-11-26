@@ -279,13 +279,13 @@
     "track": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.269, 0, 0],
-        "hex": "#262626"
+        "components": [0.32109, 0, 0],
+        "hex": "#333333"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface",
-          "source": "shadcn/ui default theme: --muted"
+          "source": "shadcn/ui default theme: --input (light) / --input at 80% over the card (dark)"
         }
       },
       "$description": "Inactive track background for switches, sliders, and progress bars."
@@ -307,41 +307,41 @@
     "info": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.708, 0, 0],
-        "hex": "#a1a1a1"
+        "components": [0.707, 0.165, 254.624],
+        "hex": "#51a2ff"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status"
         }
       },
-      "$description": "Informational semantic status color mapped onto shadcn's neutral grey ramp."
+      "$description": "Informational semantic status color (Tailwind CSS v4 blue semantic palette)."
     },
     "warn": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.87, 0, 0],
-        "hex": "#d4d4d4"
+        "components": [0.828, 0.189, 84.429],
+        "hex": "#ffb900"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status"
         }
       },
-      "$description": "Warning semantic status color mapped onto shadcn's neutral chart ramp."
+      "$description": "Warning semantic status color (Tailwind CSS v4 amber semantic palette)."
     },
     "up": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.922, 0, 0],
-        "hex": "#e5e5e5"
+        "components": [0.765, 0.177, 163.223],
+        "hex": "#00d492"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status"
         }
       },
-      "$description": "Positive trend color mapped onto shadcn's neutral ramp."
+      "$description": "Positive trend color (Tailwind CSS v4 emerald semantic palette)."
     },
     "brand-tint": {
       "$value": {
@@ -394,9 +394,9 @@
     "info-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.708, 0, 0],
+        "components": [0.707, 0.165, 254.624],
         "alpha": 0.1,
-        "hex": "#a1a1a1"
+        "hex": "#51a2ff"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -415,9 +415,9 @@
     "warn-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.87, 0, 0],
+        "components": [0.828, 0.189, 84.429],
         "alpha": 0.1,
-        "hex": "#d4d4d4"
+        "hex": "#ffb900"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -457,9 +457,9 @@
     "up-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.922, 0, 0],
+        "components": [0.765, 0.177, 163.223],
         "alpha": 0.1,
-        "hex": "#e5e5e5"
+        "hex": "#00d492"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -474,27 +474,6 @@
         }
       },
       "$description": "Translucent positive trend background tint."
-    },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.704, 0.191, 22.216],
-        "alpha": 0.1,
-        "hex": "#ff6467"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 10,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Translucent negative trend background tint."
     },
     "card-foreground": {
       "$value": "{color.foreground}",
@@ -548,13 +527,13 @@
     "chart-1": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.87, 0, 0],
-        "hex": "#d4d4d4"
+        "components": [0.488, 0.243, 264.376],
+        "hex": "#1447e6"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "source": "shadcn/ui default theme: --chart-1"
+          "source": "shadcn/ui default theme: --chart-1 (theming.mdx)"
         }
       },
       "$description": "Primary chart series color."
@@ -562,13 +541,13 @@
     "chart-2": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.556, 0, 0],
-        "hex": "#737373"
+        "components": [0.696, 0.17, 162.48],
+        "hex": "#00bc7d"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "source": "shadcn/ui default theme: --chart-2"
+          "source": "shadcn/ui default theme: --chart-2 (theming.mdx)"
         }
       },
       "$description": "Second chart series color."
@@ -576,13 +555,13 @@
     "chart-3": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.439, 0, 0],
-        "hex": "#525252"
+        "components": [0.769, 0.188, 70.08],
+        "hex": "#fe9a00"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "source": "shadcn/ui default theme: --chart-3"
+          "source": "shadcn/ui default theme: --chart-3 (theming.mdx)"
         }
       },
       "$description": "Third chart series color."
@@ -590,13 +569,13 @@
     "chart-4": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.371, 0, 0],
-        "hex": "#404040"
+        "components": [0.627, 0.265, 303.9],
+        "hex": "#ad46ff"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "source": "shadcn/ui default theme: --chart-4"
+          "source": "shadcn/ui default theme: --chart-4 (theming.mdx)"
         }
       },
       "$description": "Fourth chart series color."
@@ -604,13 +583,13 @@
     "chart-5": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.269, 0, 0],
-        "hex": "#262626"
+        "components": [0.645, 0.246, 16.439],
+        "hex": "#ff2056"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status",
-          "source": "shadcn/ui default theme: --chart-5"
+          "source": "shadcn/ui default theme: --chart-5 (theming.mdx)"
         }
       },
       "$description": "Fifth chart series color."
@@ -873,15 +852,15 @@
             "unit": "px"
           },
           "offsetY": {
-            "value": 4,
+            "value": 10,
             "unit": "px"
           },
           "blur": {
-            "value": 6,
+            "value": 15,
             "unit": "px"
           },
           "spread": {
-            "value": -1,
+            "value": -3,
             "unit": "px"
           }
         },
@@ -897,15 +876,15 @@
             "unit": "px"
           },
           "offsetY": {
-            "value": 2,
-            "unit": "px"
-          },
-          "blur": {
             "value": 4,
             "unit": "px"
           },
+          "blur": {
+            "value": 6,
+            "unit": "px"
+          },
           "spread": {
-            "value": -2,
+            "value": -4,
             "unit": "px"
           }
         }

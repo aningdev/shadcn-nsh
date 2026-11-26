@@ -40,7 +40,7 @@ colors:
     sidebar-ring: "#007aff"
     inset: "#f4f4f5"
     raised: "#efeff0"
-    field: "#efeff0"
+    field: "#ffffff"
     line: "#dcdcdd"
     hover: "#0000000f"
     faint: "#c5c5c7"
@@ -50,17 +50,16 @@ colors:
     track: "#e9e9eb"
     knob: "#ffffff"
     info: "#007aff"
-    warn: "#ff9500"
-    up: "#34c759"
+    warn: "#b25000"
+    up: "#248a3d"
     brand-tint: "#007aff1f"
     inverse: "#ffffff"
     inverse-foreground: "#000000"
     inverse-brand: "#ffffff"
     info-tint: "#007aff1f"
-    warn-tint: "#ff95001f"
+    warn-tint: "#b250001f"
     destructive-tint: "#ff3b301f"
-    up-tint: "#34c7591f"
-    down-tint: "#ff3b301f"
+    up-tint: "#248a3d1f"
   dark:
     background: "#000000"
     foreground: "#ffffff"
@@ -115,7 +114,6 @@ colors:
     warn-tint: "#ff9f0a1f"
     destructive-tint: "#ff453a1f"
     up-tint: "#30d1581f"
-    down-tint: "#ff453a1f"
 typography:
   caption:
     fontSize: 11px
@@ -167,11 +165,10 @@ spacing:
   control:
     padding: 8px
     gap: 8px
-    dot: 6px
   height:
-    sm: 20px
-    md: 24px
-    lg: 28px
+    sm: 24px
+    md: 28px
+    lg: 32px
   stroke:
     hairline: 0.5px
     control: 1px
@@ -183,10 +180,6 @@ spacing:
     md: 16px
     lg: 20px
 motion:
-  enter:
-    duration: 420ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
   fast:
     duration: 150ms
     delay: 0ms
@@ -221,7 +214,7 @@ components:
   button-secondary-hover:
     backgroundColor: "{colors.light.hover}"
   button-secondary-pressed:
-    backgroundColor: "{colors.light.muted}"
+    backgroundColor: "#00000029"
   card:
     backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.card-foreground}"
@@ -321,7 +314,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`sidebar-accent`** (light `#e9e9eb`, dark `#323236`): Selected or active row fill in the sidebar.
 - **`inset`** (light `#f4f4f5`, dark `#2c2c30`): Inset surface (UIKit quaternarySystemFill composited over card).
 - **`raised`** (light `#efeff0`, dark `#323236`): Raised control surface (UIKit tertiarySystemFill composited over card).
-- **`field`** (light `#efeff0`, dark `#323236`): Form input background (UIKit tertiarySystemFill composited over card).
+- **`field`** (light `#ffffff`, dark `#323236`): Form input background (UIKit systemBackground in light for grouped-canvas separation; tertiarySystemFill over card in dark).
 - **`hover`** (light `#0000000f`, dark `#ffffff0f`): Pointer hover tint (6% foreground ink over transparent).
 - **`track`** (light `#e9e9eb`, dark `#39393d`): Switch and slider track (UIKit secondarySystemFill composited over card).
 - **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
@@ -361,13 +354,12 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`chart-4`** (light `#af52de`, dark `#bf5af2`): Fourth chart series color (UIKit systemPurple).
 - **`chart-5`** (light `#ff3b30`, dark `#ff453a`): Fifth chart series color (UIKit systemRed).
 - **`info`** (light `#007aff`, dark `#0a84ff`): Informational semantic color (UIKit systemBlue).
-- **`warn`** (light `#ff9500`, dark `#ff9f0a`): Warning semantic color (UIKit systemOrange).
-- **`up`** (light `#34c759`, dark `#30d158`): Positive trend semantic color (UIKit systemGreen).
+- **`warn`** (light `#b25000`, dark `#ff9f0a`): Warning semantic color (UIKit systemOrange).
+- **`up`** (light `#248a3d`, dark `#30d158`): Positive trend semantic color (UIKit systemGreen).
 - **`info-tint`** (light `#007aff1f`, dark `#0a84ff1f`): Translucent informational wash (12% info over transparent).
-- **`warn-tint`** (light `#ff95001f`, dark `#ff9f0a1f`): Translucent warning wash (12% warn over transparent).
+- **`warn-tint`** (light `#b250001f`, dark `#ff9f0a1f`): Translucent warning wash (12% warn over transparent).
 - **`destructive-tint`** (light `#ff3b301f`, dark `#ff453a1f`): Translucent destructive wash (12% destructive over transparent).
-- **`up-tint`** (light `#34c7591f`, dark `#30d1581f`): Translucent positive wash (12% up over transparent).
-- **`down-tint`** (light `#ff3b301f`, dark `#ff453a1f`): Translucent negative wash (12% destructive over transparent).
+- **`up-tint`** (light `#248a3d1f`, dark `#30d1581f`): Translucent positive wash (12% up over transparent).
 
 ### Chrome
 
@@ -400,9 +392,8 @@ Ergonomic sizing scales for pointer input.
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding and gap.
 - **List rows:** A list's rows in a popup or a palette: inset, the container's edge to the row's fill; pad, the fill's edge to its text. shadcn's select and menus: 4 (SelectContent p-1) and 8 (SelectItem pl-2).
-- **Control geometry:** Control internal spacing and switch size tier.
+- **Control geometry:** Control internal spacing.
 - **Control heights:** Standard control heights (sm, md, lg).
-- **Switch size tier (pointer):** `regular`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
 
 - **Pointer tier:** Apple macOS pointer input-tier overrides (Apple HIG Layout and Typography).
@@ -418,25 +409,22 @@ Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` fini
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
-- **State overlays (hover=0, focus=0, pressed=0, dragged=0):** State-layer ink opacities for hover, focus, pressed, and dragged states.
+- **State overlays (hover=0, pressed=0):** State-layer ink opacities for hover and pressed states.
 
 ## Shapes
 
 Apple HIG corner radius scale (8px control, 12px container, 16px modal; button corners per size via the `button.corner.*` slots).
 
-Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "{dimension.radius.control}"`).
+Non-dimensional corner curve. (`curve: "continuous"`).
 
-Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
-
-- **`control`** (8px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
-- **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
-- **`modal`** (16px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
+- **`control`** (8px): Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (12px): Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (16px): Corner radius for dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
 Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
-- **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
 - **`fast`** (150ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Quickest response: small control toggles and thumbs.
 - **`default`** (250ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Everyday feedback: presses, releases and modest movement.
 - **`slow`** (350ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Slowest: large surfaces and long-travel layout movement.
@@ -474,7 +462,7 @@ The neutral of each field a finish role can have, written once for the roles tha
 - **Do:** Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.
 - **Do:** Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
-- **Do:** Use the `button.corner.*` slots (5/6/`full` with a pointer) alongside `8px` controls/fields, `12px` containers, and `16px` modals with `shape.curve: "continuous"`.
+- **Do:** Use the `button.corner.*` slots (5/6/8 with a pointer, `full` on touch) alongside `8px` controls/fields, `12px` containers, and `16px` modals with `shape.curve: "continuous"`.
 - **Do:** Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.
 - **Do:** Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.

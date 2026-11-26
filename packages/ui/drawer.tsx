@@ -2,9 +2,9 @@
 // card's header, footer, title and description. The panel is `sheet.tsx`'s (`sheetPanel`); the title
 // and text are `dialog.tsx`'s (`dialogTitle`, `dialogText`).
 
-import { rounded } from "@shadcn-nsh/theme";
+import { alpha, colors, rounded } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, split, token, View } from "nsh";
+import { context, split, View } from "nsh";
 import {
   Sheet as BaseSheet,
   type OpenChangeReason,
@@ -19,9 +19,10 @@ import { backdrop } from "./lib/popup";
 import { sheetPanel, type SheetSide } from "./sheet";
 
 /**
- * The pill at the top of a bottom drawer (a view's `style`): 100 by 8 points, fully round, in the
- * muted fill — wider and heavier than a sheet's grabber, since a drawer is dragged from it. Spread
- * it on a view of your own when the app draws the drawer from the look.
+ * The pill at the top of a bottom drawer (a view's `style`): 100 by 8 points, fully round, in
+ * `mutedForeground` at 35% so it reads cleanly on any tonal or elevated modal surface — wider and
+ * heavier than a sheet's grabber, since a drawer is dragged from it. Spread it on a view of your
+ * own when the app draws the drawer from the look.
  */
 export function drawerGrabber(): ViewStyle {
   return {
@@ -29,7 +30,7 @@ export function drawerGrabber(): ViewStyle {
     height: 8,
     ...rounded(4),
     alignSelf: "center",
-    backgroundColor: token("muted"),
+    backgroundColor: alpha(colors.mutedForeground, 0.35),
   };
 }
 

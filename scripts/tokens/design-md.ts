@@ -12,7 +12,7 @@ import {
   COLOR_ROLES,
   EXT_NS,
   MOTION_ROLES,
-  SHAPE_ROLES,
+  RADIUS_ROLES,
   TYPE_ROLES,
   getExt,
   isRecord,
@@ -183,12 +183,12 @@ export function compileDesignMd(resolverPath: string): string {
     };
   }
 
-  // Rounded (semantic shape roles from resolved pointer tier)
+  // Rounded (corner radii from resolved pointer tier dimension.radius)
   const dimResolved = (lightResolved.dimension ?? {}) as Record<string, unknown>;
-  const shapeDimResolved = (dimResolved.shape ?? {}) as Record<string, Record<string, unknown>>;
+  const radiusDimResolved = (dimResolved.radius ?? {}) as Record<string, Record<string, unknown>>;
   const roundedYaml: Record<string, string> = {};
-  for (const role of SHAPE_ROLES) {
-    roundedYaml[role] = fmtDim(shapeDimResolved[role]!.$value as DtcgDimension);
+  for (const role of RADIUS_ROLES) {
+    roundedYaml[role] = fmtDim(radiusDimResolved[role]!.$value as DtcgDimension);
   }
 
   // Spacing (pointer tier dimension.size, stroke, focus, icon)
@@ -212,15 +212,8 @@ export function compileDesignMd(resolverPath: string): string {
     icon: readDimLeaves(dimResolved.icon as Record<string, unknown>),
   };
 
-  // Motion (the entrance transition's timing and the role timings)
+  // Motion (the role timings)
   const motionYaml: Record<string, Record<string, string>> = {};
-  const enterVal = (lightResolved.transition as Record<string, Record<string, unknown>>).enter!
-    .$value as DtcgTransition;
-  motionYaml.enter = {
-    duration: `${enterVal.duration.value}${enterVal.duration.unit}`,
-    delay: `${enterVal.delay.value}${enterVal.delay.unit}`,
-    timingFunction: `cubic-bezier(${(enterVal.timingFunction as number[]).join(", ")})`,
-  };
   const motionRes = (lightResolved.motion ?? {}) as Record<string, Record<string, unknown>>;
   for (const role of MOTION_ROLES) {
     const timingNode = motionRes[role]?.timing;
@@ -472,7 +465,6 @@ export function compileDesignMd(resolverPath: string): string {
   const darkMerged = darkRaw as Record<string, unknown>;
   const dimGroup = (lightMerged.dimension ?? {}) as Record<string, unknown>;
   const radiusGroup = (dimGroup.radius ?? {}) as Record<string, Record<string, unknown>>;
-  const shapeDimGroup = (dimGroup.shape ?? {}) as Record<string, Record<string, unknown>>;
   const sizeGroup = (dimGroup.size ?? {}) as Record<string, unknown>;
   const strokeGroup = (dimGroup.stroke ?? {}) as Record<string, Record<string, unknown>>;
   const focusGroup = (dimGroup.focus ?? {}) as Record<string, Record<string, unknown>>;
@@ -480,14 +472,12 @@ export function compileDesignMd(resolverPath: string): string {
   const typoGroup = (lightMerged.typography ?? {}) as Record<string, Record<string, unknown>>;
   const stateGroup = (lightMerged.state ?? {}) as Record<string, Record<string, unknown>>;
   const motionGroup = (lightMerged.motion ?? {}) as Record<string, Record<string, unknown>>;
-  const transitionGroup = (lightMerged.transition ?? {}) as Record<string, Record<string, unknown>>;
   const cubicBezierGroup = (lightMerged.cubicBezier ?? {}) as Record<
     string,
     Record<string, unknown>
   >;
   const shapeExt = getExt(lightMerged.shape) ?? {};
   const focusExt = getExt(focusGroup) ?? {};
-  const controlSizeExt = getExt(sizeGroup.control) ?? {};
 
   const pointerRaw = resolvePermutationDescriptions(absPath, "pointer");
   const touchRaw = resolvePermutationDescriptions(absPath, "touch");
@@ -600,9 +590,6 @@ export function compileDesignMd(resolverPath: string): string {
     const d = getDesc(node);
     if (d) lines.push(`- **${label}:** ${d}`);
   }
-  if (typeof controlSizeExt.switch === "string") {
-    lines.push(`- **Switch size tier (pointer):** \`${controlSizeExt.switch}\`.`);
-  }
   const iconDesc = getDesc(iconGroup);
   if (iconDesc) lines.push(`- **Icons:** ${iconDesc}`);
   const pointerDocDesc = pointerRaw.docDescription ?? getDesc(lightMerged.font);
@@ -647,7 +634,7 @@ export function compileDesignMd(resolverPath: string): string {
   const overlayDesc = getDesc(stateGroup.overlay);
   if (overlayDesc) {
     const ov = (stateGroup.overlay ?? {}) as Record<string, Record<string, unknown>>;
-    const vals = ["hover", "focus", "pressed", "dragged"]
+    const vals = ["hover", "pressed"]
       .map((k) => {
         const v = ov[k]?.$value;
         return `${k}=${typeof v === "number" ? v : 0}`;
@@ -661,23 +648,15 @@ export function compileDesignMd(resolverPath: string): string {
   lines.push("## Shapes");
   lines.push("");
   const radiusGroupDesc = getDesc(radiusGroup);
-  const shapeDimDesc = getDesc(shapeDimGroup);
   const shapeExtDesc = getDesc(lightMerged.shape);
   if (radiusGroupDesc) lines.push(radiusGroupDesc);
   if (shapeExtDesc) {
     if (radiusGroupDesc) lines.push("");
-    const button = cornerValue(lightMerged.shape);
-    lines.push(
-      `${shapeExtDesc} (\`curve: "${String(shapeExt.curve)}"\`, \`corners.button: "${button}"\`).`,
-    );
-  }
-  if (shapeDimDesc) {
-    lines.push("");
-    lines.push(shapeDimDesc);
+    lines.push(`${shapeExtDesc} (\`curve: "${String(shapeExt.curve)}"\`).`);
   }
   lines.push("");
-  for (const role of SHAPE_ROLES) {
-    const desc = getDesc(shapeDimGroup[role]) ?? getDesc(radiusGroup[role]) ?? "";
+  for (const role of RADIUS_ROLES) {
+    const desc = getDesc(radiusGroup[role]) ?? "";
     lines.push(`- **\`${role}\`** (${roundedYaml[role]}): ${desc}`);
   }
   lines.push("");
@@ -688,12 +667,6 @@ export function compileDesignMd(resolverPath: string): string {
   const motionGroupDesc = getDesc(motionGroup);
   if (motionGroupDesc) lines.push(motionGroupDesc);
   lines.push("");
-  const enterNode = transitionGroup.enter;
-  if (enterNode) {
-    lines.push(
-      `- **\`enter\`** (${motionYaml.enter!.duration}, \`${motionYaml.enter!.timingFunction}\`): ${getDesc(enterNode) ?? ""}`,
-    );
-  }
   for (const role of MOTION_ROLES) {
     const roleNode = motionGroup[role];
     const desc = getDesc(roleNode) ?? "";
@@ -801,15 +774,4 @@ function resolvePermutationDescriptions(
     docDescription: tierDesc,
     typography: withTier.typography as Record<string, Record<string, unknown>> | undefined,
   };
-}
-
-/** A theme's `shape.corners.button`: `full`, a radius token reference, or a width in points. */
-function cornerValue(shape: unknown): string {
-  const group = isRecord(shape)
-    ? (shape.corners as Record<string, unknown> | undefined)
-    : undefined;
-  const node = isRecord(group) ? group.button : undefined;
-  const value = isRecord(node) ? node.$value : undefined;
-  if (isRecord(value)) return `${String(value.value)}${String(value.unit)}`;
-  return String(value);
 }

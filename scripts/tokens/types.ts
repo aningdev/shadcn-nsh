@@ -156,7 +156,7 @@ export const TYPE_ROLES = [
  */
 export const TYPOGRAPHY_FONT_FAMILY = "system-ui";
 
-export const SHAPE_ROLES = ["control", "container", "modal"] as const;
+export const RADIUS_ROLES = ["control", "container", "modal"] as const;
 
 /** The motion roles every theme states: the three speeds, then `state`'s fade. */
 export const MOTION_ROLES = ["fast", "default", "slow", "state"] as const;
@@ -227,7 +227,6 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   "warn-tint": "status",
   up: "status",
   "up-tint": "status",
-  "down-tint": "status",
   "chart-1": "status",
   "chart-2": "status",
   "chart-3": "status",

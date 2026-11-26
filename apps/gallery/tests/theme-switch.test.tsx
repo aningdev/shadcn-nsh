@@ -93,7 +93,7 @@ test("selectTheme swaps a rendered button's fills to the neutral theme, and null
   expect(after).toMatchObject({ ...raisedIn(neutral, "light", "8"), theme: "shadcn" });
   expect(after.fill).toMatch(resolved);
   expect(after.run).toMatch(oneGradient);
-  expect(after.rail).toMatch(railShape);
+  expect(after.rail).toBe("none");
   // Another theme, another fill and another run: the neutral theme's raised face is a step darker,
   // and its run runs the chart ramp instead of the brand one.
   expect(after.fill).not.toBe(before.fill);
@@ -125,7 +125,7 @@ test("an appearance change reaches both themes", async () => {
   });
   expect(dark.fill).toMatch(resolved);
   expect(dark.run).toMatch(oneGradient);
-  expect(dark.rail).toMatch(railShape);
+  expect(dark.rail).toBe("none");
   expect(dark.fill).not.toBe(light.fill);
   expect(dark.run).not.toBe(light.run);
 

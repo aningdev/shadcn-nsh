@@ -1,4 +1,4 @@
-// A reply's Markdown at a chat's scale: `nsh/base`'s `TextView` with the theme's ink and type.
+// A reply's Markdown at a chat's scale: the library's `TextView` with the theme's ink and type.
 //
 // While a reply streams, syntax its end leaves open shows as if closed and only the block being
 // written renders again; `caret` is drawn at the end of the last block, inline with its text.
@@ -8,9 +8,9 @@
 // A press on an image opens it in the library's `ImageViewer`.
 import { colors } from "@shadcn-nsh/theme";
 import { type JSX, signal } from "nsh";
-import { TextView, type TextViewImage } from "nsh/base";
 
 import { ImageViewer } from "@/packages/ui/image-viewer";
+import { TextView, type TextViewImage } from "@/packages/ui/text-view";
 
 export function Markdown(props: {
   md: string;

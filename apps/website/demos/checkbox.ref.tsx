@@ -1,7 +1,7 @@
 // The reference of `checkbox.tsx`: the same scene as upstream writes it, `checkboxLook` and
 // `CheckboxMark` spread on `nsh/base`'s Checkbox. The render check requires the two to draw the
 // same pixels.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, dimmed, focusRing } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { Checkbox } from "nsh/base";
@@ -46,6 +46,8 @@ function Box(props: {
       checked={props.mark === "check"}
       indeterminate={props.mark === "dash"}
       disabled={props.disabled}
+      focusVisibleStyle={focusRing()}
+      disabledStyle={{ opacity: dimmed.disabled }}
       {...checkboxLook({
         scale,
         round: props.round,

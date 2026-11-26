@@ -1,4 +1,4 @@
-import { SLOTS } from "./slots";
+import { SLOTS, flattenControls } from "./slots";
 /**
  * The scope of a theme's customization (docs/decisions/0007-theme-customization-scope.md,
  * docs/decisions/0012-derived-colours-are-defaults.md), as the lint reads it: every colour a theme
@@ -35,8 +35,7 @@ export interface WhitelistTheme {
 }
 
 export interface WhitelistSemantics {
-  typography: Record<string, { fontSize: unknown; lineHeight: unknown }>;
-  slots: Record<string, unknown>;
+  controls: Record<string, unknown>;
 }
 
 const nothing: ColourProvenance = { theme: {}, light: {}, dark: {} };
@@ -46,7 +45,7 @@ export function checkWhitelist(
   path: string,
   theme: WhitelistTheme,
   semantics: WhitelistSemantics,
-  shared: WhitelistSemantics,
+  _shared: WhitelistSemantics,
   provenance: ColourProvenance = nothing,
 ): string[] {
   const problems: string[] = [];
@@ -107,20 +106,12 @@ export function checkWhitelist(
         );
     }
 
-  for (const slot of Object.keys(semantics.slots))
+  const flatControls = flattenControls(semantics.controls);
+  for (const slot of Object.keys(flatControls))
     if (!Object.hasOwn(SLOTS, slot))
       problems.push(`${path}: \`${slot}\` is not a control slot (docs/specs/theme-slots.md)`);
   for (const slot of Object.keys(SLOTS))
-    if (!Object.hasOwn(semantics.slots, slot))
+    if (!Object.hasOwn(flatControls, slot))
       problems.push(`${path}: \`${slot}\` is missing (docs/specs/theme-slots.md)`);
-
-  for (const [role, own] of Object.entries(semantics.typography)) {
-    const base = shared.typography[role];
-    for (const field of ["fontSize", "lineHeight"] as const)
-      if (JSON.stringify(own[field]) !== JSON.stringify(base?.[field]))
-        problems.push(
-          `${path}: typography.${role}.${field} differs from the shared scale (ADR 0009)`,
-        );
-  }
   return problems;
 }

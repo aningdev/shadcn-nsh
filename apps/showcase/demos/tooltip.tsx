@@ -28,7 +28,7 @@ import {
   TooltipContent,
   TooltipTrigger,
   tooltipNote,
-  tooltipText,
+  tooltipTextStyle,
 } from "@/packages/ui/tooltip";
 
 import { Caption, DemoCard, DemoPage, DemoRow } from "../kit";
@@ -55,7 +55,7 @@ const reviewers = ["Mira Chen", "Ravi Patel", "Ana Silva"];
 function TipLabel(props: { label: string; shortcut?: string }) {
   return (
     <>
-      <Text class={tooltipText}>{props.label}</Text>
+      <Text style={tooltipTextStyle()}>{props.label}</Text>
       <If when={props.shortcut}>
         <Text style={tooltipNote()}>{props.shortcut}</Text>
       </If>
@@ -282,16 +282,14 @@ function Rich() {
           </TooltipTrigger>
           <TooltipContent rich>
             <View style={{ width: 210, gap: 8 }}>
-              <Text class={tooltipText} style={{ fontWeight: "600" }}>
+              <Text style={[tooltipTextStyle(), { fontWeight: "600" }]}>
                 Approved by 3 reviewers
               </Text>
               <Each of={reviewers}>
                 {(name) => (
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                     <Avatar name={name()} style={{ width: 20, height: 20 }} />
-                    <Text class={tooltipText} style={{ flex: 1 }}>
-                      {name()}
-                    </Text>
+                    <Text style={[tooltipTextStyle(), { flex: 1 }]}>{name()}</Text>
                     <Text style={tooltipNote()}>2h ago</Text>
                   </View>
                 )}

@@ -27,7 +27,7 @@ import {
 } from "nsh/base";
 
 import { type Live, read } from "./lib/live-value";
-import { disabledLook, edged, fillOf, selectedLook } from "./lib/look";
+import { disabledLook, edged, fillOf, outlineEdge, selectedLook } from "./lib/look";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { toolbarTrack } from "./lib/tool";
 
@@ -70,7 +70,7 @@ export interface ToggleDimensions {
 /** The ground a toggle wears while on (`button.selected.face`), as the style that paints it. */
 function onFill(): ViewStyle {
   const ground = selectedLook().face;
-  return ground === null ? {} : { ...fillOf(ground) };
+  return ground === null ? {} : { borderColor: "transparent", ...fillOf(ground) };
 }
 
 /** The tier the theme measures at: a pointer's compact padding, a touch screen's roomier one. */
@@ -169,7 +169,7 @@ export function toggleLook(o?: ToggleLookOptions) {
         ...rounded(buttonCorner(read(o?.size) ?? "default")),
         borderWidth: stroke.control,
         ...(outline
-          ? { borderColor: colors.input, backgroundColor: colors.field }
+          ? { borderColor: edged(outlineEdge()), backgroundColor: "transparent" }
           : { borderColor: "transparent" }),
         ...(on && !split ? onFill() : {}),
         ...(split && off.face !== null

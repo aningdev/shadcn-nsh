@@ -68,11 +68,6 @@ export interface ThemeStyleInput {
    */
   slots?: Record<string, SlotValue>;
   dimension: {
-    shape: {
-      control: string;
-      container: string;
-      modal: string;
-    };
     size: {
       hit: { pointer: number; touch: number };
       density: {
@@ -84,8 +79,8 @@ export interface ThemeStyleInput {
         touch: { inset: number; pad: number };
       };
       control: {
-        pointer: Record<string, number | string>;
-        touch: Record<string, number | string>;
+        pointer: { padding: number; gap: number };
+        touch: { padding: number; gap: number };
       };
       height: {
         pointer: { sm: number; md: number; lg: number };
@@ -101,19 +96,14 @@ export interface ThemeStyleInput {
   };
   shape: {
     curve: string;
-    corners: {
-      /** A capsule, the control radius, or points: `full`, `{dimension.radius.*}`, or a number. */
-      button: string;
-    };
   };
   state: {
     "press-scale": number;
-    overlay: { hover: number; focus: number; pressed: number; dragged: number };
+    overlay: { hover: number; pressed: number };
     "pressed-opacity": number;
     "rest-opacity": number;
     disabled: { content: number };
   };
-  transition: { enter: { duration: number; timingFunction: string } };
   motion: {
     fast: ThemeMotionRoleStyle;
     default: ThemeMotionRoleStyle;
@@ -152,6 +142,8 @@ export interface ThemeGeneratorOutput {
   touchDescription?: string;
   "press-scale"?: number;
   radiusGroupDescription?: string;
+  /** Control slot overrides for themes without a custom `style` block (e.g. shadcn, solid-glass). */
+  slots?: Record<string, SlotValue>;
   style?: ThemeStyleInput;
   designMd?: Pick<DesignMdExtension, "overview" | "elevation" | "dos" | "donts">;
   /** The pairs this theme keeps below AA, each with its platform source (`theme:contrast`). */
@@ -715,20 +707,6 @@ function readDefaultMetadata(repoRoot: string) {
   };
 }
 
-/**
- * A button's corner as its token states it: `full`, a radius scale reference, or points (`12px`).
- * One string type for the token in every theme, so the base's reference and a theme's capsule or
- * number stay comparable.
- */
-function cornerValue(corner: string | number): string {
-  return typeof corner === "number" ? `${corner}px` : corner;
-}
-
-/** A corner is stated in points (`dimension`) unless it names a scale or asks for a capsule. */
-function cornerType(corner: string | number): string | null {
-  return typeof corner === "number" ? "dimension" : corner === "full" ? null : "dimension";
-}
-
 function getAt(root: Record<string, unknown>, ...keys: string[]): Record<string, unknown> {
   let cur: unknown = root;
   for (const k of keys) {
@@ -755,7 +733,6 @@ function encodeSharedStyleOverrides(
   typography?: Record<string, unknown>;
   shape?: Record<string, unknown>;
   state: Record<string, unknown>;
-  transition?: Record<string, unknown>;
   motion?: Record<string, unknown>;
 } {
   const desc = (key: string, fallback: unknown): string =>
@@ -836,34 +813,16 @@ function encodeSharedStyleOverrides(
     };
   }
 
-  // 3. shape: the corner curve (an extension) and the radius a button takes (a token)
+  // 3. shape: the corner curve (an extension)
   const baseShape = getAt(baseShared, "shape");
   const baseShapeExt = getExtNs(baseShape);
-  const baseCorner = getAt(baseShape, "corners", "button");
   const shapeExtOut: Record<string, unknown> = {};
   if (style.shape.curve !== baseShapeExt.curve) shapeExtOut.curve = style.shape.curve;
-  const cornerDiffers = style.shape.corners.button !== baseCorner.$value;
   const shape =
-    Object.keys(shapeExtOut).length > 0 || cornerDiffers
+    Object.keys(shapeExtOut).length > 0
       ? {
           $description: desc("shape", baseShape.$description),
-          ...(Object.keys(shapeExtOut).length > 0
-            ? { $extensions: { [EXT_NS]: shapeExtOut } }
-            : {}),
-          ...(cornerDiffers
-            ? {
-                corners: {
-                  $description: getAt(baseShape, "corners").$description,
-                  button: {
-                    ...(cornerType(style.shape.corners.button) === null
-                      ? {}
-                      : { $type: cornerType(style.shape.corners.button) as string }),
-                    $value: cornerValue(style.shape.corners.button),
-                    $description: baseCorner.$description,
-                  },
-                },
-              }
-            : {}),
+          $extensions: { [EXT_NS]: shapeExtOut },
         }
       : undefined;
 
@@ -884,7 +843,7 @@ function encodeSharedStyleOverrides(
 
   const baseOverlay = getAt(baseState, "overlay");
   const overlayOverrides: Record<string, unknown> = {};
-  for (const key of ["hover", "focus", "pressed", "dragged"] as const) {
+  for (const key of ["hover", "pressed"] as const) {
     const baseTok = getAt(baseOverlay, key);
     if (style.state.overlay[key] !== baseTok.$value) {
       overlayOverrides[key] = { $value: style.state.overlay[key] };
@@ -925,31 +884,6 @@ function encodeSharedStyleOverrides(
       ...disabledOverrides,
     };
   }
-
-  // 6. transition.enter
-  const baseTransition = getAt(baseShared, "transition");
-  const baseEnter = getAt(baseTransition, "enter");
-  const baseEnterVal = baseEnter.$value as {
-    duration: { value: number };
-    timingFunction: string;
-  };
-  const nextEnterTf = `{cubicBezier.${style.transition.enter.timingFunction}}`;
-  const transition =
-    style.transition.enter.duration !== baseEnterVal.duration.value ||
-    nextEnterTf !== baseEnterVal.timingFunction
-      ? {
-          $type: "transition",
-          $description: desc("transition", baseTransition.$description),
-          enter: {
-            $value: {
-              duration: { value: style.transition.enter.duration, unit: "ms" },
-              delay: { value: 0, unit: "ms" },
-              timingFunction: nextEnterTf,
-            },
-            $description: desc("transition.enter", baseEnter.$description),
-          },
-        }
-      : undefined;
 
   // 7. motion: the three speeds and the state fade
   const baseMotion = getAt(baseShared, "motion");
@@ -997,7 +931,6 @@ function encodeSharedStyleOverrides(
     ...(typography ? { typography } : {}),
     ...(shape ? { shape } : {}),
     state: stateOut,
-    ...(transition ? { transition } : {}),
     ...(motion ? { motion } : {}),
   };
 }
@@ -1061,26 +994,12 @@ function encodeInputTierOverrides(
   );
   if (itemOut) sizeGroupOut.item = itemOut;
 
-  const baseControl = getAt(baseSizeGroup, "control");
-  const baseSwitch = getExtNs(baseControl).switch as string;
-  const controlVals = style.dimension.size.control[tier];
-  const controlDiff: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(controlVals)) {
-    if (k === "switch") continue;
-    const baseTok = getAt(baseControl, k);
-    const baseV = (baseTok.$value as { value: number }).value;
-    if (v !== baseV) {
-      controlDiff[k] = { $value: { value: v as number, unit: "px" } };
-    }
-  }
-  const switchDiff = controlVals.switch !== baseSwitch;
-  if (switchDiff || Object.keys(controlDiff).length > 0) {
-    sizeGroupOut.control = {
-      ...(switchDiff ? { $extensions: { [EXT_NS]: { switch: controlVals.switch } } } : {}),
-      $description: desc("dimension.size.control", baseControl.$description),
-      ...controlDiff,
-    };
-  }
+  const controlOut = diffDimSubgroup(
+    "dimension.size.control",
+    style.dimension.size.control[tier],
+    getAt(baseSizeGroup, "control"),
+  );
+  if (controlOut) sizeGroupOut.control = controlOut;
 
   const heightOut = diffDimSubgroup(
     "dimension.size.height",
@@ -1270,7 +1189,7 @@ export function themeSourceDocs(
     );
   }
 
-  const slots = slotOverridesDoc(output.style?.slots ?? {}, BASE_SLOTS);
+  const slots = slotOverridesDoc(output.slots ?? output.style?.slots ?? {}, BASE_SLOTS);
   const pressScale = output["press-scale"] ?? output.style?.state["press-scale"];
   if (pressScale === undefined) {
     throw new Error(
@@ -1319,7 +1238,6 @@ export function themeSourceDocs(
               "Scale factor applied while a pressable control is pressed.",
           },
         },
-    ...(sharedStyle?.transition ? { transition: sharedStyle.transition } : {}),
     ...(sharedStyle?.motion ? { motion: sharedStyle.motion } : {}),
   };
 

@@ -1,12 +1,12 @@
 // An OTP input: the cells (`otpCells`, `otpCellLook`) and the `OtpInput` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, finish, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
+import { colors, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
 
-import { edgeClass } from "./input";
+import { edgeClass, insetShade } from "./input";
 import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
 import { type Live, read } from "./lib/live-value";
 import { fieldLook } from "./lib/look";
@@ -30,6 +30,12 @@ export interface OtpCellOptions {
   tone?: Live<Tone | undefined>;
 }
 
+const FILLED_FOCUS_CLASS = {
+  ring: "data-filled:focus:border-ring",
+  line: "data-filled:focus:border-b-brand",
+  brand: "data-filled:focus:border-brand",
+} as const;
+
 /**
  * A one-time code's cells (spread on `OtpInput`): wells that a digit (a
  * bullet too) lifts out of (`data-filled:`), the cell taking the next digit
@@ -47,7 +53,12 @@ export function otpCellLook(o?: OtpCellOptions) {
       if (terminal)
         return "w-10 h-12 items-center justify-center border border-line font-semibold text-foreground focus:border-brand disabled:opacity-50";
       const field = fieldLook();
-      return `${cells} items-center justify-center ${fieldCornerClass(field)} bg-inset font-semibold text-foreground ${fieldEdgeClass(field)} border-line data-filled:border-input data-filled:bg-card data-filled:focus:border-brand disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`;
+      const filledFocus = field.focusLine
+        ? FILLED_FOCUS_CLASS.line
+        : field.focusUsesRing
+          ? FILLED_FOCUS_CLASS.ring
+          : FILLED_FOCUS_CLASS.brand;
+      return `${cells} items-center justify-center ${fieldCornerClass(field)} bg-inset font-semibold text-foreground ${fieldEdgeClass(field)} border-line data-filled:border-input data-filled:bg-card ${filledFocus} disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`;
     },
     get cellStyle(): ViewStyle {
       const tone = read(o?.tone);
@@ -55,9 +66,10 @@ export function otpCellLook(o?: OtpCellOptions) {
       // A copy, as the other looks hand a finish out: `finish` reads the theme when the style is
       // applied, so a cell drawn after an appearance change wears that appearance (a shared object
       // passed as it is would keep the one of the render that made it).
+      const shade = insetShade();
       return tone
-        ? { ...finish.inset, backgroundColor: toneTint(tone), borderColor: toneColor(tone) }
-        : { ...finish.inset };
+        ? { ...shade, backgroundColor: toneTint(tone), borderColor: toneColor(tone) }
+        : shade;
     },
     caretClass: "w-0.5 h-6 rounded-full",
     get caretStyle(): ViewStyle {

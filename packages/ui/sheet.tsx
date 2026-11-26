@@ -1,7 +1,7 @@
 // A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, colors, cornerCurve, shape, stroke } from "@shadcn-nsh/theme";
+import { alpha, colors, cornerCurve, finish, shape, stroke, terminal } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { cleanup, context, keyboardFrame, safeArea, signal, split, View, windowSize } from "nsh";
 import {
@@ -13,6 +13,7 @@ import {
 import { Action, type ButtonVariant } from "./button";
 import { dialogText, dialogTitle } from "./dialog";
 import { AsText } from "./lib/as-text";
+import { surfaceBorderWidth } from "./lib/look";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
 
@@ -20,32 +21,39 @@ import { backdrop } from "./lib/popup";
 export type SheetSide = "bottom" | "top" | "left" | "right";
 
 /**
- * A sheet's panel (`nsh/base`'s `Sheet`'s `popupStyle`): the card's
- * surface with the border's edge. At the bottom (or the top) it spans the
- * width, its two inner corners on the card's radius, 16 points of padding at
+ * A sheet's panel (`nsh/base`'s `Sheet`'s `popupStyle`): the modal finish's
+ * surface (`finish.modal`), shadow and edge (only along the inner side facing
+ * the screen, never along the screen edge). At the bottom (or the top) it spans
+ * the width, its two inner corners on `shape.modal`, 16 points of padding at
  * its sides and its rows 14 apart, kept above the home indicator (the sheet
  * itself stands above the keyboard), and never taller than the screen
  * below the status bar; put `sheetGrabber` first in a bottom one. At the
  * left or the right it is the full height, at most 360 points wide (48
- * short of a narrow window), its inner corners on the card's radius, 20
+ * short of a narrow window), its inner corners on `shape.modal`, 20
  * points of padding inside the safe area.
  */
 export function sheetPanel(side: SheetSide): ViewStyle {
-  const surface: ViewStyle = { backgroundColor: colors.card, borderColor: colors.border };
+  const edgeWidth = terminal ? stroke.hairline : surfaceBorderWidth(finish.modal.borderColor);
+  const surface: ViewStyle = terminal
+    ? { borderColor: colors.border }
+    : {
+        backgroundColor: finish.modal.backgroundColor,
+        boxShadow: finish.modal.boxShadow,
+        borderColor: finish.modal.borderColor,
+      };
   if (side === "bottom" || side === "top") {
     const bottom = side === "bottom";
     return {
       ...surface,
-      borderWidth: stroke.hairline,
       ...(bottom
         ? {
-            borderBottomWidth: 0,
+            borderTopWidth: edgeWidth,
             borderTopLeftRadius: shape.modal,
             borderTopRightRadius: shape.modal,
             paddingTop: 8,
           }
         : {
-            borderTopWidth: 0,
+            borderBottomWidth: edgeWidth,
             borderBottomLeftRadius: shape.modal,
             borderBottomRightRadius: shape.modal,
             paddingTop: safeArea().top + 16,
@@ -77,12 +85,12 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     // physical: `side` is the window edge the sheet stands on, so its inner edge (the border and the corners) is physical too.
     ...(side === "right"
       ? {
-          borderLeftWidth: stroke.hairline,
+          borderLeftWidth: edgeWidth,
           borderTopLeftRadius: shape.modal,
           borderBottomLeftRadius: shape.modal,
         }
       : {
-          borderRightWidth: stroke.hairline,
+          borderRightWidth: edgeWidth,
           borderTopRightRadius: shape.modal,
           borderBottomRightRadius: shape.modal,
         }),

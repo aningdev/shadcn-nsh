@@ -338,13 +338,15 @@ describe("compiled winui theme files", () => {
       material: "acrylic",
       foreground: "{foreground}",
     });
-    // `SurfaceStrokeColorDefault #66757575`, over the flyout's own face.
-    for (const appearance of ["light", "dark"] as const) {
-      expect(merged[appearance].overlay, appearance).toMatchObject({
-        "border-color": "oklch(0.5624 0 0 / 0.4)",
-        material: "acrylic",
-      });
-    }
+    // `SurfaceStrokeColorFlyout` (`#0F000000` light, `#33000000` dark), subtle stroke over the flyout's face.
+    expect(merged.light.overlay, "light").toMatchObject({
+      "border-color": "oklch(0 0 0 / 0.059)",
+      material: "acrylic",
+    });
+    expect(merged.dark.overlay, "dark").toMatchObject({
+      "border-color": "oklch(0 0 0 / 0.2)",
+      material: "acrylic",
+    });
     expect(files.semantics.finishes.light.overlay).toMatchObject({
       background: "oklch(from {popover} l c h / 0.85)",
     });
@@ -367,8 +369,9 @@ describe("compiled winui theme files", () => {
     // same #c1c1c1 / #424242 it drew before, now without pinning the face it was measured on.
     expect(hexOf(over(String(merged.light.modal?.["border-color"]), "#f3f3f3"))).toBe("#c1c1c1");
     expect(hexOf(over(String(merged.dark.modal?.["border-color"]), "#202020"))).toBe("#424242");
-    // A raised control's edge is WinUI's pair — `ControlStrokeColorDefault` above,
-    // `ControlStrokeColorSecondary` below — so the lower line is the stronger one.
+    // A raised control's bevel uses `ControlElevationBorderBrush`: darker bottom in light mode
+    // (`ControlStrokeColorSecondary` below) and brighter top highlight in dark mode
+    // (`ControlStrokeColorSecondary` above).
     expect(files.semantics.finishes.shared.raised).toMatchObject({ shadow: "none" });
     expect(files.semantics.finishes.light.raised).toMatchObject({
       "border-color": "oklch(0 0 0 / 0.059)",
@@ -377,8 +380,8 @@ describe("compiled winui theme files", () => {
     });
     expect(files.semantics.finishes.dark.raised).toMatchObject({
       "border-color": "oklch(1 0 0 / 0.071)",
-      "border-top-color": "oklch(1 0 0 / 0.071)",
-      "border-bottom-color": "oklch(1 0 0 / 0.094)",
+      "border-top-color": "oklch(1 0 0 / 0.094)",
+      "border-bottom-color": "oklch(1 0 0 / 0.071)",
     });
     // A field is the same pair at the controls' own strength (`ControlStrongStrokeColorDefault`
     // under the text), so the line under it is the strong one and the rest is the hairline.
@@ -436,7 +439,7 @@ describe("compiled winui theme files", () => {
     expect(files.theme.cssVars.light["focus-inner"]).toBe("oklch(1 0 0)");
     expect(files.theme.cssVars.dark["focus-inner"]).toBe("oklch(0.14479 0 0)");
     // The disabled field turns over to the theme's disabled brushes rather than fading.
-    expect(files.semantics.slots["field.disabled.face"]).toEqual({ finish: "disabled" });
+    expect(files.semantics.controls.field.disabled.face).toEqual({ finish: "disabled" });
 
     const kinds = tokenKinds(files.theme.cssVars);
     expect(

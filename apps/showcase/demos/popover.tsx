@@ -20,14 +20,18 @@ import {
   type IconNode,
 } from "lucide";
 import { signal, Text, View } from "nsh";
-import type { OpenChangeReason } from "nsh/base";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import type { PopupSide } from "@/packages/ui/lib/popup";
-import { Popover, PopoverContent, PopoverTrigger } from "@/packages/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  type PopoverOpenChangeReason,
+} from "@/packages/ui/popover";
 import { Stat } from "@/packages/ui/stat";
 import { Switch } from "@/packages/ui/switch";
 
@@ -74,7 +78,7 @@ export function PopoverDemo() {
   const { toast, dismissToast, Toaster } = createToaster();
   const changed =
     (name: string) =>
-    ({ open, reason }: { open: boolean; reason: OpenChangeReason }) =>
+    ({ open, reason }: { open: boolean; reason: PopoverOpenChangeReason }) =>
       log(`${name} ${open ? "opened" : "closed"} · ${reason}`);
 
   return (
@@ -92,7 +96,7 @@ export function PopoverDemo() {
 function Share(props: {
   log: (line: string) => void;
   toast: (content: ToastContent) => Promise<string | null>;
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: PopoverOpenChangeReason }) => void;
 }) {
   const { log, toast, changed } = props;
   const open = signal(false);
@@ -282,7 +286,7 @@ function Share(props: {
 
 function Profile(props: {
   log: (line: string) => void;
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: PopoverOpenChangeReason }) => void;
 }) {
   const { log, changed } = props;
   const open = signal(false);
@@ -409,7 +413,7 @@ function Reminder(props: {
   log: (line: string) => void;
   toast: (content: ToastContent) => Promise<string | null>;
   dismissToast: (id?: string) => void;
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: PopoverOpenChangeReason }) => void;
 }) {
   const { log, toast, dismissToast, changed } = props;
   const open = signal(false);
@@ -533,7 +537,7 @@ function Reminder(props: {
 }
 
 function Placement(props: {
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: PopoverOpenChangeReason }) => void;
 }) {
   const { changed } = props;
   const side = signal<PopupSide>("bottom");

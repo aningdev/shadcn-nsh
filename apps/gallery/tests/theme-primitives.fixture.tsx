@@ -44,11 +44,7 @@ const expressive: AppTheme = {
     },
     state: {
       ...nshGallery.semantics.state,
-      overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
-    },
-    transition: {
-      ...nshGallery.semantics.transition,
-      enter: { duration: 200, timingFunction: "point-to-point" },
+      overlay: { hover: 0.08, pressed: 0.1 },
     },
     motion: {
       ...nshGallery.semantics.motion,
@@ -92,7 +88,6 @@ function App() {
       <Text>{`motionFast=${showMotion(motion.fast)}`}</Text>
       <Text>{`motionDefault=${showMotion(motion.default)}`}</Text>
       <Text>{`motionSlow=${showMotion(motion.slow)}`}</Text>
-      <Text>{`motionEnter=${motion.enter.duration}:${JSON.stringify(motion.enter.timingFunction)}`}</Text>
       <Text>{`btnHover=${JSON.stringify(defaultBtn.hoverStyle ?? null)}`}</Text>
       <Text>{`roundHover=${JSON.stringify(roundBtn.hoverStyle ?? null)}`}</Text>
       <Text>{`splitHover=${JSON.stringify(splitSeg.hoverStyle ?? null)}`}</Text>

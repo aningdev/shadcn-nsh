@@ -268,6 +268,10 @@ export function m3Scheme(seed?: string): M3Scheme {
 /** Non-M3 NSH semantic tokens carried over from RESEARCH §2.1 & §2.2. */
 const NSH_EXTENSIONS = {
   media: "oklch(0.1869 0.0151 266.766)",
+  info: {
+    light: "oklch(0.525 0.185 260)",
+    dark: "oklch(0.76 0.118 258)",
+  },
   warn: {
     light: "oklch(0.5909 0.13245 65.117)",
     dark: "oklch(0.82449 0.14865 73.346)",
@@ -284,7 +288,7 @@ const NSH_EXTENSIONS = {
  */
 const m3Field = {
   "field.edge.sides": false,
-  "field.edge.bottom": "color:mutedForeground",
+  "field.edge.bottom": "color:muted-foreground",
   "field.corner.bottom": 0,
   "field.focus.line": true,
   // M3's focus indicator: 2dp over the field's own 1dp line (_md-comp-filled-text-field.scss).
@@ -300,49 +304,49 @@ const m3Choice = {
   "choice.shade": "none",
   // M3 fills a checked box with Primary, edge and all (CheckboxTokens.SelectedContainerColor).
   "choice.checked.face": "color:primary",
+  // M3 keeps radios ring-only: a 2dp primary outer ring and 10dp primary inner dot.
+  "choice.radio.checked.face": "none",
+  "choice.radio.checked.edge": "color:primary",
   "choice.edge.width": 2,
   "choice.mark.size": { pointer: 10, touch: 10 },
-  "choice.edge.colour": "color:mutedForeground",
+  "choice.edge.color": "color:muted-foreground",
   // M3 outlines a box the same way whether it can be used or not: only the mark fades.
-  "choice.edge.disabled": "color:mutedForeground",
+  "choice.edge.disabled": "color:muted-foreground",
   // M3 states 40dp (CheckboxTokens.StateLayerSize); 32 keeps the hover halo from crowding the row.
   "choice.halo": 32,
 } as const;
 
 /** M3's switch: a 40×24 track whose knob grows in place (the library's circle is M3's handle). */
 const m3Switch = {
-  "switch.width": { pointer: 40, touch: 52 },
-  "switch.height": { pointer: 24, touch: 32 },
-  // M3 publishes one switch size: its small one states the same numbers.
-  "switch.small.width": { pointer: 40, touch: 52 },
-  "switch.small.height": { pointer: 24, touch: 32 },
-  "switch.small.knob.width": { pointer: 16, touch: 16 },
-  "switch.small.knob.height": { pointer: 16, touch: 16 },
-  "switch.edge.off": { pointer: 1, touch: 2 },
+  "switch.track": { pointer: [40, 24], touch: [52, 32] },
+  // Compact size (`size="sm"`): 32×20 (pointer) / 40×24 (touch) with a 12pt rest knob
+  // (0.75× scale keeps expanded/pressed handles within the track bounds).
+  "switch.small.track": { pointer: [32, 20], touch: [40, 24] },
+  "switch.small.knob": { pointer: 12, touch: 12 },
+  "switch.edge.off": { pointer: 2, touch: 2 },
   "switch.edge.on": 0,
-  "switch.knob.width": { pointer: 16, touch: 16 },
-  "switch.knob.height": { pointer: 16, touch: 16 },
-  "switch.knob.on.width": { pointer: 20, touch: 24 },
-  "switch.knob.on.height": { pointer: 20, touch: 24 },
-  "switch.knob.hover": { pointer: 16, touch: 16 },
-  "switch.knob.pressed.width": { pointer: 22, touch: 28 },
-  "switch.knob.pressed.height": { pointer: 22, touch: 28 },
-  "switch.feedback": "expand",
+  "switch.edge.color": "color:input",
+  "switch.knob.size": { pointer: 16, touch: 16 },
+  "switch.knob.on": { pointer: 20, touch: 24 },
+  "switch.knob.pressed": { pointer: 22, touch: 28 },
 } as const;
 
 /** M3's groove: a tinted bar with no edge, and no spinner ring around it. */
 const m3Track = {
   // The inactive run is SecondaryContainer, not a wash of Primary: SliderTokens.InactiveTrackColor.
+  "slider.rail": { pointer: 4, touch: 4 },
+  "slider.knob.size": { pointer: 16, touch: 20 },
+  "slider.knob.pressed": { pointer: 16, touch: 32 },
   "slider.face": "color:secondary",
   "slider.knob.face": "color:primary",
   "slider.shade": "none",
-  "slider.edge.colour": "none",
+  "slider.edge.color": "none",
   "slider.edge.width": 0,
   "progress.height": 4,
   "progress.line": 0,
   "progress.face": "color:secondary",
   "progress.shade": "none",
-  "progress.edge.colour": "none",
+  "progress.edge.color": "none",
   "progress.edge.width": 0,
   "spinner.opacity": 0,
 } as const;
@@ -357,7 +361,6 @@ const colourScheme: ColourScheme = {
   knob: ["border", "border"],
   secondaryIsRaised: false,
   raised: "card",
-  strongBorder: true,
   inverse: ["foreground", "background"],
   chart: ["primary", "up", "warn", "destructive", "muted-foreground"],
 };
@@ -383,11 +386,11 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     border: c(p.outlineVariant),
     input: c(p.outline),
     ring: c(p.secondary),
-    "chart-1": c(p.primary),
+    "chart-1": "var(--primary)",
     "chart-2": c(p.tertiary),
-    "chart-3": c(p.secondary),
-    "chart-4": c(p.outline),
-    "chart-5": c(p.outlineVariant),
+    "chart-3": "var(--up)",
+    "chart-4": "var(--warn)",
+    "chart-5": "var(--info)",
     sidebar: "var(--background)",
     "sidebar-foreground": "var(--foreground)",
     "sidebar-primary": "var(--primary)",
@@ -408,7 +411,7 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "focus-inner": "var(--card)",
     track: c(p.surfaceContainerHighest),
     knob: c(p.outline),
-    info: c(p.primary),
+    info: toOklchText(NSH_EXTENSIONS.info[appearance]),
     warn: toOklchText(NSH_EXTENSIONS.warn[appearance]),
     up: toOklchText(NSH_EXTENSIONS.up[appearance]),
     // M3 paints selected chips/tiles/buttons with opaque SecondaryContainer.
@@ -420,7 +423,6 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "warn-tint": tintMix("warn"),
     "destructive-tint": c(p.errorContainer),
     "up-tint": tintMix("up"),
-    "down-tint": tintMix("destructive"),
   };
 }
 
@@ -428,7 +430,6 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
 const origin: ColourOrigin = {
   spec: "Material 3 sys.color",
   names: {
-    border: "outline",
     accent: "secondaryContainer",
     inset: "surfaceContainer",
     track: "surfaceContainerHighest",
@@ -443,11 +444,7 @@ const origin: ColourOrigin = {
     "inverse-brand": "inversePrimary",
     inverse: "inverseSurface",
     "inverse-foreground": "inverseOnSurface",
-    "chart-1": "primary",
     "chart-2": "tertiary",
-    "chart-3": "secondary",
-    "chart-4": "outline",
-    "chart-5": "outlineVariant",
     "secondary-foreground": "onSecondaryContainer",
     "accent-foreground": "onSecondaryContainer",
     "brand-tint": "secondaryContainer",
@@ -522,11 +519,6 @@ export const m3Style = {
     },
   },
   dimension: {
-    shape: {
-      control: "{radius-control}",
-      container: "{radius-container}",
-      modal: "{radius-modal}",
-    },
     size: {
       hit: { pointer: 0, touch: 48 },
       density: {
@@ -539,9 +531,9 @@ export const m3Style = {
         touch: { inset: 0, pad: 12 },
       },
       control: {
-        // M3 spacing steps: 8 inside a control, 12 beside it; a radio's dot is 10dp.
-        pointer: { padding: 8, gap: 8, dot: 10, switch: "regular" },
-        touch: { padding: 8, gap: 8, dot: 10, switch: "regular" },
+        // M3 spacing steps: 8 inside a control, 8 beside it.
+        pointer: { padding: 8, gap: 8 },
+        touch: { padding: 8, gap: 8 },
       },
       // Desktop runs a step below the touch scale; M3's own numbers stay on touch
       // (docs/decisions/0003-material-desktop-tier.md).
@@ -566,6 +558,11 @@ export const m3Style = {
     ...m3Track,
     // A popup keeps ExtraSmall corners (4dp) inside a shape scale whose container is 12dp.
     "popup.corner": "control",
+    "tooltip.edge": "none",
+    "tooltip.shade": "none",
+    "toast.action.face": "none",
+    "list.item.highlight": "color:accent",
+    "list.item.edge": "none",
     // A segmented strip draws its own outline on the surface: its track has no ground of its own.
     "tabs.track.face": "none",
     // M3 containers are edge-free: a sunk well is its ground, not a line.
@@ -574,26 +571,30 @@ export const m3Style = {
     "button.corner.sm": "full",
     "button.corner.md": "full",
     "button.corner.lg": "full",
-    "state.disabled.face": "finish:disabled",
-    "state.disabled.ink": "finish:disabled:foreground",
-    "state.disabled.edge": "finish:disabled:border-color",
+    "badge.corner": "full",
+    "button.outline.edge": "color:input",
+    // M3 secondary buttons take the Filled Tonal style (no border, no shadow).
+    "button.secondary.face": "color:secondary",
+    "button.secondary.ink": "color:secondary-foreground",
+    "button.secondary.edge": "none",
+    "button.shade": "none",
+    // M3 destructive buttons match the flat tonal surface (errorContainer tint, no border, no shadow).
+    "button.destructive.edge": "none",
+    "disabled.face": "finish:disabled",
+    "disabled.ink": "finish:disabled:foreground",
+    // M3 outlined disabled controls draw a 12% onSurface outline (while filled disabled containers stay edge-free).
+    "disabled.edge": "color:foreground@0.12",
   },
   shape: {
     curve: "circular",
-    corners: {
-      button: "full" as const,
-    },
   },
   state: {
     // M3 presses with a state layer, not by sinking.
     "press-scale": 1,
-    overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
+    overlay: { hover: 0.08, pressed: 0.1 },
     "pressed-opacity": 1,
     "rest-opacity": 0.38,
     disabled: { content: 0.38 },
-  },
-  transition: {
-    enter: { duration: 500, timingFunction: "emphasized-decelerate" },
   },
   motion: {
     // M3 duration and easing tokens, named by speed (`_md-sys-motion.scss`): Short3 (150) for
@@ -631,15 +632,14 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     accent: "Tonal accent fill (M3 secondaryContainer).",
     "accent-foreground": "Text and icon ink on accent fills (M3 Expressive onSecondaryContainer).",
     destructive: "Error and destructive action color (M3 error).",
-    border:
-      "Hairline container border color (M3 outline: one step stronger than outlineVariant, which reads too faint at 1dp).",
+    border: "Hairline divider and container border color (M3 outlineVariant).",
     input: "Input outline color (M3 outline).",
     ring: "Focus indicator ring color (M3 primary, the role M3 draws its focus indicator in).",
     "chart-1": "First chart series color (M3 primary).",
-    "chart-2": "Second chart series color (the theme's positive `up` tone).",
-    "chart-3": "Third chart series color (the theme's `warn` tone).",
-    "chart-4": "Fourth chart series color (M3 error).",
-    "chart-5": "Fifth chart series color (M3 onSurfaceVariant).",
+    "chart-2": "Second chart series color (M3 tertiary).",
+    "chart-3": "Third chart series color (the theme's positive `up` tone).",
+    "chart-4": "Fourth chart series color (the theme's `warn` tone).",
+    "chart-5": "Fifth chart series color (the theme's `info` tone).",
     sidebar: "Sidebar canvas background (M3 surface).",
     "sidebar-accent": "Sidebar active item fill (M3 secondaryContainer).",
     "sidebar-accent-foreground":
@@ -655,7 +655,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     "brand-edge": "Brand container outline (M3 outlineVariant).",
     track: "Switch and slider track fill (M3 surfaceContainerHighest).",
     knob: "Unchecked switch thumb fill (M3 outline).",
-    info: "Informational semantic color matching M3 primary.",
+    info: "Informational semantic color (Material Blue).",
     "brand-tint": "Opaque selected chip/tile fill (M3 secondaryContainer).",
     inverse: "Inverse surface for snackbars and tooltips (M3 inverseSurface).",
     "inverse-foreground": "Ink on inverse surfaces (M3 inverseOnSurface).",
@@ -664,7 +664,6 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     "warn-tint": "Translucent warning wash (12% warn over transparent).",
     "destructive-tint": "Tonal error container background (M3 errorContainer).",
     "up-tint": "Translucent positive wash (12% up over transparent).",
-    "down-tint": "Translucent negative wash (12% down over transparent).",
   };
 
   return {
@@ -728,14 +727,11 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         shape: "M3 circular arc corners (ShapeTokens.kt).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; M3 uses the state layer).",
-        "state.overlay":
-          "M3 state-layer ink opacities: hover 0.08, focus 0.10, pressed 0.10, dragged 0.16 (StateTokens.kt).",
+        "state.overlay": "M3 state-layer ink opacities: hover 0.08, pressed 0.10 (StateTokens.kt).",
         "state.pressed-opacity":
           "Content stays full opacity when pressed (1; the state layer shows press).",
         "state.disabled":
           "M3 disabled controls: 0.38 content opacity, the disabled finish as their face (10% onSurface container) and its foreground as their ink (_md-comp-button-filled.scss).",
-        "transition.enter":
-          "M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).",
         "motion.fast":
           "M3 DurationShort3 (150ms) with the standard curve for control state (_md-sys-motion.scss).",
         "motion.default":

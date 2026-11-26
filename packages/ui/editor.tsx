@@ -27,7 +27,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "
 import { mergeClasses } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/indicator";
-import { fieldLook } from "./lib/look";
+import { fieldLook, fillOf } from "./lib/look";
 import { popupSurface } from "./lib/popup";
 import { Toggle } from "./toggle";
 
@@ -72,11 +72,11 @@ export const editorClasses: EditorClasses = {
 export function editorFrame(): ViewStyle {
   const field = fieldLook();
   return {
-    backgroundColor: colors.field,
+    ...(field.ground ? fillOf(field.ground) : {}),
     ...fieldEdgeWidths(field),
     ...fieldRestEdge(field),
     ...fieldCorners(field),
-    ...finish.inset,
+    boxShadow: finish.inset.boxShadow,
   };
 }
 

@@ -480,27 +480,6 @@
       },
       "$description": "Translucent positive trend background tint."
     },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.704, 0.191, 22.216],
-        "alpha": 0.1,
-        "hex": "#ff6467"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 10,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Translucent negative trend background tint."
-    },
     "card-foreground": {
       "$value": "{color.foreground}",
       "$extensions": {

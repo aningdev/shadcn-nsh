@@ -25,21 +25,10 @@
         }
       },
       "control": {
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "switch": "regular"
-          }
-        },
-        "$description": "Control internal spacing and switch size tier.",
+        "$description": "Control internal spacing.",
         "padding": {
           "$value": {
             "value": 6,
-            "unit": "px"
-          }
-        },
-        "dot": {
-          "$value": {
-            "value": 12,
             "unit": "px"
           }
         }

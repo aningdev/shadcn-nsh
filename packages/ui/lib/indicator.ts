@@ -2,10 +2,19 @@
 // styles and classes every field control draws with, so an input, a select and an editor read the
 // same value the same way.
 
-import { alpha, cornerCurve, shape, terminal, stroke } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  cornerCurve,
+  focusRing,
+  shape,
+  style,
+  terminal,
+  stroke,
+} from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 
-import { type FieldLook, fieldFocusWidth, painted } from "./look";
+import { type FieldLook, fieldFocusWidth, painted, sameFill } from "./look";
 
 /**
  * The frame a field draws, as the platform reads it: the theme's, or the terminal's box — a shell's
@@ -19,8 +28,8 @@ export function fieldDrawn(field: FieldLook): FieldLook {
     width: stroke.control,
     radius: shape.control,
     bottomRadius: shape.control,
-    side: { kind: "colour", role: "input" },
-    bottom: { kind: "colour", role: "input" },
+    side: { kind: "color", role: "input" },
+    bottom: { kind: "color", role: "input" },
   };
 }
 
@@ -53,18 +62,35 @@ export function fieldCornerClass(field: FieldLook): string {
     : "rounded-(--radius-control)";
 }
 
-/** A field's edge widths: every side, or its bottom edge alone for a line. */
+/** A field's edge widths: every side, its bottom edge alone for a line, or none when borderless. */
 export function fieldEdgeWidths(field: FieldLook): ViewStyle {
   const look = fieldDrawn(field);
   const width = look.width;
+  if (width === 0) return { borderWidth: 0 };
   return look.edges === "bottom"
     ? { borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: width }
     : { borderWidth: width };
 }
 
-/** `fieldEdgeWidths` for a frame drawn in classes: `border` all round, or `border-b` for a line. */
+/** `fieldEdgeWidths` for a frame drawn in classes: `border` all round, `border-b` for a line, or empty when borderless. */
 export function fieldEdgeClass(field: FieldLook): string {
-  return fieldDrawn(field).edges === "bottom" ? "border-b" : "border";
+  const look = fieldDrawn(field);
+  if (look.width === 0) return "";
+  return look.edges === "bottom" ? "border-b" : "border";
+}
+
+/** Total vertical edge thickness in points (both top and bottom, bottom alone, or 0 when borderless). */
+export function fieldEdgeThickness(field: FieldLook): number {
+  const look = fieldDrawn(field);
+  if (look.width === 0) return 0;
+  return look.width * (look.edges === "bottom" ? 1 : 2);
+}
+
+/** Whether a field draws a uniform non-zero edge across all four sides (not split-edge or borderless). */
+export function fieldHasUniformEdge(field: FieldLook): boolean {
+  const look = fieldDrawn(field);
+  if (look.width === 0) return false;
+  return sameFill(look.side ?? look.bottom, look.bottom);
 }
 
 /**
@@ -73,6 +99,7 @@ export function fieldEdgeClass(field: FieldLook): string {
  */
 export function fieldRestEdge(field: FieldLook): ViewStyle {
   const look = fieldDrawn(field);
+  if (look.width === 0) return {};
   const bottom = { borderBottomColor: painted(look.bottom) };
   return look.side
     ? { borderColor: painted(look.side), ...bottom }
@@ -80,15 +107,17 @@ export function fieldRestEdge(field: FieldLook): ViewStyle {
 }
 
 /**
- * A field's ring, invisible until a state lights it (`fieldFocusEdge`): the two numbers its class
- * form draws (`outline-2 -outline-offset-1`), which are not `focusRing`'s scale.
+ * A field's ring, invisible until a state lights it (`fieldFocusEdge`), sized to `dimension.focus`.
  */
 export function fieldRing(tone: string): ViewStyle {
+  const { width, offset } = style().dimension.focus;
   return {
     outlineStyle: "solid",
-    outlineWidth: 2,
-    outlineOffset: -1,
-    outlineColor: alpha(tone, 0),
+    outlineWidth: width,
+    outlineOffset: offset,
+    // Keep a non-zero alpha so the renderer retains `outlineStyle: solid` and interpolates from the
+    // ring hue rather than flashing from 100% `currentcolor` on focus.
+    outlineColor: alpha(tone, 0.004),
   };
 }
 
@@ -130,18 +159,46 @@ export function fieldFocusLine(state: FieldState): string {
   return line;
 }
 
+/** The focus colour for a field: `destructive` when invalid, `ring` when `field.focus.colour` names it, else `brand`. */
+export function fieldFocusTone(field: FieldLook, invalid = false): string {
+  if (invalid) return colors.destructive;
+  const look = fieldDrawn(field);
+  if (look.focusLine) return colors.brand;
+  if (look.focusUsesRing) {
+    const ring = focusRing();
+    return (ring.borderColor as string | undefined) ?? (ring.outlineColor as string);
+  }
+  return colors.brand;
+}
+
 /**
  * A field's edge with the keys, in `style`, in `tone`: the border and the ring together, or for a
  * field whose focus is a line, its bottom edge alone, `focus.width` wide, and no ring.
  */
 export function fieldFocusEdge(field: FieldLook, tone: string): ViewStyle {
   const look = fieldDrawn(field);
-  const ring = { ...fieldRing(tone), outlineColor: tone };
-  if (!look.focusLine) return { ...ring, borderColor: tone };
+  if (look.focusLine) {
+    return {
+      ...fieldRing(tone),
+      borderBottomColor: tone,
+      borderBottomWidth: fieldFocusWidth(),
+      outlineColor: alpha(tone, 0),
+    };
+  }
+  if (!look.focusUsesRing) {
+    // NSH Gallery (`color:brand`): crisp 2px outline inset by 1px over the focused border.
+    return {
+      outlineStyle: "solid",
+      outlineWidth: 2,
+      outlineOffset: -1,
+      outlineColor: tone,
+      ...(look.width > 0 ? { borderColor: tone } : {}),
+    };
+  }
+  const { style: focusLook } = style().dimension.focus;
   return {
-    ...ring,
-    borderBottomColor: tone,
-    borderBottomWidth: fieldFocusWidth(),
-    outlineColor: alpha(tone, 0),
+    ...fieldRing(tone),
+    outlineColor: focusLook === "halo" ? alpha(tone, 0.3) : tone,
+    ...(focusLook === "halo" && look.width > 0 ? { borderColor: tone } : {}),
   };
 }

@@ -10,7 +10,7 @@
       },
       "shadow": {
         "$type": "shadow",
-        "$value": ["{shadow.md}"]
+        "$value": ["{shadow.edge.surface}"]
       },
       "foreground": {
         "$type": "color",
@@ -78,7 +78,17 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.line}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
       },
       "shadow": {
         "$type": "shadow",
@@ -140,7 +150,7 @@
       },
       "shadow": {
         "$type": "shadow",
-        "$value": ["{shadow.lg}"]
+        "$value": ["{shadow.md}"]
       },
       "foreground": {
         "$type": "color",

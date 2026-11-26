@@ -5,13 +5,12 @@ import { alpha, colors, isDark, terminal, toneColor, type Tone } from "@shadcn-n
 import { Check, Undo2, type IconNode } from "lucide";
 import { split, Text, View } from "nsh";
 import {
-  Button,
   type DiffViewProps as BaseDiffViewProps,
   type DiffViewStyles,
   DiffView as BaseDiffView,
 } from "nsh/base";
 
-import { buttonGlyph, buttonLabel, buttonLook, type ButtonVariant } from "./button";
+import { Button, buttonGlyph, buttonLabel, type ButtonVariant } from "./button";
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
 
@@ -39,18 +38,18 @@ function HunkAction(props: {
   iconOnly?: boolean;
   onPress: () => void;
 }) {
-  const look = buttonLook(props.variant, {
-    size: "sm",
-    style: () =>
-      terminal
-        ? undefined
-        : { height: 20, minWidth: 20, borderRadius: 5, paddingHorizontal: props.iconOnly ? 0 : 6 },
-  });
+  // The chip's box over the button's small size: 20 points square, its corners tighter than a
+  // control's, and no room beside the glyph when it is the only thing in it.
+  const chip = terminal
+    ? undefined
+    : { height: 20, minWidth: 20, borderRadius: 5, paddingHorizontal: props.iconOnly ? 0 : 6 };
   return (
     <Button
+      variant={props.variant}
+      size="sm"
+      style={chip}
       onPress={props.onPress}
       accessibilityLabel={`${props.label} change ${props.index + 1}`}
-      {...look}
     >
       {props.iconOnly && !terminal ? (
         <Icon {...buttonGlyph(props.variant, { size: "sm" })} icon={props.icon} size={11} />

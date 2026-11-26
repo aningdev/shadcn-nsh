@@ -25,7 +25,7 @@ test("control dimensions and component looks follow the active theme", async () 
     );
     expect(find(app.texts(), "slider=")).toContain("|true|rounded-full");
     expect(find(app.texts(), "slider=")?.endsWith("|true|false|false|false")).toBe(true);
-    expect(find(app.texts(), "checkbox=")).toBe("1|false|false");
+    expect(find(app.texts(), "checkbox=")).toBe("1|false|false|true|finish");
     expect(find(app.texts(), "progress=")).toBe("6/solid/true");
     expect(find(app.texts(), "tabs=")).toBe("0/1");
     expect(find(app.texts(), "tabs-indicator=")).toBe("2");
@@ -42,21 +42,20 @@ test("control dimensions and component looks follow the active theme", async () 
   // Material Design 3 ("material")
   await app.press("text:Material");
   expect(app.texts()).toContain("theme:material");
-  // The desktop tier is one step below M3's touch numbers (ADR 0003): 40x24, the knob 16 → 20 → 22.
+  // The desktop tier is one step below M3's touch numbers (ADR 0003): 40x24, 2px edge, the knob 16 → 20 → 22.
   expect(find(app.texts(), "switch=")).toBe(
-    "40x24|1|16|checked:translate-x-[16px] checked:scale-[1.25] active:scale-[1.375]",
+    "40x24|2|16|checked:translate-x-[16px] checked:scale-[1.25] active:scale-[1.375]",
   );
-  // Material's slider keeps the library's round knob on M3's track (#367, a downgrade recorded in
-  // docs/specs/native-themes.md): the circle's 6-point rail and 20-point band, the track
-  // `SecondaryContainer` (`slider.face` / `progress.face`, #408) and the knob `primary`
+  // Material's slider uses a 4-point rail and 20-point band with its 16-point round knob (8px pad),
+  // the track `SecondaryContainer` (`slider.face` / `progress.face`, #408) and the knob `primary`
   // (`slider.knob.face`), so the band is neither the muted track nor a brand tint.
   expect(find(app.texts(), "slider=")).toContain(
-    "h-[6px] rounded-full|h-[20px] justify-center px-[7px]",
+    "h-[4px] rounded-full|h-[20px] justify-center px-[8px]",
   );
   expect(find(app.texts(), "slider=")).toContain("|false|rounded-full");
   // M3's brand tint is its SecondaryContainer too, so the band equals both.
   expect(find(app.texts(), "slider=")?.endsWith("|false|true|false|true")).toBe(true);
-  expect(find(app.texts(), "checkbox=")).toBe("2|true|false");
+  expect(find(app.texts(), "checkbox=")).toBe("2|true|false|true|primary");
   expect(find(app.texts(), "progress=")).toBe("4/solid/false");
   expect(find(app.texts(), "tabs=")).toBe("0/1");
   expect(find(app.texts(), "tabs-indicator=")).toBe("2");
@@ -74,7 +73,7 @@ test("control dimensions and component looks follow the active theme", async () 
   );
   expect(find(app.texts(), "slider=")).toContain("|false|w-[16px] h-[16px]");
   expect(find(app.texts(), "slider=")?.endsWith("|false|false|true|false")).toBe(true);
-  expect(find(app.texts(), "checkbox=")).toBe("1|false|true");
+  expect(find(app.texts(), "checkbox=")).toBe("1|false|true|true|primary");
   expect(find(app.texts(), "progress=")).toBe("3/gradient/false");
   expect(find(app.texts(), "tabs=")).toBe("0/1");
   expect(find(app.texts(), "tabs-indicator=")).toBe("2");

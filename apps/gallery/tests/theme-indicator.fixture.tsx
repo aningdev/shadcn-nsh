@@ -33,6 +33,21 @@ const marked: AppTheme = {
   },
 };
 
+function frameLine() {
+  const look = inputLook();
+  const s = look.style;
+  const f = look.focusWithinStyle;
+  return [
+    `side-muted=${s.borderColor === colors.mutedForeground}`,
+    `side-line=${s.borderColor === colors.line}`,
+    `bottom-input=${s.borderBottomColor === colors.input}`,
+    `hover=${look.hoverStyle !== undefined}`,
+    `focus-bottom-brand=${f.borderBottomColor === colors.brand}`,
+    `focus-bottom-width=${f.borderBottomWidth ?? 0}`,
+    `ring=${(f.outlineWidth ?? 0) === 2 && !fieldLook().focusLine}`,
+  ].join("|");
+}
+
 function App() {
   return (
     <View>
@@ -41,8 +56,8 @@ function App() {
       <Text testID="tooltip">{`tooltip:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>
-      <Text testID="stroke">{`stroke:${"borderBottomColor" in { ...finish.inset }}|${inputLook().style.borderBottomColor === finish.inset.borderBottomColor}|${finish.inset.borderBottomColor !== finish.inset.borderTopColor}`}</Text>
-      <Text testID="frame">{`frame:${inputLook().class}`}</Text>
+      <Text testID="stroke">{`stroke:${"borderBottomColor" in { ...finish.inset }}|${inputLook().style.borderBottomColor === finish.inset.borderBottomColor}|${finish.inset.borderBottomColor !== finish.inset.borderColor}`}</Text>
+      <Text testID="frame">{`frame:${frameLine()}`}</Text>
       <Text testID="corners">{`corners:${fieldCorners(fieldLook()).borderBottomLeftRadius}|${fieldCorners(fieldLook()).borderTopLeftRadius}`}</Text>
       <Button onPress={() => selectTheme(materialTheme)}>Material</Button>
       <Button onPress={() => selectTheme(marked)}>Marked</Button>

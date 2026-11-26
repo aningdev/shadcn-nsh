@@ -64,13 +64,13 @@ flowchart LR
 
 **设计问题**：调色板是什么？页面分几层，每层什么色？亮暗怎么翻？墨色和底色的对比度要多少？哪些语义要单独的颜色（品牌、信息、警告、涨跌）？
 
-**定义项**（`theme.json`，共 56 个角色：15 个源色由主题写值；引用色与派生色默认由这 15 个源色派生，主题也可以写自己的取值，但要记出处，见 [ADR 0007](decisions/0007-theme-customization-scope.md) 第 4 条与 [ADR 0012](decisions/0012-derived-colours-are-defaults.md)）
+**定义项**（`theme.json`，共 55 个角色：15 个源色由主题写值；引用色与派生色默认由这 15 个源色派生，主题也可以写自己的取值，但要记出处，见 [ADR 0007](decisions/0007-theme-customization-scope.md) 第 4 条与 [ADR 0012](decisions/0012-derived-colours-are-defaults.md)）
 
 | 类           | 角色                                                                                                                                                                                                                        | 主题写什么                                                                                            |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | 源色（15）   | `primary`、`primary-foreground`、`secondary`、`foreground`、`muted-foreground`、`faint`、`background`、`card`、`muted`、`border`（强：控件与输入框的边）、`line`（弱：分割线、卡片边）、`destructive`、`warn`、`info`、`up` | 字面值                                                                                                |
 | 引用         | `popover`、`accent`、`inset`、`raised`、`field`、`track`、`knob`、`hover`、`input`、`ring`、`brand`、`brand-edge`、`inverse*`、`sidebar*`、`*-foreground`（foreground 族）                                                  | 默认 DTCG 引用（`{color.x}`）指向某个源色；写自己的值时在 token 的 `$extensions` 里记出处（ADR 0012） |
-| 派生         | 六个 `*-tint`（`brand-tint`、`info-tint`、`warn-tint`、`destructive-tint`、`up-tint`、`down-tint`）                                                                                                                         | 默认同一条公式 `color-mix(in srgb, X N%, transparent)`，`N` 每套主题一个数；写自己的值时记出处        |
+| 派生         | 五个 `*-tint`（`brand-tint`、`info-tint`、`warn-tint`、`destructive-tint`、`up-tint`，下跌复用 `destructive-tint`）                                                                                                         | 默认同一条公式 `color-mix(in srgb, X N%, transparent)`，`N` 每套主题一个数；写自己的值时记出处        |
 | 图表         | `chart-1…5`                                                                                                                                                                                                                 | 默认引用源色：状态色序列（主色、蓝、绿、黄、红）或由 `foreground` 混出的灰阶；写自己的值时记出处      |
 | C 层（3 色） | `scrim`、`media`、`on-media`                                                                                                                                                                                                | 亮暗共用（同层还有 3 个圆角，见 2.6、2.8）                                                            |
 
@@ -177,11 +177,11 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **定义项**
 
-| 定义项                                                 | 位置                                                                           | 说明                                                                                              |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `radius-control` / `radius-container` / `radius-modal` | `theme.json` `cssVars.theme`；`semantics.json` 的 `dimension.shape.*` 引用它们 | 控件 / 容器（卡片、浮层、区块） / 模态（对话框、抽屉）三层。A 层的 `radius` 等于 `radius-control` |
-| `shape.corners.button`                                 | `semantics.json`                                                               | `full` 时按钮是胶囊，否则解成它引用的那个圆角（base 引用 `{radius-control}`）                     |
-| `shape.curve`                                          | `semantics.json`                                                               | `continuous` 或 `circular`                                                                        |
+| 定义项                                                 | 位置                                                   | 说明                                                                                              |
+| ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `radius-control` / `radius-container` / `radius-modal` | `theme.json` `cssVars.theme`；`shape.*` 直接 `token()` | 控件 / 容器（卡片、浮层、区块） / 模态（对话框、抽屉）三层。A 层的 `radius` 等于 `radius-control` |
+| `controls.button.corner.{sm,md,lg}`                    | `semantics.json` `controls`                            | 按尺寸设按钮角：`full` 时按钮是胶囊、`control` 取 `shape.control`，或具体点数                     |
+| `shape.curve`                                          | `semantics.json`                                       | `continuous` 或 `circular`                                                                        |
 
 **约束**
 
@@ -194,7 +194,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | ------------- | --------------------------- | ----------- | ---------- |
 | m             | `nsh-gallery` / `shadcn`    | 8 / 12 / 14 | radius     | continuous |
 | `solid-glass` | 11 / 14 / 20                | radius      | continuous |
-| `apple`       | 8 / 12 / 26                 | full        | continuous |
+| `apple`       | 8 / 12 / 16                 | full        | continuous |
 | `material`    | 4 / 12 / 28                 | full        | circular   |
 | `winui`       | 4 / 8 / 8                   | radius      | circular   |
 
@@ -204,13 +204,13 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **定义项**：`semantics.json` 的 `dimension.size` 与 `dimension.icon`，都分 `pointer` / `touch` 两档，同一结构只换数值。
 
-| 定义项         | 内容                                                  |
-| -------------- | ----------------------------------------------------- |
-| `size.height`  | `sm` / `md` / `lg` 三档。行、标签栏、数值行都读 `lg`  |
-| `icon`         | `sm` / `md` / `lg` 三档                               |
-| `size.density` | 面的 `pad`（内边距）与 `gap`（间距）                  |
-| `size.control` | 控件的 `padding` / `gap`，以及 `dot`、`switch` 尺寸档 |
-| `size.hit`     | 触控目标外扩：`pointer` 一般为 0，`touch` 不小于 44   |
+| 定义项         | 内容                                                 |
+| -------------- | ---------------------------------------------------- |
+| `size.height`  | `sm` / `md` / `lg` 三档。行、标签栏、数值行都读 `lg` |
+| `icon`         | `sm` / `md` / `lg` 三档                              |
+| `size.density` | 面的 `pad`（内边距）与 `gap`（间距）                 |
+| `size.control` | 控件的 `padding` / `gap` 与指示点 `dot`              |
+| `size.hit`     | 触控目标外扩：`pointer` 一般为 0，`touch` 不小于 44  |
 
 **约束**（`check:theme` 的 `checkScales`）
 
@@ -265,12 +265,12 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 - `accent` 的按下：`pressed-opacity`（变淡），或 `pressed-background` / `pressed-foreground`（换面）。
 - `state` 组：
 
-| 键                                      | 含义                                                                 |
-| --------------------------------------- | -------------------------------------------------------------------- |
-| `press-scale`                           | 按下缩放（1 为不缩）                                                 |
-| `overlay.{hover,focus,pressed,dragged}` | 状态层叠色的不透明度（M3 的 state layer）                            |
-| `pressed-opacity` / `rest-opacity`      | 被动指示（滚动条把手等）按下与静止时的不透明度                       |
-| `disabled.content`                      | 禁用时内容的不透明度（换了面、墨、边时由 `state.disabled.*` 槽再补） |
+| 键                                 | 含义                                                              |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `press-scale`                      | 按下缩放（1 为不缩）                                              |
+| `overlay.{hover,pressed}`          | 状态层叠色的不透明度（M3 的 state layer）                         |
+| `pressed-opacity` / `rest-opacity` | 被动指示（滚动条把手等）按下与静止时的不透明度                    |
+| `disabled.content`                 | 禁用时内容的不透明度（换面/墨/边时由 `controls.disabled.*` 覆盖） |
 
 **约束**
 
@@ -296,7 +296,6 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 - `motion`：三档 `fast` / `default` / `slow`，按速度命名，不按用途。每档是时间曲线（`duration` / `timingFunction`），没有弹簧（[决策 0010](decisions/0010-drop-ripple-springs.md)）。
 - `motion.state`：一条状态过渡，只有时间曲线。悬停、按下、选中这类小状态来去的时长与曲线（表 2.11）。
-- `transition.enter`：浮层进场的时长与曲线。
 
 **约束**：弹簧只有三档，状态过渡只有一条。动效解释变化，不做装饰；要能中断；尊重系统的减弱动态效果设置（组件负责）。主题只给档位，不规定哪个组件要动。
 
@@ -388,19 +387,19 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 新主题从上往下填；改主题时找到对应的行。
 
-| #   | 设计问题       | 定义项                                                                                    | 文件                                                        | 检查 / 验收                           |
-| --- | -------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------- |
-| 1   | 对齐谁，差多少 | 主题类型、出处、裁剪、契约表达不了的降级                                                  | 生成器注释、主题 README、`native-themes.md` 差异表          | 审阅                                  |
-| 2   | 调色板与语义色 | A 层 31、B 层 25、C 层 3                                                                  | `theme.tokens.json`、`{light,dark}.tokens.json`             | `check:theme`、`theme:contrast`       |
-| 3   | 面的层级       | 15 个 finish                                                                              | `finishes.shared.tokens.json`（生成器：`finishes/<id>.ts`） | `check:theme`、`theme:contrast`       |
-| 4   | 深度           | `elevation`：`sm`–`xl`、`inset`、`edge`                                                   | `{light,dark}.tokens.json` 的 `shadow`                      | `check:theme`、截图                   |
-| 5   | 透明材质       | finish 的 `material`                                                                      | `finishes.shared.tokens.json`                               | `check:theme`（不透明度下限）         |
-| 6   | 圆角           | `radius-control/container/modal`、`corners.button`、`curve`、各槽的角                     | `theme.tokens.json`                                         | `check:theme`、截图                   |
-| 7   | 尺度与密度     | `size.height`、`icon`、`density`、`control`、`hit`                                        | `theme.tokens.json`                                         | `checkScales`，例外进出处表           |
-| 8   | 字重与字距     | 7 个 `typography` 角色的 `fontWeight`、`letterSpacing`                                    | `theme.tokens.json`                                         | `checkScales`                         |
-| 9   | 线与焦点       | `stroke`、`focus`                                                                         | `theme.tokens.json`                                         | 截图（键盘焦点）                      |
-| 10  | 交互状态       | `hover` / `pressed` / `disabled` finish、`accent` 的按下字段、`state` 组                  | `finishes.shared.tokens.json`、`theme.tokens.json`          | `theme:contrast`、截图                |
-| 11  | 动效           | `motion.{fast,default,slow}`、`motion.state`、`transition.enter`                          | `theme.tokens.json`                                         | 真机或演示里看                        |
-| 12  | 控件外观       | `slots`（`field`、`choice`、`switch`、`slider`、`progress`、`spinner`、`state.disabled`） | `theme.tokens.json`、base 的 `slots.tokens.json`（生成物）  | `check:theme`、`tokens:build --check` |
-| —   | 无障碍收尾     | 对比度 AA、不只靠颜色、禁用可辨、touch 触控 ≥ 44、放大字号比例不乱                        | —                                                           | `theme:contrast`、`checkScales`、截图 |
-| —   | 产物           | `tokens:build`、`registry:build`                                                          | `packages/theme`、`public/r`                                | `tokens:build --check`、`test:unit`   |
+| #   | 设计问题       | 定义项                                                                                                                                               | 文件                                                        | 检查 / 验收                           |
+| --- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------- |
+| 1   | 对齐谁，差多少 | 主题类型、出处、裁剪、契约表达不了的降级                                                                                                             | 生成器注释、主题 README、`native-themes.md` 差异表          | 审阅                                  |
+| 2   | 调色板与语义色 | A 层 31、B 层 25、C 层 3                                                                                                                             | `theme.tokens.json`、`{light,dark}.tokens.json`             | `check:theme`、`theme:contrast`       |
+| 3   | 面的层级       | 15 个 finish                                                                                                                                         | `finishes.shared.tokens.json`（生成器：`finishes/<id>.ts`） | `check:theme`、`theme:contrast`       |
+| 4   | 深度           | `elevation`：`sm`–`xl`、`inset`、`edge`                                                                                                              | `{light,dark}.tokens.json` 的 `shadow`                      | `check:theme`、截图                   |
+| 5   | 透明材质       | finish 的 `material`                                                                                                                                 | `finishes.shared.tokens.json`                               | `check:theme`（不透明度下限）         |
+| 6   | 圆角           | `radius-control/container/modal`、`corners.button`、`curve`、各槽的角                                                                                | `theme.tokens.json`                                         | `check:theme`、截图                   |
+| 7   | 尺度与密度     | `size.height`、`icon`、`density`、`control`、`hit`                                                                                                   | `theme.tokens.json`                                         | `checkScales`，例外进出处表           |
+| 8   | 字重与字距     | 7 个 `typography` 角色的 `fontWeight`、`letterSpacing`                                                                                               | `theme.tokens.json`                                         | `checkScales`                         |
+| 9   | 线与焦点       | `stroke`、`focus`                                                                                                                                    | `theme.tokens.json`                                         | 截图（键盘焦点）                      |
+| 10  | 交互状态       | `hover` / `pressed` / `disabled` finish、`accent` 的按下字段、`state` 组                                                                             | `finishes.shared.tokens.json`、`theme.tokens.json`          | `theme:contrast`、截图                |
+| 11  | 动效           | `motion.{fast,default,slow}`、`motion.state`                                                                                                         | `theme.tokens.json`                                         | 真机或演示里看                        |
+| 12  | 控件外观       | `controls`（`button`、`field`、`choice`、`switch`、`slider`、`progress`、`spinner`、`disabled` 等，[ADR 0019](decisions/0019-theme-contract-v4.md)） | `theme.tokens.json`、base 的 `slots.tokens.json`（生成物）  | `check:theme`、`tokens:build --check` |
+| —   | 无障碍收尾     | 对比度 AA、不只靠颜色、禁用可辨、touch 触控 ≥ 44、放大字号比例不乱                                                                                   | —                                                           | `theme:contrast`、`checkScales`、截图 |
+| —   | 产物           | `tokens:build`、`registry:build`                                                                                                                     | `packages/theme`、`public/r`                                | `tokens:build --check`、`test:unit`   |

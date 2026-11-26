@@ -2,7 +2,16 @@
 // `SelectTrigger`, `SelectContent`), which wear the shared listbox look.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, finish, terminal, TERMINAL_COLUMN, dimmed } from "@shadcn-nsh/theme";
+import {
+  colors,
+  finish,
+  rounded,
+  shape,
+  stroke,
+  terminal,
+  TERMINAL_COLUMN,
+  dimmed,
+} from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, effect, platform, reduceMotion, signal, split, Text, View } from "nsh";
@@ -14,12 +23,14 @@ import {
   type SelectProps as BaseSelectProps,
 } from "nsh/base";
 
-import { fieldSize } from "./input";
+import { fieldSize, insetShade } from "./input";
 import { Icon } from "./lib/icons";
 import {
   fieldCorners,
   fieldEdgeWidths,
   fieldFocusEdge,
+  fieldFocusTone,
+  fieldHasUniformEdge,
   fieldRestEdge,
   fieldRing,
 } from "./lib/indicator";
@@ -34,7 +45,7 @@ import {
   triggerPadding,
 } from "./lib/listbox";
 import { type Live, read } from "./lib/live-value";
-import { fieldLook, fillOf, inked } from "./lib/look";
+import { edged, fieldLook, fillOf, inked, outlineEdge } from "./lib/look";
 import {
   createItemRegistry,
   createOpenState,
@@ -105,13 +116,11 @@ export function pickerLook(o?: PickerLookOptions) {
       // A theme that states the ground a field that cannot be used turns over to paints the trigger
       // in it, edge and all (the finish's own stroke), rather than fading it.
       const off = !outline && read(o?.disabled) ? field.disabled : null;
-      // A copy: a finish's properties are getters, read where the look is applied.
-      const inset = { ...finish.inset };
       return {
         flexDirection: "row",
         alignItems: "center",
         gap: triggerGap,
-        height: controlSize.line,
+        height: fieldSize.height,
         minWidth: pointer ? minTriggerWidth : undefined,
         // With a pointer its title truncates before a row's label is squeezed.
         flexShrink: pointer ? 1 : undefined,
@@ -123,26 +132,31 @@ export function pickerLook(o?: PickerLookOptions) {
           : clearable
             ? clearInset() + controlSize.clear + 8
             : triggerPadding(),
-        ...fieldCorners(field),
-        ...fieldEdgeWidths(field),
+        ...(outline ? rounded(shape.control) : fieldCorners(field)),
+        ...(outline ? { borderWidth: stroke.control } : fieldEdgeWidths(field)),
         ...(outline
-          ? { backgroundColor: colors.raised, ...finish.raised }
+          ? {
+              backgroundColor: colors.raised,
+              ...finish.raised,
+              ...(finish.raised.borderColor === "transparent" && !finish.raised.backdropFilter
+                ? { borderColor: edged(outlineEdge()) }
+                : {}),
+            }
           : off
             ? fillOf(off)
-            : { backgroundColor: colors.field, ...inset }),
-        // A theme whose inset states the field's edge (a stroke over its own face) has drawn it
-        // above: the slots' flat edge would paint the sides the same as the bottom and lose it.
+            : { ...(field.ground ? fillOf(field.ground) : {}), ...insetShade() }),
         ...(invalid()
           ? { borderColor: colors.destructive }
-          : read(o?.open)
+          : read(o?.open) &&
+              (outline
+                ? finish.raised.borderTopColor === finish.raised.borderBottomColor
+                : fieldHasUniformEdge(field))
             ? { borderColor: colors.faint }
-            : outline
-              ? { borderColor: colors.border }
-              : off || inset.borderBottomColor != null
-                ? {}
-                : fieldRestEdge(field)),
-        ...(terminal ? {} : fieldRing(invalid() ? colors.destructive : colors.brand)),
-        transitionProperty: "border-color, outline-color, opacity",
+            : outline || off
+              ? {}
+              : fieldRestEdge(field)),
+        ...(terminal ? {} : fieldRing(fieldFocusTone(field, invalid()))),
+        transitionProperty: "border-color, background-color, outline-color, opacity",
         transitionDuration: reduceMotion() ? 0 : edgeFade,
         // The look is one object (it is spread on the trigger's view), so a list of styles is
         // flattened into it: the app's style still lands last, over the look's.
@@ -150,7 +164,14 @@ export function pickerLook(o?: PickerLookOptions) {
       };
     },
     get hoverStyle(): ViewStyle | undefined {
-      return invalid() ? undefined : { borderColor: colors.faint };
+      if (invalid()) return undefined;
+      if (outline) {
+        const { borderTopColor, borderBottomColor } = { ...finish.raised };
+        return borderTopColor != null && borderTopColor !== borderBottomColor
+          ? { backgroundColor: finish.hover.backgroundColor }
+          : { borderColor: colors.faint };
+      }
+      return fieldHasUniformEdge(fieldLook()) ? { borderColor: colors.faint } : undefined;
     },
     get activeStyle(): ViewStyle {
       return { opacity: dimmed.pressed };
@@ -158,8 +179,9 @@ export function pickerLook(o?: PickerLookOptions) {
     // The border with the outline, which not every platform draws over it; `focus-visible` is above `hover` in the
     // states' order. Only for the keyboard: a click's focus, and the focus a closing list gives back, draw nothing.
     get focusVisibleStyle(): ViewStyle {
-      const tone = invalid() ? colors.destructive : colors.brand;
-      return terminal ? { borderColor: tone } : fieldFocusEdge(fieldLook(), tone);
+      const field = fieldLook();
+      const tone = fieldFocusTone(field, invalid());
+      return terminal ? { borderColor: tone } : fieldFocusEdge(field, tone);
     },
     get disabledStyle(): ViewStyle {
       return fieldLook().disabled ? {} : { opacity: dimmed.disabled };

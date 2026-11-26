@@ -30,8 +30,8 @@ export const hairline = () => 1 / pixelRatio();
 export function Appear(props: { index?: number; flex?: boolean; children: JSX.Element }) {
   const t = createAnimatedValue(0);
   void t.timing(1, {
-    duration: motion.enter.duration,
-    easing: motion.enter.timingFunction,
+    duration: motion.slow.duration,
+    easing: motion.slow.timingFunction,
     delay: Math.min(8, props.index ?? 0) * 40,
   });
   return (

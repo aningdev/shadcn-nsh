@@ -17,12 +17,15 @@ import { platform, Text, View } from "nsh";
 import type { SelectEntry, SelectGroup } from "nsh/base";
 
 import { Icon } from "./icons";
+import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./indicator";
+import { fieldLook, fillOf, listItemHighlightClass } from "./look";
 import {
   backdrop,
   itemRadius,
   itemSpacing,
   listPadding,
   popInStyles,
+  popupSurface,
   rowVerticalPad,
 } from "./popup";
 import { controlSize } from "./surface";
@@ -53,10 +56,8 @@ const SHEET_FOOT = 34;
 export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
   return pointer
     ? {
-        ...rounded(shape.container),
-        borderWidth: stroke.hairline,
+        ...popupSurface(),
         ...(o?.padding === undefined ? listPadding() : { padding: o.padding }),
-        ...finish.overlay,
         ...(o?.minWidth ? { minWidth: o.minWidth } : {}),
         ...popInStyles().style,
       }
@@ -84,8 +85,11 @@ export function listboxPopupStarting(): ViewStyle | undefined {
  * while disabled. Every state is the row's class (`group`), so the list draws a
  * row's content once per item and the highlight moves without drawing.
  */
-export const optionClass =
-  "group border border-transparent transition-colors duration-100 motion-reduce:transition-none focus:border-brand/30 focus:bg-brand-tint active:opacity-70 disabled:opacity-50";
+const OPTION_BASE =
+  "group border border-transparent transition-colors duration-100 motion-reduce:transition-none active:opacity-70 disabled:opacity-50";
+
+/** Default option row class (brand tint with brand edge); `listboxProps()` picks the theme's variant from `listItemHighlightClass()`, read where the list is drawn, which a class fixed at import cannot. */
+export const optionClass = `${OPTION_BASE} focus:border-brand/30 focus:bg-brand-tint`;
 
 /**
  * What a select's or combobox's list takes besides its items (spread it):
@@ -105,7 +109,9 @@ export function listboxProps(o?: ListboxPopupOptions) {
     get backdropStyle() {
       return backdrop();
     },
-    itemClass: optionClass,
+    get itemClass(): string {
+      return `${OPTION_BASE} ${listItemHighlightClass(true)}`;
+    },
     get itemStyle(): ViewStyle {
       return rounded(itemRadius());
     },
@@ -320,15 +326,18 @@ export function listboxSearch() {
   return {
     searchClass: `${pointer ? "text-sm" : "text-base"} text-foreground placeholder:text-muted-foreground`,
     get searchStyle(): ViewStyle {
+      // The field's own well: its fill, its edge (the theme decides how many sides it draws and in
+      // which colour) and its corners, so a list's search reads as the field it is.
+      const field = fieldLook();
       return {
         height: pointer ? 32 : 40,
         paddingHorizontal: itemSpacing.pad,
         marginBottom: 6,
-        ...rounded(shape.control),
-        borderWidth: stroke.hairline,
-        backgroundColor: colors.field,
-        ...finish.inset,
-        borderColor: colors.input,
+        ...(field.ground ? fillOf(field.ground) : {}),
+        ...fieldEdgeWidths(field),
+        ...fieldRestEdge(field),
+        ...fieldCorners(field),
+        boxShadow: finish.inset.boxShadow,
       };
     },
   };

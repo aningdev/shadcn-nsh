@@ -13,7 +13,7 @@ test("a label's text follows the theme's type roles when the theme is switched",
 
   await app.press("text:Scaled");
   expect(app.texts()).toContain("theme:scaled");
-  expect(app.spanStyle("text:Name")).toMatchObject({ fontSize: 21, fontWeight: 700 });
+  expect(app.spanStyle("text:Name")).toMatchObject({ fontSize: 14, fontWeight: 700 });
   // The badge's weight is the `label` role's too; its size is its own and stays.
   expect(app.spanStyle("text:Tag")).toMatchObject({ fontSize: badge.fontSize, fontWeight: 700 });
 

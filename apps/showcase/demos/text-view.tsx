@@ -4,14 +4,19 @@ import { colors, rounded, tints, shape } from "@shadcn-nsh/theme";
 // that crosses views. Images open in this library's `ImageViewer`.
 import { Code, Play } from "lucide";
 import { cleanup, keymap, signal, Text, View } from "nsh";
-import type { TextViewCustomNode, TextViewImage } from "nsh/base";
+import type { TextViewCustomNode } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/packages/ui/card";
 import { ImageViewer } from "@/packages/ui/image-viewer";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
-import { TextView, textViewCaretClass, type TextViewRef } from "@/packages/ui/text-view";
+import {
+  TextView,
+  textViewCaretClass,
+  type TextViewRef,
+  type TextViewImage,
+} from "@/packages/ui/text-view";
 
 import { DemoPage } from "../kit";
 

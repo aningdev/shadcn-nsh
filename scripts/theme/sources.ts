@@ -40,7 +40,6 @@ export const TINT_TONES: Record<string, string> = {
   "warn-tint": "warn",
   "destructive-tint": "destructive",
   "up-tint": "up",
-  "down-tint": "destructive",
 };
 
 /** ADR 0007 §4: the `*-tint` colours share one formula, `color-mix(in srgb, <source> N%, transparent)`. */
@@ -117,8 +116,6 @@ export interface ColourScheme {
   raised: ColourSource;
   /** The sources the inverse surface and its ink take. */
   inverse: [ColourSource, ColourSource];
-  /** `border` is the generator's `input` (the strong edge), not its `border` (a theme whose hairline is weaker than a field's edge). */
-  strongBorder?: boolean;
   /** Chart series: five sources, or a foreground grey ramp. */
   chart: ColourSource[] | "ramp";
 }
@@ -168,12 +165,7 @@ export function reduceColours(
   };
 
   for (const name of sourceColours) {
-    const own =
-      name === "secondary" && scheme.secondaryIsRaised
-        ? full.raised
-        : name === "border" && scheme.strongBorder
-          ? full.input
-          : full[name];
+    const own = name === "secondary" && scheme.secondaryIsRaised ? full.raised : full[name];
     if (own === undefined) throw new Error(`the theme writes no source colour ${name}`);
     // A source is the theme's own value (ADR 0007 §4): there is nothing behind it to cite.
     colours[name] = own;

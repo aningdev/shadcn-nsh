@@ -9,10 +9,13 @@ function App() {
   const link = signal("none");
   const stats = signal("none");
   const fill = signal("#336699ff");
-  const fieldClass = fieldLook().class;
+  const fieldMotion = () => {
+    const s = fieldLook().style;
+    return `${s.transitionProperty ?? ""}|${s.transitionDuration ?? ""}`;
+  };
   return (
     <View style={{ padding: 12, gap: 8 }}>
-      <Text>{`motion=${fieldClass}`}</Text>
+      <Text>{`motion=${fieldMotion()}`}</Text>
       <ColorPicker
         value={fill()}
         onChange={({ value, formatted }) => {

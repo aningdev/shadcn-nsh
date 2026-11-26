@@ -118,12 +118,7 @@
         }
       },
       "control": {
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "switch": "regular"
-          }
-        },
-        "$description": "Control internal spacing and switch size tier.",
+        "$description": "Control internal spacing.",
         "padding": {
           "$value": {
             "value": 8,
@@ -131,12 +126,6 @@
           }
         },
         "gap": {
-          "$value": {
-            "value": 8,
-            "unit": "px"
-          }
-        },
-        "dot": {
           "$value": {
             "value": 8,
             "unit": "px"

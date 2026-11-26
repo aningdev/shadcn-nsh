@@ -27,9 +27,10 @@ const run = () => {
 };
 
 /** A slider's rail, as the page reads it out: its edge and its shade, joined where the theme
- * gives each. */
+ * gives each, or `"none"` when the rail is flat. */
 const rail = () => {
   const shadow = sliderLook().indicatorStyle.boxShadow;
+  if (shadow === undefined) return "none";
   return typeof shadow === "string" ? shadow : "layers";
 };
 

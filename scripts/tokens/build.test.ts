@@ -18,7 +18,7 @@ import {
   EXT_NS,
   NAMED_CUBIC_BEZIERS,
   RADIUS_KEYS,
-  SHAPE_ROLES,
+  RADIUS_ROLES,
   TYPE_ROLES,
   type ColorOpExtension,
   type DtcgColor,
@@ -248,9 +248,7 @@ describe("DTCG 2025.10 build (all six themes)", () => {
         finishes: { shared: { card: { shadow: string } } };
       };
       expect(compiledSemantics.state["press-scale"]).toBe(1);
-      expect(compiledSemantics.finishes.shared.card.shadow).toBe(
-        "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      );
+      expect(compiledSemantics.finishes.shared.card.shadow).toBe("0 1px 2px oklch(0 0 0 / 0.05)");
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
     }
@@ -310,16 +308,6 @@ describe("DTCG source lint", () => {
     expect(text).toContain("elevation must be a non-negative number");
   });
 
-  test("rejects a shape.corners.button that is neither a radius, points, nor `full`", () => {
-    const problems = withMutatedDefault((tmp) => {
-      const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
-      const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
-      shared.shape.corners.button.$value = "pill";
-      fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
-    });
-    expect(problems.join("\n")).toContain('shape.corners.button is "pill"');
-  });
-
   test("rejects a slot the list has no row for", () => {
     const problems = withMutatedDefault((tmp) => {
       const themePath = path.join(
@@ -333,7 +321,7 @@ describe("DTCG source lint", () => {
     expect(problems.join("\n")).toContain("`field.selection` is not a slot");
   });
 
-  test("rejects missing or extra radius and shape roles", () => {
+  test("rejects missing or extra radius roles", () => {
     const extra = withMutatedDefault((tmp) => {
       const themePath = path.join(
         tmp,
@@ -342,14 +330,8 @@ describe("DTCG source lint", () => {
       const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
       themeDoc.dimension.radius.extra = { $value: { value: 14, unit: "px" } };
       fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
-
-      const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
-      const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
-      shared.dimension.shape.extra = { $value: "{dimension.radius.extra}" };
-      fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
     });
     expect(extra.join("\n")).toContain('dimension.radius has unexpected key "extra"');
-    expect(extra.join("\n")).toContain('dimension.shape has unexpected key "extra"');
 
     const missing = withMutatedDefault((tmp) => {
       const themePath = path.join(
@@ -359,24 +341,8 @@ describe("DTCG source lint", () => {
       const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
       delete themeDoc.dimension.radius.modal;
       fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
-
-      const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
-      const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
-      delete shared.dimension.shape.modal;
-      fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
     });
     expect(missing.join("\n")).toContain("dimension.radius.modal is missing");
-    expect(missing.join("\n")).toContain("dimension.shape.modal is missing");
-  });
-
-  test("rejects reference with mismatched $type", () => {
-    const problems = withMutatedDefault((tmp) => {
-      const p = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
-      const doc = JSON.parse(fs.readFileSync(p, "utf8"));
-      doc.dimension.shape.container.$value = "{color.card}";
-      fs.writeFileSync(p, JSON.stringify(doc, null, 2));
-    });
-    expect(problems.join("\n")).toContain('of $type "color", expected "dimension"');
   });
 
   test("rejects dangling and circular aliases", () => {
@@ -483,7 +449,7 @@ describe("DTCG source lint", () => {
       appearance: "light",
       input: "touch",
     }).resolved as Record<string, any>;
-    expect(applePointer.dimension.size.height.md.$value.value).toBe(24);
+    expect(applePointer.dimension.size.height.md.$value.value).toBe(28);
     expect(appleTouch.dimension.size.height.md.$value.value).toBe(44);
     // Type sizes are one shared scale, not per theme (ADR 0009)
     expect(applePointer.typography.body.$value.fontSize.value).toBe(13);
@@ -498,7 +464,7 @@ describe("DTCG source lint", () => {
     expect(winuiMerged.motion.fast.timing.$value.duration.value).toBe(83);
     expect(winuiMerged.motion.fast.$extensions).toBeUndefined();
 
-    // 3. WinUI sidebar-primary = var(--primary), and Material alias-backed colorOp (down-tint)
+    // 3. WinUI sidebar-primary = var(--primary), and Material alias-backed colorOp (destructive-tint)
     const winuiTheme = compileThemeJson(winuiResolver);
     expect(Object.keys(winuiTheme.cssVars.theme).some((k) => k.startsWith("font-"))).toBe(false);
     expect(winuiTheme.cssVars.light["sidebar-primary"]).toBe("var(--primary)");
@@ -508,8 +474,8 @@ describe("DTCG source lint", () => {
       "packages/theme/tokens/themes/material/theme.resolver.json",
     );
     const matTheme = compileThemeJson(matResolver);
-    expect(matTheme.cssVars.light["down-tint"]).toBe(
-      "color-mix(in srgb, var(--destructive) 12%, transparent)",
+    expect(matTheme.cssVars.light["up-tint"]).toBe(
+      "color-mix(in srgb, var(--up) 12%, transparent)",
     );
   });
 
@@ -625,28 +591,15 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           expect(cssColor, `color.${key}`).toBe(expectedColors[key]);
         }
 
-        // Typography at pointer tier: the placeholder family for every role, and line heights stated as points
+        // Typography: weight & letterSpacing come from semantics, placeholder fontFamily in DTCG
         for (const role of TYPE_ROLES) {
           const val = resolved.typography[role].$value as DtcgTypography;
           expect(doc.typography[role].$value.fontFamily).toBe("system-ui");
-          expect((val.fontSize as { value: number }).value).toBe(
-            semanticsJson.typography[role].fontSize.pointer,
-          );
-          const size = (val.fontSize as { value: number }).value;
-          const multiple = val.lineHeight as number;
-          expect(Math.round(size * multiple)).toBe(
-            semanticsJson.typography[role].lineHeight.pointer,
-          );
           expect(val.fontWeight).toBe(semanticsJson.typography[role].fontWeight);
           expect(val.letterSpacing.value).toBe(semanticsJson.typography[role].letterSpacing);
         }
 
-        // Dimension: shape, size (pointer tier), stroke, focus, icon (pointer tier)
-        for (const role of SHAPE_ROLES) {
-          const ref = doc.dimension.shape[role].$value as string;
-          const m = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(ref)!;
-          expect(`{radius-${m[1]}}`).toBe(semanticsJson.dimension.shape[role]);
-        }
+        // Dimension: size (pointer tier), stroke, focus, icon (pointer tier)
         expect(resolved.dimension.size.hit.$value.value).toBe(
           semanticsJson.dimension.size.hit.pointer,
         );
@@ -664,9 +617,6 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           if (k.startsWith("$")) continue;
           expect(tok.$value.value).toBe(semanticsJson.dimension.size.control.pointer[k]);
         }
-        expect(doc.dimension.size.control.$extensions[EXT_NS].switch).toBe(
-          semanticsJson.dimension.size.control.pointer.switch,
-        );
         for (const [k, tok] of Object.entries(resolved.dimension.stroke as Record<string, any>)) {
           if (k.startsWith("$")) continue;
           expect(tok.$value.value).toBe(semanticsJson.dimension.stroke[k]);
@@ -685,18 +635,8 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           expect(tok.$value.value).toBe(semanticsJson.dimension.icon.pointer[k]);
         }
 
-        // Shape, state, duration, transition, motion
+        // Shape, state, duration, motion
         expect(doc.shape.$extensions[EXT_NS].curve).toBe(semanticsJson.shape.curve);
-        // A corner is a capsule, or the radius token it names resolved to its points.
-        const corner = resolved.shape.corners.button.$value;
-        const cornerRole = /^\{radius-([a-z0-9-]+)\}$/.exec(
-          semanticsJson.shape.corners.button,
-        )?.[1];
-        if (cornerRole === undefined) expect(corner).toBe(semanticsJson.shape.corners.button);
-        else
-          expect((corner as { value: number }).value).toBe(
-            (resolved.dimension.radius[cornerRole] as { $value: { value: number } }).$value.value,
-          );
         expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
         expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
         expect(doc.state["rest-opacity"].$value).toBe(semanticsJson.state["rest-opacity"]);
@@ -718,15 +658,6 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             spec.value.every((v, i) => Math.abs(v - tf[i]!) < 1e-6),
           )?.[0];
         };
-
-        const enterResolved = resolved.transition.enter.$value as DtcgTransition;
-        expect({
-          duration: enterResolved.duration.value,
-          timingFunction: bezierNameOf(
-            enterResolved.timingFunction as [number, number, number, number],
-            doc.transition.enter.$value.timingFunction,
-          ),
-        }).toEqual(semanticsJson.transition.enter);
 
         for (const role of ["fast", "default", "slow"] as const) {
           const tVal = resolved.motion[role].timing.$value as DtcgTransition;
@@ -829,9 +760,9 @@ describe("generated DESIGN.md validation and compiled equality", () => {
         });
       }
 
-      // Rounded (semantic shape roles)
-      for (const role of SHAPE_ROLES) {
-        const dim = lightDoc.dimension.shape[role].$value as { value: number; unit: string };
+      // Rounded (radius roles)
+      for (const role of RADIUS_ROLES) {
+        const dim = lightDoc.dimension.radius[role].$value as { value: number; unit: string };
         expect(yaml.rounded[role], `rounded.${role}`).toBe(`${dim.value}${dim.unit}`);
       }
 
@@ -857,13 +788,7 @@ describe("generated DESIGN.md validation and compiled equality", () => {
         }
       }
 
-      // Motion (timing transitions & shake duration)
-      const enter = lightDoc.transition.enter.$value as DtcgTransition;
-      expect(yaml.motion.enter).toEqual({
-        duration: `${enter.duration.value}${enter.duration.unit}`,
-        delay: `${enter.delay.value}${enter.delay.unit}`,
-        timingFunction: `cubic-bezier(${(enter.timingFunction as number[]).join(", ")})`,
-      });
+      // Motion (timing transitions)
       for (const role of ["fast", "default", "slow"] as const) {
         const timingTok = lightDoc.motion[role]?.timing;
         if (timingTok) {
@@ -888,7 +813,7 @@ describe("generated DESIGN.md validation and compiled equality", () => {
           const rawRef = yaml.components[compName]?.rounded as string | undefined;
           const m = rawRef ? /^\{rounded\.([a-z0-9-]+)\}$/.exec(rawRef) : null;
           if (m) {
-            const expectedDim = lightDoc.dimension.shape[m[1]!].$value as {
+            const expectedDim = lightDoc.dimension.radius[m[1]!].$value as {
               value: number;
               unit: string;
             };

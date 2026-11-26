@@ -105,17 +105,20 @@ const commit = (next, what) => {
 
 <Toolbar accessibilityLabel="Formatting" style={toolbarTrack()}>
   <ToolbarGroup accessibilityLabel="History">
-    <Button variant="ghost" accessibilityLabel="Undo" disabled={past().length === 0} onPress={undo}>
-      <Icon icon={Undo2} />
-    </Button>
     <Button
       variant="ghost"
+      icon={Undo2}
+      accessibilityLabel="Undo"
+      disabled={past().length === 0}
+      onPress={undo}
+    />
+    <Button
+      variant="ghost"
+      icon={Redo2}
       accessibilityLabel="Redo"
       disabled={future().length === 0}
       onPress={redo}
-    >
-      <Icon icon={Redo2} />
-    </Button>
+    />
   </ToolbarGroup>
   <ToolbarSeparator style={toolbarRule()} />
   <Menu>
@@ -127,7 +130,7 @@ const commit = (next, what) => {
         {...toggleLook({ on: open, text: true })}
       >
         <Text style={toggleLabel(open)}>{doc().block}</Text>
-        <Text>▾</Text>
+        <Text style={toggleLabel(open)}>▾</Text>
       </View>
     </MenuTrigger>
     <MenuContent>
@@ -192,12 +195,11 @@ import { Toolbar, ToolbarGroup, ToolbarButton, ToolbarOverflow } from "@/compone
     >
       <Button
         variant="ghost"
+        icon={Undo2}
         accessibilityLabel="Undo"
         disabled={past().length === 0}
         onPress={undo}
-      >
-        <Icon icon={Undo2} />
-      </Button>
+      />
     </ToolbarButton>
     <ToolbarButton
       priority={3}
@@ -209,12 +211,11 @@ import { Toolbar, ToolbarGroup, ToolbarButton, ToolbarOverflow } from "@/compone
     >
       <Button
         variant="ghost"
+        icon={Redo2}
         accessibilityLabel="Redo"
         disabled={future().length === 0}
         onPress={redo}
-      >
-        <Icon icon={Redo2} />
-      </Button>
+      />
     </ToolbarButton>
   </ToolbarGroup>
   <ToolbarGroup accessibilityLabel="Marks" fold="none">

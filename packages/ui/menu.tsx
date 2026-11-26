@@ -107,9 +107,12 @@ export const menuItemSize: MenuItemDimensions = {
   },
 };
 
+/** The horizontal gap between a row's mark/icon, label and trailing note. */
+const ROW_GAP = 8;
+
 /** The room a checkable row's mark takes before its label: the mark and the row's gap. An `inset`
  * row starts its label that much further in, so it lines up with the checkable rows. */
-const markRoom = () => menuItemSize.icon + itemSpacing.pad;
+const markRoom = () => menuItemSize.icon + ROW_GAP;
 
 /** A row under the pointer or the keyboard (`hoverStyle`, `focusStyle`): a
  * flat neutral fill, the theme's `accent`. */
@@ -147,7 +150,7 @@ export function menuItemLook(o?: MenuItemLookOptions) {
       return {
         flexDirection: "row",
         alignItems: "center",
-        gap: 8,
+        gap: ROW_GAP,
         minHeight: menuItemSize.height,
         paddingVertical: rowVerticalPad(),
         paddingHorizontal: itemSpacing.pad,
@@ -298,7 +301,7 @@ export function menuSeparator(): ViewStyle {
     height: stroke.hairline,
     marginTop: 4,
     marginBottom: 5,
-    marginHorizontal: 4,
+    marginHorizontal: itemSpacing.inset,
     backgroundColor: colors.line,
     boxShadow: finish.inset.boxShadow,
   };
@@ -799,7 +802,13 @@ export function MenuButton(props: MenuButtonProps) {
         // Read once, here where the content is drawn (`marker.tsx` reads in the same shape).
         const kids = props.children;
         return typeof kids === "string" ? (
-          <View style={look.style}>
+          <View
+            style={look.style}
+            hoverStyle={look.hoverStyle}
+            activeStyle={look.activeStyle}
+            focusVisibleStyle={look.focusVisibleStyle}
+            disabledStyle={look.disabledStyle}
+          >
             <AsText style={buttonLabel(variant, options)}>{kids}</AsText>
           </View>
         ) : (

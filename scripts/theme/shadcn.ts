@@ -43,11 +43,11 @@ const NEUTRAL = {
     input: "oklch(0.922 0 0)",
     ring: "oklch(0.708 0 0)",
     chart: [
-      "oklch(0.87 0 0)",
-      "oklch(0.556 0 0)",
-      "oklch(0.439 0 0)",
-      "oklch(0.371 0 0)",
-      "oklch(0.269 0 0)",
+      "oklch(0.646 0.222 41.116)",
+      "oklch(0.6 0.118 184.704)",
+      "oklch(0.398 0.07 227.392)",
+      "oklch(0.828 0.189 84.429)",
+      "oklch(0.769 0.188 70.08)",
     ],
     sidebar: "oklch(0.985 0 0)",
   },
@@ -66,11 +66,11 @@ const NEUTRAL = {
     input: "oklch(1 0 0 / 15%)",
     ring: "oklch(0.556 0 0)",
     chart: [
-      "oklch(0.87 0 0)",
-      "oklch(0.556 0 0)",
-      "oklch(0.439 0 0)",
-      "oklch(0.371 0 0)",
-      "oklch(0.269 0 0)",
+      "oklch(0.488 0.243 264.376)",
+      "oklch(0.696 0.17 162.48)",
+      "oklch(0.769 0.188 70.08)",
+      "oklch(0.627 0.265 303.9)",
+      "oklch(0.645 0.246 16.439)",
     ],
     sidebar: "oklch(0.205 0 0)",
   },
@@ -92,7 +92,7 @@ const origin: ColourOrigin = {
   names: {
     accent: "--accent",
     inset: "--muted",
-    track: "--muted",
+    track: "--input (light) / --input at 80% over the card (dark)",
     popover: "--card",
     sidebar: "--sidebar",
     "sidebar-accent": "--accent",
@@ -103,11 +103,11 @@ const origin: ColourOrigin = {
     "sidebar-border": "--border",
     ring: "--ring",
     brand: "--primary",
-    "chart-1": "--chart-1",
-    "chart-2": "--chart-2",
-    "chart-3": "--chart-3",
-    "chart-4": "--chart-4",
-    "chart-5": "--chart-5",
+    "chart-1": "--chart-1 (theming.mdx)",
+    "chart-2": "--chart-2 (theming.mdx)",
+    "chart-3": "--chart-3 (theming.mdx)",
+    "chart-4": "--chart-4 (theming.mdx)",
+    "chart-5": "--chart-5 (theming.mdx)",
   },
 };
 
@@ -156,20 +156,29 @@ function own(appearance: Appearance) {
     // card pressed (the finishes take the pointer's step from `--accent`, the theme's own).
     raised: p.control,
     pressed: p.inputOnCard,
-    // A surface inside a card, a control's track: shadcn's `muted`; an input's well: the card, or
-    // `dark:bg-input/30` of it.
+    // A surface inside a card: shadcn's `muted`; a switch's track: shadcn's `bg-input`
+    // (`dark:bg-input/80`, composited over `card`); an input's well: the card, or `dark:bg-input/30`.
     inset: p.muted,
-    track: p.muted,
+    track:
+      appearance === "light"
+        ? p.input
+        : over(withAlpha("white", (parseColor(p.input).a ?? 1) * 0.8), p.card),
     field: appearance === "light" ? p.background : inputThin(p.input),
     // A switch's knob, a slider's thumb: shadcn's `bg-background` light, `dark:bg-foreground` off
     // (`switch.tsx` 19–27); on, the switch reads the accent's ink.
     knob: appearance === "light" ? p.background : p.foreground,
-    // Statuses: shadcn has one red (`destructive`) and no other hue, so the rest step through its
-    // grey ramp; `faint` is the quieter of the two muted greys.
+    // Statuses: Tailwind CSS v4 semantic colors for info (blue), warn (amber), and up (emerald);
+    // `faint` is the quieter of the two muted greys.
     faint: appearance === "light" ? p.ring : p.mutedForeground,
-    info: p.mutedForeground,
-    warn: appearance === "light" ? p.chart[2] : p.chart[0],
-    up: appearance === "light" ? p.chart[3] : p.primary,
+    info: toOklchText(
+      appearance === "light" ? "oklch(0.546 0.245 262.881)" : "oklch(0.707 0.165 254.624)",
+    ),
+    warn: toOklchText(
+      appearance === "light" ? "oklch(0.555 0.163 48.998)" : "oklch(0.828 0.189 84.429)",
+    ),
+    up: toOklchText(
+      appearance === "light" ? "oklch(0.508 0.118 165.612)" : "oklch(0.765 0.177 163.223)",
+    ),
     line: p.border,
   };
 }
@@ -253,7 +262,6 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     "warn-tint": tints("warn"),
     "destructive-tint": tints("destructive"),
     "up-tint": tints("up"),
-    "down-tint": tints("destructive"),
   };
 }
 
@@ -267,9 +275,9 @@ export function themeFiles(): ThemeGeneratorOutput {
     hover: "Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.",
     "brand-edge":
       "Hairline border aliased to {color.border} (shadcn draws no separate brand edge).",
-    info: "Informational semantic status color mapped onto shadcn's neutral grey ramp.",
-    warn: "Warning semantic status color mapped onto shadcn's neutral chart ramp.",
-    up: "Positive trend color mapped onto shadcn's neutral ramp.",
+    info: "Informational semantic status color (Tailwind CSS v4 blue semantic palette).",
+    warn: "Warning semantic status color (Tailwind CSS v4 amber semantic palette).",
+    up: "Positive trend color (Tailwind CSS v4 emerald semantic palette).",
   };
 
   const reduced = {
@@ -289,6 +297,39 @@ export function themeFiles(): ThemeGeneratorOutput {
     // A flat theme draws no press of its own: its surfaces change colour under the finger, they
     // do not sink (`state["press-scale"]` of 1, which `press.scale` reads as "no sink").
     "press-scale": 1,
+    slots: {
+      "badge.corner": "full",
+      "button.selected.face": "color:track",
+      "button.selected.ink": "color:foreground",
+      "button.destructive.edge": "none",
+      "field.focus.color": "color:ring",
+      "list.item.highlight": "color:accent",
+      "list.item.edge": "none",
+      "popup.corner": "control",
+      "tooltip.face": "color:foreground",
+      "tooltip.ink": "color:background",
+      "tooltip.edge": "none",
+      "tooltip.shade": "none",
+      "tabs.track.edge": "none",
+      "tabs.track.corner": "control",
+      "choice.corner": { pointer: 4, touch: 4 },
+      "choice.shade": "none",
+      "choice.radio.checked.face": "none",
+      "choice.radio.checked.edge": "none",
+      "choice.mark.size": { pointer: 8, touch: 8 },
+      "slider.face": "color:muted",
+      "slider.shade": "none",
+      "slider.edge.color": "none",
+      "slider.edge.width": 0,
+      "slider.knob.size": { pointer: 16, touch: 20 },
+      "slider.knob.pressed": { pointer: 16, touch: 32 },
+      "slider.knob.edge": "color:primary",
+      "switch.track": { pointer: [32, 18], touch: [44, 24] },
+      "switch.small.track": { pointer: [24, 14], touch: [36, 20] },
+      "switch.edge.off": 0,
+      "switch.edge.on": 0,
+      "switch.edge.color": "none",
+    },
     designMd: {
       overview:
         "shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) and Tailwind-style border/shadow lifts (`references/shadcn-ui` `new-york-v4`).",

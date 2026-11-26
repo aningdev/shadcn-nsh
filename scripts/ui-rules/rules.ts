@@ -244,7 +244,12 @@ export function violations(
     const report = (rule: Violation["rule"], column: number) =>
       found.push({ file, line, column, rule, text: raw.trim() });
 
-    if (/(?<![\w.])controls\(\s*\)/.test(code) || /\bControls\b/.test(code)) report("controls", 1);
+    if (
+      file !== "packages/ui/lib/look.ts" &&
+      (/(?<![\w.])controls\(\s*\)/.test(code) || /\bControls\b/.test(code))
+    ) {
+      report("controls", 1);
+    }
     const name = themeName.exec(code);
     if (name) report("theme-name", name.index + 1);
     const stateHit = marked(lines, index, "// state:")

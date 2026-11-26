@@ -29,17 +29,17 @@ npx shadcn-nsh@latest add theme
 
 `theme.json` is a shadcn theme: `cssVars.theme` holds the radii and the accent's raw values, `cssVars.light` and `cssVars.dark` hold the same semantic keys for the two appearances. The core keys are shadcn's (`background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1` … `chart-5`, `sidebar*`). Upstream adds the roles the gallery needs:
 
-| Role                                                                               | Use                                                                                                         |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `inset` / `raised`                                                                 | A surface inside a card, and a control on the card                                                          |
-| `field` / `input`                                                                  | An input's well and its edge                                                                                |
-| `line` / `border`                                                                  | Hairlines inside insets, and the edge of a card or control                                                  |
-| `hover` / `faint`                                                                  | The pointer's wash, and the quietest text                                                                   |
-| `brand`                                                                            | The accent as ink                                                                                           |
-| `track` / `knob`                                                                   | A switch's track when off, and a switch's knob; sliders and progress bars read their preset's track role    |
-| `info` / `warn` / `up`                                                             | The tones beside the accent; a data loss reads `destructive`                                                |
-| `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` | The same tones as fills behind text                                                                         |
-| `inverse` / `inverse-foreground` / `inverse-brand`                                 | A toast's and a tooltip's reversed surface, its text and action; quieter ink is `finish.inverse.foreground` |
+| Role                                                                  | Use                                                                                                         |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `inset` / `raised`                                                    | A surface inside a card, and a control on the card                                                          |
+| `field` / `input`                                                     | An input's well and its edge                                                                                |
+| `line` / `border`                                                     | Hairlines inside insets, and the edge of a card or control                                                  |
+| `hover` / `faint`                                                     | The pointer's wash, and the quietest text                                                                   |
+| `brand`                                                               | The accent as ink                                                                                           |
+| `track` / `knob`                                                      | A switch's track when off, and a switch's knob; sliders and progress bars read their preset's track role    |
+| `info` / `warn` / `up`                                                | The tones beside the accent; a data loss reads `destructive`                                                |
+| `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint` | The same tones as fills behind text (negative trend reuses `destructive-tint`)                              |
+| `inverse` / `inverse-foreground` / `inverse-brand`                    | A toast's and a tooltip's reversed surface, its text and action; quieter ink is `finish.inverse.foreground` |
 
 `colors` maps the roles a component names onto those keys:
 
@@ -120,15 +120,15 @@ Spread one where a control needs that depth:
 
 ## Radii
 
-`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-control` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-container` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-modal` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-control`. In `semantics.json`, `dimension.shape.*` references them with `"{radius-…}"`, and `shape.corners.button` (`"full" | "radius"`) says whether buttons are capsules. `shape` resolves each role reactively via `token()`:
+`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-control` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-container` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-modal` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-control`. `shape` resolves each role reactively via `token()`, and `buttonCorner(size)` reads `controls().button.corner` (`"control"` or `"full"` capsule):
 
 ```tsx
-import { shape } from "@shadcn-nsh/theme";
+import { buttonCorner, shape } from "@shadcn-nsh/theme";
 
 shape.control; // 8, from radius-control
 shape.container; // 12, from radius-container
 shape.modal; // 14, from radius-modal
-shape.button; // 999 when shape.corners.button is "full", else shape.control
+buttonCorner("default"); // 999 when button.corner.md is "full", else shape.control
 ```
 
 | Theme               | `control` | `container` | `modal` | Buttons   |

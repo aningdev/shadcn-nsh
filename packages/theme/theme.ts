@@ -165,20 +165,16 @@ export interface Tiered<T> {
   touch: T;
 }
 
-/** One typography role: fontSize in points and lineHeight in whole points per tier, numeric fontWeight (400..700), letterSpacing in points. */
+/** One typography role: numeric fontWeight (400..700), letterSpacing in points; sizes live in `SHARED_TYPE_SCALE`. */
 export interface TypographyRole {
-  fontSize: Tiered<number>;
-  lineHeight: Tiered<number>;
   fontWeight: number;
   letterSpacing: number;
 }
 
-/** What a control's own spacing reads in one tier: the padding inside its box, the gap beside it, a radio's dot, and which switch size sits beside a label. Rows and glyphs come from the height and icon scales, not from here. */
+/** What a control's own spacing reads in one tier: the padding inside its box and the gap beside it. Rows and glyphs come from the height and icon scales, not from here. */
 export interface ControlMetrics {
   padding: number;
   gap: number;
-  dot: number;
-  switch: string;
 }
 
 /** A page's density in one tier: its padding and its gaps. Rows come from the height scale, a section's corners from `shape.container`. */
@@ -212,34 +208,115 @@ export interface Timing {
   timingFunction: EasingCurve;
 }
 
-/** A face a slot paints: a colour role, a tint, a finish field, or nothing. */
+/** A face a slot paints: a color role, a tint, a finish field, nothing, or `keep` as it is. */
 export type SlotFace =
-  | { colour: string; alpha?: number }
-  | { tint: string; alpha?: number }
-  | { finish: string; field?: string }
+  | { readonly color: string; readonly alpha?: number }
+  | { readonly tint: string; readonly alpha?: number }
+  | { readonly finish: string; readonly field?: string }
   | "none"
   | "keep";
 
-/** A corner a slot cuts: the theme's control radius, a capsule, or points. */
-export type SlotCorner = number | "control" | "full";
+/** A corner a slot cuts: the theme's control radius, container radius, a capsule, or points. */
+export type SlotCorner = number | "control" | "container" | "full";
 
-/**
- * One slot's value: a length, a ratio, a flag, a face, or a corner — or the two sides of the input
- * tier, or of the appearance, where the theme states them separately.
- */
-export type SlotValue =
-  | number
-  | boolean
-  | string
-  | Exclude<SlotFace, "none" | "keep">
-  | { pointer: SlotValue; touch: SlotValue }
-  | { light: SlotValue; dark: SlotValue };
+/** A 2D box size: square points, `[width, height]`, or `"same"` to inherit the resting knob. */
+export type SlotSize = number | readonly number[] | "same";
 
-/** The slots, flat and dotted (`docs/specs/theme-slots.md`): every theme states every one. */
-export type Slots = Record<string, SlotValue>;
+/** A stroke length: points, `"none"`, or `"control"` for the theme's `stroke.control`. */
+export type SlotLength = number | "none" | "control";
 
-/** What a theme's `switch.feedback` names: nothing, a growing knob, or a widening one. */
-export type KnobFeedback = "none" | "expand" | "stretch";
+/** An appearance pair: light vs dark. */
+export interface Appearance<T> {
+  readonly light: T;
+  readonly dark: T;
+}
+
+/** One slot's value: flat or varying along tier or appearance. */
+export type Slot<T> = T | Tiered<T> | Appearance<T>;
+
+/** What a theme's `controls` tree holds (`docs/specs/theme-slots.md`, ADR 0019): every theme states every leaf. */
+export interface Controls {
+  button: {
+    corner: { sm: Slot<SlotCorner>; md: Slot<SlotCorner>; lg: Slot<SlotCorner> };
+    selected: { face: Slot<SlotFace>; ink: Slot<SlotFace> };
+    secondary: {
+      face: Slot<SlotFace>;
+      ink: Slot<SlotFace>;
+      edge: Slot<SlotFace>;
+      hover: Slot<SlotFace>;
+    };
+    outline: { edge: Slot<SlotFace> };
+    destructive: { edge: Slot<SlotFace> };
+    shade: Slot<FinishRole | "none">;
+  };
+  badge: { corner: Slot<SlotCorner> };
+  field: {
+    edge: { sides: Slot<boolean>; color: Slot<SlotFace>; bottom: Slot<SlotFace> };
+    corner: { bottom: Slot<SlotCorner> };
+    focus: { line: Slot<boolean>; width: Slot<SlotLength>; color: Slot<SlotFace> };
+    disabled: { face: Slot<SlotFace> };
+  };
+  choice: {
+    size: Slot<number>;
+    box: Slot<number>;
+    corner: Slot<SlotCorner>;
+    face: Slot<SlotFace>;
+    shade: Slot<FinishRole | "none">;
+    edge: { width: Slot<SlotLength>; color: Slot<SlotFace>; disabled: Slot<SlotFace> };
+    checked: { face: Slot<SlotFace> };
+    radio: { checked: { face: Slot<SlotFace>; edge: Slot<SlotFace> } };
+    mark: { size: Slot<number>; hover: Slot<number | "none">; pressed: Slot<number | "none"> };
+    halo: Slot<number | "none">;
+  };
+  switch: {
+    track: Slot<SlotSize>;
+    small: { track: Slot<SlotSize>; knob: Slot<SlotSize> };
+    edge: { off: Slot<SlotLength>; on: Slot<SlotLength>; color: Slot<SlotFace> };
+    knob: {
+      size: Slot<SlotSize>;
+      on: Slot<SlotSize>;
+      hover: Slot<SlotSize>;
+      pressed: Slot<SlotSize>;
+    };
+  };
+  slider: {
+    rail: Slot<number>;
+    band: Slot<number>;
+    face: Slot<SlotFace>;
+    shade: Slot<FinishRole | "none">;
+    edge: { color: Slot<SlotFace>; width: Slot<SlotLength> };
+    knob: {
+      size: Slot<SlotSize>;
+      pressed: Slot<SlotSize>;
+      face: Slot<SlotFace>;
+      edge: Slot<SlotFace>;
+    };
+    mark: { size: Slot<number>; hover: Slot<number>; pressed: Slot<number> };
+    brightens: Slot<boolean>;
+  };
+  progress: {
+    height: Slot<number>;
+    line: Slot<number>;
+    face: Slot<SlotFace>;
+    shade: Slot<FinishRole | "none">;
+    edge: { color: Slot<SlotFace>; width: Slot<SlotLength> };
+  };
+  calendar: { today: { face: Slot<SlotFace>; ink: Slot<SlotFace> } };
+  spinner: { opacity: Slot<number>; spokes: Slot<boolean> };
+  popup: { corner: Slot<SlotCorner> };
+  tooltip: {
+    face: Slot<SlotFace>;
+    ink: Slot<SlotFace>;
+    edge: Slot<SlotFace>;
+    shade: Slot<FinishRole | "none">;
+  };
+  toast: { action: { face: Slot<SlotFace> } };
+  list: { item: { highlight: Slot<SlotFace>; edge: Slot<SlotFace> } };
+  menubar: { bar: Slot<SlotFace> };
+  tabs: { track: { face: Slot<SlotFace>; edge: Slot<SlotFace>; corner: Slot<SlotCorner> } };
+  well: { edge: Slot<SlotFace> };
+  disabled: { face: Slot<SlotFace>; ink: Slot<SlotFace>; edge: Slot<SlotFace> };
+}
 
 /**
  * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
@@ -257,14 +334,9 @@ export interface Style {
     headline: TypographyRole;
     display: TypographyRole;
   };
-  /** The control slots every theme states (`docs/specs/theme-slots.md`). */
-  slots: Slots;
+  /** The typed control slots every theme states (`docs/specs/theme-slots.md`, ADR 0019). */
+  controls: Controls;
   dimension: {
-    shape: {
-      control: string;
-      container: string;
-      modal: string;
-    };
     size: {
       hit: Tiered<number>;
       density: Tiered<DensitySpacing>;
@@ -278,21 +350,14 @@ export interface Style {
   };
   shape: {
     curve: string;
-    corners: {
-      /** `full` for a capsule, else the radius in points or a scale reference (`{radius-control}`). */
-      button: string;
-    };
   };
   state: {
     "press-scale": number;
-    overlay: { hover: number; focus: number; pressed: number; dragged: number };
+    overlay: { hover: number; pressed: number };
     /** Opacity of a passive indicator at rest (a scrollbar's thumb), `rest-opacity`. */
     "rest-opacity": number;
     "pressed-opacity": number;
     disabled: { content: number };
-  };
-  transition: {
-    enter: TimingSpec;
   };
   motion: {
     fast: TimingSpec;
@@ -352,9 +417,6 @@ export function reactive<T extends object>(keys: readonly (keyof T)[], read: () 
 /** The tier a pointer's screen (a desktop) or a touch screen reads: `platform.desktop`, fixed for the run. */
 export const tier: "pointer" | "touch" = platform.desktop ? "pointer" : "touch";
 
-/** A bare `{token}` reference (used by `dimension.shape.*`). */
-const tokenRef = /^\{([a-z0-9-]+)\}$/;
-
 /** The one relative color a finish writes: a token's color at another alpha. */
 const relative = /oklch\(from \{([a-z0-9-]+)\} l c h \/ ([\d.]+)\)/g;
 
@@ -363,16 +425,6 @@ const atAlpha = (color: string, a: number) =>
   `${color.slice(0, 7)}${Math.round(a * 255)
     .toString(16)
     .padStart(2, "0")}`;
-
-/** Resolve a `{token}` dimension reference through `token()` reactively (returns points). */
-const resolveDimension = (value: string): number => {
-  const match = tokenRef.exec(value);
-  if (match) {
-    const resolved = token(match[1] as keyof Tokens);
-    if (typeof resolved === "number") return resolved;
-  }
-  return Number(value);
-};
 
 /**
  * A finish's strings name the theme's tokens instead of writing their colors (`{raised}`, an
@@ -646,6 +698,10 @@ export interface Palette {
   secondary: string;
   /** Text on `secondary`. */
   secondaryForeground: string;
+  /** Highlight background for focused options and interactive items. */
+  accent: string;
+  /** Focus ring border/outline color. */
+  ring: string;
   /** The app's sidebar, beside the page. */
   sidebar: string;
   /** The selected row of the sidebar. */
@@ -707,6 +763,8 @@ export const colors: Palette = tokens<keyof Palette>({
   primaryForeground: "primary-foreground",
   secondary: "secondary",
   secondaryForeground: "secondary-foreground",
+  accent: "accent",
+  ring: "ring",
   sidebar: "sidebar",
   sidebarAccent: "sidebar-accent",
   sidebarBorder: "sidebar-border",
@@ -749,7 +807,6 @@ export const tints = tokens({
   warn: "warn-tint",
   destructive: "destructive-tint",
   up: "up-tint",
-  down: "down-tint",
 });
 
 /**
@@ -794,8 +851,8 @@ export const finish: { [R in FinishRole]: FinishStyle<R> } = {
  * that has no value for a step gives `"none"`. Reactive: reading it follows `selectTheme`.
  */
 export function elevation(level: ElevationLevel): string {
-  const scale = isDark() ? builtIn.elevation.dark : builtIn.elevation.light;
-  return scale[level] ?? "none";
+  const { elevation: scale } = semanticsOf();
+  return (isDark() ? scale.dark : scale.light)[level] ?? "none";
 }
 
 /**
@@ -851,26 +908,45 @@ export const toneColor = (tone: Tone) =>
         : colors[tone];
 
 /**
- * The tint of a tone. `accent` reads `tints.brand` (the `brand-tint` token); the other tones share
- * a key with `colors`.
+ * The tint of a tone. `accent` reads `tints.brand` (the `brand-tint` token); `down` shares
+ * `tints.destructive` just as `toneColor` shares `colors.destructive`.
  */
 export const toneTint = (tone: Tone) =>
-  tone === "neutral" ? colors.raised : tone === "accent" ? tints.brand : tints[tone];
+  tone === "neutral"
+    ? colors.raised
+    : tone === "accent"
+      ? tints.brand
+      : tone === "down"
+        ? tints.destructive
+        : tints[tone];
 
 /** A typography role of `semantics.json`'s `typography`: the seven text roles. */
 export type TypeName = keyof Style["typography"];
 
 /**
- * One facet of a typography role, read from the style in use (reactive: reading it in JSX, a `draw` or
- * an effect follows `selectTheme`). A component reads only the facets it set before, so text that
- * leaves its weight or line height to the text around it still does:
- * `style={{ fontSize: font.size("label"), fontWeight: font.weight("label") }}`.
- * `size` and `lineHeight` take the tier of the screen (`tier`); `lineHeight` is the theme's
- * line height in points (a whole number of pixels).
+ * Cross-theme shared font sizes and whole-point line heights per tier (`ADR 0009`, `ADR 0019`):
+ * `semantics.json` carries only per-theme `fontWeight` and `letterSpacing`.
+ */
+const SHARED_TYPE_SCALE: Record<
+  TypeName,
+  { readonly fontSize: Tiered<number>; readonly lineHeight: Tiered<number> }
+> = {
+  caption: { fontSize: { pointer: 11, touch: 12 }, lineHeight: { pointer: 16, touch: 16 } },
+  detail: { fontSize: { pointer: 12, touch: 13 }, lineHeight: { pointer: 16, touch: 20 } },
+  body: { fontSize: { pointer: 13, touch: 15 }, lineHeight: { pointer: 20, touch: 20 } },
+  label: { fontSize: { pointer: 14, touch: 15 }, lineHeight: { pointer: 20, touch: 20 } },
+  title: { fontSize: { pointer: 16, touch: 16 }, lineHeight: { pointer: 24, touch: 24 } },
+  headline: { fontSize: { pointer: 20, touch: 22 }, lineHeight: { pointer: 28, touch: 28 } },
+  display: { fontSize: { pointer: 26, touch: 28 }, lineHeight: { pointer: 32, touch: 36 } },
+};
+
+/**
+ * One facet of a typography role: `size` and `lineHeight` read the shared scale for `tier`, while
+ * `weight` and `letterSpacing` read the active theme's `semantics.json` reactively.
  */
 export const font = {
-  size: (role: TypeName) => style().typography[role].fontSize[tier],
-  lineHeight: (role: TypeName) => style().typography[role].lineHeight[tier],
+  size: (role: TypeName) => SHARED_TYPE_SCALE[role].fontSize[tier],
+  lineHeight: (role: TypeName) => SHARED_TYPE_SCALE[role].lineHeight[tier],
   weight: (role: TypeName) =>
     style().typography[role].fontWeight as NonNullable<TextStyle["fontWeight"]>,
   letterSpacing: (role: TypeName) => style().typography[role].letterSpacing,
@@ -880,44 +956,37 @@ export const font = {
 export const CAPSULE_RADIUS = 999;
 
 /**
- * The corner radii by layer (`semantics.json`'s `dimension.shape`), resolved from `theme.json`'s
- * `radius-*` tokens via `token()`: `control` (in-page elements), `container` (cards, menus,
- * popovers, tooltips, list panels, toasts, frames), `modal` (dialogs, sheets, drawers), and
- * `button` (`CAPSULE_RADIUS` when `shape.corners.button` is `full`, else its radius). Reactive:
- * reading one in JSX, a `draw` or an effect follows `selectTheme` and host token overrides.
+ * The corner radii by layer, read directly from `theme.json`'s `radius-*` tokens via `token()`:
+ * `control` (in-page elements), `container` (cards, menus, popovers, tooltips, list panels,
+ * toasts, frames), and `modal` (dialogs, sheets, drawers). Reactive: reading one in JSX, a `draw`
+ * or an effect follows `selectTheme` and host token overrides.
  */
 export const shape = {
-  get control() {
-    return resolveDimension(style().dimension.shape.control);
+  get control(): number {
+    return token("radius-control") as number;
   },
-  get container() {
-    return resolveDimension(style().dimension.shape.container);
+  get container(): number {
+    return token("radius-container") as number;
   },
-  get modal() {
-    return resolveDimension(style().dimension.shape.modal);
-  },
-  get button() {
-    const corner = style().shape.corners.button;
-    return corner === "full" ? CAPSULE_RADIUS : resolveDimension(corner);
+  get modal(): number {
+    return token("radius-modal") as number;
   },
 };
 
 /**
- * A button's corner at its size, as points (`semantics.json`'s `button.corner.*` slots): the corner
- * the theme shapes its buttons with (`shape.corners.button`, `"control"` unless it says otherwise),
- * `CAPSULE_RADIUS` where it states a capsule, or the points it states. Reactive: a reading in JSX,
- * a `draw` or an effect follows `selectTheme`.
+ * A button's corner at its size, as points (`semantics.json`'s `controls.button.corner.*` slots):
+ * `shape.control` (`"control"`), `CAPSULE_RADIUS` (`"full"`), or the points it states. Reactive: a
+ * reading in JSX, a `draw` or an effect follows `selectTheme`.
  */
 export function buttonCorner(size: "sm" | "default" | "lg"): number {
-  // A regular button is the scale's `md` step: its corner is `button.corner.md`.
+  // A regular button is the scale's `md` step: its corner is `controls.button.corner.md`.
   const step = size === "default" ? "md" : size;
-  const corner = slots()[`button.corner.${step}`];
+  const raw = controls().button.corner[step];
+  const corner = typeof raw === "object" && raw !== null && "pointer" in raw ? raw[tier] : raw;
   if (corner === "full") return CAPSULE_RADIUS;
-  if (corner === "control") return shape.button;
+  if (corner === "control") return shape.control;
   if (typeof corner === "number") return corner;
-  throw new Error(
-    `the theme states no \`button.corner.${step}\` corner: ${JSON.stringify(corner)}`,
-  );
+  throw new Error(`the theme states no \`button.corner.${step}\` corner: ${JSON.stringify(raw)}`);
 }
 
 /** Line widths in points (`semantics.json`'s `dimension.stroke`): `hairline` a divider's or a surface's edge (0 where surfaces stand by tone or shadow alone), `control` a control's edge. The focus ring's width is `dimension.focus.width`. */
@@ -980,14 +1049,14 @@ export function stateLayer(
 export const hitTarget = (): number => style().dimension.size.hit[tier];
 
 /**
- * The slots in use (`semantics.json`'s `slot` group), made once at import: every theme states every
- * one (`docs/specs/theme-slots.md`, ADR 0013), so a reader can take one without a fallback.
+ * The controls tree in use (`semantics.json`'s `controls`), made once at import: every theme
+ * states every leaf (`docs/specs/theme-slots.md`, ADR 0019), so a reader takes one directly.
  * Reactive: reading one in JSX, a `draw` or an effect follows `selectTheme`.
  */
-const slotValues = computed(() => style().slots);
+const controlValues = computed(() => style().controls);
 
-/** The control slots a theme states: how a field, a choice, a groove, a slider, a switch and a disabled control are drawn. Reactive. */
-export const slots = (): Slots => slotValues();
+/** The typed control slots a theme states (`controls` in `semantics.json`). Reactive. */
+export const controls = (): Controls => controlValues();
 
 /** A button's height by size (`dimension.size.height` of the tier). */
 export const controlHeight = {
@@ -1042,7 +1111,7 @@ export const header = {
   },
 };
 
-/** The easings a theme names (`transition.enter.timingFunction` and timing roles): the curve is code, the name is data. */
+/** The easings a theme names (`motion.<role>.timingFunction`): the curve is code, the name is data. */
 const easings: Record<string, EasingCurve> = {
   "out-cubic": Easing.out(Easing.cubic),
   "in-cubic": Easing.in(Easing.cubic),
@@ -1088,17 +1157,13 @@ const motionRole = (read: () => TimingSpec): Timing => {
  * The theme's motion roles: `fast` (a small control's state coming and going), `default` (the one
  * most feedback uses: a press, a release, a modest move), `slow` (a large surface or a
  * long-travel movement) and `state` (a hover, a press or a choice fading in and out). Each is a
- * duration and an easing, `{ duration, timingFunction }`. `enter` is a surface's entrance.
+ * duration and an easing, `{ duration, timingFunction }`.
  */
 export const motion = {
   fast: motionRole(() => style().motion.fast),
   default: motionRole(() => style().motion.default),
   slow: motionRole(() => style().motion.slow),
   state: motionRole(() => style().motion.state),
-  get enter(): Timing {
-    const { duration, timingFunction } = style().transition.enter;
-    return { duration, timingFunction: easings[timingFunction] };
-  },
 };
 
 /**

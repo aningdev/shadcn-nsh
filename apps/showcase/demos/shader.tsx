@@ -14,12 +14,11 @@ import {
   token,
   View,
 } from "nsh";
-import { NavPage } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
 import { Dialog, DialogClose, DialogContent } from "@/packages/ui/dialog";
 import { pressSink } from "@/packages/ui/lib/press";
-import { createNavStack, NavStack } from "@/packages/ui/nav-stack";
+import { createNavStack, NavPage, NavStack } from "@/packages/ui/nav-stack";
 import { Switch } from "@/packages/ui/switch";
 
 import logo from "../assets/logo-dark.svg";

@@ -225,22 +225,6 @@
   "dimension": {
     "$type": "dimension",
     "$description": "Desktop pointer layout density, control geometry, and icon sizes.",
-    "shape": {
-      "$type": "dimension",
-      "$description": "Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.",
-      "control": {
-        "$value": "{dimension.radius.control}",
-        "$description": "Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd."
-      },
-      "container": {
-        "$value": "{dimension.radius.container}",
-        "$description": "Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames."
-      },
-      "modal": {
-        "$value": "{dimension.radius.modal}",
-        "$description": "Corner radius for modal surfaces: dialogs, sheets, and drawers."
-      }
-    },
     "stroke": {
       "$description": "Border stroke widths.",
       "hairline": {
@@ -345,12 +329,7 @@
         }
       },
       "control": {
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "switch": "small"
-          }
-        },
-        "$description": "Control internal spacing and switch size tier.",
+        "$description": "Control internal spacing.",
         "padding": {
           "$value": {
             "value": 8,
@@ -360,12 +339,6 @@
         "gap": {
           "$value": {
             "value": 8,
-            "unit": "px"
-          }
-        },
-        "dot": {
-          "$value": {
-            "value": 6,
             "unit": "px"
           }
         }
@@ -415,18 +388,10 @@
     }
   },
   "shape": {
-    "$description": "Non-dimensional corner curve and the radius a button takes.",
+    "$description": "Non-dimensional corner curve.",
     "$extensions": {
       "dev.aning.shadcn-nsh": {
         "curve": "continuous"
-      }
-    },
-    "corners": {
-      "$description": "How a control cuts its corners.",
-      "button": {
-        "$type": "dimension",
-        "$value": "{dimension.radius.control}",
-        "$description": "A button's corner: the control radius, `full` for a capsule, or points."
       }
     }
   },
@@ -438,17 +403,11 @@
       "$description": "Scale factor applied while pressed (1 disables press shrinking for Solid Glass panes)."
     },
     "overlay": {
-      "$description": "State-layer ink opacities for hover, focus, pressed, and dragged states.",
+      "$description": "State-layer ink opacities for hover and pressed states.",
       "hover": {
         "$value": 0
       },
-      "focus": {
-        "$value": 0
-      },
       "pressed": {
-        "$value": 0
-      },
-      "dragged": {
         "$value": 0
       }
     },
@@ -465,24 +424,6 @@
       "content": {
         "$value": 0.5
       }
-    }
-  },
-  "transition": {
-    "$type": "transition",
-    "$description": "Named CSS/NSH transition presets.",
-    "enter": {
-      "$value": {
-        "duration": {
-          "value": 420,
-          "unit": "ms"
-        },
-        "delay": {
-          "value": 0,
-          "unit": "ms"
-        },
-        "timingFunction": "{cubicBezier.out-cubic}"
-      },
-      "$description": "Default surface entrance transition."
     }
   },
   "motion": {
@@ -592,7 +533,6 @@
       "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "border-top-color": "none",
           "border-bottom-color": "none"
         }
       },
@@ -1095,7 +1035,7 @@
           "$description": "The ground a chosen control turns over to: a toggle that is on, a tool that is picked, a button that is selected."
         },
         "ink": {
-          "$value": "color:primaryForeground",
+          "$value": "color:primary-foreground",
           "$description": "What a chosen control's label and glyph are drawn in."
         }
       },
@@ -1112,53 +1052,41 @@
           "$value": "finish:raised:border-color",
           "$description": "What a secondary button's edge is drawn in, or `none` where it draws none."
         },
-        "shade": {
-          "$value": "shade:raised",
-          "$description": "The finish whose shade a secondary button wears, or `none` where it stands flat."
-        },
         "hover": {
           "$value": "finish:hover",
           "$description": "The ground a secondary button turns over to under the pointer."
         }
       },
-      "destructive": {
-        "face": {
-          "$value": "tint:destructive",
-          "$description": "The ground of a destructive button."
-        },
-        "ink": {
-          "$value": "color:destructive",
-          "$description": "What a destructive button's label and glyph are drawn in."
-        },
+      "outline": {
         "edge": {
-          "$value": "color:destructive@0.32",
-          "$description": "What a destructive button's edge is drawn in, or `none` where it draws none."
-        },
-        "shade": {
-          "$value": "shade:raised",
-          "$description": "The finish whose shade a destructive button wears, or `none` where it stands flat."
+          "$value": "color:border",
+          "$description": "What an outline button's edge is drawn in."
         }
+      },
+      "destructive": {
+        "edge": {
+          "$value": "none",
+          "$description": "What a destructive button's edge is drawn in, or `none` where it draws none."
+        }
+      },
+      "shade": {
+        "$value": "shade:raised",
+        "$description": "The finish whose shade a secondary or destructive button wears, or `none` where it stands flat."
+      }
+    },
+    "badge": {
+      "corner": {
+        "$value": "control",
+        "$description": "A badge's corner: the control radius, `full` for a capsule, or points."
       }
     },
     "field": {
-      "face": {
-        "$value": "color:field",
-        "$description": "The ground a field lies on."
-      },
-      "shade": {
-        "$value": "shade:inset",
-        "$description": "The finish whose inner shade a field wears, or `none` where it lies flat."
-      },
       "edge": {
-        "width": {
-          "$value": "control",
-          "$description": "How thick a field's edge is, on every side it draws; `control` is the theme's `stroke.control`."
-        },
         "sides": {
           "$value": "yes",
           "$description": "Whether a field draws the sides and top of its edge, or only the line under its text."
         },
-        "colour": {
+        "color": {
           "$value": "color:input",
           "$description": "What a field's sides and top are drawn in."
         },
@@ -1168,10 +1096,6 @@
         }
       },
       "corner": {
-        "top": {
-          "$value": "control",
-          "$description": "A field's top corners."
-        },
         "bottom": {
           "$value": "control",
           "$description": "A field's bottom corners: `0` where the line under it is its edge."
@@ -1189,6 +1113,10 @@
             "unit": "px"
           },
           "$description": "How thick the line under a field's text is where focus lights it (`field.focus.line`), or the edge of a field whose focus is a ring."
+        },
+        "color": {
+          "$value": "color:ring",
+          "$description": "What a field's focus edge and ring are drawn in (`color:brand` for a crisp accent ring, `color:ring` for the theme's `focus.style` halo)."
         }
       },
       "disabled": {
@@ -1269,7 +1197,7 @@
           },
           "$description": "How thick a box's edge is."
         },
-        "colour": {
+        "color": {
           "$value": "color:input",
           "$description": "What a box's edge is drawn in.",
           "$extensions": {
@@ -1292,6 +1220,18 @@
         "face": {
           "$value": "finish:accent",
           "$description": "The layer a chosen box turns over to, or `none` where it keeps its ground and draws a mark alone."
+        }
+      },
+      "radio": {
+        "checked": {
+          "face": {
+            "$value": "finish:accent",
+            "$description": "The layer a chosen radio turns over to, or `none` where it keeps its ground and draws a ring and dot."
+          },
+          "edge": {
+            "$value": "none",
+            "$description": "What a chosen ring-only radio's border is drawn in, or `none` to keep its resting edge."
+          }
         }
       },
       "mark": {
@@ -1326,101 +1266,37 @@
       }
     },
     "switch": {
-      "width": {
-        "$type": "dimension",
-        "$value": {
-          "value": 36,
-          "unit": "px"
-        },
-        "$description": "An off switch's track, per input: its width.",
+      "track": {
+        "$value": "36x20",
+        "$description": "An off switch's track, per input: `[width, height]`.",
         "$extensions": {
           "dev.aning.shadcn-nsh": {
-            "touch": {
-              "value": 44,
-              "unit": "px"
-            }
-          }
-        }
-      },
-      "height": {
-        "$type": "dimension",
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
-        "$description": "An off switch's track, per input: its height.",
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "touch": {
-              "value": 24,
-              "unit": "px"
-            }
+            "touch": "44x24"
           }
         }
       },
       "small": {
-        "width": {
-          "$type": "dimension",
-          "$value": {
-            "value": 28,
-            "unit": "px"
-          },
-          "$description": "A small switch's track, per input: its width.",
+        "track": {
+          "$value": "28x16",
+          "$description": "A small switch's track, per input: `[width, height]`.",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 36,
-                "unit": "px"
-              }
-            }
-          }
-        },
-        "height": {
-          "$type": "dimension",
-          "$value": {
-            "value": 16,
-            "unit": "px"
-          },
-          "$description": "A small switch's track, per input: its height.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 20,
-                "unit": "px"
-              }
+              "touch": "36x20"
             }
           }
         },
         "knob": {
-          "width": {
-            "$type": "dimension",
-            "$value": {
-              "value": 12,
-              "unit": "px"
-            },
-            "$description": "A small switch's knob, per input: its width.",
-            "$extensions": {
-              "dev.aning.shadcn-nsh": {
-                "touch": {
-                  "value": 16,
-                  "unit": "px"
-                }
-              }
-            }
+          "$type": "dimension",
+          "$value": {
+            "value": 12,
+            "unit": "px"
           },
-          "height": {
-            "$type": "dimension",
-            "$value": {
-              "value": 12,
-              "unit": "px"
-            },
-            "$description": "A small switch's knob, per input: its height.",
-            "$extensions": {
-              "dev.aning.shadcn-nsh": {
-                "touch": {
-                  "value": 16,
-                  "unit": "px"
-                }
+          "$description": "A small switch's knob, per input: side or `[width, height]`.",
+          "$extensions": {
+            "dev.aning.shadcn-nsh": {
+              "touch": {
+                "value": 16,
+                "unit": "px"
               }
             }
           }
@@ -1442,32 +1318,20 @@
             "unit": "px"
           },
           "$description": "How thick an on switch's track edge is."
+        },
+        "color": {
+          "$value": "color:border",
+          "$description": "What an off switch's track edge is drawn in, or `none` where the track has no border."
         }
       },
       "knob": {
-        "width": {
+        "size": {
           "$type": "dimension",
           "$value": {
             "value": 16,
             "unit": "px"
           },
-          "$description": "An off switch's knob, per input: its width.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 20,
-                "unit": "px"
-              }
-            }
-          }
-        },
-        "height": {
-          "$type": "dimension",
-          "$value": {
-            "value": 16,
-            "unit": "px"
-          },
-          "$description": "An off switch's knob, per input: its height.",
+          "$description": "An off switch's knob, per input: diameter or `[width, height]`.",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
               "touch": {
@@ -1478,93 +1342,17 @@
           }
         },
         "on": {
-          "width": {
-            "$type": "dimension",
-            "$value": {
-              "value": 16,
-              "unit": "px"
-            },
-            "$description": "An on switch's knob, per input: its width.",
-            "$extensions": {
-              "dev.aning.shadcn-nsh": {
-                "touch": {
-                  "value": 20,
-                  "unit": "px"
-                }
-              }
-            }
-          },
-          "height": {
-            "$type": "dimension",
-            "$value": {
-              "value": 16,
-              "unit": "px"
-            },
-            "$description": "An on switch's knob, per input: its height.",
-            "$extensions": {
-              "dev.aning.shadcn-nsh": {
-                "touch": {
-                  "value": 20,
-                  "unit": "px"
-                }
-              }
-            }
-          }
+          "$value": "same",
+          "$description": "An on switch's knob, per input, or `same` to keep the resting knob size."
         },
         "hover": {
-          "$type": "dimension",
-          "$value": {
-            "value": 16,
-            "unit": "px"
-          },
-          "$description": "The side a knob grows to under the pointer, where hovering changes nothing.",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 20,
-                "unit": "px"
-              }
-            }
-          }
+          "$value": "same",
+          "$description": "The knob size under the pointer, or `same` where hovering changes nothing."
         },
         "pressed": {
-          "width": {
-            "$type": "dimension",
-            "$value": {
-              "value": 16,
-              "unit": "px"
-            },
-            "$description": "The knob's width while pressed.",
-            "$extensions": {
-              "dev.aning.shadcn-nsh": {
-                "touch": {
-                  "value": 20,
-                  "unit": "px"
-                }
-              }
-            }
-          },
-          "height": {
-            "$type": "dimension",
-            "$value": {
-              "value": 16,
-              "unit": "px"
-            },
-            "$description": "The knob's height while pressed.",
-            "$extensions": {
-              "dev.aning.shadcn-nsh": {
-                "touch": {
-                  "value": 20,
-                  "unit": "px"
-                }
-              }
-            }
-          }
+          "$value": "same",
+          "$description": "The knob size while pressed, or `same` where pressing changes nothing; widening past its height stretches toward the edge it heads for."
         }
-      },
-      "feedback": {
-        "$value": "none",
-        "$description": "What pressing a knob does: `none`, `expand` (it grows) or `stretch` (it widens toward the edge it heads for)."
       }
     },
     "slider": {
@@ -1600,22 +1388,6 @@
           }
         }
       },
-      "vertical": {
-        "$type": "dimension",
-        "$value": {
-          "value": 128,
-          "unit": "px"
-        },
-        "$description": "How long a vertical slider's rail is, per input.",
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "touch": {
-              "value": 144,
-              "unit": "px"
-            }
-          }
-        }
-      },
       "face": {
         "$value": "color:track",
         "$description": "What a slider's rail is filled with."
@@ -1625,7 +1397,7 @@
         "$description": "The finish whose shade a slider's rail wears, or `none`."
       },
       "edge": {
-        "colour": {
+        "color": {
           "$value": "color:border",
           "$description": "What a slider's rail edge is drawn in, or `none` where it draws none."
         },
@@ -1641,23 +1413,7 @@
             "value": 14,
             "unit": "px"
           },
-          "$description": "A slider's knob, per input: its width (`0` where the theme draws only a mark).",
-          "$extensions": {
-            "dev.aning.shadcn-nsh": {
-              "touch": {
-                "value": 20,
-                "unit": "px"
-              }
-            }
-          }
-        },
-        "height": {
-          "$type": "dimension",
-          "$value": {
-            "value": 14,
-            "unit": "px"
-          },
-          "$description": "A slider's knob, per input: its height; equal to its width where the knob is a disc.",
+          "$description": "A slider's knob, per input: diameter or `[width, height]` (`0` where the theme draws only a mark).",
           "$extensions": {
             "dev.aning.shadcn-nsh": {
               "touch": {
@@ -1668,19 +1424,17 @@
           }
         },
         "pressed": {
-          "size": {
-            "$type": "dimension",
-            "$value": {
-              "value": 14,
-              "unit": "px"
-            },
-            "$description": "The knob's diameter while pressed, per input.",
-            "$extensions": {
-              "dev.aning.shadcn-nsh": {
-                "touch": {
-                  "value": 32,
-                  "unit": "px"
-                }
+          "$type": "dimension",
+          "$value": {
+            "value": 14,
+            "unit": "px"
+          },
+          "$description": "The knob size while pressed, per input, or `same` to keep the resting knob size.",
+          "$extensions": {
+            "dev.aning.shadcn-nsh": {
+              "touch": {
+                "value": 32,
+                "unit": "px"
               }
             }
           }
@@ -1688,6 +1442,10 @@
         "face": {
           "$value": "finish:knob",
           "$description": "What a slider's knob is filled with."
+        },
+        "edge": {
+          "$value": "none",
+          "$description": "What a solid slider knob's border is drawn in, or `none` where it wears only the knob finish's own edge."
         }
       },
       "mark": {
@@ -1747,7 +1505,7 @@
         "$description": "The finish whose shade a progress bar's groove wears, or `none`."
       },
       "edge": {
-        "colour": {
+        "color": {
           "$value": "color:border",
           "$description": "What a progress bar's groove edge is drawn in, or `none`."
         },
@@ -1764,8 +1522,8 @@
           "$description": "The fill under a calendar's today, or `none` where it draws none."
         },
         "ink": {
-          "$value": "foreground",
-          "$description": "The ink a calendar's today is drawn in: a role name the day's text class reads (`foreground`, `brand`)."
+          "$value": "color:foreground",
+          "$description": "What a calendar's today number is drawn in (`color:foreground`, `color:brand`)."
         }
       }
     },
@@ -1786,34 +1544,84 @@
         "$description": "A popup's surface corner (a menu's, a select's list, a calendar's): `container` is the theme's `shape.container`."
       }
     },
+    "tooltip": {
+      "face": {
+        "$value": "finish:inverse",
+        "$description": "What a tooltip bubble is filled with."
+      },
+      "ink": {
+        "$value": "finish:inverse:foreground",
+        "$description": "What a tooltip bubble's text is drawn in."
+      },
+      "edge": {
+        "$value": "finish:inverse:border-color",
+        "$description": "What a tooltip bubble's border is drawn in, or `none` where it draws none."
+      },
+      "shade": {
+        "$value": "shade:inverse",
+        "$description": "The finish whose elevation shadow a tooltip bubble wears, or `none`."
+      }
+    },
+    "toast": {
+      "action": {
+        "face": {
+          "$value": "finish:accent",
+          "$description": "The ground a toast's action button wears, or `none` for a borderless text button on the inverse surface."
+        }
+      }
+    },
+    "list": {
+      "item": {
+        "highlight": {
+          "$value": "tint:brand",
+          "$description": "What a listbox or command option's focused background is drawn in (`tint:brand`, `color:accent`)."
+        },
+        "edge": {
+          "$value": "color:brand@0.3",
+          "$description": "What a listbox option's focused border is drawn in (`color:brand@0.3`, `none`)."
+        }
+      }
+    },
+    "menubar": {
+      "bar": {
+        "$value": "finish:card",
+        "$description": "The surface a menubar frames its triggers on (`finish:card`, or `none` for a borderless transparent strip)."
+      }
+    },
     "tabs": {
       "track": {
         "face": {
           "$value": "color:inset",
           "$description": "The ground a tab strip's track lies on, or `none` where the surface behind it shows through."
+        },
+        "edge": {
+          "$value": "color:border",
+          "$description": "What a tab strip's track edge is drawn in, or `none` where it draws no border."
+        },
+        "corner": {
+          "$value": "full",
+          "$description": "A tab strip's track corner: `full` for a capsule, `control`, or points."
         }
       }
     },
     "well": {
       "edge": {
         "$value": "color:border",
-        "$description": "What a sunk well's edge is drawn in, or `none` where it draws no edge and its ground alone marks it."
+        "$description": "What a sunk well's edge is drawn in, or `none` where it draws no border."
       }
     },
-    "state": {
-      "disabled": {
-        "face": {
-          "$value": "keep",
-          "$description": "The ground a disabled control turns over to, or `keep` where it keeps its own and fades instead."
-        },
-        "ink": {
-          "$value": "keep",
-          "$description": "What a disabled control's label is drawn in, or `keep`."
-        },
-        "edge": {
-          "$value": "keep",
-          "$description": "What a disabled control's edge is drawn in, or `keep`."
-        }
+    "disabled": {
+      "face": {
+        "$value": "keep",
+        "$description": "The ground a disabled control turns over to, or `keep` where it keeps its own and fades instead."
+      },
+      "ink": {
+        "$value": "keep",
+        "$description": "What a disabled control's label is drawn in, or `keep`."
+      },
+      "edge": {
+        "$value": "keep",
+        "$description": "What a disabled control's edge is drawn in, or `keep`."
       }
     }
   },
@@ -2463,31 +2271,6 @@
         }
       },
       "$description": "Translucent positive trend background tint."
-    },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.704,
-          0.191,
-          22.216
-        ],
-        "alpha": 0.1,
-        "hex": "#ff6467"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 10,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Translucent negative trend background tint."
     },
     "card-foreground": {
       "$value": "{color.foreground}",

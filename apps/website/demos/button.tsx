@@ -147,6 +147,9 @@ function App() {
           <Button variant="secondary" onPress={() => press("secondary")}>
             Secondary
           </Button>
+          <Button variant="outline" onPress={() => press("outline")}>
+            Outline
+          </Button>
           <Button variant="ghost" onPress={() => press("ghost")}>
             Ghost
           </Button>
@@ -225,9 +228,6 @@ function App() {
             Pinned
           </Button>
           <Button variant="default" disabled>
-            Disabled
-          </Button>
-          <Button variant="secondary" disabled>
             Disabled
           </Button>
         </DemoSection>

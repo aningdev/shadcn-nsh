@@ -170,23 +170,7 @@
   },
   "dimension": {
     "$type": "dimension",
-    "$description": "Cross-theme semantic dimension scales (shapes, strokes, focus geometry).",
-    "shape": {
-      "$type": "dimension",
-      "$description": "Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.",
-      "control": {
-        "$value": "{dimension.radius.control}",
-        "$description": "Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd."
-      },
-      "container": {
-        "$value": "{dimension.radius.container}",
-        "$description": "Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames."
-      },
-      "modal": {
-        "$value": "{dimension.radius.modal}",
-        "$description": "Corner radius for modal surfaces: dialogs, sheets, and drawers."
-      }
-    },
+    "$description": "Cross-theme semantic dimension scales (strokes, focus geometry).",
     "stroke": {
       "$description": "Border stroke widths.",
       "hairline": {
@@ -228,18 +212,10 @@
     }
   },
   "shape": {
-    "$description": "Non-dimensional corner curve and the radius a button takes.",
+    "$description": "Non-dimensional corner curve.",
     "$extensions": {
       "dev.aning.shadcn-nsh": {
         "curve": "continuous"
-      }
-    },
-    "corners": {
-      "$description": "How a control cuts its corners.",
-      "button": {
-        "$type": "dimension",
-        "$value": "{dimension.radius.control}",
-        "$description": "A button's corner: the control radius, `full` for a capsule, or points."
       }
     }
   },
@@ -251,17 +227,11 @@
       "$description": "Scale factor applied while a pressable control is pressed."
     },
     "overlay": {
-      "$description": "State-layer ink opacities for hover, focus, pressed, and dragged states.",
+      "$description": "State-layer ink opacities for hover and pressed states.",
       "hover": {
         "$value": 0
       },
-      "focus": {
-        "$value": 0
-      },
       "pressed": {
-        "$value": 0
-      },
-      "dragged": {
         "$value": 0
       }
     },
@@ -278,24 +248,6 @@
       "content": {
         "$value": 0.5
       }
-    }
-  },
-  "transition": {
-    "$type": "transition",
-    "$description": "Named CSS/NSH transition presets.",
-    "enter": {
-      "$value": {
-        "duration": {
-          "value": 420,
-          "unit": "ms"
-        },
-        "delay": {
-          "value": 0,
-          "unit": "ms"
-        },
-        "timingFunction": "{cubicBezier.out-cubic}"
-      },
-      "$description": "Default surface entrance transition."
     }
   },
   "motion": {
@@ -387,7 +339,6 @@
       "$description": "A well cut into a surface: an inset, a field, a track, a groove.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "border-top-color": "none",
           "border-bottom-color": "none"
         }
       }

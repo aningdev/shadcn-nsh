@@ -22,21 +22,21 @@ colors:
     accent: "#e8def8"
     accent-foreground: "#4a4458"
     destructive: "#b3261e"
-    border: "#79747e"
+    border: "#cac4d0"
     input: "#79747e"
     ring: "#625b71"
     chart-1: "#6750a4"
     chart-2: "#7d5260"
-    chart-3: "#625b71"
-    chart-4: "#79747e"
-    chart-5: "#cac4d0"
+    chart-3: "#138a5a"
+    chart-4: "#b26a00"
+    chart-5: "#1e63d2"
     sidebar: "#fef7ff"
     sidebar-foreground: "#1d1b20"
     sidebar-primary: "#6750a4"
     sidebar-primary-foreground: "#ffffff"
     sidebar-accent: "#e8def8"
     sidebar-accent-foreground: "#4a4458"
-    sidebar-border: "#79747e"
+    sidebar-border: "#cac4d0"
     sidebar-ring: "#625b71"
     inset: "#f3edf7"
     raised: "#f7f2fa"
@@ -49,18 +49,17 @@ colors:
     focus-inner: "#f7f2fa"
     track: "#e6e0e9"
     knob: "#79747e"
-    info: "#6750a4"
+    info: "#1e63d2"
     warn: "#b26a00"
     up: "#138a5a"
     brand-tint: "#e8def8"
     inverse: "#322f35"
     inverse-foreground: "#f5eff7"
     inverse-brand: "#d0bcff"
-    info-tint: "#6750a41f"
+    info-tint: "#1e63d21f"
     warn-tint: "#b26a001f"
     destructive-tint: "#f9dedc"
     up-tint: "#138a5a1f"
-    down-tint: "#b3261e1f"
   dark:
     background: "#141218"
     foreground: "#e6e0e9"
@@ -77,21 +76,21 @@ colors:
     accent: "#4a4458"
     accent-foreground: "#e8def8"
     destructive: "#f2b8b5"
-    border: "#938f99"
+    border: "#49454f"
     input: "#938f99"
     ring: "#ccc2dc"
     chart-1: "#d0bcff"
     chart-2: "#efb8c8"
-    chart-3: "#ccc2dc"
-    chart-4: "#938f99"
-    chart-5: "#49454f"
+    chart-3: "#45d49a"
+    chart-4: "#ffb547"
+    chart-5: "#81b3fc"
     sidebar: "#141218"
     sidebar-foreground: "#e6e0e9"
     sidebar-primary: "#d0bcff"
     sidebar-primary-foreground: "#381e72"
     sidebar-accent: "#4a4458"
     sidebar-accent-foreground: "#e8def8"
-    sidebar-border: "#938f99"
+    sidebar-border: "#49454f"
     sidebar-ring: "#ccc2dc"
     inset: "#211f26"
     raised: "#1d1b20"
@@ -104,18 +103,17 @@ colors:
     focus-inner: "#1d1b20"
     track: "#36343b"
     knob: "#938f99"
-    info: "#d0bcff"
+    info: "#81b3fc"
     warn: "#ffb547"
     up: "#45d49a"
     brand-tint: "#4a4458"
     inverse: "#e6e0e9"
     inverse-foreground: "#322f35"
     inverse-brand: "#6750a4"
-    info-tint: "#d0bcff1f"
+    info-tint: "#81b3fc1f"
     warn-tint: "#ffb5471f"
     destructive-tint: "#8c1d18"
     up-tint: "#45d49a1f"
-    down-tint: "#f2b8b51f"
 typography:
   caption:
     fontSize: 11px
@@ -167,7 +165,6 @@ spacing:
   control:
     padding: 8px
     gap: 8px
-    dot: 10px
   height:
     sm: 24px
     md: 32px
@@ -183,10 +180,6 @@ spacing:
     md: 16px
     lg: 20px
 motion:
-  enter:
-    duration: 500ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0.05, 0.7, 0.1, 1)"
   fast:
     duration: 150ms
     delay: 0ms
@@ -356,25 +349,24 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 
 - **`destructive`** (light `#b3261e`, dark `#f2b8b5`): Error and destructive action color (M3 error).
 - **`chart-1`** (light `#6750a4`, dark `#d0bcff`): First chart series color (M3 primary).
-- **`chart-2`** (light `#7d5260`, dark `#efb8c8`): Second chart series color (the theme's positive `up` tone).
-- **`chart-3`** (light `#625b71`, dark `#ccc2dc`): Third chart series color (the theme's `warn` tone).
-- **`chart-4`** (light `#79747e`, dark `#938f99`): Fourth chart series color (M3 error).
-- **`chart-5`** (light `#cac4d0`, dark `#49454f`): Fifth chart series color (M3 onSurfaceVariant).
-- **`info`** (light `#6750a4`, dark `#d0bcff`): Informational semantic color matching M3 primary.
+- **`chart-2`** (light `#7d5260`, dark `#efb8c8`): Second chart series color (M3 tertiary).
+- **`chart-3`** (light `#138a5a`, dark `#45d49a`): Third chart series color (the theme's positive `up` tone).
+- **`chart-4`** (light `#b26a00`, dark `#ffb547`): Fourth chart series color (the theme's `warn` tone).
+- **`chart-5`** (light `#1e63d2`, dark `#81b3fc`): Fifth chart series color (the theme's `info` tone).
+- **`info`** (light `#1e63d2`, dark `#81b3fc`): Informational semantic color (Material Blue).
 - **`warn`** (light `#b26a00`, dark `#ffb547`): Warning semantic status color.
 - **`up`** (light `#138a5a`, dark `#45d49a`): Positive trend and growth semantic color.
-- **`info-tint`** (light `#6750a41f`, dark `#d0bcff1f`): Translucent informational wash (12% info over transparent).
+- **`info-tint`** (light `#1e63d21f`, dark `#81b3fc1f`): Translucent informational wash (12% info over transparent).
 - **`warn-tint`** (light `#b26a001f`, dark `#ffb5471f`): Translucent warning wash (12% warn over transparent).
 - **`destructive-tint`** (light `#f9dedc`, dark `#8c1d18`): Tonal error container background (M3 errorContainer).
 - **`up-tint`** (light `#138a5a1f`, dark `#45d49a1f`): Translucent positive wash (12% up over transparent).
-- **`down-tint`** (light `#b3261e1f`, dark `#f2b8b51f`): Translucent negative wash (12% down over transparent).
 
 ### Chrome
 
-- **`border`** (light `#79747e`, dark `#938f99`): Hairline container border color (M3 outline: one step stronger than outlineVariant, which reads too faint at 1dp).
+- **`border`** (light `#cac4d0`, dark `#49454f`): Hairline divider and container border color (M3 outlineVariant).
 - **`input`** (light `#79747e`, dark `#938f99`): Input outline color (M3 outline).
 - **`ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color (M3 primary, the role M3 draws its focus indicator in).
-- **`sidebar-border`** (light `#79747e`, dark `#938f99`): Sidebar divider border (M3 outlineVariant).
+- **`sidebar-border`** (light `#cac4d0`, dark `#49454f`): Sidebar divider border (M3 outlineVariant).
 - **`sidebar-ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color inside the sidebar.
 - **`line`** (light `#cac4d0`, dark `#49454f`): Inset divider hairline (M3 outlineVariant).
 - **`focus-inner`** (light `#f7f2fa`, dark `#1d1b20`): The line inside a focus ring, hugging the control: the surface's own color where a theme draws one.
@@ -400,9 +392,8 @@ Ergonomic sizing scales for pointer input.
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding and gap.
 - **List rows:** Material 3 menu rows: the fill spans the menu's width (inset 0; a DropdownMenuItem takes no horizontal margin) and the text sits 12dp in (DropdownMenuItemHorizontalPadding, androidx compose material3 Menu.kt).
-- **Control geometry:** Control internal spacing and switch size tier.
+- **Control geometry:** Control internal spacing.
 - **Control heights:** Desktop control heights one step below the touch scale (24, 32, 40dp against M3's 32, 40, 56dp): the library's own desktop sizing, not an M3 density step (docs/decisions/0003-material-desktop-tier.md).
-- **Switch size tier (pointer):** `regular`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
 
 - **Pointer tier:** Material 3 Expressive desktop pointer input-tier overrides: control heights one step below the touch scale (24, 32, 40dp), glyphs 12, 16, 20dp, no hit padding (docs/decisions/0003-material-desktop-tier.md).
@@ -418,25 +409,22 @@ Tonal surface stepping plus Material Web Level 1–3 shadows and `material.andro
 - **Focus indicator (`style: "outline"`):** M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).
   - `focus.width` (3px): Focus ring stroke width.
   - `focus.offset` (2px): 2px outward focus indicator offset per M3.
-- **State overlays (hover=0.08, focus=0.1, pressed=0.1, dragged=0.16):** M3 state-layer ink opacities: hover 0.08, focus 0.10, pressed 0.10, dragged 0.16 (StateTokens.kt).
+- **State overlays (hover=0.08, pressed=0.1):** M3 state-layer ink opacities: hover 0.08, pressed 0.10 (StateTokens.kt).
 
 ## Shapes
 
 Material 3 Expressive corner scale (Compose tokens at `ac364f3c`: 4px CornerExtraSmall control, 12px CornerMedium/CornerLarge container, 28px CornerExtraLarge modal; capsule buttons via `shape.corners.button: "full"`).
 
-M3 circular arc corners (ShapeTokens.kt). (`curve: "circular"`, `corners.button: "full"`).
+M3 circular arc corners (ShapeTokens.kt). (`curve: "circular"`).
 
-Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
-
-- **`control`** (4px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
-- **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
-- **`modal`** (28px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
+- **`control`** (4px): Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (12px): Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (28px): Corner radius for dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
 Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
-- **`enter`** (500ms, `cubic-bezier(0.05, 0.7, 0.1, 1)`): M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).
 - **`fast`** (150ms, `cubic-bezier(0.2, 0, 0, 1)`): M3 DurationShort3 (150ms) with the standard curve for control state (_md-sys-motion.scss).
 - **`default`** (250ms, `cubic-bezier(0.2, 0, 0, 1)`): M3 DurationMedium1 (250ms) with the standard curve for presses and movement.
 - **`slow`** (400ms, `cubic-bezier(0.05, 0.7, 0.1, 1)`): M3 DurationMedium4 (400ms) with the emphasized-decelerate curve for settling and panels.

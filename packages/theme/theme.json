@@ -49,7 +49,7 @@
       "hover": "color-mix(in srgb, var(--foreground) 5%, transparent)",
       "faint": "oklch(0.69542 0.00939 264.505)",
       "brand": "oklch(0.55192 0.15368 133.676)",
-      "brand-edge": "var(--border)",
+      "brand-edge": "color-mix(in srgb, var(--primary) 78%, oklch(0 0 0))",
       "focus-inner": "var(--card)",
       "track": "oklch(0.93714 0.00417 271.368)",
       "knob": "oklch(1 0 0)",
@@ -63,8 +63,7 @@
       "info-tint": "color-mix(in srgb, var(--info) 10%, transparent)",
       "warn-tint": "color-mix(in srgb, var(--warn) 11%, transparent)",
       "destructive-tint": "color-mix(in srgb, var(--destructive) 10%, transparent)",
-      "up-tint": "color-mix(in srgb, var(--up) 10%, transparent)",
-      "down-tint": "oklch(0.58301 0.18974 19.874 / 0.1)"
+      "up-tint": "color-mix(in srgb, var(--up) 10%, transparent)"
     },
     "dark": {
       "background": "oklch(0.21297 0.01273 264.257)",
@@ -86,7 +85,7 @@
       "hover": "color-mix(in srgb, var(--foreground) 5%, transparent)",
       "faint": "oklch(0.54061 0.01194 261.771)",
       "brand": "oklch(0.90469 0.16668 124.297)",
-      "brand-edge": "var(--border)",
+      "brand-edge": "color-mix(in srgb, var(--primary) 45%, oklch(0 0 0))",
       "focus-inner": "var(--card)",
       "track": "oklch(0.33232 0.01134 264.409)",
       "knob": "oklch(0.92199 0.00419 271.367)",
@@ -101,7 +100,6 @@
       "warn-tint": "color-mix(in srgb, var(--warn) 16%, transparent)",
       "destructive-tint": "color-mix(in srgb, var(--destructive) 16%, transparent)",
       "up-tint": "color-mix(in srgb, var(--up) 16%, transparent)",
-      "down-tint": "oklch(0.70034 0.19197 18.007 / 0.16)",
       "card-foreground": "var(--foreground)",
       "popover-foreground": "var(--foreground)",
       "accent-foreground": "var(--foreground)",

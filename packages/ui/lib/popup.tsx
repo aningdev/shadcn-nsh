@@ -18,7 +18,7 @@ import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
 import { createMotion, Easing, reduceMotion, token, View } from "nsh";
 
 import { CheckMark } from "./icons";
-import { popupCorner } from "./look";
+import { popupCorner, surfaceBorderWidth } from "./look";
 
 /**
  * The scrim behind what is modal (a sheet, a dialog, a menu's sheet on a
@@ -62,7 +62,7 @@ export function popupSurface(): ViewStyle {
         }
       : {
           ...rounded(popupCorner()),
-          borderWidth: stroke.hairline,
+          borderWidth: surfaceBorderWidth(finish.overlay.borderColor),
           padding: POPUP_PAD,
           ...finish.overlay,
         }

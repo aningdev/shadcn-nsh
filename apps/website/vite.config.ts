@@ -1,11 +1,12 @@
 import { readFileSync } from "node:fs";
+import { constants as zlibConstants, createBrotliCompress, createGzip } from "node:zlib";
 
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
 import { fumadocsMdx } from "fumadocs-mdx/vite";
 import { nitro } from "nitro/vite";
-import { defineConfig, runnerImport } from "vite";
+import { defineConfig, type Plugin, runnerImport } from "vite";
 
 import { PALETTES } from "./demos/palettes";
 import { PACKAGE_MANAGER_GROUP, PACKAGE_MANAGERS } from "./src/lib/package-managers";
@@ -73,6 +74,137 @@ const DOCS_VERSION: string = JSON.parse(
 const changelog = readFileSync(new URL("../../CHANGELOG.md", import.meta.url), "utf8");
 const DOCS_UNRELEASED = /^## Unreleased\n([\s\S]*?)(?=^## )/m.exec(changelog)?.[1]?.trim() !== "";
 
+const COMPRESSIBLE = /^(text\/|application\/(javascript|json|wasm|xml)|image\/svg\+xml)(\s*;|$)/i;
+
+const IMMUTABLE_ASSET = /\.[0-9a-f]{8,}\.(wasm|js|css)(\?.*)?$/i;
+
+/** Stream-compresses text, JS, JSON, SVG, and WASM responses at max quality (`br` 11 / `gzip` 9) in `vite dev`, caching immutable hashed assets in memory. */
+function devGzip(): Plugin {
+  const cache = new Map<string, { type: string; body: Buffer }>();
+  return {
+    name: "dev-gzip",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const accept = String(req.headers["accept-encoding"] ?? "");
+        const encodingMethod = /\bbr\b/i.test(accept)
+          ? "br"
+          : /\bgzip\b/i.test(accept)
+            ? "gzip"
+            : null;
+        if (req.method === "HEAD" || !encodingMethod) {
+          return next();
+        }
+        const url = req.url ?? "";
+        const cacheKey = IMMUTABLE_ASSET.test(url) ? `${encodingMethod}:${url}` : null;
+        if (cacheKey) {
+          const hit = cache.get(cacheKey);
+          if (hit) {
+            res.statusCode = 200;
+            res.setHeader("content-type", hit.type);
+            res.setHeader("content-encoding", encodingMethod);
+            res.setHeader("content-length", String(hit.body.length));
+            res.setHeader("vary", "Accept-Encoding");
+            return res.end(hit.body);
+          }
+        }
+        const rawWriteHead = res.writeHead.bind(res);
+        const rawWrite = res.write.bind(res);
+        const rawEnd = res.end.bind(res);
+        let compressor:
+          | ReturnType<typeof createGzip>
+          | ReturnType<typeof createBrotliCompress>
+          | null = null;
+        let decided = false;
+        const chunks: Buffer[] | null = cacheKey ? [] : null;
+
+        const init = (statusCode: number) => {
+          if (decided) return;
+          decided = true;
+          const contentType = String(res.getHeader("content-type") ?? "");
+          const encoding = res.getHeader("content-encoding");
+          const length = Number(res.getHeader("content-length") ?? 0);
+          if (
+            statusCode !== 200 ||
+            encoding ||
+            !contentType ||
+            contentType.includes("text/event-stream") ||
+            (length > 0 && length < 1024) ||
+            !COMPRESSIBLE.test(contentType)
+          ) {
+            return;
+          }
+          res.removeHeader("content-length");
+          res.setHeader("content-encoding", encodingMethod);
+          const vary = res.getHeader("vary");
+          res.setHeader("vary", vary ? `${vary}, Accept-Encoding` : "Accept-Encoding");
+          compressor =
+            encodingMethod === "br"
+              ? createBrotliCompress({
+                  params: {
+                    [zlibConstants.BROTLI_PARAM_QUALITY]: zlibConstants.BROTLI_MAX_QUALITY,
+                  },
+                })
+              : createGzip({ level: zlibConstants.Z_BEST_COMPRESSION });
+          compressor.on("data", (chunk: Buffer) => {
+            if (chunks) chunks.push(chunk);
+            rawWrite(chunk);
+          });
+          compressor.on("drain", () => res.emit("drain"));
+          compressor.on("end", () => {
+            if (cacheKey && chunks) {
+              if (cache.size >= 64) {
+                const oldest = cache.keys().next().value;
+                if (oldest !== undefined) cache.delete(oldest);
+              }
+              cache.set(cacheKey, { type: contentType, body: Buffer.concat(chunks) });
+            }
+            rawEnd();
+          });
+        };
+
+        res.writeHead = ((statusCode: number, ...args: unknown[]) => {
+          const last = args.length > 0 ? args[args.length - 1] : undefined;
+          if (Array.isArray(last)) {
+            decided = true;
+            return (rawWriteHead as (...a: unknown[]) => unknown)(statusCode, ...args);
+          }
+          if (last && typeof last === "object") {
+            if (last instanceof Headers) {
+              last.forEach((v, k) => res.setHeader(k, v));
+            } else {
+              for (const [k, v] of Object.entries(
+                last as Record<string, string | number | readonly string[]>,
+              )) {
+                res.setHeader(k, v);
+              }
+            }
+          }
+          init(statusCode);
+          return typeof args[0] === "string"
+            ? (rawWriteHead as (s: number, m: string) => unknown)(statusCode, args[0])
+            : rawWriteHead(statusCode);
+        }) as typeof res.writeHead;
+
+        res.write = ((...args: unknown[]) => {
+          init(res.statusCode || 200);
+          if (!compressor) return (rawWrite as (...a: unknown[]) => boolean)(...args);
+          return (compressor.write as (...a: unknown[]) => boolean)(...args);
+        }) as typeof res.write;
+
+        res.end = ((...args: unknown[]) => {
+          init(res.statusCode || 200);
+          if (!compressor) return (rawEnd as (...a: unknown[]) => typeof res)(...args);
+          (compressor.end as (...a: unknown[]) => unknown)(...args);
+          return res;
+        }) as typeof res.end;
+
+        next();
+      });
+    },
+  };
+}
+
 /**
  * Two docs sites, one build: the root holds the latest release (built from its `v*` tag), `/dev/`
  * holds `main`. `base` and `basepath` are wired to `DOCS_BASE`; `import.meta.env.BASE_URL`
@@ -89,6 +221,7 @@ export default defineConfig({
     port: 4321,
   },
   plugins: [
+    devGzip(),
     docsMdx(),
     tailwindcss(),
     tanstackStart({
