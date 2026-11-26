@@ -80,7 +80,7 @@ function Plain(props: {
 function IconPlain(props: {
   icon: IconNode;
   label: string;
-  variant?: "ghost" | "secondary" | "destructive";
+  variant?: "ghost" | "secondary" | "outline" | "destructive";
   size?: IconButtonSize;
   selected?: boolean;
   onPress?: () => void;
@@ -219,6 +219,7 @@ function App() {
           <Plain label="Primary" variant="default" onPress={() => press("primary")} />
           <Plain label="Accent" variant="default" onPress={() => press("accent")} />
           <Plain label="Secondary" onPress={() => press("secondary")} />
+          <Plain label="Outline" variant="outline" onPress={() => press("outline")} />
           <Plain label="Ghost" variant="ghost" onPress={() => press("ghost")} />
           <Plain label="Delete" variant="destructive" onPress={() => press("delete")} />
         </DemoSection>
@@ -264,7 +265,6 @@ function App() {
             }}
           />
           <Plain label="Disabled" variant="default" disabled />
-          <Plain label="Disabled" disabled />
         </DemoSection>
         <DemoSection title="Icon">
           <IconPlain icon={Search} label="Search" onPress={() => press("search")} />

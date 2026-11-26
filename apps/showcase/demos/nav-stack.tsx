@@ -54,9 +54,18 @@ import {
   UrlScheme,
   View,
 } from "nsh";
-import { AlertDialog as NshAlertDialog, type SheetDetent } from "nsh/base";
+import { type SheetDetent } from "nsh/base";
 import { BackHandler } from "nsh/mobile";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/packages/ui/alert-dialog";
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Dialog, DialogContent } from "@/packages/ui/dialog";
@@ -235,8 +244,8 @@ function createRefresh(): Refresh {
 function Appear(props: { index?: number; children: JSX.Element }) {
   const t = createAnimatedValue(0);
   void t.timing(1, {
-    duration: motion.enter.duration,
-    easing: motion.enter.timingFunction,
+    duration: motion.slow.duration,
+    easing: motion.slow.timingFunction,
     delay: Math.min(8, props.index ?? 0) * 40,
   });
   return (
@@ -755,21 +764,10 @@ function Locked(_props: { pop: () => void }) {
 function Unsaved(props: { pop: () => void }) {
   const text = signal("");
   const focused = signal(false);
-  // The platform's box, awaited: `show` resolves with the chosen action's id, so the page acts on
-  // the answer in one place. `AlertDialog`'s parts declare the same box under a root of the page's
-  // own, for an alert that is part of what the page draws.
-  const confirm = () => {
-    void NshAlertDialog.show({
-      title: "Discard your changes?",
-      description: "Your draft will be lost. This cannot be undone.",
-      actions: [
-        { id: "keep", label: "Keep editing", role: "cancel" },
-        { id: "discard", label: "Discard", role: "destructive" },
-      ],
-    }).then(({ action }) => {
-      if (action === "discard") props.pop();
-    });
-  };
+  // The library's box: the page says when it is up, and acts on the chosen action's id in one
+  // place — the same box `show` puts up, under a root of the page's own.
+  const asking = signal(false);
+  const confirm = () => asking.set(true);
   return (
     <NavPage
       title="Unsaved changes"
@@ -825,6 +823,31 @@ function Unsaved(props: { pop: () => void }) {
           </Text>
         </SectionCard>
       </Page>
+      <AlertDialog
+        open={asking()}
+        onOpenChange={({ open }) => asking.set(open)}
+        onAction={({ action }) => {
+          asking.set(false);
+          if (action === "discard") props.pop();
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Discard your changes?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your draft will be lost. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction id="keep" role="cancel">
+              Keep editing
+            </AlertDialogAction>
+            <AlertDialogAction id="discard" role="destructive">
+              Discard
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </NavPage>
   );
 }

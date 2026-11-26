@@ -6,7 +6,7 @@ import { mount, signal, Text, View } from "nsh";
 import { NumberInput, Switch } from "nsh/base";
 
 import { listRow, plainRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
-import { numberInputClasses, numberInputSteps, numberInputText } from "@/packages/ui/number-input";
+import { numberInputLook, numberInputSteps, numberInputText } from "@/packages/ui/number-input";
 import { switchLook } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
@@ -81,7 +81,7 @@ function App() {
               max={10}
               accessibilityLabel="Tickets"
               disabled={disabled()}
-              class={numberInputClasses.frame}
+              {...numberInputLook({ disabled: () => disabled() })}
               inputStyle={[numberInputText(), centered()]}
               {...split()}
             />
@@ -94,7 +94,7 @@ function App() {
               step={0.05}
               accessibilityLabel="Price"
               disabled={disabled()}
-              class={numberInputClasses.frame}
+              {...numberInputLook({ disabled: () => disabled() })}
               inputStyle={numberInputText()}
               {...pair()}
               suffix={
@@ -121,7 +121,7 @@ function App() {
               placeholder="Not set"
               accessibilityLabel="Temperature"
               disabled={disabled()}
-              class={numberInputClasses.frame}
+              {...numberInputLook({ disabled: () => disabled() })}
               inputStyle={[numberInputText(), centered()]}
               {...split()}
             />

@@ -24,7 +24,6 @@ import {
   type IconNode,
 } from "lucide";
 import { keymap, platform, signal, Text, View } from "nsh";
-import { Button } from "nsh/base";
 
 import {
   Command,
@@ -39,6 +38,7 @@ import { fieldLook, fieldSize } from "@/packages/ui/input";
 import { Kbd } from "@/packages/ui/kbd";
 import { Icon } from "@/packages/ui/lib/icons";
 import { backdrop } from "@/packages/ui/lib/popup";
+import { Pressable } from "@/packages/ui/pressable";
 import { Spinner } from "@/packages/ui/spinner";
 
 import { DemoPage } from "../kit";
@@ -237,7 +237,7 @@ function Palette() {
     >
       {/* A search field that opens the palette, as shadcn's: the fields' well and height, a
           muted prompt and the shortcut's key cap at its end. */}
-      <Button
+      <Pressable
         onPress={() => show(true)}
         accessibilityLabel="Search commands"
         class={fieldLook().class}
@@ -259,7 +259,7 @@ function Palette() {
         <If when={desktop}>
           <Kbd>{keymap.label("mod+k")}</Kbd>
         </If>
-      </Button>
+      </Pressable>
       <CaptionRow
         label={`Recent: ${recent()
           .map((id) => actionOf(id)!.item.label)

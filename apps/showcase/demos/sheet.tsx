@@ -18,13 +18,18 @@ import {
 } from "lucide";
 import type { JSX } from "nsh";
 import { safeArea, Scroll, signal, Text, token, View, windowSize } from "nsh";
-import type { OpenChangeReason, SheetDetent } from "nsh/base";
+import type { SheetDetent } from "nsh/base";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
 import { Button, IconButton } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { Sheet, SheetContent, type SheetSide } from "@/packages/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  type SheetOpenChangeReason,
+  type SheetSide,
+} from "@/packages/ui/sheet";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage } from "../kit";
@@ -188,7 +193,7 @@ export function SheetDemo() {
   const wide = wideWindow();
   const changed =
     (name: string, set: (open: boolean) => void) =>
-    ({ open, reason }: { open: boolean; reason: OpenChangeReason }) => {
+    ({ open, reason }: { open: boolean; reason: SheetOpenChangeReason }) => {
       set(open);
       log(`${name} ${open ? "opened" : "closed"} (${reason})`);
     };
@@ -211,7 +216,7 @@ function FilterSheet(props: {
   changed: (
     name: string,
     set: (open: boolean) => void,
-  ) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  ) => (event: { open: boolean; reason: SheetOpenChangeReason }) => void;
 }) {
   const { wide, log, changed } = props;
   const side: Side = wide ? "right" : "bottom";
@@ -348,7 +353,7 @@ function ProfileSheet(props: {
   changed: (
     name: string,
     set: (open: boolean) => void,
-  ) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  ) => (event: { open: boolean; reason: SheetOpenChangeReason }) => void;
 }) {
   const { wide, log, toast, changed } = props;
   const side: Side = wide ? "right" : "bottom";
@@ -481,7 +486,7 @@ function CommentsSheet(props: {
   changed: (
     name: string,
     set: (open: boolean) => void,
-  ) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  ) => (event: { open: boolean; reason: SheetOpenChangeReason }) => void;
 }) {
   const { log, changed } = props;
   const open = signal(false);
@@ -640,7 +645,7 @@ function Drawer(props: {
   changed: (
     name: string,
     set: (open: boolean) => void,
-  ) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  ) => (event: { open: boolean; reason: SheetOpenChangeReason }) => void;
 }) {
   const { log, changed } = props;
   const open = signal(false);

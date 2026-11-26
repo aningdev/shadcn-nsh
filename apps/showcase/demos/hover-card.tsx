@@ -19,12 +19,16 @@ import {
 } from "lucide";
 import type { JSX } from "nsh";
 import { signal, Text, View } from "nsh";
-import type { OpenChangeReason } from "nsh/base";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/packages/ui/hover-card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  type HoverCardOpenChangeReason,
+} from "@/packages/ui/hover-card";
 import { Icon } from "@/packages/ui/lib/icons";
 import type { PopupSide } from "@/packages/ui/lib/popup";
 import { Stat } from "@/packages/ui/stat";
@@ -196,7 +200,7 @@ export function HoverCardDemo() {
   );
   const changed =
     (name: string) =>
-    ({ open, reason }: { open: boolean; reason: OpenChangeReason }) =>
+    ({ open, reason }: { open: boolean; reason: HoverCardOpenChangeReason }) =>
       log(`${name} ${open ? "opened" : "closed"} · ${reason}`);
 
   return (
@@ -215,7 +219,7 @@ function Mention(props: {
   person: Person;
   side?: PopupSide;
   log: (line: string) => void;
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
 }) {
   const { log, changed } = props;
   const following = signal(false);
@@ -365,7 +369,7 @@ function Comment(props: { author: string; when: string; children: JSX.Element })
 
 function Thread(props: {
   log: (line: string) => void;
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
 }) {
   const { log, changed } = props;
   return (
@@ -409,7 +413,7 @@ function Preview(props: {
   site: Site;
   label: string;
   log: (line: string) => void;
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
 }) {
   const { log, changed } = props;
   const site = props.site;
@@ -472,7 +476,7 @@ function Preview(props: {
 
 function Links(props: {
   log: (line: string) => void;
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
 }) {
   const { log, changed } = props;
   return (
@@ -506,7 +510,7 @@ function Links(props: {
 
 function Ticker(props: {
   quote: Quote;
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
 }) {
   const { changed } = props;
   const quote = props.quote;
@@ -640,7 +644,7 @@ function Ticker(props: {
 }
 
 function Tickers(props: {
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
 }) {
   const { changed } = props;
   return (
@@ -661,7 +665,7 @@ function Tickers(props: {
 }
 
 function Delays(props: {
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
 }) {
   const { changed } = props;
   const open = signal("600");
@@ -751,7 +755,7 @@ function Delays(props: {
 }
 
 function Pinned(props: {
-  changed: (name: string) => (event: { open: boolean; reason: OpenChangeReason }) => void;
+  changed: (name: string) => (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
 }) {
   const { changed } = props;
   const open = signal(false);

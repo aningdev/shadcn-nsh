@@ -357,7 +357,7 @@ export function Ticket(props: {
             borderRadius: shape.control,
             borderWidth: 1,
             borderColor: tone(),
-            backgroundColor: props.side() === "buy" ? tints.up : tints.down,
+            backgroundColor: props.side() === "buy" ? tints.up : tints.destructive,
           }}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

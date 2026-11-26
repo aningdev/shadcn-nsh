@@ -5,7 +5,7 @@ import { TimeField } from "nsh/base";
 
 import { calendarLook, TimeSegment } from "@/packages/ui/calendar";
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { timeFieldClass } from "@/packages/ui/time-field";
+import { timeFieldLook } from "@/packages/ui/time-field";
 
 import { DemoSection, DemoPage } from "./kit";
 import { desktop, Log, Panel, Segmented, Split, ui } from "./stage";
@@ -72,7 +72,7 @@ function App() {
                 start.set(value);
                 log(`start → ${value}`);
               }}
-              class={timeFieldClass()}
+              {...timeFieldLook()}
               segmentClass={calendarLook.segmentClass}
               separatorStyle={calendarLook.separator}
               renderSegment={(segment) => <TimeSegment label={segment.label} />}
@@ -88,7 +88,7 @@ function App() {
                 end.set(value);
                 log(`end → ${value}`);
               }}
-              class={timeFieldClass()}
+              {...timeFieldLook()}
               segmentClass={calendarLook.segmentClass}
               separatorStyle={calendarLook.separator}
               renderSegment={(segment) => <TimeSegment label={segment.label} />}
@@ -99,7 +99,7 @@ function App() {
               value="12:00"
               disabled
               accessibilityLabel="Disabled time"
-              class={timeFieldClass()}
+              {...timeFieldLook({ disabled: true })}
               segmentClass={calendarLook.segmentClass}
               separatorStyle={calendarLook.separator}
               renderSegment={(segment) => <TimeSegment label={segment.label} />}

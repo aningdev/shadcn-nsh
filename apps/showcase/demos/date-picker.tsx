@@ -6,12 +6,17 @@
 import { colors, finish, rounded, shape, type Tone } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { platform, signal, Text, View, windowSize } from "nsh";
-import type { DateMatcher, DatePickerValue, DateRangePreset } from "nsh/base";
+import type { DateMatcher, DateRangePreset } from "nsh/base";
 import { DateTimePicker, isAvailable } from "nsh/mobile";
 
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
-import { DatePicker, DatePickerContent, DatePickerTrigger } from "@/packages/ui/date-picker";
+import {
+  DatePicker,
+  DatePickerContent,
+  DatePickerTrigger,
+  type DatePickerValue,
+} from "@/packages/ui/date-picker";
 import {
   controlSize,
   density,

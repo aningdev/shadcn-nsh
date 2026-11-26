@@ -608,8 +608,8 @@ function EditorToolbar() {
               }).style
             }
           >
-            <Icon icon={Code} {...toggleGlyph(false)} />
-            <Text style={{ ...toggleLabel(true), fontSize: 12 }}>
+            <Icon icon={Code} {...toggleGlyph(() => m.menuOpen() === "language")} />
+            <Text style={{ ...toggleLabel(() => m.menuOpen() === "language"), fontSize: 12 }}>
               {LANGUAGES.find((item) => item.value === m.language())!.label}
             </Text>
           </View>

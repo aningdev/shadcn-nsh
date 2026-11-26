@@ -3,10 +3,9 @@ import { Trash2 } from "lucide";
 // Avatar: the official gallery's scene (`references/nsh/examples/gallery/demos/AvatarDemo.tsx`).
 // The picture, the initials and the identity colors are this library's `Avatar`. A stacked row
 // is `AvatarGroup`, the overflow count `AvatarGroupCount`, and the presence mark `AvatarBadge`.
-// A team row is `nsh/base`'s `Button`: the library's `Button` is a filled control, not a list row.
+// A team row is the library's `Pressable`: `Button` is a filled control, not a list row.
 import type { JSX } from "nsh";
 import { reduceMotion, signal, Text, View } from "nsh";
-import { Button } from "nsh/base";
 
 import { avatarPortrait, AVATAR_BROKEN } from "@/apps/website/demos/avatar-data";
 import { photoUrl } from "@/apps/website/demos/photos";
@@ -19,6 +18,7 @@ import {
 } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
 import { Button as UiButton } from "@/packages/ui/button";
+import { Pressable } from "@/packages/ui/pressable";
 
 import { DemoPage } from "../kit";
 import { Choices, pointer, SceneCard } from "./overlays-shared";
@@ -183,7 +183,7 @@ function Team(props: { last: { (): string; set: (value: string) => void } }) {
           {(member, i) => {
             const current = () => presence()[i()];
             return (
-              <Button
+              <Pressable
                 onPress={() => {
                   const next = PRESENCE[(PRESENCE.indexOf(current()) + 1) % PRESENCE.length]!;
                   presence.set(presence().map((value, j) => (j === i() ? next : value)));
@@ -231,7 +231,7 @@ function Team(props: { last: { (): string; set: (value: string) => void } }) {
                   </Text>
                 </View>
                 <Text style={{ fontSize: note, color: presenceColor(current()) }}>{current()}</Text>
-              </Button>
+              </Pressable>
             );
           }}
         </Each>

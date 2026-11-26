@@ -6,7 +6,7 @@ import { Ellipsis, Redo2, Undo2 } from "lucide";
 import { computed, type JSX, mount, signal, Text, View } from "nsh";
 import { Button, Toggle, ToggleGroup, Toolbar, ToolbarGroup, ToolbarSeparator } from "nsh/base";
 
-import { buttonLook } from "@/packages/ui/button";
+import { buttonGlyph, buttonLook } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { toolbarTrack } from "@/packages/ui/lib/tool";
@@ -224,7 +224,10 @@ function App() {
               }}
               {...buttonLook("ghost", { disabled: () => history().length === 0 })}
             >
-              <Icon icon={Undo2} {...toggleGlyph(() => true)} />
+              <Icon
+                icon={Undo2}
+                {...buttonGlyph("ghost", { disabled: () => history().length === 0 })}
+              />
             </Button>
           </ToolbarGroup>
           <ToolbarSeparator style={toolbarRule()} />
@@ -335,7 +338,10 @@ function App() {
                 onPress={undo}
                 {...buttonLook("ghost", { disabled: () => past().length === 0 })}
               >
-                <Icon icon={Undo2} {...toggleGlyph(() => true)} />
+                <Icon
+                  icon={Undo2}
+                  {...buttonGlyph("ghost", { disabled: () => past().length === 0 })}
+                />
               </Button>
               <Button
                 accessibilityLabel="Redo"
@@ -343,7 +349,10 @@ function App() {
                 onPress={redo}
                 {...buttonLook("ghost", { disabled: () => future().length === 0 })}
               >
-                <Icon icon={Redo2} {...toggleGlyph(() => true)} />
+                <Icon
+                  icon={Redo2}
+                  {...buttonGlyph("ghost", { disabled: () => future().length === 0 })}
+                />
               </Button>
             </ToolbarGroup>
             <ToolbarSeparator style={toolbarRule()} />
@@ -355,11 +364,16 @@ function App() {
                   accessibilityState={{ expanded: blockOpen() }}
                   {...toggleLook({ on: blockOpen, text: true })}
                 >
-                  <Text style={{ fontSize: 14, color: colors.foreground }}>
+                  <Text style={{ ...toggleLabel(blockOpen), fontSize: 14 }}>
                     {blocks.find((b) => b.value === doc().block)!.glyph}
                   </Text>
                   {wide() ? <Text style={toggleLabel(blockOpen)}>{doc().block}</Text> : null}
-                  <Text style={{ fontSize: 9, color: colors.faint }}>
+                  <Text
+                    style={{
+                      fontSize: 9,
+                      color: blockOpen() ? toggleLabel(blockOpen).color : colors.faint,
+                    }}
+                  >
                     {blockOpen() ? "▴" : "▾"}
                   </Text>
                 </View>
@@ -487,7 +501,10 @@ function App() {
                       onPress={undo}
                       {...buttonLook("ghost", { disabled: () => past().length === 0 })}
                     >
-                      <Icon icon={Undo2} {...toggleGlyph(() => true)} />
+                      <Icon
+                        icon={Undo2}
+                        {...buttonGlyph("ghost", { disabled: () => past().length === 0 })}
+                      />
                     </Button>
                   </View>
                 </If>
@@ -502,7 +519,10 @@ function App() {
                       onPress={redo}
                       {...buttonLook("ghost", { disabled: () => future().length === 0 })}
                     >
-                      <Icon icon={Redo2} {...toggleGlyph(() => true)} />
+                      <Icon
+                        icon={Redo2}
+                        {...buttonGlyph("ghost", { disabled: () => future().length === 0 })}
+                      />
                     </Button>
                   </View>
                 </If>
@@ -525,10 +545,17 @@ function App() {
                       accessibilityState={{ expanded: overflowBlockOpen() }}
                       {...toggleLook({ on: overflowBlockOpen })}
                     >
-                      <Text style={{ fontSize: 14, color: colors.foreground }}>
+                      <Text style={{ ...toggleLabel(overflowBlockOpen), fontSize: 14 }}>
                         {blocks.find((b) => b.value === doc().block)!.glyph}
                       </Text>
-                      <Text style={{ fontSize: 9, color: colors.faint }}>
+                      <Text
+                        style={{
+                          fontSize: 9,
+                          color: overflowBlockOpen()
+                            ? toggleLabel(overflowBlockOpen).color
+                            : colors.faint,
+                        }}
+                      >
                         {overflowBlockOpen() ? "▴" : "▾"}
                       </Text>
                     </View>

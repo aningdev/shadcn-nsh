@@ -34,7 +34,7 @@ import {
   untracked,
   View,
 } from "nsh";
-import { Button as BaseButton, type CommandItem, Input as BaseInput, Toolbar } from "nsh/base";
+import { type CommandItem, Input as BaseInput } from "nsh/base";
 import {
   currentWindow,
   isAvailable,
@@ -53,7 +53,7 @@ import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
 import { PopIn } from "@/packages/ui/lib/popup";
 import { plainRow } from "@/packages/ui/lib/surface";
-import { toolbarTrack } from "@/packages/ui/lib/tool";
+import { Pressable } from "@/packages/ui/pressable";
 import { Progress } from "@/packages/ui/progress";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Stat } from "@/packages/ui/stat";
@@ -61,6 +61,7 @@ import { Status } from "@/packages/ui/status";
 import { Switch } from "@/packages/ui/switch";
 import { TitleBar, WindowControls, WindowResizeEdges } from "@/packages/ui/title-bar";
 import { toast, Toaster } from "@/packages/ui/toast";
+import { Toolbar } from "@/packages/ui/toolbar";
 
 import { DemoPage } from "../kit";
 import { Tip } from "./actions-shared";
@@ -205,7 +206,7 @@ function Tool(props: {
   onPress: () => void;
 }) {
   return (
-    <BaseButton
+    <Pressable
       accessibilityLabel={props.label}
       selected={props.on}
       tooltip={<Tip label={props.label} shortcut={props.shortcut} />}
@@ -224,7 +225,7 @@ function Tool(props: {
       focusVisibleStyle={{ outlineColor: colors.brand, outlineWidth: 2, outlineOffset: 1 }}
     >
       <Icon icon={props.icon} size={15} tint={props.on ? colors.brand : colors.mutedForeground} />
-    </BaseButton>
+    </Pressable>
   );
 }
 
@@ -274,7 +275,7 @@ function Draft() {
           <Text style={{ fontSize: 13, color: colors.foreground }}>Open document</Text>
         </Button>
         <View style={{ flex: 1 }} />
-        <Toolbar accessibilityLabel="Window tools" style={toolbarTrack()}>
+        <Toolbar accessibilityLabel="Window tools">
           <Tool
             icon={PanelLeft}
             label="Inspector"
@@ -348,7 +349,7 @@ function WindowRow(props: { win: WindowRef; first: boolean }) {
           borderTopColor: colors.line,
         }}
       >
-        <BaseButton
+        <Pressable
           testID={`window-${props.win.id}`}
           accessibilityLabel={`${info().title()}, ${state().label}`}
           onPress={() => props.win.focus()}
@@ -389,7 +390,7 @@ function WindowRow(props: { win: WindowRef; first: boolean }) {
             </Text>
           </View>
           <Status label={state().label} tone={state().tone} />
-        </BaseButton>
+        </Pressable>
         {/* A lane of its own, so every row's chip keeps one column. */}
         <View style={{ width: pointer ? 28 : 40, alignItems: "center" }}>
           <If when={!props.win.main}>
@@ -994,7 +995,7 @@ function DocumentWindow() {
           <Icon icon={Download} size={13} tint={colors.foreground} />
           <Text style={{ fontSize: 13, color: colors.foreground }}>Export</Text>
         </Button>
-        <BaseButton
+        <Pressable
           accessibilityLabel="Inspector"
           selected={inspectorOpen()}
           tooltip={<Tip label="Inspector" shortcut="mod+alt+i" />}
@@ -1013,7 +1014,7 @@ function DocumentWindow() {
             size={15}
             tint={inspectorOpen() ? colors.brand : colors.mutedForeground}
           />
-        </BaseButton>
+        </Pressable>
         <If when={!mac}>
           <View style={{ width: 4 }} />
           <WindowControls variant="caption" />

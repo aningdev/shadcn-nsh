@@ -5,8 +5,16 @@ import { Check } from "lucide";
 import { type Accessor, signal } from "nsh";
 import { Storage } from "nsh";
 import { Text, View } from "nsh";
-import { AlertDialog } from "nsh/base";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/packages/ui/alert-dialog";
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
@@ -165,18 +173,9 @@ export function StorageDemo() {
     );
   };
 
+  /** Whether the page is asking before it clears what it keeps. */
+  const asking = signal(false);
   const clearAll = async () => {
-    const { action } = await AlertDialog.show({
-      title: "Clear the storage?",
-      description: "Removes every key the app keeps, the launch count and the note among them.",
-      actions: [
-        { label: "Cancel", role: "cancel", id: "cancel" },
-        { label: "Clear", role: "destructive", id: "clear" },
-      ],
-      closeOnEscape: true,
-      closeOnBackdropPress: true,
-    });
-    if (action !== "clear") return;
     try {
       await Storage.clear();
     } catch {
@@ -192,7 +191,32 @@ export function StorageDemo() {
     <DemoPage title="Storage">
       <Launches launches={launches} />
       <NoteCard note={note} saved={saved} onWrite={write} />
-      <Keys entries={entries} onClear={() => void clearAll()} />
+      <Keys entries={entries} onClear={() => asking.set(true)} />
+      <AlertDialog
+        open={asking()}
+        onOpenChange={({ open }) => asking.set(open)}
+        onAction={({ action }) => {
+          asking.set(false);
+          if (action === "clear") void clearAll();
+        }}
+      >
+        <AlertDialogContent closeOnEscape closeOnBackdropPress>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clear the storage?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Removes every key the app keeps, the launch count and the note among them.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction id="cancel" role="cancel">
+              Cancel
+            </AlertDialogAction>
+            <AlertDialogAction id="clear" role="destructive">
+              Clear
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DemoPage>
   );
 }

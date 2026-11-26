@@ -3,7 +3,7 @@
 import { ArrowLeft, ArrowRight } from "lucide";
 import { mount, Text, View } from "nsh";
 
-import { Button, buttonLabel } from "@/packages/ui/button";
+import { Button, buttonGlyph, buttonLabel } from "@/packages/ui/button";
 import { buttonGroupLook } from "@/packages/ui/button-group";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Separator } from "@/packages/ui/separator";
@@ -21,44 +21,62 @@ function App() {
       <DemoCard>
         <DemoSection title="A row">
           <View role="group" style={[buttonGroupLook().root("horizontal")]}>
-            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "first")]}>
-              <Icon icon={ArrowLeft} size={14} tint={ui().text} />
-              <Text style={buttonLabel("secondary")}>Back</Text>
+            <Button
+              variant="outline"
+              icon={ArrowLeft}
+              style={[buttonGroupLook().item("horizontal", "first")]}
+            >
+              Back
             </Button>
-            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "middle")]}>
-              <Text style={buttonLabel("secondary")}>Archive</Text>
+            <Button variant="outline" style={[buttonGroupLook().item("horizontal", "middle")]}>
+              Archive
             </Button>
-            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "last")]}>
-              <Text style={buttonLabel("secondary")}>Next</Text>
-              <Icon icon={ArrowRight} size={14} tint={ui().text} />
+            <Button variant="outline" style={[buttonGroupLook().item("horizontal", "last")]}>
+              <Text style={buttonLabel("outline")}>Next</Text>
+              <Icon icon={ArrowRight} {...buttonGlyph("outline")} />
             </Button>
           </View>
         </DemoSection>
 
         <DemoSection title="A column">
           <View role="group" style={[buttonGroupLook().root("vertical")]}>
-            <Button variant="secondary" style={[buttonGroupLook().item("vertical", "first")]}>
-              <Text style={buttonLabel("secondary")}>Copy the path</Text>
+            <Button variant="outline" style={[buttonGroupLook().item("vertical", "first")]}>
+              Copy the path
             </Button>
-            <Button variant="secondary" style={[buttonGroupLook().item("vertical", "middle")]}>
-              <Text style={buttonLabel("secondary")}>Open in a new window</Text>
+            <Button variant="outline" style={[buttonGroupLook().item("vertical", "middle")]}>
+              Open in a new window
             </Button>
-            <Button variant="secondary" style={[buttonGroupLook().item("vertical", "last")]}>
-              <Text style={buttonLabel("secondary")}>Reveal in the file manager</Text>
+            <Button variant="outline" style={[buttonGroupLook().item("vertical", "last")]}>
+              Reveal in the file manager
             </Button>
           </View>
         </DemoSection>
 
-        <DemoSection title="A word and a divider">
+        <DemoSection title="With a separator">
+          <View role="group" style={[buttonGroupLook().root("horizontal")]}>
+            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "first")]}>
+              Cut
+            </Button>
+            <Separator orientation="vertical" style={buttonGroupLook().separator()} />
+            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "middle")]}>
+              Copy
+            </Button>
+            <Separator orientation="vertical" style={buttonGroupLook().separator()} />
+            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "last")]}>
+              Paste
+            </Button>
+          </View>
+        </DemoSection>
+
+        <DemoSection title="With a text addon">
           <View role="group" style={[buttonGroupLook().root("horizontal")]}>
             <View
               style={[buttonGroupLook().textFrame(), buttonGroupLook().item("horizontal", "first")]}
             >
               <Text style={[buttonGroupLook().text()]}>Path</Text>
             </View>
-            <Separator orientation="vertical" />
-            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "last")]}>
-              <Text style={buttonLabel("secondary")}>Copy</Text>
+            <Button variant="outline" style={[buttonGroupLook().item("horizontal", "last")]}>
+              Copy
             </Button>
           </View>
         </DemoSection>

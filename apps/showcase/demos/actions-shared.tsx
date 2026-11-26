@@ -14,8 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/packages/ui/card";
-import { TooltipContent } from "@/packages/ui/tooltip";
-import { tooltipNote, tooltipText } from "@/packages/ui/tooltip";
+import { TooltipContent, tooltipNote, tooltipTextStyle } from "@/packages/ui/tooltip";
 
 /**
  * A card of the gallery's shape: a title and a quieter subtitle, a slot on the trailing edge of
@@ -64,7 +63,7 @@ export function Tip(props: { label: string; shortcut?: string }) {
   return (
     <TooltipContent>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-        <Text class={tooltipText}>{props.label}</Text>
+        <Text style={tooltipTextStyle()}>{props.label}</Text>
         <If when={props.shortcut}>
           <Text style={tooltipNote()}>{props.shortcut}</Text>
         </If>

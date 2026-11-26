@@ -31,10 +31,10 @@ import {
   Text,
   View,
 } from "nsh";
-import { Button as BaseButton } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
+import { Pressable } from "@/packages/ui/pressable";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 
 import { DemoPage } from "../kit";
@@ -226,7 +226,7 @@ function PresetTile(props: { name: MotionName; tone: string; onPlay: (status: st
     void m.play("fadeIn", { duration: 220 });
   };
   return (
-    <BaseButton
+    <Pressable
       onPress={() => void press()}
       accessibilityLabel={props.name}
       style={{
@@ -289,7 +289,7 @@ function PresetTile(props: { name: MotionName; tone: string; onPlay: (status: st
           {props.name}
         </Text>
       </View>
-    </BaseButton>
+    </Pressable>
   );
 }
 
@@ -589,7 +589,7 @@ function Keyframes() {
           <Code>steps(12)</Code>
         </View>
         <View style={{ alignItems: "center", gap: 8 }}>
-          <BaseButton
+          <Pressable
             onPress={() => void like()}
             accessibilityLabel={liked() ? "Unlike" : "Like"}
             style={{ borderRadius: MOON / 2 }}
@@ -610,7 +610,7 @@ function Keyframes() {
                 <Icon icon={Star} size={24} tint={liked() ? colors.warn : colors.mutedForeground} />
               </View>
             </View>
-          </BaseButton>
+          </Pressable>
           <View
             style={{
               pointerEvents: "none",
