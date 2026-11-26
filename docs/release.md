@@ -96,6 +96,12 @@ git push origin vX.Y.Z
 
 站点地址的 base 只有一个入口：构建时的 `DOCS_BASE`（`apps/website/vite.config.ts`）。Vite 的 `base`、TanStack Router 的 `basepath` 与代码里的 `import.meta.env.BASE_URL` 都从它来；页面里写的站点路径过 `sitePath()`（`apps/website/src/lib/base.ts`）。换成项目页地址（没有自定义域名）时，它应是 `/shadcn-nsh/` 与 `/shadcn-nsh/dev/`：改 `deploy-docs.yml` 里两处 `base` 即可。
 
+**环境设置（一次性）**：`github-pages` 环境的 Deployment branches and tags 必须是 "Selected branches and tags"，同时含分支 `main` 与标签 `v*`。默认只允许 `main`，标签推送会在 `deploy` 一上来就被拒：`Tag "vX.Y.Z" is not allowed to deploy to github-pages due to environment protection rules.`（`build` 已经跑完并推了 `site` 分支，只有部署没发生）。补上标签规则后重跑该 run 的失败作业即可，不必重建。命令：
+
+```sh
+gh api -X POST repos/$GITHUB_REPOSITORY/environments/github-pages/deployment-branch-policies -f name='v*' -f type='tag'
+```
+
 **一次性引导**：换到这套之前，根上是旧的 `main` 构建。合并后手动跑一次 `Deploy docs`，`ref` 填 `v0.9.0`，根就变成 0.9.0 的文档，`dev/` 保持 `main`；之后不用再手动跑。
 
 ## 9 发完之后
