@@ -23,11 +23,11 @@ export const finishes: ThemeFinishes = {
       "border-color": "{input}",
       foreground: "{foreground}",
     },
-    // iOS 26's segmented track: a capsule on the card layer, a hairline edge and a soft drop shadow.
+    // Apple segmented control track: a recessed system fill groove, no border or drop shadow.
     channel: {
-      background: "{card}",
-      "border-color": "{border}",
-      shadow: "{shadow.sm}",
+      background: "{raised}",
+      "border-color": "transparent",
+      shadow: "{shadow.inset}",
       foreground: "{foreground}",
     },
     raised: {
@@ -54,7 +54,7 @@ export const finishes: ThemeFinishes = {
     },
     modal: {
       background: "{card}",
-      "border-color": "{border}",
+      "border-color": "transparent",
       shadow: "{shadow.xl}",
       foreground: "{foreground}",
     },
@@ -78,7 +78,7 @@ export const finishes: ThemeFinishes = {
       "border-bottom-color": "transparent",
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
-      "pressed-opacity": 0.88,
+      "pressed-opacity": 0.72,
     },
     fill: {
       background: "{primary}",
@@ -103,7 +103,6 @@ export const finishes: ThemeFinishes = {
       foreground: "{foreground}",
     },
     pressed: {
-      background: "{muted}",
       "border-color": "transparent",
       shadow: "{shadow.inset}",
       foreground: "{foreground}",
@@ -120,22 +119,25 @@ export const finishes: ThemeFinishes = {
     overlay: { background: "oklch(from {popover} l c h / 0.72)" },
     inverse: { background: "oklch(from {inverse} l c h / 0.72)" },
     glass: { background: "oklch(from {popover} l c h / 0.72)" },
+    pressed: { background: "oklch(from {foreground} l c h / 0.16)" },
   },
   dark: {
+    channel: { background: "{inset}" },
     raised: { background: "oklch(from {raised} l c h / 0.72)" },
     plate: { background: "{raised}" },
     overlay: { background: "oklch(from {popover} l c h / 0.72)" },
     inverse: { background: "oklch(from {inverse} l c h / 0.72)" },
     glass: { background: "oklch(from {popover} l c h / 0.72)" },
+    pressed: { background: "oklch(from {foreground} l c h / 0.2)" },
   },
 };
 
 export const shadows: ThemeShadowScale = {
   light: {
-    sm: "0px 1px 3px 0px oklch(0 0 0 / 0.2)",
+    sm: "0px 1px 2px 0px oklch(0 0 0 / 0.12)",
     md: "none",
-    lg: "0px 0px 0px 0.5px oklch(0 0 0 / 0.08), 0px 8px 30px 0px oklch(0 0 0 / 0.14)",
-    xl: "0px 0px 0px 0.5px oklch(0 0 0 / 0.08), 0px 8px 30px 0px oklch(0 0 0 / 0.14)",
+    lg: "0px 0px 0px 0.5px oklch(0 0 0 / 0.08), 0px 8px 24px 0px oklch(0 0 0 / 0.14)",
+    xl: "0px 0px 0px 0.5px oklch(0 0 0 / 0.08), 0px 18px 48px 0px oklch(0 0 0 / 0.2)",
     inset: "none",
     edge: {
       surface: "0px 0px 0px 0.5px oklch(0 0 0 / 0.08)",
@@ -143,10 +145,10 @@ export const shadows: ThemeShadowScale = {
     },
   },
   dark: {
-    sm: "0px 1px 3px 0px oklch(0 0 0 / 0.2)",
+    sm: "0px 1px 2px 0px oklch(0 0 0 / 0.2)",
     md: "none",
-    lg: "0px 0px 0px 0.5px oklch(1 0 0 / 0.1), 0px 8px 30px 0px oklch(0 0 0 / 0.4)",
-    xl: "0px 0px 0px 0.5px oklch(1 0 0 / 0.1), 0px 8px 30px 0px oklch(0 0 0 / 0.4)",
+    lg: "0px 0px 0px 0.5px oklch(1 0 0 / 0.1), 0px 8px 24px 0px oklch(0 0 0 / 0.38)",
+    xl: "0px 0px 0px 0.5px oklch(1 0 0 / 0.1), 0px 18px 48px 0px oklch(0 0 0 / 0.5)",
     inset: "none",
     edge: {
       surface: "0px 0px 0px 0.5px oklch(1 0 0 / 0.1)",

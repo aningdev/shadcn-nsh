@@ -1,96 +1,35 @@
 {
   "typography": {
     "caption": {
-      "fontSize": {
-        "pointer": 11,
-        "touch": 12
-      },
-      "lineHeight": {
-        "pointer": 16,
-        "touch": 16
-      },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "detail": {
-      "fontSize": {
-        "pointer": 12,
-        "touch": 13
-      },
-      "lineHeight": {
-        "pointer": 16,
-        "touch": 20
-      },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "body": {
-      "fontSize": {
-        "pointer": 13,
-        "touch": 15
-      },
-      "lineHeight": {
-        "pointer": 20,
-        "touch": 20
-      },
       "fontWeight": 400,
       "letterSpacing": 0
     },
     "label": {
-      "fontSize": {
-        "pointer": 14,
-        "touch": 15
-      },
-      "lineHeight": {
-        "pointer": 20,
-        "touch": 20
-      },
       "fontWeight": 500,
       "letterSpacing": 0
     },
     "title": {
-      "fontSize": {
-        "pointer": 16,
-        "touch": 16
-      },
-      "lineHeight": {
-        "pointer": 24,
-        "touch": 24
-      },
       "fontWeight": 600,
       "letterSpacing": 0
     },
     "headline": {
-      "fontSize": {
-        "pointer": 20,
-        "touch": 22
-      },
-      "lineHeight": {
-        "pointer": 28,
-        "touch": 28
-      },
       "fontWeight": 600,
       "letterSpacing": 0
     },
     "display": {
-      "fontSize": {
-        "pointer": 26,
-        "touch": 28
-      },
-      "lineHeight": {
-        "pointer": 32,
-        "touch": 36
-      },
       "fontWeight": 600,
       "letterSpacing": 0
     }
   },
   "dimension": {
-    "shape": {
-      "control": "{radius-control}",
-      "container": "{radius-container}",
-      "modal": "{radius-modal}"
-    },
     "size": {
       "hit": {
         "pointer": 0,
@@ -119,15 +58,11 @@
       "control": {
         "pointer": {
           "padding": 8,
-          "gap": 8,
-          "dot": 6,
-          "switch": "small"
+          "gap": 8
         },
         "touch": {
           "padding": 8,
-          "gap": 8,
-          "dot": 8,
-          "switch": "regular"
+          "gap": 8
         }
       },
       "height": {
@@ -165,255 +100,328 @@
       }
     }
   },
-  "slots": {
-    "button.corner.sm": "control",
-    "button.corner.md": "control",
-    "button.corner.lg": "control",
-    "button.selected.face": {
-      "finish": "accent"
-    },
-    "button.selected.ink": {
-      "colour": "primaryForeground"
-    },
-    "button.secondary.face": {
-      "finish": "raised"
-    },
-    "button.secondary.ink": {
-      "colour": "foreground"
-    },
-    "button.secondary.edge": {
-      "finish": "raised",
-      "field": "borderColor"
-    },
-    "button.secondary.shade": "raised",
-    "button.secondary.hover": {
-      "finish": "hover"
-    },
-    "button.destructive.face": {
-      "tint": "destructive"
-    },
-    "button.destructive.ink": {
-      "colour": "destructive"
-    },
-    "button.destructive.edge": {
-      "colour": "destructive",
-      "alpha": 0.32
-    },
-    "button.destructive.shade": "raised",
-    "field.face": {
-      "colour": "field"
-    },
-    "field.shade": "inset",
-    "field.edge.width": "control",
-    "field.edge.sides": true,
-    "field.edge.colour": {
-      "colour": "input"
-    },
-    "field.edge.bottom": {
-      "colour": "input"
-    },
-    "field.corner.top": "control",
-    "field.corner.bottom": "control",
-    "field.focus.line": false,
-    "field.focus.width": 3,
-    "field.disabled.face": "keep",
-    "choice.size": {
-      "pointer": 16,
-      "touch": 22
-    },
-    "choice.box": {
-      "pointer": 16,
-      "touch": 20
-    },
-    "choice.corner": {
-      "pointer": 5,
-      "touch": 7
-    },
-    "choice.face": {
-      "light": {
-        "colour": "field"
+  "controls": {
+    "button": {
+      "corner": {
+        "sm": "control",
+        "md": "control",
+        "lg": "control"
       },
-      "dark": {
-        "colour": "input",
-        "alpha": 0.3
+      "selected": {
+        "face": {
+          "finish": "accent"
+        },
+        "ink": {
+          "color": "primary-foreground"
+        }
+      },
+      "secondary": {
+        "face": {
+          "finish": "raised"
+        },
+        "ink": {
+          "color": "foreground"
+        },
+        "edge": {
+          "finish": "raised",
+          "field": "borderColor"
+        },
+        "hover": {
+          "finish": "hover"
+        }
+      },
+      "outline": {
+        "edge": {
+          "color": "border"
+        }
+      },
+      "destructive": {
+        "edge": "none"
+      },
+      "shade": "raised"
+    },
+    "badge": {
+      "corner": "control"
+    },
+    "field": {
+      "edge": {
+        "sides": true,
+        "color": {
+          "color": "input"
+        },
+        "bottom": {
+          "color": "input"
+        }
+      },
+      "corner": {
+        "bottom": "control"
+      },
+      "focus": {
+        "line": false,
+        "width": 3,
+        "color": {
+          "color": "ring"
+        }
+      },
+      "disabled": {
+        "face": "keep"
       }
     },
-    "choice.shade": "inset",
-    "choice.edge.width": 1,
-    "choice.edge.colour": {
-      "light": {
-        "colour": "input"
+    "choice": {
+      "size": {
+        "pointer": 16,
+        "touch": 22
       },
-      "dark": {
-        "colour": "foreground",
-        "alpha": 0.2
+      "box": {
+        "pointer": 16,
+        "touch": 20
+      },
+      "corner": {
+        "pointer": 5,
+        "touch": 7
+      },
+      "face": {
+        "light": {
+          "color": "field"
+        },
+        "dark": {
+          "color": "input",
+          "alpha": 0.3
+        }
+      },
+      "shade": "inset",
+      "edge": {
+        "width": 1,
+        "color": {
+          "light": {
+            "color": "input"
+          },
+          "dark": {
+            "color": "foreground",
+            "alpha": 0.2
+          }
+        },
+        "disabled": {
+          "light": {
+            "color": "input"
+          },
+          "dark": {
+            "color": "foreground",
+            "alpha": 0.4
+          }
+        }
+      },
+      "checked": {
+        "face": {
+          "finish": "accent"
+        }
+      },
+      "radio": {
+        "checked": {
+          "face": {
+            "finish": "accent"
+          },
+          "edge": "none"
+        }
+      },
+      "mark": {
+        "size": {
+          "pointer": 6,
+          "touch": 8
+        },
+        "hover": "none",
+        "pressed": "none"
+      },
+      "halo": "none"
+    },
+    "switch": {
+      "track": {
+        "pointer": [
+          36,
+          20
+        ],
+        "touch": [
+          44,
+          24
+        ]
+      },
+      "small": {
+        "track": {
+          "pointer": [
+            28,
+            16
+          ],
+          "touch": [
+            36,
+            20
+          ]
+        },
+        "knob": {
+          "pointer": 12,
+          "touch": 16
+        }
+      },
+      "edge": {
+        "off": 1,
+        "on": 1,
+        "color": {
+          "color": "border"
+        }
+      },
+      "knob": {
+        "size": {
+          "pointer": 16,
+          "touch": 20
+        },
+        "on": "same",
+        "hover": "same",
+        "pressed": "same"
       }
     },
-    "choice.edge.disabled": {
-      "light": {
-        "colour": "input"
+    "slider": {
+      "rail": {
+        "pointer": 6,
+        "touch": 8
       },
-      "dark": {
-        "colour": "foreground",
-        "alpha": 0.4
+      "band": {
+        "pointer": 20,
+        "touch": 32
+      },
+      "face": {
+        "color": "track"
+      },
+      "shade": "inset",
+      "edge": {
+        "color": {
+          "color": "border"
+        },
+        "width": "control"
+      },
+      "knob": {
+        "size": {
+          "pointer": 14,
+          "touch": 20
+        },
+        "pressed": {
+          "pointer": 14,
+          "touch": 32
+        },
+        "face": {
+          "finish": "knob"
+        },
+        "edge": "none"
+      },
+      "mark": {
+        "size": 0,
+        "hover": 0,
+        "pressed": 0
+      },
+      "brightens": true
+    },
+    "progress": {
+      "height": 6,
+      "line": 0,
+      "face": {
+        "color": "track"
+      },
+      "shade": "inset",
+      "edge": {
+        "color": {
+          "color": "border"
+        },
+        "width": "control"
       }
     },
-    "choice.checked.face": {
-      "finish": "accent"
+    "calendar": {
+      "today": {
+        "face": {
+          "color": "foreground",
+          "alpha": 0.08
+        },
+        "ink": {
+          "color": "foreground"
+        }
+      }
     },
-    "choice.mark.size": {
-      "pointer": 6,
-      "touch": 8
+    "spinner": {
+      "opacity": 0.25,
+      "spokes": false
     },
-    "choice.mark.hover": "none",
-    "choice.mark.pressed": "none",
-    "choice.halo": "none",
-    "switch.width": {
-      "pointer": 36,
-      "touch": 44
+    "popup": {
+      "corner": "container"
     },
-    "switch.height": {
-      "pointer": 20,
-      "touch": 24
+    "tooltip": {
+      "face": {
+        "finish": "inverse"
+      },
+      "ink": {
+        "finish": "inverse",
+        "field": "foreground"
+      },
+      "edge": {
+        "finish": "inverse",
+        "field": "borderColor"
+      },
+      "shade": "inverse"
     },
-    "switch.small.width": {
-      "pointer": 28,
-      "touch": 36
+    "toast": {
+      "action": {
+        "face": {
+          "finish": "accent"
+        }
+      }
     },
-    "switch.small.height": {
-      "pointer": 16,
-      "touch": 20
+    "list": {
+      "item": {
+        "highlight": {
+          "tint": "brand"
+        },
+        "edge": {
+          "color": "brand",
+          "alpha": 0.3
+        }
+      }
     },
-    "switch.small.knob.width": {
-      "pointer": 12,
-      "touch": 16
+    "menubar": {
+      "bar": {
+        "finish": "card"
+      }
     },
-    "switch.small.knob.height": {
-      "pointer": 12,
-      "touch": 16
+    "tabs": {
+      "track": {
+        "face": {
+          "color": "inset"
+        },
+        "edge": {
+          "color": "border"
+        },
+        "corner": "full"
+      }
     },
-    "switch.edge.off": 1,
-    "switch.edge.on": 1,
-    "switch.knob.width": {
-      "pointer": 16,
-      "touch": 20
+    "well": {
+      "edge": {
+        "color": "border"
+      }
     },
-    "switch.knob.height": {
-      "pointer": 16,
-      "touch": 20
-    },
-    "switch.knob.on.width": {
-      "pointer": 16,
-      "touch": 20
-    },
-    "switch.knob.on.height": {
-      "pointer": 16,
-      "touch": 20
-    },
-    "switch.knob.hover": {
-      "pointer": 16,
-      "touch": 20
-    },
-    "switch.knob.pressed.width": {
-      "pointer": 16,
-      "touch": 20
-    },
-    "switch.knob.pressed.height": {
-      "pointer": 16,
-      "touch": 20
-    },
-    "switch.feedback": "none",
-    "slider.rail": {
-      "pointer": 6,
-      "touch": 8
-    },
-    "slider.band": {
-      "pointer": 20,
-      "touch": 32
-    },
-    "slider.vertical": {
-      "pointer": 128,
-      "touch": 144
-    },
-    "slider.face": {
-      "colour": "track"
-    },
-    "slider.shade": "inset",
-    "slider.edge.colour": {
-      "colour": "border"
-    },
-    "slider.edge.width": "control",
-    "slider.knob.size": {
-      "pointer": 14,
-      "touch": 20
-    },
-    "slider.knob.height": {
-      "pointer": 14,
-      "touch": 20
-    },
-    "slider.knob.pressed.size": {
-      "pointer": 14,
-      "touch": 32
-    },
-    "slider.knob.face": {
-      "finish": "knob"
-    },
-    "slider.mark.size": 0,
-    "slider.mark.hover": 0,
-    "slider.mark.pressed": 0,
-    "slider.brightens": true,
-    "progress.height": 6,
-    "progress.line": 0,
-    "progress.face": {
-      "colour": "track"
-    },
-    "progress.shade": "inset",
-    "progress.edge.colour": {
-      "colour": "border"
-    },
-    "progress.edge.width": "control",
-    "calendar.today.face": {
-      "colour": "foreground",
-      "alpha": 0.08
-    },
-    "calendar.today.ink": "foreground",
-    "spinner.opacity": 0.25,
-    "spinner.spokes": false,
-    "popup.corner": "container",
-    "tabs.track.face": {
-      "colour": "inset"
-    },
-    "well.edge": {
-      "colour": "border"
-    },
-    "state.disabled.face": "keep",
-    "state.disabled.ink": "keep",
-    "state.disabled.edge": "keep"
+    "disabled": {
+      "face": "keep",
+      "ink": "keep",
+      "edge": "keep"
+    }
   },
   "shape": {
-    "curve": "continuous",
-    "corners": {
-      "button": "{radius-control}"
-    }
+    "curve": "continuous"
   },
   "state": {
     "press-scale": 1,
     "overlay": {
       "hover": 0,
-      "focus": 0,
-      "pressed": 0,
-      "dragged": 0
+      "pressed": 0
     },
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
     "disabled": {
       "content": 0.5
-    }
-  },
-  "transition": {
-    "enter": {
-      "duration": 420,
-      "timingFunction": "out-cubic"
     }
   },
   "motion": {
@@ -445,7 +453,6 @@
       "inset": {
         "foreground": "{foreground}",
         "border-color": "{border}",
-        "border-top-color": null,
         "border-bottom-color": null
       },
       "channel": {

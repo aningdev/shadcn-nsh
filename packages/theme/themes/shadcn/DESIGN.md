@@ -25,11 +25,11 @@ colors:
     border: "#e5e5e5"
     input: "#e5e5e5"
     ring: "#a1a1a1"
-    chart-1: "#d4d4d4"
-    chart-2: "#737373"
-    chart-3: "#525252"
-    chart-4: "#404040"
-    chart-5: "#262626"
+    chart-1: "#f54900"
+    chart-2: "#009689"
+    chart-3: "#104e64"
+    chart-4: "#ffb900"
+    chart-5: "#fe9a00"
     sidebar: "#fafafa"
     sidebar-foreground: "#0a0a0a"
     sidebar-primary: "#171717"
@@ -47,20 +47,19 @@ colors:
     brand: "#171717"
     brand-edge: "#e5e5e5"
     focus-inner: "#ffffff"
-    track: "#f5f5f5"
+    track: "#e5e5e5"
     knob: "#ffffff"
-    info: "#737373"
-    warn: "#525252"
-    up: "#404040"
+    info: "#155dfc"
+    warn: "#bb4d00"
+    up: "#007a55"
     brand-tint: "#1717171a"
     inverse: "#ffffff"
     inverse-foreground: "#0a0a0a"
     inverse-brand: "#fafafa"
-    info-tint: "#7373731a"
-    warn-tint: "#5252521a"
+    info-tint: "#155dfc1a"
+    warn-tint: "#bb4d001a"
     destructive-tint: "#e7000b1a"
-    up-tint: "#4040401a"
-    down-tint: "#e7000b1a"
+    up-tint: "#007a551a"
   dark:
     background: "#0a0a0a"
     foreground: "#fafafa"
@@ -80,11 +79,11 @@ colors:
     border: "#ffffff1a"
     input: "#ffffff26"
     ring: "#737373"
-    chart-1: "#d4d4d4"
-    chart-2: "#737373"
-    chart-3: "#525252"
-    chart-4: "#404040"
-    chart-5: "#262626"
+    chart-1: "#1447e6"
+    chart-2: "#00bc7d"
+    chart-3: "#fe9a00"
+    chart-4: "#ad46ff"
+    chart-5: "#ff2056"
     sidebar: "#171717"
     sidebar-foreground: "#fafafa"
     sidebar-primary: "#e5e5e5"
@@ -102,20 +101,19 @@ colors:
     brand: "#e5e5e5"
     brand-edge: "#ffffff1a"
     focus-inner: "#171717"
-    track: "#262626"
+    track: "#333333"
     knob: "#fafafa"
-    info: "#a1a1a1"
-    warn: "#d4d4d4"
-    up: "#e5e5e5"
+    info: "#51a2ff"
+    warn: "#ffb900"
+    up: "#00d492"
     brand-tint: "#e5e5e51a"
     inverse: "#171717"
     inverse-foreground: "#fafafa"
     inverse-brand: "#171717"
-    info-tint: "#a1a1a11a"
-    warn-tint: "#d4d4d41a"
+    info-tint: "#51a2ff1a"
+    warn-tint: "#ffb9001a"
     destructive-tint: "#ff64671a"
-    up-tint: "#e5e5e51a"
-    down-tint: "#ff64671a"
+    up-tint: "#00d4921a"
 typography:
   caption:
     fontSize: 11px
@@ -167,7 +165,6 @@ spacing:
   control:
     padding: 8px
     gap: 8px
-    dot: 6px
   height:
     sm: 24px
     md: 28px
@@ -183,10 +180,6 @@ spacing:
     md: 16px
     lg: 20px
 motion:
-  enter:
-    duration: 420ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
   fast:
     duration: 150ms
     delay: 0ms
@@ -323,7 +316,7 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`raised`** (light `#f5f5f5`, dark `#262626`): Raised control surface resting on a card.
 - **`field`** (light `#ffffff`, dark `#ffffff0b`): Input well surface below card and inset layers.
 - **`hover`** (light `#f5f5f5`, dark `#262626`): Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.
-- **`track`** (light `#f5f5f5`, dark `#262626`): Inactive track background for switches, sliders, and progress bars.
+- **`track`** (light `#e5e5e5`, dark `#333333`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#fafafa`): Switch thumb fill in the off state.
 - **`inverse`** (light `#ffffff`, dark `#171717`): High-contrast surface for toasts and tooltips.
 
@@ -355,19 +348,18 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 ### Status
 
 - **`destructive`** (light `#e7000b`, dark `#ff6467`): Semantic danger color for destructive actions and errors.
-- **`chart-1`** (`#d4d4d4`): Primary chart series color.
-- **`chart-2`** (`#737373`): Second chart series color.
-- **`chart-3`** (`#525252`): Third chart series color.
-- **`chart-4`** (`#404040`): Fourth chart series color.
-- **`chart-5`** (`#262626`): Fifth chart series color.
-- **`info`** (light `#737373`, dark `#a1a1a1`): Informational semantic status color mapped onto shadcn's neutral grey ramp.
-- **`warn`** (light `#525252`, dark `#d4d4d4`): Warning semantic status color mapped onto shadcn's neutral chart ramp.
-- **`up`** (light `#404040`, dark `#e5e5e5`): Positive trend color mapped onto shadcn's neutral ramp.
-- **`info-tint`** (light `#7373731a`, dark `#a1a1a11a`): Translucent informational status background tint.
-- **`warn-tint`** (light `#5252521a`, dark `#d4d4d41a`): Translucent warning status background tint.
+- **`chart-1`** (light `#f54900`, dark `#1447e6`): Primary chart series color.
+- **`chart-2`** (light `#009689`, dark `#00bc7d`): Second chart series color.
+- **`chart-3`** (light `#104e64`, dark `#fe9a00`): Third chart series color.
+- **`chart-4`** (light `#ffb900`, dark `#ad46ff`): Fourth chart series color.
+- **`chart-5`** (light `#fe9a00`, dark `#ff2056`): Fifth chart series color.
+- **`info`** (light `#155dfc`, dark `#51a2ff`): Informational semantic status color (Tailwind CSS v4 blue semantic palette).
+- **`warn`** (light `#bb4d00`, dark `#ffb900`): Warning semantic status color (Tailwind CSS v4 amber semantic palette).
+- **`up`** (light `#007a55`, dark `#00d492`): Positive trend color (Tailwind CSS v4 emerald semantic palette).
+- **`info-tint`** (light `#155dfc1a`, dark `#51a2ff1a`): Translucent informational status background tint.
+- **`warn-tint`** (light `#bb4d001a`, dark `#ffb9001a`): Translucent warning status background tint.
 - **`destructive-tint`** (light `#e7000b1a`, dark `#ff64671a`): Translucent destructive status background tint.
-- **`up-tint`** (light `#4040401a`, dark `#e5e5e51a`): Translucent positive trend background tint.
-- **`down-tint`** (light `#e7000b1a`, dark `#ff64671a`): Translucent negative trend background tint.
+- **`up-tint`** (light `#007a551a`, dark `#00d4921a`): Translucent positive trend background tint.
 
 ### Chrome
 
@@ -400,9 +392,8 @@ Ergonomic sizing scales for pointer input.
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding and gap.
 - **List rows:** A list's rows in a popup or a palette: inset, the container's edge to the row's fill; pad, the fill's edge to its text. shadcn's select and menus: 4 (SelectContent p-1) and 8 (SelectItem pl-2).
-- **Control geometry:** Control internal spacing and switch size tier.
+- **Control geometry:** Control internal spacing.
 - **Control heights:** Standard control heights (sm, md, lg).
-- **Switch size tier (pointer):** `small`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
 
 - **Pointer tier:** Default pointer input-tier metrics.
@@ -418,25 +409,22 @@ Flat elevation model: cards and floating surfaces sit on neutral background step
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
-- **State overlays (hover=0, focus=0, pressed=0, dragged=0):** State-layer ink opacities for hover, focus, pressed, and dragged states.
+- **State overlays (hover=0, pressed=0):** State-layer ink opacities for hover and pressed states.
 
 ## Shapes
 
 Base corner radius scale referenced by semantic shape roles.
 
-Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "{dimension.radius.control}"`).
+Non-dimensional corner curve. (`curve: "continuous"`).
 
-Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
-
-- **`control`** (8px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
-- **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
-- **`modal`** (14px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
+- **`control`** (8px): Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (12px): Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (14px): Corner radius for dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
 Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
-- **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
 - **`fast`** (150ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Quickest response: small control toggles and thumbs.
 - **`default`** (250ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Everyday feedback: presses, releases and modest movement.
 - **`slow`** (350ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Slowest: large surfaces and long-travel layout movement.

@@ -19,7 +19,7 @@ import { finishFields, type FinishRole } from "../packages/theme/finish-fields";
 import { colourSources, scaleCitationsOf } from "./theme/extensions";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkMaterial, checkMaterialFill } from "./theme/material";
-import { SLOTS } from "./theme/slots";
+import { SLOTS, flattenControls } from "./theme/slots";
 import { specBlock, specEnums, specParts, specRows } from "./theme/spec";
 import {
   checkScales,
@@ -445,18 +445,18 @@ for (const key of Object.keys(whitelists))
   if (!enumKeys.includes(key))
     fail(`scripts/theme/style.ts: whitelist \`${key}\` is not in the spec's enum table`);
 
-// 4d. Every theme carries every control slot (`docs/specs/theme-slots.md` is the list): a theme
+// 4d. Every theme carries every control leaf (`docs/specs/theme-slots.md`, ADR 0019): a theme
 // states the ones it answers differently, inherits the rest, and a name the list has no row for is
 // a typo rather than a new slot.
 const slotPaths = new Set(Object.keys(SLOTS));
 for (const theme of themes) {
   const path = `packages/theme/themes/${theme}/semantics.json`;
-  const compiled = readJson<Record<string, unknown>>(path).slots;
+  const compiled = readJson<Record<string, unknown>>(path).controls;
   if (!isRecord(compiled)) {
-    fail(`${path}: states no slots`);
+    fail(`${path}: states no controls`);
     continue;
   }
-  const stated = new Set(Object.keys(compiled));
+  const stated = new Set(Object.keys(flattenControls(compiled)));
   for (const slot of slotPaths)
     if (!stated.has(slot)) fail(`${path}: states no \`${slot}\` slot (docs/specs/theme-slots.md)`);
   for (const slot of stated)
@@ -493,7 +493,7 @@ const readSlotFinishes = (node: unknown): void => {
 };
 for (const theme of themes)
   readSlotFinishes(
-    readJson<Record<string, unknown>>(`packages/theme/themes/${theme}/semantics.json`).slots,
+    readJson<Record<string, unknown>>(`packages/theme/themes/${theme}/semantics.json`).controls,
   );
 for (const role of defaultRoles)
   if (!readsRole(role) && !slotFinishes.has(role) && !unread.has(role))
@@ -523,7 +523,7 @@ for (const theme of themes) {
     fail(problem);
 }
 
-// 5b. A slot's `color:<role>` names a palette role the components can read (`colors` in theme.ts).
+// 5b. A control slot's `color:<role>` names a kebab-case palette role the components read (`colors` in theme.ts).
 {
   const block =
     themeModule.match(
@@ -531,23 +531,33 @@ for (const theme of themes) {
     )?.[1] ?? "";
   const palette = new Set([...block.matchAll(/^\s*(\w+):/gm)].map((match) => match[1]));
   if (palette.size === 0) fail("packages/theme/theme.ts: no `colors` palette found");
-  const colours = (value: unknown): string[] =>
+  const toCamel = (role: string): string =>
+    role.replace(/-([a-z])/g, (_, ch: string) => ch.toUpperCase());
+  const slotColors = (value: unknown): string[] =>
     isRecord(value)
       ? [
-          ...(typeof value.colour === "string" ? [value.colour] : []),
-          ...Object.values(value).flatMap(colours),
+          ...(typeof value.color === "string" ? [value.color] : []),
+          ...Object.values(value).flatMap(slotColors),
         ]
       : [];
   for (const theme of themes) {
-    const file = readJson<{ slots?: Record<string, unknown> }>(
+    const file = readJson<{ controls?: Record<string, unknown> }>(
       `packages/theme/themes/${theme}/semantics.json`,
     );
-    for (const [slot, value] of Object.entries(file.slots ?? {}))
-      for (const role of colours(value))
-        if (palette.size > 0 && !palette.has(role))
+    for (const [slot, value] of Object.entries(flattenControls(file.controls ?? {})))
+      for (const role of slotColors(value)) {
+        if (/[A-Z]/.test(role)) {
+          fail(
+            `packages/theme/themes/${theme}/semantics.json: slot \`${slot}\` reads \`color:${role}\`; use kebab-case`,
+          );
+          continue;
+        }
+        const camel = toCamel(role);
+        if (palette.size > 0 && !palette.has(camel))
           fail(
             `packages/theme/themes/${theme}/semantics.json: slot \`${slot}\` reads \`color:${role}\`, which \`colors\` in packages/theme/theme.ts does not expose`,
           );
+      }
   }
 }
 

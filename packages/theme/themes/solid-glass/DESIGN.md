@@ -60,7 +60,6 @@ colors:
     warn-tint: "#d874001a"
     destructive-tint: "#e7000b1a"
     up-tint: "#0a924b1a"
-    down-tint: "#e7000b1a"
   dark:
     background: "#0d0d0d"
     foreground: "#fafafa"
@@ -115,7 +114,6 @@ colors:
     warn-tint: "#f79c401a"
     destructive-tint: "#ff64671a"
     up-tint: "#4ac7771a"
-    down-tint: "#ff64671a"
 typography:
   caption:
     fontSize: 11px
@@ -167,7 +165,6 @@ spacing:
   control:
     padding: 8px
     gap: 8px
-    dot: 6px
   height:
     sm: 24px
     md: 28px
@@ -183,10 +180,6 @@ spacing:
     md: 16px
     lg: 20px
 motion:
-  enter:
-    duration: 420ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
   fast:
     duration: 150ms
     delay: 0ms
@@ -367,7 +360,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`warn-tint`** (light `#d874001a`, dark `#f79c401a`): Translucent warning status background tint.
 - **`destructive-tint`** (light `#e7000b1a`, dark `#ff64671a`): Translucent destructive status background tint.
 - **`up-tint`** (light `#0a924b1a`, dark `#4ac7771a`): Translucent positive trend background tint.
-- **`down-tint`** (light `#e7000b1a`, dark `#ff64671a`): Translucent negative trend background tint.
 
 ### Chrome
 
@@ -400,9 +392,8 @@ Ergonomic sizing scales for pointer input.
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding and gap.
 - **List rows:** A list's rows in a popup or a palette: inset, the container's edge to the row's fill; pad, the fill's edge to its text. shadcn's select and menus: 4 (SelectContent p-1) and 8 (SelectItem pl-2).
-- **Control geometry:** Control internal spacing and switch size tier.
+- **Control geometry:** Control internal spacing.
 - **Control heights:** Standard control heights (sm, md, lg).
-- **Switch size tier (pointer):** `small`.
 - **Icons:** Standard icon dimensions (sm, md, lg).
 
 - **Pointer tier:** Default pointer input-tier metrics.
@@ -418,25 +409,22 @@ Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over pa
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
-- **State overlays (hover=0, focus=0, pressed=0, dragged=0):** State-layer ink opacities for hover, focus, pressed, and dragged states.
+- **State overlays (hover=0, pressed=0):** State-layer ink opacities for hover and pressed states.
 
 ## Shapes
 
 Solid Glass layered corner radius scale (11px control, 14px container, 20px modal) referenced by semantic shape roles.
 
-Non-dimensional corner curve and the radius a button takes. (`curve: "continuous"`, `corners.button: "{dimension.radius.control}"`).
+Non-dimensional corner curve. (`curve: "continuous"`).
 
-Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
-
-- **`control`** (11px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
-- **`container`** (14px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
-- **`modal`** (20px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
+- **`control`** (11px): Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (14px): Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (20px): Corner radius for dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
 Interactive timing roles (a duration and an easing): fast, default, slow, and the state fade.
 
-- **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
 - **`fast`** (150ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Quickest response: small control toggles and thumbs.
 - **`default`** (250ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Everyday feedback: presses, releases and modest movement.
 - **`slow`** (350ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Slowest: large surfaces and long-travel layout movement.

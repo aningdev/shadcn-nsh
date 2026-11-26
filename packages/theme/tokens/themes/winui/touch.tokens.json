@@ -1,18 +1,11 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "WinUI 3 touch input-tier overrides (40px hit target and controls, 16/20/24px icons).",
+  "$description": "WinUI 3 touch input-tier overrides (44px hit target, 40px controls, 16/20/24px icons).",
   "dimension": {
     "$type": "dimension",
     "$description": "Touch layout density, control geometry, and icon sizes.",
     "size": {
       "$description": "Ergonomic sizing scales for touch input.",
-      "hit": {
-        "$value": {
-          "value": 40,
-          "unit": "px"
-        },
-        "$description": "Minimum hit target size (0 disables padding expansion)."
-      },
       "density": {
         "$description": "Page-level padding and gap.",
         "gap": {
@@ -38,16 +31,10 @@
         }
       },
       "control": {
-        "$description": "Control internal spacing and switch size tier.",
+        "$description": "Control internal spacing.",
         "padding": {
           "$value": {
             "value": 6,
-            "unit": "px"
-          }
-        },
-        "dot": {
-          "$value": {
-            "value": 12,
             "unit": "px"
           }
         }

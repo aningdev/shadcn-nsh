@@ -93,7 +93,7 @@ export const finishes: ThemeFinishes = {
     knob: {
       background: "{knob}",
       "border-color": "transparent",
-      shadow: "{shadow.sm}",
+      shadow: "{shadow.edge.surface}",
       foreground: "{foreground}",
       // Upstream `knobOn` paints an open knob in the accent's ink; the rest is still `knob`.
       "checked-background": "{primary-foreground}",
@@ -110,13 +110,13 @@ export const finishes: ThemeFinishes = {
     pressed: {
       background: "{raised}",
       "border-color": "transparent",
-      shadow: "{shadow.inset}",
+      shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
       elevation: 1,
     },
     disabled: {
       "border-color": "transparent",
-      shadow: "{shadow.edge.surface}, {shadow.sm}",
+      shadow: "{shadow.edge.surface}",
       foreground: "{foreground}",
     },
   },

@@ -391,7 +391,7 @@
       },
       "shadow": {
         "$type": "shadow",
-        "$value": ["{shadow.sm}"]
+        "$value": ["{shadow.edge.surface}"]
       },
       "foreground": {
         "$type": "color",
@@ -486,7 +486,7 @@
       },
       "shadow": {
         "$type": "shadow",
-        "$value": ["{shadow.inset}"]
+        "$value": ["{shadow.edge.surface}", "{shadow.sm}"]
       },
       "foreground": {
         "$type": "color",
@@ -516,7 +516,7 @@
       },
       "shadow": {
         "$type": "shadow",
-        "$value": ["{shadow.edge.surface}", "{shadow.sm}"]
+        "$value": ["{shadow.edge.surface}"]
       },
       "foreground": {
         "$type": "color",

@@ -43,13 +43,9 @@ describe("checkStyle", () => {
 
   test("names a whole group that was deleted, key by key", () => {
     const file = copy();
-    delete file.transition;
+    delete file.motion;
     const problems = check(file);
-    expect(
-      problems
-        .map((p) => p.match(/`([A-Za-z.]+)`/)?.[1])
-        .sort((a, b) => String(a).localeCompare(String(b))),
-    ).toEqual(["transition.enter.duration", "transition.enter.timingFunction"]);
+    expect(problems).toContain("fixture/semantics.json: `motion.fast` is missing");
   });
 
   test("names a key the build-time theme does not state", () => {
@@ -69,7 +65,7 @@ describe("checkStyle", () => {
 
   test("names a slot the list does not have", () => {
     const file = copy();
-    file.slots["field.selection"] = { colour: "field" };
+    file.controls.field.selection = { color: "field" };
     const problems = check(file).join("\n");
     expect(problems).toContain("`field.selection` is not a slot");
   });
@@ -101,30 +97,17 @@ describe("checkStyle", () => {
     expect(problems).toContain("state.press-scale");
   });
 
-  test("rejects literal numbers or wrong-kind tokens on shape radii", () => {
-    const file = copy();
-    file.dimension.shape.container = 16;
-    file.dimension.shape.control = "{primary}";
-    file.dimension.shape.modal = "{radius-missing}";
-    const problems = check(file);
-    expect(problems).toHaveLength(3);
-    expect(problems.join("\n")).toContain("dimension.shape.container");
-    expect(problems.join("\n")).toContain("not a dimension");
-    expect(problems.join("\n")).toContain("radius-missing");
-  });
-
   test("accepts double focus style and timing motion roles, rejecting invalid shapes and timingFunctions", () => {
     const ok = copy();
     ok.dimension.focus.style = "double";
     ok.motion.fast = { duration: 150, timingFunction: "emphasized-decelerate" };
     ok.motion.default = { duration: 167, timingFunction: "decelerate" };
-    ok.transition.enter = { duration: 250, timingFunction: "point-to-point" };
+    ok.motion.state = { duration: 250, timingFunction: "point-to-point" };
     expect(check(ok)).toEqual([]);
 
     for (const timingFunction of easingNames) {
       const withEasing = copy();
       withEasing.motion.slow = { duration: 200, timingFunction };
-      withEasing.transition.enter.timingFunction = timingFunction;
       expect(check(withEasing), timingFunction).toEqual([]);
     }
 
@@ -150,9 +133,7 @@ describe("checkStyle", () => {
     );
     expect(check(file)).toEqual([]);
     expect((file.state as Record<string, unknown>)["press-scale"]).toBe(1);
-    expect(((file.dimension as Record<string, any>).shape as Record<string, unknown>).modal).toBe(
-      "{radius-modal}",
-    );
+    expect((file.shape as Record<string, unknown>).curve).toBe("continuous");
   });
 });
 

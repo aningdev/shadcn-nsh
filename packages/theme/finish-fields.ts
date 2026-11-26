@@ -54,7 +54,7 @@ export type FinishFieldName = keyof FinishFields;
  */
 export const finishFields = {
   card: ["background", "shadow", "border-color", "foreground", "elevation"],
-  inset: ["shadow", "border-color", "border-top-color", "border-bottom-color", "foreground"],
+  inset: ["shadow", "border-color", "border-bottom-color", "foreground"],
   channel: ["background", "shadow", "border-color", "foreground"],
   raised: [
     "background",

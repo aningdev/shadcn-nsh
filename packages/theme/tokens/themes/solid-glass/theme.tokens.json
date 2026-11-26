@@ -45,6 +45,24 @@
       }
     }
   },
+  "slot": {
+    "button": {
+      "destructive": {
+        "edge": {
+          "$value": "none",
+          "$description": "What a destructive button's edge is drawn in, or `none` where it draws none."
+        }
+      }
+    },
+    "field": {
+      "focus": {
+        "color": {
+          "$value": "color:ring",
+          "$description": "What a field's focus edge and ring are drawn in (`color:brand` for a crisp accent ring, `color:ring` for the theme's `focus.style` halo)."
+        }
+      }
+    }
+  },
   "color": {
     "$type": "color",
     "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",

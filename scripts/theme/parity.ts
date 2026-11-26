@@ -35,6 +35,10 @@ const EXEMPT: Exemption[] = [
   // Upstream keys this library has no role for.
   { key: "code", reason: "upstream's code-view ground; no library role names it" },
   { key: "down", reason: "upstream's negative trend; `destructive` carries it here" },
+  {
+    key: "down-tint",
+    reason: "upstream's negative trend tint; `destructive-tint` carries it here",
+  },
   { key: "scrollbar-thumb", reason: "the shell paints its own scrollbar" },
   { key: "scrollbar-thumb-hover", reason: "the shell paints its own scrollbar" },
   { key: "violet", reason: "upstream's chart accent for one panel; not a role" },

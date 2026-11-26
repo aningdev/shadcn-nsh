@@ -371,7 +371,6 @@ function section(appearance: Appearance): Record<string, string> {
     "warn-tint": tint("warn"),
     "destructive-tint": tint("destructive"),
     "up-tint": tint("up"),
-    "down-tint": tint("destructive"),
   };
 }
 
@@ -414,6 +413,10 @@ export function themeFiles(): ThemeGeneratorOutput {
     // The material draws no press of its own: a pressed pane loses the shadow it stood on and
     // darkens a step, it does not shrink (`state["press-scale"]` of 1, which `press.scale` reads as none).
     "press-scale": 1,
+    slots: {
+      "button.destructive.edge": "none",
+      "field.focus.color": "color:ring",
+    },
     radiusGroupDescription:
       "Solid Glass layered corner radius scale (11px control, 14px container, 20px modal) referenced by semantic shape roles.",
     designMd: {

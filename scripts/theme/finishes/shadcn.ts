@@ -14,7 +14,7 @@ export const finishes: ThemeFinishes = {
     card: {
       background: "{card}",
       "border-color": "{border}",
-      shadow: "{shadow.md}",
+      shadow: "{shadow.sm}",
       foreground: "{foreground}",
     },
     inset: {
@@ -124,7 +124,7 @@ export const shadows: ThemeShadowScale = {
     sm: "0px 1px 2px 0px oklch(0 0 0 / 0.05)",
     md: "0px 1px 3px 0px oklch(0 0 0 / 0.1), 0px 1px 2px -1px oklch(0 0 0 / 0.1)",
     lg: "0px 4px 6px -1px oklch(0 0 0 / 0.1), 0px 2px 4px -2px oklch(0 0 0 / 0.1)",
-    xl: "0px 4px 6px -1px oklch(0 0 0 / 0.1), 0px 2px 4px -2px oklch(0 0 0 / 0.1)",
+    xl: "0px 10px 15px -3px oklch(0 0 0 / 0.1), 0px 4px 6px -4px oklch(0 0 0 / 0.1)",
     inset: "none",
     edge: {
       surface: "none",
@@ -135,7 +135,7 @@ export const shadows: ThemeShadowScale = {
     sm: "0px 1px 2px 0px oklch(0 0 0 / 0.05)",
     md: "0px 1px 3px 0px oklch(0 0 0 / 0.1), 0px 1px 2px -1px oklch(0 0 0 / 0.1)",
     lg: "0px 4px 6px -1px oklch(0 0 0 / 0.1), 0px 2px 4px -2px oklch(0 0 0 / 0.1)",
-    xl: "0px 4px 6px -1px oklch(0 0 0 / 0.1), 0px 2px 4px -2px oklch(0 0 0 / 0.1)",
+    xl: "0px 10px 15px -3px oklch(0 0 0 / 0.1), 0px 4px 6px -4px oklch(0 0 0 / 0.1)",
     inset: "none",
     edge: {
       surface: "none",

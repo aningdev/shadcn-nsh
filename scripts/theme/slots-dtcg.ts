@@ -1,22 +1,30 @@
 /**
- * The slot list (`slots.ts`) as DTCG 2025.10 tokens, and back.
+ * The slot list (`slots.ts`) as DTCG 2025.10 tokens, and back into nested `controls`.
  *
- * A slot token states its value the way a theme's author does: a length as a `dimension`, a share as
- * a `number`, a switch as `yes` or `no`, and everything a name — a colour role, a finish field, a
- * corner keyword — as text in the slot grammar (`docs/specs/theme-slots.md`), because the format
- * has no type for either. A value that
- * depends on the input tier or on the appearance is one token whose `$extensions[EXT_NS]` carries the
- * other side (`touch`, `dark`): both sides stay in one place, so a theme that overrides a slot
- * overrides it once, and a theme that states nothing inherits both.
+ * A slot token states its value the way a theme's author does: a length or square size as a
+ * `dimension`, a share as a `number`, a boolean as `yes` or `no`, a non-square box size as
+ * `"WxH"` (or `"same"` to inherit the resting knob), and everything a name — a color role, a finish
+ * field, a corner keyword — as text in the slot grammar (`docs/specs/theme-slots.md`), because the
+ * format has no type for them. A value that depends on the input tier or on the appearance is one
+ * token whose `$extensions[EXT_NS]` carries the other side (`touch`, `dark`): both sides stay in
+ * one place, so a theme that overrides a slot overrides it once, and a theme that states nothing
+ * inherits both.
  *
  * Pure: no `node:fs`, so the tokens' lint and its unit test read the same code the build does.
  */
 import { EXT_NS, isRecord, type DtcgDimension } from "../tokens/types";
-import { SLOTS, type SlotKind, type SlotValue, type SlotSpec, isPair } from "./slots";
+import {
+  SLOTS,
+  type SizeValue,
+  type SlotKind,
+  type SlotValue,
+  type SlotSpec,
+  isPair,
+} from "./slots";
 
-/** A colour a slot paints: a palette role, one field of a finish layer, nothing, or `keep` as it is. */
+/** A color a slot paints: a palette role, a tint, one field of a finish layer, nothing, or `keep` as it is. */
 export type SlotFace =
-  | { readonly colour: string; readonly alpha?: number }
+  | { readonly color: string; readonly alpha?: number }
   | { readonly tint: string; readonly alpha?: number }
   | { readonly finish: string; readonly field?: FinishField }
   | "none"
@@ -42,10 +50,14 @@ export type CompiledSlot =
   | number
   | boolean
   | string
+  | readonly number[]
   | PaintedFace
   | null
   | { readonly pointer: CompiledSlot; readonly touch: CompiledSlot }
   | { readonly light: CompiledSlot; readonly dark: CompiledSlot };
+
+/** Pattern for non-square box size encoded as a DTCG string (`"36x20"`). */
+const BOX_SIZE_RE = /^(\d+(?:\.\d+)?)x(\d+(?:\.\d+)?)$/;
 
 /** A face as the slot grammar states it: `color:input@0.3`, `finish:fill`, `finish:inset:border-color`. */
 export function parseFace(value: string): SlotFace {
@@ -57,9 +69,7 @@ export function parseFace(value: string): SlotFace {
     return alpha === undefined ? { tint: name } : { tint: name, alpha: Number.parseFloat(alpha) };
   }
   if (scheme === "color") {
-    return alpha === undefined
-      ? { colour: name }
-      : { colour: name, alpha: Number.parseFloat(alpha) };
+    return alpha === undefined ? { color: name } : { color: name, alpha: Number.parseFloat(alpha) };
   }
   if (scheme === "finish") {
     if (field === undefined) return { finish: name };
@@ -93,12 +103,22 @@ function faceValue(spec: SlotSpec, value: SlotValue): CompiledSlot {
   return value;
 }
 
+const isSizeTuple = (value: unknown): value is readonly [number, number] =>
+  Array.isArray(value) &&
+  value.length === 2 &&
+  typeof value[0] === "number" &&
+  typeof value[1] === "number";
+
 /** One side of a value, in the form its token's `$value` takes. */
-function encodeSide(spec: SlotSpec, value: string | number | boolean): unknown {
+function encodeSide(spec: SlotSpec, value: string | number | boolean | readonly number[]): unknown {
   switch (spec.kind) {
     case "px":
     case "corner":
       return typeof value === "number" ? { value, unit: "px" } : value;
+    case "size":
+      if (typeof value === "number") return { value, unit: "px" };
+      if (isSizeTuple(value)) return `${value[0]}x${value[1]}`;
+      return value;
     case "ratio":
       return typeof value === "number" ? value : Number.parseFloat(String(value));
     case "shade":
@@ -111,26 +131,34 @@ function encodeSide(spec: SlotSpec, value: string | number | boolean): unknown {
   }
 }
 
-/** The `$type` a slot's token states: a length or a corner states points, every other name is a string. */
 /**
  * The DTCG type a slot's value is stated in, where the format has one: `dimension` for points and
- * `number` for a ratio. A face, a shade, a corner name, text, and a boolean state no type — the
- * format has none for them, and `SLOTS` is their type.
+ * square sizes, `number` for a ratio. A non-square `WxH` box, `"same"`, a face, a shade, a corner
+ * name, and a boolean state no type — the format has none for them, and `SLOTS` is their type.
  */
 function slotType(kind: SlotKind, value: unknown): string | null {
   if (kind === "ratio") return "number";
-  if (kind === "px" || kind === "corner") return typeof value === "number" ? "dimension" : null;
+  if (kind === "px" || kind === "corner" || kind === "size") {
+    return typeof value === "number" ? "dimension" : null;
+  }
   return null;
 }
 
+type AtomicSlotValue = string | number | boolean | readonly number[];
+
 /** A value and the other side of the pair it is stated as (or none). */
 function sidesOf(value: SlotValue): {
-  main: string | number | boolean;
-  rest?: string | number | boolean;
+  main: AtomicSlotValue;
+  rest?: AtomicSlotValue;
   axis: "touch" | "dark";
 } {
   if (!isPair(value)) {
-    if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+    if (
+      typeof value !== "string" &&
+      typeof value !== "number" &&
+      typeof value !== "boolean" &&
+      !isSizeTuple(value)
+    ) {
       throw new Error(`${JSON.stringify(value)} is not a slot value`);
     }
     return { main: value, axis: "dark" };
@@ -142,8 +170,8 @@ function sidesOf(value: SlotValue): {
     throw new Error(`${JSON.stringify(value)} states a pair inside a pair`);
   }
   return {
-    main: main as string | number | boolean,
-    rest: rest as string | number | boolean,
+    main: main as AtomicSlotValue,
+    rest: rest as AtomicSlotValue,
     axis: tiered ? "touch" : "dark",
   };
 }
@@ -235,12 +263,25 @@ function share(side: unknown): number {
   throw new Error(`${JSON.stringify(side)} is not a number`);
 }
 
+/** A size side, decoded to a scalar `number`, `[width, height]`, or `"same"`. */
+function decodeSize(side: unknown): SizeValue {
+  if (typeof side === "number") return side;
+  if (isRecord(side) && typeof side.value === "number") return side.value;
+  if (isSizeTuple(side)) return side;
+  if (side === "same") return "same";
+  if (typeof side === "string") {
+    const m = BOX_SIZE_RE.exec(side);
+    if (m) return [Number.parseFloat(m[1]!), Number.parseFloat(m[2]!)];
+  }
+  throw new Error(`${JSON.stringify(side)} is not a size`);
+}
+
 /** One side of a slot as the runtime draws it. */
 function decodeSide(spec: SlotSpec, side: unknown): CompiledSlot {
   switch (spec.kind) {
     case "px":
       // `control` is the theme's own control stroke, so a host that reshapes `stroke.control` moves
-      // the edge with it (HEAD's `width: "stroke.control"`).
+      // the edge with it.
       return side === "control" ? "control" : length(side);
     case "ratio":
       return share(side);
@@ -248,8 +289,8 @@ function decodeSide(spec: SlotSpec, side: unknown): CompiledSlot {
       return side === true || side === "yes";
     case "corner":
       return typeof side === "string" ? side : share(side);
-    case "text":
-      return String(side);
+    case "size":
+      return decodeSize(side);
     default:
       return faceValue(spec, side as SlotValue);
   }
@@ -289,6 +330,35 @@ export function readSlots(tree: Record<string, unknown>): Record<string, Compile
     }
   };
   walk(group as Record<string, unknown>, "");
+  return out;
+}
+
+/**
+ * Nest compiled flat dotted slots into the structured `controls` object written to `semantics.json`
+ * (`button.secondary.face` -> `controls.button.secondary.face`).
+ */
+export function nestControls(
+  flat: Readonly<Record<string, CompiledSlot>>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [path, value] of Object.entries(flat)) {
+    const parts = path.split(".");
+    let cursor: Record<string, unknown> = out;
+    for (const part of parts.slice(0, -1)) {
+      const existing = cursor[part];
+      if (existing !== undefined && !isRecord(existing)) {
+        throw new Error(
+          `slot path collision at \`${parts.slice(0, -1).join(".")}\` vs \`${path}\``,
+        );
+      }
+      cursor = (cursor[part] ??= {}) as Record<string, unknown>;
+    }
+    const leaf = parts.at(-1)!;
+    if (leaf in cursor) {
+      throw new Error(`slot path collision: \`${path}\` collides with an existing group`);
+    }
+    cursor[leaf] = value;
+  }
   return out;
 }
 

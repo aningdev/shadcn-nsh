@@ -331,8 +331,7 @@ export type WinuiAppearanceRole =
   | "info-tint"
   | "warn-tint"
   | "destructive-tint"
-  | "up-tint"
-  | "down-tint";
+  | "up-tint";
 
 export interface WinuiRoles {
   theme: Record<WinuiThemeRole, string>;
@@ -442,7 +441,6 @@ function buildAppearance(
     "warn-tint": onBase(w.SystemFillColorCautionBackground),
     "destructive-tint": destructiveTint,
     "up-tint": onBase(w.SystemFillColorSuccessBackground),
-    "down-tint": destructiveTint,
   };
 }
 
@@ -488,7 +486,7 @@ function themeLevel(roles: WinuiRoles): Record<string, string> {
  */
 const winuiField = {
   "field.edge.sides": true,
-  "field.edge.colour": "color:border",
+  "field.edge.color": "color:line",
   "field.edge.bottom": "color:input",
   "field.corner.bottom": "control",
   "field.focus.line": true,
@@ -498,12 +496,14 @@ const winuiField = {
 
 const winuiChoice = {
   "choice.size": { pointer: 20, touch: 20 },
+  "choice.box": { pointer: 20, touch: 20 },
   "choice.corner": { pointer: 4, touch: 4 },
   "choice.face": "color:track",
   "choice.shade": "none",
-  "choice.checked.face": "finish:accent",
+  "choice.checked.face": "color:primary",
+  "choice.radio.checked.face": "color:primary",
   "choice.edge.width": 1,
-  "choice.edge.colour": "color:input",
+  "choice.edge.color": "color:input",
   // A WinUI box keeps its edge whether it can be used or not: only the mark fades.
   "choice.edge.disabled": "color:input",
   "choice.mark.size": { pointer: 12, touch: 12 },
@@ -512,37 +512,30 @@ const winuiChoice = {
   "choice.halo": "none",
 } as const;
 
-/** WinUI's switch: a 40×20 track, a 12pt knob, and a press that stretches it sideways. */
+/** WinUI's switch: a 40×20 track (44×22 touch), a 12pt knob (14pt touch), and a press that stretches it sideways. */
 const winuiSwitch = {
-  "switch.width": { pointer: 40, touch: 40 },
-  "switch.height": { pointer: 20, touch: 20 },
-  // WinUI publishes one switch size: its small one states the same numbers.
-  "switch.small.width": { pointer: 40, touch: 40 },
-  "switch.small.height": { pointer: 20, touch: 20 },
-  "switch.small.knob.width": { pointer: 12, touch: 12 },
-  "switch.small.knob.height": { pointer: 12, touch: 12 },
+  "switch.track": { pointer: [40, 20], touch: [44, 22] },
+  // Compact size (`size="sm"`): 32×16 (pointer) / 36×18 (touch), hover/pressed scale proportionally.
+  "switch.small.track": { pointer: [32, 16], touch: [36, 18] },
+  "switch.small.knob": { pointer: 10, touch: 12 },
   "switch.edge.off": 1,
   "switch.edge.on": 0,
-  "switch.knob.width": { pointer: 12, touch: 12 },
-  "switch.knob.height": { pointer: 12, touch: 12 },
-  "switch.knob.on.width": { pointer: 12, touch: 12 },
-  "switch.knob.on.height": { pointer: 12, touch: 12 },
-  "switch.knob.hover": { pointer: 14, touch: 14 },
-  "switch.knob.pressed.width": { pointer: 17, touch: 17 },
-  "switch.knob.pressed.height": { pointer: 14, touch: 14 },
-  "switch.feedback": "stretch",
+  "switch.edge.color": "color:input",
+  "switch.knob.size": { pointer: 12, touch: 14 },
+  "switch.knob.hover": { pointer: 14, touch: 16 },
+  "switch.knob.pressed": { pointer: [17, 14], touch: [19, 16] },
 } as const;
 
 /** WinUI's groove: a hairline bar, a ring slider, and no spinner ring. */
 const winuiTrack = {
-  "slider.rail": { pointer: 4, touch: 4 },
-  "slider.band": { pointer: 32, touch: 32 },
+  "slider.rail": { pointer: 4, touch: 6 },
+  "slider.band": { pointer: 32, touch: 36 },
   "slider.face": "color:input",
   "slider.shade": "none",
-  "slider.edge.colour": "none",
+  "slider.edge.color": "none",
   "slider.edge.width": 0,
-  "slider.knob.size": { pointer: 18, touch: 18 },
-  "slider.knob.pressed.size": { pointer: 18, touch: 18 },
+  "slider.knob.size": { pointer: 18, touch: 24 },
+  "slider.knob.pressed": { pointer: 18, touch: 36 },
   "slider.mark.size": 12,
   "slider.mark.hover": 14,
   "slider.mark.pressed": 10,
@@ -551,7 +544,7 @@ const winuiTrack = {
   "progress.line": 1,
   "progress.face": "color:input",
   "progress.shade": "none",
-  "progress.edge.colour": "none",
+  "progress.edge.color": "none",
   "progress.edge.width": 0,
   "spinner.opacity": 0,
 } as const;
@@ -591,13 +584,8 @@ export const winuiStyle = {
     },
   },
   dimension: {
-    shape: {
-      control: "{radius-control}",
-      container: "{radius-container}",
-      modal: "{radius-modal}",
-    },
     size: {
-      hit: { pointer: 0, touch: 40 },
+      hit: { pointer: 0, touch: 44 },
       density: {
         pointer: { pad: 12, gap: 8 },
         touch: { pad: 12, gap: 8 },
@@ -609,8 +597,8 @@ export const winuiStyle = {
       },
       control: {
         // WinUI's own 6px inset inside a control (`Button_themeresources.xaml`); 8 beside it.
-        pointer: { padding: 6, gap: 8, dot: 12, switch: "regular" },
-        touch: { padding: 6, gap: 8, dot: 12, switch: "regular" },
+        pointer: { padding: 6, gap: 8 },
+        touch: { padding: 6, gap: 8 },
       },
       height: { pointer: { sm: 24, md: 32, lg: 40 }, touch: { sm: 32, md: 40, lg: 48 } },
     },
@@ -629,31 +617,32 @@ export const winuiStyle = {
     ...winuiChoice,
     ...winuiSwitch,
     ...winuiTrack,
+    "list.item.highlight": "color:accent",
+    "list.item.edge": "none",
+    "menubar.bar": "none",
+    "tabs.track.edge": "color:line",
+    "tabs.track.corner": "control",
     // A field that cannot be used turns over to the disabled brushes (fill, edge and ink), where a
     // theme without them keeps its own box and fades it.
     "field.disabled.face": "finish:disabled",
-    "state.disabled.face": "finish:disabled",
-    "state.disabled.ink": "finish:disabled:foreground",
-    "state.disabled.edge": "finish:disabled:border-color",
+    "button.outline.edge": "finish:raised:border-color",
+    "button.destructive.edge": "none",
+    "disabled.face": "finish:disabled",
+    "disabled.ink": "finish:disabled:foreground",
+    "disabled.edge": "finish:disabled:border-color",
   },
   shape: {
     curve: "circular",
-    corners: {
-      button: "{dimension.radius.control}",
-    },
   },
   state: {
     "press-scale": 1,
-    overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
+    overlay: { hover: 0, pressed: 0 },
     "pressed-opacity": 1,
     "rest-opacity": 0.5,
-    // `state.disabled.*` turns a disabled control over to the dedicated disabled brush
+    // `disabled.*` turns a disabled control over to the dedicated disabled brush
     // (`ControlFillColorDisabled` / `TextFillColorDisabled`); `content: 0.36` matches
     // `TextFillColorDisabled` where the theme fades instead.
     disabled: { content: 0.36 },
-  },
-  transition: {
-    enter: { duration: 250, timingFunction: "decelerate" },
   },
   motion: {
     // Three of WinUI 3's four control durations, named by speed (`motion.md`,
@@ -678,7 +667,6 @@ const colourScheme: ColourScheme = {
   knob: ["muted-foreground", "muted-foreground"],
   secondaryIsRaised: false,
   raised: "card",
-  strongBorder: true,
   inverse: ["card", "foreground"],
   chart: ["primary", "info", "up", "warn", "destructive"],
 };
@@ -690,7 +678,6 @@ const colourScheme: ColourScheme = {
 const origin: ColourOrigin = {
   spec: "WinUI 3 theme resources",
   names: {
-    border: "ControlStrokeColorDefault",
     accent:
       "SubtleFillColorSecondary over base (light) / ControlFillColorSecondary over base (dark)",
     inset: "ControlAltFillColorSecondary over base",
@@ -722,7 +709,6 @@ const origin: ColourOrigin = {
     "warn-tint": "SystemFillColorCautionBackground over base",
     "destructive-tint": "SystemFillColorCriticalBackground over base",
     "up-tint": "SystemFillColorSuccessBackground over base",
-    "down-tint": "SystemFillColorCriticalBackground over base",
   },
 };
 
@@ -750,7 +736,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "accent-foreground": "Ink on subtle accent fills (WinUI TextFillColorPrimary).",
     destructive: "Critical/error status ink (WinUI SystemFillColorCritical).",
     border:
-      "Standard control hairline border (WinUI ControlStrongStrokeColorDefault composited over base: this theme's hairline takes the stroke a field's edge draws).",
+      "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base).",
     input:
       "Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base).",
     ring: "Outer keyboard focus stroke (WinUI FocusStrokeColorOuter).",
@@ -796,8 +782,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "destructive-tint":
       "Critical wash (WinUI SystemFillColorCriticalBackground composited over base).",
     "up-tint": "Success wash (WinUI SystemFillColorSuccessBackground composited over base).",
-    "down-tint":
-      "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base).",
   };
   const reduced = {
     light: reduceColours(roles.light, origin, colourScheme, "light"),
@@ -819,7 +803,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     pointerDescription:
       "WinUI 3 desktop pointer input-tier overrides (Standard 40px ListViewItemMinHeight, 32px controls, 12/16/20px icons).",
     touchDescription:
-      "WinUI 3 touch input-tier overrides (40px hit target and controls, 16/20/24px icons).",
+      "WinUI 3 touch input-tier overrides (44px hit target, 40px controls, 16/20/24px icons).",
     radiusGroupDescription:
       "WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).",
     style: winuiStyle,
@@ -846,8 +830,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
           "WinUI 3 menu row text padding 11px (`MenuFlyoutItemThemePadding` 11,8,11,9, `MenuFlyout_themeresources.xaml`)",
         "dimension.size.item.touch.pad":
           "WinUI 3 menu row text padding 11px (the same padding on touch)",
-        "dimension.size.hit.touch":
-          'Windows touch target 40x40 epx (Touch interactions, "Target size")',
       },
     },
     // WinUI turns its accent a third colour under the finger, and TextOnAccentFillColorSecondary
@@ -896,8 +878,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
           "Content stays full opacity when pressed (1; fill brush swap shows press).",
         "state.disabled":
           "WinUI 3 disabled styling: 0.36 content opacity, the disabled finish as their face and its TextFillColorDisabled as their ink.",
-        "transition.enter":
-          "WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).",
         "motion.fast":
           "WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).",
         "motion.default":

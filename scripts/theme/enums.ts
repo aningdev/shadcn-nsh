@@ -32,8 +32,8 @@ const valuesOf = (key: string): readonly (string | number)[] =>
 /** A row's values that are names, whatever they spell: the easing names, or a dimension's. */
 const namesOf = (key: string): readonly string[] => row(key).values;
 
-/** Every easing name a theme may name in `transition.enter.timingFunction` or a timing `motion.<role>`. */
-export const easingNames: readonly string[] = namesOf("transition.enter.timingFunction");
+/** Every easing name a theme may name in a timing `motion.<role>`. */
+export const easingNames: readonly string[] = namesOf("motion.*.timingFunction");
 
 /** One theme's values that must come from a list: the path of the key, and the values it may take. */
 export const whitelists: Record<string, readonly (string | number)[]> = Object.fromEntries(

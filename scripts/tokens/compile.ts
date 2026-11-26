@@ -9,7 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { readSlots } from "../theme/slots-dtcg";
+import { nestControls, readSlots } from "../theme/slots-dtcg";
 import { BUILD_ROOT_THEME, splitFinishes } from "../theme/tokens";
 import { formatColorOpToCss, formatDtcgColor, oklchToHex6, srgbToHex6 } from "./color";
 import { loadSourceItem, mergeTokenTrees, resolvePermutation, type ResolverDoc } from "./resolver";
@@ -19,7 +19,6 @@ import {
   MOTION_ROLES,
   NAMED_CUBIC_BEZIERS,
   RADIUS_KEYS,
-  SHAPE_ROLES,
   TYPE_ROLES,
   getExt,
   isRecord,
@@ -417,7 +416,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     appearance: "light",
     input: "pointer",
   });
-  const { merged: lt, resolved: ltResolved } = resolvePermutation(absPath, {
+  const { merged: lt } = resolvePermutation(absPath, {
     appearance: "light",
     input: "touch",
   });
@@ -426,18 +425,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   for (const role of TYPE_ROLES) {
     const pTypo = (lpResolved.typography as Record<string, Record<string, unknown>>)[role]!
       .$value as DtcgTypography;
-    const tTypo = (ltResolved.typography as Record<string, Record<string, unknown>>)[role]!
-      .$value as DtcgTypography;
-    const pSize = (pTypo.fontSize as { value: number }).value;
-    const tSize = (tTypo.fontSize as { value: number }).value;
-    // DTCG's `lineHeight` is a multiple of the font size; the contract states the whole points it works out to.
-    const points = (size: number, lineHeight: number) => Math.round(size * lineHeight);
     typographyOut[role] = {
-      fontSize: { pointer: pSize, touch: tSize },
-      lineHeight: {
-        pointer: points(pSize, pTypo.lineHeight as number),
-        touch: points(tSize, tTypo.lineHeight as number),
-      },
       fontWeight: pTypo.fontWeight,
       letterSpacing: pTypo.letterSpacing.value,
     };
@@ -450,17 +438,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         .map(([k, tok]) => [k, (tok.$value as { value: number }).value]),
     );
 
-  const shapeGroup = (lp.dimension as Record<string, unknown>).shape as Record<
-    string,
-    Record<string, unknown>
-  >;
-  const dimShapeOut: Record<string, unknown> = {};
-  for (const role of SHAPE_ROLES) {
-    const ref = shapeGroup[role]!.$value as string;
-    const m = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(ref);
-    if (!m) throw new Error(`Expected {dimension.radius.*} in dimension.shape.${role}, got ${ref}`);
-    dimShapeOut[role] = `{radius-${m[1]}}`;
-  }
   const shapeExt = getExt(lp.shape)!;
 
   const lpDim = lp.dimension as Record<string, unknown>;
@@ -468,19 +445,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   const lpSize = lpDim.size as Record<string, unknown>;
   const ltSize = ltDim.size as Record<string, unknown>;
   const focusExt = getExt(lpDim.focus)!;
-  /** A corner states the control radius (a reference) or `full` (a capsule). */
-  const cornerOf = (value: unknown): string => {
-    if (value === "full") return "full";
-    if (typeof value === "string") {
-      const ref = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(value);
-      if (ref !== null) return `{radius-${ref[1]}}`;
-      const points = /^(\d+(?:\.\d+)?)px$/.exec(value);
-      if (points !== null) return points[1]!;
-    }
-    throw new Error(
-      `Expected {dimension.radius.*}, points as \`Npx\`, or "full", got ${JSON.stringify(value)}`,
-    );
-  };
   const stateGroup = lp.state as Record<string, unknown>;
 
   const readNumMap = (group: Record<string, Record<string, unknown>>) =>
@@ -511,25 +475,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       };
     }
   }
-
-  const enterVal = (lpResolved.transition as Record<string, Record<string, unknown>>).enter!
-    .$value as DtcgTransition;
-  const enterRef = (
-    (lp.transition as Record<string, Record<string, unknown>>).enter!.$value as DtcgTransition
-  ).timingFunction as string;
-  const enterBezierName = /^\{cubicBezier\.([a-z0-9-]+)\}$/.exec(enterRef)?.[1];
-  const enterBezierExt = enterBezierName
-    ? getExt((lp.cubicBezier as Record<string, unknown>)[enterBezierName])
-    : undefined;
-  const transitionOut = {
-    enter: {
-      duration: enterVal.duration.value,
-      timingFunction: bezierToEasingName(
-        enterVal.timingFunction as [number, number, number, number],
-        enterBezierExt?.nshEasing as string | undefined,
-      ),
-    },
-  };
 
   // The base set's finish group comes first: it states the neutral fields every finish has, and a
   // theme's own `finishes.shared` (then each appearance's) overrides the fields it really differs on.
@@ -589,7 +534,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   return {
     typography: typographyOut,
     dimension: {
-      shape: dimShapeOut,
       size: {
         hit: {
           pointer: ((lpSize.hit as Record<string, unknown>).$value as { value: number }).value,
@@ -604,14 +548,8 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
           touch: readDimMap(ltSize.item as Record<string, Record<string, unknown>>),
         },
         control: {
-          pointer: {
-            ...readDimMap(lpSize.control as Record<string, Record<string, unknown>>),
-            switch: getExt(lpSize.control)!.switch,
-          },
-          touch: {
-            ...readDimMap(ltSize.control as Record<string, Record<string, unknown>>),
-            switch: getExt(ltSize.control)!.switch,
-          },
+          pointer: readDimMap(lpSize.control as Record<string, Record<string, unknown>>),
+          touch: readDimMap(ltSize.control as Record<string, Record<string, unknown>>),
         },
         height: {
           pointer: readDimMap(lpSize.height as Record<string, Record<string, unknown>>),
@@ -637,15 +575,9 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
       },
     },
-    slots: readSlots(lp),
+    controls: nestControls(readSlots(lp)),
     shape: {
       curve: shapeExt.curve,
-      corners: {
-        button: cornerOf(
-          (lp.shape as Record<string, Record<string, Record<string, unknown>>>).corners!.button!
-            .$value,
-        ),
-      },
     },
     state: {
       "press-scale": (stateGroup["press-scale"] as Record<string, unknown>).$value as number,
@@ -658,7 +590,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
           .$value as number,
       },
     },
-    transition: transitionOut,
     motion: motionOut,
     finishes: finishesOut,
     elevation: { light: elevationSet(shadowsLight), dark: elevationSet(shadowsDark) },

@@ -139,15 +139,15 @@
     "border": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.65664, 0.01531, 304.011],
-        "hex": "#938f99"
+        "components": [0.39805, 0.01736, 303.721],
+        "hex": "#49454f"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
         }
       },
-      "$description": "Hairline container border color (M3 outline: one step stronger than outlineVariant, which reads too faint at 1dp)."
+      "$description": "Hairline divider and container border color (M3 outlineVariant)."
     },
     "input": {
       "$value": {
@@ -316,15 +316,15 @@
     "info": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.83493, 0.09457, 298.018],
-        "hex": "#d0bcff"
+        "components": [0.76, 0.118, 258],
+        "hex": "#81b3fc"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "status"
         }
       },
-      "$description": "Informational semantic color matching M3 primary."
+      "$description": "Informational semantic color (Material Blue)."
     },
     "warn": {
       "$value": {
@@ -411,9 +411,9 @@
     "info-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.83493, 0.09457, 298.018],
+        "components": [0.76, 0.118, 258],
         "alpha": 0.12,
-        "hex": "#d0bcff"
+        "hex": "#81b3fc"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -485,27 +485,6 @@
       },
       "$description": "Translucent positive wash (12% up over transparent)."
     },
-    "down-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.83449, 0.06771, 22.012],
-        "alpha": 0.12,
-        "hex": "#f2b8b5"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.destructive}",
-            "percent": 12,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Translucent negative wash (12% down over transparent)."
-    },
     "card-foreground": {
       "$value": "{color.foreground}",
       "$extensions": {
@@ -566,15 +545,10 @@
       "$description": "Text and icon ink on secondary containers (M3 Expressive onSecondaryContainer, Tone 30 in light)."
     },
     "chart-1": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.83493, 0.09457, 298.018],
-        "hex": "#d0bcff"
-      },
+      "$value": "{color.primary}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "Material 3 sys.color: primary"
+          "role": "status"
         }
       },
       "$description": "First chart series color (M3 primary)."
@@ -591,49 +565,34 @@
           "source": "Material 3 sys.color: tertiary"
         }
       },
-      "$description": "Second chart series color (the theme's positive `up` tone)."
+      "$description": "Second chart series color (M3 tertiary)."
     },
     "chart-3": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.83027, 0.03743, 303.029],
-        "hex": "#ccc2dc"
-      },
+      "$value": "{color.up}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "Material 3 sys.color: secondary"
+          "role": "status"
         }
       },
-      "$description": "Third chart series color (the theme's `warn` tone)."
+      "$description": "Third chart series color (the theme's positive `up` tone)."
     },
     "chart-4": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.65664, 0.01531, 304.011],
-        "hex": "#938f99"
-      },
+      "$value": "{color.warn}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "Material 3 sys.color: outline"
+          "role": "status"
         }
       },
-      "$description": "Fourth chart series color (M3 error)."
+      "$description": "Fourth chart series color (the theme's `warn` tone)."
     },
     "chart-5": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.39805, 0.01736, 303.721],
-        "hex": "#49454f"
-      },
+      "$value": "{color.info}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
-          "role": "status",
-          "source": "Material 3 sys.color: outlineVariant"
+          "role": "status"
         }
       },
-      "$description": "Fifth chart series color (M3 onSurfaceVariant)."
+      "$description": "Fifth chart series color (the theme's `info` tone)."
     },
     "ring": {
       "$value": {

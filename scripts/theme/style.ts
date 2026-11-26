@@ -11,18 +11,11 @@
  */
 import { MOTION_ROLES } from "../tokens/types";
 import { easingNames, whitelists } from "./enums";
-import { SLOTS } from "./slots";
-import { parseTokenRef, type SplitFinishes, type TokenKind } from "./tokens";
+import { SLOTS, flattenControls } from "./slots";
+import type { SplitFinishes, TokenKind } from "./tokens";
 
 /** The groups of `semantics.json` that are style, in the order the file writes them. */
-export const styleGroups = [
-  "typography",
-  "dimension",
-  "shape",
-  "state",
-  "transition",
-  "motion",
-] as const;
+export const styleGroups = ["typography", "dimension", "shape", "state", "motion"] as const;
 
 /** The style groups of a `semantics.json` document: every group, nothing else. */
 export const styleOf = (file: Record<string, unknown>): Record<string, unknown> =>
@@ -286,38 +279,8 @@ export function checkScales(
         `${path}: \`${key}\` cites ${source}, but nothing there needs excusing: the value is on the scale now`,
       );
   }
-
-  const typography = isObject(file.typography) ? file.typography : {};
-  for (const tier of ["pointer", "touch"] as const) {
-    let previousSize = -1;
-    for (const role of typeRamp) {
-      const entry = typography[role];
-      if (!isObject(entry)) continue;
-      const fontSize = isObject(entry.fontSize) ? entry.fontSize[tier] : undefined;
-      const lineHeight = isObject(entry.lineHeight) ? entry.lineHeight[tier] : undefined;
-      if (typeof fontSize === "number") {
-        if (fontSize < previousSize)
-          problems.push(
-            `${path}: \`typography.${role}.fontSize.${tier}\` is ${fontSize}, below the role before it (${previousSize})`,
-          );
-        previousSize = fontSize;
-      }
-      if (typeof lineHeight !== "number") continue;
-      if (!Number.isInteger(lineHeight))
-        problems.push(
-          `${path}: \`typography.${role}.lineHeight.${tier}\` is ${lineHeight}, not a whole number of points`,
-        );
-      else if (typeof fontSize === "number" && lineHeight < fontSize)
-        problems.push(
-          `${path}: \`typography.${role}.lineHeight.${tier}\` is ${lineHeight}, shorter than its ${fontSize} pt text`,
-        );
-    }
-  }
   return problems;
 }
-
-/** The three corner roles in `dimension.shape` that must reference a `dimension` token in `theme.json`. */
-export const shapeRadiusRoles = ["control", "container", "modal"] as const;
 
 /** Every leaf of a document, by dotted path. A leaf is anything that is not a plain object. */
 export function leaves(value: unknown, prefix = ""): Map<string, unknown> {
@@ -388,7 +351,7 @@ export function checkStyle(
   path: string,
   file: Record<string, unknown>,
   reference: Record<string, unknown>,
-  kinds: Map<string, TokenKind>,
+  _kinds: Map<string, TokenKind>,
   referenceName = "the build-time theme",
 ): string[] {
   const problems: string[] = [];
@@ -406,38 +369,10 @@ export function checkStyle(
     problems.push(...checkMotionRole(path, role, motion?.[role]));
   }
 
-  const shapeRadiusKeys = new Set<string>(
-    shapeRadiusRoles.map((role) => `dimension.shape.${role}`),
-  );
-
   for (const [key, value] of have) {
     if (isMotionRolePath(key)) continue;
     const other = want.get(key);
     if (other === undefined && !want.has(key)) continue;
-
-    if (shapeRadiusKeys.has(key)) {
-      if (typeof value !== "string") {
-        problems.push(
-          `${path}: \`${key}\` is ${JSON.stringify(value)}, not a \`{token}\` reference to a dimension token`,
-        );
-        continue;
-      }
-      const ref = parseTokenRef(value);
-      if (ref === null) {
-        problems.push(
-          `${path}: \`${key}\` is ${JSON.stringify(value)}, not a \`{token}\` reference to a dimension token`,
-        );
-        continue;
-      }
-      const kind = kinds.get(ref);
-      if (kind === undefined)
-        problems.push(`${path}: \`${key}\` names token \`${ref}\`, which theme.json does not have`);
-      else if (kind !== "dimension")
-        problems.push(
-          `${path}: \`${key}\` names token \`${ref}\`, which is a ${kind}, not a dimension`,
-        );
-      continue;
-    }
 
     if (value !== null && other !== null && typeof value !== typeof other)
       problems.push(
@@ -460,10 +395,9 @@ export function checkStyle(
         );
   }
 
-  // A slot a theme overrides is named by the list (`docs/specs/theme-slots.md`); its value's grammar
-  // is the decoder's (`slots-dtcg.ts`), which throws where a theme writes something unparsable.
-  const slots = isObject(file.slots) ? file.slots : {};
-  for (const slot of Object.keys(slots))
+  // Every control leaf must match a row in `SLOTS` (`docs/specs/theme-slots.md`, ADR 0019).
+  const controls = flattenControls(file.controls);
+  for (const slot of Object.keys(controls))
     if (!Object.hasOwn(SLOTS, slot))
       problems.push(`${path}: \`${slot}\` is not a slot (docs/specs/theme-slots.md)`);
   return problems;

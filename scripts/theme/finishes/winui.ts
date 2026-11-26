@@ -17,7 +17,7 @@ export const finishes: ThemeFinishes = {
   shared: {
     card: {
       background: "{card}",
-      shadow: "{shadow.md}",
+      shadow: "{shadow.edge.surface}",
       foreground: "{foreground}",
     },
     inset: {
@@ -39,7 +39,7 @@ export const finishes: ThemeFinishes = {
     },
     plate: {
       background: "{card}",
-      "border-color": "{line}",
+      "border-color": "transparent",
       shadow: "{shadow.edge.surface}, {shadow.sm}",
       foreground: "{foreground}",
     },
@@ -58,7 +58,7 @@ export const finishes: ThemeFinishes = {
     inverse: {
       background: "{inverse}",
       "border-color": "{line}",
-      shadow: "{shadow.lg}",
+      shadow: "{shadow.md}",
       foreground: "{inverse-foreground}",
     },
     glass: {
@@ -113,7 +113,6 @@ export const finishes: ThemeFinishes = {
   // face it is drawn on (a card's `#fbfbfb`, a field's, a dialog's), the way WinUI paints them.
   light: {
     card: { "border-color": "oklch(0 0 0 / 0.0588)" },
-    plate: { "border-color": "oklch(0 0 0 / 0.0588)" },
     inset: {
       "border-color": "oklch(0 0 0 / 0.0588)",
       "border-bottom-color": "oklch(0 0 0 / 0.4471)",
@@ -133,7 +132,7 @@ export const finishes: ThemeFinishes = {
     // falls back to `AcrylicInAppFillColorDefault` when the platform draws no blur.
     overlay: {
       background: "oklch(from {popover} l c h / 0.85)",
-      "border-color": "oklch(0.5624 0 0 / 0.4)",
+      "border-color": "oklch(0 0 0 / 0.0588)",
     },
     glass: { background: "oklch(from {popover} l c h / 0.85)" },
     accent: {
@@ -153,25 +152,24 @@ export const finishes: ThemeFinishes = {
   // `SurfaceStrokeColorDefault #66757575`, the same grey at the same alpha as in light.
   dark: {
     card: { "border-color": "oklch(0 0 0 / 0.102)" },
-    plate: { "border-color": "oklch(0 0 0 / 0.102)" },
     inset: {
       "border-color": "oklch(1 0 0 / 0.0706)",
       "border-bottom-color": "oklch(1 0 0 / 0.5451)",
     },
     raised: {
       "border-color": "oklch(1 0 0 / 0.0706)",
-      "border-top-color": "oklch(1 0 0 / 0.0706)",
-      "border-bottom-color": "oklch(1 0 0 / 0.0941)",
+      "border-top-color": "oklch(1 0 0 / 0.0941)",
+      "border-bottom-color": "oklch(1 0 0 / 0.0706)",
     },
     hover: {
       "border-color": "oklch(1 0 0 / 0.0706)",
-      "border-top-color": "oklch(1 0 0 / 0.0706)",
-      "border-bottom-color": "oklch(1 0 0 / 0.0941)",
+      "border-top-color": "oklch(1 0 0 / 0.0941)",
+      "border-bottom-color": "oklch(1 0 0 / 0.0706)",
     },
     modal: { "border-color": "oklch(0.5624 0 0 / 0.4)" },
     overlay: {
       background: "oklch(from {popover} l c h / 0.96)",
-      "border-color": "oklch(0.5624 0 0 / 0.4)",
+      "border-color": "oklch(0 0 0 / 0.2)",
     },
     glass: { background: "oklch(from {popover} l c h / 0.96)" },
     accent: {
@@ -192,8 +190,8 @@ export const shadows: ThemeShadowScale = {
   light: {
     sm: "none",
     md: "0px 0px 2px 0px oklch(0 0 0 / 0.12), 0px 4px 8px 0px oklch(0 0 0 / 0.14)",
-    lg: "0px 0px 8px 0px oklch(0 0 0 / 0.2), 0px 16px 32px 0px oklch(0 0 0 / 0.24)",
-    xl: "0px 0px 8px 0px oklch(0 0 0 / 0.2), 0px 64px 128px 0px oklch(0 0 0 / 0.24)",
+    lg: "0px 0px 8px 0px oklch(0 0 0 / 0.12), 0px 16px 32px 0px oklch(0 0 0 / 0.14)",
+    xl: "0px 0px 8px 0px oklch(0 0 0 / 0.12), 0px 64px 128px 0px oklch(0 0 0 / 0.14)",
     inset: "none",
     edge: {
       surface: "none",

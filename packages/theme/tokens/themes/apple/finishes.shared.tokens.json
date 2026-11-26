@@ -40,15 +40,25 @@
       "$description": "The channel a group of choices sits in: a segmented control's track.",
       "background": {
         "$type": "color",
-        "$value": "{color.card}"
+        "$value": "{color.raised}"
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
       },
       "shadow": {
         "$type": "shadow",
-        "$value": ["{shadow.sm}"]
+        "$value": ["{shadow.inset}"]
       },
       "foreground": {
         "$type": "color",
@@ -182,7 +192,17 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
       },
       "shadow": {
         "$type": "shadow",
@@ -289,7 +309,7 @@
       },
       "pressed-opacity": {
         "$type": "number",
-        "$value": 0.88
+        "$value": 0.72
       }
     },
     "fill": {
@@ -413,10 +433,6 @@
     },
     "pressed": {
       "$description": "A control held down.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.muted}"
-      },
       "border-color": {
         "$type": "color",
         "$value": {

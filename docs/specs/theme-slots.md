@@ -1,43 +1,35 @@
 # 主题槽矩阵
 
-- 日期：2026-11-25
-- 决策：[0013](../decisions/0013-one-contract-value-slots.md)（一套契约、按主题配值）、[0012](../decisions/0012-derived-colours-are-defaults.md)（值带出处）
+- 日期：2026-11-26
+- 决策：[0013](../decisions/0013-one-contract-value-slots.md)（一套契约、按主题配值）、[0012](../decisions/0012-derived-colours-are-defaults.md)（值带出处）、[0019](../decisions/0019-theme-contract-v4.md)（Contract v4：强类型嵌套 `controls`、`size` 槽与消歧整理）
 - 范围：[0007](../decisions/0007-theme-customization-scope.md) 第 1 条的全局样式与第 2 条的关键组件
 
 ## 目标
 
-同一组槽，四套主题（nsh-gallery、apple、material、winui；shadcn、solid-glass 同样填）只配值。组件按槽画，一种画法。
-
-**完成的标准**（逐条可答是 / 否）：
-
-1. 下表每个槽在每套主题都有值，平台值有出处（规范名 + token，或文件 + 行号）。
-2. `packages/ui` 里没有形态枚举、没有平台配方表（`look.ts` 的四张表、`switch.tsx` 的 `winuiSwitch` / `materialSwitch` 已删）。
-3. 表达不了的样子都在 `native-themes.md` 第 3.6 节有一行。
-4. 第 2 条的每个组件 × 4 套主题 × 亮 / 暗，截图看过、进了基线、CI 比对。
-5. 加一套新平台主题只写 token、不改组件（用一套试验主题验证一次）。
+同一组槽（DTCG 源码写 `slot.*`，编译成强类型嵌套对象 `semantics.json` 的 `controls`，共 86 个叶子，无 `text` 枚举槽），六套主题只配值，组件经 `controls()` / `packages/ui/lib/look.ts` 按槽画。
 
 ## 通用写法
 
-槽值是作者写的一行字符串（`scripts/theme/slots.ts` 的 `SLOTS` / `BASE_SLOTS` 定义写法与默认值），编译成数、布尔或对象：
+槽值是作者写的一行值（`scripts/theme/slots.ts` 的 `SLOTS` / `BASE_SLOTS` 定义类型与默认值；色名统一 kebab-case，如 `color:primary-foreground`）：
 
-| 写法                                  | 含义                                                          |
-| ------------------------------------- | ------------------------------------------------------------- |
-| `color:<role>[@alpha]`                | 颜色角色，可带不透明度（`color:foreground@0.2`）              |
-| `tint:<role>[@alpha]`                 | tint 角色                                                     |
-| `finish:<role>[:<field>]`             | finish 的一层，取它的哪个字段（`finish:disabled:foreground`） |
-| `none`                                | 不画：边宽 0、点 0、光晕 0、底 `none`                         |
-| `keep`                                | 沿用控件自己的（只用于 `state.disabled.*`）                   |
-| `shade:<role>`                        | 用 finish 的内阴影作底色阴影                                  |
-| `control` / `container` / `full` / 数 | 圆角：控制圆角、容器圆角、胶囊（高度一半）、点                |
-| 数 / `"yes"` / `"no"`                 | 点（宽度、直径、高度；0 是“没有”，不是“最小”）、布尔          |
+| 类型      | 写法                                   | 含义                                                                           |
+| --------- | -------------------------------------- | ------------------------------------------------------------------------------ |
+| `face`    | `color:<role>[@alpha]`                 | 颜色角色（kebab-case），可带不透明度（`color:foreground@0.2`）                 |
+|           | `tint:<role>[@alpha]`                  | tint 角色                                                                      |
+|           | `finish:<role>[:<field>]`              | finish 的一层或字段（`finish:disabled:foreground`）                            |
+|           | `none` / `keep`                        | `none` 不画；`keep` 沿用控件自己的（用于 `disabled.*`、`field.disabled.face`） |
+| `shade`   | `shade:<role>` / `none`                | 用 finish 的内阴影/投影，或 `none`                                             |
+| `corner`  | `control` / `container` / `full` / 数  | 圆角：控制圆角、容器圆角、胶囊、点数                                           |
+| `px`      | 数 / `"none"` / `"control"`            | 长度（`"none"` = 不画，`"control"` = `stroke.control`）                        |
+| `ratio`   | 数                                     | 比例/不透明度                                                                  |
+| `boolean` | `"yes"` / `"no"`                       | 开关                                                                           |
+| `size`    | 数（`dimension`） / `"WxH"` / `"same"` | 2D 尺寸（正方单数、宽×高元组、`"same"` 继承静止 knob 尺寸）                    |
 
-形态由值的退化表达，不另起名字：边宽 0 或边色等于底 → 只有填充；侧边与上边宽 0 → 下划线；宽 = 高 → 圆，不等 → 椭圆；圆角 = 高度一半 → 胶囊；内点 0 → 实心；光晕 0 → 没有。
+按输入档（`pointer` / `touch`）或外观（`light` / `dark`）区分的值，第二个值写在 `$extensions["dev.aning.shadcn-nsh"].touch` / `.dark` 里。
 
-每个尺寸槽可按输入档（`pointer` / `touch`）给两个值，面与边可按外观（亮 / 暗）给两个值；第二个值写在同一个 token 的 `$extensions["dev.aning.shadcn-nsh"].touch` / `.dark` 里，一条槽一个 token。
+## 已落地的组（86 槽）
 
-## 已经落地的组
-
-`field`、`choice`、`switch`、`slider`、`progress`、`spinner`、`state.disabled` 已经成为 `semantics.json` 的 `slots`（[契约第 11 节](theme-contract-v2.md)，[决策 0013](../decisions/0013-one-contract-value-slots.md)）：每套主题都填了全部槽，值是 #404 之前枚举选出来的样子，`check:theme` 要求键集一致。
+`button`（含 `button.corner.*`、`button.selected.*`、`button.secondary.*`、`button.outline.edge`、`button.destructive.edge`、`button.shade`）、`badge.corner`、`field`、`choice`、`switch`、`slider`、`progress`、`calendar.today`、`spinner`、`popup.corner`、`tooltip`、`toast.action.face`、`list.item`、`menubar.bar`、`tabs.track`、`well.edge` 与 `disabled` 已全部进入 `controls` 树（[ADR 0019](../decisions/0019-theme-contract-v4.md) 删除了 9 个恒定/冗余槽、并将 16 个开关与滑杆宽高槽合并为 9 个 `size` 槽、`switch.feedback` 改为从静/按尺寸自动推导）。
 
 下面第 2、6、7 节（按钮组、面与列表行、提示与日期）还没有槽：那些控件今天读 finish 与全局角色，将来若按本文填，槽的名单与值一起加。
 
@@ -61,15 +53,17 @@
 
 ## 3 输入组（input、select、combobox、number-input、otp-input、time-field、editor）
 
-| 槽                                                      | nsh-gallery | material         | winui                 | apple   |
-| ------------------------------------------------------- | ----------- | ---------------- | --------------------- | ------- |
-| 底色                                                    | field       | field            | field                 | field   |
-| 边宽：上 / 侧 / 下                                      | 1 / 1 / 1   | 0 / 0 / 1        | 1 / 1 / 1             | 待审计  |
-| 边色：上 / 侧 / 下                                      | input       | — / — / muted-fg | line / border / input | 待审计  |
-| 聚焦：边色 / 下边宽                                     | ring / 1    | primary / 2      | accent / 2            | 待审计  |
-| 下边线宽（`field.focus.width`）                         | 3           | 2                | 2                     | 3       |
-| 圆角                                                    | control     | 上 4 下 0        | 4                     | control |
-| 禁用：底 / 边 / 墨（`keep` = 不换，按统一不透明度淡出） | keep        | keep             | finish:disabled       | keep    |
+- **高度规范**：指针端单行输入高 `32`；触控端跟随 `dimension.size.hit.touch`（`nsh-gallery` / `shadcn` / `solid-glass` / `apple` / `winui` 为 `44`，`material` 为 `48`）。
+
+| 槽                                                      | nsh-gallery    | material         | winui                 | apple                                |
+| ------------------------------------------------------- | -------------- | ---------------- | --------------------- | ------------------------------------ |
+| 底色                                                    | field          | field            | field                 | field                                |
+| 边宽：上 / 侧 / 下（`field.edge.width`）                | 1 / 1 / 1      | 0 / 0 / 1        | 1 / 1 / 1             | 1 / 1 / 1（指针）· 0 / 0 / 0（触控） |
+| 边色：上 / 侧 / 下                                      | input          | — / — / muted-fg | line / border / input | input                                |
+| 聚焦：颜色 / 环或下边宽（`field.focus.colour`）         | brand / 实线 2 | primary / 底边 2 | accent / 底边 2       | ring / halo 3                        |
+| 下边线宽（`field.focus.width`）                         | 3              | 2                | 2                     | 3                                    |
+| 圆角                                                    | control        | 上 4 下 0        | 4                     | control                              |
+| 禁用：底 / 边 / 墨（`keep` = 不换，按统一不透明度淡出） | keep           | keep             | finish:disabled       | keep                                 |
 
 ## 4 选择组
 
@@ -85,14 +79,15 @@
 | radio 点：静止 / hover / 按下   | dot / dot / dot | dot / dot / dot | dot / 14 / 10  | 待审计         |
 | 光晕                            | 0               | 32（M3 为 40）  | 0              | 0              |
 
-**switch**：轨道尺寸、轨道边宽（关 / 开）、旋钮尺寸（关 / 开 / hover / 按下，均为宽 × 高）、旋钮颜色（knob finish）。
+**switch**：轨道尺寸、轨道边宽（关 / 开）、轨道边色、旋钮尺寸（关 / 开 / hover / 按下，均为宽 × 高）、旋钮颜色（knob finish）。
 
-| 槽           | nsh-gallery    | material   | winui      | apple                       |
-| ------------ | -------------- | ---------- | ---------- | --------------------------- |
-| 轨道         | height.md 推出 | 52×32      | 40×20      | 待审计（审计值 54×24）      |
-| 边宽 关 / 开 | 1 / 1          | 2 / 0      | 1 / 0      | 待审计                      |
-| 旋钮 关 / 开 | icon.md        | 16 / 24    | 12 / 12    | 待审计（审计值 31×20 椭圆） |
-| hover / 按下 | —              | 16 / 28×28 | 14 / 17×14 | 待审计                      |
+| 槽                           | nsh-gallery    | shadcn        | solid-glass    | apple               | material                  | winui                           |
+| ---------------------------- | -------------- | ------------- | -------------- | ------------------- | ------------------------- | ------------------------------- |
+| 轨道（`default` / `sm`）     | height.md 推出 | 32×18 / 24×14 | height.md 推出 | 54×24 / 40×18       | 40×24·52×32 / 32×20·40×24 | 40×20·44×22 / 32×16·36×18       |
+| 边宽 关 / 开                 | 1 / 1          | 0 / 0         | 1 / 1          | 0 / 0               | 1·2 / 0                   | 1 / 0                           |
+| 边色（`switch.edge.colour`） | `border`       | `none`        | `border`       | `none`              | `border` (`outline`)      | `input` (`ControlStrongStroke`) |
+| 旋钮 关 / 开                 | icon.md        | 16 / 16       | icon.md        | 31×20（`sm` 23×14） | 16（`sm` 12） / 20·24     | 12·14（`sm` 10·12） / 12·14     |
+| hover / 按下                 | —              | —             | —              | —                   | 16 / 22·28                | 14·16 / 17×14·19×16             |
 
 **slider**：轨道粗细、轨道底色 / 阴影 / 边、旋钮尺寸、旋钮内点直径（0 = 实心）、hover / 按下尺寸、竖向长度。
 

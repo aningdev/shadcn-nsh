@@ -25,7 +25,6 @@ import {
   easingNames,
   isValidPressScale,
   motionRoleNames,
-  shapeRadiusRoles,
   whitelists,
 } from "../theme/style";
 import type { TokenKind } from "../theme/tokens";
@@ -220,18 +219,6 @@ function checkExtensionNodes(
   walk(tree, "");
 }
 
-/** A button's corner: the radius token it names, points, or `full`. */
-function isCorner(value: unknown): boolean {
-  if (value === "full") return true;
-  if (typeof value === "number") return value >= 0;
-  // A resolved length: the radius token the source names, after the resolver flattens it.
-  if (isRecord(value) && typeof value.value === "number") return value.value >= 0;
-  return (
-    typeof value === "string" &&
-    (/^\{dimension\.radius\.[a-z0-9-]+\}$/.test(value) || /^\d+(?:\.\d+)?px$/.test(value))
-  );
-}
-
 function validateExtAtPath(
   label: string,
   p: string,
@@ -243,35 +230,13 @@ function validateExtAtPath(
   const where = `${label}: ${p}.$extensions["${EXT_NS}"]`;
 
   if (p === "shape") {
-    checkUnknownKeys(where, ext, ["curve", "corners"], problems);
+    checkUnknownKeys(where, ext, ["curve"], problems);
     if ("curve" in ext) {
       if (!whitelists["shape.curve"]!.includes(ext.curve as string)) {
         problems.push(`${where}.curve: ${JSON.stringify(ext.curve)} is not in whitelist`);
       }
     } else if (mode === "merged") {
       problems.push(`${where}.curve is missing`);
-    }
-    if ("corners" in ext) {
-      if (!isRecord(ext.corners)) {
-        problems.push(`${where}.corners must be an object`);
-      } else {
-        checkUnknownKeys(`${where}.corners`, ext.corners, ["button"], problems);
-        if ("button" in ext.corners) {
-          if (!isCorner(ext.corners.button)) {
-            problems.push(
-              `${where}.corners.button: ${JSON.stringify(ext.corners.button)} is not a radius, points, or \`full\``,
-            );
-          }
-        }
-      }
-    }
-    return;
-  }
-
-  if (p === "dimension.size.control") {
-    checkUnknownKeys(where, ext, ["switch"], problems);
-    if (!whitelists["dimension.size.control.*.switch"]!.includes(ext.switch as string)) {
-      problems.push(`${where}.switch: ${JSON.stringify(ext.switch)} is not in whitelist`);
     }
     return;
   }
@@ -835,36 +800,6 @@ function checkMergedSemantics(
     }
   }
 
-  // Shape references (only control, container, and modal must exist and reference dimension tokens)
-  const expectedShapeRoles = new Set<string>(shapeRadiusRoles);
-  const dimShape = getAtPath(merged, "dimension.shape");
-  if (isRecord(dimShape)) {
-    for (const k of Object.keys(dimShape)) {
-      if (!k.startsWith("$") && !expectedShapeRoles.has(k)) {
-        problems.push(`${label}: dimension.shape has unexpected key "${k}"`);
-      }
-    }
-    for (const role of shapeRadiusRoles) {
-      const tok = dimShape[role];
-      if (!isTokenNode(tok)) {
-        problems.push(`${label}: dimension.shape.${role} is missing`);
-        continue;
-      }
-      const target = checkTypedRef(
-        `${label}: dimension.shape.${role}`,
-        tok.$value,
-        "dimension",
-        tokenTypes,
-        problems,
-      );
-      if (target && !target.startsWith("dimension.radius.")) {
-        problems.push(
-          `${label}: dimension.shape.${role} must reference dimension.radius.*, got {${target}}`,
-        );
-      }
-    }
-  }
-
   // State press-scale, unit-interval opacities, and non-negative numeric dimensions/durations
   const pressScaleTok = getAtPath(resolved, "state.press-scale");
   if (isTokenNode(pressScaleTok) && !isValidPressScale(pressScaleTok.$value)) {
@@ -874,9 +809,7 @@ function checkMergedSemantics(
   }
   for (const unitPath of [
     "state.overlay.hover",
-    "state.overlay.focus",
     "state.overlay.pressed",
-    "state.overlay.dragged",
     "state.pressed-opacity",
     "state.disabled.content",
   ]) {
@@ -911,13 +844,6 @@ function checkMergedSemantics(
       }
     };
     walkDim(group, dimGroupPath);
-  }
-  // A button's corner: the radius token it names, points, or `full`.
-  const cornerNode = getAtPath(resolved, "shape.corners.button");
-  if (isTokenNode(cornerNode) && !isCorner(cornerNode.$value)) {
-    problems.push(
-      `${label}: shape.corners.button is ${JSON.stringify(cornerNode.$value)}, not a radius, points, or \`full\``,
-    );
   }
   // Slots: every path the list has, and no path it does not (`docs/specs/theme-slots.md`).
   const slotGroup = getAtPath(resolved, "slot");
@@ -973,34 +899,6 @@ function checkMergedSemantics(
     }
   }
 
-  // transition.enter
-  const enterRaw = getAtPath(merged, "transition.enter");
-  const enterResolved = getAtPath(resolved, "transition.enter");
-  if (
-    isTokenNode(enterRaw) &&
-    isRecord(enterRaw.$value) &&
-    isTokenNode(enterResolved) &&
-    isRecord(enterResolved.$value)
-  ) {
-    const bezierTarget = checkTypedRef(
-      `${label}: transition.enter.timingFunction`,
-      enterRaw.$value.timingFunction,
-      "cubicBezier",
-      tokenTypes,
-      problems,
-    );
-    const durVal = isRecord(enterResolved.$value.duration)
-      ? enterResolved.$value.duration.value
-      : undefined;
-    const easingName = bezierTarget?.replace(/^cubicBezier\./, "");
-    problems.push(
-      ...checkTimingSpec(label, "transition.enter", {
-        duration: durVal,
-        timingFunction: easingName,
-      }),
-    );
-  }
-
   // Finish material (reusing scripts/theme/material.ts)
   const colorKinds = new Map<string, TokenKind>();
   for (const [k, t] of tokenTypes) {
@@ -1049,7 +947,6 @@ function checkMergedSemantics(
     for (const groupPath of [
       "cubicBezier",
       "typography",
-      "dimension.shape",
       "dimension.stroke",
       "dimension.focus",
       "dimension.control",
@@ -1058,7 +955,6 @@ function checkMergedSemantics(
       "shape",
       "state",
       "duration",
-      "transition",
       "motion",
     ]) {
       const group = getAtPath(merged, groupPath);

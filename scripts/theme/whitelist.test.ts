@@ -83,14 +83,7 @@ describe("the whitelist", () => {
 
   test("a tint at the spec's own strength passes, and sets no shared number (ADR 0012 §5)", () => {
     const f = fixture();
-    const tints = [
-      "brand-tint",
-      "info-tint",
-      "warn-tint",
-      "destructive-tint",
-      "up-tint",
-      "down-tint",
-    ];
+    const tints = ["brand-tint", "info-tint", "warn-tint", "destructive-tint", "up-tint"];
     for (const key of tints) f.provenance.light[key] = `some spec: ${key}`;
     f.theme.cssVars.light["info-tint"] = "color-mix(in srgb, var(--info) 30%, transparent)";
     expect(lint(f)).toEqual([]);
@@ -111,33 +104,24 @@ describe("the whitelist", () => {
     const f = fixture();
     f.theme.cssVars.light["warn-tint"] = "color-mix(in srgb, var(--warn) 30%, transparent)";
     f.provenance = structuredClone(colourSources("shadcn"));
-    for (const key of [
-      "brand-tint",
-      "info-tint",
-      "warn-tint",
-      "destructive-tint",
-      "up-tint",
-      "down-tint",
-    ])
+    for (const key of ["brand-tint", "info-tint", "warn-tint", "destructive-tint", "up-tint"])
       delete f.provenance.light[key];
     expect(lint(f).join("\n")).toContain("one number per theme");
   });
 
   test("a slot the list does not have fails, and one it has and the theme omits fails", () => {
     const f = fixture();
-    f.semantics.slots["slider.selection"] = 1;
-    delete f.semantics.slots["switch.feedback"];
+    (f.semantics.controls.slider as Record<string, unknown>).selection = 1;
+    delete (f.semantics.controls.switch as Record<string, unknown>).track;
     const text = lint(f).join("\n");
     expect(text).toContain("`slider.selection` is not a control slot");
-    expect(text).toContain("`switch.feedback` is missing");
+    expect(text).toContain("`switch.track` is missing");
   });
 
-  test("a font family or a per-theme size fails", () => {
+  test("a font family fails", () => {
     const f = fixture();
     f.theme.cssVars.theme["font-sans"] = "Inter";
-    f.semantics.typography["body"]!.fontSize = { pointer: 15, touch: 15 };
     const text = lint(f).join("\n");
     expect(text).toContain("font-sans");
-    expect(text).toContain("typography.body.fontSize differs");
   });
 });

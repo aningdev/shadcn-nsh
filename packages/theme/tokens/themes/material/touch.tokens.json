@@ -37,15 +37,6 @@
           }
         }
       },
-      "control": {
-        "$description": "Control internal spacing and switch size tier.",
-        "dot": {
-          "$value": {
-            "value": 10,
-            "unit": "px"
-          }
-        }
-      },
       "height": {
         "$description": "Standard control heights (sm, md, lg).",
         "lg": {

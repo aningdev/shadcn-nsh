@@ -32,7 +32,9 @@ const SYSTEM = {
     blue: "#007AFF",
     red: "#FF3B30",
     orange: "#FF9500",
+    orangeAccessible: "#B25000",
     green: "#34C759",
+    greenAccessible: "#248A3D",
     purple: "#AF52DE",
     popover: "#FFFFFF",
     sidebar: "#F2F2F7",
@@ -96,13 +98,13 @@ function palette(appearance: Appearance) {
     sidebar: t(s.sidebar),
     raised: onCard(s.tertiaryFill),
     inset: onCard(s.quaternaryFill),
-    field: onCard(s.tertiaryFill),
+    field: appearance === "light" ? card : onCard(s.tertiaryFill),
     line: onCard(s.hairline),
     track: onCard(s.secondaryFill),
     faint: onCard(s.tertiaryLabel),
     info: t(s.blue),
-    warn: t(s.orange),
-    up: t(s.green),
+    warn: appearance === "light" ? t(SYSTEM.light.orangeAccessible) : t(s.orange),
+    up: appearance === "light" ? t(SYSTEM.light.greenAccessible) : t(s.green),
   };
 }
 
@@ -147,7 +149,7 @@ const origin: ColourOrigin = {
     hover: "label at 6% over transparent",
     popover: "tertiarySystemBackground",
     sidebar: "secondarySystemBackground",
-    field: "tertiarySystemFill over the card",
+    field: "systemBackground (light) / tertiarySystemFill over the card (dark)",
     raised: "tertiarySystemFill over the card",
     knob: "white",
     input: "separator over the card",
@@ -216,7 +218,6 @@ function section(p: ReturnType<typeof palette>) {
     "warn-tint": tints("warn"),
     "destructive-tint": tints("destructive"),
     "up-tint": tints("up"),
-    "down-tint": tints("destructive"),
   };
 }
 
@@ -253,11 +254,6 @@ export const style = {
     },
   },
   dimension: {
-    shape: {
-      control: "{radius-control}",
-      container: "{radius-container}",
-      modal: "{radius-modal}",
-    },
     size: {
       hit: { pointer: 0, touch: 44 },
       density: {
@@ -270,11 +266,11 @@ export const style = {
         touch: { inset: 0, pad: 16 },
       },
       control: {
-        pointer: { padding: 8, gap: 8, dot: 6, switch: "regular" },
-        touch: { padding: 8, gap: 8, dot: 8, switch: "regular" },
+        pointer: { padding: 8, gap: 8 },
+        touch: { padding: 8, gap: 8 },
       },
-      // macOS 26's control heights are 20/24/28 (mini/small/regular); large keeps 28.
-      height: { pointer: { sm: 20, md: 24, lg: 28 }, touch: { sm: 32, md: 44, lg: 56 } },
+      // macOS 26 Tahoe control heights align with the 24/28/32 pointer grid.
+      height: { pointer: { sm: 24, md: 28, lg: 32 }, touch: { sm: 32, md: 44, lg: 56 } },
     },
     stroke: { hairline: 0.5, control: 1 },
     focus: { style: "halo", width: 3, offset: 0 },
@@ -285,43 +281,45 @@ export const style = {
   },
   slots: {
     // Apple's own controls (docs/specs/theme-slots.md, docs/specs/native-themes.md §3.5–3.6):
-    // macOS buttons take a corner per size (capsules only at large), a selected control wears the
-    // 12% brand wash with brand ink, `.gray` (secondary) is a solid fill-3 ground, `.destructive`
-    // is the tint with neither border nor shadow, the checkbox is a white rounded square with a
-    // mid grey border, switch and slider thumbs are ovals on filled tracks, today's date is brand
-    // ink without a disc, and the spinner is eight spokes.
-    "button.corner.sm": 5,
-    "button.corner.md": 6,
-    "button.corner.lg": "full",
+    // macOS buttons take 5/6/8 corners per size while iOS touch buttons are capsules, a selected
+    // control wears the 12% brand wash with brand ink, `.gray` (secondary) is a flat solid fill-3
+    // ground, `.destructive` is the tint with neither border nor shadow, the checkbox is a white
+    // rounded square with a mid grey border, switch and slider thumbs are ovals on filled tracks,
+    // today's date is brand ink without a disc, and the spinner is eight spokes.
+    "button.corner.sm": { pointer: 5, touch: "full" },
+    "button.corner.md": { pointer: 6, touch: "full" },
+    "button.corner.lg": { pointer: 8, touch: "full" },
+    "badge.corner": "full",
     "button.selected.face": "tint:brand",
     "button.selected.ink": "color:brand",
+    "button.secondary.face": "color:raised",
     "button.secondary.edge": "none",
-    "button.secondary.hover": "color:muted",
+    "button.secondary.hover": { light: "color:muted", dark: "color:track" },
     "button.destructive.edge": "none",
-    "button.destructive.shade": "none",
+    "button.shade": "none",
+    "field.focus.color": "color:ring",
+    "list.item.edge": "none",
+    "menubar.bar": "none",
+    "tooltip.shade": "plate",
     "choice.corner": { pointer: 4, touch: 7 },
     "choice.face": { light: "color:card", dark: "color:raised" },
     "choice.shade": "none",
-    "switch.width": { pointer: 54, touch: 63 },
-    "switch.height": { pointer: 24, touch: 28 },
-    "switch.knob.width": { pointer: 31, touch: 37 },
-    "switch.knob.height": { pointer: 20, touch: 24 },
-    "switch.knob.on.width": { pointer: 31, touch: 37 },
-    "switch.knob.on.height": { pointer: 20, touch: 24 },
-    "switch.knob.hover": { pointer: 31, touch: 37 },
-    "switch.knob.pressed.width": { pointer: 31, touch: 37 },
-    "switch.knob.pressed.height": { pointer: 20, touch: 24 },
+    "switch.track": { pointer: [54, 24], touch: [63, 28] },
+    "switch.small.track": { pointer: [40, 18], touch: [48, 22] },
+    "switch.small.knob": { pointer: [23, 14], touch: [28, 18] },
+    "switch.knob.size": { pointer: [31, 20], touch: [37, 24] },
     "switch.edge.off": 0,
     "switch.edge.on": 0,
+    "switch.edge.color": "none",
     "slider.rail": { pointer: 4, touch: 6 },
     "slider.band": { pointer: 24, touch: 32 },
-    "slider.knob.size": { pointer: 20, touch: 37 },
-    "slider.knob.height": { pointer: 16, touch: 24 },
-    "slider.knob.pressed.size": { pointer: 20, touch: 37 },
+    "slider.knob.size": { pointer: [20, 16], touch: [37, 24] },
+    "slider.knob.pressed": { pointer: [20, 16], touch: [49, 32] },
+    "slider.knob.edge": "color:border",
     "slider.shade": "none",
     "slider.edge.width": 0,
     "calendar.today.face": "none",
-    "calendar.today.ink": "brand",
+    "calendar.today.ink": "color:brand",
     "spinner.spokes": true,
     "spinner.opacity": 0,
     // Apple's wells are their ground alone: no fill of a box ever draws a border (HIG, "Adopting
@@ -330,23 +328,14 @@ export const style = {
   },
   shape: {
     curve: "continuous",
-    corners: {
-      // A button's own corners are the `button.corner.*` slots; this is the corner of the other
-      // button-like controls (icon buttons, pagination items, calendar days): macOS rounds them
-      // like a control, not as capsules.
-      button: "{dimension.radius.control}",
-    },
   },
   state: {
     // Apple presses by dimming (`state["pressed-opacity"]`), not by sinking.
     "press-scale": 1,
-    overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
+    overlay: { hover: 0, pressed: 0 },
     "pressed-opacity": 0.7,
     "rest-opacity": 0.5,
-    disabled: { content: 0.4, fill: false },
-  },
-  transition: {
-    enter: { duration: 420, timingFunction: "out-cubic" },
+    disabled: { content: 0.4 },
   },
   motion: {
     // UIKit's own animations run a quarter second (`CATransaction`'s default 0.25 s) and ease out:
@@ -382,7 +371,8 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     sidebar: "Sidebar surface matching Apple system sidebar/grouped background.",
     inset: "Inset surface (UIKit quaternarySystemFill composited over card).",
     raised: "Raised control surface (UIKit tertiarySystemFill composited over card).",
-    field: "Form input background (UIKit tertiarySystemFill composited over card).",
+    field:
+      "Form input background (UIKit systemBackground in light for grouped-canvas separation; tertiarySystemFill over card in dark).",
     line: "Inset divider hairline (UIKit hairline composited over card).",
     hover: "Pointer hover tint (6% foreground ink over transparent).",
     faint: "Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel).",
@@ -397,7 +387,6 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     "warn-tint": "Translucent warning wash (12% warn over transparent).",
     "destructive-tint": "Translucent destructive wash (12% destructive over transparent).",
     "up-tint": "Translucent positive wash (12% up over transparent).",
-    "down-tint": "Translucent negative wash (12% destructive over transparent).",
   };
 
   const reduced = {
@@ -428,7 +417,7 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
       elevation:
         'Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: "regular"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.',
       dos: [
-        'Use the `button.corner.*` slots (5/6/`full` with a pointer) alongside `8px` controls/fields, `12px` containers, and `16px` modals with `shape.curve: "continuous"`.',
+        'Use the `button.corner.*` slots (5/6/8 with a pointer, `full` on touch) alongside `8px` controls/fields, `12px` containers, and `16px` modals with `shape.curve: "continuous"`.',
         "Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.",
         "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.",
       ],
