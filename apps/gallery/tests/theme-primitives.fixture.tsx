@@ -11,7 +11,10 @@ import {
 } from "@shadcn-nsh/theme";
 import { createAnimatedValue, mount, signal, Text, token, View } from "nsh";
 
+import apple from "../../../packages/theme/themes/apple/index";
+import material from "../../../packages/theme/themes/material/index";
 import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
+import winui from "../../../packages/theme/themes/winui/index";
 import {
   Button,
   buttonLook,
@@ -56,6 +59,19 @@ const expressive = defineTheme({
 const showMotion = (m: typeof motion.fast) =>
   `timing:${m.duration}:${JSON.stringify(m.timingFunction)}`;
 
+const showPresets = () => {
+  const pop = motion.preset("popoverEnter");
+  const dlg = motion.preset("dialogEnter");
+  const glide = motion.indicatorGlide;
+  const sw = motion.themeSwitch;
+  return JSON.stringify({
+    pop: { scale: pop.fromScale, y: pop.fromY, spring: pop.spring ?? null },
+    dlg: { scale: dlg.fromScale, y: dlg.fromY, spring: dlg.spring ?? null },
+    glide: { dur: glide.timing.duration, spring: glide.spring ?? null },
+    switch: sw,
+  });
+};
+
 function App() {
   const step = signal(0);
   const followed = follow(() => step(), motion.fast);
@@ -70,11 +86,40 @@ function App() {
 
   return (
     <View>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4 }}>
+        <Button variant="default" onPress={() => selectTheme(expressive)}>
+          Expressive
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={() => {
+            const next = step() + 1;
+            step.set(next);
+            void animate(direct, next % 2, motion.slow);
+          }}
+        >
+          Step
+        </Button>
+        <Toggle pressed>Pinned</Toggle>
+        <Button variant="ghost" onPress={() => selectTheme(null)}>
+          Reset
+        </Button>
+        <Button variant="ghost" onPress={() => selectTheme(apple)}>
+          Apple
+        </Button>
+        <Button variant="ghost" onPress={() => selectTheme(material)}>
+          Material
+        </Button>
+        <Button variant="ghost" onPress={() => selectTheme(winui)}>
+          WinUI
+        </Button>
+      </View>
       <Text>{`focus=${JSON.stringify(focusRing())}`}</Text>
       <Text>{`ringTokens=${String(token("ring"))}|${String(token("card"))}`}</Text>
       <Text>{`motionFast=${showMotion(motion.fast)}`}</Text>
       <Text>{`motionDefault=${showMotion(motion.default)}`}</Text>
       <Text>{`motionSlow=${showMotion(motion.slow)}`}</Text>
+      <Text>{`motionPresets=${showPresets()}`}</Text>
       <Text>{`btnHover=${JSON.stringify(defaultBtn.hoverStyle ?? null)}`}</Text>
       <Text>{`roundHover=${JSON.stringify(roundBtn.hoverStyle ?? null)}`}</Text>
       <Text>{`splitHover=${JSON.stringify(splitSeg.hoverStyle ?? null)}`}</Text>
@@ -93,23 +138,6 @@ function App() {
           ],
         }}
       />
-      <Button variant="default" onPress={() => selectTheme(expressive)}>
-        Expressive
-      </Button>
-      <Button
-        variant="secondary"
-        onPress={() => {
-          const next = step() + 1;
-          step.set(next);
-          void animate(direct, next % 2, motion.slow);
-        }}
-      >
-        Step
-      </Button>
-      <Toggle pressed>Pinned</Toggle>
-      <Button variant="ghost" onPress={() => selectTheme(null)}>
-        Reset
-      </Button>
     </View>
   );
 }

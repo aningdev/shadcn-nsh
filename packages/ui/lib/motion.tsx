@@ -3,10 +3,15 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { feedback, motion as themeMotion, press, type Timing } from "@shadcn-nsh/theme";
-import type { StyleProp, TextStyle, ViewStyle } from "nsh";
+import type { MotionSpec as NshMotionSpec, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { createMotion, effect, reduceMotion, signal, Text } from "nsh";
 
 import { type Live, read } from "./utils";
+
+/** Theme-driven dialog enter motion spec (`dialogEnter` timing, scale, Y offset, and optional spring). */
+export function dialogMotion(): NshMotionSpec {
+  return themeMotion.enterSpec("dialogEnter");
+}
 
 /**
  * A theme's motion role as a CSS transition: the two properties a `transitionProperty` needs, for

@@ -7,16 +7,10 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { materials } from "../packages/theme/materials";
-import {
-  SHARED_TYPE_SCALE,
-  type AppTheme,
-  type SurfaceRole,
-  type TypeRole,
-} from "../packages/theme/schema";
+import { type AppTheme, type SurfaceRole } from "../packages/theme/schema";
 import { ALL_THEMES, BUILD_ROOT_THEME } from "../packages/theme/themes";
 import { resolveColour, varsOf } from "./theme/css-colour";
-import { parseColor } from "./theme/oklch";
+import { validateThemeInvariants } from "./theme/invariants";
 
 const root = join(import.meta.dir, "..");
 const read = (p: string) => readFileSync(join(root, p), "utf8");
@@ -69,16 +63,6 @@ for (const file of ["theme.json", "DESIGN.md", "light.tokens.json", "dark.tokens
 }
 
 // 2. Per-theme checks across ALL_THEMES.
-const ALLOWED_SPACING = new Set([4, 8, 12, 16, 24, 32]);
-const TYPE_ORDER: readonly TypeRole[] = [
-  "caption",
-  "detail",
-  "body",
-  "label",
-  "title",
-  "headline",
-  "display",
-];
 const SURFACE_ROLES: readonly SurfaceRole[] = [
   "card",
   "raised",
@@ -94,7 +78,7 @@ const SURFACE_ROLES: readonly SurfaceRole[] = [
 ];
 
 function validateTheme(entry: AppTheme) {
-  const { id, theme, spec } = entry;
+  const { id, theme } = entry;
   const tag = `theme(${id})`;
 
   // Compiled theme.json parity & keysets
@@ -133,87 +117,7 @@ function validateTheme(entry: AppTheme) {
     }
   }
 
-  // Radii monotonicity
-  const { control, container, modal } = spec.tokens.radius;
-  if (control < 0 || container < control || modal < container) {
-    fail(`${tag}: radii must satisfy 0 <= control <= container <= modal`);
-  }
-
-  // Metrics scales
-  for (const tierName of ["pointer", "touch"] as const) {
-    const h = spec.metrics.height[tierName];
-    const ic = spec.metrics.icon[tierName];
-    if (!(h.sm <= h.md && h.md <= h.lg)) fail(`${tag}: ${tierName} heights must not decrease`);
-    if (!(ic.sm <= ic.md && ic.md <= ic.lg)) fail(`${tag}: ${tierName} icons must not decrease`);
-    for (const [k, v] of Object.entries(h)) {
-      if (v % 4 !== 0) fail(`${tag}: height.${tierName}.${k}=${v} not on 4px grid`);
-    }
-    for (const [k, v] of Object.entries(ic)) {
-      if (v % 4 !== 0) fail(`${tag}: icon.${tierName}.${k}=${v} not on 4px grid`);
-    }
-    const citations = spec.meta?.scaleCitations ?? {};
-    const spacingEntries: [string, number][] = [
-      [`metrics.density.${tierName}.pad`, spec.metrics.density[tierName].pad],
-      [`metrics.density.${tierName}.gap`, spec.metrics.density[tierName].gap],
-      [`metrics.control.${tierName}.padding`, spec.metrics.control[tierName].padding],
-      [`metrics.control.${tierName}.gap`, spec.metrics.control[tierName].gap],
-      [`metrics.item.${tierName}.pad`, spec.metrics.item[tierName].pad],
-    ];
-    for (const [pathKey, val] of spacingEntries) {
-      if (!ALLOWED_SPACING.has(val) && !citations[pathKey]) {
-        fail(`${tag}: ${pathKey}=${val} is off the scale without meta.scaleCitations entry`);
-      }
-    }
-  }
-  if (spec.metrics.hit.touch < 44) {
-    fail(`${tag}: metrics.hit.touch=${spec.metrics.hit.touch} must be >= 44`);
-  }
-
-  // Shared type scale monotonicity
-  for (const tierName of ["pointer", "touch"] as const) {
-    for (let i = 1; i < TYPE_ORDER.length; i += 1) {
-      const prev = SHARED_TYPE_SCALE[TYPE_ORDER[i - 1]!].fontSize[tierName];
-      const cur = SHARED_TYPE_SCALE[TYPE_ORDER[i]!].fontSize[tierName];
-      if (cur < prev) fail(`${tag}: shared type scale ${TYPE_ORDER[i]} < ${TYPE_ORDER[i - 1]}`);
-    }
-  }
-
-  // Feedback invariants
-  if (spec.feedback.press.scale <= 0 || spec.feedback.press.scale > 1) {
-    fail(`${tag}: feedback.press.scale must be in (0, 1]`);
-  }
-  if (spec.feedback.press.accent.opacity <= 0 || spec.feedback.press.accent.opacity > 1) {
-    fail(`${tag}: feedback.press.accent.opacity must be in (0, 1]`);
-  }
-
-  // Material fallback opacity floor
-  for (const role of SURFACE_ROLES) {
-    const s = spec.surfaces[role];
-    for (const mode of ["light", "dark"] as const) {
-      const merged = { ...s, ...s[mode] };
-      if (!merged.material) continue;
-      const minOpacity = materials[merged.material].fallback.minOpacity;
-      const bg = merged.background;
-      if (
-        typeof bg === "object" &&
-        bg !== null &&
-        "alpha" in bg &&
-        bg.alpha !== undefined &&
-        bg.alpha < minOpacity
-      ) {
-        fail(
-          `${tag}: surfaces.${role}.${mode} material ${merged.material} alpha ${bg.alpha} < ${minOpacity}`,
-        );
-      } else if (typeof bg === "string" && bg.startsWith("oklch(")) {
-        const rgb = parseColor(bg);
-        if ((rgb.a ?? 1) < minOpacity) {
-          fail(
-            `${tag}: surfaces.${role}.${mode} material ${merged.material} alpha ${rgb.a} < ${minOpacity}`,
-          );
-        }
-      }
-    }
-  }
+  for (const msg of validateThemeInvariants(entry)) fail(msg);
 }
 
 for (const t of ALL_THEMES) validateTheme(t);

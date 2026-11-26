@@ -256,26 +256,42 @@ export interface FeedbackSpec {
   };
 }
 
+/** Physics spring parameters for native NSH motion (`stiffness`, `damping`, optional `mass`). */
+export interface MotionSpringSpec {
+  readonly stiffness: number;
+  readonly damping: number;
+  readonly mass?: number;
+}
+
+/** Built-in transition style used when switching themes at runtime (`selectTheme`). */
+export type ThemeSwitchKind = "none" | "fade" | "dissolve" | "radial-wipe";
+
 export interface MotionSpec {
   readonly state: TimingSpec;
   readonly fast: TimingSpec;
   readonly default: TimingSpec;
   readonly slow: TimingSpec;
-  readonly spring?: {
-    readonly stiffness: number;
-    readonly damping: number;
-    readonly mass?: number;
-  };
+  readonly spring?: MotionSpringSpec;
   readonly presets: {
     readonly popoverEnter: {
       readonly fromScale: number;
       readonly fromY: number;
       readonly timing: "fast" | "default";
+      readonly spring?: boolean;
     };
     readonly dialogEnter: {
       readonly fromScale: number;
       readonly fromY: number;
       readonly timing: "fast" | "default" | "slow";
+      readonly spring?: boolean;
+    };
+    readonly indicatorGlide: {
+      readonly timing: "fast" | "default";
+      readonly spring?: boolean;
+    };
+    readonly themeSwitch: {
+      readonly kind: ThemeSwitchKind;
+      readonly duration: number;
     };
   };
 }
@@ -436,6 +452,7 @@ export type DeepPartial<T> = T extends readonly unknown[]
           | { readonly tint: "brand" | ToneColorKey }
           | { readonly surface: SurfaceRole }
           | { readonly duration: number; readonly easing: string }
+          | MotionSpringSpec
       ? T
       : T extends object
         ? { readonly [K in keyof T]?: DeepPartial<T[K]> }
@@ -478,7 +495,8 @@ const isAtomicObject = (v: Record<string, unknown>): boolean =>
     Object.keys(v).every((k) => k === "color" || k === "alpha")) ||
   ("tint" in v && typeof v.tint === "string") ||
   ("surface" in v && typeof v.surface === "string" && Object.keys(v).length === 1) ||
-  ("duration" in v && typeof v.duration === "number" && "easing" in v);
+  ("duration" in v && typeof v.duration === "number" && "easing" in v) ||
+  ("stiffness" in v && typeof v.stiffness === "number" && "damping" in v);
 
 function deepMerge<T>(base: T, patch: unknown): T {
   if (patch === undefined) return base;

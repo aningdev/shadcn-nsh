@@ -234,7 +234,7 @@ Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline bor
 
 ## Motion & Micro-interaction
 
-- Press scale: `0.97`, state transition: 120ms `out-cubic`.
+- Press scale: `0.97`, state transition: 120ms `out-cubic`, theme switch: `fade` (200ms).
 
 ## Voice & Content Strategy
 

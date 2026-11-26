@@ -216,9 +216,12 @@ export const material = defineTheme({
     fast: { duration: 150, easing: "standard" },
     default: { duration: 250, easing: "standard" },
     slow: { duration: 400, easing: "emphasized-decelerate" },
+    spring: { stiffness: 380, damping: 32, mass: 1 },
     presets: {
-      popoverEnter: { fromScale: 0.96, fromY: -4, timing: "fast" },
-      dialogEnter: { fromScale: 0.94, fromY: 8, timing: "slow" },
+      popoverEnter: { fromScale: 0.96, fromY: -4, timing: "fast", spring: true },
+      dialogEnter: { fromScale: 0.94, fromY: 8, timing: "slow", spring: true },
+      indicatorGlide: { timing: "fast", spring: true },
+      themeSwitch: { kind: "radial-wipe", duration: 320 },
     },
   },
   controls: {

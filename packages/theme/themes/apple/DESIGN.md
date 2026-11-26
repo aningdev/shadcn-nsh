@@ -234,7 +234,7 @@ Apple Liquid Glass and Retina hairline depth: `glass`, `overlay`, `inverse`, and
 
 ## Motion & Micro-interaction
 
-- Press scale: `1`, state transition: 120ms `out-cubic`.
+- Press scale: `1`, state transition: 120ms `out-cubic`, spring `340/30/1`, theme switch: `dissolve` (240ms).
 
 ## Voice & Content Strategy
 

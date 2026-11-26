@@ -226,6 +226,15 @@ export const apple = defineTheme({
       },
     },
   },
+  motion: {
+    spring: { stiffness: 340, damping: 30, mass: 1 },
+    presets: {
+      popoverEnter: { spring: true },
+      dialogEnter: { spring: true },
+      indicatorGlide: { timing: "fast", spring: true },
+      themeSwitch: { kind: "dissolve", duration: 240 },
+    },
+  },
   controls: {
     button: {
       corner: {

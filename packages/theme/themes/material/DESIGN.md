@@ -234,7 +234,7 @@ Tonal surface stepping plus Material Web Level 1–3 shadows and Android native 
 
 ## Motion & Micro-interaction
 
-- Press scale: `1`, state transition: 100ms `standard`.
+- Press scale: `1`, state transition: 100ms `standard`, spring `380/32/1`, theme switch: `radial-wipe` (320ms).
 
 ## Voice & Content Strategy
 

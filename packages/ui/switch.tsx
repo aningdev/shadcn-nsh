@@ -307,7 +307,7 @@ export function switchLook(
         ...knob,
         borderWidth: hasEdge ? stroke.control : 0,
         transitionProperty: reduceMotion() ? "none" : "transform",
-        ...cssMotion(motion.fast),
+        ...cssMotion(motion.indicatorGlide.timing),
       };
     },
     get disabledStyle(): ViewStyle {

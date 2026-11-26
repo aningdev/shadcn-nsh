@@ -6,6 +6,7 @@ import {
   colors,
   control,
   metrics,
+  motion,
   rounded,
   stroke,
   surface,
@@ -14,7 +15,7 @@ import {
   TERMINAL_COLUMN,
 } from "@shadcn-nsh/theme";
 import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
-import { createMotion, Easing, reduceMotion, View } from "nsh";
+import { createMotion, reduceMotion, View } from "nsh";
 
 import { CheckMark } from "./icons";
 
@@ -30,12 +31,7 @@ export function backdrop(): ViewStyle {
 /** The side of its trigger a popup is on. */
 export type PopupSide = "top" | "bottom" | "left" | "right";
 
-/** How long a popup takes to come in, and how far it moves: shadcn/ui's popups' 150 ms and its
- * `zoom-in-95` (it starts at 96 % of its size). */
-const ENTER_MS = 150;
-const ENTER_SCALE = 0.96;
-
-/** How far a popup slides out of its trigger's edge as it comes in, in points. */
+/** How far a popup slides out of its trigger's edge as it comes in when the theme preset specifies no offset. */
 const ENTER_DISTANCE = 4;
 
 /** The dot of a choice in a menu, and the corners that make it round: 6 points across. */
@@ -135,45 +131,37 @@ const origins: Record<PopupSide, string> = {
 };
 
 /**
- * How a popup comes in, as shadcn/ui's popups do (`fade-in-0 zoom-in-95
- * slide-in-from-*`): it fades up from nothing, grows from 96 % and slides
- * the last `distance` points out of its trigger's edge, decelerating into
- * place. Reduced motion lands it at once.
+ * How a popup comes in, driven by the active theme's `popoverEnter` preset (duration, easing,
+ * optional spring, and scale) while sliding `distance` points out of its trigger's edge. Reduced
+ * motion lands it at once.
  */
-function popIn(side: PopupSide = "bottom", distance = ENTER_DISTANCE): MotionSpec {
-  const away = side === "top" || side === "left" ? distance : -distance;
-  const axis = side === "top" || side === "bottom" ? "translateY" : "translateX";
-  return {
-    duration: ENTER_MS,
-    easing: Easing.bezier(0.16, 1, 0.3, 1),
-    keyframes: { opacity: [0, 1], scale: [ENTER_SCALE, 1], [axis]: [away, 0] },
-  };
+function popIn(side: PopupSide = "bottom", distance?: number): MotionSpec {
+  const preset = motion.preset("popoverEnter");
+  const resolved = distance ?? (preset.fromY !== 0 ? Math.abs(preset.fromY) : ENTER_DISTANCE);
+  return motion.enterSpec("popoverEnter", { side, distance: resolved });
 }
 
 /**
- * `popIn` on a popup's own box, which `nsh/base` makes on each opening (a
- * `Menu`'s and its submenus', whose surface is that box so it stays put
- * around the items scrolling in it): `style` the transition and the edge
- * it grows from, `starting` its first frame's look (the popup's
- * `popupStartingStyle`), from which it fades up, grows from 96 % and
- * slides `distance` points out of the trigger's edge in 150 ms. Reduced
- * motion, and a terminal, land it at once: no transition, no first look.
+ * `popIn` on a popup's own box, which `nsh/base` makes on each opening (a `Menu`'s and its
+ * submenus', whose surface is that box so it stays put around the items scrolling in it): `style`
+ * the theme's `popoverEnter` transition and edge origin, `starting` its first frame's look from
+ * the theme's `fromScale` and `distance`. Reduced motion, and a terminal, land it at once.
  */
 export function popInStyles(
   side: PopupSide = "bottom",
-  distance = ENTER_DISTANCE,
+  distance?: number,
 ): { style: ViewStyle; starting?: ViewStyle } {
   if (terminal || reduceMotion()) return { style: {} };
-  const away = side === "top" || side === "left" ? distance : -distance;
+  const preset = motion.preset("popoverEnter");
+  const resolved = distance ?? (preset.fromY !== 0 ? Math.abs(preset.fromY) : ENTER_DISTANCE);
+  const away = side === "top" || side === "left" ? resolved : -resolved;
   const slide = side === "top" || side === "bottom" ? { translateY: away } : { translateX: away };
   return {
     style: {
       transformOrigin: origins[side],
-      transitionProperty: "opacity, transform",
-      transitionDuration: ENTER_MS,
-      transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+      ...motion.transition("opacity, transform", preset.role),
     },
-    starting: { opacity: 0, transform: [{ scale: ENTER_SCALE }, slide] },
+    starting: { opacity: 0, transform: [{ scale: preset.fromScale }, slide] },
   };
 }
 

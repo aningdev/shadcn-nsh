@@ -151,6 +151,15 @@
 | `motion.presets.dialogEnter.fromScale` | 对话框入场初始缩放 | 0.96 | 0.96 | 0.96 | 0.94 | 1.04 |
 | `motion.presets.dialogEnter.fromY` | 对话框入场初始 Y 偏移 | 0 | 0 | 0 | 8 | 0 |
 | `motion.presets.dialogEnter.timing` | 对话框入场使用的时序档位 | `default` | `default` | `default` | `slow` | `default` |
+| `motion.presets.indicatorGlide.timing` | 指示器/滑块滑动使用的时序档位 | `fast` | `fast` | `fast` | `fast` | `fast` |
+| `motion.presets.themeSwitch.kind` | 运行时切换主题的屏幕过渡方式 | `fade` | `none` | `dissolve` | `radial-wipe` | `fade` |
+| `motion.presets.themeSwitch.duration` | 运行时切换主题过渡时长 | 200 | 0 | 240 | 320 | 167 |
+| `motion.presets.popoverEnter.spring` | 弹出层入场是否启用主题物理弹簧 | — | — | true | true | — |
+| `motion.presets.dialogEnter.spring` | 对话框入场是否启用主题物理弹簧 | — | — | true | true | — |
+| `motion.presets.indicatorGlide.spring` | 指示器/滑块滑动是否启用主题物理弹簧 | — | — | true | true | — |
+| `motion.spring.stiffness` | 物理弹性刚度 | — | — | 340 | 380 | — |
+| `motion.spring.damping` | 物理弹性阻尼 | — | — | 30 | 32 | — |
+| `motion.spring.mass` | 物理弹性质量 | — | — | 1 | 1 | — |
 
 ## 7 surfaces
 

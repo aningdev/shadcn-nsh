@@ -8,6 +8,7 @@ import type {
   AnimatedValue,
   BackdropMaterial,
   Easing as EasingCurve,
+  MotionSpec as NshMotionSpec,
   TextStyle,
   Theme,
   Tokens,
@@ -40,6 +41,7 @@ import {
   type FaceExpr,
   type Mode,
   type ModeOrFlat,
+  type MotionSpringSpec,
   type ShadowExpr,
   type ShadowPart,
   type SlotCorner,
@@ -48,6 +50,7 @@ import {
   type SurfaceRole,
   type SurfaceSpec,
   type ThemeSpec,
+  type ThemeSwitchKind,
   type Tiered,
   type TieredOrFlat,
   type TimingSpec,
@@ -63,11 +66,14 @@ export type {
   ElevationScale,
   FaceExpr,
   Mode,
+  ModeOrFlat,
+  MotionSpringSpec,
   SlotCorner,
   SlotSize,
   SurfaceRole,
   SurfaceSpec,
   ThemeSpec,
+  ThemeSwitchKind,
   Tiered,
   TimingSpec,
   ToneColorKey,
@@ -645,24 +651,74 @@ const motionRole = (read: () => TimingSpec): Timing => {
   };
 };
 
-export type MotionPresetName = keyof ThemeSpec["motion"]["presets"];
+export type MotionPresetName = "popoverEnter" | "dialogEnter";
+export type EnterSide = "top" | "bottom" | "left" | "right";
 
-/** Motion timing channels, optional spring, CSS transition helper, and enter presets. */
+/** Motion timing channels, optional spring, CSS transition helper, and enter/indicator presets. */
 export const motion = {
   fast: motionRole(() => activeSpec().motion.fast),
   default: motionRole(() => activeSpec().motion.default),
   slow: motionRole(() => activeSpec().motion.slow),
   state: motionRole(() => activeSpec().motion.state),
-  get spring() {
+  get spring(): MotionSpringSpec | undefined {
     return activeSpec().motion.spring;
   },
   preset(name: MotionPresetName) {
-    const p = activeSpec().motion.presets[name];
+    const m = activeSpec().motion;
+    const p = m.presets[name];
+    const reduced = reduceMotion();
     return {
-      fromScale: reduceMotion() ? 1 : p.fromScale,
-      fromY: reduceMotion() ? 0 : p.fromY,
+      fromScale: reduced ? 1 : p.fromScale,
+      fromY: reduced ? 0 : p.fromY,
+      role: p.timing,
       timing: motion[p.timing],
+      spring: !reduced && p.spring && m.spring ? m.spring : undefined,
     };
+  },
+  /** Build an NSH `MotionSpec` from a named theme enter preset, honoring `reduceMotion()` and `spring`. */
+  enterSpec(
+    name: MotionPresetName,
+    options?: { readonly side?: EnterSide; readonly distance?: number },
+  ): NshMotionSpec {
+    const p = motion.preset(name);
+    if (reduceMotion()) {
+      return { duration: 0, keyframes: { opacity: [1, 1] } };
+    }
+    const distance = options?.distance ?? (p.fromY !== 0 ? Math.abs(p.fromY) : 0);
+    const side = options?.side ?? (p.fromY < 0 ? "top" : "bottom");
+    const away =
+      options?.side !== undefined
+        ? side === "top" || side === "left"
+          ? distance
+          : -distance
+        : p.fromY !== 0
+          ? p.fromY
+          : -distance;
+    const axis = side === "top" || side === "bottom" ? "translateY" : "translateX";
+    return {
+      duration: p.timing.duration,
+      easing: p.timing.timingFunction,
+      ...(p.spring ? { spring: p.spring } : {}),
+      keyframes: {
+        opacity: [0, 1],
+        ...(p.fromScale === 1 ? {} : { scale: [p.fromScale, 1] }),
+        ...(away === 0 ? {} : { [axis]: [away, 0] }),
+      },
+    };
+  },
+  /** Timing & optional spring used when switch/tab/segmented indicators glide between states. */
+  get indicatorGlide(): { readonly timing: Timing; readonly spring: MotionSpringSpec | undefined } {
+    const m = activeSpec().motion;
+    const g = m.presets.indicatorGlide;
+    return {
+      timing: motion[g.timing],
+      spring: !reduceMotion() && g.spring && m.spring ? m.spring : undefined,
+    };
+  },
+  /** Transition policy when switching runtime themes (`selectTheme`). */
+  get themeSwitch(): { readonly kind: ThemeSwitchKind; readonly duration: number } {
+    if (reduceMotion()) return { kind: "none", duration: 0 };
+    return activeSpec().motion.presets.themeSwitch;
   },
   transition(properties: string, role: "state" | "fast" | "default" | "slow" = "state"): ViewStyle {
     if (reduceMotion()) return { transitionProperty: "none" };
@@ -676,15 +732,18 @@ export const motion = {
   },
 };
 
-/** Drive `AnimatedValue` toward `to` over `config` (lands immediately if `reduceMotion()`). */
+/** Drive `AnimatedValue` toward `to` over `config` (`spring` takes precedence when provided; lands immediately if `reduceMotion()`). */
 export function animate(
   value: AnimatedValue,
   to: number,
-  config: Timing = motion.default,
+  config: Timing & { readonly spring?: MotionSpringSpec } = motion.default,
 ): Promise<{ finished: boolean }> {
   if (reduceMotion()) {
     value.set(to);
     return Promise.resolve({ finished: true });
+  }
+  if (config.spring) {
+    return value.spring(to, config.spring);
   }
   return value.timing(to, { duration: config.duration, easing: config.timingFunction });
 }

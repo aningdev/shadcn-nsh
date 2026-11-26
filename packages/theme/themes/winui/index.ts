@@ -286,6 +286,8 @@ export const winui = defineTheme({
     presets: {
       popoverEnter: { fromScale: 1, fromY: -6, timing: "fast" },
       dialogEnter: { fromScale: 1.04, fromY: 0, timing: "default" },
+      indicatorGlide: { timing: "fast" },
+      themeSwitch: { kind: "fade", duration: 167 },
     },
   },
   controls: {

@@ -397,9 +397,15 @@ const DESCRIPTIONS: Record<string, string> = {
   "motion.presets.popoverEnter.fromScale": "弹出层入场初始缩放",
   "motion.presets.popoverEnter.fromY": "弹出层入场初始 Y 偏移",
   "motion.presets.popoverEnter.timing": "弹出层入场使用的时序档位",
+  "motion.presets.popoverEnter.spring": "弹出层入场是否启用主题物理弹簧",
   "motion.presets.dialogEnter.fromScale": "对话框入场初始缩放",
   "motion.presets.dialogEnter.fromY": "对话框入场初始 Y 偏移",
   "motion.presets.dialogEnter.timing": "对话框入场使用的时序档位",
+  "motion.presets.dialogEnter.spring": "对话框入场是否启用主题物理弹簧",
+  "motion.presets.indicatorGlide.timing": "指示器/滑块滑动使用的时序档位",
+  "motion.presets.indicatorGlide.spring": "指示器/滑块滑动是否启用主题物理弹簧",
+  "motion.presets.themeSwitch.kind": "运行时切换主题的屏幕过渡方式",
+  "motion.presets.themeSwitch.duration": "运行时切换主题过渡时长",
 
   // elevation
   "elevation.sm": "控件投影",

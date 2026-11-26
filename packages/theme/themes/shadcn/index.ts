@@ -157,6 +157,11 @@ export const shadcn = defineTheme({
       },
     },
   },
+  motion: {
+    presets: {
+      themeSwitch: { kind: "none", duration: 0 },
+    },
+  },
   controls: {
     button: {
       selected: { face: "input", ink: "foreground" },

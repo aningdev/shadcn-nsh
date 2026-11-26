@@ -189,6 +189,15 @@ export const solidGlass = defineTheme({
       },
     },
   },
+  motion: {
+    spring: { stiffness: 280, damping: 26, mass: 1 },
+    presets: {
+      popoverEnter: { spring: true },
+      dialogEnter: { spring: true },
+      indicatorGlide: { timing: "fast", spring: true },
+      themeSwitch: { kind: "dissolve", duration: 260 },
+    },
+  },
   controls: {
     button: { destructive: { edge: "none" } },
     field: {

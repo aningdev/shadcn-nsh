@@ -315,6 +315,8 @@ export const baseSpec: ThemeSpec = {
     presets: {
       popoverEnter: { fromScale: 0.96, fromY: 0, timing: "fast" },
       dialogEnter: { fromScale: 0.96, fromY: 0, timing: "default" },
+      indicatorGlide: { timing: "fast" },
+      themeSwitch: { kind: "fade", duration: 200 },
     },
   },
   controls: {

@@ -234,7 +234,7 @@ Flat elevation model: cards and floating surfaces sit on neutral background step
 
 ## Motion & Micro-interaction
 
-- Press scale: `1`, state transition: 120ms `out-cubic`.
+- Press scale: `1`, state transition: 120ms `out-cubic`, theme switch: `none` (0ms).
 
 ## Voice & Content Strategy
 

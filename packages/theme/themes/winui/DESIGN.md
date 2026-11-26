@@ -234,7 +234,7 @@ WinUI 3 soft ambient elevation (`md`, `lg`, `xl`), beveled 1px border strokes on
 
 ## Motion & Micro-interaction
 
-- Press scale: `1`, state transition: 83ms `decelerate`.
+- Press scale: `1`, state transition: 83ms `decelerate`, theme switch: `fade` (167ms).
 
 ## Voice & Content Strategy
 

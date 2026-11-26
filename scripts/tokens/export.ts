@@ -445,8 +445,11 @@ export function exportDesignMd(entry: AppTheme): string {
   lines.push("");
   lines.push("## Motion & Micro-interaction");
   lines.push("");
+  const springLine = spec.motion.spring
+    ? `, spring \`${spec.motion.spring.stiffness}/${spec.motion.spring.damping}/${spec.motion.spring.mass ?? 1}\``
+    : "";
   lines.push(
-    `- Press scale: \`${spec.feedback.press.scale}\`, state transition: ${spec.motion.state.duration}ms \`${spec.motion.state.easing}\`.`,
+    `- Press scale: \`${spec.feedback.press.scale}\`, state transition: ${spec.motion.state.duration}ms \`${spec.motion.state.easing}\`${springLine}, theme switch: \`${spec.motion.presets.themeSwitch.kind}\` (${spec.motion.presets.themeSwitch.duration}ms).`,
   );
   lines.push("");
   lines.push("## Voice & Content Strategy");

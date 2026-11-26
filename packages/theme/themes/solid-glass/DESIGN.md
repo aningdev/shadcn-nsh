@@ -234,7 +234,7 @@ Layered glass elevation combining translucent fills, top-edge inset highlights, 
 
 ## Motion & Micro-interaction
 
-- Press scale: `1`, state transition: 120ms `out-cubic`.
+- Press scale: `1`, state transition: 120ms `out-cubic`, spring `280/26/1`, theme switch: `dissolve` (260ms).
 
 ## Voice & Content Strategy
 
