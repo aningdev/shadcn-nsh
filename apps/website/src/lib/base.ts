@@ -33,5 +33,17 @@ export const OTHER_DOCS =
 /** A request path without the base it was served under, for the routes that serve files by path. */
 export function sitePathname(pathname: string): string {
   const base = BASE.replace(/\/$/, "");
-  return base && pathname.startsWith(`${base}/`) ? pathname.slice(base.length) : pathname;
+  if (!base) return pathname;
+  if (pathname === base) return "/";
+  return pathname.startsWith(`${base}/`) ? pathname.slice(base.length) : pathname;
+}
+
+/**
+ * Target URL when switching between the `release` (`/`) and `dev` (`/dev/`) docs sites, preserving
+ * the current route relative to `BASE_URL`.
+ */
+export function docsChannelHref(channel: "release" | "dev", pathname?: string): string {
+  const root = channel === "dev" ? DEV_DOCS_URL : RELEASE_DOCS_URL;
+  const rel = pathname ? sitePathname(pathname) : "/";
+  return rel === "/" ? root : `${root.replace(/\/$/, "")}${rel}`;
 }
