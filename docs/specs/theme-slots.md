@@ -135,14 +135,14 @@ spinner：辐条数（0 = 连续弧）、弧长、轨道不透明度（0 = 无�
 
 apple 审计（#407）把这几组槽从“待审计”变成了真值，并按需补了 18 个槽，分七组（`button.corner.*`、`button.selected.*`、`button.secondary.*`、`button.destructive.*`、`calendar.today.*`、`slider.knob.height`、`spinner.spokes`）。四个主题列的值待并入第 1、2、3、4、5、7 节；这里先记下新槽与 apple 的取值，其余主题是 base 默认值（= 审计前的外观）。
 
-| 槽                                                               | base / 其余主题                                                          | apple                                                     | 出处                               |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------- | ---------------------------------- |
-| `button.corner.sm` / `.md` / `.lg`                               | `control`                                                                | `5` / `6` / `full`                                        | macOS 26 按钮 r5 / r6 / 胶囊       |
-| `button.selected.face` / `.ink`                                  | `finish:accent` / `primary-foreground`                                   | `tint:brand` / `brand`                                    | iOS 26 tinted 控件                 |
-| `button.secondary.face` / `.ink` / `.edge` / `.shade` / `.hover` | `finish:raised` / `foreground` / raised 的边 / `raised` / `finish:hover` | 同 base 的面 / `foreground` / `none` / `raised` / `muted` | macOS `.gray`（bg-fill-3 + label） |
-| `button.destructive.face` / `.ink` / `.edge` / `.shade`          | `tint:destructive` / `destructive` / `destructive@0.32` / `raised`       | 同 base 的面与墨 / `none` / `none`                        | `.destructive` 无边框无影          |
-| `calendar.today.face` / `.ink`                                   | `foreground@0.08` / `foreground`                                         | `none` / `brand`                                          | 今天只有品牌色墨                   |
-| `slider.knob.height`                                             | = 旋钮宽（圆）                                                           | `16`（20×16 椭圆，触屏 37×24）                            | macOS 滑杆 thumb                   |
-| `spinner.spokes`                                                 | `no`（转弧）                                                             | `yes`（八根渐隐射线）                                     | 系统活动指示器                     |
+| 槽                                                               | base / 其余主题                                                          | apple                                                                    | 出处                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ---------------------------------- |
+| `button.corner.sm` / `.md` / `.lg`                               | `control`                                                                | `5` / `6` / `full`                                                       | macOS 26 按钮 r5 / r6 / 胶囊       |
+| `button.selected.face` / `.ink`                                  | `finish:accent` / `primary-foreground`                                   | `tint:brand` / `brand`                                                   | iOS 26 tinted 控件                 |
+| `button.secondary.face` / `.ink` / `.edge` / `.shade` / `.hover` | `finish:raised` / `foreground` / raised 的边 / `raised` / `finish:hover` | `color:raised` / `foreground` / `none` / `none` / 亮 `muted`、暗 `track` | macOS `.gray`（bg-fill-3 + label） |
+| `button.destructive.face` / `.ink` / `.edge` / `.shade`          | `tint:destructive` / `destructive` / `destructive@0.32` / `raised`       | 同 base 的面与墨 / `none` / `none`                                       | `.destructive` 无边框无影          |
+| `calendar.today.face` / `.ink`                                   | `foreground@0.08` / `foreground`                                         | `none` / `brand`                                                         | 今天只有品牌色墨                   |
+| `slider.knob.height`                                             | = 旋钮宽（圆）                                                           | `16`（20×16 椭圆，触屏 37×24）                                           | macOS 滑杆 thumb                   |
+| `spinner.spokes`                                                 | `no`（转弧）                                                             | `yes`（八根渐隐射线）                                                    | 系统活动指示器                     |
 
 面与边写 `finish:<role>` 时整层都画（WinUI 次要按钮的下边线就在 `raised` 层里），变体只覆盖它自己写了的项；边写 `none` 是真不画（画透明边，不留给 `borderWidth` 去继承标签色）。
