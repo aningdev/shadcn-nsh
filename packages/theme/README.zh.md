@@ -9,6 +9,7 @@ Theme v5 主题契约与运行时读取层（决策见 [`docs/decisions/0020-the
 | `schema.ts`                             | 契约类型（`ThemeSpec`、`ThemePatch`）、`SHARED_TYPE_SCALE`、`EASING_BEZIERS`、`defineTheme()`、`compileNshTheme()`                                       |
 | `materials.ts`                          | 平台玻璃与亚克力材质配方，以及参数化材质的 `resolveMaterial()`                                                                                           |
 | `effects.ts`                            | 内置 WGSL 表面与主题切换着色器（`SURFACE_SHADERS`、`TRANSITION_SHADERS`）                                                                                |
+| `paradigm.ts`                           | L1 `ThemeParadigm` 六轴与 `expandParadigm()`；由 `defineTheme` 展开，不进入 `ThemeSpec`                                                                  |
 | `themes/nsh-gallery/index.ts`           | 完整 `base` 主题源码（`baseSpec`、`base`、`nshGallery`）                                                                                                 |
 | `themes/<id>/index.ts`                  | 稀疏覆写主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）与 `themes/native/`                                                                 |
 | `preset.ts`                             | 构建时预设导出（`init --theme <id>` 时指向所选主题）                                                                                                     |
@@ -19,6 +20,7 @@ Theme v5 主题契约与运行时读取层（决策见 [`docs/decisions/0020-the
 
 ## 架构摘要（Theme v5）
 
+- **三层写法**：L1 `ThemeParadigm`（`paradigm.ts` 六轴，`defineTheme` 展开后从 `ThemeSpec` 去掉），L2 稀疏 `ThemeSpec` 覆写，L3 `MaterialSpec` 与 `effects.ts` 的 WGSL（`<ThemedSurface>`、`<ThemeTransition>`）。见 `.agents/skills/theme-designer/SKILL.md`。
 - **精简 `theme.json`（25 个核心角色 + 可选字体）**：
   - `cssVars.theme`：必需 `radius`、`radius-control`、`radius-container`、`radius-modal`、`scrim`、`media`、`on-media`；可选 `font-sans`、`font-mono`（内置主题默认省略以沿用系统字体）。
   - `cssVars.light` / `cssVars.dark`：21 个核心颜色角色（`background`、`card`、`popover`、`muted`、`surface`、`foreground`、`muted-foreground`、`faint`、`primary`、`primary-foreground`、`secondary`、`accent`、`brand`、`border`、`line`、`input`、`ring`、`info`、`success`、`warning`、`destructive`）。
@@ -35,4 +37,4 @@ Theme v5 主题契约与运行时读取层（决策见 [`docs/decisions/0020-the
 bun run tokens:build && bun run check:theme && bun run theme:contrast && bun run theme:parity
 ```
 
-应用通过 `shadcn-nsh init --theme <id>` 初始化后，会在项目根目录写入 `theme.json` 与 `DESIGN.md`，并在 `lib/ui/` 下写入精简源码（`schema.ts`、`materials.ts`、`effects.ts`、`base.ts`、`preset.ts`、`theme.ts`）。执行 `shadcn-nsh add theme-<id>` 时仅复制 `themes/<id>.ts` 供 `selectTheme()` 运行时切换。
+应用通过 `shadcn-nsh init --theme <id>` 初始化后，会在项目根目录写入 `theme.json` 与 `DESIGN.md`，并在 `lib/ui/` 下写入精简源码（`schema.ts`、`materials.ts`、`effects.ts`、`paradigm.ts`、`base.ts`、`preset.ts`、`theme.ts`）。执行 `shadcn-nsh add theme-<id>` 时仅复制 `themes/<id>.ts` 供 `selectTheme()` 运行时切换。

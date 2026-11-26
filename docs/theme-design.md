@@ -30,7 +30,17 @@
 
 ### 1.2 应用侧定制
 
-通过 `shadcn-nsh init --theme <id>` 初始化后，项目根目录会获得 `theme.json` 与 `DESIGN.md`，`lib/ui/` 下获得精简的主题源码（`schema.ts`、`materials.ts`、`base.ts`、`preset.ts`、`theme.ts`）。应用可直接微调 `theme.json` 的颜色、圆角或可选的 `font-sans`/`font-mono`，或借助 `base.ts` + `defineTheme()` 扩展视觉行为。
+通过 `shadcn-nsh init --theme <id>` 初始化后，项目根目录会获得 `theme.json` 与 `DESIGN.md`，`lib/ui/` 下获得精简的主题源码（`schema.ts`、`materials.ts`、`effects.ts`、`paradigm.ts`、`base.ts`、`preset.ts`、`theme.ts`）。应用可直接微调 `theme.json` 的颜色、圆角或可选的 `font-sans`/`font-mono`，或借助 `base.ts` + `defineTheme()` 扩展视觉行为。
+
+### 1.3 L1 `ThemeParadigm`
+
+写一套新主题时先选六个语义轴，再只写下和这套轴不同的 L2 字段：
+
+1. **L1** `ThemeParadigm`（`packages/theme/paradigm.ts`）：`depth`、`shape`、`stroke`、`motion`、`feedback`、`density`。`expandParadigm()` 把它展开成稀疏 L2 patch。
+2. **L2** `defineTheme({ extends, paradigm, ... })`：合并顺序是被继承的主题、展开后的 paradigm、然后这次调用自己的 `tokens` / `metrics` / `elevation` / `surfaces` / `feedback` / `motion` / `controls`。显式 L2 字段胜出。解析后的 `ThemeSpec` 不保留 `paradigm`。
+3. **L3** 表面材质与 WGSL：`material` 用 `"glass"` / `"acrylic"`（或 `MaterialSpec`），`effect` 用 `{ kind: "liquid-glass" | "acrylic-noise" | "specular-rim" | "paper-grain" }`。`<ThemedSurface role="…">` 画出该表面；`<ThemeTransition value={…} />` 没有子节点，放在要切换的画面旁边，按 `motion.presets.themeSwitch` 播放 `dissolve` 或 `radial-wipe`（`fade` / `none` 不走着色器）。
+
+轴的取舍、调色板角色、不变量和一份可复制的 `defineTheme({ paradigm })` 写在 [`.agents/skills/theme-designer/SKILL.md`](../.agents/skills/theme-designer/SKILL.md)。Showcase 的 **Theme Specimen**（`apps/showcase/demos/specimen.tsx`）用同一套轴现场切换六套内置主题和 `Editorial Paper`。
 
 ## 2 硬性原则
 

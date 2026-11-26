@@ -7,7 +7,12 @@
  * 3. `surfaces` — 11 semantic surface layers + per-appearance elevation scales (no finish-fields allowlist)
  * 4. `feedback` & `motion` — unified hover/press/focus/disabled feedback primitives and motion timings/presets
  * 5. `controls` — 13 sparse control recipes with numerical/degenerate defaults (no theme-ID branches)
+ *
+ * L1 `ThemeParadigm` (`paradigm.ts`) is an authoring shorthand. `defineTheme` expands it into these
+ * L2 fields and does not store `paradigm` on the resolved `ThemeSpec`.
  */
+
+import { expandParadigm, type ParadigmPatch, type ThemeParadigm } from "./paradigm";
 
 /** Platform glass/acrylic material requests (`null` = pure CSS/layer paint). */
 export type FinishMaterial = "glass" | "acrylic";
@@ -489,6 +494,11 @@ export interface ThemePatch extends Omit<DeepPartial<ThemeSpec>, "id" | "label" 
   readonly id: string;
   readonly label: string;
   readonly extends: ThemeSpec;
+  /**
+   * L1 axes. Expanded after `extends` and before this patch's own L2 fields, which win.
+   * Stripped from the resolved `ThemeSpec`.
+   */
+  readonly paradigm?: ThemeParadigm;
   readonly meta?: ThemeMeta;
 }
 
@@ -638,7 +648,20 @@ export const EASING_BEZIERS: Record<EasingName, readonly [number, number, number
   "point-to-point": [0.55, 0.55, 0, 1],
 };
 
-/** Create a complete `ThemeSpec` and runtime `AppTheme` from either a full `ThemeSpec` or a sparse patch extending another theme. */
+/** Merge a paradigm's sparse L2 fields onto a base spec. Identity and `meta` stay put. */
+function withParadigm(base: ThemeSpec, patch: ParadigmPatch): ThemeSpec {
+  return {
+    ...base,
+    tokens: mergeTokens(base.tokens, patch.tokens),
+    metrics: deepMerge(base.metrics, patch.metrics),
+    elevation: deepMerge(base.elevation, patch.elevation),
+    surfaces: deepMerge(base.surfaces, patch.surfaces),
+    feedback: deepMerge(base.feedback, patch.feedback),
+    motion: deepMerge(base.motion, patch.motion),
+    controls: deepMerge(base.controls, patch.controls),
+  };
+}
+
 function mergeTokens(base: TokensSpec, patch: ThemePatch["tokens"]): TokensSpec {
   const merged = deepMerge(base, patch);
   if (!patch?.light && !patch?.dark) return merged;
@@ -651,22 +674,33 @@ function mergeTokens(base: TokensSpec, patch: ThemePatch["tokens"]): TokensSpec 
   };
 }
 
+/**
+ * Create a complete `ThemeSpec` and runtime `AppTheme` from either a full `ThemeSpec` or a sparse
+ * patch extending another theme. When `paradigm` is set, the merge order is the extended theme,
+ * then `expandParadigm`, then the patch's own L2 fields. Omitting `paradigm` keeps the previous merge.
+ */
 export function defineTheme(input: ThemeSpec | ThemePatch): AppTheme {
-  const spec: ThemeSpec =
+  const base =
     "extends" in input
+      ? input.paradigm
+        ? withParadigm(input.extends, expandParadigm(input.paradigm))
+        : input.extends
+      : undefined;
+  const spec: ThemeSpec =
+    base !== undefined && "extends" in input
       ? {
           id: input.id,
           label: input.label,
-          tokens: mergeTokens(input.extends.tokens, input.tokens),
-          metrics: deepMerge(input.extends.metrics, input.metrics),
-          elevation: deepMerge(input.extends.elevation, input.elevation),
-          surfaces: deepMerge(input.extends.surfaces, input.surfaces),
-          feedback: deepMerge(input.extends.feedback, input.feedback),
-          motion: deepMerge(input.extends.motion, input.motion),
-          controls: deepMerge(input.extends.controls, input.controls),
+          tokens: mergeTokens(base.tokens, input.tokens),
+          metrics: deepMerge(base.metrics, input.metrics),
+          elevation: deepMerge(base.elevation, input.elevation),
+          surfaces: deepMerge(base.surfaces, input.surfaces),
+          feedback: deepMerge(base.feedback, input.feedback),
+          motion: deepMerge(base.motion, input.motion),
+          controls: deepMerge(base.controls, input.controls),
           meta: input.meta,
         }
-      : input;
+      : (input as ThemeSpec);
   return {
     id: spec.id,
     label: spec.label,

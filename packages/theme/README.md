@@ -9,6 +9,7 @@ Theme v5 runtime and theme definitions (`docs/decisions/0020-theme-v5.md`). One 
 | `schema.ts`                             | Contracts (`ThemeSpec`, `ThemePatch`), `SHARED_TYPE_SCALE`, `EASING_BEZIERS`, `defineTheme()`, and `compileNshTheme()`                                           |
 | `materials.ts`                          | Platform glass and acrylic material recipes, plus `resolveMaterial()` for a parameterized spec                                                                   |
 | `effects.ts`                            | Built-in WGSL surface and theme-switch shaders (`SURFACE_SHADERS`, `TRANSITION_SHADERS`)                                                                         |
+| `paradigm.ts`                           | L1 `ThemeParadigm` axes and `expandParadigm()`, expanded by `defineTheme` and omitted from `ThemeSpec`                                                           |
 | `themes/nsh-gallery/index.ts`           | Complete `base` theme spec (`baseSpec`, `base`, `nshGallery`)                                                                                                    |
 | `themes/<id>/index.ts`                  | Sparse overrides (`shadcn`, `solid-glass`, `apple`, `material`, `winui`) and `themes/native/`                                                                    |
 | `preset.ts`                             | Build-time preset re-export (replaced by `init --theme <id>` with the chosen theme)                                                                              |
@@ -19,6 +20,7 @@ Theme v5 runtime and theme definitions (`docs/decisions/0020-theme-v5.md`). One 
 
 ## Architecture (Theme v5)
 
+- **Three authoring layers**: L1 `ThemeParadigm` (`paradigm.ts`, six axes, stripped after `defineTheme`), L2 sparse `ThemeSpec` overrides, L3 `MaterialSpec` plus the WGSL in `effects.ts` (`<ThemedSurface>`, `<ThemeTransition>`). See `.agents/skills/theme-designer/SKILL.md`.
 - **Minimal 25-key `theme.json` + optional fonts**:
   - `cssVars.theme`: required `radius`, `radius-control`, `radius-container`, `radius-modal`, `scrim`, `media`, `on-media`; optional `font-sans`, `font-mono` (omitted by default in built-in themes to keep system fonts).
   - `cssVars.light` / `cssVars.dark`: 21 core keys (`background`, `card`, `popover`, `muted`, `surface`, `foreground`, `muted-foreground`, `faint`, `primary`, `primary-foreground`, `secondary`, `accent`, `brand`, `border`, `line`, `input`, `ring`, `info`, `success`, `warning`, `destructive`).
@@ -32,4 +34,4 @@ Theme v5 runtime and theme definitions (`docs/decisions/0020-theme-v5.md`). One 
 ## Authoring & Runtime Switching
 
 - Build and validate after theme changes: `bun run tokens:build && bun run check:theme && bun run theme:contrast && bun run theme:parity`
-- App initialization (`shadcn-nsh init --theme <id>`) installs `theme.json` and `DESIGN.md` at the app root alongside `lib/ui/{schema,materials,effects,base,preset,theme}.ts`. Adding another theme (`shadcn-nsh add theme-<id>`) copies `themes/<id>.ts` for `selectTheme()`.
+- App initialization (`shadcn-nsh init --theme <id>`) installs `theme.json` and `DESIGN.md` at the app root alongside `lib/ui/{schema,materials,effects,paradigm,base,preset,theme}.ts`. Adding another theme (`shadcn-nsh add theme-<id>`) copies `themes/<id>.ts` for `selectTheme()`.

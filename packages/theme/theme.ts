@@ -102,6 +102,19 @@ export {
 } from "./effects";
 export { resolveMaterial } from "./materials";
 
+/** L1 axes. `defineTheme` expands them and does not store them on `ThemeSpec`. */
+export type {
+  ParadigmDensity,
+  ParadigmDepth,
+  ParadigmFeedback,
+  ParadigmMotion,
+  ParadigmPatch,
+  ParadigmShape,
+  ParadigmStroke,
+  ThemeParadigm,
+} from "./paradigm";
+export { expandParadigm } from "./paradigm";
+
 /** Terminal idiom metrics (`16x8` character grid points). */
 export const terminal = platform.idiom === "terminal";
 export const TERMINAL_ROW = 16;

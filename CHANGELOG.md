@@ -12,6 +12,8 @@
 
 ### Added
 
+- **L1 `ThemeParadigm` (`expandParadigm`).** Six optional axes (`depth`, `shape`, `stroke`, `motion`, `feedback`, `density`) expand into a sparse L2 patch inside `defineTheme`, after `extends` and before that call's own fields. The resolved `ThemeSpec` does not keep `paradigm`. The showcase page Theme Specimen switches the six built-in themes and an Editorial Paper example through `<ThemeTransition>` and `<ThemedSurface>`. Agents authoring a theme start from `.agents/skills/theme-designer/SKILL.md`.
+
 - **`AlertDialogContent` takes an `input` (#122).** One text field in the platform's alert (`defaultValue`, `placeholder`, `selectTextOnFocus`, `required`); `onAction` reports its text as `value` beside the chosen `action`. Windows, Linux and the terminal show no field, and `value` is `null` there. Needs NSH v0.7.0.
 
 - **A half-picked range previews its band (#326).** In `Calendar` and `DatePicker` with `range`, the band runs from the first pick to the later day under the pointer or the keyboard until the second pick commits it. A day before the first starts the range again, as `nsh/base` does, so nothing is previewed there.
