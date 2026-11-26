@@ -49,9 +49,11 @@ export type Case = {
   /**
    * A wider budget than `antialiasing`, for a page that needs one: at most `pixels` pixels, a
    * channel of each within `delta` levels (0-255). Everything else — a moved edge, a color, a
-   * missing row — fails as it always did; this only forgives a rounded clip's antialiasing, which
-   * the web rasterizer draws a level apart between two page instances (the avatar's circular
-   * photos). `scripts/port/render.ts` compares every pair; the test only takes the pictures.
+   * missing row — fails as it always did; this forgives the antialiased pixels along an edge the
+   * two pages draw a hair apart, whether the rasterizer lands a rounded clip a level off between
+   * two page instances (the avatar's circular photos) or the pages draw that edge's 1px a
+   * different colour (a checked box's cleared edge). `scripts/port/render.ts` compares every pair;
+   * the test only takes the pictures.
    */
   tolerance?: { pixels: number; delta: number; why: string };
   /**
@@ -118,6 +120,20 @@ const overrides: Record<string, Override> = {
     steps: async (app) => {
       await app.press("text:Documents");
       await app.wait(300);
+    },
+    // A checked box's fill reaches its edge (ADR 0014), so the box clears the edge it rests with;
+    // the reference page is upstream's own box, which keeps that edge under the fill. The two
+    // differ by that 1px ring and its antialiasing, and only there. Measured, per theme, the
+    // pixels over 12/255 and the worst channel: nsh-gallery 11 / 9, shadcn 1 / 13, solid-glass
+    // 0 / 8, apple 2 / 14, material 65 / 43, winui 115 / 48 (the fuller the edge's contrast with
+    // the checked fill, the more of it shows: WinUI's `input` over `primary` is the ring the
+    // gallery's pass was for). The edge's colour, not the rasterizer, so the counts are the same
+    // on every run; a different fill or a moved box moves hundreds of pixels, and the labels and
+    // the other rows are compared at the shared budget.
+    tolerance: {
+      pixels: 130,
+      delta: 50,
+      why: "a checked box's edge is cleared where the reference leaves it under the fill",
     },
   },
   // A checked context-menu row: its mark's color is the accent's, as the reference draws it.
