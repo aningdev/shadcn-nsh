@@ -34,9 +34,18 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { edgeClass } from "./input";
+import { edgeClass, fieldSize, insetShade } from "./input";
 import { Icon } from "./lib/icons";
-import { fieldCorners, fieldEdgeWidths } from "./lib/indicator";
+import {
+  fieldCorners,
+  fieldEdgeThickness,
+  fieldEdgeWidths,
+  fieldFocusEdge,
+  fieldFocusTone,
+  fieldHasUniformEdge,
+  fieldRestEdge,
+  fieldRing,
+} from "./lib/indicator";
 import {
   Chevron,
   clearButtonLook,
@@ -47,7 +56,7 @@ import {
   triggerPadding,
 } from "./lib/listbox";
 import { type Live, read } from "./lib/live-value";
-import { fieldLook } from "./lib/look";
+import { fieldLook, fillOf } from "./lib/look";
 import {
   createItemRegistry,
   createOpenState,
@@ -56,7 +65,7 @@ import {
   type OpenState,
   type Slot,
 } from "./lib/open-state";
-import { controlSize, narrowWindow } from "./lib/surface";
+import { narrowWindow } from "./lib/surface";
 
 const pointer = platform.desktop;
 
@@ -93,30 +102,45 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         ...(pointer && !narrowWindow()
           ? { width: fieldWidth, flexShrink: 1, minWidth: fieldMinWidth }
           : { alignSelf: "stretch" }),
-        minHeight: controlSize.line,
+        minHeight: fieldSize.height,
         // The query starts where a select's title does, and stops 4 points short of the toggle.
         paddingStart: triggerPadding(),
         paddingEnd: 4,
         ...fieldCorners(field),
         ...fieldEdgeWidths(field),
-        backgroundColor: colors.field,
-        ...finish.inset,
+        ...(field.ground ? fillOf(field.ground) : {}),
+        ...insetShade(),
+        ...(read(open) && fieldHasUniformEdge(field)
+          ? { borderColor: colors.faint }
+          : fieldRestEdge(field)),
+        ...(terminal ? {} : fieldRing(fieldFocusTone(field, false))),
+        transitionProperty: "border-color, outline-color, opacity",
+        transitionDuration: reduceMotion() ? 0 : 120,
         ...read(o?.style),
       };
     },
-    // The edge's states are classes, the fields' (`edgeClass`): the focus edge over the hover's.
     get class(): string {
-      return edgeClass({
-        rest: read(open) ? "border-faint" : "border-input",
-        hover: "border-faint",
-      });
+      return terminal
+        ? edgeClass({
+            rest: read(open) ? "border-faint" : "border-input",
+            hover: "border-faint",
+          })
+        : "";
+    },
+    get hoverStyle(): ViewStyle | undefined {
+      return fieldHasUniformEdge(fieldLook()) ? { borderColor: colors.faint } : undefined;
+    },
+    get focusWithinStyle(): ViewStyle {
+      const field = fieldLook();
+      const tone = fieldFocusTone(field, false);
+      return terminal ? { borderColor: tone } : fieldFocusEdge(field, tone);
     },
     get inputClass(): string {
       return `${pointer ? "text-sm" : "text-base"} text-foreground ${read(o?.filled) ? "placeholder:text-foreground" : "placeholder:text-muted-foreground"}`;
     },
     get inputStyle(): InputStyle {
       // A least width for the query, so a row of chips leaves it room at the row's end.
-      return { flex: 1, minWidth: 40, height: controlSize.line - 2 };
+      return { flex: 1, minWidth: 40, height: fieldSize.height - fieldEdgeThickness(fieldLook()) };
     },
   };
 }
@@ -565,6 +589,8 @@ export function ComboboxContent(props: ComboboxContentProps) {
     "minWidth",
     "class",
     "style",
+    "hoverStyle",
+    "focusWithinStyle",
     "inputClass",
     "inputStyle",
     "popupStyle",
@@ -610,8 +636,12 @@ export function ComboboxContent(props: ComboboxContentProps) {
             clearButtonClass={props.clearButtonClass ?? clear.clearButtonClass}
             clearButtonStyle={props.clearButtonStyle ?? clear.clearButtonStyle}
             clearButton={props.clearButton ?? clear.clearButton}
-            class={props.class ? `${look.class} ${props.class}` : look.class}
+            class={
+              look.class ? (props.class ? `${look.class} ${props.class}` : look.class) : props.class
+            }
             style={[look.style, props.style ?? null]}
+            hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+            focusWithinStyle={[look.focusWithinStyle, props.focusWithinStyle ?? null]}
             inputClass={
               props.inputClass ? `${look.inputClass} ${props.inputClass}` : look.inputClass
             }

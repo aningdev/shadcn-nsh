@@ -23,7 +23,7 @@ import type { ViewStyle } from "nsh";
 import { computed, platform, Text, token, View, windowSize } from "nsh";
 
 import { type Live, read } from "./live-value";
-import { edged, wellEdge } from "./look";
+import { edged, surfaceBorderWidth, wellEdge } from "./look";
 
 const pointer = platform.desktop;
 
@@ -43,11 +43,11 @@ export const density = reactive<{
   pad: number;
   gap: number;
 }>(["title", "note", "body", "row", "pad", "gap"], () => {
-  const { typography, dimension } = style();
+  const { dimension } = style();
   return {
-    title: typography.title.fontSize[tier],
-    note: typography.detail.fontSize[tier],
-    body: typography.body.fontSize[tier],
+    title: font.size("title"),
+    note: font.size("detail"),
+    body: font.size("body"),
     row: dimension.size.height[tier].lg,
     ...dimension.size.density[tier],
   };
@@ -74,11 +74,9 @@ const terminalSizes: ControlSizeSet = {
   detail: 12,
   control: 3 * TERMINAL_COLUMN,
   check: 12,
-  dot: 6,
   tabs: TERMINAL_ROW,
   line: TERMINAL_ROW,
   clear: 2 * TERMINAL_COLUMN,
-  switch: "small",
 };
 
 /**
@@ -89,30 +87,17 @@ const terminalSizes: ControlSizeSet = {
  * row each, an indicator's box three Cells wide for its glyph (`[x]`).
  * `row` is a pressable row's least height, `line` a row of values', `tabs`
  * a tab strip's, `control` a checkbox's or radio's side, `check` its mark's,
- * `dot` a radio's dot, `clear` a clear button's side, `switch` the switch size
- * beside a row's label; `padding` and `gap` are the theme's control spacing.
+ * `clear` a clear button's side; `padding` and `gap` are
+ * the theme's control spacing.
  * `label` and `detail` are the theme's type roles of those names. Read from the
  * theme in use (the terminal's are the grid's), so a theme switch redraws
  * what reads them.
  */
 export const controlSize = reactive<ControlSizeSet>(
-  [
-    "row",
-    "padding",
-    "gap",
-    "label",
-    "detail",
-    "control",
-    "check",
-    "dot",
-    "tabs",
-    "line",
-    "clear",
-    "switch",
-  ],
+  ["row", "padding", "gap", "label", "detail", "control", "check", "tabs", "line", "clear"],
   () => {
     if (terminal) return terminalSizes;
-    const { typography, dimension } = style();
+    const { dimension } = style();
     const { height } = dimension.size;
     const icons = dimension.icon;
     return {
@@ -123,8 +108,8 @@ export const controlSize = reactive<ControlSizeSet>(
       clear: icons[tier].md,
       check: icons[tier].sm,
       ...dimension.size.control[tier],
-      label: typography.label.fontSize[tier],
-      detail: typography.detail.fontSize[tier],
+      label: font.size("label"),
+      detail: font.size("detail"),
     };
   },
 );
@@ -156,7 +141,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
   return {
     backgroundColor: finish.card.backgroundColor,
     ...rounded(shape.container),
-    borderWidth: stroke.hairline,
+    borderWidth: surfaceBorderWidth(finish.card.borderColor),
     borderColor: finish.card.borderColor,
     boxShadow: finish.card.boxShadow,
     ...(o?.padded ? { padding: density.pad } : {}),
@@ -170,12 +155,13 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
  * ground alone marks it).
  */
 export function insetSurface(): ViewStyle {
+  const edge = edged(wellEdge());
   return {
     backgroundColor: colors.inset,
-    borderWidth: stroke.hairline,
+    borderWidth: surfaceBorderWidth(edge),
+    borderColor: edge,
     ...rounded(shape.control),
-    ...finish.inset,
-    borderColor: edged(wellEdge()),
+    boxShadow: finish.inset.boxShadow,
   };
 }
 
@@ -292,7 +278,7 @@ export function listRow(o?: ListRowOptions): ListRowLook {
         marginHorizontal: -ROW_BLEED,
         paddingStart: ROW_BLEED + (o?.start ?? 0),
         paddingEnd: ROW_BLEED,
-        borderRadius: ROW_BLEED,
+        ...rounded(shape.control),
         ...(read(o?.style) ?? {}),
       };
     },

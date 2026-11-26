@@ -17,6 +17,7 @@ import {
 import { Kbd } from "./kbd";
 import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
+import { listItemHighlightClass } from "./lib/look";
 import { itemRadius, itemSpacing, listPadding, rowVerticalPad } from "./lib/popup";
 import { controlSize } from "./lib/surface";
 
@@ -58,11 +59,14 @@ export const commandClasses = {
   group: "pt-2.5 pb-1",
   /** Between two sections: its sides are `commandStyles.separator`'s. */
   separator: "my-1 h-px bg-border",
-  /** A row: quiet until hovered, tinted in the brand while highlighted, dimmed while disabled; its
+  /** A row: quiet until hovered, focused per `list.item.highlight`, dimmed while disabled; its
    * corners are `commandStyles.item`'s. */
-  item:
-    "group transition-colors duration-100 motion-reduce:transition-none " +
-    "hover:bg-hover focus:bg-brand-tint active:opacity-70 disabled:opacity-50",
+  get item(): string {
+    return (
+      "group transition-colors duration-100 motion-reduce:transition-none " +
+      `hover:bg-hover ${listItemHighlightClass(false)} active:opacity-70 disabled:opacity-50`
+    );
+  },
 };
 
 /**

@@ -58,11 +58,15 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   // The theme's height scale, read where it is drawn: the middle step, or the small one for `sm`
   // (so a small control is as tall as a small button, and the two sit level in a row).
   const height = () => (small() ? controlHeight.sm : controlHeight.md);
+  const plateBorderWidth = () =>
+    finish.plate.borderColor === undefined || finish.plate.borderColor === "transparent"
+      ? 0
+      : stroke.control;
   // The thumb: the track's raised plate, a segment's own box (the theme's `plate`: a labelled block
   // chosen inside a well).
   const thumb = (): ViewStyle => ({
     ...rounded(shape.control, inset),
-    borderWidth: stroke.control,
+    borderWidth: plateBorderWidth(),
     // A face without an edge of its own draws none: `finish.plate` states the colour where it
     // names one, and a border with no colour of its own draws black.
     borderColor: "transparent",
@@ -75,11 +79,11 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         flexDirection: "row",
         alignSelf: spread() ? "stretch" : "flex-start",
         padding: inset,
-        ...rounded(shape.control, inset),
+        ...rounded(shape.control),
         // The channel the chosen block sits in (`channel`), not the switch's track: in dark a
         // switch's track is as raised as its thumb, which would hide the thumb.
         ...finish.channel,
-        borderWidth: stroke.control,
+        borderWidth: finish.channel.borderColor === "transparent" ? 0 : stroke.control,
       };
     },
     /** The thumb as `Tabs`' indicator, which the core springs to the selected tab. */
@@ -98,7 +102,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
           return {
             ...(spread() ? { flex: 1, paddingHorizontal: 7 } : { paddingHorizontal: 9 }),
             ...rounded(shape.control, inset),
-            borderWidth: stroke.control,
+            borderWidth: plateBorderWidth(),
             borderColor: "transparent",
             flexDirection: "row",
             alignItems: "center",

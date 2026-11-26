@@ -49,7 +49,6 @@ test("double focus, timing motion, state-layer inks and platform material follow
   expect(read("motionFast")).toBe("timing:150:[0.05,0.7,0.1,1]");
   expect(read("motionDefault")).toBe("timing:250:[0,0,0,1]");
   expect(read("motionSlow")).toBe("timing:167:[1,0,1,1]");
-  expect(read("motionEnter")).toBe("200:[0.55,0.55,0,1]");
 
   // Drive follow/Roll/animate under timing config cleanly.
   await app.press("text:Step");

@@ -76,11 +76,11 @@ test("a select and a combobox are compact with a pointer and roomier on a touch 
   const touch = await open("./listbox.fixture.tsx", { platform: "ios" });
   expect(find(desktop.texts(), "desktop=")).toBe("true");
   expect(find(touch.texts(), "desktop=")).toBe("false");
-  // Trigger 32×180, row 30. Touch: 48 (the tallest height), no min width, row 44.
+  // Trigger 32×180, row 30. Touch: 44 (`dimension.size.hit.touch`), no min width, row 44.
   expect(find(desktop.texts(), "select-size=")).toBe("32|180|30");
-  expect(find(touch.texts(), "select-size=")).toBe("48|0|44");
+  expect(find(touch.texts(), "select-size=")).toBe("44|0|44");
   expect(find(desktop.texts(), "combo-size=")).toBe("32|30");
-  expect(find(touch.texts(), "combo-size=")).toBe("48|44");
+  expect(find(touch.texts(), "combo-size=")).toBe("44|44");
   // Pointer: floating popup, padding 6. Touch: bottom sheet, top radius 20, max 70%, pad 34.
   expect(find(desktop.texts(), "popup=")).toBe("popup|4|4|none");
   expect(find(touch.texts(), "popup=")).toBe("sheet|14|14|70%|8|34");

@@ -640,12 +640,12 @@ export function ToolbarOverflow(props: ToolbarOverflowProps) {
             style={props.style ?? null}
           >
             {terminal ? (
-              <Text style={toggleLabel(state.open)}>⋯</Text>
+              <Text style={toggleLabel(state.open, { disabled: isDisabled })}>⋯</Text>
             ) : (
               <Icon
                 icon={Ellipsis}
-                size={toggleGlyph(state.open).size}
-                tint={toggleGlyph(state.open).tint}
+                size={toggleGlyph(state.open, { disabled: isDisabled }).size}
+                tint={toggleGlyph(state.open, { disabled: isDisabled }).tint}
               />
             )}
           </Toggle>

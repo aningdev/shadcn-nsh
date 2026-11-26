@@ -1,7 +1,7 @@
 // A pagination: `paginationItemClass` and `paginationArrows`, and the `Pagination` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, rounded, shape, terminal } from "@shadcn-nsh/theme";
+import { buttonCorner, colors, rounded, terminal } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { JSX, TextStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -38,8 +38,8 @@ const pageItem =
   "transition-colors duration-200 motion-reduce:transition-none hover:bg-hover active:opacity-70 " +
   "selected:bg-primary selected:text-primary-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-ring";
 
-/** A `Pagination` item's button corners (`shape.button`). */
-export const paginationItemStyle = (): TextStyle => rounded(shape.button) as TextStyle;
+/** A `Pagination` item's button corners (`buttonCorner("default")`). */
+export const paginationItemStyle = (): TextStyle => rounded(buttonCorner("default")) as TextStyle;
 
 /**
  * A `Pagination`'s `itemClass`, over the component's own numbers and

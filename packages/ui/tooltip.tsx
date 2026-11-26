@@ -1,7 +1,7 @@
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) at the top, and the parts below.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { finish } from "@shadcn-nsh/theme";
+import { finish, platformMaterial } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -12,6 +12,7 @@ import {
 
 import { Button, type ButtonVariant } from "./button";
 import { AsText } from "./lib/as-text";
+import { edged, painted, surfaceBorderWidth, tooltipSlotLook } from "./lib/look";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 /** Options of `tooltipLook`. */
@@ -22,39 +23,56 @@ export interface TooltipLookOptions {
 
 /**
  * A tooltip's bubble (`class` and `style`, on the view inside `nsh/base`'s `Tooltip`):
- * the theme's tooltip finish (`finish.inverse`: today the `popover` surface with the border's
- * edge, so it reads as the menus and popovers do in both appearances). One line: a row 8 points apart, 8 by 4 points of padding,
- * the theme's control corners (`radius-control`); `rich`: a column, 10 points of
- * padding, the theme's base corners (`radius`).
- * Its text takes `tooltipText`, a shortcut or a note `tooltipNote`.
+ * read from the theme's `tooltip.*` slots (`face`, `edge`, `shade`), plus backdrop blur where
+ * the face names a translucent finish. One line: a row 8 points apart, 8 by 4 points of padding,
+ * the theme's control corners (`radius-control`); `rich`: a column, 10 points of padding, the
+ * theme's container corners (`radius-container`).
+ * Its text takes `tooltipTextStyle()`, a shortcut or a note `tooltipNote()`.
  */
 export function tooltipLook(o?: TooltipLookOptions) {
   return {
     class: o?.rich
-      ? "gap-2 rounded-(--radius-container) border p-2.5"
-      : "flex-row items-center gap-2 rounded-(--radius-control) border px-2 py-1",
+      ? "gap-2 rounded-(--radius-container) p-2.5"
+      : "flex-row items-center gap-2 rounded-(--radius-control) px-2 py-1",
     style: {
       get backgroundColor() {
-        return finish.inverse.backgroundColor;
+        return painted(tooltipSlotLook().face);
       },
       get boxShadow() {
-        return finish.inverse.boxShadow;
+        const shade = tooltipSlotLook().shade;
+        return shade === null ? "none" : finish[shade].boxShadow;
       },
       get borderColor() {
-        return finish.inverse.borderColor;
+        return edged(tooltipSlotLook().edge);
+      },
+      get borderWidth() {
+        return surfaceBorderWidth(edged(tooltipSlotLook().edge));
+      },
+      get backdropFilter() {
+        const face = tooltipSlotLook().face;
+        return face?.kind === "finish"
+          ? ({ ...finish[face.role] } as { backdropFilter?: string }).backdropFilter
+          : undefined;
       },
     } satisfies ViewStyle,
   };
 }
 
-/** A tooltip's text (`class`): 12 points in the inverse foreground (`inverse-foreground`). */
-export const tooltipText = "text-xs text-inverse-foreground";
+/** Class name for tooltip sizing where only a class prop is used; prefer `tooltipTextStyle()` for color. */
+export const tooltipText = "text-xs";
 
-/** A tooltip's quieter text (`style`): a shortcut's keys, a time, 12 points over 16 in the inverse finish's ink. */
+/** A tooltip's text style: 12 points over 16 in the theme's `tooltip.ink`. */
+export const tooltipTextStyle = (): TextStyle => ({
+  fontSize: 12,
+  lineHeight: 16,
+  color: tooltipSlotLook().ink ?? finish.inverse.foreground,
+});
+
+/** A tooltip's quieter text (`style`): a shortcut's keys, a time, 12 points over 16 in the tooltip's ink. */
 export const tooltipNote = (): TextStyle => ({
   fontSize: 12,
   lineHeight: 16,
-  color: finish.inverse.foreground,
+  color: tooltipSlotLook().ink ?? finish.inverse.foreground,
 });
 
 /** Why a tooltip closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
@@ -139,17 +157,19 @@ function useTooltip() {
   return ctx;
 }
 
-/** The bubble itself: `tooltipLook`'s classes, a string child in `tooltipText`. */
+/** The bubble itself: `tooltipLook`'s classes, a string child in `tooltipTextStyle()`. */
 function Bubble(props: TooltipContentProps) {
   const [, rest] = split(props, ["children", "rich", "class"]);
   const look = tooltipLook({ rich: props.rich });
+  const usesInverseMaterial = () => tooltipSlotLook().face?.kind === "finish";
   return (
     <BaseTooltip
+      {...(usesInverseMaterial() ? platformMaterial("inverse") : {})}
       {...rest}
       class={props.class ? `${look.class} ${props.class}` : look.class}
       style={[look.style, props.style ?? null]}
     >
-      <AsText class={tooltipText}>{props.children}</AsText>
+      <AsText style={tooltipTextStyle()}>{props.children}</AsText>
     </BaseTooltip>
   );
 }

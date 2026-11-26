@@ -17,8 +17,11 @@ import { split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
 import { joinClass } from "./lib/class-names";
-import { painted, sliderLook as sliderSlots, trackLook } from "./lib/look";
+import { edged, painted, sliderLook as sliderSlots, trackLook } from "./lib/look";
 import { railFace, railShadow } from "./lib/track";
+
+/** Default vertical slider rail length per tier. */
+const VERTICAL_LENGTH = { pointer: 128, touch: 144 } as const;
 
 /** The knob a slider draws: the theme's `slider.*` slots. */
 const knob = () => sliderSlots();
@@ -69,7 +72,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
     get trackClass(): string {
       const h = knob();
       const pad = knobWidth(h) / 2;
-      const length = h.vertical[tier];
+      const length = VERTICAL_LENGTH[tier];
       const bandClass = vertical
         ? `w-[${perTier(h.band)}px] h-[${length}px] items-center py-[${pad}px]`
         : `h-[${perTier(h.band)}px] justify-center px-[${pad}px]`;
@@ -103,20 +106,29 @@ export function sliderLook(o: SliderLookOptions = {}) {
     get thumbClass(): string {
       const h = knob();
       const focusRingClass = "focus-visible:outline-3 focus-visible:outline-ring/50";
-      if (h.dot > 0) {
-        const outer = h.knob[tier] - 2 * EDGE_WIDTH;
-        const rim = (outer - h.dot) / 2;
-        const hoverRim = (outer - h.dotHover) / 2;
-        const pressRim = (outer - h.dotPressed) / 2;
-        return `w-[${outer}px] h-[${outer}px] rounded-full border-solid border-popover border-[${rim}px] hover:border-[${hoverRim}px] active:border-[${pressRim}px] ${fade} ${focusRingClass}`;
-      }
-      const hoverMods = h.brightens
-        ? "hover:brightness-105 active:brightness-95 disabled:brightness-100"
-        : "";
       // A press swells the knob (a touch screen's 20 points reach 32): as a transform, so the
       // thumb grows around its own middle and nothing re-measures the band.
       const press = Number((h.knobPressed[tier] / h.knob[tier]).toFixed(4));
       const pressMod = press === 1 ? "" : `active:scale-[${press}]`;
+      if (h.dot > 0) {
+        const outer = h.knob[tier] - 2 * EDGE_WIDTH;
+        const scale = h.knob[tier] / h.knob.pointer;
+        const scaled = (v: number) => (scale === 1 ? v : Math.round((v * scale) / 2) * 2);
+        const rim = (outer - scaled(h.dot)) / 2;
+        const hoverRim = (outer - scaled(h.dotHover)) / 2;
+        const pressRim = (outer - scaled(h.dotPressed)) / 2;
+        return [
+          `w-[${outer}px] h-[${outer}px] rounded-full border-solid border-popover border-[${rim}px] hover:border-[${hoverRim}px] active:border-[${pressRim}px]`,
+          fade,
+          pressMod,
+          focusRingClass,
+        ]
+          .filter(Boolean)
+          .join(" ");
+      }
+      const hoverMods = h.brightens
+        ? "hover:brightness-105 active:brightness-95 disabled:brightness-100"
+        : "";
       return ["rounded-full", fade, hoverMods, pressMod, focusRingClass].filter(Boolean).join(" ");
     },
     get thumbStyle(): ViewStyle {
@@ -127,11 +139,19 @@ export function sliderLook(o: SliderLookOptions = {}) {
           boxShadow: outerEdge(finish.knob.borderColor, finish.knob.boxShadow, EDGE_WIDTH),
         };
       }
+      const width = vertical ? h.knobHeight[tier] : h.knob[tier];
+      const height = vertical ? h.knob[tier] : h.knobHeight[tier];
+      const hasFinishEdge =
+        finish.knob.borderColor !== undefined && finish.knob.borderColor !== "transparent";
+      const edgeStyle: ViewStyle =
+        h.knobEdge !== null
+          ? { borderWidth: stroke.control, borderColor: edged(h.knobEdge) }
+          : { borderWidth: hasFinishEdge ? stroke.control : 0 };
       return {
-        width: h.knob[tier],
-        height: h.knobHeight[tier],
-        borderWidth: stroke.control,
+        width,
+        height,
         ...finish.knob,
+        ...edgeStyle,
         backgroundColor: painted(h.knobFace),
       };
     },

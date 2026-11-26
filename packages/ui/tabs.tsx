@@ -2,6 +2,7 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
+  CAPSULE_RADIUS,
   colors,
   finish,
   focusRing,
@@ -27,7 +28,7 @@ import {
 
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
-import { painted, trackGround } from "./lib/look";
+import { edged, painted, tabsTrackLook } from "./lib/look";
 import { controlSize } from "./lib/surface";
 
 const pointer = platform.desktop;
@@ -77,11 +78,20 @@ export function tabsLook(o?: TabsLookOptions) {
   // The track's padding, and the room the mark keeps inside it: both the same step, so a tab's own
   // box is the mark's box — the one the pointer's hover paints.
   const inset = 3;
-  // The track's corner, and the mark's one step inside it — concentric: half the strip's height,
-  // with the curve the theme states for corners (`shape.curve`).
-  const corners = (step = 0) => rounded(controlSize.tabs / 2, step);
+  // The track's corner, and the mark's one step inside it — concentric: `tabs.track.corner` (`full`
+  // snaps to half the strip's height), with the curve the theme states for corners (`shape.curve`).
+  const radius = () => {
+    const c = tabsTrackLook().corner;
+    return c === CAPSULE_RADIUS ? controlSize.tabs / 2 : c;
+  };
+  const corners = (step = 0) => rounded(radius(), step);
+  const plateBorderWidth = () =>
+    finish.plate.borderColor === undefined || finish.plate.borderColor === "transparent"
+      ? 0
+      : stroke.control;
   return {
     get style(): ViewStyle {
+      const track = tabsTrackLook();
       return {
         height: controlSize.tabs,
         flexDirection: "row",
@@ -89,9 +99,9 @@ export function tabsLook(o?: TabsLookOptions) {
         gap: 2,
         padding: inset,
         ...corners(),
-        borderWidth: stroke.control,
-        borderColor: colors.border,
-        backgroundColor: painted(trackGround()),
+        borderWidth: track.edge === null ? 0 : stroke.control,
+        borderColor: track.edge === null ? "transparent" : edged(track.edge),
+        backgroundColor: painted(track.face),
         boxShadow: finish.inset.boxShadow,
       };
     },
@@ -103,7 +113,7 @@ export function tabsLook(o?: TabsLookOptions) {
         top: inset,
         bottom: inset,
         ...corners(inset),
-        borderWidth: stroke.control,
+        borderWidth: plateBorderWidth(),
         ...finish.plate,
       };
     },
@@ -115,7 +125,7 @@ export function tabsLook(o?: TabsLookOptions) {
             // The mark's side pad: the same fixed 8 as the underlined strip's (§12 M7).
             paddingHorizontal: TAB_PAD,
             ...corners(inset),
-            borderWidth: stroke.control,
+            borderWidth: plateBorderWidth(),
             borderColor: "transparent",
             alignItems: "center",
             justifyContent: "center",

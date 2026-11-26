@@ -68,7 +68,8 @@ describe("mergeTheme", () => {
     const incoming = {
       typography: { fontFamily: null },
       state: { "press-scale": 0.97, "pressed-opacity": 0.7 },
-      shape: { curve: "continuous", corners: { button: "radius" } },
+      shape: { curve: "continuous" },
+      dimension: { stroke: { hairline: 1, control: 1 } },
       finishes: {
         shared: {
           card: {
@@ -95,7 +96,8 @@ describe("mergeTheme", () => {
     expect(theme).toEqual({
       typography: { fontFamily: "{font-sans}" },
       state: { "press-scale": 1, "pressed-opacity": 0.8 },
-      shape: { curve: "circular", corners: { button: "radius" } },
+      shape: { curve: "circular" },
+      dimension: { stroke: { hairline: 1, control: 1 } },
       finishes: {
         shared: {
           card: {
@@ -120,7 +122,7 @@ describe("mergeTheme", () => {
     });
     expect(added).toBe(6);
     expect(missing).toEqual([
-      "shape.corners",
+      "dimension",
       "finishes.shared.card.material",
       "finishes.shared.modal",
       "finishes.light.modal",

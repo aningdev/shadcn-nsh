@@ -3,6 +3,7 @@
 
 import {
   alpha,
+  buttonCorner,
   colors,
   controlHeight,
   cornerCurve,
@@ -68,8 +69,8 @@ const monthGap = 16;
 /** The gap over each week: rows of a cell plus this (`mt-2` in shadcn's calendar). */
 const weekGap = 4;
 
-/** The corners of header arrows and month/year grid buttons (`shape.button`). */
-const cellRadius = () => shape.button;
+/** The corners of header arrows and month/year grid buttons (`buttonCorner("default")`). */
+const cellRadius = () => buttonCorner("default");
 
 /** Day cell corner radius: a day is a control (`shape.control`). */
 const dayRadius = () => shape.control;
@@ -243,7 +244,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
     return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent group-data-range-preview-middle:bg-transparent group-data-range-preview-middle:group-focus-visible:bg-brand-tint`;
   };
   const textClass = () =>
-    `${props.item.today ? `text-${today().ink}` : own()} font-normal group-aria-selected:text-primary-foreground group-disabled:text-muted-foreground group-disabled:opacity-50`;
+    `${props.item.today ? today().ink : own()} font-normal group-aria-selected:text-primary-foreground group-disabled:text-muted-foreground group-disabled:opacity-50`;
   return (
     <View style={{ minWidth: 0, paddingTop: weekGap }}>
       <View style={{ height: cell(), alignItems: "center", justifyContent: "center" }}>
@@ -430,7 +431,7 @@ export const calendarLook = {
       return {
         height: 28,
         paddingHorizontal: terminal ? 8 : 10,
-        ...rounded(shape.button),
+        ...rounded(buttonCorner("default")),
         justifyContent: "center" as const,
         // No type role has this size: a preset's 13 in both tiers.
         fontSize: 13,

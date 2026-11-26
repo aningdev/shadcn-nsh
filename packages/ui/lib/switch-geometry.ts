@@ -12,9 +12,15 @@ export interface SwitchGeometry {
   border: number;
   /** The track's padding, between its border and the knob, on every side. */
   inset: number;
-  /** The knob's diameter. */
+  /** The knob's diameter (or width when oval). */
   knob: number;
+  /** The knob's height when oval (defaults to `knob` for a circular knob). */
+  knobHeight?: number;
 }
+
+/** Distance from the track's inner border edge to the knob's leading and top edges. */
+export const knobOffset = (g: SwitchGeometry, border: number = g.border): number =>
+  (g.height - (g.knobHeight ?? g.knob)) / 2 - border;
 
 /**
  * How far the knob travels from off to on. Off, it rests at the start of the

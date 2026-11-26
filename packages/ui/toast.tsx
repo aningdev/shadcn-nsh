@@ -14,7 +14,6 @@ import {
   terminal,
   font,
   shape,
-  stroke,
 } from "@shadcn-nsh/theme";
 import { CircleCheck, CircleX, Info, TriangleAlert, X, type IconNode } from "lucide";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
@@ -29,15 +28,16 @@ import {
 
 import { Button, buttonLabel, buttonLook, type ButtonLookOptions } from "./button";
 import { Icon } from "./lib/icons";
+import { popupCorner, surfaceBorderWidth, toastActionFace } from "./lib/look";
 import { pressSink, pressTransition } from "./lib/press";
 import { Spinner } from "./spinner";
 
 const pointer = platform.desktop;
 
 /**
- * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the inverse finish (`finish.inverse`: the
- * floating pane every popup wears today, not the raised one, a control's, which a theme may make a tint over the page),
- * 12-point corners (`shape.container`), 12 by 14 points of padding. Its title takes `toastTitle`,
+ * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the inverse finish (`finish.inverse`),
+ * the theme's `popup.corner`, edge width following `finish.inverse.borderColor` (zero where
+ * transparent), 12 by 14 points of padding. Its title takes `toastTitle`,
  * its description `toastText`.
  */
 export function toastLook(): ViewStyle {
@@ -47,8 +47,8 @@ export function toastLook(): ViewStyle {
     gap: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    ...rounded(shape.container),
-    borderWidth: stroke.hairline,
+    ...rounded(popupCorner()),
+    borderWidth: surfaceBorderWidth(finish.inverse.borderColor),
     ...finish.inverse,
   };
 }
@@ -78,11 +78,27 @@ const toastActionSize: ButtonLookOptions = pointer
   : { size: "sm" };
 
 /**
- * A toast's action (an Undo, a Retry), spread on a `Button` or a pressable view: the main action's
- * citrus button (`buttonLook("default")`). Its label takes `toastActionLabel`.
+ * A toast's action (an Undo, a Retry), spread on a `Button` or a pressable view: a filled
+ * primary button where `toast.action.face` names one, or a borderless text button on the
+ * inverse surface (`toast.action.face === null`) for Material Snackbars. Its label takes `toastActionLabel`.
  */
 export function toastActionLook() {
-  return buttonLook("default", toastActionSize);
+  if (toastActionFace() !== null) return buttonLook("default", toastActionSize);
+  const ghost = buttonLook("ghost", toastActionSize);
+  return {
+    ...ghost,
+    get hoverStyle(): ViewStyle {
+      return hovered("inverse-foreground");
+    },
+    get activeStyle(): ViewStyle {
+      return {
+        ...(themeStyle().state.overlay.pressed > 0
+          ? stateLayer("pressed", "inverse-foreground")
+          : { backgroundColor: alpha(finish.inverse.foreground, 0.1) }),
+        ...pressSink(0.96).activeStyle,
+      };
+    },
+  };
 }
 
 /** The label of a `toastActionLook` (`buttonLabel("default")`). */
@@ -122,7 +138,7 @@ export function toastCloseLook() {
       return {
         ...(themeStyle().state.overlay.pressed > 0
           ? stateLayer("pressed", "inverse-foreground")
-          : { backgroundColor: alpha(colors.foreground, 0.1) }),
+          : { backgroundColor: alpha(finish.inverse.foreground, 0.1) }),
         ...pressSink(0.9).activeStyle,
       };
     },

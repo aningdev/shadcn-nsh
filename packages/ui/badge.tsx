@@ -10,12 +10,12 @@ import {
   type Tone,
   rounded,
   font,
-  shape,
   stroke,
 } from "@shadcn-nsh/theme";
 import { split, token, View, Text, type ViewProps } from "nsh";
 
 import { type Live, read } from "./lib/live-value";
+import { badgeCorner } from "./lib/look";
 
 /** A badge's variants: `default`, the tone's fill; `outline`, an edge in the tone's color. */
 export type BadgeVariant = "default" | "outline";
@@ -66,7 +66,7 @@ export function Badge(props: BadgeProps) {
         {
           paddingHorizontal: terminal ? 0 : size.pad,
           height: terminal ? TERMINAL_ROW : size.height,
-          ...rounded(shape.control),
+          ...rounded(badgeCorner()),
           justifyContent: "center",
           backgroundColor: outline
             ? "transparent"

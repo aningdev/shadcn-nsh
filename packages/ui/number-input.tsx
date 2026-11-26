@@ -4,16 +4,17 @@
 
 import { colors, terminal } from "@shadcn-nsh/theme";
 import { ChevronDown, ChevronUp, Minus, Plus, type IconNode } from "lucide";
-import type { InputStyle } from "nsh";
-import { platform, split, Text } from "nsh";
+import type { InputStyle, ViewStyle } from "nsh";
+import { platform, signal, split, Text } from "nsh";
 import {
   NumberInput as BaseNumberInput,
   type NumberInputProps as BaseNumberInputProps,
 } from "nsh/base";
 
-import { edgeClass, fieldSize } from "./input";
+import { edgeClass, fieldLook as fieldWellLook, fieldSize } from "./input";
 import { Icon } from "./lib/icons";
 import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
+import { type Live } from "./lib/live-value";
 import { fieldLook } from "./lib/look";
 
 const pointer = platform.desktop;
@@ -51,6 +52,30 @@ export const numberInputClasses = {
   pair: (width: string) => `${width} border-l border-line`,
   pairButton: (top: boolean) => `flex-1 ${press}${top ? " border-b border-line" : ""}`,
 };
+
+/**
+ * A number input's frame props (`style`, `hoverStyle`, `focusWithinStyle`, `disabledStyle`, and
+ * `class` in a terminal): aligns the well with `fieldLook()` so step buttons share the theme's
+ * field fill, corners, edge widths, and smooth focus halo.
+ */
+export function numberInputLook(o?: { disabled?: Live<boolean>; focused?: Live<boolean> }) {
+  if (terminal) {
+    return {
+      get class(): string {
+        return numberInputClasses.frame;
+      },
+      style: undefined as ViewStyle | undefined,
+      hoverStyle: undefined as ViewStyle | undefined,
+      focusWithinStyle: undefined as ViewStyle | undefined,
+      disabledStyle: undefined as ViewStyle | undefined,
+    };
+  }
+  return fieldWellLook({
+    disabled: o?.disabled,
+    focused: o?.focused,
+    style: () => ({ height: fieldSize.height, alignItems: "stretch", overflow: "hidden" }),
+  });
+}
 
 /** A number input's field (`inputStyle`): the label size, tabular figures; at the end of a terminal's band, as a column of numbers reads. */
 export function numberInputText(): InputStyle {
@@ -130,6 +155,12 @@ export function NumberInput(props: NumberInputProps) {
   const [, rest] = split(props, [
     "steps",
     "class",
+    "style",
+    "hoverStyle",
+    "focusWithinStyle",
+    "disabledStyle",
+    "onFocus",
+    "onBlur",
     "inputStyle",
     "controlsRight",
     "controlsClass",
@@ -138,6 +169,11 @@ export function NumberInput(props: NumberInputProps) {
     "decrementButton",
     "incrementButton",
   ]);
+  const focused = signal(false);
+  const look = numberInputLook({
+    disabled: () => !!props.disabled,
+    focused: () => focused(),
+  });
   const kind = props.steps ?? "pair";
   // Upstream's widths: a pair of chevrons sits in a narrower lane (`w-6` / `w-9`) than a − and
   // + either side of the field (`w-8` / `w-11`).
@@ -146,10 +182,24 @@ export function NumberInput(props: NumberInputProps) {
   const width = pointer ? lanes.desktop : lanes.touch;
   const glyphSize = pointer ? 14 : 16;
   const buttons = numberInputSteps(kind, width, glyphSize);
+  const cls = () =>
+    look.class ? (props.class ? `${look.class} ${props.class}` : look.class) : props.class;
   return (
     <BaseNumberInput
       {...rest}
-      class={props.class ? `${numberInputClasses.frame} ${props.class}` : numberInputClasses.frame}
+      onFocus={() => {
+        focused.set(true);
+        props.onFocus?.();
+      }}
+      onBlur={() => {
+        focused.set(false);
+        props.onBlur?.();
+      }}
+      class={cls()}
+      style={[look.style ?? null, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      focusWithinStyle={[look.focusWithinStyle ?? null, props.focusWithinStyle ?? null]}
+      disabledStyle={[look.disabledStyle ?? null, props.disabledStyle ?? null]}
       inputStyle={[numberInputText(), props.inputStyle ?? null]}
       controlsRight={props.controlsRight ?? buttons.controlsRight}
       controlsClass={props.controlsClass ?? buttons.controlsClass}

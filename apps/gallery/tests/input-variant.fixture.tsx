@@ -1,3 +1,4 @@
+import { colors } from "@shadcn-nsh/theme";
 import { mount, Text } from "nsh";
 
 import { inputLook } from "../../../packages/ui";
@@ -10,10 +11,10 @@ const plain = inputLook();
 const line = (name: string, look: ReturnType<typeof inputLook>) =>
   [
     `${name} fill=${look.style.backgroundColor === "transparent" ? "—" : "yes"}`,
-    `edge=${look.class.includes("border-transparent") ? "—" : "yes"}`,
-    `hover-edge=${look.class.includes("hover:border-") ? "yes" : "—"}`,
-    `focus-edge=${look.class.includes("focus-within:border-brand") ? "yes" : "—"}`,
-    `focus-ring=${look.class.includes("focus-within:outline-brand") ? "yes" : "—"}`,
+    `edge=${look.style.borderColor === "transparent" ? "—" : "yes"}`,
+    `hover-edge=${look.hoverStyle?.borderColor === colors.faint ? "yes" : "—"}`,
+    `focus-edge=${look.focusWithinStyle.borderColor === colors.brand ? "yes" : "—"}`,
+    `focus-ring=${look.focusWithinStyle.outlineColor === colors.brand && look.focusWithinStyle.outlineWidth === 2 ? "yes" : "—"}`,
     `stride=${said(look.style.borderWidth)}`,
   ].join(" ");
 

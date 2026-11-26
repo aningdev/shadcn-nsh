@@ -17,7 +17,6 @@ import { Check, ChevronDown, Copy, Pipette } from "lucide";
 import type { InputStyle, JSX, StyleProp, ViewStyle } from "nsh";
 import { Clipboard, platform, signal, Text, token, View } from "nsh";
 import {
-  Button as BaseButton,
   type ColorChannel,
   ColorArea,
   ColorEyeDropper,
@@ -32,7 +31,7 @@ import {
   Popover,
 } from "nsh/base";
 
-import { iconButtonLook } from "./button";
+import { IconButton, iconButtonLook } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./input";
 import { useCopied } from "./lib/copied";
 import { Icon } from "./lib/icons";
@@ -423,17 +422,16 @@ export function ColorFields(props: ColorFieldsProps) {
   );
 }
 
-/** A copy button (the gallery's ghost icon button): it copies `text()` and shows a check for a moment. */
+/** A copy button (this library's ghost icon button): it copies `text()` and shows a check for a moment. */
 export function ColorCopy(props: { name: string; text: () => string }) {
   const { copied, mark } = useCopied();
   return (
-    <BaseButton
+    <IconButton
       accessibilityLabel={copied() ? "Copied" : `Copy ${props.name.toLocaleLowerCase()}`}
       onPress={() => {
         void Clipboard.writeText(props.text());
         mark();
       }}
-      {...iconButtonLook()}
     >
       {terminal ? (
         <Text style={{ color: colors.mutedForeground }}>{copied() ? "✓" : "Copy"}</Text>
@@ -444,7 +442,7 @@ export function ColorCopy(props: { name: string; text: () => string }) {
           tint={copied() ? colors.brand : colors.mutedForeground}
         />
       )}
-    </BaseButton>
+    </IconButton>
   );
 }
 

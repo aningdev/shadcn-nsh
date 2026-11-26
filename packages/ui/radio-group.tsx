@@ -1,7 +1,17 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, follow, motion, terminal, TERMINAL_ROW, tier } from "@shadcn-nsh/theme";
+import {
+  colors,
+  dimmed,
+  focusRing,
+  follow,
+  motion,
+  press,
+  terminal,
+  TERMINAL_ROW,
+  tier,
+} from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { reduceMotion, split, View } from "nsh";
 import {
@@ -23,7 +33,7 @@ import {
 } from "./checkbox";
 import { AsText } from "./lib/as-text";
 import { joinClass } from "./lib/class-names";
-import { choiceLook } from "./lib/look";
+import { choiceLook, edged } from "./lib/look";
 import { cssMotion } from "./lib/motion";
 
 /**
@@ -44,10 +54,14 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
   const dotPressed = () => Math.round((look().dotPressed ?? 0) * scale);
   const border = () => choiceEdge(look());
   /** A theme that leaves the box empty draws its mark as the ring itself, and keeps the edge while on. */
-  const ringOnly = () => look().checked === null;
+  const ringOnly = () => look().radioChecked === null;
   const wellStyle = () => choiceWell({ look: look(), disabled: props.disabled });
-  const ringBorderColor = () =>
-    ringOnly() && props.on ? colors.brand : (wellStyle().borderColor ?? colors.border);
+  const ringBorderColor = () => {
+    if (props.on && !ringOnly() && !props.disabled) return "transparent";
+    return ringOnly() && props.on && look().radioCheckedEdge !== null
+      ? edged(look().radioCheckedEdge)
+      : (wellStyle().borderColor ?? colors.border);
+  };
   const on = follow(() => (props.on ? 1 : 0));
   /** The dot's growth under hover and press, as a scale of its box, where the recipe states it: the
    * ring around it is the pointer's, so the classes ride the group's states, paced by the theme's
@@ -62,13 +76,13 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
     width: dot(),
     height: dot(),
     borderRadius: dot() / 2,
-    backgroundColor: ringOnly() ? colors.brand : colors.primaryForeground,
+    backgroundColor: ringOnly() ? colors.primary : colors.primaryForeground,
     opacity: on,
     transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
   });
   return (
     <View
-      class={choiceSink}
+      class={press.scale < 1 ? choiceSink : undefined}
       style={{
         width: size(),
         height: height(),
@@ -88,12 +102,12 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
           checked={props.on}
         />
       ) : null}
-      {look().checked === null ? null : (
+      {look().radioChecked === null ? null : (
         <ChoiceLight
           on={on}
           radius={size() / 2}
           border={border()}
-          fill={look().checked ?? undefined}
+          fill={look().radioChecked ?? undefined}
         />
       )}
       {grows() ? (
@@ -178,8 +192,15 @@ export function Radio(props: RadioProps) {
       style={[look?.style ?? null, props.style ?? null]}
       hoverStyle={[look?.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look?.activeStyle ?? null, props.activeStyle ?? null]}
-      focusVisibleStyle={[look?.focusVisibleStyle ?? null, props.focusVisibleStyle ?? null]}
-      disabledStyle={[look?.disabledStyle ?? null, props.disabledStyle ?? null]}
+      focusVisibleStyle={[
+        look ? look.focusVisibleStyle : focusRing(),
+        props.focusVisibleStyle ?? null,
+      ]}
+      disabledStyle={
+        look
+          ? [look.disabledStyle, props.disabledStyle ?? null]
+          : (props.disabledStyle ?? { opacity: dimmed.disabled })
+      }
     >
       <If when={props.indicator ?? true}>
         <RadioRing on={!!props.checked} scale={scale} disabled={!!props.disabled} />

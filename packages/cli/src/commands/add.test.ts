@@ -9,6 +9,7 @@ const fixture = (): Fixture =>
       "theme",
       "switch-geometry",
       "press",
+      "motion",
       "spinner",
       "as-text",
       "icons",

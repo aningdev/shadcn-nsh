@@ -20,8 +20,9 @@ test("the field dimension and the inverse, modal and tooltip roles follow the th
   expect(read(app.texts(), "field")).not.toBe("0|0");
   expect(read(app.texts(), "field")?.endsWith("|0")).toBe(false);
   expect(read(app.texts(), "corners")?.startsWith("0|")).toBe(false);
-  expect(read(app.texts(), "frame")).toContain("outline-2");
-  // A theme whose well states no edge of its own spreads none: the slots' classes draw it.
+  expect(read(app.texts(), "frame")).toContain("ring=true");
+  expect(read(app.texts(), "frame")).toContain("hover=true");
+  // A theme whose well states no edge of its own spreads none: the inline field look draws it.
   expect(read(app.texts(), "stroke")?.startsWith("false|")).toBe(true);
 
   // Material ("material"): underlined fields with top corners only.
@@ -30,27 +31,29 @@ test("the field dimension and the inverse, modal and tooltip roles follow the th
   const material = look(app.texts());
   expect(material.field?.endsWith("|0")).toBe(true);
   expect(material.corners?.startsWith("0|")).toBe(true);
-  expect(read(app.texts(), "frame")).toContain("border-muted-foreground");
-  expect(read(app.texts(), "frame")).not.toContain("border-b-muted-foreground");
-  // The line alone takes the accent, `focus.width` (3) wide, and no ring is drawn.
-  expect(read(app.texts(), "frame")).not.toContain("outline-2");
+  expect(read(app.texts(), "frame")).toContain("side-muted=true");
+  expect(read(app.texts(), "frame")).not.toContain("bottom-input=true");
+  // The line alone takes the accent, `focus.width` (2) wide, and no ring is drawn.
+  expect(read(app.texts(), "frame")).toContain("focus-bottom-brand=true");
+  expect(read(app.texts(), "frame")).toContain("focus-bottom-width=2");
+  expect(read(app.texts(), "frame")).toContain("ring=false");
 
-  // Marked ("winui"): fields boxed all round like the base's with the muted line as their bottom
-  // edge, and all four corners.
+  // Marked ("winui"): fields boxed all round like the base's with the line color as their sides
+  // and `input` as their bottom edge (WinUI's TextBox), unchanged under the pointer; with the keys
+  // the bottom edge alone takes the accent, `focus.width` (2) wide, in place of the ring.
   await app.press("text:Marked");
 
   const after = look(app.texts());
   expect(after.field).toBe(before.field);
   expect(after.corners?.startsWith("0|")).toBe(false);
-  // A hairline box over an input-colored bottom edge (WinUI's TextBox), unchanged under the pointer;
-  // with the keys the bottom edge alone takes the accent, `focus.width` (2) wide, in place of the ring.
-  expect(read(app.texts(), "frame")).toContain("border-border border-b-input");
-  expect(read(app.texts(), "frame")).not.toContain("hover:border-faint");
-  expect(read(app.texts(), "frame")).toContain("focus-within:border-b-brand");
-  expect(read(app.texts(), "frame")).toContain("focus-within:border-b-[2px]");
-  expect(read(app.texts(), "frame")).not.toContain("outline-2");
-  // WinUI's well states its own translucent strokes, the bottom one stronger: a field spreads both.
-  expect(read(app.texts(), "stroke")).toBe("true|true|true");
+  expect(read(app.texts(), "frame")).toContain("side-line=true");
+  expect(read(app.texts(), "frame")).toContain("bottom-input=true");
+  expect(read(app.texts(), "frame")).toContain("hover=false");
+  expect(read(app.texts(), "frame")).toContain("focus-bottom-brand=true");
+  expect(read(app.texts(), "frame")).toContain("focus-bottom-width=2");
+  expect(read(app.texts(), "frame")).toContain("ring=false");
+  // WinUI's finish.inset declares distinct side/bottom strokes, while `insetShade()` lets field edge slots draw the border.
+  expect(read(app.texts(), "stroke")).toBe("true|false|true");
   expect(after.inverse).not.toBe(before.inverse);
   expect(after.modal).not.toBe(before.modal);
   expect(after.tooltip).not.toBe(before.tooltip);

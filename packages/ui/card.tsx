@@ -51,8 +51,9 @@ export function cardLook(): CardLook {
     get card(): ViewStyle {
       return {
         ...sectionSurface(),
-        ...(terminal ? {} : { paddingVertical: pad(), overflow: "hidden", gap: gap() }),
-        ...(terminal ? { gap: TERMINAL_GAP } : {}),
+        ...(terminal
+          ? { gap: TERMINAL_GAP }
+          : { paddingVertical: pad(), overflow: "hidden", gap: gap() }),
         flexDirection: "column",
       };
     },

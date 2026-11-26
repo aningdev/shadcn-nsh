@@ -2,8 +2,11 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
+  alpha,
   colors,
+  dimmed,
   finish,
+  focusRing,
   hitTarget,
   motion,
   terminal,
@@ -12,21 +15,35 @@ import {
   stroke,
   tier,
 } from "@shadcn-nsh/theme";
-import type { ViewStyle } from "nsh";
+import type { JSX, ViewStyle } from "nsh";
 import { reduceMotion, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
+import { AsText } from "./lib/as-text";
 import { joinClass } from "./lib/class-names";
-import { switchLook as switchSlots } from "./lib/look";
+import { type Live, read } from "./lib/live-value";
+import { disabledLook, edged, painted, switchLook as switchSlots } from "./lib/look";
 import { cssMotion } from "./lib/motion";
-import { type SwitchGeometry, knobTravel, switchSlop } from "./lib/switch-geometry";
+import { type SwitchGeometry, knobOffset, knobTravel, switchSlop } from "./lib/switch-geometry";
 
 /**
- * A switch's size: `default` draws the theme's own knob and track, `sm` the compact ones a theme
- * states in `switch.small.*` (the library's is a knob one icon step down with the track four points
- * taller than it; a theme that publishes one switch size states the same numbers twice).
+ * A switch's size: `default` draws the theme's standard knob and track, `sm` draws the compact
+ * ones in `switch.small.*` (desktop vs touch scales come from the active input `tier`).
  */
 export type SwitchSize = "sm" | "default";
+
+/** Options accepted by {@link switchLook}. */
+export interface SwitchLookOptions {
+  /** Switch size (`default` or `sm`, reactive or static). */
+  size?: Live<SwitchSize | undefined>;
+  /** Whether the switch is disabled (either a boolean or reactive getter). */
+  disabled?: Live<boolean>;
+  /**
+   * Whether the theme's `state.disabled.*` surface replaces the track and knob when disabled.
+   * Defaults to true; set false when an enclosing row (such as `listRow`) already dims the whole row.
+   */
+  disabledSurface?: boolean;
+}
 
 /** The props `switchLook` gives a `Switch`. */
 export interface SwitchLook {
@@ -35,6 +52,8 @@ export interface SwitchLook {
   readonly trackStyle: ViewStyle;
   readonly thumbClass: string;
   readonly thumbStyle: ViewStyle;
+  /** Root disabled opacity when the theme dims rather than replacing `state.disabled.face`. */
+  readonly disabledStyle: ViewStyle;
 }
 
 /** What a press does to a knob (`switch.feedback`): nothing, a grow, or a widening slide. */
@@ -79,7 +98,8 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
   const small = size === "sm";
   const knob = small ? look.knobSmall[tier] : look.knob[tier];
   const knobHeight = small ? look.knobSmallHeight[tier] : look.knobHeight[tier];
-  const ratio = knob / look.knob[tier];
+  const ratioW = knob / look.knob[tier];
+  const ratioH = knobHeight / look.knobHeight[tier];
   const border = look.edge.off[tier];
   const height = small ? look.smallHeight[tier] : look.height[tier];
   return {
@@ -90,11 +110,11 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
     knob,
     knobHeight,
     onBorder: look.edge.on[tier],
-    onKnobWidth: look.knobOn[tier] * ratio,
-    onKnobHeight: look.knobOnHeight[tier] * ratio,
-    knobHover: look.knobHover[tier] * ratio,
-    knobPressedWidth: look.knobPressed[tier] * ratio,
-    knobPressedHeight: look.knobPressedHeight[tier] * ratio,
+    onKnobWidth: look.knobOn[tier] * ratioW,
+    onKnobHeight: look.knobOnHeight[tier] * ratioH,
+    knobHover: look.knobHover[tier] * ratioW,
+    knobPressedWidth: look.knobPressed[tier] * ratioW,
+    knobPressedHeight: look.knobPressedHeight[tier] * ratioH,
     knobFeedback: look.feedback,
   };
 }
@@ -125,7 +145,11 @@ function knobLook(on: boolean): ViewStyle {
  * box it grew from, and `travel - shift` back once it is open — the same pixels as today's box,
  * without moving `transformOrigin`, which a press would jump.
  */
-function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[] {
+function knobFeedbackClasses(
+  g: ResolvedSwitchGeometry,
+  travel: number,
+  disabled: boolean,
+): string[] {
   if (g.knobFeedback === "none") return [];
   /** A size as a scale of the knob's box, to four places (a whole number of points fits). */
   const of = (size: number) => Number((size / g.knob).toFixed(4));
@@ -136,10 +160,14 @@ function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[
     of(w) === ofH(h) ? [`scale-[${of(w)}]`] : [`scale-x-[${of(w)}]`, `scale-y-[${ofH(h)}]`];
   const under = (variant: string, utilities: string[]): string[] =>
     utilities.map((utility) => `${variant}:${utility}`);
-  const pressed = under("active", scale(g.knobPressedWidth, g.knobPressedHeight));
   if (g.knobFeedback === "expand") {
-    return [...under("checked", scale(g.onKnobWidth, g.onKnobHeight)), ...pressed];
+    return [
+      ...under("checked", scale(g.onKnobWidth, g.onKnobHeight)),
+      ...(disabled ? [] : under("active", scale(g.knobPressedWidth, g.knobPressedHeight))),
+    ];
   }
+  if (disabled) return [];
+  const pressed = under("active", scale(g.knobPressedWidth, g.knobPressedHeight));
   const shift = (g.knobPressedWidth - g.knobHover) / 2;
   return [
     ...under("hover", scale(g.knobHover, g.knobHover)),
@@ -159,52 +187,99 @@ function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[
  * timing role in the theme paces them and no layout property moves. NSH animates a
  * view's translate and scale as one transform, so one transition carries both: `motion.fast`.
  */
-export function switchLook(on: () => boolean, size: SwitchSize = "default"): SwitchLook {
+export function switchLook(
+  on: () => boolean,
+  sizeOrOptions: SwitchSize | SwitchLookOptions = "default",
+): SwitchLook {
+  const options: SwitchLookOptions =
+    typeof sizeOrOptions === "string" ? { size: sizeOrOptions } : sizeOrOptions;
+  const resolveSize = (): SwitchSize => read(options.size) ?? "default";
+  const isDisabled = () => !!read(options.disabled);
+  const disabledSurface = options.disabledSurface ?? true;
+
   return {
     // The knob sits at the track's physical left (`left`, which keeps its
     // side) and travels right; right to left the whole track is mirrored, so
     // it rests at the start and springs toward the end in either direction.
     trackClass: "rtl:-scale-x-100",
     get trackStyle(): ViewStyle {
-      const g = geometry(size);
+      const g = geometry(resolveSize());
       const checked = on();
+      const look = switchSlots();
+      const off = disabledLook();
+      const offSurface = disabledSurface && isDisabled() && off.face !== null;
+      const disabledEdge = offSurface
+        ? look.edgeColor
+          ? alpha(edged(look.edgeColor), dimmed.disabled)
+          : edged(off.edge)
+        : undefined;
       return {
         width: g.width,
         height: g.height,
         borderRadius: g.height / 2,
         padding: g.inset,
-        backgroundColor: checked ? finish.fill.backgroundColor : colors.track,
-        borderWidth: checked ? g.onBorder : g.border,
-        borderColor: checked ? finish.fill.borderColor : finish.inset.borderColor,
-        boxShadow: checked ? finish.fill.boxShadow : finish.inset.boxShadow,
+        backgroundColor: offSurface
+          ? painted(off.face)
+          : checked
+            ? finish.accent.backgroundColor
+            : colors.track,
+        borderWidth: offSurface ? g.border : checked ? g.onBorder : g.border,
+        borderColor: offSurface
+          ? disabledEdge
+          : checked
+            ? finish.fill.borderColor
+            : edged(look.edgeColor),
+        boxShadow: offSurface ? "none" : checked ? finish.fill.boxShadow : finish.inset.boxShadow,
         transitionProperty: reduceMotion() ? "none" : "background-color, border-color, box-shadow",
         ...cssMotion(motion.fast),
       };
     },
     get thumbClass(): string {
-      const g = geometry(size);
+      const g = geometry(resolveSize());
       const travel = knobTravel(g);
-      return [`checked:translate-x-[${travel}px]`, ...knobFeedbackClasses(g, travel)].join(" ");
+      return [
+        `checked:translate-x-[${travel}px]`,
+        ...knobFeedbackClasses(g, travel, isDisabled()),
+      ].join(" ");
     },
     get thumbStyle(): ViewStyle {
-      const g = geometry(size);
+      const g = geometry(resolveSize());
       const checked = on();
-      const border = checked ? g.onBorder : g.border;
+      const off = disabledLook();
+      const offSurface = disabledSurface && isDisabled() && off.face !== null;
+      const border = offSurface ? g.border : checked ? g.onBorder : g.border;
+      const pad = knobOffset(g, border);
+      const knob = offSurface
+        ? ({
+            backgroundColor: off.ink ?? colors.mutedForeground,
+            boxShadow: "none",
+            borderColor: "transparent",
+          } satisfies ViewStyle)
+        : knobLook(checked);
+      const hasEdge = knob.borderColor !== undefined && knob.borderColor !== "transparent";
       return {
         position: "absolute",
         // physical: the knob's travel is a translateX from the track's left edge, and transforms do not mirror.
-        left: g.height / 2 - border - g.knob / 2,
-        top: g.height / 2 - border - g.knobHeight / 2,
+        left: pad,
+        top: pad,
         width: g.knob,
         height: g.knobHeight,
         borderRadius: Math.min(g.knob, g.knobHeight) / 2,
-        borderWidth: stroke.control,
-        ...knobLook(checked),
+        ...knob,
+        borderWidth: hasEdge ? stroke.control : 0,
         transitionProperty: reduceMotion() ? "none" : "transform",
         ...cssMotion(motion.fast),
       };
     },
+    get disabledStyle(): ViewStyle {
+      return disabledLook().face === null ? { opacity: dimmed.disabled } : {};
+    },
   };
+}
+
+/** Capsule focus ring matching the switch track (for a standalone switch). */
+export function switchFocusStyle(size: SwitchSize = "default"): ViewStyle {
+  return { borderRadius: geometry(size).height / 2, ...focusRing() };
 }
 
 /**
@@ -223,11 +298,13 @@ export function switchHitSlop(
 
 /**
  * `nsh/base`'s Switch in the look of `switchLook`. Every base prop passes through; `trackClass`,
- * `trackStyle` and `thumbStyle` go over the look's.
+ * `trackStyle` and `thumbStyle` go over the look's. A string child is the label.
  */
-export type SwitchProps = BaseSwitchProps & {
-  /** Its size on a touch screen (default `default`); read once, as `switchLook` does. */
+export type SwitchProps = Omit<BaseSwitchProps, "children"> & {
+  /** Compact (`sm`) or standard (`default`) geometry across both pointer and touch tiers. */
   size?: SwitchSize;
+  /** A string is the label; anything else is drawn as given. */
+  children?: string | JSX.Element;
 };
 
 /**
@@ -237,22 +314,38 @@ export type SwitchProps = BaseSwitchProps & {
 export function Switch(props: SwitchProps) {
   const [, rest] = split(props, [
     "size",
+    "children",
     "trackClass",
     "trackStyle",
     "thumbClass",
     "thumbStyle",
     "hitSlop",
+    "focusVisibleStyle",
+    "disabledStyle",
   ]);
-  const size = props.size ?? "default";
-  const look = switchLook(() => props.checked ?? false, size);
+  const children = props.children;
+  const alone = children == null;
+  const size = () => props.size ?? "default";
+  const look = switchLook(() => props.checked ?? false, {
+    size: () => props.size,
+    disabled: () => !!props.disabled,
+    disabledSurface: props.disabledStyle == null,
+  });
   return (
     <BaseSwitch
       {...rest}
-      hitSlop={props.hitSlop ?? (props.children == null ? switchHitSlop(size) : undefined)}
+      hitSlop={props.hitSlop ?? (alone ? switchHitSlop(size()) : undefined)}
+      focusVisibleStyle={[
+        alone ? switchFocusStyle(size()) : focusRing(),
+        props.focusVisibleStyle ?? null,
+      ]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
       trackClass={joinClass(look.trackClass, props.trackClass)}
       trackStyle={[look.trackStyle, props.trackStyle ?? null]}
       thumbClass={joinClass(look.thumbClass, props.thumbClass)}
       thumbStyle={[look.thumbStyle, props.thumbStyle ?? null]}
-    />
+    >
+      {alone ? null : <AsText style={{ color: colors.foreground }}>{children}</AsText>}
+    </BaseSwitch>
   );
 }

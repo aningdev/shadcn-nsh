@@ -7,13 +7,13 @@ import {
   DatePicker,
   DatePickerContent,
   DatePickerTrigger,
-  pickerLook,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "../../../packages/ui";
+import { controlSize } from "../../../packages/ui/lib/surface";
 
 const PALETTES = [
   { value: "nsh-gallery", label: "NSH Gallery" },
@@ -25,7 +25,7 @@ function App() {
   const pickedDate = signal<string | null>(null);
   const fruit = signal<string | null>(null);
   const due = signal<string | null>(null);
-  const selectHeight = () => pickerLook().style.height;
+  const selectHeight = () => controlSize.line;
 
   const choose = (val: string | null) => {
     palette.set(val);
@@ -43,7 +43,7 @@ function App() {
       <Button onPress={() => selectTheme(null)}>Apply NSH Gallery</Button>
 
       <Select value={palette()} onChange={({ value }) => choose(value)}>
-        <SelectTrigger>
+        <SelectTrigger style={{ height: controlSize.line }}>
           <SelectValue placeholder="Theme" />
         </SelectTrigger>
         <SelectContent accessibilityLabel="Theme picker">
@@ -60,12 +60,19 @@ function App() {
           void Promise.resolve().then(() => selectTheme(materialTheme));
         }}
       >
-        <DatePickerTrigger accessibilityLabel="Switch via date" style={{ width: 200 }} />
+        <DatePickerTrigger
+          accessibilityLabel="Switch via date"
+          style={{ width: 200, height: controlSize.line }}
+        />
         <DatePickerContent accessibilityLabel="Switch via date" />
       </DatePicker>
 
       <Select value={fruit()} onChange={({ value }) => fruit.set(value)}>
-        <SelectTrigger testID="fruit" accessibilityLabel="Fruit" style={{ width: 200 }}>
+        <SelectTrigger
+          testID="fruit"
+          accessibilityLabel="Fruit"
+          style={{ width: 200, height: controlSize.line }}
+        >
           <SelectValue placeholder="Pick fruit" />
         </SelectTrigger>
         <SelectContent accessibilityLabel="Fruit">
@@ -78,7 +85,11 @@ function App() {
         value={due()}
         onChange={({ value }) => due.set(typeof value === "string" ? value : null)}
       >
-        <DatePickerTrigger testID="due" accessibilityLabel="Due date" style={{ width: 200 }} />
+        <DatePickerTrigger
+          testID="due"
+          accessibilityLabel="Due date"
+          style={{ width: 200, height: controlSize.line }}
+        />
         <DatePickerContent accessibilityLabel="Due date" />
       </DatePicker>
     </View>

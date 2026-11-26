@@ -2,26 +2,21 @@
 // `activeStyle`, so it never waits for JS.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { hitTarget, press, terminal } from "@shadcn-nsh/theme";
+import { hitTarget, motion, press, terminal } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { reduceMotion } from "nsh";
 
 import { type Live, read } from "./live-value";
-
-/** How long a press's sink, and the state changes beside it, take to settle. */
-const PRESS_MS = 150;
-
-/** The easing of a press and of the state changes beside it: 150 ms, ease-out. */
-const pressEasing = {
-  transitionDuration: PRESS_MS,
-  transitionTimingFunction: "ease-out",
-} satisfies ViewStyle;
+import { cssMotion } from "./motion";
 
 /** A `style`'s transition for a press's sink: `transform`, and `also` (more
  * of CSS's property names the control's states change, as
- * `"background-color, opacity"`) alike, over `pressEasing`. */
+ * `"background-color, opacity"`) alike, over the theme's `motion.state`. */
 export function pressTransition(also?: string): ViewStyle {
-  return { transitionProperty: also ? `${also}, transform` : "transform", ...pressEasing };
+  return {
+    transitionProperty: also ? `${also}, transform` : "transform",
+    ...cssMotion(motion.state),
+  };
 }
 
 /**
@@ -36,7 +31,7 @@ export function pressTransition(also?: string): ViewStyle {
 export function pressSink(
   scale?: Live<number | undefined>,
   also?: string,
-): { readonly activeStyle: ViewStyle; transition: ViewStyle } {
+): { readonly activeStyle: ViewStyle; readonly transition: ViewStyle } {
   return {
     get activeStyle(): ViewStyle {
       if (reduceMotion()) return {};
@@ -44,7 +39,9 @@ export function pressSink(
       if (sink >= 1) return {};
       return { transform: [{ scale: read(scale) ?? sink }] };
     },
-    transition: pressTransition(also),
+    get transition(): ViewStyle {
+      return pressTransition(also);
+    },
   };
 }
 /**

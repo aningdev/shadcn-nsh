@@ -13,7 +13,7 @@ export interface ToolbarTrackOptions {
 /**
  * The inset track a toolbar or a `ToggleGroup` sits in: its tools in a row
  * (a column when `vertical`) 2 points apart, 3 points inside its edge, on
- * the inset with the border's edge. A terminal sets each tool as its label
+ * the inset with a hairline edge. A terminal sets each tool as its label
  * two columns apart and wraps a row too narrow for them.
  */
 export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
@@ -25,7 +25,7 @@ export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
     padding: 3,
     ...rounded(shape.control),
     borderWidth: stroke.control,
-    borderColor: colors.border,
+    borderColor: colors.line,
     backgroundColor: colors.inset,
   };
 }

@@ -3,16 +3,20 @@
 import {
   buttonCorner,
   colors,
+  controlHeight,
   font,
   rounded,
+  shape,
   stroke,
   TERMINAL_COLUMN,
+  TERMINAL_ROW,
   terminal,
 } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, token, View } from "nsh";
 
 import { AsText } from "./lib/as-text";
+import { edged, outlineEdge } from "./lib/look";
 import { density } from "./lib/surface";
 import { Separator } from "./separator";
 
@@ -37,6 +41,8 @@ export interface ButtonGroupLook {
   textFrame(): ViewStyle;
   /** That word's type. */
   text(): TextStyle;
+  /** The hairline between buttons (`ButtonGroupSeparator`). */
+  separator(): ViewStyle;
 }
 
 /**
@@ -71,18 +77,21 @@ export function buttonGroupLook(): ButtonGroupLook {
           ...(after ? { borderTopEndRadius: 0, borderBottomEndRadius: 0 } : {}),
         };
       }
-      // A raised face lights its top edge from inside; under the button above, that light would
-      // read as a white seam, so a button below another drops its shadows with its top edge.
+      // A vertical column clamps outer corners to `shape.container` so capsule buttons do not arch
+      // into giant domes, and drops shadows so seams stay clean across stacked items.
+      const cap = Math.min(buttonCorner("default"), shape.container);
       return {
+        boxShadow: "none",
         ...(before
           ? {
               borderTopLeftRadius: 0,
               borderTopRightRadius: 0,
               borderTopWidth: 0,
-              boxShadow: "none",
             }
-          : {}),
-        ...(after ? { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } : {}),
+          : { borderTopLeftRadius: cap, borderTopRightRadius: cap }),
+        ...(after
+          ? { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }
+          : { borderBottomLeftRadius: cap, borderBottomRightRadius: cap }),
       };
     },
     /** A word inside the group: the muted fill behind the control's corners. */
@@ -91,10 +100,11 @@ export function buttonGroupLook(): ButtonGroupLook {
       alignItems: "center",
       justifyContent: "center",
       gap: 8,
+      minHeight: terminal ? TERMINAL_ROW : controlHeight.md,
       paddingHorizontal: terminal ? TERMINAL_COLUMN : 12,
       backgroundColor: token("muted"),
       borderWidth: terminal ? 0 : stroke.control,
-      borderColor: colors.border,
+      borderColor: edged(outlineEdge()),
       // The group's word sits between its buttons: one control, one corner.
       ...rounded(terminal ? 0 : buttonCorner("default")),
     }),
@@ -103,6 +113,9 @@ export function buttonGroupLook(): ButtonGroupLook {
       fontWeight: font.weight("label"),
       color: colors.foreground,
       numberOfLines: 1,
+    }),
+    separator: (): ViewStyle => ({
+      backgroundColor: edged(outlineEdge()),
     }),
   };
 }
@@ -167,7 +180,7 @@ export function ButtonGroupSeparator(props: ButtonGroupSeparatorProps) {
     <Separator
       {...rest}
       orientation={OrientationContext() === "vertical" ? "horizontal" : "vertical"}
-      style={props.style ?? null}
+      style={[buttonGroupLook().separator(), props.style ?? null]}
     />
   );
 }

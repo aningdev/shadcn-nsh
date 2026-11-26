@@ -29,7 +29,8 @@ const problems = walk(ui).flatMap((file) =>
 );
 
 const advice: Record<(typeof problems)[number]["rule"], string> = {
-  controls: "pick a control dimension with `control()`, not a theme's whole geometry",
+  controls:
+    "read slot parts via `./lib/look` rather than calling `controls()` directly in components",
   "theme-name": "read what the theme states (a dimension, a finish), not which theme it is",
   colour: "read a theme role (`colors.*`, `finish.*`), or mark the line `// color: <why>`",
   state: "use `hoverStyle` / `activeStyle` / `hovered()`, or mark the line `// state: <why>`",
