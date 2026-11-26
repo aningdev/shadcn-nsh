@@ -349,7 +349,7 @@ export function listRow(o?: ListRowOptions): ListRowLook {
       };
     },
     get hoverStyle(): ViewStyle | undefined {
-      return read(o?.disabled) ? undefined : surface("accent").style;
+      return read(o?.disabled) ? undefined : { backgroundColor: colors.accent };
     },
     get activeStyle(): ViewStyle {
       return { opacity: feedback.passive.pressedOpacity };

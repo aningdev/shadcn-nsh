@@ -7,8 +7,10 @@ import {
   feedback,
   focusRing,
   follow,
+  metrics,
   press,
   rounded,
+  shape,
   stroke,
   surface,
   terminal,
@@ -50,7 +52,7 @@ export interface ChoiceOptions {
 const dims = (scale = 1) => ({
   control: Math.round(control("choice").box * scale),
   height: terminal ? TERMINAL_ROW : Math.round(control("choice").box * scale),
-  check: Math.round(control("choice").mark * scale),
+  check: Math.round((terminal ? 12 : metrics.icon.sm) * scale),
 });
 
 /** The choice resting recipe, read where the control is drawn so it follows `selectTheme`. */
@@ -310,7 +312,7 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
         minWidth: 0,
         padding: 12,
         paddingTop: 14,
-        ...rounded(control("choice").corner),
+        ...rounded(shape.control),
         borderWidth: stroke.control,
         borderColor: on ? colors.brand : colors.border,
         backgroundColor: on ? tints.brand : colors.surface,

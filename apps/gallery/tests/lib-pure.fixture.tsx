@@ -1,9 +1,12 @@
+import { colors, shape } from "@shadcn-nsh/theme";
 import {
+  choiceTileLook,
   drawIcon,
   type IconCanvas,
   iconImage,
   knobOffset,
   knobTravel,
+  listRow,
   mergeClasses,
   type PartMap,
   type SwitchGeometry,
@@ -317,6 +320,26 @@ const results: string[] = [
     return sameValue(slop, { top: 12, bottom: 12, left: 4, right: 4 })
       ? null
       : JSON.stringify(slop);
+  }),
+  check("checkbox:listRowHover", () => {
+    const enabled = listRow().hoverStyle;
+    const disabled = listRow({ disabled: true }).hoverStyle;
+    if (disabled !== undefined) return `disabled=${JSON.stringify(disabled)}`;
+    if (!enabled || enabled.backgroundColor !== colors.accent) {
+      return `enabled=${JSON.stringify(enabled)}`;
+    }
+    if (
+      enabled.backgroundColor === colors.primary ||
+      enabled.borderColor !== undefined ||
+      enabled.boxShadow !== undefined
+    ) {
+      return `accentStyleLeak=${JSON.stringify(enabled)}`;
+    }
+    return null;
+  }),
+  check("checkbox:choiceTileCorner", () => {
+    const radius = choiceTileLook(() => false).style.borderRadius;
+    return radius === shape.control ? null : `radius=${String(radius)}`;
   }),
 ];
 
