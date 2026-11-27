@@ -42,7 +42,7 @@ well holding a raised block. The thumb is always as big as a segment's own box, 
 hover shade covers exactly the box the chosen block covers. Every theme draws this one form — the
 list reads no control dimension, so `apple`'s capsule-in-a-capsule and `material`'s connected
 cells are gone; what the native controls look like instead is in the theme's difference table
-(`docs/specs/native-themes.md` §3.6).
+(`packages/theme/themes/material/README.md` / `packages/theme/themes/apple/README.md`).
 
 ```tsx
 <SegmentedList size="default" fill>

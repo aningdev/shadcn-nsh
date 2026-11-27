@@ -61,7 +61,8 @@ The box grows only as the app sizes it: [`nsh/base`'s multi-line input](https://
 ```tsx
 import { signal } from "nsh";
 
-import { fieldText, Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { fieldText } from "@/components/ui/lib/field-look";
 
 const note = signal("");
 const content = signal(0);
@@ -179,11 +180,11 @@ The segments keep the field's own width — a bar of four parts, each a share of
 keeps a column at the end, so the meter does not reflow as the word changes from `Empty` to
 `Strong`.
 
-### The look alone [#the-look-alone]
+### Ghost [#ghost]
 
 ```tsx
-<Input {...inputLook({ invalid: true })} />
-<Input {...inputLook({ variant: "ghost" })} />
+<Input invalid accessibilityLabel="Invalid" />
+<Input variant="ghost" accessibilityLabel="Ghost" />
 ```
 
 ## API [#api]

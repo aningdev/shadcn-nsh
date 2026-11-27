@@ -54,21 +54,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 </Checkbox>
 ```
 
-### The look alone [#the-look-alone]
-
-The look is a function, for a checkbox of your own.
-
-```tsx
-<Checkbox
-  class="group"
-  checked={on()}
-  {...checkboxLook()}
-  indicator={<CheckboxMark mark={on() ? "check" : null} />}
->
-  Photos
-</Checkbox>
-```
-
 ### Names for screen readers [#names-for-screen-readers]
 
 A string child is the row's label and its name for screen readers, so the box and its text are one control to a reader; `accessibilityLabel` wins when it should differ. Children drawn as given are named by the texts inside them.
@@ -82,4 +67,4 @@ Every prop of [`nsh/base` Checkbox](https://nsh.dev/elements/checkbox) passes th
 | `Checkbox`     | `size`: `ChoiceSize` (default `"default"`), `round` (default `false`), `children`: `string \| JSX.Element` | The box of the theme's choice recipe, filling as it is checked; the row is the group it sinks with. |
 | `CheckboxMark` | `mark`: `"check" \| "dash" \| null`, `scale`, `round`                                                      | The check or the dash that springs in, drawn into the look's `indicator`.                           |
 
-`ChoiceSize` is `"sm" | "default" | "lg"`: 0.8, 1 or 1.25 times the page's control size, shared with `Radio` (`choiceScales` is the table).
+`ChoiceSize` is `"sm" | "default" | "lg"`: 0.8, 1 or 1.25 times the page's control size, shared with `Radio`. The table is `choiceScales` in `lib/choice`.

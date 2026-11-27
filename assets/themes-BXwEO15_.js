@@ -1,0 +1,32 @@
+import{t as e}from"./jsx-runtime-DsDUoChv.js";import{t}from"./theme-index-COBYsoJ3.js";var n=e(),r={title:`Themes`,description:`The palettes the demos can draw in: what a theme is, the radius layers, and a page for each palette.`,demo:`themes`},i={contents:[{heading:`one-look-more-than-one-palette`,content:"A theme is one `AppTheme`: the TypeScript spec `defineTheme()` compiles — tokens, metrics, elevation,\neleven surfaces, feedback, motion and controls — and the `theme.json` that same build exports from it\n(the roles of both appearances, three `radius-*` layer lengths and the fixed `scrim` / `media` /\n`on-media` values). A theme that ships beside another is a sparse delta over it, so it states only\nwhat it changes. An app is _built_ with one theme and can _carry_ more, switching between them while\nit runs with `selectTheme`."},{heading:`one-look-more-than-one-palette`,content:`Each built-in theme distills the visual style of its design system — colors, radii, surfaces, and
+motion — rather than replicating every platform widget 1:1. Apple, Material, and WinUI record that
+mapping under Design notes and trade-offs. A theme of your own is Customizing.`},{heading:`one-look-more-than-one-palette`,content:`Every demo on this site can be drawn in any of these palettes: pick one with the **Demo theme**
+switch in the nav, and the previews load again in it. The panel above is the showcase — buttons, a
+card with a field, badges, switches, a slider and a progress bar, with the card, inset and press surfaces
+the palette brings. The list is \`apps/website/demos/palettes.ts\`. Each palette has its own page,
+with the same sections: how to install it, every token it sets, and every surface it draws. Those
+pages read each theme's own spec. The contract is
+\`docs/theme.md\`.`},{heading:`radii-by-role`,content:'`theme.json` states one corner radius per layer in `cssVars.theme` — `radius-md` (in-page\nelements), `radius-lg` (cards, menus, popovers, toasts) and `radius-xl` (dialogs, sheets) —\nand `control("button").corner.*` makes buttons capsules (`material`, touch `apple`) or points / `control` (the rest). A surface nested in\nanother takes the concentric corner, `rounded(outer, inset)`. Every corner that reads a theme radius\nuses `shape.curve` (`"continuous"` or `"circular"`), which `rounded()` applies in one place.'}],headings:[{id:`one-look-more-than-one-palette`,content:`One look, more than one palette`},{id:`radii-by-role`,content:`Radii by role`}]},a=[{depth:2,url:`#one-look-more-than-one-palette`,title:(0,n.jsx)(n.Fragment,{children:`One look, more than one palette`})},{depth:2,url:`#radii-by-role`,title:(0,n.jsx)(n.Fragment,{children:`Radii by role`})}];function o(e){let r={a:`a`,code:`code`,em:`em`,h2:`h2`,p:`p`,strong:`strong`,...e.components};return(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(r.h2,{id:`one-look-more-than-one-palette`,children:`One look, more than one palette`}),`
+`,(0,n.jsxs)(r.p,{children:[`A theme is one `,(0,n.jsx)(r.code,{children:`AppTheme`}),`: the TypeScript spec `,(0,n.jsx)(r.code,{children:`defineTheme()`}),` compiles — tokens, metrics, elevation,
+eleven surfaces, feedback, motion and controls — and the `,(0,n.jsx)(r.code,{children:`theme.json`}),` that same build exports from it
+(the roles of both appearances, three `,(0,n.jsx)(r.code,{children:`radius-*`}),` layer lengths and the fixed `,(0,n.jsx)(r.code,{children:`scrim`}),` / `,(0,n.jsx)(r.code,{children:`media`}),` /
+`,(0,n.jsx)(r.code,{children:`on-media`}),` values). A theme that ships beside another is a sparse delta over it, so it states only
+what it changes. An app is `,(0,n.jsx)(r.em,{children:`built`}),` with one theme and can `,(0,n.jsx)(r.em,{children:`carry`}),` more, switching between them while
+it runs with `,(0,n.jsx)(r.code,{children:`selectTheme`}),`.`]}),`
+`,(0,n.jsxs)(r.p,{children:[`Each built-in theme distills the visual style of its design system — colors, radii, surfaces, and
+motion — rather than replicating every platform widget 1:1. Apple, Material, and WinUI record that
+mapping under Design notes and trade-offs. A theme of your own is `,(0,n.jsx)(r.a,{href:`./customizing`,children:`Customizing`}),`.`]}),`
+`,(0,n.jsxs)(r.p,{children:[`Every demo on this site can be drawn in any of these palettes: pick one with the `,(0,n.jsx)(r.strong,{children:`Demo theme`}),`
+switch in the nav, and the previews load again in it. The panel above is the showcase — buttons, a
+card with a field, badges, switches, a slider and a progress bar, with the card, inset and press surfaces
+the palette brings. The list is `,(0,n.jsx)(r.code,{children:`apps/website/demos/palettes.ts`}),`. Each palette has its own page,
+with the same sections: how to install it, every token it sets, and every surface it draws. Those
+pages read each theme's own spec. The contract is
+`,(0,n.jsx)(r.a,{href:`https://github.com/aningdev/shadcn-nsh/blob/main/docs/theme.md`,children:(0,n.jsx)(r.code,{children:`docs/theme.md`})}),`.`]}),`
+`,(0,n.jsx)(r.h2,{id:`radii-by-role`,children:`Radii by role`}),`
+`,(0,n.jsxs)(r.p,{children:[(0,n.jsx)(r.code,{children:`theme.json`}),` states one corner radius per layer in `,(0,n.jsx)(r.code,{children:`cssVars.theme`}),` — `,(0,n.jsx)(r.code,{children:`radius-md`}),` (in-page
+elements), `,(0,n.jsx)(r.code,{children:`radius-lg`}),` (cards, menus, popovers, toasts) and `,(0,n.jsx)(r.code,{children:`radius-xl`}),` (dialogs, sheets) —
+and `,(0,n.jsx)(r.code,{children:`control("button").corner.*`}),` makes buttons capsules (`,(0,n.jsx)(r.code,{children:`material`}),`, touch `,(0,n.jsx)(r.code,{children:`apple`}),`) or points / `,(0,n.jsx)(r.code,{children:`control`}),` (the rest). A surface nested in
+another takes the concentric corner, `,(0,n.jsx)(r.code,{children:`rounded(outer, inset)`}),`. Every corner that reads a theme radius
+uses `,(0,n.jsx)(r.code,{children:`shape.curve`}),` (`,(0,n.jsx)(r.code,{children:`"continuous"`}),` or `,(0,n.jsx)(r.code,{children:`"circular"`}),`), which `,(0,n.jsx)(r.code,{children:`rounded()`}),` applies in one place.`]}),`
+`,(0,n.jsx)(t,{})]})}function s(e={}){let{wrapper:t}=e.components||{};return t?(0,n.jsx)(t,{...e,children:(0,n.jsx)(o,{...e})}):o(e)}export{s as default,r as frontmatter,i as structuredData,a as toc};

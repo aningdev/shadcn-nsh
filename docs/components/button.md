@@ -19,6 +19,8 @@ The examples draw icons with `Icon` from `lib/ui/icons`; see [Icons](../icons) f
 <Button onPress={save}>Save</Button>
 ```
 
+A main action and the menu of its variants, in one control, is a [Button group](./button-group) used as a split button.
+
 ## Examples [#examples]
 
 ### Variant [#variant]
@@ -107,8 +109,7 @@ chosen.
 
 `icon` draws a lucide node in the look's size and tint: the chosen surface's ink while selected, the danger tone as
 `destructive`; in the terminal, which draws no icons, the `accessibilityLabel` is its text. For an
-icon of your own, pass it as `children` and spread `iconButtonGlyph` on it. `iconButtonSizes` is the
-table, for geometry that has to match a square. A ghost icon button keeps the scale's metrics (28
+icon of your own, pass it as `children` and spread `iconButtonGlyph` on it. A ghost icon button keeps the scale's metrics (28
 points with 12 of padding at `default`, 32 and 16 at `lg`), so a bare square is `IconButton` with
 `size="xs"`; a bare text button — a Dock header's Hide — is `size="sm"`; there is no separate bare
 variant.
@@ -134,20 +135,6 @@ A tool in a rich text toolbar, at upstream's 32 pt:
 </RoundButton>
 ```
 
-### Split button [#split-button]
-
-A main action and a menu half in one silhouette.
-
-```tsx
-<SplitButton variant="default">
-  <SplitButtonSegment onPress={save}>Save</SplitButtonSegment>
-  <SplitButtonDivider />
-  <SplitButtonSegment accessibilityLabel="More" onPress={openMenu}>
-    <Icon icon={ChevronDown} {...buttonGlyph("default")} />
-  </SplitButtonSegment>
-</SplitButton>
-```
-
 ### The look alone [#the-look-alone]
 
 The look is a function, for a pressable of your own.
@@ -166,14 +153,11 @@ it: the padding is the look's own.
 
 ## API [#api]
 
-| Part                 | Props                                                                       | Description                                                                     |
-| -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `Button`             | `variant`, `size`, `icon`, `busy`, `accessibilityLabel`, `children`         | A press that acts; a string child is the label and its name for screen readers. |
-| `IconButton`         | `variant`, `size`, `icon`, `accessibilityLabel`, `children`                 | A square icon-only button; it will not compile without an `accessibilityLabel`. |
-| `RoundButton`        | `variant`, `size`, `side`, `icon`, `accessibilityLabel`, `children`         | A round icon-only button; `side` is an exact diameter where the scale is off.   |
-| `SplitButton`        | `variant`, `size`                                                           | A main action and a menu half in one silhouette.                                |
-| `SplitButtonSegment` | every [`nsh/base` Button](https://nsh.dev/elements/button) prop; `children` | One half; a string child is the label and its name for screen readers.          |
-| `SplitButtonDivider` | `style`                                                                     | The hairline between the main action and the menu half.                         |
+| Part          | Props                                                               | Description                                                                     |
+| ------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `Button`      | `variant`, `size`, `icon`, `busy`, `accessibilityLabel`, `children` | A press that acts; a string child is the label and its name for screen readers. |
+| `IconButton`  | `variant`, `size`, `icon`, `accessibilityLabel`, `children`         | A square icon-only button; it will not compile without an `accessibilityLabel`. |
+| `RoundButton` | `variant`, `size`, `side`, `icon`, `accessibilityLabel`, `children` | A round icon-only button; `side` is an exact diameter where the scale is off.   |
 
 ### Button [#button]
 
@@ -198,8 +182,7 @@ Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes throug
 | `accessibilityLabel` | `string` (required: an icon names nothing)             |
 | `children`           | `JSX.Element`                                          |             |
 
-`selected` (a base prop) shows it as chosen. `iconButtonSizes` is the table: `side`, the square's
-side in points, and `glyph`, the icon's size.
+`selected` (a base prop) shows it as chosen. The square is 20 / 24 / 28 / 32 points across with a pointer (32 / 36 / 40 / 44 on a touch screen), and the icon grows with it.
 
 ### RoundButton [#roundbutton]
 
@@ -211,12 +194,3 @@ side in points, and `glyph`, the icon's size.
 | `icon`               | `IconNode` (lucide)                        |             |
 | `accessibilityLabel` | `string` (required: an icon names nothing) |
 | `children`           | `JSX.Element`                              |             |
-
-### SplitButton [#splitbutton]
-
-| Prop      | Type                                                                | Default     |
-| --------- | ------------------------------------------------------------------- | ----------- |
-| `variant` | `"default" \| "secondary" \| "outline" \| "ghost" \| "destructive"` | `"default"` |
-| `size`    | `"sm" \| "default" \| "lg"`                                         | `"default"` |
-
-`SplitButtonSegment` takes every prop of [`nsh/base` Button](https://nsh.dev/elements/button); a string child is the label, and its name for screen readers.

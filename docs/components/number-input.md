@@ -32,16 +32,6 @@ import { NumberInput } from "@/components/ui/number-input";
 
 Default `pair`: chevrons stacked at the end. `split`: − before the field and + after it.
 
-### The look alone [#the-look-alone]
-
-```tsx
-<NumberInput
-  class={numberInputClasses.frame}
-  inputStyle={numberInputText()}
-  {...numberInputSteps("pair", "w-8", 14)}
-/>
-```
-
 ### A rolling figure [#a-rolling-figure]
 
 The field draws its own glyphs, and the caret lives in them, so the digits inside the field do not roll. `Roll` (`@/lib/ui/motion`, the `motion` registry item, which `input` installs) is the figure beside it — upstream's ticker. It rolls on the theme's `control` spring. The first value is already there. Less motion replaces it in place.

@@ -342,14 +342,14 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Mes
 and the image props are not used). A string child of `MessageFooter` and of `MessageHeader` is
 drawn as [`nsh` Text](https://nsh.dev/elements/text).
 
-| Part             | Props                     | Description                                                                                         |
-| ---------------- | ------------------------- | --------------------------------------------------------------------------------------------------- |
-| `MessageGroup`   |                           | Renders `View` (`messageLook().group`)                                                              |
-| `Message`        | `align`                   | Renders `View` (`messageLook().row(align)`)                                                         |
-| `MessageAvatar`  | `name`, `src`, `children` | Renders `Avatar` (`messageLook().avatar`), or a `View` (`messageLook().avatarSlot`) with `children` |
-| `MessageContent` |                           | Renders `View` (`messageLook().content(align)`)                                                     |
-| `MessageHeader`  | `children`                | Renders `View` (`messageLook().header`)                                                             |
-| `MessageFooter`  | `children`                | Renders `View` (`messageLook().footer(align)`)                                                      |
+| Part             | Props                     | Description                                                                |
+| ---------------- | ------------------------- | -------------------------------------------------------------------------- |
+| `MessageGroup`   |                           | Renders `View`: a column, 8 points apart                                   |
+| `Message`        | `align`                   | Renders `View`: the avatar and the content, mirrored when `align` is `end` |
+| `MessageAvatar`  | `name`, `src`, `children` | Renders `Avatar`, or a round `View` with `children`                        |
+| `MessageContent` |                           | Renders `View`: the header, the turn and the footer, on the message's side |
+| `MessageHeader`  | `children`                | Renders `View`: who sent it, at the start of the row                       |
+| `MessageFooter`  | `children`                | Renders `View`: what is under the turn, on the message's side              |
 
 | Prop       | On              | Type                    | Default |
 | ---------- | --------------- | ----------------------- | ------- |
@@ -362,5 +362,4 @@ drawn as [`nsh` Text](https://nsh.dev/elements/text).
 
 The row is its avatar and its content 8 points apart, the content a column 10 points apart in the
 body's size; the header and the footer are small (12 with a pointer, 13 on a touch screen), medium
-and in the muted ink, 12 points in from the turn's edge. `messageLook()` is exported for a row an
-app draws itself.
+and in the muted ink, 12 points in from the turn's edge.

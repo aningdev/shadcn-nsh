@@ -88,7 +88,7 @@ A picture that fails to load leaves the initials on the ring, as a gone picture 
 
 ## API [#api]
 
-Uses `avatarIdentity` and `avatarHue`. Every prop of [`nsh/base` Avatar](https://nsh.dev/elements/avatar) passes through on `Avatar`, and every prop of [`nsh/base` AvatarGroup](https://nsh.dev/elements/avatar) on `AvatarGroup` (`limit`, `total`, `overflow`, `overflowAccessibilityLabel`).
+Uses `avatarIdentity` for a named fallback's colors. Every prop of [`nsh/base` Avatar](https://nsh.dev/elements/avatar) passes through on `Avatar`, and every prop of [`nsh/base` AvatarGroup](https://nsh.dev/elements/avatar) on `AvatarGroup` (`limit`, `total`, `overflow`, `overflowAccessibilityLabel`).
 
 | Part               | Props                        | Description                                                                |
 | ------------------ | ---------------------------- | -------------------------------------------------------------------------- |

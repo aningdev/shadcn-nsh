@@ -125,20 +125,19 @@ squeezing both.
 
 ## API [#api]
 
-Each part is the `nsh` element it is drawn with, wearing the look `cardLook()` gives it. Every
-view prop passes through; `style` goes over the look's.
+Each part is the `nsh` element it is drawn with. Every view prop passes through; `style` goes over
+the part's own.
 
-| Part              | Props   | Description                                                                             |
-| ----------------- | ------- | --------------------------------------------------------------------------------------- |
-| `Card`            | —       | The flat surface holding related content: `cardLook().card`.                            |
-| `CardHeader`      | —       | Title over description in the first column, the action at the trailing edge: `.header`. |
-| `CardTitle`       | —       | A step larger than body, semibold, the text colour: `.title`.                           |
-| `CardDescription` | —       | Body size in the muted colour: `.description`.                                          |
-| `CardAction`      | —       | The control at the trailing edge, beside title and description: `.action`.              |
-| `CardContent`     | `flush` | What the card is about. `flush` meets the card's side and bottom edges: `.content`.     |
-| `CardFooter`      | —       | A wrapping row, centred, 8 apart: `.footer`.                                            |
+| Part              | Props   | Description                                                                  |
+| ----------------- | ------- | ---------------------------------------------------------------------------- |
+| `Card`            | —       | The flat surface holding related content.                                    |
+| `CardHeader`      | —       | Title over description in the first column, the action at the trailing edge. |
+| `CardTitle`       | —       | A step larger than body, semibold, the text colour.                          |
+| `CardDescription` | —       | Body size in the muted colour.                                               |
+| `CardAction`      | —       | The control at the trailing edge, beside title and description.              |
+| `CardContent`     | `flush` | What the card is about. `flush` meets the card's side and bottom edges.      |
+| `CardFooter`      | —       | A wrapping row, centred, 8 apart.                                            |
 
 `CardTitle` and `CardDescription` are `Text`, so they take text props (`numberOfLines`, `role`).
 `CardHeader` is a grid of two columns: the title over the description in the first and the action
 at the trailing edge of the first row, whichever order the three are written in.
-`cardLook()` is exported for a card the app draws itself.

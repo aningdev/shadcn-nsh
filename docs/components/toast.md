@@ -24,12 +24,10 @@ toast("Copied", { description: "The link is on the clipboard." });
 ### Action [#action]
 
 ```tsx
-<Toast>
-  <Text style={toastTitle()}>Deleted</Text>
-  <Button {...toastActionLook()}>
-    <Text style={toastActionLabel()}>Undo</Text>
-  </Button>
-</Toast>
+toast("Deleted", {
+  description: "Undo to restore.",
+  action: { label: "Undo", onClick: () => {} },
+});
 ```
 
 ### From code [#from-code]
@@ -50,7 +48,7 @@ An action's `onClick` runs when it is pressed, and `onDismiss` hears that action
 
 ## API [#api]
 
-Every prop of [`nsh/base` Toast](https://nsh.dev/elements/toast) passes through. `style` goes over `toastLook`.
+Every prop of [`nsh/base` Toast](https://nsh.dev/elements/toast) passes through. `style` goes over the banner's own look.
 
 | Part            | Props                                                                                     | Description                                                                            |
 | --------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -61,4 +59,4 @@ Every prop of [`nsh/base` Toast](https://nsh.dev/elements/toast) passes through.
 | `toast.dismiss` | `(id?)`                                                                                   | Closes one toast, or every toast when `id` is omitted                                  |
 | `Toaster`       |                                                                                           | The stack at the foot of the window. Mount it once                                     |
 
-`toastLook`, `toastTitle`, `toastText`, `toastCloseLook`, `toastActionLook` and `toastActionLabel` are the look's parts, for content of your own.
+Without `children`, `Toast` draws `title` and `description`. An action and a close button are `toast`'s `action` and `closeButton`.

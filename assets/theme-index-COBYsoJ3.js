@@ -1,0 +1,1 @@
+import{t as e}from"./theme-cards-I9E_kJLH.js";import{t}from"./jsx-runtime-DsDUoChv.js";var n=t();function r(){return(0,n.jsx)(e,{columns:`two`})}export{r as t};

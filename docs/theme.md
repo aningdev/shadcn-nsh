@@ -1,4 +1,4 @@
-# Theme (/docs/theme)
+# Theme specification (/docs/theme)
 
 The theme is the upstream gallery's: a graphite page (paper in light appearance), cards and wells, one citrus accent, compact controls with a pointer and roomier ones on a touch screen. It is **one TypeScript module** — the spec `defineTheme()` compiles — plus the module that reads it, and every component takes its colors, radii, typography, motion and depth from there. `theme.json` and `DESIGN.md` are exports of that same spec, so a theme is written once and drawn, shipped and documented from one place. No component writes a color of its own.
 
@@ -7,12 +7,12 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 | File                                    | What it holds                                                                                                                                                                                                                                                                                              |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `themes/<id>/index.ts`                  | The spec: `tokens` (21 appearance roles per mode, the fixed `scrim` / `media` / `on-media`, radii, fonts, tints, charts), `metrics`, `elevation`, the eleven `surfaces`, `feedback`, `motion`, `controls` — a full `ThemeSpec` for `nsh-gallery`, a `defineTheme({ extends, … })` delta for the other five |
-| `theme.json`                            | The build export in shadcn's `cssVars` shape: `cssVars.theme` (radius, `radius-control` / `-container` / `-modal`, `scrim`, `media`, `on-media`, optional `font-sans` / `font-mono`), `cssVars.light` and `cssVars.dark` (the same 21 keys)                                                                |
+| `theme.json`                            | The build export in shadcn's `cssVars` shape: `cssVars.theme` (`font-sans`, `font-mono`, `radius`, `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`), `cssVars.light` and `cssVars.dark` (the same 21 keys)                                                                             |
 | `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from the same spec                                                                                                                                                                                                     |
 | `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio and Style Dictionary v4                                                                                                                  |
 | `lib/ui/theme.ts`                       | `colors`, `surface`, `control`, `feedback`, `shape`, `font`, `metrics`, `elevation`, `motion`, `focusRing` and `alpha`, read reactively from the spec                                                                                                                                                      |
 
-`bun run tokens:build` writes `theme.json`, `DESIGN.md` and the two `.tokens.json` files from `themes/<id>/index.ts`; they are build outputs, so edit the spec, not them.
+`bun run theme:build` writes `theme.json`, `DESIGN.md` and the two `.tokens.json` files from `themes/<id>/index.ts`; they are build outputs, so edit the spec, not them.
 
 ## Installation [#installation]
 
@@ -158,14 +158,14 @@ The names are `button`, `badge`, `field`, `choice`, `switch`, `slider`, `progres
 
 ## Radii [#radii]
 
-`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-control` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-container` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-modal` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-control`. `shape` resolves each role reactively via `token()`, and `buttonCorner(size)` reads `control("button").corner` (`"control"` or `"full"` capsule):
+`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-md` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-lg` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-xl` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-md`. `shape` resolves each role reactively via `token()`, and `buttonCorner(size)` reads `control("button").corner` (`"control"` or `"full"` capsule):
 
 ```tsx
 import { buttonCorner, shape } from "@shadcn-nsh/theme";
 
-shape.control; // 8, from radius-control
-shape.container; // 12, from radius-container
-shape.modal; // 14, from radius-modal
+shape.control; // 8, from radius-md
+shape.container; // 12, from radius-lg
+shape.modal; // 14, from radius-xl
 buttonCorner("default"); // 999 when button.corner.md is "full", else shape.control
 ```
 
@@ -229,11 +229,11 @@ The theme file stays complete: copy it, then edit. Every role of both appearance
 }
 ```
 
-Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-control`, `radius-container` or `radius-modal` in `cssVars.theme` (keep `radius` equal to `radius-control`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. A surface's shape and depth and a control's geometry are the spec's, so an app that changes them edits `themes/<id>.ts` — the file `add theme-<id>` installs — and copies it into its own reader if it does not. Fonts are the app's own: see [Fonts](#fonts).
+Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-md`, `radius-lg` or `radius-xl` in `cssVars.theme` (keep `radius` equal to `radius-md`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. A surface's shape and depth and a control's geometry are the spec's, so an app that changes them edits `themes/<id>.ts` — the file `add theme-<id>` installs — and copies it into its own reader if it does not. Fonts are the app's own: see [Fonts](#fonts).
 
 ## Fonts [#fonts]
 
-A theme owns no font: none of the shipped themes declares a family unless its app's does, and one type scale (sizes and line heights) serves them all, so switching themes never reflows text. Each theme states its own weight and letter spacing per role. Text names no family of its own; it takes the app's `font-sans`, and monospaced text (the `font-mono` class, code in a `Text`) takes `font-mono` — this library writes the generic `monospace` where it needs a monospaced face. The user's system font size scales every size.
+Every `theme.json` writes `font-sans` and `font-mono`. Built-in themes leave `tokens.font` unset, so those keys are `system-ui` and `monospace` — the system's own faces — and one type scale (sizes and line heights) serves them all, so switching themes never reflows text. Each theme states its own weight and letter spacing per role. `font.sans` and `font.mono` read the two keys; the `font-sans` and `font-mono` classes read the same CSS variables. The user's system font size scales every size.
 
 Set the app's families in the `cssVars.theme` block of its own `theme.json`:
 
@@ -260,12 +260,12 @@ This library distributes no font files: `add theme` writes JSON and TypeScript a
 
 ## Restyling [#restyling]
 
-Edit the spec; every component follows. Change a brand colour in `tokens.light` and `tokens.dark`, a radius in `tokens.radius`, a shadow part in `elevation`, a gradient, a surface or a control in the theme's own `index.ts` — then `bun run tokens:build` re-exports `theme.json`, `DESIGN.md` and the two `.tokens.json` files. Keep the keys: components and surfaces refer to them by name. A value that follows the device is stated twice, `pointer` and `touch`, with the same keys.
+Edit the spec; every component follows. Change a brand colour in `tokens.light` and `tokens.dark`, a radius in `tokens.radius`, a shadow part in `elevation`, a gradient, a surface or a control in the theme's own `index.ts` — then `bun run theme:build` re-exports `theme.json`, `DESIGN.md` and the two `.tokens.json` files. Keep the keys: components and surfaces refer to them by name. A value that follows the device is stated twice, `pointer` and `touch`, with the same keys.
 
 - A theme of your own is a `defineTheme()` delta over one that ships: `defineTheme({ id, label, extends: nshGallery.spec, tokens: { … } })`, sparse — what it does not state, it inherits. `ALL_THEMES` in `packages/theme/themes` is the list, and adding one there gives it a page on this site and a registry item.
 - Add a shipped theme to an app with `shadcn-nsh add theme` (or let `init` do it); subsequent `add` runs key-merge missing entries into `theme.json` while keeping your values.
 - The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn, Solid Glass, Apple, Material or WinUI 3) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette — its install command and every role it sets — has a page linked from [Themes](./themes).
 - To change one component's look instead, edit its look function in the copied component; to change structure or API, edit the shell. See [Customizing](./customizing).
-- Maintaining this repository: edit the look in `packages/ui` (all of it is ours; a credit line in the header says where it began); `port:check` lists upstream's changes and `bun run port:review` marks them read. After editing `packages/theme`, run `bun run registry:build` and commit `public/r`.
+- Maintaining this repository: edit the look in `packages/ui` (all of it is ours; a credit line in the header says where it began). After editing `packages/theme`, run `bun run theme:build` and `bun run registry:build`, and commit `public/r`.
 
-Theme rules and decisions: [`docs/specs/theme-roles.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/theme-roles.md), [`docs/decisions/0020-theme-v5.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/decisions/0020-theme-v5.md) and [`packages/theme/README.md`](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md). Behavior and accessibility are `nsh/base`'s: [nsh.dev/elements](https://nsh.dev/elements).
+Theme rules: [`docs/theme.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/theme.md) and [`packages/theme/README.md`](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md). Behavior and accessibility are `nsh/base`'s: [nsh.dev/elements](https://nsh.dev/elements).
