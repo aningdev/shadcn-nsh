@@ -6,6 +6,6 @@
   "dependencies": {
     "@shadcn-nsh/theme": "workspace:*",
     "@shadcn-nsh/ui": "workspace:*",
-    "lucide": "^1.75.0"
+    "lucide": "^1.82.0"
   }
 }
