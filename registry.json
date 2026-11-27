@@ -404,20 +404,6 @@
       "dependencies": ["lucide@^1.66.0"]
     },
     {
-      "name": "split-button",
-      "type": "registry:ui",
-      "title": "Split Button",
-      "description": "A main action and the menu of its variants in one silhouette.",
-      "registryDependencies": ["button", "motion", "theme", "utils"],
-      "files": [
-        {
-          "path": "packages/ui/split-button.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/split-button.tsx"
-        }
-      ]
-    },
-    {
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",

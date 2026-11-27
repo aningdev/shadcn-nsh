@@ -176,7 +176,6 @@ import type {
   SliderProps,
   SplitViewProps,
   SplitViewColumnProps,
-  SplitButtonSegmentProps,
   SwitchProps,
   TableBodyProps,
   TableCaptionProps,
@@ -256,8 +255,6 @@ type _roundButton = Assert<
     never
   >
 >;
-/** `SplitButtonSegmentProps`. */
-type _splitButtonSegment = Assert<KeepsBase<BaseButtonProps, SplitButtonSegmentProps, never>>;
 /** `CalendarProps`. */
 type _calendar = Assert<KeepsBase<BaseCalendarProps, CalendarProps, never>>;
 /** `CarouselProps`. */
@@ -675,7 +672,6 @@ export type {
   _button,
   _iconButton,
   _roundButton,
-  _splitButtonSegment,
   _calendar,
   _carousel,
   _carouselContent,

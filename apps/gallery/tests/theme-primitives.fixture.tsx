@@ -18,10 +18,10 @@ import winui from "../../../packages/theme/themes/winui/index";
 import {
   Button,
   buttonLook,
+  ButtonGroup,
+  buttonGroupItem,
   carouselArrowLook,
   RoundButton,
-  SplitButton,
-  SplitButtonSegment,
   toastCloseLook,
   Toggle,
   toggleLook,
@@ -115,9 +115,11 @@ function App() {
         <RoundButton accessibilityLabel="Round">
           <Text>R</Text>
         </RoundButton>
-        <SplitButton>
-          <SplitButtonSegment accessibilityLabel="Split">Save</SplitButtonSegment>
-        </SplitButton>
+        <ButtonGroup>
+          <Button accessibilityLabel="Split" style={buttonGroupItem("first")}>
+            Save
+          </Button>
+        </ButtonGroup>
       </View>
       <Text>{`focus=${JSON.stringify(focusRing())}`}</Text>
       <Text>{`ringTokens=${String(token("ring"))}|${String(token("card"))}`}</Text>

@@ -305,7 +305,7 @@ export function Action(props: ActionProps) {
 }
 
 // Shared button primitives
-// Cross-file looks and the sizes they read. `split-button` wears the same face.
+// Cross-file looks and the sizes they read.
 
 /**
  * `default`: the citrus fill, the one main action of a decision area.
@@ -334,7 +334,7 @@ export interface ButtonLookOptions {
   disabled?: Live<boolean | undefined>;
   /** Work started by it is going on: no hover and no press feedback, not dimmed. */
   busy?: Live<boolean | undefined>;
-  /** Actively pressed down (managed by `Button` / `SplitButtonSegment` so pressed ink stays reactive). */
+  /** Actively pressed down (managed by `Button` so pressed ink stays reactive). */
   pressed?: Live<boolean | undefined>;
   /** More style (a flex, a width, a margin), over the look's. */
   style?: Live<ViewStyle | undefined>;

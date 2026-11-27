@@ -6,7 +6,6 @@ export const componentIds = [
   "spinner",
   "badge",
   "button",
-  "split-button",
   "switch",
   "dialog",
   "toggle",

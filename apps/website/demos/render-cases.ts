@@ -277,7 +277,7 @@ const overrides: Record<string, Override> = {
   input: { selfReference: "inputLook is private to input.tsx" },
   switch: { selfReference: "switchLook is private to switch.tsx" },
   spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
-  "split-button": { selfReference: "splitButtonLook is private to split-button.tsx" },
+  "button-group": { selfReference: "buttonGroupLook is private to button-group.tsx" },
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
   status: { selfReference: "upstream's own Status, with no shell to compare against" },
   stat: { selfReference: "upstream's own Stat, with no shell to compare against" },

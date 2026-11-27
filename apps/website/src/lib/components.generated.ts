@@ -664,14 +664,6 @@ export const components: ComponentDoc[] = [
     description: "A turning ring: work going on.",
   },
   {
-    slug: "split-button",
-    title: "Split Button",
-    kind: "own",
-    shadcn: null,
-    nshElement: null,
-    description: "A main action and the menu of its variants in one silhouette.",
-  },
-  {
     slug: "stat",
     title: "Stat",
     kind: "own",

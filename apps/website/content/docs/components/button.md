@@ -24,7 +24,7 @@ The examples draw icons with `Icon` from `lib/ui/icons`; see [Icons](../icons) f
 <Button onPress={save}>Save</Button>
 ```
 
-A main action and the menu of its variants, in one silhouette, is a [Split Button](./split-button).
+A main action and the menu of its variants, in one control, is a [Button group](./button-group) used as a split button.
 
 ## Examples
 

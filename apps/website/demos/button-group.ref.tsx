@@ -1,12 +1,16 @@
-// The reference of `button-group.tsx`: the same page, the look spread on `nsh`'s own View and Text
-// instead of worn by the parts. The render check requires the two to draw the same pixels.
-import { ArrowLeft, ArrowRight } from "lucide";
-import { mount, Text, View } from "nsh";
+// The reference of `button-group.tsx`. `buttonGroupLook` is private to the component, so this
+// page draws `ButtonGroup` itself. The two pages match because they are the same composition.
+import { ArrowLeft, ArrowRight, ChevronDown, Plus } from "lucide";
+import { mount, Text } from "nsh";
 
 import { Button, buttonGlyph, buttonLabel } from "@/packages/ui/button";
-import { buttonGroupLook } from "@/packages/ui/button-group";
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
+  buttonGroupItem,
+} from "@/packages/ui/button-group";
 import { Icon } from "@/packages/ui/lib/icons";
-import { Separator } from "@/packages/ui/separator";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { ui } from "./stage";
@@ -20,65 +24,98 @@ function App() {
 
       <DemoCard>
         <DemoSection title="A row">
-          <View role="group" style={[buttonGroupLook().root("horizontal")]}>
-            <Button
-              variant="outline"
-              icon={ArrowLeft}
-              style={[buttonGroupLook().item("horizontal", "first")]}
-            >
+          <ButtonGroup>
+            <Button variant="outline" icon={ArrowLeft} style={buttonGroupItem("first")}>
               Back
             </Button>
-            <Button variant="outline" style={[buttonGroupLook().item("horizontal", "middle")]}>
+            <Button variant="outline" style={buttonGroupItem("middle")}>
               Archive
             </Button>
-            <Button variant="outline" style={[buttonGroupLook().item("horizontal", "last")]}>
+            <Button variant="outline" style={buttonGroupItem("last")}>
               <Text style={buttonLabel("outline")}>Next</Text>
               <Icon icon={ArrowRight} {...buttonGlyph("outline")} />
             </Button>
-          </View>
+          </ButtonGroup>
         </DemoSection>
 
         <DemoSection title="A column">
-          <View role="group" style={[buttonGroupLook().root("vertical")]}>
-            <Button variant="outline" style={[buttonGroupLook().item("vertical", "first")]}>
+          <ButtonGroup orientation="vertical">
+            <Button variant="outline" style={buttonGroupItem("first")}>
               Copy the path
             </Button>
-            <Button variant="outline" style={[buttonGroupLook().item("vertical", "middle")]}>
+            <Button variant="outline" style={buttonGroupItem("middle")}>
               Open in a new window
             </Button>
-            <Button variant="outline" style={[buttonGroupLook().item("vertical", "last")]}>
+            <Button variant="outline" style={buttonGroupItem("last")}>
               Reveal in the file manager
             </Button>
-          </View>
+          </ButtonGroup>
         </DemoSection>
 
         <DemoSection title="With a separator">
-          <View role="group" style={[buttonGroupLook().root("horizontal")]}>
-            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "first")]}>
+          <ButtonGroup>
+            <Button variant="secondary" style={buttonGroupItem("first")}>
               Cut
             </Button>
-            <Separator orientation="vertical" style={buttonGroupLook().separator()} />
-            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "middle")]}>
+            <ButtonGroupSeparator />
+            <Button variant="secondary" style={buttonGroupItem("middle")}>
               Copy
             </Button>
-            <Separator orientation="vertical" style={buttonGroupLook().separator()} />
-            <Button variant="secondary" style={[buttonGroupLook().item("horizontal", "last")]}>
+            <ButtonGroupSeparator />
+            <Button variant="secondary" style={buttonGroupItem("last")}>
               Paste
             </Button>
-          </View>
+          </ButtonGroup>
         </DemoSection>
 
         <DemoSection title="With a text addon">
-          <View role="group" style={[buttonGroupLook().root("horizontal")]}>
-            <View
-              style={[buttonGroupLook().textFrame(), buttonGroupLook().item("horizontal", "first")]}
-            >
-              <Text style={[buttonGroupLook().text()]}>Path</Text>
-            </View>
-            <Button variant="outline" style={[buttonGroupLook().item("horizontal", "last")]}>
+          <ButtonGroup>
+            <ButtonGroupText style={buttonGroupItem("first")}>Path</ButtonGroupText>
+            <Button variant="outline" style={buttonGroupItem("last")}>
               Copy
             </Button>
-          </View>
+          </ButtonGroup>
+        </DemoSection>
+
+        <DemoSection title="Split button">
+          <ButtonGroup>
+            <Button variant="default" style={buttonGroupItem("first")}>
+              Save
+            </Button>
+            <ButtonGroupSeparator />
+            <Button
+              variant="default"
+              accessibilityLabel="More save options"
+              style={buttonGroupItem("last")}
+            >
+              <Icon icon={ChevronDown} {...buttonGlyph("default")} />
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button variant="secondary" style={buttonGroupItem("first")}>
+              Export
+            </Button>
+            <ButtonGroupSeparator />
+            <Button
+              variant="secondary"
+              accessibilityLabel="More export options"
+              style={buttonGroupItem("last")}
+            >
+              <Icon icon={Plus} {...buttonGlyph("secondary")} />
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button variant="outline" style={buttonGroupItem("first")}>
+              Follow
+            </Button>
+            <Button
+              variant="outline"
+              accessibilityLabel="More follow options"
+              style={buttonGroupItem("last")}
+            >
+              <Icon icon={ChevronDown} {...buttonGlyph("outline")} />
+            </Button>
+          </ButtonGroup>
         </DemoSection>
       </DemoCard>
     </DemoPage>
