@@ -1,6 +1,6 @@
 /**
  * shadcn neutral (`new-york-v4`, `neutral`) as a sparse Theme v5 override over `base`
- * (`docs/decisions/0020-theme-v5.md`).
+ * (`docs/theme.md`).
  */
 import { defineTheme } from "../../schema";
 import { base } from "../nsh-gallery";

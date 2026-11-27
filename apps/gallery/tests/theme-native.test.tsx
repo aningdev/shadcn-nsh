@@ -17,7 +17,7 @@ test("nativeTheme() is apple on macOS, and its glass reaches a popover's finish"
   expect(find(app.texts(), "menu=")).toBe("");
 
   await app.press("text:Native");
-  // Glass is the effect and the layer's own fill as its tint (docs/specs/native-themes.md §3.5).
+  // Glass is the effect and the layer's own fill as its tint (`docs/theme.md`).
   expect(find(app.texts(), "menu=")).toBe("glassEffect,glassTintColor");
   expect(find(app.texts(), "menuEffect=")).toBe("regular");
   expect(find(app.texts(), "glassEffect=")).toBe("clear");

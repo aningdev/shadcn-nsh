@@ -6,7 +6,7 @@
  * `node:fs`, and the page prerenders like any other. `check:pages` holds the registry items and the
  * theme pages to the same list, so a theme is never written twice here.
  *
- * The spec is the single source (`docs/decisions/0020-theme-v5.md`): the appearance roles are
+ * The spec is the single source (`docs/theme.md`): the appearance roles are
  * `tokens.light`'s keys, the shared values are `cssVars.theme`, and the surfaces are `surfaces` —
  * eleven structural roles (`SurfaceRole`), each with the ink it falls back to. What a surface is for
  * is the one list this file keeps (`SURFACE_DUTIES`): the duties used to be read out of a spec page,

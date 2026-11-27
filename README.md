@@ -33,7 +33,7 @@ npx shadcn-nsh init --theme shadcn                      # built with shadcn's ne
 npx shadcn-nsh add theme-apple                    # one more theme to switch to at run time
 ```
 
-`init --theme <nsh-gallery|shadcn|solid-glass|apple|material|winui|native>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, semantics and the switching example: [themes](https://shadcn-nsh.aning.dev/docs/themes) and [`docs/specs/design-semantics.md`](docs/specs/design-semantics.md).
+`init --theme <nsh-gallery|shadcn|solid-glass|apple|material|winui|native>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, surfaces and the switching example: [themes](https://shadcn-nsh.aning.dev/docs/themes) and [`docs/theme.md`](docs/theme.md).
 
 ## Registry
 
@@ -59,7 +59,7 @@ Each release of this library tracks one NSH CLI version; installing a newer CLI 
 ## Community
 
 - Contributing — development setup, checks before a pull request, commit format: [`CONTRIBUTING.md`](CONTRIBUTING.md).
-- How the project is put together, and the rules the code keeps: [`AGENTS.md`](AGENTS.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), vocabulary in [`docs/GLOSSARY.md`](docs/GLOSSARY.md).
+- How the project is put together, and the rules the code keeps: [`AGENTS.md`](AGENTS.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (with glossary).
 - Security reports: [`SECURITY.md`](SECURITY.md).
 - Licence: MIT, with the parts adapted from NSH under Apache-2.0 and the Solid Glass theme's MIT text — [`NOTICE`](NOTICE), [`LICENSE`](LICENSE).
 

@@ -1,6 +1,6 @@
 /**
  * NSH Gallery: the default build-time theme and complete `base` spec that all other themes
- * inherit sparsely from (`docs/decisions/0020-theme-v5.md`).
+ * inherit sparsely from (`docs/theme.md`).
  * Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
  */
 import { defineTheme, type ThemeSpec } from "../../schema";

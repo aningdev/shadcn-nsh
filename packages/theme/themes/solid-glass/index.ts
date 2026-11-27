@@ -1,6 +1,6 @@
 /**
  * Solid Glass (`deeplethe/solid-glass`, MIT) as a sparse Theme v5 override over `base`
- * (`docs/decisions/0020-theme-v5.md`).
+ * (`docs/theme.md`).
  */
 import { defineTheme, type MaterialSpec } from "../../schema";
 import { base } from "../nsh-gallery";

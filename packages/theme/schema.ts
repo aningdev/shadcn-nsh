@@ -1,5 +1,5 @@
 /**
- * Theme v5 schema and sparse inheritance builder (`docs/decisions/0020-theme-v5.md`).
+ * Theme v5 schema and sparse inheritance builder (`docs/theme.md`).
  *
  * A theme is four orthogonal TypeScript layers derived from one `base` theme via `defineTheme()`:
  * 1. `tokens`   — the core CSS variables compiled into `theme.json`, including `font-sans` / `font-mono`

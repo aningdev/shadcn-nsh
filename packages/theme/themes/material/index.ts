@@ -1,6 +1,6 @@
 /**
  * Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) as a sparse Theme v5
- * override over `base` (`docs/decisions/0020-theme-v5.md`).
+ * override over `base` (`docs/theme.md`).
  */
 import { defineTheme } from "../../schema";
 import { base } from "../nsh-gallery";

@@ -21,9 +21,8 @@ import { InstallTabs } from "./install-tabs";
 const themes = themePages();
 const samples = surfaceSampleCss();
 
-/** The spec on GitHub: the page's lists are its, so the reader can read the reasons behind them. */
-const SPEC_URL = `${REPO_URL}/blob/main/docs/specs/theme-roles.md`;
-const ADR_URL = `${REPO_URL}/blob/main/docs/decisions/0020-theme-v5.md`;
+/** The spec on GitHub: the page's lists are its, so the reader can read the rules behind them. */
+const THEME_DOC_URL = `${REPO_URL}/blob/main/docs/theme.md`;
 
 function themeOf(id: PaletteId): ThemePage {
   const theme = themes.find((page) => page.palette.id === id);
@@ -85,8 +84,8 @@ export function ThemeIntro({ id }: { id: PaletteId }) {
         elevation, surfaces, feedback, motion and controls <code>defineTheme()</code> compiles — and
         two files that same build exports from it: <code>theme.json</code> for NSH&apos;s variables
         and <code>DESIGN.md</code> for the language in words. Which tokens there are, and what each
-        surface draws, is <a href={SPEC_URL}>the theme spec on GitHub</a> (the reasons are{" "}
-        <a href={ADR_URL}>the Theme v5 decision</a>); this page reads the specs themselves.
+        surface draws, is <a href={THEME_DOC_URL}>the Theme v5 spec on GitHub</a>; this page reads
+        the specs themselves.
       </p>
       <p>
         A token is a colour, length or font family under a name, a surface is a layer a component

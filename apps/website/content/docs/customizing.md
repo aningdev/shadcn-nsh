@@ -65,7 +65,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
 }
 ```
 
-Change the values in that function — a height, a radius, a hover fill — and the shell below still spreads the result. Keep the props it returns; they are what the base control reads. `buttonLook` is one; `iconButtonLook`, `roundButtonLook` and `splitButtonLook` live in the same file, and other components name theirs the same way (`switchLook`, `checkboxLook`). Controls whose shape and dimensions vary by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/field-look.ts` for fields) read the theme's control geometry through `control("switch")`, `control("slider")`, `control("choice")` and `control("field")`; the per-component geometry that hangs off them stays right inside those component or lib files.
+Change the values in that look function — a height, a radius, a hover fill — and the component below still spreads the result. Keep the props it returns; they are what the base control reads. Shared look helpers (`buttonLook`, `iconButtonLook`, `fieldLook`, `choiceLook`) sit in the component or `lib/` file they belong to, while component-private geometry (`switch`, `checkbox`, `split-button`, `card`, `badge`) lives inside each component file itself. Controls whose shape and dimensions vary by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/field-look.ts` for fields) read the theme's control geometry through `control("switch")`, `control("slider")`, `control("choice")` and `control("field")`; the per-component geometry that hangs off them stays right inside those component or lib files.
 
 ## Structure and API
 

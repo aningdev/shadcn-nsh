@@ -58,8 +58,7 @@ const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
  * calendar does not read the theme's `control()`: under Material and WinUI it keeps `nsh/base`'s
  * look — its days the same size as everywhere else, square-cornered in `shape.control`; today is
  * the theme's own (`calendar.today.*`: the library's quiet disc, Apple's brand ink with no disc),
- * so a day keeps `nsh/base`'s hover and selection states (docs/specs/theme-contract-v2.md §11.4,
- * §11.7, §12 M5).
+ * so a day keeps `nsh/base`'s hover and selection states (`packages/theme/themes/{material,winui}/README.md`).
  */
 const cell = () => controlHeight.md;
 

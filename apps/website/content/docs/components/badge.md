@@ -61,7 +61,7 @@ import { Badge } from "@/components/ui/badge";
 
 ## API
 
-Gallery atom: no `nsh/base` counterpart. The children are the label, and the axes take the vocabulary of [`api-unify.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/api-unify.md).
+Gallery atom: no `nsh/base` counterpart. The children are the label, and the variant/tone/size axes follow the library's unified component conventions.
 
 | Part    | Props                                                                                                                                                                                                    | Description                                                  |
 | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |

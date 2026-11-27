@@ -5,9 +5,9 @@
 先花十分钟读这几份，改动才不会撞上既有规则：
 
 - [`AGENTS.md`](AGENTS.md) —— 各方的角色、能做什么、不能做什么。
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) —— 目录、分层、规则 P1–P6、归属。
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) —— 目录、分层、规则 P1–P9、归属与词汇表。
+- [`docs/component-authoring.md`](docs/component-authoring.md) —— 组件代码组织与编写黄金规范。
 - [`docs/port.md`](docs/port.md) —— 加一个组件要走的路：外壳怎么写、文件头怎么写、怎么检查。
-- [`docs/GLOSSARY.md`](docs/GLOSSARY.md) —— token / finish / alias 这些词在库里指什么。
 
 ## 环境
 
@@ -48,7 +48,7 @@ bun run nsh:bootstrap                     # 校验 CLI 与 references/nsh 在基
 - **一个 PR 一件事**：一个组件家族、一个 bug。不相关的改动分开提，review 和回滚都按 PR 来。
 - **PR 标题就是合并后的提交信息**，照下面「提交信息」的格式写；分支里的提交怎么写都行，合并时会压成一个。
 - **CHANGELOG**：用的人能感知到的改动，在 `CHANGELOG.md` 的 `## Unreleased` 下加一条（Added / Changed / Fixed），写在同一个 PR 里。只改内部工具、CI、测试的不用写。根目录 `.gitattributes` 给它设了 `merge=union`：本地 rebase 时两边的条目都保留，不再起冲突（GitHub 网页上的 "Update branch" 不用它，请在本地 rebase）；顺序发版时再理。
-- **发版**也是一个 PR（`chore(release): vX.Y.Z`），合并后打标签，见 [`docs/release.md`](docs/release.md)。
+- **发版**也是一个 PR（`chore(release): vX.Y.Z`），合并后打标签，见 [`docs/toolchain.md`](docs/toolchain.md)。
 
 ## 提 PR 前
 
@@ -57,7 +57,7 @@ bun run nsh:bootstrap                     # 校验 CLI 与 references/nsh 在基
 ```text
 vp check --fix                    格式化、lint、工具面的类型
 bun run catalog --check           演示、参照页、文档页、导出是否一致
-bun run check:theme               主题数据是否符合 docs/specs/theme-roles.md
+bun run check:theme               主题数据是否符合 docs/theme.md 契约
 bun run registry:build --check    public/r 是否与 registry.json 同步
 bun run port:check                上游变化与清单完整性
 bun run port:coverage             每个组件有没有演示、文档页、参照
@@ -70,7 +70,7 @@ bun run check:docs                文档站自身
 按改动涉及的东西再补：
 
 - **改组件或演示** → `bun run port:render`，四张截图人眼看过。迭代时加 `--changed`（不知道哪个 id 会动）或 `--only <id,...>`（知道）只跑受影响的页，一次几十秒；开 PR 前跑一次全量。`--jobs <n>` 控制同时开几个 `nsh test` 进程，默认 CPU 核数的一半、至多 6，`--jobs 1` 是逐页串行——只用来对照。
-- **改主题数据**（token、finish、角色、预设）→ 按 [`docs/port.md`](docs/port.md#主题改动的验收) 分层验收：`bun run theme:diff` 比解析后的值，`port:render:theme --only <ids> --against <目录>` 比改动前后，全量截图开 PR 前只跑一次。契约冻结在 contract v3（[`decisions/0004`](docs/decisions/0004-theme-contract-freeze.md)）：表达不了的外观改值降级、记进 [`native-themes.md`](docs/specs/native-themes.md) 的差异表，不加键、不加层；真要改契约，同一 PR 里加 `docs/decisions/` 记录，否则 `bun run theme:diff --gate` 失败。
+- **改主题数据**（token、surface、角色、预设）→ 按 [`docs/port.md`](docs/port.md#主题改动的验收) 分层验收：`bun run theme:diff` 比解析后的值，`port:render:theme --only <ids> --against <目录>` 比改动前后，全量截图开 PR 前只跑一次。遵守 [`docs/theme.md`](docs/theme.md) 契约；平台表达不了的外观改值降级并记入对应主题的 `packages/theme/themes/<id>/README.md`。
 - **改行为** → `bun run test:gallery`（原生行为测试）。
 - **改 registry 条目或 CLI** → `bun run test:install`（在真实 NSH 应用里 `init` / `add`，逐条目）。
 - **改过 `registry.json` 或组件文件** → `bun run registry:build`，把 `public/r` 的改动一起提交；`check` 里的 `registry:build --check` 会拦下没重建的提交。
@@ -95,4 +95,4 @@ PR 标题用这个格式，它就是 squash 之后 `main` 上的提交信息；�
 4. 补演示（手机与桌面两种画布）与文档页；`bun run catalog --check` 会查它们与导出是否齐全。
 5. `bun run registry:build`，然后按上一节跑检查。
 
-维护者发版的步骤见 [`docs/release.md`](docs/release.md)。
+维护者发版的步骤见 [`docs/toolchain.md`](docs/toolchain.md)。

@@ -1,5 +1,5 @@
 /**
- * Windows 11 WinUI 3 as a sparse Theme v5 override over `base` (`docs/decisions/0020-theme-v5.md`).
+ * Windows 11 WinUI 3 as a sparse Theme v5 override over `base` (`docs/theme.md`).
  */
 import { defineTheme, type MaterialSpec } from "../../schema";
 import { base } from "../nsh-gallery";

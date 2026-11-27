@@ -33,7 +33,7 @@ npx shadcn-nsh init --theme shadcn                      # 用 shadcn 的中性�
 npx shadcn-nsh add theme-apple                    # 多带一套，运行时切换
 ```
 
-`init --theme <nsh-gallery|shadcn|solid-glass|apple|material|winui|native>` 决定应用**构建时**用的主题；`add theme-<name>` 则**多装一套**到 `themes/<name>/`，供应用运行时用 `selectTheme` 切换（`selectTheme(null)` 回到构建时那套）。`nsh-ui.json` 记着构建时用的是哪一套，所以 `add` 不会把别的主题写回去。token、语义层与切换示例见[主题](https://shadcn-nsh.aning.dev/docs/themes)与 [`docs/specs/design-semantics.md`](docs/specs/design-semantics.md)。
+`init --theme <nsh-gallery|shadcn|solid-glass|apple|material|winui|native>` 决定应用**构建时**用的主题；`add theme-<name>` 则**多装一套**到 `themes/<name>/`，供应用运行时用 `selectTheme` 切换（`selectTheme(null)` 回到构建时那套）。`nsh-ui.json` 记着构建时用的是哪一套，所以 `add` 不会把别的主题写回去。token、surface 与切换示例见[主题](https://shadcn-nsh.aning.dev/docs/themes)与 [`docs/theme.md`](docs/theme.md)。
 
 ## Registry
 
@@ -59,7 +59,7 @@ npx shadcn-nsh add theme-apple                    # 多带一套，运行时切�
 ## 参与与声明
 
 - 贡献 —— 开发环境、提交前要跑的检查、提交信息格式：[`CONTRIBUTING.md`](CONTRIBUTING.md)。
-- 项目怎么搭起来、代码守哪些规则：[`AGENTS.md`](AGENTS.md)、[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)，词汇见 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)。
+- 项目怎么搭起来、代码守哪些规则：[`AGENTS.md`](AGENTS.md)、[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)（含词汇表）。
 - 安全问题上报：[`SECURITY.md`](SECURITY.md)。
 - 许可：MIT；改编自 NSH 的部分为 Apache-2.0，Solid Glass 主题附其 MIT 文本 —— [`NOTICE`](NOTICE)、[`LICENSE`](LICENSE)。
 

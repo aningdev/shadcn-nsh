@@ -1,6 +1,6 @@
 /**
  * Apple HIG / UIKit theme (`systemBlue`, continuous corners, Liquid Glass) as a sparse Theme v5
- * override over `base` (`docs/decisions/0020-theme-v5.md`).
+ * override over `base` (`docs/theme.md`).
  */
 import { defineTheme, type IosBackdropMaterial, type MaterialSpec } from "../../schema";
 import { base } from "../nsh-gallery";

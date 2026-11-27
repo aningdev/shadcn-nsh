@@ -1,6 +1,6 @@
 /**
  * Theme v5 runtime: unified colors, shapes, metrics, surfaces, feedback, motion, and control recipes
- * (`docs/decisions/0020-theme-v5.md`).
+ * (`docs/theme.md`).
  *
  * Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
  */
@@ -1110,7 +1110,7 @@ const FOCUS_BG_MAP: Record<string, string> = {
 };
 
 /**
- * Strongly typed reactive reader for every control group in `controls` (`docs/decisions/0020-theme-v5.md`).
+ * Strongly typed reactive reader for every control group in `controls` (`docs/theme.md`).
  */
 export function control<K extends keyof ThemeSpec["controls"]>(name: K): ResolvedControlMap[K] {
   const c = activeSpec().controls;
