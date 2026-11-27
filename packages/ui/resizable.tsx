@@ -11,35 +11,6 @@ import {
 
 import { joinClass } from "./lib/utils";
 
-/**
- * The thumb of a resize handle (`handleThumbClass`), as gpui-component
- * draws it: none at rest, so the hairlines stay quiet; a faint pill grows
- * in under the pointer, and a long solid one while pressed or dragged.
- */
-export const handleThumb =
-  "h-11 w-[3px] rounded-full bg-muted-foreground opacity-0 scale-y-0 transition duration-150 ease-out group-hover:opacity-40 group-hover:scale-y-[0.45] group-active:opacity-90 group-active:scale-y-100";
-
-/** A resize handle's hairline, which stays as it is (its thumb shows where
- * to drag): `across` a row of panels, `along` a column. */
-export const resizableHandle = {
-  across: "h-full w-px bg-border",
-  along: "h-px w-full bg-border",
-  thumb: handleThumb,
-};
-
-/** A `ResizablePanelGroup`'s handles (spread it): the hairline across a
- * `horizontal` group's row, along a `vertical` one's column, and the
- * thumb. */
-export function resizableHandleLook(axis: "horizontal" | "vertical") {
-  return {
-    handleClass: axis === "horizontal" ? resizableHandle.across : resizableHandle.along,
-    handleThumbClass: handleThumb,
-  };
-}
-
-/** What a resize handle announces when its group is given no label of its own. */
-export const RESIZE_HANDLE_LABEL = "Resize";
-
 /** Every prop of `nsh/base` ResizablePanelGroup, plus the handle's look. */
 export type ResizablePanelGroupProps = BaseGroupProps;
 
@@ -80,3 +51,36 @@ export function ResizablePanel(props: ResizablePanelProps) {
   const [, rest] = split(props, ["class", "style"]);
   return <BasePanel {...rest} class={props.class} style={props.style} />;
 }
+
+// Shared resizable primitives. `dock-area` reads `handleThumb`; gallery reads `resizableHandleLook`.
+
+/**
+ * The thumb of a resize handle (`handleThumbClass`), as gpui-component
+ * draws it: none at rest, so the hairlines stay quiet; a faint pill grows
+ * in under the pointer, and a long solid one while pressed or dragged.
+ */
+export const handleThumb =
+  "h-11 w-[3px] rounded-full bg-muted-foreground opacity-0 scale-y-0 transition duration-150 ease-out group-hover:opacity-40 group-hover:scale-y-[0.45] group-active:opacity-90 group-active:scale-y-100";
+
+/** A `ResizablePanelGroup`'s handles (spread it): the hairline across a
+ * `horizontal` group's row, along a `vertical` one's column, and the
+ * thumb. */
+export function resizableHandleLook(axis: "horizontal" | "vertical") {
+  return {
+    handleClass: axis === "horizontal" ? resizableHandle.across : resizableHandle.along,
+    handleThumbClass: handleThumb,
+  };
+}
+
+/** What a resize handle announces when its group is given no label of its own. */
+export const RESIZE_HANDLE_LABEL = "Resize";
+
+// Private helpers & looks
+
+/** A resize handle's hairline, which stays as it is (its thumb shows where
+ * to drag): `across` a row of panels, `along` a column. */
+const resizableHandle = {
+  across: "h-full w-px bg-border",
+  along: "h-px w-full bg-border",
+  thumb: handleThumb,
+};

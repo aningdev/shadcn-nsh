@@ -8,35 +8,50 @@ import { split, View } from "nsh";
 import { Icon } from "./lib/icons";
 import { Spinner } from "./spinner";
 
+/** A refresh indicator's props. */
+export type RefreshIndicatorProps = Omit<ViewProps, "children"> & {
+  /** The `AnimatedValue` the scroll view feeds through `pullValue`: how far it is pulled past its top. */
+  pull: AnimatedValue;
+  /** The refresh is running: the arrow gives way to a ring that spins (it stands still with reduced motion). */
+  refreshing: boolean;
+  /**
+   * The same height the scroll view is given in `refreshIndicator={{ height }}`: the pull at which
+   * the chip is home and the arrow has turned. Read once, when the indicator is made. 72 by default.
+   */
+  height?: number;
+};
+
+/**
+ * The chip a pull-to-refresh draws: it travels in with the pull, grows and fades in, turns its arrow
+ * over once the pull is past half of `height`, and shows a spinning ring while `refreshing`. It owns
+ * the look and the motion only: the scroll view keeps `onRefresh`, `refreshing`, `pullValue` and
+ * `refreshIndicator`. Put it over the scroll view, in a parent both fill; it takes no presses.
+ */
+export function RefreshIndicator(props: RefreshIndicatorProps) {
+  const [mine, rest] = split(props, ["pull", "refreshing", "height", "style"]);
+  const look = refreshIndicatorLook();
+  const height = mine.height ?? REFRESH_INDICATOR_HEIGHT;
+  const pull = mine.pull;
+  return (
+    <View {...rest} style={[look.root(height), mine.style ?? null]}>
+      <View style={look.chip(pull, height)}>
+        <View style={look.arrow(pull, height, mine.refreshing)}>
+          <Icon icon={ArrowDown} size={look.glyph()} tint={look.tint()} />
+        </View>
+        <If when={mine.refreshing}>
+          <View style={look.ring()}>
+            <Spinner side={look.glyph()} tint={look.tint()} />
+          </View>
+        </If>
+      </View>
+    </View>
+  );
+}
+
+// Shared refresh-indicator primitives. Gallery reads `refreshIndicatorLook`; gallery and the demos read `REFRESH_INDICATOR_HEIGHT`.
+
 /** How tall the indicator is unless told otherwise: where a pull refreshes, and the room it keeps. */
 export const REFRESH_INDICATOR_HEIGHT = 72;
-
-/** How far, in points, the pull must go before the chip is fully opaque. */
-const FADE_IN = 24;
-
-/** How far above its place the chip starts, and how small it is there. */
-const FROM_ABOVE = -28;
-const FROM_SCALE = 0.6;
-
-/** The least side of the chip, in points: it is a mark rather than a control, and stays this size
- * where a theme's mid control is smaller. */
-const CHIP_FLOOR = 40;
-
-/** A refresh indicator's parts as the styles they wear: spread each one. */
-export interface RefreshIndicatorLook {
-  /** The strip the chip is centered in: over the top of the scroll view, taking no presses. */
-  root(height: number): ViewStyle;
-  /** The round chip: a raised face with a hairline edge. It fades, grows and travels in with `pull`. */
-  chip(pull: AnimatedValue, height: number): ViewStyle;
-  /** The arrow's box: it turns over once the pull is past half of `height`, and is gone while refreshing. */
-  arrow(pull: AnimatedValue, height: number, refreshing: boolean): ViewStyle;
-  /** The ring's box, stacked over the arrow's. */
-  ring(): ViewStyle;
-  /** The arrow's side and the ring's, in points. */
-  glyph(): number;
-  /** The ink of the arrow and the ring. */
-  tint(): string;
-}
 
 /**
  * A refresh indicator's look: a chip on the raised surface at least 40 points, its opacity, travel
@@ -96,42 +111,31 @@ export function refreshIndicatorLook(): RefreshIndicatorLook {
   };
 }
 
-/** A refresh indicator's props. */
-export type RefreshIndicatorProps = Omit<ViewProps, "children"> & {
-  /** The `AnimatedValue` the scroll view feeds through `pullValue`: how far it is pulled past its top. */
-  pull: AnimatedValue;
-  /** The refresh is running: the arrow gives way to a ring that spins (it stands still with reduced motion). */
-  refreshing: boolean;
-  /**
-   * The same height the scroll view is given in `refreshIndicator={{ height }}`: the pull at which
-   * the chip is home and the arrow has turned. Read once, when the indicator is made. 72 by default.
-   */
-  height?: number;
-};
+// Private helpers & looks
 
-/**
- * The chip a pull-to-refresh draws: it travels in with the pull, grows and fades in, turns its arrow
- * over once the pull is past half of `height`, and shows a spinning ring while `refreshing`. It owns
- * the look and the motion only: the scroll view keeps `onRefresh`, `refreshing`, `pullValue` and
- * `refreshIndicator`. Put it over the scroll view, in a parent both fill; it takes no presses.
- */
-export function RefreshIndicator(props: RefreshIndicatorProps) {
-  const [mine, rest] = split(props, ["pull", "refreshing", "height", "style"]);
-  const look = refreshIndicatorLook();
-  const height = mine.height ?? REFRESH_INDICATOR_HEIGHT;
-  const pull = mine.pull;
-  return (
-    <View {...rest} style={[look.root(height), mine.style ?? null]}>
-      <View style={look.chip(pull, height)}>
-        <View style={look.arrow(pull, height, mine.refreshing)}>
-          <Icon icon={ArrowDown} size={look.glyph()} tint={look.tint()} />
-        </View>
-        <If when={mine.refreshing}>
-          <View style={look.ring()}>
-            <Spinner side={look.glyph()} tint={look.tint()} />
-          </View>
-        </If>
-      </View>
-    </View>
-  );
+/** A refresh indicator's parts as the styles they wear: spread each one. */
+interface RefreshIndicatorLook {
+  /** The strip the chip is centered in: over the top of the scroll view, taking no presses. */
+  root(height: number): ViewStyle;
+  /** The round chip: a raised face with a hairline edge. It fades, grows and travels in with `pull`. */
+  chip(pull: AnimatedValue, height: number): ViewStyle;
+  /** The arrow's box: it turns over once the pull is past half of `height`, and is gone while refreshing. */
+  arrow(pull: AnimatedValue, height: number, refreshing: boolean): ViewStyle;
+  /** The ring's box, stacked over the arrow's. */
+  ring(): ViewStyle;
+  /** The arrow's side and the ring's, in points. */
+  glyph(): number;
+  /** The ink of the arrow and the ring. */
+  tint(): string;
 }
+
+/** How far, in points, the pull must go before the chip is fully opaque. */
+const FADE_IN = 24;
+
+/** How far above its place the chip starts, and how small it is there. */
+const FROM_ABOVE = -28;
+const FROM_SCALE = 0.6;
+
+/** The least side of the chip, in points: it is a mark rather than a control, and stays this size
+ * where a theme's mid control is smaller. */
+const CHIP_FLOOR = 40;

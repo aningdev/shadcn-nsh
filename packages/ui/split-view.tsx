@@ -30,6 +30,175 @@ export type { ColumnVisibility };
 /** Which column a page or a header belongs to. */
 export type SplitViewColumn = "sidebar" | "content" | "detail";
 
+/** Every prop of `nsh/base`'s SplitView. `style` goes over the look's. */
+export type SplitViewProps = BaseSplitViewProps;
+
+/**
+ * The columns. Every prop of `nsh/base`'s [`SplitView`](https://nsh.dev/elements/split-view) passes
+ * through; `style` goes over the look's. `sidebar`, `content` and `detail` are each a
+ * `NavStack`, as the platform expects — the column's look is the page inside that stack
+ * (`SplitViewSidebar`, `SplitViewContent`, `SplitViewDetail`).
+ */
+export function SplitView(props: SplitViewProps) {
+  const [, rest] = split(props, ["style"]);
+  const look = splitViewLook();
+  return <BaseSplitView {...rest} style={[look.root(), props.style ?? null]} />;
+}
+
+/**
+ * A column's page: every prop of `nsh/base`'s NavPage, plus the header's `leading` and `trailing`
+ * items. On the desktops and the web those items sit in `SplitViewHeader`; on iOS and Android they
+ * are the system header's `headerLeft` and `headerRight`. `header` replaces the bar.
+ */
+export type SplitViewColumnProps = BaseNavPageProps & {
+  /** The header's leading item: a way back, or `SplitViewTrigger`. */
+  leading?: JSX.Element;
+  /** The header's trailing item. */
+  trailing?: JSX.Element;
+};
+
+/** The sidebar column's page: the sidebar's fill, and a hairline after it (not on iOS). */
+export function SplitViewSidebar(props: SplitViewColumnProps) {
+  return columnPage("sidebar", props);
+}
+
+/** The content column's page: the page's fill, and a hairline after it (not on iOS). */
+export function SplitViewContent(props: SplitViewColumnProps) {
+  return columnPage("content", props);
+}
+
+/** The detail column's page: the page's fill, with no hairline after it. */
+export function SplitViewDetail(props: SplitViewColumnProps) {
+  return columnPage("detail", props);
+}
+
+/** The bar `SplitViewHeader` draws: its title and the items either side of it. */
+export type SplitViewHeaderProps = {
+  /** Which column's bar: the sidebar's has no hairline (default the content column's). */
+  column?: SplitViewColumn;
+  /** The page's `title`, shown in the bar on the desktops and the web. */
+  title?: string;
+  /** The bar's leading item. */
+  leading?: JSX.Element;
+  /** The bar's trailing item. */
+  trailing?: JSX.Element;
+  /** Over the bar's own classes. */
+  class?: string;
+  /** Classes toggled on the bar. `null` turns one off. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the look's. */
+  style?: StyleProp<ViewStyle>;
+};
+
+/**
+ * The column header the desktops and the web draw. iOS and Android show the system header instead,
+ * which takes the page's `title`, `leading` and `trailing` itself; a column page does not draw this
+ * bar there.
+ */
+export function SplitViewHeader(props: SplitViewHeaderProps) {
+  const look = splitViewHeaderLook(props.column ?? "content");
+  const [, rest] = split(props, [
+    "column",
+    "title",
+    "leading",
+    "trailing",
+    "class",
+    "classList",
+    "style",
+  ]);
+  const leading = props.leading;
+  const trailing = props.trailing;
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[look.bar(), props.style ?? null]}
+    >
+      {leading}
+      <View
+        style={{
+          flex: 1,
+          minWidth: 0,
+          flexDirection: "row",
+          alignItems: "center",
+          paddingHorizontal: leading ? 0 : 4,
+        }}
+      >
+        <Text style={look.title()}>{props.title ?? ""}</Text>
+      </View>
+      {trailing}
+    </View>
+  );
+}
+
+/** The sidebar button. Pressing it hides the sidebar, or shows every column. */
+export type SplitViewTriggerProps = {
+  /**
+   * Which columns show. The sidebar is showing for `"automatic"` and `"all"` (and when this is
+   * left out). A press reports `"doubleColumn"` then, and `"all"` when it is hidden.
+   */
+  columnVisibility?: ColumnVisibility;
+  /** The press chose which columns show. The app owns the value, as `SplitView` does. */
+  onColumnVisibilityChange?: (event: { columnVisibility: ColumnVisibility }) => void;
+  /** Runs on the press, before `onColumnVisibilityChange`. */
+  onPress?: () => void;
+  /** What screen readers say. Defaults to "Hide the sidebar" or "Show the sidebar". */
+  accessibilityLabel?: string;
+  /** Over the button's own classes. */
+  class?: string;
+  /** Classes toggled on the button. `null` turns one off. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the look's. */
+  style?: StyleProp<ViewStyle>;
+};
+
+/**
+ * The button that hides and shows the sidebar. It does not change what the split shows: the app
+ * sets `columnVisibility` from `onColumnVisibilityChange`, the same value `SplitView` takes. iOS
+ * draws the system's sidebar button, so a page leaves this one out there.
+ */
+export function SplitViewTrigger(props: SplitViewTriggerProps) {
+  const shown = () => sidebarShown(props.columnVisibility);
+  const look = splitViewTriggerLook();
+  const [, rest] = split(props, [
+    "columnVisibility",
+    "onColumnVisibilityChange",
+    "onPress",
+    "accessibilityLabel",
+    "class",
+    "classList",
+    "style",
+  ]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      onPress={() => {
+        props.onPress?.();
+        props.onColumnVisibilityChange?.({
+          columnVisibility: shown() ? "doubleColumn" : "all",
+        });
+      }}
+      role="button"
+      accessibilityLabel={
+        props.accessibilityLabel ?? (shown() ? "Hide the sidebar" : "Show the sidebar")
+      }
+      accessibilityState={{ selected: shown() }}
+      hitSlop={6}
+      hoverStyle={look.hoverStyle()}
+      activeStyle={look.activeStyle()}
+      focusVisibleStyle={look.focusVisibleStyle()}
+      style={[look.style(), props.style ?? null]}
+    >
+      <Icon icon={PanelLeft} size={look.glyph().size} tint={look.glyph().tint} />
+    </View>
+  );
+}
+
+// Private helpers & looks
+
 /** The system draws the header on iOS and Android; everywhere else the app's bar does. */
 const systemHeader = platform.os === "ios" || platform.os === "android";
 
@@ -37,7 +206,7 @@ const systemHeader = platform.os === "ios" || platform.os === "android";
  * The split view's own surface: it fills its parent, on the page's fill, and shrinks instead of
  * forcing the columns' widths on the parent. The columns' widths stay the platform's.
  */
-export function splitViewLook() {
+function splitViewLook() {
   return {
     root: (): ViewStyle => ({
       flex: 1,
@@ -52,7 +221,7 @@ export function splitViewLook() {
  * detail column, and none on iOS, which draws the columns' own edges. The page fills the column and
  * shrinks with it.
  */
-export function splitViewColumnLook(column: SplitViewColumn) {
+function splitViewColumnLook(column: SplitViewColumn) {
   return {
     page: (): ViewStyle => ({
       flex: 1,
@@ -73,7 +242,7 @@ export function splitViewColumnLook(column: SplitViewColumn) {
  * semibold, on the page's fill. The sidebar's bar carries no hairline; the others have `colors.line`
  * under them.
  */
-export function splitViewHeaderLook(column: SplitViewColumn = "content") {
+function splitViewHeaderLook(column: SplitViewColumn = "content") {
   const sidebar = column === "sidebar";
   return {
     bar: (): ViewStyle => ({
@@ -106,7 +275,7 @@ export function splitViewHeaderLook(column: SplitViewColumn = "content") {
  * glyph is `colors.mutedForeground` either way — the button's selected state says whether the
  * sidebar is showing, as the gallery's tool button does.
  */
-export function splitViewTriggerLook() {
+function splitViewTriggerLook() {
   return {
     style: (): ViewStyle => ({
       width: 28,
@@ -122,32 +291,10 @@ export function splitViewTriggerLook() {
   };
 }
 
-/** Every prop of `nsh/base`'s SplitView. `style` goes over the look's. */
-export type SplitViewProps = BaseSplitViewProps;
-
-/**
- * The columns. Every prop of `nsh/base`'s [`SplitView`](https://nsh.dev/elements/split-view) passes
- * through; `style` goes over `splitViewLook()`. `sidebar`, `content` and `detail` are each a
- * `NavStack`, as the platform expects — the column's look is the page inside that stack
- * (`SplitViewSidebar`, `SplitViewContent`, `SplitViewDetail`).
- */
-export function SplitView(props: SplitViewProps) {
-  const [, rest] = split(props, ["style"]);
-  const look = splitViewLook();
-  return <BaseSplitView {...rest} style={[look.root(), props.style ?? null]} />;
+/** Whether `columnVisibility` leaves the sidebar showing beside the other columns. */
+function sidebarShown(columnVisibility: ColumnVisibility | undefined) {
+  return columnVisibility == null || columnVisibility === "automatic" || columnVisibility === "all";
 }
-
-/**
- * A column's page: every prop of `nsh/base`'s NavPage, plus the header's `leading` and `trailing`
- * items. On the desktops and the web those items sit in `SplitViewHeader`; on iOS and Android they
- * are the system header's `headerLeft` and `headerRight`. `header` replaces the bar.
- */
-export type SplitViewColumnProps = BaseNavPageProps & {
-  /** The header's leading item: a way back, or `SplitViewTrigger`. */
-  leading?: JSX.Element;
-  /** The header's trailing item. */
-  trailing?: JSX.Element;
-};
 
 /** One column's page: the surface, the hairline, and the header for `column`. */
 function columnPage(column: SplitViewColumn, props: SplitViewColumnProps) {
@@ -187,114 +334,5 @@ function columnPage(column: SplitViewColumn, props: SplitViewColumnProps) {
         {props.children}
       </View>
     </BaseNavPage>
-  );
-}
-
-/** The sidebar column's page: the sidebar's fill, and a hairline after it (not on iOS). */
-export function SplitViewSidebar(props: SplitViewColumnProps) {
-  return columnPage("sidebar", props);
-}
-
-/** The content column's page: the page's fill, and a hairline after it (not on iOS). */
-export function SplitViewContent(props: SplitViewColumnProps) {
-  return columnPage("content", props);
-}
-
-/** The detail column's page: the page's fill, with no hairline after it. */
-export function SplitViewDetail(props: SplitViewColumnProps) {
-  return columnPage("detail", props);
-}
-
-/** The bar `SplitViewHeader` draws: its title and the items either side of it. */
-export type SplitViewHeaderProps = {
-  /** Which column's bar: the sidebar's has no hairline (default the content column's). */
-  column?: SplitViewColumn;
-  /** The page's `title`, shown in the bar on the desktops and the web. */
-  title?: string;
-  /** The bar's leading item. */
-  leading?: JSX.Element;
-  /** The bar's trailing item. */
-  trailing?: JSX.Element;
-};
-
-/**
- * The column header the desktops and the web draw. iOS and Android show the system header instead,
- * which takes the page's `title`, `leading` and `trailing` itself; a column page does not draw this
- * bar there. `splitViewHeaderLook` has the words to build a different bar that matches.
- */
-export function SplitViewHeader(props: SplitViewHeaderProps) {
-  const look = splitViewHeaderLook(props.column ?? "content");
-  const leading = props.leading;
-  const trailing = props.trailing;
-  return (
-    <View style={look.bar()}>
-      {leading}
-      <View
-        style={{
-          flex: 1,
-          minWidth: 0,
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: leading ? 0 : 4,
-        }}
-      >
-        <Text style={look.title()}>{props.title ?? ""}</Text>
-      </View>
-      {trailing}
-    </View>
-  );
-}
-
-/** The sidebar button. Pressing it hides the sidebar, or shows every column. */
-export type SplitViewTriggerProps = {
-  /**
-   * Which columns show. The sidebar is showing for `"automatic"` and `"all"` (and when this is
-   * left out). A press reports `"doubleColumn"` then, and `"all"` when it is hidden.
-   */
-  columnVisibility?: ColumnVisibility;
-  /** The press chose which columns show. The app owns the value, as `SplitView` does. */
-  onColumnVisibilityChange?: (event: { columnVisibility: ColumnVisibility }) => void;
-  /** Runs on the press, before `onColumnVisibilityChange`. */
-  onPress?: () => void;
-  /** What screen readers say. Defaults to "Hide the sidebar" or "Show the sidebar". */
-  accessibilityLabel?: string;
-  /** Over the look's. */
-  style?: StyleProp<ViewStyle>;
-};
-
-/** Whether `columnVisibility` leaves the sidebar showing beside the other columns. */
-function sidebarShown(columnVisibility: ColumnVisibility | undefined) {
-  return columnVisibility == null || columnVisibility === "automatic" || columnVisibility === "all";
-}
-
-/**
- * The button that hides and shows the sidebar. It does not change what the split shows: the app
- * sets `columnVisibility` from `onColumnVisibilityChange`, the same value `SplitView` takes. iOS
- * draws the system's sidebar button, so a page leaves this one out there.
- */
-export function SplitViewTrigger(props: SplitViewTriggerProps) {
-  const shown = () => sidebarShown(props.columnVisibility);
-  const look = splitViewTriggerLook();
-  return (
-    <View
-      onPress={() => {
-        props.onPress?.();
-        props.onColumnVisibilityChange?.({
-          columnVisibility: shown() ? "doubleColumn" : "all",
-        });
-      }}
-      role="button"
-      accessibilityLabel={
-        props.accessibilityLabel ?? (shown() ? "Hide the sidebar" : "Show the sidebar")
-      }
-      accessibilityState={{ selected: shown() }}
-      hitSlop={6}
-      hoverStyle={look.hoverStyle()}
-      activeStyle={look.activeStyle()}
-      focusVisibleStyle={look.focusVisibleStyle()}
-      style={[look.style(), props.style ?? null]}
-    >
-      <Icon icon={PanelLeft} size={look.glyph().size} tint={look.glyph().tint} />
-    </View>
   );
 }

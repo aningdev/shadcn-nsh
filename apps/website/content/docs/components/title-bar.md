@@ -86,9 +86,9 @@ They sit flush against the window's corner, so the bar's trailing padding goes t
 
 The three parts are the shapes the platforms draw; an app that wants its own draws the same
 `desktop` views itself, and the platform still carries out the press. A round close button
-(`Icon` from `lib/ui/icons`, `lightInk` from `lib/ui/title-bar`, `X` from `lucide`; the
-traffic lights keep macOS's own hues whatever the theme, so the disc's colour is written out
-rather than read from a role):
+(`Icon` from `lib/ui/icons`, `X` from `lucide`; the traffic lights keep macOS's own hues
+whatever the theme, so the disc's colour is written out rather than read from a role, and the
+glyph on a light is black at half):
 
 ```tsx
 <View
@@ -104,7 +104,7 @@ rather than read from a role):
   }}
   hoverStyle={{ backgroundColor: "#FF5F57" }}
 >
-  <Icon icon={X} size={12} tint={lightInk} />
+  <Icon icon={X} size={12} />
 </View>
 ```
 
@@ -113,11 +113,11 @@ A bar of the app's own takes `desktop={{ windowDrag: true }}` to drag the window
 
 ## API
 
-| Part                | Props                                                               | Description                                 |
-| ------------------- | ------------------------------------------------------------------- | ------------------------------------------- |
-| `TitleBar`          | every `nsh` View prop; look `titleBarLook().root()`                 | The bar that drags the window               |
-| `WindowControls`    | `variant`; every `nsh` View prop; look `titleBarLook().controls(…)` | The window's own buttons                    |
-| `WindowResizeEdges` | look `titleBarLook().resize(edge)`                                  | The edges and corners of a frameless window |
+| Part                | Props                                                       | Description                                 |
+| ------------------- | ----------------------------------------------------------- | ------------------------------------------- |
+| `TitleBar`          | every `nsh` View prop; `style` over the bar                 | The bar that drags the window               |
+| `WindowControls`    | `variant`; every `nsh` View prop; `style` over the controls | The window's own buttons                    |
+| `WindowResizeEdges` |                                                             | The edges and corners of a frameless window |
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all three, and `style`
 goes over the look's on `TitleBar` and `WindowControls`.
@@ -128,7 +128,7 @@ goes over the look's on `TitleBar` and `WindowControls`.
 
 `TitleBar` is `TITLE_BAR_HEIGHT` (40 points) tall, or the height the system's title bar has, on
 the inset fill with a hairline under it; its children start `12` points after the system's buttons.
-A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in macOS's own close, minimize and zoom hues wherever the theme goes (`lightTone`, with glyphs in `lightInk` and the disc's `lightEdge`), and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
+A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in macOS's own close, minimize and zoom hues wherever the theme goes, with glyphs in black at half and a hairline of black at an eighth around the disc, and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
 washes the destructive tint while the pointer is on it. `WindowResizeEdges` draws eight strips —
 `5` points along the edges, `12` at the corners — as the last child of the window's root.
-`titleBarLook()` is exported for a bar the app lays out itself.
+A bar the app lays out itself takes `desktop={{ windowDrag: true }}` and pads by `titleBar().left` and `titleBar().right`.

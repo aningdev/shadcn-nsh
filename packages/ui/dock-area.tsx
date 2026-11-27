@@ -1,8 +1,8 @@
-// Dock area: `dockClasses`, `DockTab`, and the `DockArea` that spreads them.
+// Dock area: tabs, splits and edge docks. `DockTab` draws a tab; `DockArea` spreads the chrome.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { surface, terminal } from "@shadcn-nsh/theme";
-import type { JSX } from "nsh";
+import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
   DockArea as BaseDockArea,
@@ -22,84 +22,6 @@ import {
 
 import { joinClass } from "./lib/utils";
 import { handleThumb, RESIZE_HANDLE_LABEL } from "./resizable";
-
-/**
- * A `DockArea`'s parts (spread it): groups and docks on the inset, a tab
- * bar over a hairline (its tabs drawn by `DockTab`, a margin apart: they
- * scroll in a row of their own, which the bar's `gap` does not space), the
- * handles' hairlines and thumbs, a drop target edged and tinted in the brand color, the
- * compact presentation's drawer and sheet on the card's surface over the
- * theme's `scrim`, every modal's backdrop.
- */
-export const dockClasses = {
-  groupClass: "flex-1 bg-muted",
-  tabBarClass: "flex-row border-b border-line",
-  tabClass: "group ml-1 first:ml-0",
-  contentClass: "flex-1",
-  handleClass: "basis-px bg-line",
-  handleThumbClass: handleThumb,
-  dockClass: "bg-muted",
-  dropIndicatorClass: "rounded-(--radius-lg) border-2 border-brand bg-brand/15",
-  drawerClass: "border-r border-border bg-card",
-  sheetClass: "rounded-t-(--radius-xl) border-t border-border bg-card",
-  backdropClass: "bg-scrim",
-};
-
-/**
- * A dock's tab (what `renderTab` returns, in a `dockClasses` tab): its
- * title sized to it, as wide on either side, muted until the pointer is on
- * it; the shown tab's title in the text color, underlined in the brand
- * color. `children` follow the title (a close button, `dockTabCloseClass`).
- */
-export function DockTab(props: {
-  title: string;
-  active: boolean;
-  testID?: string;
-  children?: JSX.Element;
-}) {
-  return (
-    <View testID={props.testID} class="h-9 flex-row items-center gap-1 px-3">
-      <Text
-        style={{ numberOfLines: 1 }}
-        class={`max-w-40 text-[13px] font-medium transition-colors ${props.active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}
-      >
-        {props.title}
-      </Text>
-      {props.children}
-      <If when={props.active}>
-        <View
-          style={{ pointerEvents: "none" }}
-          class="bg-brand absolute right-3 bottom-0 left-3 h-0.5 rounded-full"
-        />
-      </If>
-    </View>
-  );
-}
-
-/**
- * A dock tab's close button (`class`), its glyph `×` muted text: with a
- * pointer it fades in over the tab's end while the pointer is on the tab;
- * a touch screen keeps it beside the title (show it on the shown tab); a
- * terminal's tab, with no room at its end, sets it beside the title, shown
- * while the pointer is on the tab.
- */
-export const dockTabCloseClass = terminal
-  ? "size-5 items-center justify-center opacity-0 group-hover:opacity-100"
-  : platform.desktop
-    ? "absolute right-1 top-2 size-5 items-center justify-center rounded-(--radius-md) bg-muted opacity-0 transition-opacity group-hover:opacity-100 hover:bg-surface"
-    : "-mr-1.5 size-5 items-center justify-center rounded-(--radius-md) active:opacity-70";
-
-/** A dragged tab's preview (what `renderDragPreview` returns): its title on a raised chip. */
-export function DockDragPreview(props: { title: string }) {
-  return (
-    <View
-      class="border-border rounded-(--radius-md) border px-3 py-1.5"
-      style={surface("raised").style}
-    >
-      <Text class="text-foreground text-[13px] font-medium">{props.title}</Text>
-    </View>
-  );
-}
 
 /** Every prop of `nsh/base` DockArea. */
 export type DockAreaProps = BaseDockAreaProps;
@@ -140,21 +62,82 @@ export type { DockAreaRef };
  */
 export type DockTabValue = DockTabData;
 
-/** A tab's chrome: its title, with no close button. */
-function defaultTab(tab: DockTabData) {
-  return <DockTab title={tab.panel} active={tab.active} />;
-}
-
-/** A dragged tab, as a chip under the pointer (`DockDragPreview`). */
-function defaultPreview(tab: DockTabData) {
-  return <DockDragPreview title={tab.panel} />;
-}
-
-/** An area with no panels: a quiet line in the middle. */
-function defaultEmpty(): JSX.Element {
+/**
+ * A dock's tab (what `renderTab` returns): its
+ * title sized to it, as wide on either side, muted until the pointer is on
+ * it; the shown tab's title in the text color, underlined in the brand
+ * color. `children` follow the title (a close button, `dockTabCloseClass`).
+ */
+export function DockTab(props: {
+  /** The tab's title. */
+  title: string;
+  /** The tab that is showing. */
+  active: boolean;
+  /** The test id on the tab. */
+  testID?: string;
+  /** After the title (a close button, `dockTabCloseClass`). */
+  children?: JSX.Element;
+  /** Over the tab's own classes. */
+  class?: string;
+  /** Classes toggled on the tab. `null` turns one off. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the tab's box. */
+  style?: StyleProp<ViewStyle>;
+}) {
+  const [, rest] = split(props, [
+    "title",
+    "active",
+    "testID",
+    "children",
+    "class",
+    "classList",
+    "style",
+  ]);
   return (
-    <View class="flex-1 items-center justify-center p-2">
-      <Text class="text-muted-foreground text-[13px]">No panels</Text>
+    <View
+      {...rest}
+      testID={props.testID}
+      class={joinClass("h-9 flex-row items-center gap-1 px-3", props.class)}
+      classList={props.classList}
+      style={props.style}
+    >
+      <Text
+        style={{ numberOfLines: 1 }}
+        class={`max-w-40 text-[13px] font-medium transition-colors ${props.active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}
+      >
+        {props.title}
+      </Text>
+      {props.children}
+      <If when={props.active}>
+        <View
+          style={{ pointerEvents: "none" }}
+          class="bg-brand absolute right-3 bottom-0 left-3 h-0.5 rounded-full"
+        />
+      </If>
+    </View>
+  );
+}
+
+/** A dragged tab's preview (what `renderDragPreview` returns): its title on a raised chip. */
+export function DockDragPreview(props: {
+  /** The dragged tab's title. */
+  title: string;
+  /** Over the chip's own classes. */
+  class?: string;
+  /** Classes toggled on the chip. `null` turns one off. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the raised surface. */
+  style?: StyleProp<ViewStyle>;
+}) {
+  const [, rest] = split(props, ["title", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={joinClass("border-border rounded-(--radius-md) border px-3 py-1.5", props.class)}
+      classList={props.classList}
+      style={[surface("raised").style, props.style ?? null]}
+    >
+      <Text class="text-foreground text-[13px] font-medium">{props.title}</Text>
     </View>
   );
 }
@@ -214,15 +197,73 @@ export function DockArea(props: DockAreaProps) {
       dockStyle={props.dockStyle}
       dropIndicatorClass={joinClass(dockClasses.dropIndicatorClass, props.dropIndicatorClass)}
       dropIndicatorStyle={props.dropIndicatorStyle}
-      drawerClass={props.drawerClass ?? dockClasses.drawerClass}
+      drawerClass={joinClass(dockClasses.drawerClass, props.drawerClass)}
       drawerStyle={props.drawerStyle}
-      sheetClass={props.sheetClass ?? dockClasses.sheetClass}
+      sheetClass={joinClass(dockClasses.sheetClass, props.sheetClass)}
       sheetStyle={props.sheetStyle}
-      backdropClass={props.backdropClass ?? dockClasses.backdropClass}
+      backdropClass={joinClass(dockClasses.backdropClass, props.backdropClass)}
       backdropStyle={props.backdropStyle}
       renderTab={props.renderTab ?? defaultTab}
       renderDragPreview={props.renderDragPreview ?? defaultPreview}
       renderEmpty={props.renderEmpty ?? defaultEmpty}
     />
+  );
+}
+
+// Shared dock-area primitives. The showcase and the demo put `dockTabCloseClass` on a tab's close button.
+
+/**
+ * A dock tab's close button (`class`), its glyph `×` muted text: with a
+ * pointer it fades in over the tab's end while the pointer is on the tab;
+ * a touch screen keeps it beside the title (show it on the shown tab); a
+ * terminal's tab, with no room at its end, sets it beside the title, shown
+ * while the pointer is on the tab.
+ */
+export const dockTabCloseClass = terminal
+  ? "size-5 items-center justify-center opacity-0 group-hover:opacity-100"
+  : platform.desktop
+    ? "absolute right-1 top-2 size-5 items-center justify-center rounded-(--radius-md) bg-muted opacity-0 transition-opacity group-hover:opacity-100 hover:bg-surface"
+    : "-mr-1.5 size-5 items-center justify-center rounded-(--radius-md) active:opacity-70";
+
+// Private helpers & looks
+
+/**
+ * A `DockArea`'s parts (spread it): groups and docks on the inset, a tab
+ * bar over a hairline (its tabs drawn by `DockTab`, a margin apart: they
+ * scroll in a row of their own, which the bar's `gap` does not space), the
+ * handles' hairlines and thumbs, a drop target edged and tinted in the brand color, the
+ * compact presentation's drawer and sheet on the card's surface over the
+ * theme's `scrim`, every modal's backdrop.
+ */
+const dockClasses = {
+  groupClass: "flex-1 bg-muted",
+  tabBarClass: "flex-row border-b border-line",
+  tabClass: "group ml-1 first:ml-0",
+  contentClass: "flex-1",
+  handleClass: "basis-px bg-line",
+  handleThumbClass: handleThumb,
+  dockClass: "bg-muted",
+  dropIndicatorClass: "rounded-(--radius-lg) border-2 border-brand bg-brand/15",
+  drawerClass: "border-r border-border bg-card",
+  sheetClass: "rounded-t-(--radius-xl) border-t border-border bg-card",
+  backdropClass: "bg-scrim",
+};
+
+/** A tab's chrome: its title, with no close button. */
+function defaultTab(tab: DockTabData) {
+  return <DockTab title={tab.panel} active={tab.active} />;
+}
+
+/** A dragged tab, as a chip under the pointer (`DockDragPreview`). */
+function defaultPreview(tab: DockTabData) {
+  return <DockDragPreview title={tab.panel} />;
+}
+
+/** An area with no panels: a quiet line in the middle. */
+function defaultEmpty(): JSX.Element {
+  return (
+    <View class="flex-1 items-center justify-center p-2">
+      <Text class="text-muted-foreground text-[13px]">No panels</Text>
+    </View>
   );
 }
