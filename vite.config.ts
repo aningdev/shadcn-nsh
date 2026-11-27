@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 // vp fmt already respects .gitignore + .prettierignore and skips node_modules.
 // oxlint discovery also skips .gitignore matches. Only list paths that are
 // tracked (or otherwise walked) but should stay out of fmt/lint.
-const ignoreVendored = [".agents/**"];
+const ignoreVendored = [".agents/**", ".claude/skills/**"];
 // TanStack Router writes this file on every build in its own style and asks to
 // be left out of formatters; formatting it would dirty the tree after a build.
 // The compiled runtime files, per-appearance DTCG files, and per-theme DESIGN.md docs

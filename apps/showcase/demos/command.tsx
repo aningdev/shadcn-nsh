@@ -349,7 +349,7 @@ function Palette() {
 function MoveTo() {
   const folder = signal("projects/nsh");
   const searchable = signal(true);
-  let aligned = false;
+  const aligned = signal(false);
   return (
     <Card
       title="Move to"
@@ -360,8 +360,8 @@ function MoveTo() {
     >
       <Command
         ref={(r) => {
-          if (!aligned) {
-            aligned = true;
+          if (!aligned()) {
+            aligned.set(true);
             r.highlight(folder());
           }
         }}

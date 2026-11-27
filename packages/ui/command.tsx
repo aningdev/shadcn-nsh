@@ -2,7 +2,7 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import type { InputStyle, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { platform, split, Text, View } from "nsh";
+import { platform, signal, split, Text, View } from "nsh";
 import {
   Command as BaseCommand,
   type CommandEntry,
@@ -173,7 +173,7 @@ export function CommandEmpty(props: {
 
 /** A command palette: search field over virtualized, natively filtered rows. */
 export function Command(props: CommandProps) {
-  let cmd: CommandRef | null = null;
+  const cmd = signal<CommandRef | null>(null);
   const [, rest] = split(props, [
     "ref",
     "onSelect",
@@ -202,11 +202,11 @@ export function Command(props: CommandProps) {
     <BaseCommand
       {...rest}
       ref={(r) => {
-        cmd = r;
+        cmd.set(r);
         if (typeof props.ref === "function") props.ref(r);
       }}
       onSelect={(event) => {
-        cmd?.highlight(event.id);
+        cmd()?.highlight(event.id);
         props.onSelect?.(event);
       }}
       class={joinClass(commandClasses.root, props.class)}

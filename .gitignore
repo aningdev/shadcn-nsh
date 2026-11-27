@@ -166,6 +166,7 @@ bun.lockb
 # Claude Code local overrides
 .claude/settings.local.json
 .claude/.check-stamp
+.claude/skills/
 
 # Render check screenshots (bun run port:render / port:render:theme)
 **/demos/shots/
