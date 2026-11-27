@@ -4,7 +4,6 @@ import path from "node:path";
 import type { NshUiConfig, RegistryItem } from "../types";
 import { changeSummary } from "./diff";
 import { isThemeFile, planItems, type PlannedFile } from "./plan";
-import { mergeTheme } from "./theme-merge";
 
 export type InstallOptions = {
   /** Replace files the app has changed. Without it they are kept and reported. */
@@ -24,9 +23,9 @@ export type InstallResult = {
  * Write `items` into the app at `uiRoot`.
  *
  * A file the app does not have is written; one identical to the registry's is skipped; a
- * `theme.json` or `semantics.json` that only lacks keys is merged; any other file the app has is
- * its own and is kept, unless `overwrite` replaces it (reporting how much changes). With `dryRun`
- * the same lines are printed as `would …` and nothing is written.
+ * `theme.json` that only lacks keys is merged; any other file the app has is its own and is
+ * kept, unless `overwrite` replaces it (reporting how much changes). With `dryRun` the same
+ * lines are printed as `would …` and nothing is written.
  */
 export async function installItems(
   uiRoot: string,
@@ -60,25 +59,22 @@ export async function installItems(
       if (opts.dryRun) {
         console.log(`would merge ${shown} (${count} keys missing)`);
       } else {
-        await write(file, (await merged(file)) ?? file.content);
+        await write(file, file.merged ?? file.content);
         written.push(shown);
         console.log(`merge ${shown} (added ${count} keys)`);
       }
       continue;
     }
 
-    // `differs`, or a `theme.json` / `semantics.json` the app has changed and `--overwrite` was given.
+    // `differs`, or a `theme.json` the app has changed and `--overwrite` was given.
     const summary = changeSummary(file.added, file.removed);
     if (!opts.overwrite) {
-      // A recolored or customized theme file is the app's own and `diff` reports no difference for
-      // it, so do not send the reader there.
-      const name = path.basename(file.absolute);
+      // A recolored or customized theme.json is the app's own and `diff` reports no difference
+      // for it, so do not send the reader there.
       console.log(
-        name === "theme.json"
+        isThemeFile(file)
           ? `kept ${shown} (the app's colors stay)`
-          : isThemeFile(file)
-            ? `kept ${shown} (the app's semantics stay)`
-            : `kept ${shown}, differs (run diff)`,
+          : `kept ${shown}, differs (run diff)`,
       );
     } else if (opts.dryRun) {
       console.log(`would overwrite ${shown} ${summary}`);
@@ -95,18 +91,4 @@ export async function installItems(
 async function write(file: PlannedFile, content: string) {
   await fs.mkdir(path.dirname(file.absolute), { recursive: true });
   await fs.writeFile(file.absolute, content, "utf8");
-}
-
-/** The app's `theme.json` or `semantics.json` with the registry's missing keys added, as text. */
-async function merged(file: PlannedFile) {
-  if (file.existing == null) return null;
-  try {
-    const { theme } = mergeTheme(
-      JSON.parse(file.existing) as Record<string, unknown>,
-      JSON.parse(file.content) as Record<string, unknown>,
-    );
-    return `${JSON.stringify(theme, null, 2)}\n`;
-  } catch {
-    return null;
-  }
 }

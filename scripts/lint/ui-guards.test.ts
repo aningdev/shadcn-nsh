@@ -15,7 +15,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
  * listed with their reason and are the only ones.
  */
 
-const root = new URL("../../../", import.meta.url);
+const root = new URL("../../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
 
 /** A source with its comments removed, so prose about a color is not a color (its lines kept, so a line number is the file's). */

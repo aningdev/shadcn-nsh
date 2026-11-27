@@ -63,7 +63,7 @@ const REMOVED = [
   "chart-1",
 ] as const;
 
-const ours = read("../../../packages/theme/theme.json");
+const ours = read("../theme.json");
 
 describe("theme.json (Theme v5)", () => {
   test("declares all 9 shared theme keys and 21 light/dark core keys", () => {

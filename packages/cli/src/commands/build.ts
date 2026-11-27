@@ -60,22 +60,26 @@ export async function runBuild(registryFile: string, opts: BuildOptions): Promis
   }
   await fs.mkdir(outputDir, { recursive: true });
 
-  const catalog: RegistryIndexItem[] = [];
+  const builtItems = await Promise.all(
+    registry.items.map(async (item) => {
+      const built: RegistryItem = {
+        ...item,
+        files: await Promise.all(
+          item.files.map(async (file) => {
+            const abs = path.resolve(path.dirname(registryPath), file.path);
+            return { ...file, content: await fs.readFile(abs, "utf8") };
+          }),
+        ),
+      };
+      const outFile = path.join(outputDir, `${item.name}.json`);
+      await fs.writeFile(outFile, `${JSON.stringify(built, null, 2)}\n`, "utf8");
+      return { item, outFile };
+    }),
+  );
 
-  for (const item of registry.items) {
-    const built: RegistryItem = {
-      ...item,
-      files: await Promise.all(
-        item.files.map(async (file) => {
-          const abs = path.resolve(path.dirname(registryPath), file.path);
-          return { ...file, content: await fs.readFile(abs, "utf8") };
-        }),
-      ),
-    };
-
-    const outFile = path.join(outputDir, `${item.name}.json`);
-    await fs.writeFile(outFile, `${JSON.stringify(built, null, 2)}\n`, "utf8");
-    catalog.push({
+  const catalog: RegistryIndexItem[] = builtItems.map(({ item, outFile }) => {
+    console.log(`built ${path.relative(cwd, outFile)}`);
+    return {
       name: item.name,
       type: item.type,
       title: item.title,
@@ -86,9 +90,8 @@ export async function runBuild(registryFile: string, opts: BuildOptions): Promis
         type: file.type,
         target: file.target,
       })),
-    });
-    console.log(`built ${path.relative(cwd, outFile)}`);
-  }
+    };
+  });
 
   const indexPath = path.join(outputDir, "index.json");
   await fs.writeFile(

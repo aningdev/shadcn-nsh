@@ -79,7 +79,7 @@ flowchart TD
 
 | 规则                  | 判定                                                                                                                                                                                                                         |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **颜色只来自主题**    | 组件、`lib` 与演示不写颜色字面量。例外在该行或上一行标 `// color: <原因>`。`ui-guards.test.ts`                                                                                                                               |
+| **颜色只来自主题**    | 组件、`lib` 与演示不写颜色字面量。例外在该行或上一行标 `// color: <原因>`。`scripts/lint/ui-guards.test.ts`                                                                                                                  |
 | **外壳透传 props**    | props 是对应 `nsh/base` props 加自己的轴。`props.test-d.ts`，由 `nsh check apps/website/demos` 跑                                                                                                                            |
 | **registry 依赖如实** | `registryDependencies` 等于实际 import，相对 import 必须有条目分发。`registry:build`                                                                                                                                         |
 | **侧向随阅读方向**    | 不对称的 left/right 用 `start`/`end`。两侧同值，或标了 `// physical: <原因>` 的，除外。`check:ui -- --only rtl`                                                                                                              |

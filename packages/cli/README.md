@@ -56,9 +56,9 @@ shadcn-nsh add button --overwrite
 - `theme`, named or as a dependency, is the theme in `nsh-ui.json`: in an app on `theme-shadcn`
   it writes shadcn's data at the build-time paths, the roles module and `themes/shadcn/`, so
   `add theme --overwrite`, `add button --overwrite` and `add --all --overwrite` never write another theme back.
-- The packages the items import (`lucide`) are installed with the app's package manager, except
-  one `package.json` already declares in range: an exact `"lucide": "1.66.0"` stays as written
-  (`keep lucide (package.json has it in range)`), and only an older one is raised.
+- UI components ship built-in icon paths and declare zero runtime npm dependencies. When a
+  custom registry item declares npm `dependencies`, they are installed with the app's package
+  manager, keeping existing versions already in range (`keep <pkg> (package.json has it in range)`).
 - `--dry-run` prints the same lines as `would write …` / `would overwrite …` and writes nothing —
   not even `nsh-ui.json` or the theme `init` would install first.
 

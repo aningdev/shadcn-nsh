@@ -1,10 +1,9 @@
 import { Command } from "commander";
 
-import type { RegistryIndexItem } from "../types";
 import { readApp } from "../utils/app";
 import { changeSummary, diffLines, formatDiff } from "../utils/diff";
 import { RegistryUnreachable } from "../utils/fetch-cached";
-import { hasChange, isInstalled, planItems, type PlannedFile } from "../utils/plan";
+import { hasChange, isItemInstalled, planItems, type PlannedFile } from "../utils/plan";
 import { fetchIndex, resolveTree } from "../utils/registry";
 
 export type DiffOptions = {
@@ -44,16 +43,11 @@ async function compare(names: string[], opts: DiffOptions): Promise<number> {
     return 1;
   }
 
-  /** The app owns one theme; the other one's files are at the same paths. */
-  const installedHere = (item: RegistryIndexItem) =>
-    isInstalled(ws.uiRoot, config, item) &&
-    (item.type !== "registry:theme" || item.name === config.theme);
-
   // Named items need no catalog — offline, only their own copies.
   const targets = names.length
     ? names
     : (await fetchIndex(config, opts.registry)).items
-        .filter(installedHere)
+        .filter((item) => isItemInstalled(ws.uiRoot, config, item))
         .map((item) => item.name);
 
   if (targets.length === 0) {

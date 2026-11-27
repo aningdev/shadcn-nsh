@@ -18,11 +18,7 @@ export function itemUrl(config: NshUiConfig, name: string, registryOverride?: st
  * (`…/r/{name}.json` → `…/r/index.json`).
  */
 export function indexUrl(config: NshUiConfig, registryOverride?: string) {
-  const template = registryOverride ?? config.registry;
-  if (!template.includes("{name}")) {
-    throw new Error(`Registry URL must contain {name}: ${template}`);
-  }
-  return template.replaceAll("{name}", "index");
+  return itemUrl(config, "index", registryOverride);
 }
 
 export async function fetchItem(
@@ -129,21 +125,35 @@ export async function resolveTree(
   const seen = new Set<string>();
   const out: RegistryItem[] = [];
   const rawCache = new Map<string, RegistryItem>();
+  const inFlight = new Map<string, Promise<RegistryItem>>();
 
-  async function load(name: string): Promise<RegistryItem> {
+  function load(name: string): Promise<RegistryItem> {
     const cached = rawCache.get(name);
-    if (cached) return cached;
-    const fetched = await fetchItem(config, name, registryOverride);
-    rawCache.set(name, fetched);
-    return fetched;
+    if (cached) return Promise.resolve(cached);
+    const pending = inFlight.get(name);
+    if (pending) return pending;
+    const req = fetchItem(config, name, registryOverride)
+      .then((fetched) => {
+        rawCache.set(name, fetched);
+        inFlight.delete(name);
+        return fetched;
+      })
+      .catch((error) => {
+        inFlight.delete(name);
+        throw error;
+      });
+    inFlight.set(name, req);
+    return req;
   }
 
   async function walk(name: string) {
     if (seen.has(name)) return;
     seen.add(name);
     const item = await load(name);
+    const deps = item.registryDependencies ?? [];
     if (name === DEFAULT_THEME && config.theme === NATIVE_THEME) {
-      for (const dep of item.registryDependencies ?? []) await walk(dep);
+      await Promise.all(deps.map(load));
+      for (const dep of deps) await walk(dep);
       out.push(item);
       await walk(config.theme);
       return;
@@ -156,12 +166,14 @@ export async function resolveTree(
       out.push(atBuildTime(chosen, config));
       return;
     }
-    for (const dep of item.registryDependencies ?? []) {
+    await Promise.all(deps.map(load));
+    for (const dep of deps) {
       await walk(dep);
     }
     out.push(isCodeThemeItem(name) ? codeOnly(item) : item);
   }
 
+  await Promise.all(names.map(load));
   for (const name of names) {
     await walk(name);
   }

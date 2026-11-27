@@ -58,7 +58,7 @@ export async function fetchJson(
   };
   let res: Response;
   try {
-    res = await fetch(url);
+    res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
   } catch (error) {
     return unanswered(error);
   }

@@ -13,7 +13,7 @@ import { readdirSync, readFileSync } from "node:fs";
  * exact geometry is a `side` / `width` / `height`.
  */
 
-const root = new URL("../../../", import.meta.url);
+const root = new URL("../../", import.meta.url);
 
 /** Every `variant` value (the shadcn registry's `buttonVariants`). */
 const VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "link"];

@@ -2,7 +2,13 @@ import fs from "node:fs";
 import fsPromises from "node:fs/promises";
 import path from "node:path";
 
-import type { NshUiConfig, RegistryFile, RegistryIndexItem, RegistryItem } from "../types";
+import {
+  DEFAULT_THEME,
+  type NshUiConfig,
+  type RegistryFile,
+  type RegistryIndexItem,
+  type RegistryItem,
+} from "../types";
 import { countChanges, diffLines } from "./diff";
 import { defaultTarget } from "./paths";
 import { mergeTheme } from "./theme-merge";
@@ -12,7 +18,7 @@ import { transformContent } from "./transform";
  * What `add` would do with one file:
  * - `create`: the app has none.
  * - `same`: the app's file is byte-identical to the rewritten registry file.
- * - `merge`: a `theme.json` or `semantics.json` that lacks keys the registry's has; `add` fills those in.
+ * - `merge`: a `theme.json` that lacks keys the registry's has; `add` fills those in.
  * - `differs`: the app's file is its own. Only `--overwrite` replaces it.
  */
 export type PlanStatus = "create" | "same" | "merge" | "differs";
@@ -36,6 +42,8 @@ export type PlannedFile = {
   removed: number;
   /** For `merge`: the dotted key paths the registry has and the app's theme data lacks. */
   missing?: string[];
+  /** For `merge`: pre-serialized JSON with missing keys filled in. */
+  merged?: string;
 };
 
 /** `theme.json` is merged by key, never compared by value: the app owns its look. */
@@ -114,6 +122,7 @@ export async function planItems(
           if (merged && merged.added > 0) {
             entry.status = "merge";
             entry.missing = merged.missing;
+            entry.merged = `${JSON.stringify(merged.theme, null, 2)}\n`;
           } else {
             entry.status = "differs";
           }
@@ -135,13 +144,29 @@ export async function planItems(
   return planned;
 }
 
+const BUILD_TIME_THEME_FILES = new Set(["theme.json", "DESIGN.md"]);
+
 /**
- * True when the app has any of the item's files (what `list` marks and `diff` compares).
- * Depends on the index carrying `files`, which `registry:build` writes.
+ * True when the app has an item installed (what `list` marks and `diff` compares).
+ *
+ * Build-time theme files (`theme.json`, `DESIGN.md`) belong only to `config.theme`, while
+ * additional themes installed for runtime switching (`add theme-shadcn`) are detected by their
+ * TypeScript module (`themes/<id>.ts`). Depends on the index carrying `files`, which
+ * `registry:build` writes.
  */
-export function isInstalled(uiRoot: string, config: NshUiConfig, item: RegistryIndexItem) {
-  return (item.files ?? []).some((file) => {
-    const target = defaultTarget(file, config.aliases);
-    return fs.existsSync(path.isAbsolute(target) ? target : path.resolve(uiRoot, target));
-  });
+export function isItemInstalled(uiRoot: string, config: NshUiConfig, item: RegistryIndexItem) {
+  const files = item.files ?? [];
+  if (item.type !== "registry:theme" || item.name === config.theme) {
+    return files.some((file) => {
+      const target = defaultTarget(file, config.aliases);
+      return fs.existsSync(path.isAbsolute(target) ? target : path.resolve(uiRoot, target));
+    });
+  }
+  if (item.name === DEFAULT_THEME) return false;
+  return files
+    .filter((file) => !BUILD_TIME_THEME_FILES.has(path.posix.basename(file.target ?? file.path)))
+    .some((file) => {
+      const target = defaultTarget(file, config.aliases);
+      return fs.existsSync(path.isAbsolute(target) ? target : path.resolve(uiRoot, target));
+    });
 }
