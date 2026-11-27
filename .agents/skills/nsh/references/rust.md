@@ -1,7 +1,8 @@
 # Writing an NSH app in Rust
 
-Start here for an app, or part of an app, written in Rust. Rust is the preferred mode: the whole app is native code,
-no JavaScript VM ships with it, and `cargo check` and `cargo test` cover the real UI.
+Start here for Rust code in an app: an nshm crate that TSX screens import ([mixed.md](mixed.md) covers the join), or
+a whole app in Rust. A whole Rust app is native code, no JavaScript VM ships with it, and `cargo check` and
+`cargo test` cover the real UI; choose it when the app's core is heavy computation or system work.
 
 - [rust-ui.md](rust-ui.md): the components of `nsh_base`, family by family.
 - [rust-testing.md](rust-testing.md): `cargo test` with `Headless`, `nsh test`, platform runs.
@@ -548,12 +549,11 @@ fn card(selected: Signal<bool>) -> impl IntoElement {
         // Native states: no binding, nothing runs.
         .hover(|s| s.bg(move || theme().accent))
         .active(|s| s.opacity(0.7))
-        .focus(|s| s.outline(px(2.0)).outline_color(move || theme().ring))
+        .focus_visible(|s| s.outline(px(2.0)).outline_color(move || theme().ring))
         .disabled_style(|s| s.opacity(0.5))
         .dark(|s| s.border_2())
         // App state.
         .style_when(selected, |s| s.bg(move || theme().accent))
-        .cursor_pointer()
         .child(
             text("Title")
                 .flex_1()
@@ -666,6 +666,7 @@ async fn digest(path: std::path::PathBuf) -> Result<usize, String> {
 | `set_timeout`, `set_interval` | Engine thread | Delayed and repeating work | Yes |
 | `blocking(f)` | tokio's blocking threads | Blocking calls | **No** |
 | `background(fut)` | tokio's threads | `Send` futures, CPU work | **No** |
+| `run_on_main_thread(f)` | The platform's main thread, after the turn's views are mounted | APIs that only work there (AppKit, UIKit); await the result | Engine thread |
 
 - Long work on the engine thread freezes the UI's bindings. Move it to `blocking` or `background`, await the result in a
   `spawn`, and write signals there.

@@ -1,7 +1,7 @@
-# Rust + TSX
+# TSX with Rust
 
-One app, two languages: a Rust crate owns the core and exports typed components,
-modules and classes; TSX screens import them by a specifier. Everything is checked
+One app, two languages: TSX screens import typed components, modules and classes by a
+specifier from Rust nshm crates, the app's own in `ext/` or published ones. Everything is checked
 against declarations generated from the Rust signatures.
 
 Rust UI: [rust.md](rust.md). TSX: [tsx.md](tsx.md). Commands: [tooling.md](tooling.md). This page covers the join.
@@ -10,21 +10,21 @@ Every Rust and TSX block here is verbatim from `examples/rust-exports`, which CI
 
 ## When to pick it
 
-Start from what must ship after the binary does:
+Start from what the app needs from Rust:
 
 | Situation | Mode |
 | --- | --- |
-| All logic and UI ship in the binary; no JS VM wanted | Rust |
-| Rust core, plus screens that change often, experiments, or screens delivered as signed packages | Rust + TSX |
-| The app needs a crate (parser, crypto, storage engine, a native view) under TSX screens | Rust + TSX |
-| UI delivered at run time, no Rust code of your own, no Rust toolchain | TSX |
+| Screens and logic fit TypeScript, or the UI is delivered at run time; no Rust toolchain | TSX |
+| The app needs a crate (parser, crypto, storage engine, heavy computation, a native view) under TSX screens | TSX with Rust |
+| A Rust core, plus screens that change often, experiments, or screens delivered as signed packages | TSX with Rust |
+| The app's core is heavy computation or system work; all logic and UI ship in the binary; no JS VM wanted | Rust |
 
 Costs of this mode over the other two:
 
-- It carries QuickJS, which a Rust app does not (in the browser, TSX runs on the browser's JavaScript engine).
 - It needs the Rust toolchain, and `rustup target add ...` per target. A TSX app needs neither.
 - It builds hosts for the app. The first `nsh check` or `nsh test` compiles the crate and NSH's core, a minute or more the first time; later runs reuse it.
 - Rust edits restart the app. TSX edits are hot.
+- It carries QuickJS, which a Rust app does not (in the browser, TSX runs on the browser's JavaScript engine).
 
 A Rust app can gain TSX later: it already has a `#[native_module]`; add an entry and name it (`nsh run App.tsx`).
 
@@ -36,16 +36,25 @@ nsh init my-app --template mixed     # add --nsh-source <checkout> to build agai
 
 | File | What it is |
 | --- | --- |
-| `nsh.json` | `name`, `id`, `version`, `build` and `"rust": "."`. No `"root"`: that is what makes `App.tsx` the entry |
-| `App.tsx` | The entry. Imports `Badge`, `Counter` and `Format` from `<name>/native` |
+| `nsh.json` | `name`, `id`, `version`, `build` and `"dependencies": { "<name>-native": { "path": "ext/<name>-native" } }`. No `"rust"`, no `"root"`: `App.tsx` is the entry |
+| `App.tsx` | The entry. Imports `Badge`, `Counter` and `Format` from `<name>-native` |
 | `App.test.tsx` | Presses through the app with `nsh/test`, in a headless runner linked with the crate |
-| `Cargo.toml` | `nsh-core` and `nsh-base` at the CLI's version, and an empty `[workspace]`, so the app builds alone inside another project |
-| `src/lib.rs` | The crate: `#[native_module("<name>/native")]` and one component, module and class |
+| `ext/<name>-native/Cargo.toml` | `nsh-core` and `nsh-base` at the CLI's version, and an empty `[workspace]`, so the crate builds alone |
+| `ext/<name>-native/src/lib.rs` | The crate, an nshm of the app's own: `#[native_module("<name>-native")]` and one component, module and class |
 | `tsconfig.json`, `.gitignore`, `README.md` | `.gitignore` holds `.nsh/` and `target/` |
 | `.nsh/types/` | Generated. `.nsh/types/<name>/native.d.ts` appears after the first command that describes the crate |
 
-Templates: `crates/nsh-cli/src/templates/mixed/`. The specifier is the app's name in lower case, words joined by `-`,
-then `/native`. `rust-exports` keeps its crate in a subdirectory (`"rust": "native"`); both layouts work.
+Templates: `crates/nsh-cli/src/templates/mixed/`. The crate name and specifier are the app's name in lower case, words
+joined by `-`, then `-native`.
+
+**`ext/` is the standard layout for a TSX app's Rust**, as `src/` is for its TSX: one nshm crate per directory under
+`ext/`, each listed in `nsh.json` `"dependencies"` by path. Add one with `cargo new --lib ext/<name>`, a
+`#[native_module("<name>")]` at its root, then `nsh add --path ext/<name>`. Reference app:
+[huacnlee/disktree](https://github.com/huacnlee/disktree) (TSX UI in `App.tsx` and `src/`, scanner and SQLite index in
+`ext/disktree-native`, imported as `import { DiskTree } from "disktree-native"`). Docs:
+[An app's own Rust: ext/](https://nsh.dev/docs/nshm#an-apps-own-rust-ext). The older layout, a crate listed in
+`"rust"` (`rust-exports` keeps it in `"rust": "native"`), still builds and is what a Rust app that adds a TSX entry uses;
+the examples below come from it, and the crate code is the same in both.
 
 ## The entry point: `#[native_module]`
 
@@ -127,6 +136,11 @@ Choose a class over a module with hidden global state: instances free themselves
 A native component (`#[native_components(linux)]`, a platform view; `native/src/meter.rs`) is a fourth kind, for a
 view of the OS. TSX declares it with `nativeComponent`, and props cross as JSON. Where nothing registers it, it is an
 empty view. See `website/docs/native-components.md`.
+
+A GPU view is a box the crate draws with wgpu: implement `nsh_gpu::GpuRenderer`, register it with
+`registry.gpu_renderer("app/scene", Scene::new)` in the `#[native_module]` function, and declare it in TSX with
+`gpuView("app/scene", { props, events })` from `nsh`. It renders on a thread of its own, so 2D drawings of many
+primitives and 3D scenes keep the display's rate. See `gpuView` in `website/modules/nsh.md`.
 
 ### A component
 
@@ -234,7 +248,7 @@ All of these rows were compiled and called from TSX. A wrong argument names the 
 ### What each kind may do
 
 - **Synchronous** computes and keeps state. It runs outside the reactive runtime, so `signal(..)` panics, and TSX gets `Error: no reactive runtime: signals are used on the engine thread, while components run`. The same goes for `theme()`, `dialog` and the other UI free functions.
-- **`cx: &mut ModuleCx`** reaches the platform in order with the changes TS made before the call: `set_clipboard`, `dialog`, `dismiss_keyboard`, `set_status_bar`, `animate_layout`, `announce_for_accessibility`, `set_color_scheme`.
+- **`cx: &mut ModuleCx`** reaches the platform in order with the changes TS made before the call: `set_clipboard`, `dialog`, `dismiss_keyboard`, `set_status_bar`, `animate_layout`, `announce_for_accessibility`, `set_color_scheme`. It runs in the reactive runtime, so it may `spawn` a task (which runs to its end) and make signals. `cx.run_on_main_thread(f)` runs `f` on the platform's main thread after the call (an `async` function calls `run_on_main_thread(f)`); await the result in a task.
 - **`async`** gets the core's services: `timer`, `fetch`, dialogs. Move blocking work off the thread with `blocking(..)`, and async work with `background(..)`; those two are for native targets. It runs on the engine thread, so a long synchronous stretch inside a task freezes updates.
 
 A synchronous call that blocks freezes the app too. A synchronous call costs about what a JS method call does, so crossing is rarely a reason to move code. Embedded under limits, a call over its budget (default 2 s) is cut off.
@@ -365,6 +379,8 @@ nsh check                 # cargo check --all-targets for each crate, then tsc o
 | The declarations | `nsh_core::element::declarations` (feature `declarations`) | The `.d.ts` text, and `registry().undocumented()` |
 
 See `examples/rust-exports/native/tests/rust_exports/`. Dev-dependencies: `nsh-core` with `declarations`, `nsh-engine`, and `nsh-testing` with `bundle`.
+
+To test TSX without the crate's side effects (a keychain, a device), give `open` stand-ins for the exports it imports: `open("./App.tsx", { modules: { "rust-exports/native": { "Ledger.format": "$9.99", "Ledger.fetchRate": async () => 0.25 } } })`. A value replaces the export (a function's stand-in returns it at once). A function answers each call with its arguments, and the app's call returns a promise of the answer. Headless runs only.
 
 Test on a platform (`nsh test --target macos`) only what needs real input or a native component. Headless runs have no platform views, so a `#[native_components]` view is empty there.
 
