@@ -232,6 +232,8 @@ and Shift-Return breaks the line under a keyboard (`submitBehavior="submit"` on 
 touch screen Return breaks the line, and the button sends.
 
 ```tsx
+import { grownFieldHeight } from "@/components/ui/lib/field-look";
+
 const message = signal("");
 const grown = signal(0);
 const replying = signal(false);

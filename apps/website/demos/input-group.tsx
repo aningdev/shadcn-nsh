@@ -9,7 +9,6 @@ import { cleanup, mount, signal, Text, View } from "nsh";
 
 import { Bubble, BubbleContent } from "@/packages/ui/bubble";
 import { buttonGlyph, RoundButton, roundButtonGlyph } from "@/packages/ui/button";
-import { grownFieldHeight } from "@/packages/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
@@ -18,6 +17,7 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "@/packages/ui/input-group";
+import { grownFieldHeight } from "@/packages/ui/lib/field-look";
 import { Icon } from "@/packages/ui/lib/icons";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { Message, MessageAvatar, MessageContent } from "@/packages/ui/message";

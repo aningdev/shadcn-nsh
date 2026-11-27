@@ -68,6 +68,7 @@ import {
   type ToneColorKey,
   type TypeRole,
 } from "./schema";
+import { controlHeights, controlSpacing } from "./terminal-metrics";
 
 export type {
   AnyColorKey,
@@ -449,16 +450,19 @@ export const stroke = {
   },
 };
 
-/** Control heights by size (`sm`, `md`, `lg`) at active tier. */
+/**
+ * Control heights by size (`sm`, `md`, `lg`). The active tier's heights, or one character row in
+ * the terminal (`TERMINAL_ROW`).
+ */
 export const controlHeight = {
   get sm() {
-    return activeSpec().metrics.height[tier].sm;
+    return controlHeights(terminal, activeSpec().metrics.height[tier], TERMINAL_ROW).sm;
   },
   get md() {
-    return activeSpec().metrics.height[tier].md;
+    return controlHeights(terminal, activeSpec().metrics.height[tier], TERMINAL_ROW).md;
   },
   get lg() {
-    return activeSpec().metrics.height[tier].lg;
+    return controlHeights(terminal, activeSpec().metrics.height[tier], TERMINAL_ROW).lg;
   },
 };
 
@@ -478,10 +482,14 @@ export const iconSize = {
 /** Minimum touch/pointer hit target size at active tier. */
 export const hitTarget = (): number => activeSpec().metrics.hit[tier];
 
-/** Grouped metrics namespace (`metrics.height`, `metrics.icon`, `metrics.stroke`, `metrics.font`, etc.). */
+/**
+ * Grouped metrics namespace (`metrics.height`, `metrics.icon`, `metrics.stroke`, `metrics.font`, etc.).
+ * In the terminal `height` is one character row on every step and `control` is one character column
+ * of padding and gap. Other idioms return the active tier's objects unchanged.
+ */
 export const metrics = {
   get height() {
-    return activeSpec().metrics.height[tier];
+    return controlHeights(terminal, activeSpec().metrics.height[tier], TERMINAL_ROW);
   },
   get icon() {
     return activeSpec().metrics.icon[tier];
@@ -490,7 +498,7 @@ export const metrics = {
     return activeSpec().metrics.density[tier];
   },
   get control() {
-    return activeSpec().metrics.control[tier];
+    return controlSpacing(terminal, activeSpec().metrics.control[tier], TERMINAL_COLUMN);
   },
   get item() {
     return activeSpec().metrics.item[tier];

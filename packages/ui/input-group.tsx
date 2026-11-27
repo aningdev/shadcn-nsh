@@ -7,7 +7,7 @@ import { context, signal, split, View } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
 
 import { Button, buttonSizes, type ButtonProps, type ButtonSize } from "./button";
-import { fieldLook, fieldSize, fieldText } from "./input";
+import { fieldLook, fieldSize, fieldText } from "./lib/field-look";
 import { AsText, joinClass, type Live, read } from "./lib/utils";
 
 /** Options of `inputGroupLook`. */

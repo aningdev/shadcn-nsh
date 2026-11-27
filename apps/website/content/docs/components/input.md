@@ -66,7 +66,8 @@ The box grows only as the app sizes it: [`nsh/base`'s multi-line input](https://
 ```tsx
 import { signal } from "nsh";
 
-import { fieldText, Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { fieldText } from "@/components/ui/lib/field-look";
 
 const note = signal("");
 const content = signal(0);

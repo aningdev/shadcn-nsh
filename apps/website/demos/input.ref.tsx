@@ -8,7 +8,8 @@ import { mount, signal, Text, View } from "nsh";
 import { Button, Input } from "nsh/base";
 
 import { buttonLabel, buttonLook } from "@/packages/ui/button";
-import { inputLook, multilineFieldPad } from "@/packages/ui/input";
+import { inputLook } from "@/packages/ui/input";
+import { multilineFieldPad } from "@/packages/ui/lib/field-look";
 import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";

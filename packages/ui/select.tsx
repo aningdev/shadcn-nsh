@@ -24,7 +24,6 @@ import {
   type SelectProps as BaseSelectProps,
 } from "nsh/base";
 
-import { fieldSize, insetShade } from "./input";
 import {
   fieldCorners,
   fieldDrawn,
@@ -34,6 +33,8 @@ import {
   fieldHasUniformEdge,
   fieldRestEdge,
   fieldRing,
+  fieldSize,
+  insetShade,
 } from "./lib/field-look";
 import { Icon } from "./lib/icons";
 import {

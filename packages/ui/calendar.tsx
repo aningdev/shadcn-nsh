@@ -22,7 +22,7 @@ import {
   type CalendarProps as BaseCalendarProps,
 } from "nsh/base";
 
-import { timeFieldClass } from "./input";
+import { timeFieldClass } from "./lib/field-look";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 import { joinClass } from "./lib/utils";

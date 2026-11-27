@@ -10,7 +10,7 @@ import { computed, signal, Text, View } from "nsh";
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Checkbox } from "@/packages/ui/checkbox";
-import { choiceTileLook as tileLook } from "@/packages/ui/checkbox";
+import { choiceTileLook as tileLook } from "@/packages/ui/lib/choice";
 import { Icon } from "@/packages/ui/lib/icons";
 import {
   controlSize,

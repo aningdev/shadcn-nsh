@@ -1,6 +1,6 @@
 # shadcn-nsh Architecture
 
-一个文件一个**组件**，经 registry 与 CLI 以 **Copy-into-app** 交付。组件归本库所有：外观以**上游**（`references/nsh/examples/nsh-gallery-ui`）与官方推荐为参考规范自行抽取，行为来自 `nsh/base`，分发、组合角色与 API 命名参照 shadcn。词汇见 [`GLOSSARY.md`](GLOSSARY.md)。
+一个文件一个**组件**，经 registry 与 CLI 以 **Copy-into-app** 交付。组件归本库所有：外观以**上游**（`references/nsh/examples/nsh-gallery-ui`）与官方推荐为参考规范自行抽取，行为来自 `nsh/base`，分发、组合角色与 API 命名参照 shadcn。词汇见 [`GLOSSARY.md`](GLOSSARY.md)。组件怎么写（文件顺序、私有 Look、TUI 尺寸、响应式）见 [`component-authoring.md`](component-authoring.md)。
 
 ## Stack
 
@@ -26,7 +26,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `port-map.json`：**Port Map**，上游每个声明的来源去向表与已审阅的上游提交；目标不一定是组件——`demo.ts` 的 `Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` 等去向 `apps/website/demos/stage.tsx`（演示适配层，不进 registry）
 - `packages/theme/`：全部 6 套主题（`nsh-gallery`（NSH Gallery）、`shadcn`、`solid-glass`、`apple`、`material`、`winui`）的 **Theme Source** 是 `tokens/`（DTCG 2025.10，`tokens/base/` 与 `tokens/themes/<id>/`），经 `bun run tokens:build` 编译为运行时 `theme.json`、`semantics.json` 与 `themes/<id>/{theme,semantics}.json`（oklch，归本库；标准见 [`specs/design-semantics.md`](specs/design-semantics.md)）；`theme.ts` 读取它们与运行时的 `selectTheme` / `currentTheme`；`themes/<name>/` 一套一个 `AppTheme`（`theme.json`、`semantics.json`、`index.ts`），经 `theme-<name>` 条目分发；不放组件
 - `packages/ui/<id>.tsx`：一个**组件** = look + **Shell**；一个 registry 条目一个文件。起源于上游的文件在文件头一行致谢（**Credit Line**），代码归本库
-- `packages/ui/lib/`：跨多个外壳共用的接线与工具（作为 `registry:lib` 条目分发，收敛为 8 个高内聚模块：`utils.tsx`、`state.ts`、`motion.tsx`、`surface.tsx`、`field-look.ts`、`icons.tsx`、`popup.tsx`、`listbox.tsx`），每条按责任命名且至少两个控件在用——只有一个控件用的收回该控件（如 `switch-geometry` 并入 `switch.tsx`、`color-picker` 的 `formatColor`/`inkOn`、`icon-drawing` 并入 `icons.tsx`）
+- `packages/ui/lib/`：跨多个外壳共用的接线与工具（作为 `registry:lib` 条目分发，9 个高内聚模块：`utils.tsx`、`state.ts`、`motion.tsx`、`surface.tsx`、`field-look.ts`、`choice.tsx`、`icons.tsx`、`popup.tsx`、`listbox.tsx`），每条按责任命名且至少两个控件在用——只有一个控件用的收回该控件（如 `switch-geometry` 并入 `switch.tsx`、`color-picker` 的 `formatColor`/`inkOn`、`icon-drawing` 并入 `icons.tsx`）。写法见 [`component-authoring.md`](component-authoring.md)
 - `apps/website/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `Chips` / `desktop` / `wide` / `ui()`，见 [`port.md`](port.md#演示)），`photos.ts` 是照片页用的图（上游 `photos.ts`，原样搬运），都不进 registry；`shots/` 与 `shots-theme/` 是渲染比对的截图（`port:render` / `port:render:theme`），不提交
 - `apps/website/public/demos/`：`docs:demos` 的打包产物（页面、运行时、wasm），不进仓库；`apps/website/scripts/build-demos.ts` 打包每个演示，`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`
 - `apps/showcase/`：展示应用（#78）——NSH 官方 Gallery 的壳（桌面侧栏、手机索引推入 nav stack、搜索）与其场景演示，全部用 `packages/ui` 重建，分批实现（`groups/<group>.ts` 一个目的一个文件，未建的入口指向共享占位屏）；调色板与外观在应用内经 `theme.ts` 实时切换并持久化，`nsh test apps/showcase` 测壳的行为；由 `build-demos.ts` 打包到 `apps/website/public/showcase/`，站点首页的 “See it running” 以 `ShowcaseFrame` 嵌入，不进文档菜单
@@ -119,12 +119,12 @@ flowchart TD
 
 **归属**（抽取时，一个上游声明去哪个文件）：
 
-1. 描述某个控件的 look，进该控件的组件文件；别的组件需要时 import 那个组件
+1. 描述某个控件的 look，进该控件的组件文件
 2. 上游一个文件服务多个控件时，按声明拆到各自的组件；文件私有的常量可以路由到多个目标
-3. 没有所属控件的，进 `packages/ui/lib/<上游文件名>`
+3. 没有所属控件、或跨至少两个组件复用的样式原语，进 `packages/ui/lib/`（`field-look`、`choice`）
 4. 主题相关的进 `packages/theme`
 
-导出的声明只有一个归属（只有文件私有的常量能路由到多个目标）。组件文件不再导出 `lib/` 的声明：用 `lib/<x>` 的人（应用、演示）直接从那里 import。
+导出的声明只有一个归属（只有文件私有的常量能路由到多个目标）。组件文件不再导出 `lib/` 的声明：用 `lib/<x>` 的人（应用、演示）直接从那里 import。文件顺序、默认私有 Look 与 TUI 尺寸见 [`component-authoring.md`](component-authoring.md)。
 
 **Provider 的 children 在 Provider 里求值。** 组合控件的子元素要看见 Provider 的值，所以只在它内部求值：那里的读写成就地执行的 `(() => …)()`（见 `marker.tsx`），既在孩子们真正建出来的位置读，又只读一次。
 

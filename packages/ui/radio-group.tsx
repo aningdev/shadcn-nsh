@@ -20,7 +20,7 @@ import {
   choiceTileLook,
   choiceWell,
   type ChoiceSize,
-} from "./checkbox";
+} from "./lib/choice";
 import { cssMotion } from "./lib/motion";
 import { AsText, joinClass } from "./lib/utils";
 

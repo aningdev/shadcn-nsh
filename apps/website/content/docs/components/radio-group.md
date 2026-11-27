@@ -65,11 +65,11 @@ RadioGroup
 
 ### The look alone
 
-`choiceTileLook` is the checkbox module's, shared by the tile radio: import it from
-`@/components/ui/checkbox`.
+`choiceTileLook` is shared by the tile radio and the checkbox. Import it from
+`@/components/ui/lib/choice`.
 
 ```tsx
-import { choiceTileLook } from "@/components/ui/checkbox";
+import { choiceTileLook } from "@/components/ui/lib/choice";
 
 <Radio class="group" checked={on()} {...choiceTileLook(() => on())}>
   <RadioRing on={on()} />

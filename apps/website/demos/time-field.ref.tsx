@@ -4,8 +4,8 @@ import { mount, signal, Text, View } from "nsh";
 import { TimeField } from "nsh/base";
 
 import { calendarLook, TimeSegment } from "@/packages/ui/calendar";
+import { timeFieldLook } from "@/packages/ui/lib/field-look";
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { timeFieldLook } from "@/packages/ui/time-field";
 
 import { DemoSection, DemoPage } from "./kit";
 import { desktop, Log, Panel, Segmented, Split, ui } from "./stage";

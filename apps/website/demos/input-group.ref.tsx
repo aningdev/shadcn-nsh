@@ -16,7 +16,6 @@ import {
   roundButtonLook,
   type ButtonSize,
 } from "@/packages/ui/button";
-import { grownFieldHeight } from "@/packages/ui/input";
 import {
   inputGroupAddonLook,
   inputGroupControlLook,
@@ -25,6 +24,7 @@ import {
   type InputGroupAddonAlign,
   type InputGroupButtonSize,
 } from "@/packages/ui/input-group";
+import { grownFieldHeight } from "@/packages/ui/lib/field-look";
 import { Icon } from "@/packages/ui/lib/icons";
 import { PopIn } from "@/packages/ui/lib/popup";
 import { sectionSurface } from "@/packages/ui/lib/surface";

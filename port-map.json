@@ -190,20 +190,20 @@
         "CheckboxMarkKind": "packages/ui/checkbox.tsx",
         "ChoiceOptions": "packages/ui/checkbox.tsx",
         "dims": ["packages/ui/checkbox.tsx", "packages/ui/radio-group.tsx"],
-        "choiceWell": "packages/ui/checkbox.tsx",
+        "choiceWell": "packages/ui/lib/choice.tsx",
         "centered": "packages/ui/checkbox.tsx",
-        "choiceSink": "packages/ui/checkbox.tsx",
+        "choiceSink": "packages/ui/lib/choice.tsx",
         "CheckboxLook": "packages/ui/checkbox.tsx",
         "checkboxLook": "packages/ui/checkbox.tsx",
-        "ChoiceLight": "packages/ui/checkbox.tsx",
+        "ChoiceLight": "packages/ui/lib/choice.tsx",
         "MARK_WEIGHT": "packages/ui/checkbox.tsx",
         "CheckboxMark": "packages/ui/checkbox.tsx",
         "Live": "packages/ui/lib/utils.tsx",
         "read": "packages/ui/lib/utils.tsx",
         "RadioRing": "packages/ui/radio-group.tsx",
-        "ChoiceTileOptions": "packages/ui/checkbox.tsx",
-        "ChoiceTileLook": "packages/ui/checkbox.tsx",
-        "choiceTileLook": "packages/ui/checkbox.tsx"
+        "ChoiceTileOptions": "packages/ui/lib/choice.tsx",
+        "ChoiceTileLook": "packages/ui/lib/choice.tsx",
+        "choiceTileLook": "packages/ui/lib/choice.tsx"
       }
     },
     "look/color.tsx": {
@@ -221,21 +221,21 @@
     "look/field.tsx": {
       "symbols": {
         "pointer": [
-          "packages/ui/input.tsx",
+          "packages/ui/lib/field-look.ts",
           "packages/ui/number-input.tsx",
           "packages/ui/otp-input.tsx"
         ],
         "Live": "packages/ui/lib/utils.tsx",
         "read": "packages/ui/lib/utils.tsx",
-        "fieldSize": "packages/ui/input.tsx",
-        "FieldLookOptions": "packages/ui/input.tsx",
-        "EdgeOptions": "packages/ui/input.tsx",
-        "edgeClass": "packages/ui/input.tsx",
-        "fieldEdge": "packages/ui/input.tsx",
-        "frame": "packages/ui/input.tsx",
-        "fieldLook": "packages/ui/input.tsx",
-        "FieldTextOptions": "packages/ui/input.tsx",
-        "fieldText": "packages/ui/input.tsx",
+        "fieldSize": "packages/ui/lib/field-look.ts",
+        "FieldLookOptions": "packages/ui/lib/field-look.ts",
+        "EdgeOptions": "packages/ui/lib/field-look.ts",
+        "edgeClass": "packages/ui/lib/field-look.ts",
+        "fieldEdge": "packages/ui/lib/field-look.ts",
+        "frame": "packages/ui/lib/field-look.ts",
+        "fieldLook": "packages/ui/lib/field-look.ts",
+        "FieldTextOptions": "packages/ui/lib/field-look.ts",
+        "fieldText": "packages/ui/lib/field-look.ts",
         "inputLook": "packages/ui/input.tsx",
         "press": "packages/ui/number-input.tsx",
         "numberInputClasses": "packages/ui/number-input.tsx",
@@ -246,7 +246,7 @@
         "otpCells": "packages/ui/otp-input.tsx",
         "OtpCellOptions": "packages/ui/otp-input.tsx",
         "otpCellLook": "packages/ui/otp-input.tsx",
-        "timeFieldClass": "packages/ui/input.tsx"
+        "timeFieldClass": "packages/ui/lib/field-look.ts"
       }
     },
     "look/listbox.tsx": {

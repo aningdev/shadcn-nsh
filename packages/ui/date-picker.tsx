@@ -14,7 +14,7 @@ import {
 } from "nsh/base";
 
 import { CalendarItem, calendarLook, TimeSegment } from "./calendar";
-import { timeFieldClass } from "./input";
+import { timeFieldClass } from "./lib/field-look";
 import { clearButtonLook, listboxPopup, listboxPopupStarting } from "./lib/listbox";
 import { backdrop } from "./lib/popup";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";

@@ -36,8 +36,8 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { edgeClass, fieldSize, insetShade } from "./input";
 import {
+  edgeClass,
   fieldCorners,
   fieldEdgeThickness,
   fieldEdgeWidths,
@@ -46,6 +46,8 @@ import {
   fieldHasUniformEdge,
   fieldRestEdge,
   fieldRing,
+  fieldSize,
+  insetShade,
 } from "./lib/field-look";
 import { Icon } from "./lib/icons";
 import {

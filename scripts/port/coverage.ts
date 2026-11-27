@@ -19,7 +19,9 @@
  *
  * The same run checks the render cases' `selfReference`: a reference page that draws the component
  * itself proves nothing, so it must declare why it cannot rebuild it (`badge`, `plot`,
- * `emoji-picker`, …); a component whose page can rebuild it must not claim that.
+ * `emoji-picker`, …). A component that still exports a public `*Look` value can be rebuilt from
+ * that look, so it must not claim `selfReference`. A component with no such export cannot be
+ * rebuilt without importing itself, and may declare `selfReference`.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -314,76 +316,150 @@ function demoLiterals(file: string): Set<string> {
 }
 
 // ---------------------------------------------------------------------------------------------
+// selfReference: a public `*Look` value can be rebuilt; a file with none of those may draw itself.
+// ---------------------------------------------------------------------------------------------
+
+/** A camelCase value a reference page could spread (`buttonLook`, `choiceTileLook`). Types do not count. */
+const LOOK_HELPER = /^[a-z].*Look$/;
+
+/** Exported look values in `source`. `export type` and `ButtonLook` interfaces are not helpers. */
+export function exportedLookHelpers(source: string, file = "component.tsx"): string[] {
+  const result = parseSync(file, source);
+  if (result.errors.length > 0) {
+    throw new Error(`${file}: ${result.errors[0]?.message ?? "parse error"}`);
+  }
+  const program = result.program as unknown as Node;
+  const names: string[] = [];
+  const take = (name: string | undefined) => {
+    if (name && LOOK_HELPER.test(name)) names.push(name);
+  };
+  for (const statement of program.body as Node[]) {
+    if (statement.type !== "ExportNamedDeclaration") continue;
+    if (statement.exportKind === "type") continue;
+    const declaration = statement.declaration as Node | null | undefined;
+    if (declaration?.type === "FunctionDeclaration" || declaration?.type === "ClassDeclaration") {
+      take((declaration.id as Node | undefined)?.name as string | undefined);
+    } else if (declaration?.type === "VariableDeclaration") {
+      for (const one of (declaration.declarations as Node[] | undefined) ?? []) {
+        const id = one.id as Node | undefined;
+        if (id?.type === "Identifier") take(id.name as string);
+      }
+    }
+    for (const spec of (statement.specifiers as Node[] | undefined) ?? []) {
+      if (spec.exportKind === "type") continue;
+      const exported = spec.exported as Node | undefined;
+      const local = spec.local as Node | undefined;
+      take((exported?.name as string | undefined) ?? (local?.name as string | undefined));
+    }
+  }
+  return names;
+}
+
+/** The facts the `selfReference` check needs. `selfReference` is whether the case declares one. */
+export type SelfReferenceInput = {
+  id: string;
+  componentName: string;
+  selfReference: boolean;
+  drawsComponent: boolean;
+  ours: boolean;
+  upstreams: boolean;
+  lookHelpers: readonly string[];
+};
+
+/**
+ * Why a render case's `selfReference` is wrong. A file with no public look value may declare it:
+ * the reference page cannot rebuild the look without importing the component. A file that still
+ * exports one must not.
+ */
+export function selfReferenceProblems(input: SelfReferenceInput): string[] {
+  const found: string[] = [];
+  if (!input.selfReference && input.drawsComponent) {
+    found.push(
+      `${input.id}: its reference page draws <${input.componentName}>; declare selfReference with the reason it cannot rebuild it`,
+    );
+  }
+  if (input.selfReference && input.ours && !input.upstreams && input.lookHelpers.length > 0) {
+    found.push(
+      `${input.id}: its reference page draws only what it can rebuild, so it compares; remove selfReference`,
+    );
+  }
+  return found;
+}
+
+// ---------------------------------------------------------------------------------------------
 // The check.
 // ---------------------------------------------------------------------------------------------
 
-const set = catalog().components;
-const byId = new Map(set.map((component) => [component.id, component]));
+function main(): void {
+  const set = catalog().components;
+  const byId = new Map(set.map((component) => [component.id, component]));
 
-const problems: string[] = [];
-let checked = 0;
-for (const component of set) {
-  const file = component.uiFile;
-  const values = moduleAxes(moduleAt(file));
-  const unique = [...new Map(values.map((v) => [`${v.axis}\0${v.value}`, v])).values()];
-  if (unique.length === 0) continue;
-  const demo = component.demo;
-  if (!fs.existsSync(demo)) {
-    problems.push(`${component.id}: no demo, but ${unique.length} axis values to show`);
-    continue;
-  }
-  const shown = demoLiterals(demo);
-  checked += 1;
-  for (const { axis, value } of unique) {
-    if (!shown.has(value)) {
-      problems.push(
-        `${component.id}: ${axis} "${value}" never appears in ${path.relative(repo, demo)}`,
+  const problems: string[] = [];
+  let checked = 0;
+  for (const component of set) {
+    const file = component.uiFile;
+    const values = moduleAxes(moduleAt(file));
+    const unique = [...new Map(values.map((v) => [`${v.axis}\0${v.value}`, v])).values()];
+    if (unique.length === 0) continue;
+    const demo = component.demo;
+    if (!fs.existsSync(demo)) {
+      problems.push(`${component.id}: no demo, but ${unique.length} axis values to show`);
+      continue;
+    }
+    const shown = demoLiterals(demo);
+    checked += 1;
+    for (const { axis, value } of unique) {
+      if (!shown.has(value)) {
+        problems.push(
+          `${component.id}: ${axis} "${value}" never appears in ${path.relative(repo, demo)}`,
+        );
+      }
+    }
+    if (process.argv.includes("--verbose")) {
+      const covered = unique.filter((v) => shown.has(v.value)).length;
+      console.log(
+        `${component.id}: ${covered}/${unique.length} (${unique.map((v) => `${v.axis}=${v.value}`).join(", ")})`,
       );
     }
   }
-  if (process.argv.includes("--verbose")) {
-    const covered = unique.filter((v) => shown.has(v.value)).length;
-    console.log(
-      `${component.id}: ${covered}/${unique.length} (${unique.map((v) => `${v.axis}=${v.value}`).join(", ")})`,
+
+  // A reference page that draws the component itself proves nothing, unless the component exports
+  // no look a page could spread instead.
+  for (const { id, selfReference } of cases) {
+    const component = byId.get(id);
+    if (!component) continue;
+    const reference = path.join(demosDir, `${id}.ref.tsx`);
+    if (!fs.existsSync(reference)) {
+      problems.push(`${id}: no ${path.relative(repo, reference)}`);
+      continue;
+    }
+    const drawn = drawnFrom(reference, id);
+    const rel = path
+      .relative(path.join(repo, map.root), path.resolve(repo, component.uiFile))
+      .replaceAll(path.sep, "/");
+    const fromUpstream = ported.get(rel) ?? new Set<string>();
+    const name = pascal(id);
+    const source = fs.readFileSync(component.uiFile, "utf8");
+    const ours = declarations(component.uiFile, source).some((one) => one.names.includes(name));
+    const upstreams = [...drawn].some((one) => /^[A-Z]/.test(one) && fromUpstream.has(one));
+    problems.push(
+      ...selfReferenceProblems({
+        id,
+        componentName: name,
+        selfReference: Boolean(selfReference),
+        drawsComponent: drawn.has(name),
+        ours,
+        upstreams,
+        lookHelpers: exportedLookHelpers(source, component.uiFile),
+      }),
     );
+  }
+
+  console.log(`coverage: ${checked} components with axes checked against their demos`);
+  if (problems.length > 0) {
+    for (const problem of problems) console.error(`coverage: ${problem}`);
+    process.exit(1);
   }
 }
 
-// The render cases: a reference page that draws the component itself proves nothing, so it must
-// say why it cannot rebuild it (upstream's own component in the file, or ours a re-export); a page
-// that can rebuild it must say nothing.
-for (const { id, selfReference } of cases) {
-  const component = byId.get(id);
-  if (!component) continue;
-  const reference = path.join(demosDir, `${id}.ref.tsx`);
-  if (!fs.existsSync(reference)) {
-    problems.push(`${id}: no ${path.relative(repo, reference)}`);
-    continue;
-  }
-  const drawn = drawnFrom(reference, id);
-  const rel = path
-    .relative(path.join(repo, map.root), path.resolve(repo, component.uiFile))
-    .replaceAll(path.sep, "/");
-  const fromUpstream = ported.get(rel) ?? new Set<string>();
-  const name = pascal(id);
-  if (!selfReference && drawn.has(name)) {
-    problems.push(
-      `${id}: its reference page draws <${name}>; declare selfReference with the reason it cannot rebuild it`,
-    );
-  }
-  const ours = declarations(component.uiFile, fs.readFileSync(component.uiFile, "utf8")).some(
-    (one) => one.names.includes(name),
-  );
-  const upstreams = [...drawn].some((one) => /^[A-Z]/.test(one) && fromUpstream.has(one));
-  if (selfReference && ours && !upstreams) {
-    problems.push(
-      `${id}: its reference page draws only what it can rebuild, so it compares; remove selfReference`,
-    );
-  }
-}
-
-console.log(`coverage: ${checked} components with axes checked against their demos`);
-if (problems.length > 0) {
-  for (const problem of problems) console.error(`coverage: ${problem}`);
-  process.exit(1);
-}
+if (import.meta.main) main();

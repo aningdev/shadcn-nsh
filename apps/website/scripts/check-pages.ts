@@ -10,7 +10,8 @@
  *   table (docs/port.md, 文档页);
  * - a `demo:` names the page's own demo;
  * - every name a fenced snippet imports from `@/components/ui/<id>` is
- *   exported by that component's file;
+ *   exported by that component's file; `@/components/ui/lib/<name>` is
+ *   `packages/ui/lib/<name>.ts` or `.tsx`;
  * - a page's kind is derived from the official tables, so there is no
  *   hand-kept list of kinds to fall out of step;
  * - the official tables in `src/lib/official.ts` cover every file of
@@ -417,13 +418,26 @@ for (const component of cat.components) {
       const spec = match[2]!;
       if (!spec.startsWith("@/components/ui/")) continue;
       const id = spec.slice("@/components/ui/".length);
-      const owner = byId.get(id);
-      if (!owner) {
-        fail(`${where}:${fence.line}: no component "${id}" to import from`);
-        modules.set(id, new Set());
-        continue;
+      let moduleFile: string | undefined;
+      if (id.startsWith("lib/")) {
+        moduleFile = [".tsx", ".ts"]
+          .map((ext) => path.join(cat.paths.ui, `${id}${ext}`))
+          .find((one) => fs.existsSync(one));
+        if (!moduleFile) {
+          fail(`${where}:${fence.line}: no module "${id}" to import from`);
+          modules.set(id, new Set());
+          continue;
+        }
+      } else {
+        const owner = byId.get(id);
+        if (!owner) {
+          fail(`${where}:${fence.line}: no component "${id}" to import from`);
+          modules.set(id, new Set());
+          continue;
+        }
+        moduleFile = owner.uiFile;
       }
-      if (!modules.has(id)) modules.set(id, exportsOf(owner.uiFile));
+      if (!modules.has(id)) modules.set(id, exportsOf(moduleFile));
       const exported = modules.get(id)!;
       const names = match[1]!
         .replace(/\/\*[\s\S]*?\*\//g, "")

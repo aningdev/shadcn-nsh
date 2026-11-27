@@ -6,8 +6,13 @@ import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
 
-import { edgeClass, insetShade } from "./input";
-import { fieldCornerClass, fieldDrawn, fieldEdgeClass } from "./lib/field-look";
+import {
+  edgeClass,
+  fieldCornerClass,
+  fieldDrawn,
+  fieldEdgeClass,
+  insetShade,
+} from "./lib/field-look";
 import { createRejectShake } from "./lib/motion";
 import { joinClass, type Live, read } from "./lib/utils";
 

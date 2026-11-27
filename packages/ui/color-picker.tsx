@@ -32,7 +32,7 @@ import {
 } from "nsh/base";
 
 import { IconButton, iconButtonLook } from "./button";
-import { fieldLook, fieldSize, fieldText } from "./input";
+import { fieldLook, fieldSize, fieldText } from "./lib/field-look";
 import { Icon } from "./lib/icons";
 import { MenuMark, menuIndicator, PopIn } from "./lib/popup";
 import { useCopied } from "./lib/state";

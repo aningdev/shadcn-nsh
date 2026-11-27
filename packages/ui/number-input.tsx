@@ -11,8 +11,14 @@ import {
   type NumberInputProps as BaseNumberInputProps,
 } from "nsh/base";
 
-import { edgeClass, fieldLook as fieldWellLook, fieldSize } from "./input";
-import { fieldCornerClass, fieldDrawn, fieldEdgeClass } from "./lib/field-look";
+import {
+  edgeClass,
+  fieldCornerClass,
+  fieldDrawn,
+  fieldEdgeClass,
+  fieldLook as fieldWellLook,
+  fieldSize,
+} from "./lib/field-look";
 import { Icon } from "./lib/icons";
 import { joinClass, type Live } from "./lib/utils";
 

@@ -1,6 +1,6 @@
 # 移植一个组件
 
-新增或修改组件、演示、文档页时照这里做。分层与规则（P1–P6、归属）见 [`ARCHITECTURE.md`](ARCHITECTURE.md)，词汇见 [`GLOSSARY.md`](GLOSSARY.md)，CLI 与基线见 [`toolchain.md`](toolchain.md)。
+新增或修改组件、演示、文档页时照这里做。分层与规则（P1–P9、归属）见 [`ARCHITECTURE.md`](ARCHITECTURE.md)，文件顺序、私有 Look、TUI 尺寸与响应式见 [`component-authoring.md`](component-authoring.md)，词汇见 [`GLOSSARY.md`](GLOSSARY.md)，CLI 与基线见 [`toolchain.md`](toolchain.md)。
 
 ## 流程
 
@@ -23,7 +23,7 @@ bun run port:new <id> --view [--family]
 bun run port:new pressable --base Button
 ```
 
-它不写 `port-map.json`、不跑 `port:vendor`，`packages/ui/<id>.tsx` 从 `templates/own.tsx.tmpl` 起步：整份归本库，文件头也就没有致谢行。它不声明 `selfReference`（参照页必须由演示与 `<id>.ref.tsx` 的 look 展开画出同样的像素），其余流程、演示、文档页、registry 与上面一样。
+它不写 `port-map.json`、不跑 `port:vendor`，`packages/ui/<id>.tsx` 从 `templates/own.tsx.tmpl` 起步：整份归本库，文件头也就没有致谢行。组件仍导出公开 `*Look` 时，它不声明 `selfReference`（参照页必须由演示与 `<id>.ref.tsx` 的 look 展开画出同样的像素）。没有公开 `*Look` 可供展开时，参照页画组件自身并声明 `selfReference`（[`component-authoring.md`](component-authoring.md)）。其余流程、演示、文档页、registry 与上面一样。
 
 **外观只在演示里时**：初稿也可以抽自 `references/nsh/examples/gallery/demos/<file>.tsx` 里的一段（`port-map.json` 不登记这类路由）。`combobox` 的 chip 就这样抽自 `Controls.tsx` 的 `Chip`，搬进来的代码照常归本库、可以直接改。
 

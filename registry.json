@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,effects,paradigm,base,preset,theme}.ts).",
+      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,effects,paradigm,base,preset,terminal-metrics,theme}.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -47,6 +47,11 @@
           "path": "packages/theme/preset.ts",
           "type": "registry:lib",
           "target": "lib/ui/preset.ts"
+        },
+        {
+          "path": "packages/theme/terminal-metrics.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/terminal-metrics.ts"
         },
         {
           "path": "packages/theme/theme.ts",
@@ -266,12 +271,27 @@
       ]
     },
     {
+      "name": "choice",
+      "type": "registry:lib",
+      "title": "Choice",
+      "description": "The well, edge, press, fill and tile a checkbox and a radio share.",
+      "dependencies": [],
+      "registryDependencies": ["motion", "theme", "utils"],
+      "files": [
+        {
+          "path": "packages/ui/lib/choice.tsx",
+          "type": "registry:lib",
+          "target": "lib/ui/choice.tsx"
+        }
+      ]
+    },
+    {
       "name": "field-look",
       "type": "registry:lib",
       "title": "Field frame",
-      "description": "The shared frame of every text-input control: corners, edges, resting line and focus ring.",
+      "description": "The shared frame, well, text, size and time-field classes every text-input control reads.",
       "dependencies": [],
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/lib/field-look.ts",
@@ -430,7 +450,7 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "A sunk box that fills in citrus, with a check or a dash springing in.",
-      "registryDependencies": ["icons", "motion", "theme", "utils"],
+      "registryDependencies": ["choice", "icons", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/checkbox.tsx",
@@ -445,7 +465,7 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "A sunk ring that fills in citrus, with a dot growing in \u2014 alone or as a choice tile.",
-      "registryDependencies": ["checkbox", "motion", "theme", "utils"],
+      "registryDependencies": ["choice", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",
@@ -474,7 +494,7 @@
       "type": "registry:ui",
       "title": "Input",
       "description": "A text field \u2014 sunk, ghost, multiline, masked, or invalid.",
-      "registryDependencies": ["field-look", "motion", "theme", "utils"],
+      "registryDependencies": ["field-look", "motion", "utils"],
       "files": [
         {
           "path": "packages/ui/input.tsx",
@@ -488,7 +508,7 @@
       "type": "registry:ui",
       "title": "Number Input",
       "description": "A sunk number field with \u2212 / + or stacked chevron steppers.",
-      "registryDependencies": ["field-look", "icons", "input", "theme", "utils"],
+      "registryDependencies": ["field-look", "icons", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/number-input.tsx",
@@ -503,7 +523,7 @@
       "type": "registry:ui",
       "title": "OTP Input",
       "description": "One-time code cells that lift out of sunk wells as digits fill in.",
-      "registryDependencies": ["field-look", "input", "motion", "theme", "utils"],
+      "registryDependencies": ["field-look", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/otp-input.tsx",
@@ -517,7 +537,7 @@
       "type": "registry:ui",
       "title": "Time Field",
       "description": "A sunk well for a time of day, one segment at a time.",
-      "registryDependencies": ["calendar", "input", "utils"],
+      "registryDependencies": ["calendar", "field-look", "utils"],
       "files": [
         {
           "path": "packages/ui/time-field.tsx",
@@ -648,7 +668,6 @@
       "registryDependencies": [
         "field-look",
         "icons",
-        "input",
         "listbox",
         "state",
         "surface",
@@ -673,7 +692,6 @@
         "button",
         "field-look",
         "icons",
-        "input",
         "listbox",
         "state",
         "surface",
@@ -694,7 +712,7 @@
       "type": "registry:ui",
       "title": "Calendar",
       "description": "A month of days to pick a date or a range, on the shared calendar look.",
-      "registryDependencies": ["icons", "input", "surface", "theme", "utils"],
+      "registryDependencies": ["field-look", "icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/calendar.tsx",
@@ -711,7 +729,7 @@
       "description": "A calendar in a popup from a field trigger, on the shared listbox look.",
       "registryDependencies": [
         "calendar",
-        "input",
+        "field-look",
         "listbox",
         "popup",
         "select",
@@ -1105,8 +1123,8 @@
       "description": "Area, sliders, joined fields, swatches, and popover trigger.",
       "registryDependencies": [
         "button",
+        "field-look",
         "icons",
-        "input",
         "menu",
         "popover",
         "popup",
@@ -1283,7 +1301,7 @@
       "type": "registry:ui",
       "title": "InputGroup",
       "description": "A field's frame around an input and what sits beside it \u2014 an icon, a unit, a button.",
-      "registryDependencies": ["button", "input", "theme", "utils"],
+      "registryDependencies": ["button", "field-look", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/input-group.tsx",

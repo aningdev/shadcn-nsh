@@ -81,6 +81,7 @@ export * from "./trace";
 export * from "./refresh-indicator";
 export * from "./title-bar";
 export * from "./collapsing-header";
+export * from "./lib/choice";
 export * from "./lib/field-look";
 export * from "./lib/icons";
 export {

@@ -6,13 +6,8 @@ import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { Checkbox } from "nsh/base";
 
-import {
-  type CheckboxMarkKind,
-  CheckboxMark,
-  checkboxLook,
-  type ChoiceSize,
-  choiceScales,
-} from "@/packages/ui/checkbox";
+import { type CheckboxMarkKind, CheckboxMark, checkboxLook } from "@/packages/ui/checkbox";
+import { choiceScales, type ChoiceSize } from "@/packages/ui/lib/choice";
 import {
   controlSize,
   listRow,

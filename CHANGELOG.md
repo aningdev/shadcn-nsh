@@ -4,6 +4,8 @@
 
 ### Changed
 
+- **BREAKING: shared field and choice primitives move to `lib/`.** `fieldSize`, `edgeClass`, `insetShade`, `fieldLook`, `fieldText`, `grownFieldHeight`, `multilineFieldPad`, `timeFieldClass`, `timeFieldLook` and their option types now live in `lib/field-look`. `choiceLook`, `choiceEdge`, `choiceWell`, `choiceSink`, `ChoiceLight`, `choiceScales`, `choiceTileLook` and their types live in `lib/choice`. `Input`, `Checkbox` and `TimeField` no longer re-export them. In the terminal, `controlHeight` and `metrics.height` are one character row (`16`) and `metrics.control` is one character column of padding and gap (`8`). `controlSize` still uses `0` padding there.
+
 - **BREAKING: layer radii use Tailwind names, and `theme.json` always writes font families.** `cssVars.theme` renames `radius-control` / `radius-container` / `radius-modal` to `radius-md` / `radius-lg` / `radius-xl` (no aliases). The A-layer `radius` slot stays and still equals the control radius (`radius-md`). `shape.control` / `shape.container` / `shape.modal` keep their names and read the new keys. Classes use `rounded-(--radius-md|lg|xl)`. Every built-in `theme.json` writes `font-sans` (`system-ui` unless `tokens.font.sans` is set) and `font-mono` (`monospace` unless `tokens.font.mono` is set). `@shadcn-nsh/theme` exposes them as `font.sans` and `font.mono`.
 
 ### Added

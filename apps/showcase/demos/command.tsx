@@ -34,8 +34,8 @@ import {
   type CommandRef,
 } from "@/packages/ui/command";
 import { Dialog, DialogContent } from "@/packages/ui/dialog";
-import { fieldLook, fieldSize } from "@/packages/ui/input";
 import { Kbd } from "@/packages/ui/kbd";
+import { fieldLook, fieldSize } from "@/packages/ui/lib/field-look";
 import { Icon } from "@/packages/ui/lib/icons";
 import { backdrop } from "@/packages/ui/lib/popup";
 import { Pressable } from "@/packages/ui/pressable";

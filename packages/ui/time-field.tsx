@@ -5,10 +5,8 @@ import { split } from "nsh";
 import { TimeField as BaseTimeField, type TimeFieldProps as BaseTimeFieldProps } from "nsh/base";
 
 import { calendarLook, TimeSegment } from "./calendar";
-import { timeFieldLook } from "./input";
+import { timeFieldLook } from "./lib/field-look";
 import { joinClass } from "./lib/utils";
-
-export { timeFieldClass, timeFieldLook } from "./input";
 
 /**
  * `nsh/base`'s TimeField in the look of `timeFieldLook`, its segments and its `:` the ones of the
