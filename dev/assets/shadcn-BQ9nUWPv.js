@@ -1,4 +1,4 @@
-import{t as e}from"./jsx-runtime-DsDUoChv.js";import{t}from"./server.browser-CRtpYEZZ.js";import{a as n,i as r,n as i,r as a,t as o}from"./theme-sections-DPoP2pSu.js";var s=e(),c={title:`shadcn/ui`,description:`shadcn/ui's neutral palette: near-black and near-white fills, flat surfaces, 8-point controls and 14-point cards.`};function l(e){return t()?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(i,{id:`shadcn`}),`
+import{t as e}from"./jsx-runtime-DsDUoChv.js";import{t}from"./server.browser-CRtpYEZZ.js";import{a as n,i as r,n as i,r as a,t as o}from"./theme-sections-D5V-o3W_.js";var s=e(),c={title:`shadcn/ui`,description:`shadcn/ui's neutral palette: near-black and near-white fills, flat surfaces, 8-point controls and 14-point cards.`};function l(e){return t()?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(i,{id:`shadcn`}),`
 
 ## Installation [#installation]
 

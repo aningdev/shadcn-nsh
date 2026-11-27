@@ -1,4 +1,4 @@
-import{t as e}from"./jsx-runtime-DsDUoChv.js";import{t}from"./server.browser-CRtpYEZZ.js";import{a as n,i as r,n as i,r as a,t as o}from"./theme-sections-DPoP2pSu.js";var s=e(),c={title:`Material`,description:`Material 3 Expressive: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive shapes.`};function l(e){return t()?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(i,{id:`material`}),`
+import{t as e}from"./jsx-runtime-DsDUoChv.js";import{t}from"./server.browser-CRtpYEZZ.js";import{a as n,i as r,n as i,r as a,t as o}from"./theme-sections-D5V-o3W_.js";var s=e(),c={title:`Material`,description:`Material 3 Expressive: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive shapes.`};function l(e){return t()?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(i,{id:`material`}),`
 
 ## Installation [#installation]
 
