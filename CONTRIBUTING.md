@@ -64,5 +64,5 @@ Before opening a PR, run `bun run check` and supplement based on scope:
   3. Run `bun run catalog` so the root `nsh.json` version matches the CLI.
   4. Add a compatibility row in `README.md` and `README.zh.md`.
   5. Run `bun run registry:build` and verify `bun run check` and `bun run test:install`.
-- **Tag & publish**: After merging to `main`, push `git tag vX.Y.Z`. `publish-cli.yml` publishes npm, and `deploy-docs.yml` builds `/` (while pushes to `main` update `/dev/` using `DOCS_BASE=/dev/` and `sitePath()`).
+- **Tag & publish**: After merging to `main`, push `git tag vX.Y.Z`. `publish-cli.yml` publishes npm and creates the GitHub release from that tag's `CHANGELOG.md` section, and `deploy-docs.yml` builds `/` (while pushes to `main` update `/dev/` using `DOCS_BASE=/dev/` and `sitePath()`).
 - **`github-pages` environment**: the deployment branch policy must allow both `branch: main` (updates `/dev/`) and `tag: v*` (rebuilds `/`), otherwise the tag run fails with `Tag "vX.Y.Z" is not allowed to deploy to github-pages due to environment protection rules`. Check with `gh api repos/{owner}/{repo}/environments/github-pages/deployment-branch-policies`; add the tag rule with `gh api -X POST repos/{owner}/{repo}/environments/github-pages/deployment-branch-policies -f name='v*' -f type='tag'`, then `gh run rerun <run-id> --failed`.
