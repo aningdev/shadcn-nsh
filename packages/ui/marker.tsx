@@ -1,7 +1,7 @@
 // A marker: one line in a conversation that is not a message — a status, a note, a row with a
 // rule under it, or a label between two rules.
 
-import { colors, TERMINAL_COLUMN, TERMINAL_ROW, terminal, stroke } from "@shadcn-nsh/theme";
+import { colors, controlHeight, metrics, stroke, terminal } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
@@ -14,14 +14,110 @@ import { AsText } from "./lib/utils";
  * (a row boundary); `separator`, the label between two rules (a date, a section break). */
 export type MarkerVariant = "default" | "border" | "separator";
 
+/**
+ * A marker's props. Every `nsh` view prop passes through (`role`, `onPress`), and `style` goes
+ * over the look's.
+ */
+export type MarkerProps = ViewProps & {
+  /** Default `default`. See `MarkerVariant`. */
+  variant?: MarkerVariant;
+};
+
+/** An icon's box beside the line. `icon` is drawn in the muted ink at 16 points; anything else
+ * (`children`) is drawn as given. */
+export type MarkerIconProps = Omit<ViewProps, "children"> & {
+  /** The icon, as lucide exports it (`import { Search } from "lucide"`). */
+  icon?: IconNode;
+  /** Drawn instead of `icon`, as given. */
+  children?: JSX.Element;
+};
+
+/** A marker's line. A string is drawn in the look's type; anything else is drawn as given. */
+export type MarkerContentProps = Omit<TextProps, "children"> & {
+  /** The line: a word, a sentence, a link's label. */
+  children?: string | JSX.Element;
+};
+
+/**
+ * A marker, after shadcn/ui's: a status, a system note or a step of a run, as one muted line an
+ * icon can lead. `variant="border"` closes the line with a hairline under it (a row boundary);
+ * `variant="separator"` puts a hairline either side of it (a date, a compaction, a section).
+ * Build it from `MarkerIcon` and `MarkerContent`, in either order. Setting `role="status"` has a
+ * streaming marker announced as it changes; give it `onPress` (with `role="button"`) for one that
+ * acts, where shadcn/ui's `asChild` would take a link or a button.
+ */
+export function Marker(props: MarkerProps) {
+  const variant = () => props.variant ?? "default";
+  const interactive = () => props.onPress !== undefined;
+  const [, rest] = split(props, ["variant", "children", "class", "classList", "style"]);
+  return (
+    <MarkerContext.Provider value={{ variant, interactive }}>
+      <View
+        {...rest}
+        class={props.class}
+        classList={props.classList}
+        style={[
+          markerLook().root(variant()),
+          interactive() ? markerLook().pressable : null,
+          props.style ?? null,
+        ]}
+      >
+        <If when={variant() === "separator"}>
+          <View style={markerLook().rule} />
+        </If>
+        {/* Read once, where the children go: what they build sees the marker's variant only
+            inside its provider. */}
+        <AsText style={markerLook().content(variant())}>{props.children}</AsText>
+        <If when={variant() === "separator"}>
+          <View style={markerLook().rule} />
+        </If>
+      </View>
+    </MarkerContext.Provider>
+  );
+}
+
+/** An icon beside a marker's line. Decorative: what screen readers get is `MarkerContent`. */
+export function MarkerIcon(props: MarkerIconProps) {
+  const [, rest] = split(props, ["icon", "children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[markerLook().icon, props.style ?? null]}
+    >
+      {props.icon ? <Icon icon={props.icon} {...markerLook().glyph} /> : props.children}
+    </View>
+  );
+}
+
+/** The line of a marker. */
+export function MarkerContent(props: MarkerContentProps) {
+  // Outside a `Marker` the line stands alone: the default layout, and no underline.
+  const inherited = MarkerContext();
+  const variant = (): MarkerVariant => (inherited ? inherited.variant() : "default");
+  const interactive = () => (inherited ? inherited.interactive() : false);
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        markerLook().content(variant()),
+        interactive() ? { textDecorationLine: "underline" } : null,
+        props.style ?? null,
+      ]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+// Private helpers & looks
+
 /** A marker's icon box: 16 points, a step below the line's type (shadcn/ui's `size-4`). */
 const iconSide = 16;
-
-/** The gap between a marker's parts: 8 points, half a Cell in a terminal. */
-const gap = terminal ? TERMINAL_COLUMN / 2 : 8;
-
-/** The room a bordered marker keeps under its line, above the rule. */
-const borderPad = terminal ? 0 : 8;
 
 /** What a `MarkerContent` under a `Marker` wears: the layout, and whether the marker acts (its
  * line underlined, as shadcn/ui's link marker is). */
@@ -31,7 +127,7 @@ const MarkerContext = context<{
 } | null>(null);
 
 /** A marker's parts as the styles they wear: spread each one onto the part that matches its name. */
-export interface MarkerLook {
+interface MarkerLook {
   /** The root (`Marker`): a row of its parts, at least one line tall, as wide as its column. A
    * `border` marker keeps 8 points under the line and closes it with a hairline; a `separator`
    * one has the rule on each side of what it holds. */
@@ -55,18 +151,18 @@ export interface MarkerLook {
  * hairline across it; `separator` puts a hairline either side of the label, each taking the room
  * left. The terminal keeps the line's type and draws the rules as hairlines too.
  */
-export function markerLook(): MarkerLook {
+function markerLook(): MarkerLook {
   return {
     root: (variant: MarkerVariant): ViewStyle => ({
       flexDirection: "row",
       alignItems: "center",
-      gap,
+      gap: markerGap(),
       width: "100%",
       minWidth: 0,
-      minHeight: terminal ? TERMINAL_ROW : iconSide,
+      minHeight: markerMinHeight(),
       ...(variant === "border"
         ? {
-            paddingBottom: borderPad,
+            paddingBottom: markerBorderPad(),
             borderBottomWidth: stroke.hairline,
             borderBottomColor: colors.border,
           }
@@ -107,93 +203,19 @@ export function markerLook(): MarkerLook {
   };
 }
 
-/**
- * A marker's props. Every `nsh` view prop passes through (`role`, `onPress`), and `style` goes
- * over the look's.
- */
-export type MarkerProps = ViewProps & {
-  /** Default `default`. See `MarkerVariant`. */
-  variant?: MarkerVariant;
-};
+// Terminal
 
-/** An icon's box beside the line. `icon` is drawn in the muted ink at 16 points; anything else
- * (`children`) is drawn as given. */
-export type MarkerIconProps = Omit<ViewProps, "children"> & {
-  /** The icon, as lucide exports it (`import { Search } from "lucide"`). */
-  icon?: IconNode;
-  /** Drawn instead of `icon`, as given. */
-  children?: JSX.Element;
-};
-
-/** A marker's line. A string is drawn in the look's type; anything else is drawn as given. */
-export type MarkerContentProps = Omit<TextProps, "children"> & {
-  /** The line: a word, a sentence, a link's label. */
-  children?: string | JSX.Element;
-};
-
-/**
- * A marker, after shadcn/ui's: a status, a system note or a step of a run, as one muted line an
- * icon can lead. `variant="border"` closes the line with a hairline under it (a row boundary);
- * `variant="separator"` puts a hairline either side of it (a date, a compaction, a section).
- * Build it from `MarkerIcon` and `MarkerContent`, in either order. Setting `role="status"` has a
- * streaming marker announced as it changes; give it `onPress` (with `role="button"`) for one that
- * acts, where shadcn/ui's `asChild` would take a link or a button.
- */
-export function Marker(props: MarkerProps) {
-  const variant = () => props.variant ?? "default";
-  const interactive = () => props.onPress !== undefined;
-  const [, rest] = split(props, ["variant", "children", "style"]);
-  return (
-    <MarkerContext.Provider value={{ variant, interactive }}>
-      <View
-        {...rest}
-        style={[
-          markerLook().root(variant()),
-          interactive() ? markerLook().pressable : null,
-          props.style ?? null,
-        ]}
-      >
-        <If when={variant() === "separator"}>
-          <View style={markerLook().rule} />
-        </If>
-        {/* Read once, where the children go: what they build sees the marker's variant only
-            inside its provider. */}
-        <AsText style={markerLook().content(variant())}>{props.children}</AsText>
-        <If when={variant() === "separator"}>
-          <View style={markerLook().rule} />
-        </If>
-      </View>
-    </MarkerContext.Provider>
-  );
+/** The gap between a marker's parts: 8 points, half a Cell in a terminal. */
+function markerGap(): number {
+  return terminal ? metrics.control.gap / 2 : 8;
 }
 
-/** An icon beside a marker's line. Decorative: what screen readers get is `MarkerContent`. */
-export function MarkerIcon(props: MarkerIconProps) {
-  const [, rest] = split(props, ["icon", "children", "style"]);
-  return (
-    <View {...rest} style={[markerLook().icon, props.style ?? null]}>
-      {props.icon ? <Icon icon={props.icon} {...markerLook().glyph} /> : props.children}
-    </View>
-  );
+/** The room a bordered marker keeps under its line, above the rule. */
+function markerBorderPad(): number {
+  return terminal ? 0 : 8;
 }
 
-/** The line of a marker. */
-export function MarkerContent(props: MarkerContentProps) {
-  // Outside a `Marker` the line stands alone: the default layout, and no underline.
-  const inherited = MarkerContext();
-  const variant = (): MarkerVariant => (inherited ? inherited.variant() : "default");
-  const interactive = () => (inherited ? inherited.interactive() : false);
-  const [, rest] = split(props, ["children", "style"]);
-  return (
-    <Text
-      {...rest}
-      style={[
-        markerLook().content(variant()),
-        interactive() ? { textDecorationLine: "underline" } : null,
-        props.style ?? null,
-      ]}
-    >
-      {props.children}
-    </Text>
-  );
+/** A marker's least height: the icon's side, or one row in the terminal. */
+function markerMinHeight(): number {
+  return terminal ? controlHeight.md : iconSide;
 }

@@ -319,7 +319,7 @@ let search: InputRef | undefined;
 
 ### The look alone
 
-`inputGroupLook` is the frame's props and `inputGroupControlLook` the control's, for a `nsh/base` control of your own; `inputGroupAddonLook` and `inputGroupTextLook` are the addon's and its text's. This is what the reference page draws, and what `InputGroup` wraps.
+`inputGroupLook` is the frame's props and `inputGroupControlLook` the control's, for a `nsh/base` control of your own. This is what `InputGroup` wraps.
 
 ```tsx
 <View {...inputGroupLook({ invalid: true, style: { borderRadius: 22, padding: 6 } })}>

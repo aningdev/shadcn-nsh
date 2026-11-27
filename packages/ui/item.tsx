@@ -2,15 +2,15 @@
 
 import {
   colors,
-  rounded,
-  surface,
-  TERMINAL_COLUMN,
-  terminal,
   font,
+  metrics,
+  rounded,
   shape,
   stroke,
+  surface,
+  terminal,
 } from "@shadcn-nsh/theme";
-import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
+import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
 import { controlSize, density } from "./lib/surface";
@@ -32,6 +32,199 @@ export type ItemSize = "default" | "sm";
  */
 export type ItemMediaVariant = "default" | "icon" | "image";
 
+/** A list of items: a column with `role="list"`. */
+export type ItemGroupProps = ViewProps;
+
+/** A hairline between items. */
+export type ItemSeparatorProps = ViewProps;
+
+/** One row: what sits before its content, the content, and the controls after it. */
+export type ItemProps = ViewProps & {
+  /** Default `default`: no surface. `outline` edges the row, `muted` puts it on the muted fill. */
+  variant?: ItemVariant;
+  /** Default `default`, room for a title and a description; `sm` is one line tighter. */
+  size?: ItemSize;
+};
+
+/** What sits before an item's content: an avatar, an icon's tile, a clipping frame. */
+export type ItemMediaProps = ViewProps & {
+  /** Default `default` (the app's own content); `icon` is a square tile, `image` a square that clips. */
+  variant?: ItemMediaVariant;
+};
+
+/** An item's title and description, beside its media and its actions. */
+export type ItemContentProps = ViewProps;
+
+/** An item's title. */
+export type ItemTitleProps = TextProps;
+
+/** A quieter line under an item's title, wrapping to two lines. */
+export type ItemDescriptionProps = TextProps;
+
+/** What sits at an item's end: buttons, a badge, a switch. */
+export type ItemActionsProps = ViewProps;
+
+/** A line across the whole row above its content (a title one side, a word the other). */
+export type ItemHeaderProps = ViewProps;
+
+/** A line across the whole row under its content. */
+export type ItemFooterProps = ViewProps;
+
+/** A list of items. */
+export function ItemGroup(props: ItemGroupProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
+  return (
+    <View
+      {...rest}
+      role="list"
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().group, props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** A hairline between items. */
+export function ItemSeparator(props: ItemSeparatorProps) {
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().separator, props.style ?? null]}
+    />
+  );
+}
+
+/** One row, `variant="default"` and `size="default"` unless told otherwise. */
+export function Item(props: ItemProps) {
+  const [, rest] = split(props, ["variant", "size", "class", "classList", "style", "children"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        itemLook().item(props.variant ?? "default", props.size ?? "default"),
+        props.style ?? null,
+      ]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** An item's media: plain, an icon's tile, or a frame that clips an image. */
+export function ItemMedia(props: ItemMediaProps) {
+  const [, rest] = split(props, ["variant", "class", "classList", "style", "children"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().media(props.variant ?? "default"), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** An item's title and description. */
+export function ItemContent(props: ItemContentProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().content, props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** An item's title. */
+export function ItemTitle(props: ItemTitleProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().title, props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** A quieter line under an item's title. */
+export function ItemDescription(props: ItemDescriptionProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().description, props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** What sits at an item's end. */
+export function ItemActions(props: ItemActionsProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().actions, props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** A line across the row above its content. */
+export function ItemHeader(props: ItemHeaderProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().full, props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** A line across the row under its content. */
+export function ItemFooter(props: ItemFooterProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[itemLook().full, props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+// Shared item primitives
+// `nav-stack` wears `itemLook`.
+
 /** An item's parts as the styles they wear: spread each one. */
 export interface ItemLook {
   /** A list of items: a column, its rows `density.gap + 4` apart. */
@@ -52,12 +245,6 @@ export interface ItemLook {
   readonly full: ViewStyle;
 }
 
-/** A row's padding and gaps: `sm` takes four points off each. */
-const rowBox = (size: ItemSize) =>
-  size === "sm"
-    ? { paddingVertical: density.pad - 4, paddingHorizontal: density.pad, gap: 10 }
-    : { paddingVertical: density.pad, paddingHorizontal: density.pad, gap: density.gap + 2 };
-
 /**
  * An item family's look, after shadcn/ui's secondary `Item`, written from the
  * theme's roles: a row with the page's density in its padding and its gaps
@@ -73,67 +260,20 @@ const rowBox = (size: ItemSize) =>
 export function itemLook(): ItemLook {
   return {
     get group(): ViewStyle {
-      return {
-        flexDirection: "column",
-        gap: terminal ? 0 : density.gap,
-        width: "100%",
-      };
+      return terminal ? terminalGroup() : pointerGroup();
     },
     get separator(): ViewStyle {
-      return {
-        height: stroke.hairline,
-        backgroundColor: colors.line,
-        marginVertical: terminal ? 0 : 4,
-      };
+      return terminal ? terminalSeparator() : pointerSeparator();
     },
     item: (variant: ItemVariant, size: ItemSize): ViewStyle =>
-      terminal
-        ? {
-            flexDirection: "row",
-            alignItems: "center",
-            gap: TERMINAL_COLUMN,
-            minHeight: controlSize.row,
-          }
-        : {
-            ...rowBox(size),
-            flexDirection: "row",
-            flexWrap: "wrap",
-            alignItems: "center",
-            minHeight: controlSize.row,
-            ...rounded(shape.control),
-            borderWidth: stroke.hairline,
-            borderColor: variant === "outline" ? colors.border : "transparent",
-            backgroundColor: variant === "muted" ? colors.muted : "transparent",
-          },
+      terminal ? terminalItem() : pointerItem(variant, size),
     media: (variant: ItemMediaVariant): ViewStyle => {
+      if (terminal || variant === "default") return plainMedia();
       // A control's box plus 12; read here so a theme switch redraws the tile.
       const iconTile = controlSize.control + 12;
       // A row's own least height less 8.
       const imageTile = controlSize.row - 8;
-      return terminal || variant === "default"
-        ? { flexShrink: 0, alignItems: "center", justifyContent: "center" }
-        : variant === "icon"
-          ? {
-              flexShrink: 0,
-              width: iconTile,
-              height: iconTile,
-              alignItems: "center",
-              justifyContent: "center",
-              ...rounded(shape.control),
-              borderWidth: stroke.hairline,
-              borderColor: colors.border,
-              backgroundColor: surface("inset").style.backgroundColor,
-            }
-          : {
-              flexShrink: 0,
-              width: imageTile,
-              height: imageTile,
-              alignItems: "center",
-              justifyContent: "center",
-              overflow: "hidden",
-              ...rounded(shape.control),
-              backgroundColor: surface("inset").style.backgroundColor,
-            };
+      return variant === "icon" ? iconMedia(iconTile) : imageMedia(imageTile);
     },
     get content(): ViewStyle {
       return {
@@ -178,142 +318,107 @@ export function itemLook(): ItemLook {
   };
 }
 
-/** A list of items: a column with `role="list"`. */
-export type ItemGroupProps = ViewProps;
+// Private helpers & looks
 
-/** A hairline between items. */
-export type ItemSeparatorProps = ViewProps;
+/** A row's padding and gaps: `sm` takes four points off each. */
+const rowBox = (size: ItemSize) =>
+  size === "sm"
+    ? { paddingVertical: density.pad - 4, paddingHorizontal: density.pad, gap: 10 }
+    : { paddingVertical: density.pad, paddingHorizontal: density.pad, gap: density.gap + 2 };
 
-/** One row: what sits before its content, the content, and the controls after it. */
-export type ItemProps = ViewProps & {
-  /** Default `default`: no surface. `outline` edges the row, `muted` puts it on the muted fill. */
-  variant?: ItemVariant;
-  /** Default `default`, room for a title and a description; `sm` is one line tighter. */
-  size?: ItemSize;
-};
-
-/** What sits before an item's content: an avatar, an icon's tile, a clipping frame. */
-export type ItemMediaProps = ViewProps & {
-  /** Default `default` (the app's own content); `icon` is a square tile, `image` a square that clips. */
-  variant?: ItemMediaVariant;
-};
-
-/** An item's title and description, beside its media and its actions. */
-export type ItemContentProps = ViewProps;
-
-/** An item's title. */
-export type ItemTitleProps = TextProps;
-
-/** A quieter line under an item's title, wrapping to two lines. */
-export type ItemDescriptionProps = TextProps;
-
-/** What sits at an item's end: buttons, a badge, a switch. */
-export type ItemActionsProps = ViewProps;
-
-/** A line across the whole row above its content (a title one side, a word the other). */
-export type ItemHeaderProps = ViewProps;
-
-/** A line across the whole row under its content. */
-export type ItemFooterProps = ViewProps;
-
-/** A list of items. */
-export function ItemGroup(props: ItemGroupProps) {
-  const [, rest] = split(props, ["style", "children"]);
-  return (
-    <View {...rest} role="list" style={[itemLook().group, props.style ?? null]}>
-      {props.children}
-    </View>
-  );
+/** A list of items with a pointer or a touch screen: a column, `density.gap` apart. */
+function pointerGroup(): ViewStyle {
+  return {
+    flexDirection: "column",
+    gap: density.gap,
+    width: "100%",
+  };
 }
 
-/** A hairline between items. */
-export function ItemSeparator(props: ItemSeparatorProps) {
-  const [, rest] = split(props, ["style"]);
-  return <View {...rest} style={[itemLook().separator, props.style ?? null]} />;
+/** A hairline between items, 4 points above and below. */
+function pointerSeparator(): ViewStyle {
+  return {
+    height: stroke.hairline,
+    backgroundColor: colors.line,
+    marginVertical: 4,
+  };
 }
 
-/** One row, `variant="default"` and `size="default"` unless told otherwise. */
-export function Item(props: ItemProps) {
-  const [, rest] = split(props, ["variant", "size", "style", "children"]);
-  return (
-    <View
-      {...rest}
-      style={[
-        itemLook().item(props.variant ?? "default", props.size ?? "default"),
-        props.style ?? null,
-      ]}
-    >
-      {props.children}
-    </View>
-  );
+/** A row with a pointer or a touch screen: its surface, its padding, wrapping for a header and a footer. */
+function pointerItem(variant: ItemVariant, size: ItemSize): ViewStyle {
+  return {
+    ...rowBox(size),
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    minHeight: controlSize.row,
+    ...rounded(shape.control),
+    borderWidth: stroke.hairline,
+    borderColor: variant === "outline" ? colors.border : "transparent",
+    backgroundColor: variant === "muted" ? colors.muted : "transparent",
+  };
 }
 
-/** An item's media: plain, an icon's tile, or a frame that clips an image. */
-export function ItemMedia(props: ItemMediaProps) {
-  const [, rest] = split(props, ["variant", "style", "children"]);
-  return (
-    <View {...rest} style={[itemLook().media(props.variant ?? "default"), props.style ?? null]}>
-      {props.children}
-    </View>
-  );
+/** Media with no tile: the app's own avatar or dot, never shrunk. */
+function plainMedia(): ViewStyle {
+  return { flexShrink: 0, alignItems: "center", justifyContent: "center" };
 }
 
-/** An item's title and description. */
-export function ItemContent(props: ItemContentProps) {
-  const [, rest] = split(props, ["style", "children"]);
-  return (
-    <View {...rest} style={[itemLook().content, props.style ?? null]}>
-      {props.children}
-    </View>
-  );
+/** An icon's tile: a square well with a hairline edge. */
+function iconMedia(side: number): ViewStyle {
+  return {
+    flexShrink: 0,
+    width: side,
+    height: side,
+    alignItems: "center",
+    justifyContent: "center",
+    ...rounded(shape.control),
+    borderWidth: stroke.hairline,
+    borderColor: colors.border,
+    backgroundColor: surface("inset").style.backgroundColor,
+  };
 }
 
-/** An item's title. */
-export function ItemTitle(props: ItemTitleProps) {
-  const [, rest] = split(props, ["style", "children"]);
-  return (
-    <Text {...rest} style={[itemLook().title, props.style ?? null]}>
-      {props.children}
-    </Text>
-  );
+/** An image's frame: a square that clips. */
+function imageMedia(side: number): ViewStyle {
+  return {
+    flexShrink: 0,
+    width: side,
+    height: side,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    ...rounded(shape.control),
+    backgroundColor: surface("inset").style.backgroundColor,
+  };
 }
 
-/** A quieter line under an item's title. */
-export function ItemDescription(props: ItemDescriptionProps) {
-  const [, rest] = split(props, ["style", "children"]);
-  return (
-    <Text {...rest} style={[itemLook().description, props.style ?? null]}>
-      {props.children}
-    </Text>
-  );
+// Terminal
+
+/** A list of items in the terminal: a column with no gap (the rows are the gap). */
+function terminalGroup(): ViewStyle {
+  return {
+    flexDirection: "column",
+    gap: 0,
+    width: "100%",
+  };
 }
 
-/** What sits at an item's end. */
-export function ItemActions(props: ItemActionsProps) {
-  const [, rest] = split(props, ["style", "children"]);
-  return (
-    <View {...rest} style={[itemLook().actions, props.style ?? null]}>
-      {props.children}
-    </View>
-  );
+/** A hairline between items, with no room around it. */
+function terminalSeparator(): ViewStyle {
+  return {
+    height: stroke.hairline,
+    backgroundColor: colors.line,
+    marginVertical: 0,
+  };
 }
 
-/** A line across the row above its content. */
-export function ItemHeader(props: ItemHeaderProps) {
-  const [, rest] = split(props, ["style", "children"]);
-  return (
-    <View {...rest} style={[itemLook().full, props.style ?? null]}>
-      {props.children}
-    </View>
-  );
-}
-
-/** A line across the row under its content. */
-export function ItemFooter(props: ItemFooterProps) {
-  const [, rest] = split(props, ["style", "children"]);
-  return (
-    <View {...rest} style={[itemLook().full, props.style ?? null]}>
-      {props.children}
-    </View>
-  );
+/** A row in the terminal: one row high, one column between its parts, no surface and no tile. */
+function terminalItem(): ViewStyle {
+  return {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: metrics.control.gap,
+    minHeight: controlSize.row,
+  };
 }

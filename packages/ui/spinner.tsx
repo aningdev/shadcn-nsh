@@ -3,21 +3,11 @@
 
 import { alpha, control, iconSize } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
-import { reduceMotion, View } from "nsh";
+import { reduceMotion, split, View } from "nsh";
 
 /** A spinner's size, on the theme's icon tiers: the ring's side is `iconSize`'s `sm`, `md` or
  * `lg` (12 / 16 / 20 points with a pointer, 16 / 20 / 24 on a touch screen). */
 export type SpinnerSize = "sm" | "default" | "lg";
-
-/** The thinnest a ring's stroke gets, in points: below it the arc stops reading as a turn. */
-const MIN_STROKE = 1.5;
-
-/** The ring's side divided by this is its stroke: a stroke at 40 points, the size it is drawn at
- * most, so a smaller ring thins down to `MIN_STROKE` and no further. */
-const STROKE_SHARE = 8;
-
-/** One turn, in milliseconds: fast enough to read as work going on, slow enough not to blur. */
-const TURN_MS = 800;
 
 /** A spinner's props. */
 export interface SpinnerProps {
@@ -38,13 +28,6 @@ export interface SpinnerProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/** The color of the ring behind the arc: the tone at the `spinner` recipe's `trackOpacity`,
- * transparent where the theme draws no ring. */
-function grooveColor(tint: string): string {
-  const opacity = control("spinner").trackOpacity;
-  return opacity <= 0 ? "transparent" : alpha(tint, opacity);
-}
-
 /**
  * A ring turning with its top arc in `tint`: work going on. Its side is `side` when given,
  * else the theme's icon tier named by `size`; the stroke is that side over `STROKE_SHARE`, no
@@ -52,29 +35,52 @@ function grooveColor(tint: string): string {
  * `trackOpacity` to say. It stands still when the user asks for less motion.
  */
 export function Spinner(props: SpinnerProps) {
+  const [, rest] = split(props, ["size", "side", "tint", "class", "classList", "style"]);
   const side = () =>
     props.side ??
     (props.size === "sm" ? iconSize.sm : props.size === "lg" ? iconSize.lg : iconSize.md);
   const stroke = () => Math.max(MIN_STROKE, side() / STROKE_SHARE);
   return (
     <View
+      {...rest}
       class={props.class}
       classList={props.classList}
-      style={[
-        {
-          width: side(),
-          height: side(),
-          borderRadius: side() / 2,
-          borderWidth: stroke(),
-          borderColor: grooveColor(props.tint),
-          borderTopColor: props.tint,
-          animationName: reduceMotion() ? undefined : "spin",
-          animationDuration: TURN_MS,
-          animationTimingFunction: "linear",
-          animationIterationCount: "infinite",
-        },
-        props.style ?? null,
-      ]}
+      style={[spinnerRing(side, stroke, props.tint), props.style ?? null]}
     />
   );
+}
+
+// Private helpers & looks
+
+/** The thinnest a ring's stroke gets, in points: below it the arc stops reading as a turn. */
+const MIN_STROKE = 1.5;
+
+/** The ring's side divided by this is its stroke: a stroke at 40 points, the size it is drawn at
+ * most, so a smaller ring thins down to `MIN_STROKE` and no further. */
+const STROKE_SHARE = 8;
+
+/** One turn, in milliseconds: fast enough to read as work going on, slow enough not to blur. */
+const TURN_MS = 800;
+
+/** The color of the ring behind the arc: the tone at the `spinner` recipe's `trackOpacity`,
+ * transparent where the theme draws no ring. */
+function grooveColor(tint: string): string {
+  const opacity = control("spinner").trackOpacity;
+  return opacity <= 0 ? "transparent" : alpha(tint, opacity);
+}
+
+/** The ring: `side` across, its top arc in `tint`, turning unless motion is reduced. */
+function spinnerRing(side: () => number, stroke: () => number, tint: string): ViewStyle {
+  return {
+    width: side(),
+    height: side(),
+    borderRadius: side() / 2,
+    borderWidth: stroke(),
+    borderColor: grooveColor(tint),
+    borderTopColor: tint,
+    animationName: reduceMotion() ? undefined : "spin",
+    animationDuration: TURN_MS,
+    animationTimingFunction: "linear",
+    animationIterationCount: "infinite",
+  };
 }

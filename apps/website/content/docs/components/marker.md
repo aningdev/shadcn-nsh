@@ -101,11 +101,11 @@ hand.
 
 ## API
 
-| Part            | Props                                                                   | Description                                    |
-| --------------- | ----------------------------------------------------------------------- | ---------------------------------------------- |
-| `Marker`        | `variant`; every `nsh` View prop; look `markerLook().root(variant)`     | A line in a conversation that is not a message |
-| `MarkerIcon`    | `icon`, `children`; every `nsh` View prop; look `markerLook().icon`     | The icon beside the line                       |
-| `MarkerContent` | `children`; every `nsh` Text prop; look `markerLook().content(variant)` | The line's words                               |
+| Part            | Props                                     | Description                                    |
+| --------------- | ----------------------------------------- | ---------------------------------------------- |
+| `Marker`        | `variant`; every `nsh` View prop          | A line in a conversation that is not a message |
+| `MarkerIcon`    | `icon`, `children`; every `nsh` View prop | The icon beside the line                       |
+| `MarkerContent` | `children`; every `nsh` Text prop         | The line's words                               |
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Marker` and
 `MarkerIcon` (`role`, `onPress`, `accessibilityLabel`, …), and every prop of
@@ -121,4 +121,4 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Mar
 The line is in the muted ink at the body's size (13 points with a pointer, 15 on a touch screen),
 its icon 16 points in the same ink; a marker's icon box is never shrunk by a tight row. In a
 terminal the icon is drawn as NSH draws icons there (a check is `✓`, the others show nothing) and
-the rules are hairlines. `markerLook()` is exported for a line an app draws itself.
+the rules are hairlines.

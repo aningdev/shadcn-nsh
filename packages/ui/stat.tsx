@@ -2,16 +2,10 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { colors, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
+import type { StyleProp, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
-import type { ViewProps } from "nsh";
 
 import { type Live, read } from "./lib/utils";
-
-/** Whether a `Stat` is inside a `StatGroup` (it then shares the row). */
-const StatGroupContext = context(false);
-
-/** The figure's type: a small muted label over a value a step larger, so the value leads. */
-const type = { label: 12, value: 15 };
 
 /** A figure: its label, its value and the quieter lines around them. */
 export type StatProps = {
@@ -25,12 +19,33 @@ export type StatProps = {
   tone?: Live<Tone>;
   width?: `${number}%`;
   truncate?: boolean;
+  /** Tailwind classes on the figure, after its look. */
+  class?: string;
+  /** Tailwind classes toggled on the figure. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the figure. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 };
+
+/** A row of stats: a view's props. The hairline above a chart's figures is the app's class. */
+export type StatGroupProps = ViewProps;
 
 /** A label above a value, for grids of figures; on one row in the terminal,
  * the value right-aligned. `truncate` keeps a value that may run long (a
  * display's name) on its one line, ending in an ellipsis. */
 export function Stat(props: StatProps) {
+  const [, rest] = split(props, [
+    "label",
+    "value",
+    "unit",
+    "note",
+    "tone",
+    "width",
+    "truncate",
+    "class",
+    "classList",
+    "style",
+  ]);
   const grouped = StatGroupContext();
   // The color is read where the value is drawn, so a function follows a value the app changes.
   const valueColor = () => {
@@ -42,18 +57,10 @@ export function Stat(props: StatProps) {
   // `StatGroup`, a stat with no `width` shares the row.
   return (
     <View
-      style={
-        terminal
-          ? { width: props.width }
-          : {
-              width: props.width,
-              gap: 3,
-              paddingVertical: 4,
-              ...(grouped && props.width == null
-                ? { flexGrow: 1, flexBasis: 108, minWidth: 0 }
-                : {}),
-            }
-      }
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[statFrame(grouped, props.width), props.style ?? null]}
     >
       <Text style={{ fontSize: type.label, color: colors.mutedForeground }}>{props.label}</Text>
       <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4 }}>
@@ -63,7 +70,7 @@ export function Stat(props: StatProps) {
             color: valueColor(),
             fontVariant: ["tabular-nums"],
             numberOfLines: props.truncate ? 1 : undefined,
-            paddingEnd: props.truncate && !terminal ? 8 : undefined,
+            paddingEnd: valuePadEnd(props.truncate),
           }}
         >
           {props.value}
@@ -79,20 +86,58 @@ export function Stat(props: StatProps) {
   );
 }
 
-/** A row of stats: a view's props. The hairline above a chart's figures is the app's class. */
-export type StatGroupProps = ViewProps;
-
 /** Several stats on one wrapping row, 12 points apart. A `Stat` inside it shares the row. */
 export function StatGroup(props: StatGroupProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   return (
     <StatGroupContext.Provider value={true}>
       <View
         {...rest}
-        style={[{ flexDirection: "row", flexWrap: "wrap", gap: 12 }, props.style ?? null]}
+        class={props.class}
+        classList={props.classList}
+        style={[statGroupRow(), props.style ?? null]}
       >
         {props.children}
       </View>
     </StatGroupContext.Provider>
   );
+}
+
+// Private helpers & looks
+
+/** Whether a `Stat` is inside a `StatGroup` (it then shares the row). */
+const StatGroupContext = context(false);
+
+/** The figure's type: a small muted label over a value a step larger, so the value leads. */
+const type = { label: 12, value: 15 };
+
+/** The figure's frame with a pointer or a touch screen: a small gap, and a share of the row inside a group. */
+function statFrame(grouped: boolean, width: StatProps["width"]): ViewStyle {
+  return terminal ? terminalStat(width) : pointerStat(grouped, width);
+}
+
+function pointerStat(grouped: boolean, width: StatProps["width"]): ViewStyle {
+  return {
+    width,
+    gap: 3,
+    paddingVertical: 4,
+    ...(grouped && width == null ? { flexGrow: 1, flexBasis: 108, minWidth: 0 } : {}),
+  };
+}
+
+/** Several stats on one wrapping row, 12 points apart. */
+function statGroupRow(): ViewStyle {
+  return { flexDirection: "row", flexWrap: "wrap", gap: 12 };
+}
+
+// Terminal
+
+/** A figure in the terminal: its width only, the rows themselves the gap. */
+function terminalStat(width: StatProps["width"]): ViewStyle {
+  return { width };
+}
+
+/** Room after a truncated value: 8 points, none in the terminal (the grid is the room). */
+function valuePadEnd(truncate: boolean | undefined): number | undefined {
+  return truncate && !terminal ? 8 : undefined;
 }
