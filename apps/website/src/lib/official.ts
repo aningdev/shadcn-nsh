@@ -128,7 +128,7 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
   { id: "accordion", group: "base", ours: ["accordion"] },
   { id: "alert-dialog", group: "base", ours: ["alert-dialog"] },
   { id: "avatar", group: "base", ours: ["avatar"] },
-  { id: "button", group: "base", ours: ["button", "pressable"] },
+  { id: "button", group: "base", ours: ["button"] },
   { id: "calendar", group: "base", ours: ["calendar"] },
   { id: "carousel", group: "base", ours: ["carousel"] },
   { id: "checkbox", group: "base", ours: ["checkbox"] },

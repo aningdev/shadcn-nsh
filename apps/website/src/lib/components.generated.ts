@@ -238,14 +238,6 @@ export const components: ComponentDoc[] = [
     description: "A popup panel that grows from its trigger, on the shared menu surface.",
   },
   {
-    slug: "pressable",
-    title: "Pressable",
-    kind: "official",
-    shadcn: null,
-    nshElement: "button",
-    description: "A region that takes presses and adds only their feedback.",
-  },
-  {
     slug: "progress",
     title: "Progress",
     kind: "official",
@@ -612,6 +604,14 @@ export const components: ComponentDoc[] = [
     nshElement: null,
     description:
       "A row of triggers, each opening a panel of anything under the bar — one at a time.",
+  },
+  {
+    slug: "pressable",
+    title: "Pressable",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description: "A region that takes presses and adds only their feedback.",
   },
   {
     slug: "refresh-indicator",
