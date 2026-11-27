@@ -237,11 +237,12 @@ export function ThemeSurfaces({ id }: { id: PaletteId }) {
               <td>
                 <span
                   data-ground={theme.palette.id}
-                  className="inline-flex items-center justify-center rounded-md p-2"
+                  data-translucent={surface.translucent ? "true" : undefined}
+                  className="border-fd-border/50 inline-flex items-center justify-center rounded-lg border p-2.5"
                 >
                   <span
                     data-sample={`${theme.palette.id}-${surface.role}`}
-                    className="block h-8 w-16 rounded-md"
+                    className="block h-9 w-20 rounded-md"
                   />
                 </span>
               </td>
