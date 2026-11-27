@@ -68,6 +68,7 @@ Each release tracks one NSH CLI version against which its components and `nsh/ba
 
 | shadcn-nsh | NSH CLI |
 | ---------- | ------- |
+| 0.12.x     | v0.7.2  |
 | 0.11.x     | v0.7.2  |
 | 0.10.x     | v0.6.1  |
 | 0.9.x      | v0.6.1  |
