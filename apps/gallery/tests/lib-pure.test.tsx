@@ -3,8 +3,8 @@ import { expect, open, test } from "nsh/test";
 test("lib pure helpers pass all class, icon drawing, and switch geometry checks", async () => {
   const app = await open("./lib-pure.fixture.tsx");
   const texts = app.texts();
-  expect(texts).toContain("TOTAL:23");
+  expect(texts).toContain("TOTAL:24");
   const failures = texts.filter((t) => t.startsWith("FAIL:"));
   expect(failures).toEqual([]);
-  expect(texts.filter((t) => t.startsWith("PASS:"))).toHaveLength(23);
+  expect(texts.filter((t) => t.startsWith("PASS:"))).toHaveLength(24);
 });

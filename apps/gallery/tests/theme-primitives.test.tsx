@@ -115,9 +115,9 @@ test("double focus, timing motion, state-layer inks and platform material follow
 
   await app.press("text:WinUI");
   expect(readJson("motionPresets")).toEqual({
-    pop: { scale: 1, y: -6, spring: null },
-    dlg: { scale: 1.04, y: 0, spring: null },
-    glide: { dur: 83, spring: null },
+    pop: { scale: 0.98, y: -6, spring: { stiffness: 420, damping: 42, mass: 1 } },
+    dlg: { scale: 1.05, y: 0, spring: { stiffness: 360, damping: 40, mass: 1 } },
+    glide: { dur: 167, spring: { stiffness: 650, damping: 52, mass: 1 } },
     switch: { kind: "fade", duration: 167, shader: null },
   });
 

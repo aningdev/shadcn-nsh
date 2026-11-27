@@ -32,12 +32,21 @@ describe("built-in surface and transition shaders", () => {
     expect(SURFACE_SHADERS["liquid-glass"].defaultIntensity).toBe(0.35);
     expect(SURFACE_SHADERS["liquid-glass"].maxSampleOffset).toBe(6);
     expect(SURFACE_SHADERS["acrylic-noise"].defaultIntensity).toBe(0.035);
-    expect(SURFACE_SHADERS["acrylic-noise"].maxSampleOffset).toBe(0);
+    expect(SURFACE_SHADERS["acrylic-noise"].maxSampleOffset).toBe(6);
     expect(SURFACE_SHADERS["specular-rim"].defaultIntensity).toBe(0.4);
     expect(SURFACE_SHADERS["specular-rim"].maxSampleOffset).toBe(0);
     expect(SURFACE_SHADERS["paper-grain"].defaultIntensity).toBe(0.025);
     expect(SURFACE_SHADERS["paper-grain"].maxSampleOffset).toBe(0);
-    expect(SURFACE_SHADERS["acrylic-noise"].source).not.toContain("sample_backdrop");
+    const acrylic = SURFACE_SHADERS["acrylic-noise"].source;
+    expect(acrylic.split("sample_backdrop").length - 1).toBeGreaterThanOrEqual(9);
+    expect(acrylic).toContain("0.2126, 0.7152, 0.0722");
+    expect(acrylic).toContain("let luma = dot(soft.rgb, vec3f(0.2126, 0.7152, 0.0722))");
+    expect(acrylic).toContain("mix(vec3f(luma), soft.rgb, 0.72)");
+    expect(acrylic).toContain("hash(uv * nsh.size * max(nsh.scale, 1.0)) - 0.5");
+    expect(acrylic).not.toContain("split_r");
+    expect(acrylic).not.toContain("dispersed");
+    expect(acrylic).not.toContain("chroma");
+    expect(acrylic).not.toContain("sd_round_box");
   });
 
   test("dissolve and radial-wipe read progress and both sides", () => {

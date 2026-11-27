@@ -220,16 +220,15 @@
 - 配方集中写在 `packages/theme` 的一个文件（`materials`），由它展开成 NSH 的平台属性和 fallback。
 - 组件不改：`platformMaterial()` 已经在 `lib/popup`、`toast`、`card`、`editor`、`carousel` 里展开。
 
-| 配方      | 用在                                                                       | 展开                                                                                                                                                                                                                                                                                                             |
-| --------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `none`    | nsh-gallery、shadcn、solid-glass、material 的所有层；apple、winui 的其余层 | 不展开                                                                                                                                                                                                                                                                                                           |
-| `glass`   | apple 的 `overlay`、`inverse`、`raised`、`glass`、`modal`                  | `glassEffect`（regular 或 clear）+ 层色作 tint；iOS `ios.backdropMaterial`；macOS `macos.backdrop`（显式 backdrop 在 macOS 上盖过 `glassEffect`，NSH 画 `NSVisualEffectView`）。fallback：`backdropFilter: blur(Npx) saturate(M%)`，层色不透明度不低于该层 `minOpacity`。                                        |
-| `acrylic` | winui 的 `overlay`                                                         | `backdropFilter: blur(30px)`（`AcrylicBrush.h` `sc_blurRadius`）加层色。亮：`#FCFCFC` tint 0，luminosity 0.85；暗：`#2C2C2C` tint 0.15，luminosity 0.96（`AcrylicInAppFillColorDefaultBrush`，`AcrylicBrush_themeresources.xaml` @ `1b5b1a0`）。fallback：不透明的 `FallbackColor`（亮 `#F9F9F9`，暗 `#2C2C2C`） |
+| 配方      | 用在                                                                       | 展开                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `none`    | nsh-gallery、shadcn、solid-glass、material 的所有层；apple、winui 的其余层 | 不展开                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `glass`   | apple 的 `overlay`、`inverse`、`raised`、`glass`、`modal`                  | `glassEffect`（regular 或 clear）+ 层色作 tint；iOS `ios.backdropMaterial`；macOS `macos.backdrop`（显式 backdrop 在 macOS 上盖过 `glassEffect`，NSH 画 `NSVisualEffectView`）。fallback：`backdropFilter: blur(Npx) saturate(M%)`，层色不透明度不低于该层 `minOpacity`。                                                                                                                                                                           |
+| `acrylic` | winui 的 `overlay`、`glass`、`inverse`、`modal`                            | 分层 `MaterialSpec`：`windows.backdrop.material: "blur"`，加上该层的 `blur` / `saturate` / `minOpacity` / 顶边 `specular`。`backdropFilter` 由材质写出（`glass` 显式 `null`，得到 `blur(32px) saturate(130%)`）。`acrylic-noise` 做均匀 9 点柔焦、亮度收束、Tint 与细颗粒，没有透镜弯曲，也没有 RGB 色散。面的不透明度不低于该层 `minOpacity`（overlay `0.85`/`0.90`，glass `0.80`/`0.86`，inverse `0.88`/`0.92`，modal `0.94`）。Mica 仍是窗口级。 |
 
 - 每个配方都给出 fallback：模糊半径，以及层色的最低不透明度。不画模糊的平台（Linux / GPUI）也不会透出背后的内容。这条取代 `checkGlassFallback`（#251）：fallback 由配方保证，不再靠 lint 兜底。
 - 数值（例如 0.72）在实施时用平台截图核对；验收里那条逐字节相同，`material` 主题除外：它的 `material.android.elevation` 挪到新的 `elevation` 字段（`material` 里不再有平台对象），`platformMaterial()` 仍给出同一个 `android.elevation`，渲染不变，产物变了表示法。
 - 不做，记为差异：
-  - Acrylic 的噪点（`sc_noiseOpacity` 0.02）、luminosity 混合与饱和度 1.25；
   - Mica、macOS `behindWindow` 与侧栏 vibrancy，这些是窗口级的，属于应用；
   - CSS 折射。
 
@@ -449,12 +448,12 @@
 
 第 3 节的三档弹簧只驱动 `animate()`；换色、透明度、边框、阴影今天是 43 处硬编码时长（CSS 类与内联 `transitionDuration`），它们需要一条**时序**角色。新增 `motion.state`：
 
-| 主题                             | `motion.state`      | 出处                                                                                                                                           |
-| -------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| nsh-gallery、shadcn、solid-glass | 120 ms，`out-cubic` | 上游 `nsh-gallery-ui` 的悬停洗色 120 ms ease-out（`references/nsh` 的设计指南把“悬停洗色/换色”定为 120 ms）；`out-cubic` 就是它的 ease-out     |
-| apple                            | 120 ms，`out-cubic` | Apple HIG 的 Motion 一节只讲“短、不抢注意力”，不给状态过渡的秒数；按 `native-themes.md` 的既有约定（apple 与 nsh-gallery 同值）取上游的 120 ms |
-| material                         | 100 ms，`standard`  | `MotionTokens.DurationShort2`（100 ms）+ `Easing.StandardCubicBezier(0.2, 0, 0, 1)`（Compose M3，`ExpressiveMotionTokens.kt` 同仓）            |
-| winui                            | 83 ms，`decelerate` | `ControlFasterAnimationDuration` + `ControlFastOutSlowInKeySpline`（与 `fast` 同源，`Common_themeresources_any.xaml`）                         |
+| 主题                             | `motion.state`      | 出处                                                                                                                                                                           |
+| -------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| nsh-gallery、shadcn、solid-glass | 120 ms，`out-cubic` | 上游 `nsh-gallery-ui` 的悬停洗色 120 ms ease-out（`references/nsh` 的设计指南把“悬停洗色/换色”定为 120 ms）；`out-cubic` 就是它的 ease-out                                     |
+| apple                            | 120 ms，`out-cubic` | Apple HIG 的 Motion 一节只讲“短、不抢注意力”，不给状态过渡的秒数；按 `native-themes.md` 的既有约定（apple 与 nsh-gallery 同值）取上游的 120 ms                                 |
+| material                         | 100 ms，`standard`  | `MotionTokens.DurationShort2`（100 ms）+ `Easing.StandardCubicBezier(0.2, 0, 0, 1)`（Compose M3，`ExpressiveMotionTokens.kt` 同仓）                                            |
+| winui                            | 83 ms，`decelerate` | `ControlFasterAnimationDuration` + `ControlFastOutSlowInKeySpline`（`state` 仍是 83 ms；`fast` 是 167 ms `point-to-point`，`default` 250 ms，`slow` 333 ms，另有临界阻尼弹簧） |
 
 43 处的去向：其中 41 处归 `state`；`combobox.tsx:532` 的 `popIn`（320 ms）是出现，归 `transition.enter`；`progress.tsx:159` 的 800 ms 是**循环周期**，不是过渡，留组件常量并在注释里写明（`spinner.tsx` 的 `TURN_MS` 同理，它本就不在这 43 处里）。
 

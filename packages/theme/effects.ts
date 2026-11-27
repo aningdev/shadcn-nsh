@@ -103,14 +103,35 @@ fn shade(uv: vec2f) -> vec4f {
   },
   "acrylic-noise": {
     defaultIntensity: 0.035,
-    maxSampleOffset: 0,
+    // Uniform 4.5pt ring stays inside this budget. Acrylic is flat frost, not a lens, so do not bend it.
+    maxSampleOffset: 6,
     source: /* wgsl */ `${HASH}
 struct Uniforms { intensity: f32 }
 fn shade(uv: vec2f) -> vec4f {
+  let size = max(nsh.size, vec2f(1.0));
+  let radius = 4.5 / size;
+  let diag = 0.70710678;
+  let t0 = sample_backdrop(uv);
+  let t1 = sample_backdrop(uv + vec2f(radius.x, 0.0));
+  let t2 = sample_backdrop(uv + vec2f(-radius.x, 0.0));
+  let t3 = sample_backdrop(uv + vec2f(0.0, radius.y));
+  let t4 = sample_backdrop(uv + vec2f(0.0, -radius.y));
+  let t5 = sample_backdrop(uv + vec2f(radius.x * diag, radius.y * diag));
+  let t6 = sample_backdrop(uv + vec2f(-radius.x * diag, radius.y * diag));
+  let t7 = sample_backdrop(uv + vec2f(radius.x * diag, -radius.y * diag));
+  let t8 = sample_backdrop(uv + vec2f(-radius.x * diag, -radius.y * diag));
+  let soft = (t0 * 4.0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8) / 12.0;
+  let luma = dot(soft.rgb, vec3f(0.2126, 0.7152, 0.0722));
+  let muted = mix(vec3f(luma), soft.rgb, 0.72);
+  let frosted = mix(muted, vec3f(0.96, 0.96, 0.95), 0.06);
   let content = sample_content(uv);
+  let tinted = mix(vec4f(frosted, soft.a), content, content.a);
   let grain = hash(uv * nsh.size * max(nsh.scale, 1.0)) - 0.5;
-  let rgb = clamp(content.rgb + vec3f(grain * uniforms.intensity), vec3f(0.0), vec3f(1.0));
-  return vec4f(rgb, content.a);
+  var rgb = clamp(tinted.rgb + vec3f(grain * uniforms.intensity), vec3f(0.0), vec3f(1.0));
+  let px = 1.0 / max(nsh.scale, 1.0);
+  let top = smoothstep(px, 0.0, uv.y * size.y);
+  rgb = mix(rgb, vec3f(1.0), top * 0.16);
+  return vec4f(rgb, max(tinted.a, top * 0.05));
 }`,
   },
   "specular-rim": {

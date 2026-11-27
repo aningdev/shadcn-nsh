@@ -4,6 +4,8 @@
 
 ### Added
 
+- **WinUI 3 Fluent 2 acrylic and critically damped motion.** `acrylic-noise` is a flat four-layer frost: a uniform 9-tap blur (no lens bend, no RGB dispersion), a luminosity mix, the surface tint, fine grain, and a 1px top highlight. WinUI `overlay`, `glass`, `inverse`, and `modal` are layered acrylic (`blur`, `saturate`, `minOpacity`, a specular hairline, and `windows.backdrop` blur). Motion is 83/167/250/333 ms with critically damped springs (zeta at least 1). Presses stay a color change and do not use a press spring.
+
 - **Apple Liquid Glass, progressive blur, and physics springs.** Apple's raised, overlay, modal, inverse, and glass surfaces are layered Liquid Glass: native regular or clear glass, an iOS material, a macOS visual-effect role, a saturate blur, a specular hairline, and a rounded-rect liquid-glass shader. `ProgressiveBlur` fades a backdrop blur off the top or bottom edge. A theme can name `snappy`, `smooth`, and `bouncy` springs; popovers, dialogs, indicators, reveals, and presses use NSH's `spring()` timing when the theme asks for one.
 
 ## v0.11.0 — 2026-11-26

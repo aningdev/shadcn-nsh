@@ -15,6 +15,7 @@ import {
 import { mount, Text, View } from "nsh";
 
 import apple from "../../../packages/theme/themes/apple/index";
+import winui from "../../../packages/theme/themes/winui/index";
 
 type IconNode = Parameters<typeof drawIcon>[0];
 const CHECK_ICON: IconNode = [["path", { d: "M20 6 9 17l-5-5" }]];
@@ -398,6 +399,41 @@ const results: string[] = [
       if (!pressed || pressed.stiffness !== 520 || pressed.damping !== 34) {
         return `press=${JSON.stringify(pressed)}`;
       }
+      return null;
+    } finally {
+      selectTheme(null);
+    }
+  }),
+  check("winui:acrylic", () => {
+    selectTheme(winui);
+    try {
+      const roles = ["overlay", "glass", "inverse", "modal"] as const;
+      for (const role of roles) {
+        const layer = surface(role);
+        const filter = String(layer.style.backdropFilter ?? "");
+        if (!filter.includes("blur(") || !filter.includes("saturate(")) {
+          return `${role} blur=${filter}`;
+        }
+        const shadow = layer.style.boxShadow;
+        const shadowText = typeof shadow === "string" ? shadow : JSON.stringify(shadow ?? null);
+        if (!shadowText.includes("inset 0 1px 0")) return `${role} shadow=${shadowText}`;
+        if (layer.platformProps.windows?.backdrop.material !== "blur") {
+          return `${role} windows=${JSON.stringify(layer.platformProps.windows)}`;
+        }
+      }
+      const zeta = (stiffness: number, damping: number, mass = 1) =>
+        damping / (2 * Math.sqrt(stiffness * mass));
+      for (const role of ["snappy", "smooth", "bouncy"] as const) {
+        const spring = motion.springOf(role);
+        if (!spring) return `missing ${role}`;
+        const ratio = zeta(spring.stiffness, spring.damping, spring.mass ?? 1);
+        if (ratio < 1) return `${role} zeta=${String(ratio)}`;
+      }
+      const reveal = motion.revealSpring;
+      if (!reveal || reveal.stiffness !== 420 || reveal.damping !== 42) {
+        return `reveal=${JSON.stringify(reveal)}`;
+      }
+      if (motion.pressSpring !== undefined) return `press=${JSON.stringify(motion.pressSpring)}`;
       return null;
     } finally {
       selectTheme(null);
