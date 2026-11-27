@@ -27,6 +27,122 @@ import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 import { joinClass } from "./lib/utils";
 
+/** Options of `CalendarItem`. */
+export interface CalendarItemProps {
+  item: CalendarEntry;
+  /** Months side by side (`numberOfMonths`): each month's title over its month. */
+  months?: number;
+  /** The calendar's `firstDayOfWeek` (`0` Sunday, the default): a range's band rounds at its weeks' ends. */
+  firstDayOfWeek?: number;
+}
+
+/** `nsh/base`'s Calendar with `calendarLook` defaults. Every base prop passes through over the look's. */
+export type CalendarProps = BaseCalendarProps;
+
+/** A day as the calendar hands it over (`onSelect`, `renderItem`), from `nsh/base`. */
+export type { CalendarEntry };
+
+/** A calendar grid in the shared listbox calendar look. */
+export function Calendar(props: CalendarProps) {
+  const [, rest] = split(props, [
+    "style",
+    "headerStyle",
+    "bodyStyle",
+    "itemClass",
+    "renderItem",
+    "numberOfMonths",
+    "firstDayOfWeek",
+  ]);
+  return (
+    <BaseCalendar
+      {...rest}
+      numberOfMonths={props.numberOfMonths}
+      firstDayOfWeek={props.firstDayOfWeek}
+      style={[calendarLook.calendar, props.style ?? null]}
+      headerStyle={[calendarLook.header, props.headerStyle ?? null]}
+      bodyStyle={[terminal ? null : { gap: monthGap }, props.bodyStyle ?? null]}
+      itemClass={props.itemClass ?? calendarLook.itemClass}
+      renderItem={
+        props.renderItem ??
+        ((item: CalendarEntry) => (
+          <CalendarItem
+            item={item}
+            months={props.numberOfMonths}
+            firstDayOfWeek={props.firstDayOfWeek}
+          />
+        ))
+      }
+    />
+  );
+}
+
+/**
+ * An item of the calendar (`renderItem`), shadcn/ui's calendar: drawn once
+ * from what it is, its states the item's classes. Previous and Next are
+ * ghost buttons of a cell at the header's ends, lit in the quiet fill under
+ * the pointer, at half opacity while they take no press; the month and
+ * year toggles (or each month's title, with `months` over one) read
+ * "November 2026" centered between them, the open view's toggle in the
+ * brand color; the weekdays are two letters in the muted color. A day is a
+ * square of a cell with the controls' corners: the quiet fill (shadcn's
+ * `accent`) under the pointer and for today, `primary` with its foreground
+ * for the selected date and a range's ends, the range's other days on a
+ * band of the quiet fill from end to end (`data-range-*`) whose corners
+ * round at the weeks' ends, the same band from a half range's start to the
+ * day under the pointer or the keyboard while its end is chosen
+ * (`data-range-preview-*`), the other months' days muted, the disabled ones
+ * muted at half opacity, and the keyboard's day in the brand tint and edge:
+ * a list's highlight is the quiet fill, which a day already takes for today
+ * and the hover, so the keys' day needs a mark of its own. What draws each kind
+ * is a component of its own, below: `Arrow`, `Toggle`, `Weekday`,
+ * `MonthOrYear` and `Day`; the terminal's labels are drawn here.
+ */
+export function CalendarItem(props: CalendarItemProps) {
+  const kind = props.item.kind;
+  if (terminal) return terminalCalendarItem(props);
+  if (kind === "previous" || kind === "next")
+    return <Arrow at={kind === "previous" ? "start" : "end"} />;
+  if (kind === "monthToggle" || kind === "yearToggle") return <Toggle {...props} kind={kind} />;
+  if (kind === "weekday") return <Weekday day={props.item.value} />;
+  if (kind === "month" || kind === "year")
+    return <MonthOrYear kind={kind} value={props.item.value} />;
+  return <Day item={props.item} firstDayOfWeek={props.firstDayOfWeek} />;
+}
+
+/**
+ * A time segment's digits or AM / PM (`renderSegment`), in the color on
+ * the fill while it has the keys (`group-focus:`), so moving between the
+ * segments draws nothing.
+ */
+export function TimeSegment(props: {
+  label: string;
+  /** Tailwind classes on the digits, after its own. */
+  class?: string;
+  /** Tailwind classes toggled on the digits. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the digits' look. `style` wins over `class`. */
+  style?: StyleProp<TextStyle>;
+}) {
+  return (
+    <Text
+      class={joinClass("text-foreground group-focus:text-primary-foreground", props.class)}
+      classList={props.classList}
+      style={[
+        {
+          paddingHorizontal: terminal ? 3 : 2,
+          fontSize: controlSize.label,
+          fontVariant: ["tabular-nums"],
+        },
+        props.style ?? null,
+      ]}
+    >
+      {props.label}
+    </Text>
+  );
+}
+
+// Private geometry. `calendarLook` reads it while the module builds.
+
 const pointer = platform.desktop;
 
 /** The header's arrows: 16 points with a pointer (shadcn's `size-4`), 18 on a touch screen. */
@@ -100,14 +216,120 @@ function columnOf(date: string, firstDay: number) {
   return (day - firstDay + 7) % 7;
 }
 
-/** Options of `CalendarItem`. */
-export interface CalendarItemProps {
-  item: CalendarEntry;
-  /** Months side by side (`numberOfMonths`): each month's title over its month. */
-  months?: number;
-  /** The calendar's `firstDayOfWeek` (`0` Sunday, the default): a range's band rounds at its weeks' ends. */
-  firstDayOfWeek?: number;
-}
+// Shared calendar primitives. `date-picker`, `time-field` and `time-field.ref` read `calendarLook`.
+
+/**
+ * The calendar's parts, besides its popup: `itemClass` its items (pressed
+ * at 70%, `group` for what they draw), `segmentClass` the time's segments
+ * (filled while they have the keys), the popup's layout (`content`: the
+ * presets beside the calendar with a pointer, above it on a phone), the
+ * presets' column of ghost buttons or chips, the header's gap over the
+ * weekdays (shadcn's `gap-4`), the calendar's padding (with the popup's,
+ * shadcn's `p-3`), the time's row under a hairline, its well
+ * (`timeFieldClass`, the number inputs'), the time's `:` in the muted
+ * color, and `cell` / `monthGap`, a day's side and the gap between two
+ * months. The terminal keeps its own grid.
+ */
+export const calendarLook = {
+  get cell() {
+    return cell();
+  },
+  monthGap,
+  // `grow`: the header's arrows and toggles share out what their content leaves alike (the days' columns share the
+  // width already), which keeps the title centered between the arrows at their ends.
+  itemClass: terminal ? "group active:opacity-70" : "group grow active:opacity-70",
+  // A time segment's corner is its own small fixed geometry (a digit's mark inside the field's
+  // well), not a theme tier.
+  segmentClass: "group rounded-[4px] active:opacity-70 focus:bg-primary",
+  // The preset's corners and edge are the theme's, read when the popup is drawn.
+  get timeFieldClass(): string {
+    return timeFieldClass();
+  },
+  content: terminal
+    ? { flexDirection: "row" as const, gap: 10 }
+    : pointer
+      ? { flexDirection: "row" as const, gap: 6 }
+      : { gap: 12 },
+  get presets(): ViewStyle {
+    if (terminal)
+      return {
+        gap: 2,
+        minWidth: 110,
+        paddingEnd: 10,
+        borderEndWidth: stroke.hairline,
+        borderColor: colors.border,
+      };
+    // With a pointer a column of small ghost buttons beside the calendar, its first level with the header, parted
+    // from the calendar by a hairline that holds in dark too.
+    return pointer
+      ? {
+          gap: 2,
+          paddingTop: 8,
+          paddingEnd: 8,
+          borderEndWidth: stroke.hairline,
+          borderColor: alpha(colors.foreground, 0.1),
+        }
+      : { flexDirection: "row", flexWrap: "wrap", gap: 6 };
+  },
+  get preset() {
+    // A ghost button beside the calendar: 28 points with a pointer or in the terminal, a phone's 34-point chip with
+    // its hairline.
+    if (terminal || pointer)
+      return {
+        height: 28,
+        paddingHorizontal: terminal ? 8 : 10,
+        ...rounded(buttonCorner("default")),
+        justifyContent: "center" as const,
+        // No type role has this size: a preset's 13 in both tiers.
+        fontSize: 13,
+        color: colors.foreground,
+      };
+    return {
+      height: 34,
+      paddingHorizontal: 12,
+      borderRadius: 17,
+      borderWidth: stroke.hairline,
+      borderColor: colors.border,
+      justifyContent: "center" as const,
+      // No type role has this size: a preset's 14 on a touch screen.
+      fontSize: 14,
+      color: colors.foreground,
+    };
+  },
+  presetClass: terminal
+    ? "enabled:hover:bg-accent active:opacity-70"
+    : `transition-colors duration-100 motion-reduce:transition-none ${quietHoverEnabled} ${pressedActive}`,
+  header: { marginBottom: terminal ? 4 : pointer ? 12 : 8 },
+  calendar: terminal ? { padding: 4 } : pointer ? { padding: 6 } : {},
+  get time(): ViewStyle {
+    if (terminal)
+      return {
+        gap: 10,
+        marginTop: 8,
+        paddingTop: 8,
+        borderTopWidth: stroke.hairline,
+        borderColor: colors.border,
+        paddingHorizontal: 4,
+      };
+    // Under the calendar's last week, as far from the hairline as the calendar's padding is from the popup's edge.
+    return {
+      gap: 10,
+      marginTop: pointer ? 6 : 12,
+      paddingTop: 12,
+      borderTopWidth: stroke.hairline,
+      borderColor: alpha(colors.foreground, 0.1),
+      ...(pointer ? { paddingHorizontal: 6, paddingBottom: 6 } : {}),
+    };
+  },
+  get separator() {
+    // Tight to the digits, as a time input's: the segments' padding is the room on each side.
+    return terminal
+      ? { color: colors.faint, fontSize: controlSize.label }
+      : { color: colors.mutedForeground, fontSize: controlSize.label, marginHorizontal: -1 };
+  },
+};
+
+// Private helpers
 
 /** The weekdays over the days: two letters in the muted color, as wide as a day. */
 function Weekday(props: { day: number }) {
@@ -310,225 +532,16 @@ function heading(props: CalendarItemProps) {
       : String(props.item.value);
 }
 
+// Terminal
+
 /**
- * An item of the calendar (`renderItem`), shadcn/ui's calendar: drawn once
- * from what it is, its states the item's classes. Previous and Next are
- * ghost buttons of a cell at the header's ends, lit in the quiet fill under
- * the pointer, at half opacity while they take no press; the month and
- * year toggles (or each month's title, with `months` over one) read
- * "November 2026" centered between them, the open view's toggle in the
- * brand color; the weekdays are two letters in the muted color. A day is a
- * square of a cell with the controls' corners: the quiet fill (shadcn's
- * `accent`) under the pointer and for today, `primary` with its foreground
- * for the selected date and a range's ends, the range's other days on a
- * band of the quiet fill from end to end (`data-range-*`) whose corners
- * round at the weeks' ends, the same band from a half range's start to the
- * day under the pointer or the keyboard while its end is chosen
- * (`data-range-preview-*`), the other months' days muted, the disabled ones
- * muted at half opacity, and the keyboard's day in the brand tint and edge:
- * a list's highlight is the quiet fill, which a day already takes for today
- * and the hover, so the keys' day needs a mark of its own. What draws each kind
- * is a component of its own, below: `Arrow`, `Toggle`, `Weekday`,
- * `MonthOrYear` and `Day`; the terminal's labels are drawn here.
+ * A terminal calendar's labels: plain text on its grid of two-Cell columns. The painter bands
+ * the open view's toggle from its state. Days, years and arrows are the grid's own.
  */
-export function CalendarItem(props: CalendarItemProps) {
+function terminalCalendarItem(props: CalendarItemProps) {
   const kind = props.item.kind;
-  if (terminal) {
-    // The terminal's calendar draws its days, years and arrows itself, on its grid of two-Cell columns: the
-    // labels are plain text at their own size (the painter bands the open view's toggle, from its state).
-    if (kind === "weekday")
-      return <Text style={{ color: colors.faint }}>{WEEKDAY_INITIALS[props.item.value]}</Text>;
-    if (kind === "month") return <Text>{MONTHS[props.item.value - 1].slice(0, 3)}</Text>;
-    return <Text style={{ fontWeight: font.weight("title") }}>{heading(props)}</Text>;
-  }
-  if (kind === "previous" || kind === "next")
-    return <Arrow at={kind === "previous" ? "start" : "end"} />;
-  if (kind === "monthToggle" || kind === "yearToggle") return <Toggle {...props} kind={kind} />;
-  if (kind === "weekday") return <Weekday day={props.item.value} />;
-  if (kind === "month" || kind === "year")
-    return <MonthOrYear kind={kind} value={props.item.value} />;
-  return <Day item={props.item} firstDayOfWeek={props.firstDayOfWeek} />;
+  if (kind === "weekday")
+    return <Text style={{ color: colors.faint }}>{WEEKDAY_INITIALS[props.item.value]}</Text>;
+  if (kind === "month") return <Text>{MONTHS[props.item.value - 1].slice(0, 3)}</Text>;
+  return <Text style={{ fontWeight: font.weight("title") }}>{heading(props)}</Text>;
 }
-
-/**
- * A time segment's digits or AM / PM (`renderSegment`), in the color on
- * the fill while it has the keys (`group-focus:`), so moving between the
- * segments draws nothing.
- */
-export function TimeSegment(props: {
-  label: string;
-  /** Tailwind classes on the digits, after its own. */
-  class?: string;
-  /** Tailwind classes toggled on the digits. */
-  classList?: Record<string, boolean | null | undefined>;
-  /** Over the digits' look. `style` wins over `class`. */
-  style?: StyleProp<TextStyle>;
-}) {
-  return (
-    <Text
-      class={joinClass("text-foreground group-focus:text-primary-foreground", props.class)}
-      classList={props.classList}
-      style={[
-        {
-          paddingHorizontal: terminal ? 3 : 2,
-          fontSize: controlSize.label,
-          fontVariant: ["tabular-nums"],
-        },
-        props.style ?? null,
-      ]}
-    >
-      {props.label}
-    </Text>
-  );
-}
-
-/**
- * The calendar's parts, besides its popup: `itemClass` its items (pressed
- * at 70%, `group` for what they draw), `segmentClass` the time's segments
- * (filled while they have the keys), the popup's layout (`content`: the
- * presets beside the calendar with a pointer, above it on a phone), the
- * presets' column of ghost buttons or chips, the header's gap over the
- * weekdays (shadcn's `gap-4`), the calendar's padding (with the popup's,
- * shadcn's `p-3`), the time's row under a hairline, its well
- * (`timeFieldClass`, the number inputs'), the time's `:` in the muted
- * color, and `cell` / `monthGap`, a day's side and the gap between two
- * months. The terminal keeps its own grid.
- */
-export const calendarLook = {
-  get cell() {
-    return cell();
-  },
-  monthGap,
-  // `grow`: the header's arrows and toggles share out what their content leaves alike (the days' columns share the
-  // width already), which keeps the title centered between the arrows at their ends.
-  itemClass: terminal ? "group active:opacity-70" : "group grow active:opacity-70",
-  // A time segment's corner is its own small fixed geometry (a digit's mark inside the field's
-  // well), not a theme tier.
-  segmentClass: "group rounded-[4px] active:opacity-70 focus:bg-primary",
-  // The preset's corners and edge are the theme's, read when the popup is drawn.
-  get timeFieldClass(): string {
-    return timeFieldClass();
-  },
-  content: terminal
-    ? { flexDirection: "row" as const, gap: 10 }
-    : pointer
-      ? { flexDirection: "row" as const, gap: 6 }
-      : { gap: 12 },
-  get presets(): ViewStyle {
-    if (terminal)
-      return {
-        gap: 2,
-        minWidth: 110,
-        paddingEnd: 10,
-        borderEndWidth: stroke.hairline,
-        borderColor: colors.border,
-      };
-    // With a pointer a column of small ghost buttons beside the calendar, its first level with the header, parted
-    // from the calendar by a hairline that holds in dark too.
-    return pointer
-      ? {
-          gap: 2,
-          paddingTop: 8,
-          paddingEnd: 8,
-          borderEndWidth: stroke.hairline,
-          borderColor: alpha(colors.foreground, 0.1),
-        }
-      : { flexDirection: "row", flexWrap: "wrap", gap: 6 };
-  },
-  get preset() {
-    // A ghost button beside the calendar: 28 points with a pointer or in the terminal, a phone's 34-point chip with
-    // its hairline.
-    if (terminal || pointer)
-      return {
-        height: 28,
-        paddingHorizontal: terminal ? 8 : 10,
-        ...rounded(buttonCorner("default")),
-        justifyContent: "center" as const,
-        // No type role has this size: a preset's 13 in both tiers.
-        fontSize: 13,
-        color: colors.foreground,
-      };
-    return {
-      height: 34,
-      paddingHorizontal: 12,
-      borderRadius: 17,
-      borderWidth: stroke.hairline,
-      borderColor: colors.border,
-      justifyContent: "center" as const,
-      // No type role has this size: a preset's 14 on a touch screen.
-      fontSize: 14,
-      color: colors.foreground,
-    };
-  },
-  presetClass: terminal
-    ? "enabled:hover:bg-accent active:opacity-70"
-    : `transition-colors duration-100 motion-reduce:transition-none ${quietHoverEnabled} ${pressedActive}`,
-  header: { marginBottom: terminal ? 4 : pointer ? 12 : 8 },
-  calendar: terminal ? { padding: 4 } : pointer ? { padding: 6 } : {},
-  get time(): ViewStyle {
-    if (terminal)
-      return {
-        gap: 10,
-        marginTop: 8,
-        paddingTop: 8,
-        borderTopWidth: stroke.hairline,
-        borderColor: colors.border,
-        paddingHorizontal: 4,
-      };
-    // Under the calendar's last week, as far from the hairline as the calendar's padding is from the popup's edge.
-    return {
-      gap: 10,
-      marginTop: pointer ? 6 : 12,
-      paddingTop: 12,
-      borderTopWidth: stroke.hairline,
-      borderColor: alpha(colors.foreground, 0.1),
-      ...(pointer ? { paddingHorizontal: 6, paddingBottom: 6 } : {}),
-    };
-  },
-  get separator() {
-    // Tight to the digits, as a time input's: the segments' padding is the room on each side.
-    return terminal
-      ? { color: colors.faint, fontSize: controlSize.label }
-      : { color: colors.mutedForeground, fontSize: controlSize.label, marginHorizontal: -1 };
-  },
-};
-
-/** `nsh/base`'s Calendar with `calendarLook` defaults. Every base prop passes through over the look's. */
-export type CalendarProps = BaseCalendarProps;
-
-/** A calendar grid in the shared listbox calendar look. */
-export function Calendar(props: CalendarProps) {
-  const [, rest] = split(props, [
-    "style",
-    "headerStyle",
-    "bodyStyle",
-    "itemClass",
-    "renderItem",
-    "numberOfMonths",
-    "firstDayOfWeek",
-  ]);
-  return (
-    <BaseCalendar
-      {...rest}
-      numberOfMonths={props.numberOfMonths}
-      firstDayOfWeek={props.firstDayOfWeek}
-      style={[calendarLook.calendar, props.style ?? null]}
-      headerStyle={[calendarLook.header, props.headerStyle ?? null]}
-      bodyStyle={[terminal ? null : { gap: monthGap }, props.bodyStyle ?? null]}
-      itemClass={props.itemClass ?? calendarLook.itemClass}
-      renderItem={
-        props.renderItem ??
-        ((item: CalendarEntry) => (
-          <CalendarItem
-            item={item}
-            months={props.numberOfMonths}
-            firstDayOfWeek={props.firstDayOfWeek}
-          />
-        ))
-      }
-    />
-  );
-}
-
-/** A day as the calendar hands it over (`onSelect`, `renderItem`), from `nsh/base`. */
-export type { CalendarEntry };

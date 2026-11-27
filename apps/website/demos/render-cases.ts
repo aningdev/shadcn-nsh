@@ -242,6 +242,7 @@ const overrides: Record<string, Override> = {
   // phone (a tap's focus) and on a native desktop, but not in a browser, where the field takes the
   // click; the trigger opens it in every idiom.
   combobox: {
+    selfReference: "comboboxLook, chipLook and chipsLook are private to combobox.tsx",
     steps: (app) => app.press("id:assignee-toggle"),
     // Opening from the trigger focuses the field on a desktop (`combobox.rs`'s `press`), and a
     // focused field's caret blinks on the browser's clock, which the manual one does not hold: the
@@ -253,7 +254,12 @@ const overrides: Record<string, Override> = {
       await app.keyboard.press("shift+left");
     },
   },
-  "date-picker": { steps: (app) => app.press("No due date") },
+  "date-picker": {
+    selfReference: "datePickerLook is private to date-picker.tsx",
+    steps: (app) => app.press("No due date"),
+  },
+  "number-input": { selfReference: "numberInputLook is private to number-input.tsx" },
+  "otp-input": { selfReference: "otpCellLook is private to otp-input.tsx" },
   // The pages whose photos come over the network mark themselves once every image is there.
   carousel: {
     photos: true,

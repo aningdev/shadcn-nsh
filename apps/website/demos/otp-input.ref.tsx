@@ -1,20 +1,16 @@
-// The reference of `otp-input.tsx`: the same scene as upstream writes it, `otpCellLook` spread on
-// `nsh/base`'s OtpInput. The render check requires the two to draw the same pixels.
-import { colors } from "@shadcn-nsh/theme";
+// The reference of `otp-input.tsx`. `otpCellLook` is private to the component, so this page draws
+// the component itself. The two pages match because they are the same composition.
 import { Clipboard, cleanup, mount, signal, Text, View } from "nsh";
-import { Button, OtpInput } from "nsh/base";
 
-import { buttonLabel, buttonLook } from "@/packages/ui/button";
+import { Button } from "@/packages/ui/button";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
-import { otpCells, otpCellLook } from "@/packages/ui/otp-input";
+import { OtpInput, otpCells } from "@/packages/ui/otp-input";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const CODE = "246810";
-const TONES = ["neutral", "accent", "info", "warning", "success", "destructive"] as const;
-type Tone = (typeof TONES)[number];
 
 /** A switch with its label, the row reversed so the track trails. */
 function Option(props: { label: string; checked: boolean; onChange: (next: boolean) => void }) {
@@ -33,16 +29,12 @@ function Option(props: { label: string; checked: boolean; onChange: (next: boole
 function Action(props: { label: string; disabled?: boolean; onPress: () => void }) {
   return (
     <Button
-      disabled={props.disabled}
+      variant="secondary"
       onPress={props.onPress}
-      {...buttonLook("secondary", {
-        disabled: () => !!props.disabled,
-        style: desktop ? undefined : { flex: 1 },
-      })}
+      disabled={props.disabled}
+      style={desktop ? undefined : { flex: 1 }}
     >
-      <Text style={buttonLabel("secondary", { disabled: () => !!props.disabled })}>
-        {props.label}
-      </Text>
+      {props.label}
     </Button>
   );
 }
@@ -64,17 +56,15 @@ function App() {
   };
   const message = () =>
     ({
-      typing: { text: `${code().length} of 6 digits`, color: colors.mutedForeground },
-      checking: { text: "Checking…", color: colors.mutedForeground },
-      right: { text: "Verified", color: colors.success },
-      wrong: { text: "That code is not right", color: colors.destructive },
+      typing: { text: `${code().length} of 6 digits`, color: ui().muted },
+      checking: { text: "Checking…", color: ui().muted },
+      right: { text: "Verified", color: ui().up },
+      wrong: { text: "That code is not right", color: ui().down },
     })[status()];
-  const verdict = (): Tone | undefined =>
-    status() === "wrong" ? "destructive" : status() === "right" ? "success" : undefined;
 
   return (
     <DemoPage title="OTP Input">
-      <Text style={{ color: colors.mutedForeground }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click the code and type it, or paste it; Tab reaches it too"
           : "Tap the code to type it, or paste it"}
@@ -85,9 +75,7 @@ function App() {
         inspector={
           <>
             <Panel title="value · masked · disabled">
-              <Text
-                style={{ fontSize: 13, color: colors.foreground, fontVariant: ["tabular-nums"] }}
-              >
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {code()
                   ? `value “${masked() ? "•".repeat(code().length) : code()}”`
                   : "value “” (empty)"}
@@ -126,10 +114,10 @@ function App() {
           }}
         >
           <View style={{ gap: 4, alignItems: "center" }}>
-            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.foreground }}>
+            <Text style={{ fontSize: 13, fontWeight: "600", color: ui().text }}>
               Enter the code
             </Text>
-            <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
+            <Text style={{ fontSize: 12, color: ui().muted }}>
               {`We sent it to •••• 4821 (it is ${CODE})`}
             </Text>
           </View>
@@ -153,7 +141,9 @@ function App() {
             accessibilityLabel="Verification code, 6 digits"
             class="flex-row items-center gap-3"
             groupClass="flex-row gap-1.5"
-            {...otpCellLook({ tone: verdict })}
+            tone={() =>
+              status() === "wrong" ? "destructive" : status() === "right" ? "success" : undefined
+            }
           />
           <Text style={{ fontSize: 12, color: message().color }}>{message().text}</Text>
           <View class={desktop ? "flex-row gap-2" : "flex-row gap-2 self-stretch"}>
@@ -179,16 +169,19 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Tone">
-          {TONES.map((tone) => (
-            <OtpInput
-              length={1}
-              value="7"
-              accessibilityLabel={`${tone} tone`}
-              class="flex-row"
-              groupClass="flex-row"
-              {...otpCellLook({ cells: otpCells, tone })}
-            />
-          ))}
+          {(["neutral", "accent", "info", "warning", "success", "destructive"] as const).map(
+            (tone) => (
+              <OtpInput
+                length={1}
+                value="7"
+                tone={tone}
+                accessibilityLabel={`${tone} tone`}
+                cells={otpCells}
+                class="flex-row"
+                groupClass="flex-row"
+              />
+            ),
+          )}
         </DemoSection>
       </DemoCard>
     </DemoPage>

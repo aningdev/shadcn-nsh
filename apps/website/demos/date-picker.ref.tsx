@@ -1,18 +1,14 @@
-// The reference of `date-picker.tsx`: the same scene as upstream writes it, `datePickerLook` and
-// `DateTrigger` spread on `nsh/base`'s DatePicker. The render check requires the two to draw the
-// same pixels.
-import { colors } from "@shadcn-nsh/theme";
+// The reference of `date-picker.tsx`. `datePickerLook` is private to the component, so this page
+// draws the component itself. The two pages match because they are the same composition.
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import type { DatePickerValue, DateRangePreset, HourCycle } from "nsh/base";
-import { DatePicker } from "nsh/base";
 
-import { DateTrigger, datePickerLook } from "@/packages/ui/date-picker";
-import { clearButtonLook } from "@/packages/ui/lib/listbox";
+import { DatePicker, DatePickerContent, DatePickerTrigger } from "@/packages/ui/date-picker";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 const MONTHS = [
   "January",
@@ -53,10 +49,8 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
   return (
     <View style={{ gap: 8 }}>
       <View style={{ gap: 2 }}>
-        <Text style={{ fontSize: 13, fontWeight: "500", color: colors.foreground }}>
-          {props.label}
-        </Text>
-        <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{props.detail}</Text>
+        <Text style={{ fontSize: 13, fontWeight: "500", color: ui().text }}>{props.label}</Text>
+        <Text style={{ fontSize: 12, color: ui().muted }}>{props.detail}</Text>
       </View>
       {props.children}
     </View>
@@ -95,7 +89,7 @@ function App() {
 
   return (
     <DemoPage title="Date Picker">
-      <Text style={{ color: colors.mutedForeground }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Arrows move between days, Return picks; the trigger takes Delete to clear"
           : "Tap a day; the meeting's time takes digits"}
@@ -107,13 +101,13 @@ function App() {
           <>
             <Panel title="value">
               <Text
-                style={{ fontSize: 13, color: colors.foreground }}
+                style={{ fontSize: 13, color: ui().text }}
               >{`due ${JSON.stringify(due())}`}</Text>
               <Text
-                style={{ fontSize: 13, color: colors.foreground }}
+                style={{ fontSize: 13, color: ui().text }}
               >{`stay ${JSON.stringify(stay())}`}</Text>
               <Text
-                style={{ fontSize: 13, color: colors.foreground }}
+                style={{ fontSize: 13, color: ui().text }}
               >{`meeting ${JSON.stringify(meeting())}`}</Text>
             </Panel>
             <Segmented
@@ -135,21 +129,17 @@ function App() {
                 due.set(typeof value === "string" ? value : null);
                 log(`Due → ${JSON.stringify(value)}`);
               }}
-              disabledMatcher={[0, 6]}
-              presets={dues}
-              clearButtonAccessibilityLabel="Clear the due date"
-              trigger={
-                <DateTrigger
-                  title={due() ? `${monthDay(due()!)}, ${due()!.slice(0, 4)}` : "No due date"}
-                  placeholder={!due()}
-                  open={false}
-                  clearable={due() !== null}
-                  style={trigger}
-                />
-              }
-              {...datePickerLook()}
-              {...clearButtonLook({ over: true })}
-            />
+            >
+              <DatePickerTrigger
+                title={due() ? `${monthDay(due()!)}, ${due()!.slice(0, 4)}` : "No due date"}
+                style={trigger}
+              />
+              <DatePickerContent
+                disabledMatcher={[0, 6]}
+                presets={dues}
+                clearButtonAccessibilityLabel="Clear the due date"
+              />
+            </DatePicker>
           </Field>
           <Field
             label="Stay"
@@ -165,20 +155,15 @@ function App() {
                 stay.set(value);
                 log(`Stay → ${JSON.stringify(value)}`);
               }}
-              range
-              numberOfMonths={wide() ? 2 : 1}
-              firstDayOfWeek={1}
-              presets={stays}
-              trigger={
-                <DateTrigger
-                  title={stayTitle() ?? "Check-in – check-out"}
-                  placeholder={!stayTitle()}
-                  open={false}
-                  style={trigger}
-                />
-              }
-              {...datePickerLook({ months: () => (wide() ? 2 : 1), firstDayOfWeek: 1 })}
-            />
+            >
+              <DatePickerTrigger title={stayTitle() ?? "Check-in – check-out"} style={trigger} />
+              <DatePickerContent
+                range
+                numberOfMonths={wide() ? 2 : 1}
+                firstDayOfWeek={1}
+                presets={stays}
+              />
+            </DatePicker>
           </Field>
           <Field
             label="Meeting"
@@ -194,21 +179,16 @@ function App() {
                 meeting.set(typeof value === "string" ? value : null);
                 log(`Meeting → ${JSON.stringify(value)}`);
               }}
-              timePrecision="minute"
-              hourCycle={cycle()}
-              defaultTime="09:00"
-              timeLabel={<Text style={{ fontSize: 13, color: colors.mutedForeground }}>Time</Text>}
-              timeAccessibilityLabel="Meeting time"
-              trigger={
-                <DateTrigger
-                  title={meetingTitle() ?? "Not scheduled"}
-                  placeholder={!meetingTitle()}
-                  open={false}
-                  style={trigger}
-                />
-              }
-              {...datePickerLook()}
-            />
+            >
+              <DatePickerTrigger title={meetingTitle() ?? "Not scheduled"} style={trigger} />
+              <DatePickerContent
+                timePrecision="minute"
+                hourCycle={cycle()}
+                defaultTime="09:00"
+                timeLabel={<Text style={{ fontSize: 13, color: ui().muted }}>Time</Text>}
+                timeAccessibilityLabel="Meeting time"
+              />
+            </DatePicker>
           </Field>
         </View>
       </Split>

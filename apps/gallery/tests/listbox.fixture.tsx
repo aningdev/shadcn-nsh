@@ -12,7 +12,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  comboboxLook,
   fieldSize,
   listboxPopup,
   sliderFill,
@@ -40,7 +39,6 @@ function App() {
   const locked = signal<string[]>(["blue"]);
   const frameworkOpen = signal(false);
   const tagsOpen = signal(false);
-  const comboLook = comboboxLook(() => frameworkOpen());
   const rowH = platform.desktop ? 30 : 44;
   return (
     <View style={{ gap: 8, padding: 12 }}>
@@ -113,7 +111,7 @@ function App() {
         select-size={fieldSize.height}|{platform.desktop ? 180 : 0}|{rowH}
       </Text>
       <Text>
-        combo-size={comboLook.style.height ?? comboLook.style.minHeight}|{rowH}
+        combo-size={fieldSize.height}|{rowH}
       </Text>
       <View style={{ width: 96 }}>
         <Select value="apple">

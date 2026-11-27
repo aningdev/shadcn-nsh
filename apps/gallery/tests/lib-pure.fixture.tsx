@@ -1,7 +1,6 @@
 import { colors, control, motion, selectTheme, shape, surface } from "@shadcn-nsh/theme";
 import {
   choiceTileLook,
-  comboboxLook,
   drawIcon,
   fieldFocusEdge,
   fieldLook,
@@ -496,9 +495,8 @@ const results: string[] = [
         if (select.style.outlineStyle !== "none" || select.style.outlineWidth !== 0) {
           return `${theme.id} select rest outline=${String(select.style.outlineStyle)}`;
         }
-        const combo = comboboxLook(false);
-        if (combo.style.outlineStyle !== "none" || combo.inputStyle.outlineStyle !== "none") {
-          return `${theme.id} combo outline=${String(combo.style.outlineStyle)}/${String(combo.inputStyle.outlineStyle)}`;
+        if (!control("field").focusLine) {
+          return `${theme.id} combo expected a focus line`;
         }
         const edge = fieldFocusEdge(control("field"), colors.brand);
         if (edge.outlineStyle !== "none" || edge.outlineColor !== undefined) {

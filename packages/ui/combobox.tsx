@@ -1,5 +1,4 @@
-// A combobox: the field's and a chip's look (`comboboxLook`, `ComboToggle`, `chipLook`, `chipsLook`)
-// and the parts that wear them (`Combobox`, `ComboboxTrigger`, `ComboboxContent`, `ComboboxChip`).
+// A combobox: `Combobox` and its parts. The field, chip and chips looks are private.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
@@ -69,219 +68,6 @@ import {
 } from "./lib/state";
 import { narrowWindow } from "./lib/surface";
 import { joinClass, type Live, read } from "./lib/utils";
-
-const pointer = platform.desktop;
-
-/** Options of `comboboxLook`. */
-export interface ComboboxLookOptions {
-  /** Layout over the look, or a function reading it. */
-  style?: Live<ViewStyle>;
-  /** The placeholder sums up the chosen values (`"Layout, iOS"`, `"2
-   * people"`): drawn in the text color, as a value, rather than faint as
-   * an empty field's prompt. */
-  filled?: Live<boolean>;
-  /** The field currently renders chips at its start (`ComboboxChips`): slightly tighter start padding so chips balance inside the frame. */
-  hasChips?: Live<boolean | undefined>;
-}
-
-/** As wide as a select's trigger with a pointer, and no narrower than its rows. */
-const fieldWidth = 260;
-const fieldMinWidth = 160;
-
-/**
- * A combobox's field, shadcn's input group (spread it on `Combobox`): the root draws the well, its edge
- * stronger under the pointer and while the list is open, the fields' focus edge while its input has the
- * keys; the input types inside it in the label size, the toggle (`ComboToggle`) at its end. As wide as a
- * select's trigger with a pointer, the row's on a touch screen and in a narrow window (`narrowWindow`),
- * where its row puts it under the label (`plainRow`'s `wide`). A placeholder that sums up the chosen
- * values (`filled`) reads as a value, in the text color.
- */
-export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
-  return {
-    get style(): ViewStyle {
-      const field = control("field");
-      return {
-        flexDirection: "row",
-        alignItems: "center",
-        // Narrower in a narrow window, beside a row's label (`RowLabel` keeps its own least width).
-        ...(pointer && !narrowWindow()
-          ? { width: fieldWidth, flexShrink: 1, minWidth: fieldMinWidth }
-          : { alignSelf: "stretch" }),
-        minHeight: fieldSize.height,
-        // The query starts where a select's title does (or slightly closer when chips lead), and stops 4 points short of the toggle.
-        paddingStart: read(o?.hasChips) && !terminal ? 6 : triggerPadding(),
-        paddingEnd: 4,
-        ...fieldCorners(field),
-        ...fieldEdgeWidths(field),
-        ...(field.ground ? { backgroundColor: field.ground } : {}),
-        ...insetShade(),
-        ...(read(open) && fieldHasUniformEdge(field)
-          ? { borderColor: colors.faint }
-          : fieldRestEdge(field)),
-        ...(terminal
-          ? {}
-          : field.focusLine
-            ? { outlineStyle: "none", outlineWidth: 0 }
-            : fieldRing(fieldFocusTone(field, false))),
-        transitionProperty: "border-color, outline-color, opacity",
-        transitionDuration: reduceMotion() ? 0 : 120,
-        ...read(o?.style),
-      };
-    },
-    get class(): string {
-      return terminal
-        ? edgeClass({
-            rest: read(open) ? "border-faint" : "border-input",
-            hover: "border-faint",
-          })
-        : "";
-    },
-    get hoverStyle(): ViewStyle | undefined {
-      return fieldHasUniformEdge(control("field")) ? { borderColor: colors.faint } : undefined;
-    },
-    get focusWithinStyle(): ViewStyle {
-      const field = control("field");
-      const tone = fieldFocusTone(field, false);
-      return terminal ? { borderColor: tone } : fieldFocusEdge(field, tone);
-    },
-    get inputClass(): string {
-      return `${pointer ? "text-sm" : "text-base"} text-foreground ${read(o?.filled) ? "placeholder:text-foreground" : "placeholder:text-muted-foreground"}`;
-    },
-    get inputStyle(): InputStyle {
-      // A least width for the query, so a row of chips leaves it room at the row's end.
-      return {
-        flex: 1,
-        minWidth: 40,
-        height: fieldSize.height - fieldEdgeThickness(control("field")),
-        ...(terminal ? {} : { outlineStyle: "none" }),
-      };
-    },
-  };
-}
-
-/** A toggle's square: as tall as a step (`controlSize.check`) sits, 24 points with a pointer and a touch screen. */
-const toggleSide = 24;
-
-/** A combobox's toggle (`triggerButton`): the chevron in a square that lights under the pointer. */
-export function ComboToggle(props: {
-  open: boolean;
-  id?: string;
-  label?: string;
-  /** Tailwind classes on the square. The look is style, so these stand alone. */
-  class?: string;
-  /** Tailwind classes toggled on the square. */
-  classList?: Record<string, boolean | null | undefined>;
-  /** Over the square's look. `style` wins over `class`. */
-  style?: StyleProp<ViewStyle>;
-}) {
-  return (
-    <View
-      testID={props.id}
-      accessibilityLabel={props.label}
-      class={props.class}
-      classList={props.classList}
-      style={[
-        {
-          width: toggleSide,
-          height: toggleSide,
-          alignItems: "center",
-          justifyContent: "center",
-          // A step inside a control's corners (`radius-md`).
-          ...rounded(shape.control, 1),
-        },
-        props.style ?? null,
-      ]}
-      hoverStyle={feedback.hoverStyle()}
-    >
-      <Chevron open={props.open} />
-    </View>
-  );
-}
-
-/** Options of `chipLook`. */
-export interface ChipLookOptions {
-  /** The root is disabled: the chip dims, and its remove button takes no press. */
-  disabled?: Live<boolean | undefined>;
-  /** The chip carries a leading element (`Avatar`, status dot) before its label, keeping tight start padding. */
-  hasLead?: Live<boolean | undefined>;
-  /** The chip shows a trailing remove button (default `true`); `false` balances the end padding to match a text-only capsule. */
-  removable?: Live<boolean | undefined>;
-}
-
-/**
- * A chip's look (the gallery's `Chip`): one chosen value as a label of its own, on the theme's
- * `raised` finish (without backdrop blur/glass so inline pills stay crisp inside a field), its
- * corners half its height. `lead` goes at the start, the remove button at the end: a round target
- * lit under the pointer, `removeGlyph`'s muted mark at its middle (a terminal's mark is text, so
- * that part draws it). A disabled chip dims to half.
- */
-export function chipLook(o?: ChipLookOptions) {
-  const height = pointer ? 26 : 32;
-  // A round target 8 points inside a pointer chip's edge, 4 inside a touch chip's.
-  const remove = height - (pointer ? 8 : 4);
-  return {
-    get style(): ViewStyle {
-      const raised = surface("raised").style;
-      const { backdropFilter: _bf, glassEffect: _ge, glassTintColor: _gt, ...chipFace } = raised;
-      const borderWidth = terminal
-        ? stroke.control
-        : surfaceBorderWidth(
-            typeof raised.borderColor === "string" ? raised.borderColor : undefined,
-          );
-      const hasLead = !!read(o?.hasLead);
-      const removable = read(o?.removable) ?? true;
-      const textPad = pointer ? 9 : 11;
-      return {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6,
-        height: terminal ? undefined : height,
-        paddingStart: terminal ? 0 : hasLead ? 3 : textPad,
-        paddingEnd: terminal ? 0 : removable ? 3 : textPad,
-        borderRadius: terminal ? 0 : height / 2,
-        ...chipFace,
-        borderWidth,
-        opacity: read(o?.disabled) ? feedback.disabled.contentOpacity : 1,
-      };
-    },
-    get textStyle(): TextStyle {
-      // No type role has this size: a chip's 12 with a pointer, 14 on a touch screen.
-      return { fontSize: pointer ? 12 : 14, color: colors.foreground };
-    },
-    get removeClass(): string {
-      return terminal
-        ? ""
-        : "items-center justify-center rounded-full enabled:hover:bg-foreground/8 active:bg-surface";
-    },
-    get removeStyle(): ViewStyle | undefined {
-      return terminal ? undefined : { width: remove, height: remove };
-    },
-    get focusVisibleStyle(): ViewStyle {
-      return focusRing();
-    },
-    get removeGlyph(): { size: number; tint: string } {
-      // A mark 10 points across with a pointer, 12 on a touch screen.
-      return { size: pointer ? 10 : 12, tint: colors.mutedForeground };
-    },
-  };
-}
-
-/**
- * A chips row's look: the chosen values wrapped inside the field's start, so a field with more
- * chips than fit grows down instead of hiding them, and the input keeps its own width beside them.
- */
-export function chipsLook(): ViewStyle {
-  return {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "center",
-    gap: 5,
-    flexShrink: 1,
-    minWidth: 0,
-    paddingVertical: 4,
-    paddingEnd: 6,
-  };
-}
 
 /** Why a combobox's list closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type ComboboxOpenChangeReason = OpenChangeReason;
@@ -435,55 +221,43 @@ export type ComboboxLabelProps = {
   children?: string;
 };
 
-type ComboboxContextValue = OpenState & {
-  items: ItemRegistry<SelectItemData>;
-  trigger: Slot<JSX.Element>;
-  chips: Slot<() => JSX.Element>;
-  empty: Slot<() => JSX.Element>;
-  value: () => string[];
-  change: (event: { value: string[] }) => void;
-  /** The input's text: the chosen titles, or the root's placeholder. */
-  prompt: () => string;
-  filled: () => boolean;
-  root: ComboboxProps;
-};
+/** A toggle's square: as tall as a step (`controlSize.check`) sits, 24 points with a pointer and a touch screen. */
+const toggleSide = 24;
 
-const ComboboxContext = context<ComboboxContextValue | null>(null);
-
-/** A group's name, which its items take as their group. */
-type ComboboxGroupValue = { label?: string };
-
-const ComboboxGroupContext = context<ComboboxGroupValue | null>(null);
-
-function useCombobox() {
-  const ctx = ComboboxContext();
-  if (!ctx) throw new Error("Combobox parts must be used within <Combobox>");
-  return ctx;
-}
-
-/** One controlled value as the list `nsh/base` keeps: a string is one item, and null or "" is none. */
-function listed(value: string | readonly string[] | null | undefined): string[] {
-  if (typeof value === "string") return value === "" ? [] : [value];
-  return value == null ? [] : [...value];
-}
-
-/** The title an item gives its value: a chip's text when the app gives none. */
-function titleOf(ctx: ComboboxContextValue, value: string): string {
-  return ctx.items.items().find((item) => item.value === value)?.title ?? value;
-}
-
-/** What the input shows: the chosen titles, or the placeholder while there are none. */
-function promptOf(ctx: ComboboxContextValue): string {
-  const values = ctx.value();
-  if (values.length === 0) return ctx.root.placeholder ?? "Choose…";
-  return values.map((value) => titleOf(ctx, value)).join(", ");
-}
-
-/** The toggle the base root draws: the app's `ComboboxTrigger`, or a `ComboToggle`. */
-function triggerOf(ctx: ComboboxContextValue): JSX.Element {
-  const trigger = ctx.trigger.get();
-  if (trigger) return trigger;
-  return <ComboToggle open={ctx.open()} />;
+/** A combobox's toggle (`triggerButton`): the chevron in a square that lights under the pointer. */
+export function ComboToggle(props: {
+  open: boolean;
+  id?: string;
+  label?: string;
+  /** Tailwind classes on the square. The look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the square. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the square's look. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
+  return (
+    <View
+      testID={props.id}
+      accessibilityLabel={props.label}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        {
+          width: toggleSide,
+          height: toggleSide,
+          alignItems: "center",
+          justifyContent: "center",
+          // A step inside a control's corners (`radius-md`).
+          ...rounded(shape.control, 1),
+        },
+        props.style ?? null,
+      ]}
+      hoverStyle={feedback.hoverStyle()}
+    >
+      <Chevron open={props.open} />
+    </View>
+  );
 }
 
 /** The root of a combobox's parts. */
@@ -626,7 +400,7 @@ export function ComboboxChip(props: ComboboxChipProps) {
           onPress={remove}
         >
           {terminal ? (
-            <Text style={{ color: look.removeGlyph.tint }}>×</Text>
+            terminalChipRemove(look.removeGlyph.tint)
           ) : (
             <Icon icon={X} size={look.removeGlyph.size} tint={look.removeGlyph.tint} />
           )}
@@ -770,4 +544,240 @@ export function ComboboxItem(props: ComboboxItemProps) {
   ctx.items.register(item);
   cleanup(() => ctx.items.unregister(item.value));
   return null;
+}
+
+// Private helpers
+
+type ComboboxContextValue = OpenState & {
+  items: ItemRegistry<SelectItemData>;
+  trigger: Slot<JSX.Element>;
+  chips: Slot<() => JSX.Element>;
+  empty: Slot<() => JSX.Element>;
+  value: () => string[];
+  change: (event: { value: string[] }) => void;
+  /** The input's text: the chosen titles, or the root's placeholder. */
+  prompt: () => string;
+  filled: () => boolean;
+  root: ComboboxProps;
+};
+
+const ComboboxContext = context<ComboboxContextValue | null>(null);
+
+/** A group's name, which its items take as their group. */
+type ComboboxGroupValue = { label?: string };
+
+const ComboboxGroupContext = context<ComboboxGroupValue | null>(null);
+
+function useCombobox() {
+  const ctx = ComboboxContext();
+  if (!ctx) throw new Error("Combobox parts must be used within <Combobox>");
+  return ctx;
+}
+
+/** One controlled value as the list `nsh/base` keeps: a string is one item, and null or "" is none. */
+function listed(value: string | readonly string[] | null | undefined): string[] {
+  if (typeof value === "string") return value === "" ? [] : [value];
+  return value == null ? [] : [...value];
+}
+
+/** The title an item gives its value: a chip's text when the app gives none. */
+function titleOf(ctx: ComboboxContextValue, value: string): string {
+  return ctx.items.items().find((item) => item.value === value)?.title ?? value;
+}
+
+/** What the input shows: the chosen titles, or the placeholder while there are none. */
+function promptOf(ctx: ComboboxContextValue): string {
+  const values = ctx.value();
+  if (values.length === 0) return ctx.root.placeholder ?? "Choose…";
+  return values.map((value) => titleOf(ctx, value)).join(", ");
+}
+
+/** The toggle the base root draws: the app's `ComboboxTrigger`, or a `ComboToggle`. */
+function triggerOf(ctx: ComboboxContextValue): JSX.Element {
+  const trigger = ctx.trigger.get();
+  if (trigger) return trigger;
+  return <ComboToggle open={ctx.open()} />;
+}
+
+// Private helpers & looks
+
+/** Options of `comboboxLook`. */
+interface ComboboxLookOptions {
+  /** Layout over the look, or a function reading it. */
+  style?: Live<ViewStyle>;
+  /** The placeholder sums up the chosen values (`"Layout, iOS"`, `"2
+   * people"`): drawn in the text color, as a value, rather than faint as
+   * an empty field's prompt. */
+  filled?: Live<boolean>;
+  /** The field currently renders chips at its start (`ComboboxChips`): slightly tighter start padding so chips balance inside the frame. */
+  hasChips?: Live<boolean | undefined>;
+}
+
+const pointer = platform.desktop;
+
+/** As wide as a select's trigger with a pointer, and no narrower than its rows. */
+const fieldWidth = 260;
+const fieldMinWidth = 160;
+
+/**
+ * A combobox's field, shadcn's input group (spread it on `Combobox`): the root draws the well, its edge
+ * stronger under the pointer and while the list is open, the fields' focus edge while its input has the
+ * keys; the input types inside it in the label size, the toggle (`ComboToggle`) at its end. As wide as a
+ * select's trigger with a pointer, the row's on a touch screen and in a narrow window (`narrowWindow`),
+ * where its row puts it under the label (`plainRow`'s `wide`). A placeholder that sums up the chosen
+ * values (`filled`) reads as a value, in the text color.
+ */
+function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
+  return {
+    get style(): ViewStyle {
+      const field = control("field");
+      return {
+        flexDirection: "row",
+        alignItems: "center",
+        // Narrower in a narrow window, beside a row's label (`RowLabel` keeps its own least width).
+        ...(pointer && !narrowWindow()
+          ? { width: fieldWidth, flexShrink: 1, minWidth: fieldMinWidth }
+          : { alignSelf: "stretch" }),
+        minHeight: fieldSize.height,
+        // The query starts where a select's title does (or slightly closer when chips lead), and stops 4 points short of the toggle.
+        paddingStart: read(o?.hasChips) && !terminal ? 6 : triggerPadding(),
+        paddingEnd: 4,
+        ...fieldCorners(field),
+        ...fieldEdgeWidths(field),
+        ...(field.ground ? { backgroundColor: field.ground } : {}),
+        ...insetShade(),
+        ...(read(open) && fieldHasUniformEdge(field)
+          ? { borderColor: colors.faint }
+          : fieldRestEdge(field)),
+        ...(terminal
+          ? {}
+          : field.focusLine
+            ? { outlineStyle: "none", outlineWidth: 0 }
+            : fieldRing(fieldFocusTone(field, false))),
+        transitionProperty: "border-color, outline-color, opacity",
+        transitionDuration: reduceMotion() ? 0 : 120,
+        ...read(o?.style),
+      };
+    },
+    get class(): string {
+      return terminal
+        ? edgeClass({
+            rest: read(open) ? "border-faint" : "border-input",
+            hover: "border-faint",
+          })
+        : "";
+    },
+    get hoverStyle(): ViewStyle | undefined {
+      return fieldHasUniformEdge(control("field")) ? { borderColor: colors.faint } : undefined;
+    },
+    get focusWithinStyle(): ViewStyle {
+      const field = control("field");
+      const tone = fieldFocusTone(field, false);
+      return terminal ? { borderColor: tone } : fieldFocusEdge(field, tone);
+    },
+    get inputClass(): string {
+      return `${pointer ? "text-sm" : "text-base"} text-foreground ${read(o?.filled) ? "placeholder:text-foreground" : "placeholder:text-muted-foreground"}`;
+    },
+    get inputStyle(): InputStyle {
+      // A least width for the query, so a row of chips leaves it room at the row's end.
+      return {
+        flex: 1,
+        minWidth: 40,
+        height: fieldSize.height - fieldEdgeThickness(control("field")),
+        ...(terminal ? {} : { outlineStyle: "none" }),
+      };
+    },
+  };
+}
+
+/** Options of `chipLook`. */
+interface ChipLookOptions {
+  /** The root is disabled: the chip dims, and its remove button takes no press. */
+  disabled?: Live<boolean | undefined>;
+  /** The chip carries a leading element (`Avatar`, status dot) before its label, keeping tight start padding. */
+  hasLead?: Live<boolean | undefined>;
+  /** The chip shows a trailing remove button (default `true`); `false` balances the end padding to match a text-only capsule. */
+  removable?: Live<boolean | undefined>;
+}
+
+/**
+ * A chip's look (the gallery's `Chip`): one chosen value as a label of its own, on the theme's
+ * `raised` finish (without backdrop blur/glass so inline pills stay crisp inside a field), its
+ * corners half its height. `lead` goes at the start, the remove button at the end: a round target
+ * lit under the pointer, `removeGlyph`'s muted mark at its middle (a terminal's mark is text, so
+ * that part draws it). A disabled chip dims to half.
+ */
+function chipLook(o?: ChipLookOptions) {
+  const height = pointer ? 26 : 32;
+  // A round target 8 points inside a pointer chip's edge, 4 inside a touch chip's.
+  const remove = height - (pointer ? 8 : 4);
+  return {
+    get style(): ViewStyle {
+      const raised = surface("raised").style;
+      const { backdropFilter: _bf, glassEffect: _ge, glassTintColor: _gt, ...chipFace } = raised;
+      const borderWidth = terminal
+        ? stroke.control
+        : surfaceBorderWidth(
+            typeof raised.borderColor === "string" ? raised.borderColor : undefined,
+          );
+      const hasLead = !!read(o?.hasLead);
+      const removable = read(o?.removable) ?? true;
+      const textPad = pointer ? 9 : 11;
+      return {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+        height: terminal ? undefined : height,
+        paddingStart: terminal ? 0 : hasLead ? 3 : textPad,
+        paddingEnd: terminal ? 0 : removable ? 3 : textPad,
+        borderRadius: terminal ? 0 : height / 2,
+        ...chipFace,
+        borderWidth,
+        opacity: read(o?.disabled) ? feedback.disabled.contentOpacity : 1,
+      };
+    },
+    get textStyle(): TextStyle {
+      // No type role has this size: a chip's 12 with a pointer, 14 on a touch screen.
+      return { fontSize: pointer ? 12 : 14, color: colors.foreground };
+    },
+    get removeClass(): string {
+      return terminal
+        ? ""
+        : "items-center justify-center rounded-full enabled:hover:bg-foreground/8 active:bg-surface";
+    },
+    get removeStyle(): ViewStyle | undefined {
+      return terminal ? undefined : { width: remove, height: remove };
+    },
+    get focusVisibleStyle(): ViewStyle {
+      return focusRing();
+    },
+    get removeGlyph(): { size: number; tint: string } {
+      // A mark 10 points across with a pointer, 12 on a touch screen.
+      return { size: pointer ? 10 : 12, tint: colors.mutedForeground };
+    },
+  };
+}
+
+/**
+ * A chips row's look: the chosen values wrapped inside the field's start, so a field with more
+ * chips than fit grows down instead of hiding them, and the input keeps its own width beside them.
+ */
+function chipsLook(): ViewStyle {
+  return {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 5,
+    flexShrink: 1,
+    minWidth: 0,
+    paddingVertical: 4,
+    paddingEnd: 6,
+  };
+}
+
+// Terminal
+
+/** A chip's remove mark in a terminal, which draws no icons. */
+function terminalChipRemove(tint: string) {
+  return <Text style={{ color: tint }}>×</Text>;
 }

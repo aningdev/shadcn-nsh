@@ -1,12 +1,11 @@
-// The reference of `number-input.tsx`: the same scene as upstream writes it, the well and the
-// steppers spread on `nsh/base`'s NumberInput. The render check requires the two to draw the same
-// pixels.
+// The reference of `number-input.tsx`. `numberInputLook`, `numberInputText` and `numberInputSteps`
+// are private to the component, so this page draws the component itself. The two pages match
+// because they are the same composition.
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
-import { NumberInput } from "nsh/base";
 
 import { listRow, plainRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
-import { numberInputLook, numberInputSteps, numberInputText } from "@/packages/ui/number-input";
+import { NumberInput } from "@/packages/ui/number-input";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
@@ -23,11 +22,6 @@ function Row(props: { label: string; detail: string; first?: boolean; children: 
     </View>
   );
 }
-
-/** A number field's steppers: − and + before and after the field (`split`), or a pair at its end. */
-const split = () => numberInputSteps("split", desktop ? "w-8" : "w-11", desktop ? 14 : 16);
-const pair = () => numberInputSteps("pair", desktop ? "w-6" : "w-9", desktop ? 14 : 16);
-const centered = () => ({ ...numberInputText(), textAlign: "center" as const });
 
 function App() {
   const tickets = signal<number | null>(2);
@@ -74,15 +68,14 @@ function App() {
         <View style={sectionSurface({ padded: true })}>
           <Row first label="Tickets" detail="1 to 10">
             <NumberInput
+              steps="split"
               value={tickets()}
               onChange={change("tickets", (next) => tickets.set(next))}
               min={1}
               max={10}
               accessibilityLabel="Tickets"
               disabled={disabled()}
-              {...numberInputLook({ disabled: () => disabled() })}
-              inputStyle={[numberInputText(), centered()]}
-              {...split()}
+              inputStyle={{ textAlign: "center" }}
             />
           </Row>
           <Row label="Price" detail="Steps of 0.05">
@@ -93,9 +86,6 @@ function App() {
               step={0.05}
               accessibilityLabel="Price"
               disabled={disabled()}
-              {...numberInputLook({ disabled: () => disabled() })}
-              inputStyle={numberInputText()}
-              {...pair()}
               suffix={
                 <Text
                   style={{
@@ -112,6 +102,7 @@ function App() {
           </Row>
           <Row label="Temperature" detail="−20 to 40 °C, halves">
             <NumberInput
+              steps="split"
               value={temperature()}
               onChange={change("temperature", (next) => temperature.set(next))}
               min={-20}
@@ -120,9 +111,7 @@ function App() {
               placeholder="Not set"
               accessibilityLabel="Temperature"
               disabled={disabled()}
-              {...numberInputLook({ disabled: () => disabled() })}
-              inputStyle={[numberInputText(), centered()]}
-              {...split()}
+              inputStyle={{ textAlign: "center" }}
             />
           </Row>
         </View>

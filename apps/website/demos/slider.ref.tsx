@@ -8,7 +8,7 @@ import { mount, signal, Text, View } from "nsh";
 import { Slider, type SliderValue } from "nsh/base";
 
 import { controlSize, plainRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
-import { sliderFill, sliderLook, sliderValueClass, sliderValueStyle } from "@/packages/ui/slider";
+import { sliderFill, sliderLook, sliderValueStyle } from "@/packages/ui/slider";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split } from "./stage";
@@ -144,7 +144,10 @@ function App() {
               onChangeEnd={log("strength")}
               accessibilityLabel="Option strength"
             >
-              <Text class={sliderValueClass} style={sliderValueStyle()}>{`${strength()}%`}</Text>
+              <Text
+                class="w-[42px] text-right font-mono text-[11px] leading-none"
+                style={sliderValueStyle()}
+              >{`${strength()}%`}</Text>
             </Level>
           </Row>
           <Row label="Playback position" value={`${clock(position())} / ${clock(LENGTH)}`}>
@@ -176,7 +179,10 @@ function App() {
               accessibilityLabel="Locked intensity"
               onChange={() => {}}
             >
-              <Text class={sliderValueClass} style={sliderValueStyle()}>
+              <Text
+                class="w-[42px] text-right font-mono text-[11px] leading-none"
+                style={sliderValueStyle()}
+              >
                 72%
               </Text>
             </Level>

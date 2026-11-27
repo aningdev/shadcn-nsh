@@ -63,10 +63,107 @@ export interface ToggleDimensions {
   pad: number;
 }
 
-/** The ground a toggle wears while on (`button.selected.face`), as the style that paints it. */
-function onFill(): ViewStyle {
-  return { borderColor: "transparent", ...control("button").selected.style };
+/**
+ * `nsh/base`'s Toggle in the look of `toggleLook`. Every base prop passes through; the style
+ * props go over the look's. A string child is the label; anything else is drawn as given.
+ */
+export type ToggleProps = Omit<BaseToggleProps, "children"> & {
+  /** Default `default`: bare while off. `outline`: on a field's edge while off. */
+  variant?: ToggleVariant;
+  /** Default `default`. */
+  size?: ToggleSize;
+  /**
+   * It carries a text label, beside its icon or alone: padded at its sides rather than a
+   * square (`toggleLook`'s `text`). A string child says so; an icon and a label drawn as
+   * children say it here.
+   */
+  text?: boolean;
+  /** A string is the label, in `toggleLabel`'s type; anything else is drawn as given. A string
+   * label is also the toggle's name for screen readers, unless `accessibilityLabel` says otherwise. */
+  children?: string | JSX.Element;
+};
+
+/**
+ * `nsh/base`'s ToggleGroup. Every base prop passes through; `style` goes over the look's.
+ * Put `Toggle`s inside; they keep their own look. Default `inset` wears `toolbarTrack`; set
+ * `inset={false}` inside a `Toolbar` that already has the track.
+ */
+export type ToggleGroupProps = BaseToggleGroupProps & {
+  /** A column of toggles (default a row). */
+  vertical?: boolean;
+  /** Default true: the inset track. False inside a Toolbar that already has the track. */
+  inset?: boolean;
+};
+
+/** A toggle of a `variant` and a `size`. `pressed` (a base prop) shows it as on. */
+export function Toggle(props: ToggleProps) {
+  const [, rest] = split(props, [
+    "variant",
+    "size",
+    "text",
+    "children",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "pressedStyle",
+    "disabledStyle",
+    "hitSlop",
+  ]);
+  // Read once, here where the toggle is made: a string child is the label, which makes the look a
+  // text one (`options.text`), and the kind of the children never changes (a child that changes
+  // arrives as a function, drawn as given below).
+  const kids = props.children;
+  const options: ToggleLookOptions = {
+    size: () => props.size,
+    variant: props.variant,
+    text: props.text ?? typeof kids === "string",
+    on: () => props.pressed,
+    disabled: () => props.disabled,
+  };
+  const look = toggleLook(options);
+  return (
+    <BaseToggle
+      {...rest}
+      hitSlop={props.hitSlop ?? look.hitSlop}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      pressedStyle={[look.pressedStyle, props.pressedStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
+      {typeof kids === "string" ? (
+        <Text style={toggleLabel(() => props.pressed, options)}>{kids}</Text>
+      ) : (
+        kids
+      )}
+    </BaseToggle>
+  );
 }
+
+/**
+ * The track holding a row (or column) of toggles. The look is read where the style is applied,
+ * not held in a variable: `toolbarTrack` reads the theme's colors and radius there (tokens are
+ * values, so a look built once in the body would keep the build-time ones when the app switches
+ * theme).
+ */
+export function ToggleGroup(props: ToggleGroupProps) {
+  const [, rest] = split(props, ["style", "vertical", "inset"]);
+  return (
+    <BaseToggleGroup
+      {...rest}
+      style={[
+        props.inset === false
+          ? groupChrome(props.vertical)
+          : toolbarTrack({ vertical: props.vertical }),
+        props.style ?? null,
+      ]}
+    />
+  );
+}
+
+// Shared toggle primitives. `toolbar`, showcase and the reference pages spread these.
 
 /** The tier the theme measures at: a pointer's compact padding, a touch screen's roomier one. */
 const pointer = platform.desktop;
@@ -115,16 +212,6 @@ export const toggleSizes: Record<ToggleSize, ToggleDimensions> = {
     pad: pointer ? 12 : 14,
   },
 };
-
-/** How far a press sinks a toggle (`activeStyle`): none with reduced motion. */
-const sink = (scale: number): ViewStyle => pressSink(scale).activeStyle;
-
-/** The properties a toggle's states change, eased as a button's press
- * (`pressTransition`): the sink (Design Guides, "Motion"), the on fill
- * fading in and out, the hover's. */
-const transition = pressTransition("background-color, border-color, box-shadow, opacity");
-
-const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "default"];
 
 /**
  * A toggle's props (spread them: `<Toggle pressed={..} {...toggleLook()}>`,
@@ -217,14 +304,6 @@ export function toggleLook(o?: ToggleLookOptions) {
   };
 }
 
-/** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
-const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
-  if (read(disabled)) return feedback.disabled.ink;
-  return read(pressed)
-    ? control("button").selected.ink || colors.foreground
-    : colors.mutedForeground;
-};
-
 /** The label of a `toggleLook` of the same options: the theme's `body` type role (`sm` `detail`, `lg` `label`), medium weight, muted while off. */
 export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOptions): TextStyle {
   return {
@@ -252,83 +331,29 @@ export function toggleGlyph(pressed: Live<boolean | undefined>, o?: ToggleLookOp
   };
 }
 
-/**
- * `nsh/base`'s Toggle in the look of `toggleLook`. Every base prop passes through; the style
- * props go over the look's. A string child is the label; anything else is drawn as given.
- */
-export type ToggleProps = Omit<BaseToggleProps, "children"> & {
-  /** Default `default`: bare while off. `outline`: on a field's edge while off. */
-  variant?: ToggleVariant;
-  /** Default `default`. */
-  size?: ToggleSize;
-  /**
-   * It carries a text label, beside its icon or alone: padded at its sides rather than a
-   * square (`toggleLook`'s `text`). A string child says so; an icon and a label drawn as
-   * children say it here.
-   */
-  text?: boolean;
-  /** A string is the label, in `toggleLabel`'s type; anything else is drawn as given. A string
-   * label is also the toggle's name for screen readers, unless `accessibilityLabel` says otherwise. */
-  children?: string | JSX.Element;
-};
+// Private helpers
 
-/** A toggle of a `variant` and a `size`. `pressed` (a base prop) shows it as on. */
-export function Toggle(props: ToggleProps) {
-  const [, rest] = split(props, [
-    "variant",
-    "size",
-    "text",
-    "children",
-    "style",
-    "hoverStyle",
-    "activeStyle",
-    "focusVisibleStyle",
-    "pressedStyle",
-    "disabledStyle",
-    "hitSlop",
-  ]);
-  // Read once, here where the toggle is made: a string child is the label, which makes the look a
-  // text one (`options.text`), and the kind of the children never changes (a child that changes
-  // arrives as a function, drawn as given below).
-  const kids = props.children;
-  const options: ToggleLookOptions = {
-    size: () => props.size,
-    variant: props.variant,
-    text: props.text ?? typeof kids === "string",
-    on: () => props.pressed,
-    disabled: () => props.disabled,
-  };
-  const look = toggleLook(options);
-  return (
-    <BaseToggle
-      {...rest}
-      hitSlop={props.hitSlop ?? look.hitSlop}
-      style={[look.style, props.style ?? null]}
-      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
-      activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
-      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
-      pressedStyle={[look.pressedStyle, props.pressedStyle ?? null]}
-      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
-    >
-      {typeof kids === "string" ? (
-        <Text style={toggleLabel(() => props.pressed, options)}>{kids}</Text>
-      ) : (
-        kids
-      )}
-    </BaseToggle>
-  );
+/** The ground a toggle wears while on (`button.selected.face`), as the style that paints it. */
+function onFill(): ViewStyle {
+  return { borderColor: "transparent", ...control("button").selected.style };
 }
 
-/**
- * `nsh/base`'s ToggleGroup. Every base prop passes through; `style` goes over the look's.
- * Put `Toggle`s inside; they keep their own look. Default `inset` wears `toolbarTrack`; set
- * `inset={false}` inside a `Toolbar` that already has the track.
- */
-export type ToggleGroupProps = BaseToggleGroupProps & {
-  /** A column of toggles (default a row). */
-  vertical?: boolean;
-  /** Default true: the inset track. False inside a Toolbar that already has the track. */
-  inset?: boolean;
+/** How far a press sinks a toggle (`activeStyle`): none with reduced motion. */
+const sink = (scale: number): ViewStyle => pressSink(scale).activeStyle;
+
+/** The properties a toggle's states change, eased as a button's press
+ * (`pressTransition`): the sink (Design Guides, "Motion"), the on fill
+ * fading in and out, the hover's. */
+const transition = pressTransition("background-color, border-color, box-shadow, opacity");
+
+const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "default"];
+
+/** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
+const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
+  if (read(disabled)) return feedback.disabled.ink;
+  return read(pressed)
+    ? control("button").selected.ink || colors.foreground
+    : colors.mutedForeground;
 };
 
 /** Tools in a row (or column), matching `toolbarTrack`'s gap when not inset. */
@@ -338,25 +363,4 @@ function groupChrome(vertical?: boolean): ViewStyle {
     alignItems: "center",
     gap: 2,
   };
-}
-
-/**
- * The track holding a row (or column) of toggles. The look is read where the style is applied,
- * not held in a variable: `toolbarTrack` reads the theme's colors and radius there (tokens are
- * values, so a look built once in the body would keep the build-time ones when the app switches
- * theme).
- */
-export function ToggleGroup(props: ToggleGroupProps) {
-  const [, rest] = split(props, ["style", "vertical", "inset"]);
-  return (
-    <BaseToggleGroup
-      {...rest}
-      style={[
-        props.inset === false
-          ? groupChrome(props.vertical)
-          : toolbarTrack({ vertical: props.vertical }),
-        props.style ?? null,
-      ]}
-    />
-  );
 }
