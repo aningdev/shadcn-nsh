@@ -1,6 +1,6 @@
 name: Deploy docs
 
-# Two docs sites, one Pages site, built from the `site` branch (CONTRIBUTING.md, 发版):
+# Two docs sites, one Pages site, built from the `site` branch (CONTRIBUTING.md, Releasing):
 # the root is the latest `v*` tag — the docs of what `npm i shadcn-nsh` installs — and `/dev/`
 # is `main`. A `main` push rewrites only `dev/`; a `v*` tag rewrites the root and keeps `dev/`.
 #

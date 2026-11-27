@@ -86,7 +86,7 @@ bun run dev:docs
 bun run check
 ```
 
-Contribution workflow, architecture rules, and security policy: [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`SECURITY.md`](SECURITY.md).
+Contribution workflow and architecture rules: [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Acknowledgments and license
 

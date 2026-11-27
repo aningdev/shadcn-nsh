@@ -86,7 +86,7 @@ bun run dev:docs
 bun run check
 ```
 
-贡献规范、架构约定与安全说明见 [`CONTRIBUTING.md`](CONTRIBUTING.md)、[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) 与 [`SECURITY.md`](SECURITY.md)。
+贡献规范与架构约定见 [`CONTRIBUTING.md`](CONTRIBUTING.md) 与 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)。
 
 ## 致谢与开源协议
 

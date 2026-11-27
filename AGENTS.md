@@ -44,9 +44,9 @@ registry.json → public/r → shadcn-nsh add
 - `main` 受保护：每个改动一个分支（`<type>/<短描述>`）、一个 PR（标题是约定式提交信息，squash 合并）。bug 与新组件先有 issue，PR 写 `Closes #N`。用的人能感知到的改动在同一 PR 里写进 `CHANGELOG.md` 的 `Unreleased`。流程见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
 - 一个家族一个 PR。开 PR 前 `bun run check` 通过；改了演示布局再跑 `bun run check:narrow`。
 - 改 `registry.json` 或组件文件后运行 `bun run registry:build`。`bun run check` 里的 `registry:build --check` 会拦下没重建的提交。
-- 发版按 [`CONTRIBUTING.md`](CONTRIBUTING.md#发版)：改 `packages/cli/package.json` 的版本号、切 CHANGELOG、`bun run registry:build`、合并后打 `v*` 标签。
+- 发版按 [`CONTRIBUTING.md`](CONTRIBUTING.md#releasing)：改 `packages/cli/package.json` 的版本号、切 CHANGELOG、`bun run registry:build`、合并后打 `v*` 标签。
 - Gallery 是原生行为与冒烟。一族增加 `packages/ui` 组件、`apps/gallery/tests/<family>.fixture.tsx` 与 `.test.tsx`，需要时在 `App.tsx` 加一节。
-- 文档站页面在 `apps/website/content/docs/`。组件页章节以 [`docs/component-authoring.md`](docs/component-authoring.md#文档页) 为准。`official.ts` 与 `palettes.ts` 生成的行不手写。`DOCS_BASE` 与 `sitePath()` 见 [`CONTRIBUTING.md`](CONTRIBUTING.md#发版)。
+- 文档站页面在 `apps/website/content/docs/`。组件页章节以 [`docs/component-authoring.md`](docs/component-authoring.md#文档页) 为准。`official.ts` 与 `palettes.ts` 生成的行不手写。`DOCS_BASE` 与 `sitePath()` 见 [`CONTRIBUTING.md`](CONTRIBUTING.md#releasing)。
 
 ## 工具链
 

@@ -1,7 +1,7 @@
 name: Publish shadcn-nsh CLI
 
 # A release is a `v*` tag on a commit whose `packages/cli/package.json` has that version
-# (CONTRIBUTING.md, 发版). The CLI reads the registry at its own tag, so the tag is what ships.
+# (CONTRIBUTING.md, Releasing). The CLI reads the registry at its own tag, so the tag is what ships.
 # A manual run only rehearses: it packs and runs `npm publish --dry-run`.
 on:
   push:
