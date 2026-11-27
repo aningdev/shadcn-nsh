@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Material
-description: "Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, and M3 easing curves."
+description: "Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, M3 easing curves, and spatial vs. effects springs (`snappy`, `smooth`, `bouncy`)."
 colors:
   scrim: "#00000052"
   media: "#10131a"
@@ -183,7 +183,7 @@ components:
 
 ## Overview
 
-Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, and M3 easing curves.
+Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, M3 easing curves, and spatial vs. effects springs (`snappy`, `smooth`, `bouncy`).
 
 ## Colors
 

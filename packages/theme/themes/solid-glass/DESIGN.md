@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "Solid Glass"
-description: "Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass with top-edge light rims, hairline glass borders, and ambient drop shadows (`press.scale: 1`)."
+description: "Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass (`glass`, `overlay`, `inverse`, `modal`) with top-edge light rims (`specular-rim`), hairline glass borders, ambient drop shadows (`press.scale: 1`), and smooth multi-tier springs (`snappy`, `smooth`, `bouncy`)."
 colors:
   scrim: "#00000080"
   media: "#10131a"
@@ -161,19 +161,19 @@ components:
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   menu-popover:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "#f8f9fbcc"
     textColor: "{colors.light.foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.card}"
+    backgroundColor: "#eff1f5db"
     textColor: "{colors.light.foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "#f8f9fbd1"
     textColor: "{colors.light.foreground}"
     typography: "{typography.detail}"
     rounded: "{rounded.container}"
@@ -183,7 +183,7 @@ components:
 
 ## Overview
 
-Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass with top-edge light rims, hairline glass borders, and ambient drop shadows (`press.scale: 1`).
+Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass (`glass`, `overlay`, `inverse`, `modal`) with top-edge light rims (`specular-rim`), hairline glass borders, ambient drop shadows (`press.scale: 1`), and smooth multi-tier springs (`snappy`, `smooth`, `bouncy`).
 
 ## Colors
 
@@ -226,7 +226,7 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 
 ## Elevation & Depth
 
-Layered glass elevation combining translucent fills, top-edge inset highlights, soft ambient shadows, and backdrop blur.
+Layered smoky glass elevation combining translucent fills, backdrop blur + saturate, top-edge inset highlights (`specular-rim`), and soft ambient shadows.
 
 ## Shapes
 

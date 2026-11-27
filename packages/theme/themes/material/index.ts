@@ -217,10 +217,16 @@ export const material = defineTheme({
     default: { duration: 250, easing: "standard" },
     slow: { duration: 400, easing: "emphasized-decelerate" },
     spring: { stiffness: 380, damping: 32, mass: 1 },
+    springs: {
+      snappy: { stiffness: 520, damping: 32, mass: 1 },
+      smooth: { stiffness: 360, damping: 38, mass: 1 },
+      bouncy: { stiffness: 320, damping: 22, mass: 1 },
+    },
     presets: {
-      popoverEnter: { fromScale: 0.96, fromY: -4, timing: "fast", spring: true },
-      dialogEnter: { fromScale: 0.94, fromY: 8, timing: "slow", spring: true },
-      indicatorGlide: { timing: "fast", spring: true },
+      popoverEnter: { fromScale: 0.96, fromY: -4, timing: "fast", spring: "smooth" },
+      dialogEnter: { fromScale: 0.94, fromY: 8, timing: "slow", spring: "bouncy" },
+      indicatorGlide: { timing: "fast", spring: "snappy" },
+      reveal: { spring: "smooth" },
       themeSwitch: { kind: "radial-wipe", duration: 320 },
     },
   },
@@ -297,7 +303,7 @@ export const material = defineTheme({
   },
   meta: {
     overview:
-      "Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, and M3 easing curves.",
+      "Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, M3 easing curves, and spatial vs. effects springs (`snappy`, `smooth`, `bouncy`).",
     elevationNote:
       "Tonal surface stepping plus Material Web Level 1–3 shadows and Android native elevation (`elevation: 1/3/6`), no backdrop blur.",
     dos: [

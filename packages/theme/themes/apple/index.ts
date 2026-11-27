@@ -2,22 +2,20 @@
  * Apple HIG / UIKit theme (`systemBlue`, continuous corners, Liquid Glass) as a sparse Theme v5
  * override over `base` (`docs/decisions/0020-theme-v5.md`).
  */
-import {
-  defineTheme,
-  type IosBackdropMaterial,
-  type MacOsBackdropMaterial,
-  type MaterialSpec,
-} from "../../schema";
+import { defineTheme, type IosBackdropMaterial, type MaterialSpec } from "../../schema";
 import { base } from "../nsh-gallery";
 
-/** One Apple glass recipe. Specular is per appearance, so each mode carries a full material. */
+/**
+ * One Apple glass recipe. Deliberately omits `macos.backdrop` so macOS 26+ uses native
+ * `NSGlassEffectView` (`glassEffect` + `glassTintColor`), while earlier macOS and web fall back to
+ * `backdropFilter`. Specular is per appearance, so each mode carries a full material.
+ */
 function appleGlass(
   glass: "regular" | "clear",
   blur: number,
   saturate: number,
   minOpacity: number,
   ios: IosBackdropMaterial,
-  macos: MacOsBackdropMaterial,
   mode: "light" | "dark",
 ): MaterialSpec {
   return {
@@ -27,7 +25,6 @@ function appleGlass(
     saturate,
     minOpacity,
     ios,
-    macos,
     specular: mode === "light" ? "oklch(1 0 0 / 0.55)" : "oklch(1 0 0 / 0.16)",
   };
 }
@@ -148,14 +145,14 @@ export const apple = defineTheme({
         borderTop: "transparent",
         borderBottom: "transparent",
         shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)",
-        material: appleGlass("regular", 24, 1.8, 0.68, "thin", "headerView", "light"),
+        material: appleGlass("regular", 24, 1.8, 0.68, "thin", "light"),
       },
       dark: {
         border: "transparent",
         borderTop: "transparent",
         borderBottom: "transparent",
         shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)",
-        material: appleGlass("regular", 24, 1.8, 0.68, "thin", "headerView", "dark"),
+        material: appleGlass("regular", 24, 1.8, 0.68, "thin", "dark"),
       },
     },
     plate: {
@@ -177,12 +174,12 @@ export const apple = defineTheme({
       light: {
         background: { color: "popover", alpha: 0.68 },
         shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)",
-        material: appleGlass("regular", 30, 1.9, 0.64, "regular", "popover", "light"),
+        material: appleGlass("regular", 30, 1.9, 0.64, "regular", "light"),
       },
       dark: {
         background: { color: "popover", alpha: 0.7 },
         shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)",
-        material: appleGlass("regular", 30, 1.9, 0.64, "regular", "popover", "dark"),
+        material: appleGlass("regular", 30, 1.9, 0.64, "regular", "dark"),
       },
     },
     modal: {
@@ -191,12 +188,12 @@ export const apple = defineTheme({
       light: {
         background: { color: "card", alpha: 0.78 },
         shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 18px 48px oklch(0 0 0 / 0.2)",
-        material: appleGlass("regular", 36, 1.8, 0.72, "thick", "sheet", "light"),
+        material: appleGlass("regular", 36, 1.8, 0.72, "thick", "light"),
       },
       dark: {
         background: { color: "popover", alpha: 0.78 },
         shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 18px 48px oklch(0 0 0 / 0.5)",
-        material: appleGlass("regular", 36, 1.8, 0.72, "thick", "sheet", "dark"),
+        material: appleGlass("regular", 36, 1.8, 0.72, "thick", "dark"),
       },
     },
     inverse: {
@@ -206,11 +203,11 @@ export const apple = defineTheme({
       effect: { kind: "liquid-glass", intensity: 0.36 },
       light: {
         shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)",
-        material: appleGlass("regular", 28, 1.8, 0.68, "regular", "hudWindow", "light"),
+        material: appleGlass("regular", 28, 1.8, 0.68, "regular", "light"),
       },
       dark: {
         shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)",
-        material: appleGlass("regular", 28, 1.8, 0.68, "regular", "hudWindow", "dark"),
+        material: appleGlass("regular", 28, 1.8, 0.68, "regular", "dark"),
       },
     },
     glass: {
@@ -221,12 +218,12 @@ export const apple = defineTheme({
       light: {
         background: { color: "popover", alpha: 0.6 },
         shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)",
-        material: appleGlass("clear", 26, 2, 0.58, "ultraThin", "hudWindow", "light"),
+        material: appleGlass("clear", 26, 2, 0.58, "ultraThin", "light"),
       },
       dark: {
         background: { color: "popover", alpha: 0.6 },
         shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)",
-        material: appleGlass("clear", 26, 2, 0.58, "ultraThin", "hudWindow", "dark"),
+        material: appleGlass("clear", 26, 2, 0.58, "ultraThin", "dark"),
       },
     },
     accent: {
@@ -362,9 +359,9 @@ export const apple = defineTheme({
   },
   meta: {
     overview:
-      "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass, iOS materials, macOS visual-effect roles, saturate blur, specular hairlines, and a rounded-rect refraction shader.",
+      "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader.",
     elevationNote:
-      "Apple Liquid Glass depth: `raised` (thin / headerView, blur 24), `overlay` (regular / popover, blur 30, liquid-glass 0.42), `modal` (thick / sheet, blur 36, liquid-glass 0.30), `inverse` (regular / hudWindow, blur 28, liquid-glass 0.36), and `glass` (clear / ultraThin / hudWindow, blur 26, liquid-glass 0.50). Each fill stays at or above its material minOpacity. Motion uses snappy, smooth, and bouncy springs.",
+      "Apple Liquid Glass depth: `raised` (regular / thin, blur 24), `overlay` (regular / regular, blur 30, liquid-glass 0.42), `modal` (regular / thick, blur 36, liquid-glass 0.30), `inverse` (regular / regular, blur 28, liquid-glass 0.36), and `glass` (clear / ultraThin, blur 26, liquid-glass 0.50). Each fill stays at or above its material minOpacity; `macos.backdrop` is omitted so NSGlassEffectView renders natively on macOS 26+. Motion uses snappy, smooth, and bouncy springs.",
     dos: [
       "Respect pointer (macOS) vs touch (iOS 44pt hit target) metrics and continuous squircle corners.",
       "Spread `platformProps` on native glass views (`surface().platformProps`).",

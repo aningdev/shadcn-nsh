@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Apple
-description: "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass, iOS materials, macOS visual-effect roles, saturate blur, specular hairlines, and a rounded-rect refraction shader."
+description: "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader."
 colors:
   scrim: "#00000066"
   media: "#10131a"
@@ -183,7 +183,7 @@ components:
 
 ## Overview
 
-Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass, iOS materials, macOS visual-effect roles, saturate blur, specular hairlines, and a rounded-rect refraction shader.
+Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader.
 
 ## Colors
 
@@ -226,7 +226,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 
 ## Elevation & Depth
 
-Apple Liquid Glass depth: `raised` (thin / headerView, blur 24), `overlay` (regular / popover, blur 30, liquid-glass 0.42), `modal` (thick / sheet, blur 36, liquid-glass 0.30), `inverse` (regular / hudWindow, blur 28, liquid-glass 0.36), and `glass` (clear / ultraThin / hudWindow, blur 26, liquid-glass 0.50). Each fill stays at or above its material minOpacity. Motion uses snappy, smooth, and bouncy springs.
+Apple Liquid Glass depth: `raised` (regular / thin, blur 24), `overlay` (regular / regular, blur 30, liquid-glass 0.42), `modal` (regular / thick, blur 36, liquid-glass 0.30), `inverse` (regular / regular, blur 28, liquid-glass 0.36), and `glass` (clear / ultraThin, blur 26, liquid-glass 0.50). Each fill stays at or above its material minOpacity; `macos.backdrop` is omitted so NSGlassEffectView renders natively on macOS 26+. Motion uses snappy, smooth, and bouncy springs.
 
 ## Shapes
 

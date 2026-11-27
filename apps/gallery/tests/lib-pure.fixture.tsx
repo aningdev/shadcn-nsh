@@ -15,6 +15,8 @@ import {
 import { mount, Text, View } from "nsh";
 
 import apple from "../../../packages/theme/themes/apple/index";
+import material from "../../../packages/theme/themes/material/index";
+import solidGlass from "../../../packages/theme/themes/solid-glass/index";
 import winui from "../../../packages/theme/themes/winui/index";
 
 type IconNode = Parameters<typeof drawIcon>[0];
@@ -375,16 +377,14 @@ const results: string[] = [
         const shadowText = typeof shadow === "string" ? shadow : JSON.stringify(shadow ?? null);
         if (!shadowText.includes("inset 0 1px 0")) return `${name} shadow=${shadowText}`;
       }
-      const glassMac = glass.platformProps.macos?.backdrop;
-      if (
-        glassMac?.material !== "hudWindow" ||
-        glassMac.blending !== "withinWindow" ||
-        glassMac.state !== "followsWindowActiveState"
-      ) {
+      if (glass.platformProps.macos !== undefined) {
         return `glass macos=${JSON.stringify(glass.platformProps.macos)}`;
       }
-      if (overlay.platformProps.macos?.backdrop.material !== "popover") return "overlay macos";
-      if (modal.platformProps.macos?.backdrop.material !== "sheet") return "modal macos";
+      if (overlay.platformProps.macos !== undefined) return "overlay macos";
+      if (modal.platformProps.macos !== undefined) return "modal macos";
+      if (glass.platformProps.ios?.backdropMaterial !== "ultraThin") return "glass ios";
+      if (overlay.platformProps.ios?.backdropMaterial !== "regular") return "overlay ios";
+      if (modal.platformProps.ios?.backdropMaterial !== "thick") return "modal ios";
       if (motion.springCss({ stiffness: 360, damping: 30, mass: 1 }) !== "spring(360, 30)") {
         return "springCss mass 1";
       }
@@ -434,6 +434,41 @@ const results: string[] = [
         return `reveal=${JSON.stringify(reveal)}`;
       }
       if (motion.pressSpring !== undefined) return `press=${JSON.stringify(motion.pressSpring)}`;
+      return null;
+    } finally {
+      selectTheme(null);
+    }
+  }),
+  check("materialAndSolidGlass", () => {
+    const readReveal = () => motion.revealSpring;
+    const readPress = () => motion.pressSpring;
+    try {
+      selectTheme(material);
+      if (motion.springOf("snappy")?.stiffness !== 520) return "material snappy";
+      if (motion.springOf("smooth")?.damping !== 38) return "material smooth";
+      if (motion.springOf("bouncy")?.damping !== 22) return "material bouncy";
+      if (readReveal()?.stiffness !== 360) return "material reveal";
+      if (readPress() !== undefined) return "material press";
+
+      selectTheme(solidGlass);
+      for (const role of ["overlay", "inverse", "modal"] as const) {
+        const layer = surface(role);
+        const filter = String(layer.style.backdropFilter ?? "");
+        if (!filter.includes("blur(") || !filter.includes("saturate(")) {
+          return `solidGlass ${role} blur=${filter}`;
+        }
+        const shadowText =
+          typeof layer.style.boxShadow === "string"
+            ? layer.style.boxShadow
+            : JSON.stringify(layer.style.boxShadow ?? null);
+        if (!shadowText.includes("inset 0 1px 0")) {
+          return `solidGlass ${role} shadow=${shadowText}`;
+        }
+      }
+      if (motion.springOf("snappy")?.stiffness !== 420) return "solidGlass snappy";
+      if (motion.springOf("smooth")?.damping !== 30) return "solidGlass smooth";
+      if (motion.springOf("bouncy")?.damping !== 24) return "solidGlass bouncy";
+      if (readReveal()?.stiffness !== 280) return "solidGlass reveal";
       return null;
     } finally {
       selectTheme(null);

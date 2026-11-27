@@ -107,9 +107,9 @@ test("double focus, timing motion, state-layer inks and platform material follow
 
   await app.press("text:Material");
   expect(readJson("motionPresets")).toEqual({
-    pop: { scale: 0.96, y: -4, spring: { stiffness: 380, damping: 32, mass: 1 } },
-    dlg: { scale: 0.94, y: 8, spring: { stiffness: 380, damping: 32, mass: 1 } },
-    glide: { dur: 150, spring: { stiffness: 380, damping: 32, mass: 1 } },
+    pop: { scale: 0.96, y: -4, spring: { stiffness: 360, damping: 38, mass: 1 } },
+    dlg: { scale: 0.94, y: 8, spring: { stiffness: 320, damping: 22, mass: 1 } },
+    glide: { dur: 150, spring: { stiffness: 520, damping: 32, mass: 1 } },
     switch: { kind: "radial-wipe", duration: 320, shader: "shader" },
   });
 

@@ -154,23 +154,23 @@
 | `motion.presets.indicatorGlide.timing` | 指示器/滑块滑动使用的时序档位 | `fast` | `fast` | `fast` | `fast` | `fast` |
 | `motion.presets.themeSwitch.kind` | 运行时切换主题的屏幕过渡方式 | `fade` | `none` | `dissolve` | `radial-wipe` | `fade` |
 | `motion.presets.themeSwitch.duration` | 运行时切换主题过渡时长 | 200 | 0 | 240 | 320 | 167 |
-| `motion.presets.popoverEnter.spring` | 弹出层入场弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `smooth` | true | `smooth` |
-| `motion.presets.dialogEnter.spring` | 对话框入场弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `bouncy` | true | `bouncy` |
-| `motion.presets.indicatorGlide.spring` | 指示器滑动弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `snappy` | true | `snappy` |
-| `motion.presets.reveal.spring` | 展开面板的弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `smooth` | — | `smooth` |
+| `motion.presets.popoverEnter.spring` | 弹出层入场弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `smooth` | `smooth` | `smooth` |
+| `motion.presets.dialogEnter.spring` | 对话框入场弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `bouncy` | `bouncy` | `bouncy` |
+| `motion.presets.indicatorGlide.spring` | 指示器滑动弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `snappy` | `snappy` | `snappy` |
+| `motion.presets.reveal.spring` | 展开面板的弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `smooth` | `smooth` | `smooth` |
 | `motion.presets.press.spring` | 按压过渡的弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `snappy` | — | — |
 | `motion.spring.stiffness` | 物理弹性刚度 | — | — | 360 | 380 | 500 |
 | `motion.spring.damping` | 物理弹性阻尼 | — | — | 30 | 32 | 46 |
 | `motion.spring.mass` | 物理弹性质量 | — | — | 1 | 1 | 1 |
-| `motion.springs.snappy.stiffness` | 灵敏弹簧刚度 | — | — | 520 | — | 650 |
-| `motion.springs.snappy.damping` | 灵敏弹簧阻尼 | — | — | 34 | — | 52 |
-| `motion.springs.snappy.mass` | 灵敏弹簧质量 | — | — | 1 | — | 1 |
-| `motion.springs.smooth.stiffness` | 顺滑弹簧刚度 | — | — | 340 | — | 420 |
-| `motion.springs.smooth.damping` | 顺滑弹簧阻尼 | — | — | 34 | — | 42 |
-| `motion.springs.smooth.mass` | 顺滑弹簧质量 | — | — | 1 | — | 1 |
-| `motion.springs.bouncy.stiffness` | 回弹弹簧刚度 | — | — | 380 | — | 360 |
-| `motion.springs.bouncy.damping` | 回弹弹簧阻尼 | — | — | 26 | — | 40 |
-| `motion.springs.bouncy.mass` | 回弹弹簧质量 | — | — | 1 | — | 1 |
+| `motion.springs.snappy.stiffness` | 灵敏弹簧刚度 | — | — | 520 | 520 | 650 |
+| `motion.springs.snappy.damping` | 灵敏弹簧阻尼 | — | — | 34 | 32 | 52 |
+| `motion.springs.snappy.mass` | 灵敏弹簧质量 | — | — | 1 | 1 | 1 |
+| `motion.springs.smooth.stiffness` | 顺滑弹簧刚度 | — | — | 340 | 360 | 420 |
+| `motion.springs.smooth.damping` | 顺滑弹簧阻尼 | — | — | 34 | 38 | 42 |
+| `motion.springs.smooth.mass` | 顺滑弹簧质量 | — | — | 1 | 1 | 1 |
+| `motion.springs.bouncy.stiffness` | 回弹弹簧刚度 | — | — | 380 | 320 | 360 |
+| `motion.springs.bouncy.damping` | 回弹弹簧阻尼 | — | — | 26 | 22 | 40 |
+| `motion.springs.bouncy.mass` | 回弹弹簧质量 | — | — | 1 | 1 | 1 |
 
 ## 7 surfaces
 
@@ -227,15 +227,15 @@
 | `surfaces.fill.background` | 进度与选中填充面的底 | `oklch(0.75073 0.18465 126.794)` / `oklch(0.83973 0.16469 124.137)` | `primary` | `primary` | `primary` | `primary` |
 | `surfaces.fill.gradient` | 进度与选中填充面的渐变 | `linear-gradient(180deg, oklch(0.80472 0.1815 126.061) 0%, oklch(0.75073 0.18465 126.794) 100%)` / `linear-gradient(180deg, oklch(0.88348 0.15928 123.937) 0%, oklch(0.83973 0.16469 124.137) 100%)` | — | — | — | — |
 | `surfaces.fill.border` | 进度与选中填充面的边 | `oklch(0.69169 0.17204 126.956)` / `oklch(0.71963 0.15821 125.456)` | `transparent` | `transparent` | `transparent` | `oklch(0.52768 0.14982 252.341)` / `oklch(0.81732 0.11439 230)` |
-| `surfaces.raised.material` | 凸起控件面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":24,"saturate":1.8,"minOpacity":0.68,"ios":"thin","macos":"headerView","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":24,"saturate":1.8,"minOpacity":0.68,"ios":"thin","macos":"headerView","specular":"oklch(1 0 0 / 0.16)"}` | — | — |
+| `surfaces.raised.material` | 凸起控件面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":24,"saturate":1.8,"minOpacity":0.68,"ios":"thin","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":24,"saturate":1.8,"minOpacity":0.68,"ios":"thin","specular":"oklch(1 0 0 / 0.16)"}` | — | — |
 | `surfaces.overlay.effect` | 菜单与浮层面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.42}` | — | `{"kind":"acrylic-noise","intensity":0.04}` |
-| `surfaces.overlay.material` | 菜单与浮层面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":30,"saturate":1.9,"minOpacity":0.64,"ios":"regular","macos":"popover","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":30,"saturate":1.9,"minOpacity":0.64,"ios":"regular","macos":"popover","specular":"oklch(1 0 0 / 0.16)"}` | — | `{"kind":"acrylic","blur":30,"saturate":1.25,"minOpacity":0.85,"specular":"oklch(1 0 0 / 0.6)"}` / `{"kind":"acrylic","blur":30,"saturate":1.25,"minOpacity":0.85,"specular":"oklch(1 0 0 / 0.09)"}` |
+| `surfaces.overlay.material` | 菜单与浮层面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":30,"saturate":1.9,"minOpacity":0.64,"ios":"regular","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":30,"saturate":1.9,"minOpacity":0.64,"ios":"regular","specular":"oklch(1 0 0 / 0.16)"}` | — | `{"kind":"acrylic","blur":30,"saturate":1.25,"minOpacity":0.85,"specular":"oklch(1 0 0 / 0.6)"}` / `{"kind":"acrylic","blur":30,"saturate":1.25,"minOpacity":0.85,"specular":"oklch(1 0 0 / 0.09)"}` |
 | `surfaces.modal.effect` | 对话框与抽屉面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.3}` | — | `{"kind":"acrylic-noise","intensity":0.025}` |
-| `surfaces.modal.material` | 对话框与抽屉面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":36,"saturate":1.8,"minOpacity":0.72,"ios":"thick","macos":"sheet","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":36,"saturate":1.8,"minOpacity":0.72,"ios":"thick","macos":"sheet","specular":"oklch(1 0 0 / 0.16)"}` | — | `{"kind":"acrylic","blur":24,"saturate":1.15,"minOpacity":0.9,"specular":"oklch(1 0 0 / 0.6)"}` / `{"kind":"acrylic","blur":24,"saturate":1.15,"minOpacity":0.9,"specular":"oklch(1 0 0 / 0.09)"}` |
+| `surfaces.modal.material` | 对话框与抽屉面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":36,"saturate":1.8,"minOpacity":0.72,"ios":"thick","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":36,"saturate":1.8,"minOpacity":0.72,"ios":"thick","specular":"oklch(1 0 0 / 0.16)"}` | — | `{"kind":"acrylic","blur":24,"saturate":1.15,"minOpacity":0.9,"specular":"oklch(1 0 0 / 0.6)"}` / `{"kind":"acrylic","blur":24,"saturate":1.15,"minOpacity":0.9,"specular":"oklch(1 0 0 / 0.09)"}` |
 | `surfaces.inverse.effect` | 反色面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.36}` | — | `{"kind":"acrylic-noise","intensity":0.03}` |
-| `surfaces.inverse.material` | 反色面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":28,"saturate":1.8,"minOpacity":0.68,"ios":"regular","macos":"hudWindow","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":28,"saturate":1.8,"minOpacity":0.68,"ios":"regular","macos":"hudWindow","specular":"oklch(1 0 0 / 0.16)"}` | — | `{"kind":"acrylic","blur":24,"saturate":1.2,"minOpacity":0.85,"specular":"oklch(1 0 0 / 0.6)"}` / `{"kind":"acrylic","blur":24,"saturate":1.2,"minOpacity":0.85,"specular":"oklch(1 0 0 / 0.09)"}` |
+| `surfaces.inverse.material` | 反色面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":28,"saturate":1.8,"minOpacity":0.68,"ios":"regular","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":28,"saturate":1.8,"minOpacity":0.68,"ios":"regular","specular":"oklch(1 0 0 / 0.16)"}` | — | `{"kind":"acrylic","blur":24,"saturate":1.2,"minOpacity":0.85,"specular":"oklch(1 0 0 / 0.6)"}` / `{"kind":"acrylic","blur":24,"saturate":1.2,"minOpacity":0.85,"specular":"oklch(1 0 0 / 0.09)"}` |
 | `surfaces.glass.effect` | 玻璃面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.5}` | — | `{"kind":"acrylic-noise","intensity":0.045}` |
-| `surfaces.glass.material` | 玻璃面的材质 | — | — | `{"kind":"glass","glass":"clear","blur":26,"saturate":2,"minOpacity":0.58,"ios":"ultraThin","macos":"hudWindow","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"clear","blur":26,"saturate":2,"minOpacity":0.58,"ios":"ultraThin","macos":"hudWindow","specular":"oklch(1 0 0 / 0.16)"}` | — | `{"kind":"acrylic","blur":32,"saturate":1.3,"minOpacity":0.78,"specular":"oklch(1 0 0 / 0.6)"}` / `{"kind":"acrylic","blur":32,"saturate":1.3,"minOpacity":0.78,"specular":"oklch(1 0 0 / 0.09)"}` |
+| `surfaces.glass.material` | 玻璃面的材质 | — | — | `{"kind":"glass","glass":"clear","blur":26,"saturate":2,"minOpacity":0.58,"ios":"ultraThin","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"clear","blur":26,"saturate":2,"minOpacity":0.58,"ios":"ultraThin","specular":"oklch(1 0 0 / 0.16)"}` | — | `{"kind":"acrylic","blur":32,"saturate":1.3,"minOpacity":0.78,"specular":"oklch(1 0 0 / 0.6)"}` / `{"kind":"acrylic","blur":32,"saturate":1.3,"minOpacity":0.78,"specular":"oklch(1 0 0 / 0.09)"}` |
 | `surfaces.card.elevation` | 卡片面的平台阴影高度（dp） | — | — | — | 1 | — |
 | `surfaces.raised.elevation` | 凸起控件面的平台阴影高度（dp） | — | — | — | 1 | — |
 | `surfaces.plate.elevation` | 井内选中滑块面的平台阴影高度（dp） | — | — | — | 0 | — |

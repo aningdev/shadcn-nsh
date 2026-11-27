@@ -59,20 +59,23 @@ Merge order: extended theme, then `expandParadigm(paradigm)`, then the call's ow
 
 ## Materials and shaders
 
-Surface materials: `"glass"`, `"acrylic"`, or a `MaterialSpec` (`kind: "glass" | "acrylic" | "blur"`, optional `blur`, `saturate`, `minOpacity`, `specular`).
+Surface materials: `"glass"`, `"acrylic"`, or a `MaterialSpec` (`kind: "glass" | "acrylic" | "blur"`, optional `glass: "regular" | "clear"`, `ios: IosBackdropMaterial`, `macos: MacOsBackdropSpec`, `blur`, `saturate`, `minOpacity`, `specular`). Note: on macOS 26+, setting an explicit `macos.backdrop` draws `NSVisualEffectView` over `NSGlassEffectView` (`glassEffect`), so themes prioritizing native Liquid Glass omit `macos` and let `backdropFilter` fall back on older macOS.
 
-Surface effects (`SURFACE_SHADERS`): `"liquid-glass"`, `"acrylic-noise"`, `"specular-rim"`, `"paper-grain"`.
+Surface effects (`SURFACE_SHADERS`): `"liquid-glass"` (rounded-rect SDF lens refraction, 9-tap soft blur, dispersion, Vibrancy boost, Fresnel rim; `maxSampleOffset: 6`), `"acrylic-noise"` (Fluent 2 flat 9-tap blur, luminosity mix, tint, fine grain, 1px top highlight; `maxSampleOffset: 6`), `"specular-rim"`, `"paper-grain"`.
 
 Theme-switch shaders (`TRANSITION_SHADERS`): `"dissolve"`, `"radial-wipe"`.
+
+Motion springs: `motion.spring` plus optional named tiers `motion.springs.{snappy, smooth, bouncy}`. Presets (`popoverEnter`, `dialogEnter`, `indicatorGlide`, `reveal`, `press`) take `spring?: boolean | "snappy" | "smooth" | "bouncy"`. `motion.springCss()` emits native `spring(stiffness, damping)` for CSS transitions.
 
 ```tsx
 <ThemedSurface role="glass">
   <Text>Panel</Text>
 </ThemedSurface>
+<ProgressiveBlur edge="top" />
 <ThemeTransition value={shown()} />
 ```
 
-`<ThemeTransition>` takes `value` (`string | number | boolean`) and an optional `duration`. It has no children. Put it next to the screen it switches. Change `value` in the same press that calls `selectTheme(theme)`.
+`<ProgressiveBlur />` fades a `backdropFilter` off the top or bottom edge via native `maskImage` (terminal renders `null`). `<ThemeTransition>` takes `value` (`string | number | boolean`) and an optional `duration`. It has no children. Put it next to the screen it switches. Change `value` in the same press that calls `selectTheme(theme)`.
 
 ## Invariants
 
