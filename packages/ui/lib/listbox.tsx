@@ -5,6 +5,7 @@ import {
   colors,
   control,
   cornerCurve,
+  metrics,
   rounded,
   terminal,
   font,
@@ -157,6 +158,8 @@ export interface ClearButtonOptions {
   over?: boolean;
 }
 
+const fieldHeight = () => (pointer ? 32 : metrics.hit);
+
 /**
  * A clear button's look (spread it with `cleanable` and the app's
  * `clearButtonAccessibilityLabel`): a round target lit under the pointer, an
@@ -172,7 +175,7 @@ export function clearButtonLook(o?: ClearButtonOptions) {
         : o?.over
           ? {
               position: "absolute",
-              top: (controlSize.line - controlSize.clear) / 2,
+              top: (fieldHeight() - controlSize.clear) / 2,
               end: clearInset(),
               width: controlSize.clear,
               height: controlSize.clear,

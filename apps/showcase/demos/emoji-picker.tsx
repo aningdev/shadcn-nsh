@@ -112,8 +112,8 @@ function Composer() {
           : "A sheet across the screen, the tabs at its foot"
       }
     >
-      <InputGroup style={{ borderRadius: 16, minHeight: pointer ? 40 : 48 }}>
-        <InputGroupAddon style={{ paddingLeft: 4 }}>
+      <InputGroup style={{ borderRadius: 16, minHeight: pointer ? 40 : 48, flexWrap: "nowrap" }}>
+        <InputGroupAddon style={{ paddingStart: 4 }}>
           <PickerFrom
             open={open()}
             onOpenChange={(next) => open.set(next)}
@@ -136,6 +136,7 @@ function Composer() {
           onChange={({ value }) => text.set(value)}
           placeholder="Message"
           accessibilityLabel="Message"
+          style={{ paddingStart: 4 }}
         />
       </InputGroup>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -212,7 +213,7 @@ function Reactions() {
                 class="flex-row items-center gap-1 rounded-full border px-2 active:opacity-70"
                 style={{
                   height: 26,
-                  borderColor: r().mine ? colors.brand : colors.border,
+                  borderColor: r().mine ? colors.primary : colors.border,
                   backgroundColor: r().mine ? colors.primary : colors.card,
                 }}
               >
@@ -221,7 +222,7 @@ function Reactions() {
                   style={{
                     fontSize: 12,
                     fontWeight: "600",
-                    color: r().mine ? colors.brand : colors.mutedForeground,
+                    color: r().mine ? colors.primaryForeground : colors.mutedForeground,
                     fontVariant: ["tabular-nums"],
                   }}
                 >
