@@ -5,7 +5,7 @@ description: 'Author a shadcn-nsh Theme v5 theme from the L1 ThemeParadigm axes,
 
 # Theme designer
 
-Author a theme in three layers. Read `docs/theme-design.md` before changing one. The numbers `expandParadigm` writes live in `packages/theme/paradigm.ts`. `scripts/theme/invariants.ts` is what rejects a theme.
+Author a theme in three layers. Read `docs/theme.md` before changing one. The numbers `expandParadigm` writes live in `packages/theme/paradigm.ts`. `scripts/theme/invariants.ts` is what rejects a theme.
 
 Do not branch on `theme.id`. Do not put color literals in `packages/ui` or demos. Read `colors.*`, `tints.*`, `chart.*`, or `surface()` inside a reactive JSX thunk or style callback. A component body runs once.
 

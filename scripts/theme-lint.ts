@@ -1,5 +1,5 @@
 /**
- * Theme v5 integrity lint (`docs/decisions/0020-theme-v5.md`).
+ * Theme v5 integrity lint (`docs/theme.md`).
  *
  *   bun scripts/theme-lint.ts
  *   Run by `bun run check`.

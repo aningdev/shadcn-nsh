@@ -63,7 +63,7 @@ const { docsLlms } = (
 
 /**
  * The version the site documents, read once at build time so nothing is fetched at run time and the
- * changelog never ships: the CLI's version, which the library shares (`docs/release.md`), and
+ * changelog never ships: the CLI's version, which the library shares (`docs/toolchain.md`, 发版), and
  * whether `CHANGELOG.md`'s `Unreleased` has entries. The `/dev/` build comes from `main`, so with
  * entries it documents changes the release does not have yet, and its label says so; a tag build
  * has none.

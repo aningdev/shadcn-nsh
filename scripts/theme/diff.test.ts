@@ -1,5 +1,5 @@
 /**
- * Unit tests for Theme v5 diff classifier and contract gate (`scripts/theme/diff.ts`).
+ * Unit tests for the Theme v5 diff classifier (`scripts/theme/diff.ts`).
  */
 import { describe, expect, test } from "bun:test";
 
@@ -7,9 +7,7 @@ import {
   classifyChanges,
   contractMoves,
   contractSources,
-  decisionRecords,
   flatten,
-  gateVerdict,
   keyKind,
   type ThemeDiff,
 } from "./diff";
@@ -88,7 +86,7 @@ describe("keyKind and classifyChanges", () => {
   });
 });
 
-describe("contractSources and gateVerdict", () => {
+describe("contractSources and contractMoves", () => {
   test("flags core Theme v5 contract files and token exporter", () => {
     const hits = contractSources([
       "packages/theme/schema.ts",
@@ -107,17 +105,21 @@ describe("contractSources and gateVerdict", () => {
     ]);
   });
 
-  test("requires an ADR file when contract changes are present", () => {
+  test("lists contract file moves without an ADR", () => {
     const diff: ThemeDiff = {
       ref: "origin/main",
       base: "abc",
       files: ["packages/theme/schema.ts"],
-      contract: [{ file: "packages/theme/schema.ts", why: "contract" }],
+      contract: [
+        { file: "packages/theme/schema.ts", why: "the theme package's contract or reader" },
+      ],
       themes: {},
     };
-    expect(contractMoves(diff)).toHaveLength(1);
-    expect(decisionRecords(["docs/decisions/0020-theme-v5.md"])).toHaveLength(1);
-    expect(gateVerdict(diff, []).passed).toBe(false);
-    expect(gateVerdict(diff, ["docs/decisions/0020-theme-v5.md"]).passed).toBe(true);
+    expect(contractMoves(diff)).toEqual([
+      {
+        where: "packages/theme/schema.ts",
+        what: "the theme package's contract or reader",
+      },
+    ]);
   });
 });

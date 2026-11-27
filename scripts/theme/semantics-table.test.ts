@@ -1,5 +1,5 @@
 /**
- * Tests for the Theme v5 resolved semantics table (`docs/specs/semantics-values.md`).
+ * Tests for the Theme v5 resolved semantics table (`docs/theme-values.md`).
  */
 import { describe, expect, test } from "bun:test";
 

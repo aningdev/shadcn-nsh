@@ -36,7 +36,7 @@ type Node = { type: string; start?: number; end?: number; [key: string]: unknown
 
 /**
  * The prop names that are axes of a component's look. `variant` carries what a `kind` used to
- * (`docs/specs/api-unify.md`): a trigger's field-or-outline is a variant too.
+ * (`docs/ARCHITECTURE.md`): a trigger's field-or-outline is a variant too.
  */
 const AXES = new Set(["variant", "size", "tone"]);
 

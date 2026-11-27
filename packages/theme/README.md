@@ -1,37 +1,16 @@
 # @shadcn-nsh/theme
 
-[中文](./README.zh.md)
+Theme v5 的主题契约与运行时。真源是 `themes/<id>/index.ts`：`nsh-gallery` 写完整 `base`，`shadcn`、`solid-glass`、`apple`、`material`、`winui` 用 `defineTheme()` 稀疏覆写。`themes/native` 的 `nativeTheme()` 按 `platform.os` 选择平台主题。
 
-Theme v5 runtime and theme definitions (`docs/decisions/0020-theme-v5.md`). One complete `base` theme (`themes/nsh-gallery/index.ts`) and five sparse overrides (`shadcn`, `solid-glass`, `apple`, `material`, `winui`) authored via `defineTheme()` in TypeScript are the single source of truth. `bun run tokens:build` exports `theme.json`, W3C DTCG 2025.10 `{light,dark}.tokens.json`, and `DESIGN.md` one way.
+`bun run tokens:build` 单向导出 `theme.json`、`{light,dark}.tokens.json` 与 `DESIGN.md`（生成，不手改）。运行时读 `theme.ts`：`colors`、`tints`、`chart`、`shape`、`surface()`、`feedback`、`motion`、`control()`、`selectTheme` / `currentTheme`。
 
-| File                                    | Role                                                                                                                                                                                                                      |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `schema.ts`                             | Contracts (`ThemeSpec`, `ThemePatch`), `SHARED_TYPE_SCALE`, `EASING_BEZIERS`, `defineTheme()`, and `compileNshTheme()`                                                                                                    |
-| `materials.ts`                          | Platform glass and acrylic recipes (`ios` / `macos` / `windows`), plus `resolveMaterial()` for parameterized `MaterialSpec`                                                                                               |
-| `effects.ts`                            | Built-in WGSL surface (`liquid-glass`, `acrylic-noise`, `specular-rim`, `paper-grain`) and theme-switch shaders (`SURFACE_SHADERS`, `TRANSITION_SHADERS`)                                                                 |
-| `paradigm.ts`                           | L1 `ThemeParadigm` axes and `expandParadigm()`, expanded by `defineTheme` and omitted from `ThemeSpec`                                                                                                                    |
-| `themes/nsh-gallery/index.ts`           | Complete `base` theme spec (`baseSpec`, `base`, `nshGallery`)                                                                                                                                                             |
-| `themes/<id>/index.ts`                  | Sparse overrides (`shadcn`, `solid-glass`, `apple`, `material`, `winui`) and `themes/native/`                                                                                                                             |
-| `preset.ts`                             | Build-time preset re-export (replaced by `init --theme <id>` with the chosen theme)                                                                                                                                       |
-| `theme.ts`                              | Zero-Proxy strongly typed readers: `colors`, `tints`, `chart`, `shape`, `metrics`, `surface()`, `feedback`, `motion` (`springOf`, `springCss`, `revealSpring`, `pressSpring`), `control()`, `selectTheme`, `currentTheme` |
-| `theme.json`                            | Compiled NSH CSS variables (`cssVars.theme` includes `font-sans` / `font-mono` and the radius scale; 21 `cssVars.{light,dark}` keys)                                                                                      |
-| `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 one-way exports (interchange only; not read at runtime)                                                                                                                                       |
-| `DESIGN.md`                             | Generated Google Labs `DESIGN.md` (`alpha`) specification copied to app root on `init`                                                                                                                                    |
+| 文件                                          | 作用                                              |
+| --------------------------------------------- | ------------------------------------------------- |
+| `schema.ts`                                   | `ThemeSpec`、`defineTheme()`、`compileNshTheme()` |
+| `theme.ts`                                    | 强类型读取                                        |
+| `themes/<id>/index.ts`                        | 主题真源                                          |
+| `materials.ts` / `effects.ts` / `paradigm.ts` | 材质、WGSL、L1 轴                                 |
 
-## Architecture (Theme v5)
+契约与作者命令见 [`docs/theme.md`](../../docs/theme.md)。解析后的全表是 [`docs/theme-values.md`](../../docs/theme-values.md)。平台主题：[`apple`](themes/apple/README.md)、[`material`](themes/material/README.md)、[`winui`](themes/winui/README.md)。
 
-- **Three authoring layers**: L1 `ThemeParadigm` (`paradigm.ts`, six axes, stripped after `defineTheme`), L2 sparse `ThemeSpec` overrides, L3 `MaterialSpec` plus the WGSL in `effects.ts` (`<ThemedSurface>`, `<ThemeTransition>`). See `.agents/skills/theme-designer/SKILL.md`.
-- **`theme.json` shared keys**:
-  - `cssVars.theme`: required `font-sans` (default `system-ui`), `font-mono` (default `monospace`), `radius` (equals `radius-md`), `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`. `font.sans` and `font.mono` read the font keys.
-  - `cssVars.light` / `cssVars.dark`: 21 core keys (`background`, `card`, `popover`, `muted`, `surface`, `foreground`, `muted-foreground`, `faint`, `primary`, `primary-foreground`, `secondary`, `accent`, `brand`, `border`, `line`, `input`, `ring`, `info`, `success`, `warning`, `destructive`).
-  - Removed from `theme.json`: `sidebar-*`, redundant `*-foreground`, static `*-tint` (computed reactively via `tints.*` + `tintAlpha`), `chart-1..5` (defaults to `[brand, info, success, warning, destructive]`), and single-use control/surface keys.
-- **Four Orthogonal Layers**:
-  - `surfaces` (11 unified `SurfaceSpec` roles: `card`, `raised`, `inset`, `channel`, `plate`, `overlay`, `modal`, `inverse`, `glass`, `accent`, `fill`) + `elevation.{light,dark}`
-  - `metrics` (`height`, `icon`, `density`, `control`, `item`, `hit`, `stroke`, `typography`)
-  - `feedback` (`hover`, `press`, `focus`, `disabled`, `passive`) & `motion` (`state`, `fast`, `default`, `slow`, `spring`, `springs.{snappy,smooth,bouncy}`, `presets`)
-  - `controls` (13 sparse control recipes with zero theme-ID branches)
-
-## Authoring & Runtime Switching
-
-- Build and validate after theme changes: `bun run tokens:build && bun run check:theme && bun run theme:contrast && bun run theme:parity`
-- App initialization (`shadcn-nsh init --theme <id>`) installs `theme.json` and `DESIGN.md` at the app root alongside `lib/ui/{schema,materials,effects,paradigm,base,preset,theme}.ts`. Adding another theme (`shadcn-nsh add theme-<id>`) copies `themes/<id>.ts` for `selectTheme()`.
+改主题后：`bun run tokens:build && bun run check:theme`。

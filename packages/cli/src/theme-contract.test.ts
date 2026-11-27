@@ -7,7 +7,7 @@ type Theme = { cssVars: { theme: Vars; light: Vars; dark: Vars } };
 const read = (file: string) =>
   JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8")) as Theme;
 
-/** Theme v5 shared contract: 9 `cssVars.theme` keys (`docs/decisions/0020-theme-v5.md`). */
+/** Theme v5 shared contract: 9 `cssVars.theme` keys (`docs/theme.md`). */
 const REQUIRED_THEME = [
   "font-sans",
   "font-mono",

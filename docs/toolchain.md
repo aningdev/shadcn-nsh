@@ -52,7 +52,7 @@ CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `.github/actions/setup-nsh`         | 用 `install.sh` 装 `port-map.json` 的 `upstream.cli`（release 按 tag 缓存，`nightly` 按 UTC 日期缓存）；仓库变量 `NSH_CHANNEL` 可覆盖；装上的提交与基线不同只发 `::warning::`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `.github/workflows/check.yml`       | 每个 PR 都跑 `fast`（`vp check`、`catalog --check`、`check:theme`、`port:check`、`port:coverage`、registry、两个 `nsh check`、`test:unit`、`check:pages`、`check:docs`）。`render`（`port:render`，要 Chrome，runner 自带，截图留作 artifact）只在改动 `packages/ui`、`packages/theme`、`apps/website/demos` 时跑；`gallery`（`test:gallery`，无头引擎，不要浏览器）只在改动 `packages/ui`、`packages/theme`、`apps/gallery` 时跑；`install`（`test:install`）只在改动 CLI、UI、主题、registry 时跑。改到 `scripts/`、依赖、`port-map.json`、`references/` 或 CI 自身时全跑。汇总 job `check` 是 branch protection 要求的状态；发版 tag 不跑 `render` |
-| `.github/workflows/deploy-docs.yml` | 同一个 action，然后 `bun run build:docs`（`docs:demos` 逐个打包演示，再 `vite build` 出静态站到 `apps/website/.output/public`），按 `DOCS_BASE` 建 release（根）或 `main`（`/dev/`）的一面，写进 `site` 分支再上传。它不读 `references/nsh`，所以不取子模块（详见 [`release.md`](release.md) 的 §8）                                                                                                                                                                                                                                                                                                                                                  |
+| `.github/workflows/deploy-docs.yml` | 同一个 action，然后 `bun run build:docs`（`docs:demos` 逐个打包演示，再 `vite build` 出静态站到 `apps/website/.output/public`），按 `DOCS_BASE` 建 release（根）或 `main`（`/dev/`）的一面，写进 `site` 分支再上传。它不读 `references/nsh`，所以不取子模块（见 [发版](#发版)）                                                                                                                                                                                                                                                                                                                                                                       |
 
 缓存的 key 是 `nsh-<channel>-<os>-<UTC 日期>`：nightly 每天重建，于是每天第一次下载，当天其余运行直接恢复。
 
@@ -119,3 +119,61 @@ nsh component add ios
 ```
 
 没有模拟器或 host 时脚本报出缺的那一项并以非零退出；`port:render` 不受影响。
+
+## 发版
+
+一次 `vX.Y.Z` 标签放出两样东西：npm 上的 `shadcn-nsh@X.Y.Z`，以及**这个标签下的 `public/r`**。CLI 默认从与自己同版本的标签读 registry（`https://raw.githubusercontent.com/aningdev/shadcn-nsh/v<version>/public/r/{name}.json`），所以装到的文件与在跑的 CLI 对得上。`main` 上是开发中的 registry，不对外读。标签只用 `v*`。
+
+### 发版之前
+
+- 这一版要带的 PR 都已合并，`main` 是绿的：`check.yml` 的 `check` 通过（`port:render` 只在改到组件、主题、演示的 PR 上跑，`v*` tag 上不再跑）。
+- 本地再跑一遍 `bun run test:install`。
+- 每个 PR 已在 `CHANGELOG.md` 的 `Unreleased` 写了自己的条目；文档站与根 README 的兼容矩阵跟上了。
+- `bun run port:check` 没有未审阅的变化（审阅过的已经 `bun run port:review` 记下）。
+
+### 版本号
+
+CLI 与组件库共用一个版本号。
+
+| 这次改了什么                                                   | 版本                       |
+| -------------------------------------------------------------- | -------------------------- |
+| 组件 API、registry 条目 id、主题数据的破坏性变化；删掉某个条目 | 1.0 之前 minor，之后 major |
+| 新组件、新条目、新主题、只增不改的 API                         | minor                      |
+| 修 bug、只改外观细节（不改 API 与数据形状）、只改文档与演示    | patch                      |
+
+### 切 CHANGELOG 与版本文件
+
+把 `Unreleased` 改成版本标题，顶部留一个新的空 `Unreleased`。条目面向用的人写：改动之后感知到什么。破坏性的加 `**Breaking:**`，写清旧写法到新写法。
+
+- `packages/cli/package.json` 的 `version` 改成 `X.Y.Z`。
+- `README.md` 与 `README.zh.md` 的兼容矩阵加一行（本库版本 ↔ NSH CLI 版本）。
+- 这次跟着换了 NSH 基线时，`bun run port:bump` 更新 `port-map.json` 的 `upstream.cli` 与 `upstream.commit`。
+
+### 发版 PR、标签与 npm
+
+`main` 受保护，发版也走 PR：`chore/release-vX.Y.Z`，先 `bun run registry:build`（标签读的就是 `public/r`），提交信息 `chore(release): vX.Y.Z`，正文用这一版的 CHANGELOG 节。CI 绿了 squash 合并。
+
+在合并后的 `main` 上打标签，指向发版 PR 的那个 squash 提交：
+
+```sh
+git switch main && git pull --ff-only
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+`publish-cli.yml` 在 `v*` 标签上发布到 npm；发布前校验标签与 `packages/cli/package.json` 的版本一致，不一致就失败。GitHub Release 标题 `vX.Y.Z`，正文取 `CHANGELOG.md` 里这一节。
+
+不要改已经发出去的标签。装不上就发一个补丁版本。
+
+### 文档站
+
+同一份代码、两次构建，都在 GitHub Pages 的 `site` 分支上（Source 保持 GitHub Actions，不要手改 `site`）：
+
+| 位置    | 内容                                                     | 何时重建                   |
+| ------- | -------------------------------------------------------- | -------------------------- |
+| 站点根  | 最新 `v*` 标签的文档，即 `npm i shadcn-nsh` 装到的那一版 | 推 `v*` 标签；也可手动重发 |
+| `/dev/` | `main` 的文档                                            | 每次合并到 `main`          |
+
+`deploy-docs.yml`：`main` 的推送用 `DOCS_BASE=/dev/`，只替换 `site` 里的 `dev/`；`v*` 标签检出标签的树、用根 base 构建，替换除 `dev/` 以外的全部。手动重发时在 Actions 里跑 `Deploy docs`，`ref` 填标签。站点路径的 base 只有构建时的 `DOCS_BASE`（`apps/website/vite.config.ts`）；页面里的站点路径过 `sitePath()`。
+
+导航里 release 显示版本号（`Unreleased` 有条目时加 `+`）并链到 `/dev/`；`/dev/` 显示 `dev (main)` 并链回 release。

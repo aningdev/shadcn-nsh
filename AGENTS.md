@@ -1,6 +1,6 @@
 # AGENTS.md
 
-本仓库是 NSH 的 shadcn 模式组件库：一个组件一个文件，经 registry 和 CLI 复制进应用（Copy-into-app），复制后归应用所有。组件**由本库自己抽取并拥有**：NSH 官方示例共享的 UI 层 `references/nsh/examples/nsh-gallery-ui`（下称**上游**）与官方推荐的样子是参考规范，不是必须逐字照搬的源头。定位与路线见 [`docs/specs/positioning.md`](docs/specs/positioning.md)。
+本仓库是 NSH 的 shadcn 模式组件库：一个组件一个文件，经 registry 和 CLI 复制进应用（Copy-into-app），复制后归应用所有。组件**由本库自己抽取并拥有**：NSH 官方示例共享的 UI 层 `references/nsh/examples/nsh-gallery-ui`（下称**上游**）与官方推荐的样子是参考规范，不是必须逐字照搬的源头。定位见 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md#定位)。
 
 各方的角色：
 
@@ -13,24 +13,25 @@
 
 起源于上游的文件在文件头一行致谢（`Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.`），代码本身归本库、可以直接改。上游每个声明的去向记在 [`port-map.json`](port-map.json)；`port:vendor` 只在新增组件时抽取初稿，不覆盖已有代码。颜色只来自主题（`packages/theme`），组件代码里不写颜色字面量。
 
-**设计或改一套主题之前，先读 [`docs/theme-design.md`](docs/theme-design.md)**（要决定什么、落在哪个文件、哪项检查守住）。
+**设计或改一套主题之前，先读 [`docs/theme.md`](docs/theme.md)**（Theme v5 契约、角色、检查）。
 
-**写或改任何组件、主题、演示之前，读 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**（目录、分层、规则 P1–P9、归属）、**[`docs/port.md`](docs/port.md)**（每个组件的流程、外壳写法、检查）**和 [`docs/component-authoring.md`](docs/component-authoring.md)**（文件顺序、私有 Look、TUI 尺寸、响应式）。词汇见 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)。
+**写或改任何组件、主题、演示之前，读 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**（目录、分层、规则 P1–P9、归属、词汇）、**[`docs/port.md`](docs/port.md)**（每个组件的流程、外壳写法、检查）**和 [`docs/component-authoring.md`](docs/component-authoring.md)**（文件顺序、私有 Look、TUI 尺寸、响应式、安全区）。
 
 **不做**：改 `nsh` / `nsh/base`；在组件代码里写颜色字面量（颜色一律经主题角色）；搬上游的声音；把上游的 demo 适配层（`Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented`）放进组件库或 registry（它只在 `apps/website/demos` 里，供演示用）；为旧 registry id 提供别名。
 
 ## 目录
 
-| 路径                                     | 内容                                                                                                                            |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/theme`                         | `tokens/`（6 套主题的 DTCG 2025.10 源码）、编译产物 `theme.json` / `semantics.json`（oklch）、`themes/`、`theme.ts`（角色读取） |
-| `packages/ui`                            | 组件（look + 外壳；起源于上游的文件在文件头致谢）                                                                               |
-| `apps/website/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`                                                                       |
-| `apps/website/src/pages/docs/components` | 组件文档页                                                                                                                      |
-| `apps/showcase`                          | 展示应用：Gallery 的壳与本库组件重建的场景（分批实现），首页 “See it running” 嵌入其打包产物                                    |
-| `registry.json` → `public/r`             | shadcn registry 产物                                                                                                            |
-| `apps/gallery`                           | 原生行为测试与冒烟页                                                                                                            |
-| `packages/cli`                           | `shadcn-nsh` CLI                                                                                                                |
+| 路径                         | 内容                                                                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `docs/`                      | 六篇现行文档：架构与词汇、组件写法、主题契约、主题值表、移植流程、工具链与发版                                          |
+| `packages/theme`             | 真源 `themes/<id>/index.ts`；`tokens:build` 导出 `theme.json`、`{light,dark}.tokens.json`、`DESIGN.md`；`theme.ts` 读取 |
+| `packages/ui`                | 组件（look + 外壳；起源于上游的文件在文件头致谢）。`lib/` 为 9 个共享模块                                               |
+| `apps/website/demos`         | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`                                                               |
+| `apps/website/content/docs`  | 文档站页面（组件页、主题页）；路由在 `apps/website/src/routes/`                                                         |
+| `apps/showcase`              | 展示应用：Gallery 的壳与本库组件重建的场景（分批实现），首页 “See it running” 嵌入其打包产物                            |
+| `registry.json` → `public/r` | shadcn registry 产物                                                                                                    |
+| `apps/gallery`               | 原生行为测试与冒烟页                                                                                                    |
+| `packages/cli`               | `shadcn-nsh` CLI                                                                                                        |
 
 `port-map.json` 的 `root` 为仓库根；目标路径写全（如 `packages/ui/button.tsx`）。
 
@@ -42,7 +43,7 @@
 | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | [`references/nsh`](references/nsh)             | 上游：`examples/nsh-gallery-ui`（参考规范）；`nsh` / `nsh/base`；文档                                                |
 | [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app                                                                       |
-| [`references/design.md`](references/design.md) | DESIGN.md 格式规范（Google Labs）：用 token + 说明向编码代理描述一套设计语言；本库将来的 DESIGN.md 照它写            |
+| [`references/design.md`](references/design.md) | DESIGN.md 格式规范（Google Labs）。本库的 `DESIGN.md` 由 `tokens:build` 按它生成，不手改                             |
 | [`references/ui-sdk`](references/ui-sdk)       | Vercel UI SDK：与框架无关的行为层（behavior → primitive → parts）与面向代理的写法（skill、expert、文档），作对照参考 |
 | [nsh.dev/llms.txt](https://nsh.dev/llms.txt)   | NSH 官方文档索引（在线）：每页的 URL 加 `.md` 即 Markdown 原文；`references/nsh` 的 `website/` 是它的源，以基线为准  |
 
@@ -64,7 +65,7 @@
 上游 nsh-gallery-ui（参考规范；port:check 提醒变化）
    │  新增组件时 port:vendor 抽取初稿
    ▼
-packages/theme   tokens/ (DTCG) --[tokens:build]--> theme.json + semantics.json + themes/<id>/；theme.ts 读取
+packages/theme   themes/<id>/index.ts --[tokens:build]--> theme.json + {light,dark}.tokens.json + DESIGN.md；theme.ts 读取
 packages/ui/lib  没有所属控件的共享部分（press、overlay、surface…）
 packages/ui/<id>.tsx  一个组件 = look + 外壳，都归本库
 apps/website/demos、docs  演示与文档页
@@ -73,7 +74,7 @@ apps/website/demos、docs  演示与文档页
 registry.json → public/r → shadcn-nsh add
 ```
 
-依赖向下：本库 → `nsh/base` → `nsh`。全部 6 套主题（`default`、`shadcn`、`solid-glass`、`apple`、`material`、`winui`）的真源是 `packages/theme/tokens/`（DTCG 2025.10），改后运行 `bun run tokens:build` 编译到 `theme.json`、`semantics.json` 与 `themes/<id>/`（`generate-shadcn.ts`、`generate-solid-glass.ts`、`generate-apple.ts`、`generate-material.ts` 与 `generate-winui.ts` 均输出 DTCG 源码并自动调用构建）。编译产物以 oklch 存储、归本库所有（起点取自上游）。
+依赖向下：本库 → `nsh/base` → `nsh`。六套主题（`nsh-gallery`、`shadcn`、`solid-glass`、`apple`、`material`、`winui`）的真源是 `packages/theme/themes/<id>/index.ts`：`nsh-gallery` 为完整 `base`，其余用 `defineTheme()` 稀疏覆写。`bun run tokens:build` 单向导出 `theme.json`、W3C DTCG `{light,dark}.tokens.json` 与 `DESIGN.md`。颜色以 oklch 存储。运行时读 `theme.ts`，不读 DTCG 文件。平台主题的依据与取舍见各自主题目录的 `README.md`。
 
 ## 工作约定
 
@@ -82,7 +83,9 @@ registry.json → public/r → shadcn-nsh add
 - 一个家族一个 PR；开 PR 前 `port:check`、`nsh check apps/website/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。
 - look 与外壳都可以直接改；有意的外观决定写进对应文档。上游有变化时 `port:check` 会列出待审阅项，审阅后采纳或忽略；`bun run port:review` 把审阅到的上游提交记进 `port-map.json`。
 - 改 `registry.json` 或组件文件后运行 `bun run registry:build` 更新 `public/r`；`bun run check` 里的 `registry:build --check` 会拦下没重建的提交。
-- 发版按 [`docs/release.md`](docs/release.md) 走：改版号、切 CHANGELOG、重建 registry、打 `v*` 标签。
+- 发版按 [`docs/toolchain.md`](docs/toolchain.md#发版) 走：改版号、切 CHANGELOG、重建 registry、打 `v*` 标签。
+- Gallery 是原生行为与冒烟，不是截图。一族增加 `packages/ui` 组件、`apps/gallery/tests/<family>.fixture.tsx` 与 `.test.tsx`，需要时在 `App.tsx` 加一节。测试读原生状态。
+- 文档站页面在 `apps/website/content/docs/`，不自造 `DocsLayout`。组件页章节以 [`docs/port.md`](docs/port.md#文档页) 为准。`official.ts` 与 `palettes.ts` 生成的行不手写。`DOCS_BASE` 与 `sitePath()` 见 [`docs/toolchain.md`](docs/toolchain.md#发版)。
 
 ## 工具链
 
@@ -106,10 +109,11 @@ nsh check apps/website/demos      # 演示与 UI 的类型检查
 nsh run apps/website/demos/button.tsx  # 运行一个演示
 
 bun run nsh:bootstrap          # 校验安装的 CLI 在基线，生成各 .nsh types host
-bun run tokens:build           # 编译 DTCG 源码（packages/theme/tokens/）到主题运行时 JSON
-bun run tokens:build --check   # 校验编译产物与 DTCG 源码一致
+bun run tokens:build           # 从 themes/<id>/index.ts 导出 theme.json、DTCG 与 DESIGN.md
+bun run tokens:build --check   # 校验导出产物与主题真源一致
 bun run theme:diff             # 主题解析后的值与 origin/main 比较并分类（--same：值不许变）
-bun run theme:contrast         # WCAG 2 AA：每套主题亮暗的角色对与 finish
+bun run theme:contrast         # WCAG 2 AA：每套主题亮暗的角色对与 surface
+bun run docs:semantics         # 生成 docs/theme-values.md（--check：与真源一致）
 bun run check                  # tokens:build --check + check:theme + port:check + demos/gallery 类型 + docs（会改文件）
 bun run test:gallery           # 原生行为测试
 bun run test:install           # 复制即用：真实 NSH app 里 init / add / nsh check（逐条目）

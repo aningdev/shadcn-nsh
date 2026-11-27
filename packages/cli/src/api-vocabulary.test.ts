@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { readdirSync, readFileSync } from "node:fs";
 
 /**
- * The API's words (`docs/specs/api-unify.md` §4). Every axis hands the same vocabulary to every
+ * The API's words (`docs/ARCHITECTURE.md`, 词汇). Every axis hands the same vocabulary to every
  * control: `variant` takes shadcn's values, `size` takes the scale's. A control exports its own
  * union (`ButtonVariant`, `PickerVariant`, `ToggleSize`) so its type says which of them it takes;
  * this test holds every such union to the vocabulary, so a new value cannot slip in unnoticed —
@@ -92,10 +92,10 @@ const stray = (name: string, allowed: string[]) => {
   return (unions.get(name)?.values ?? []).filter((value) => !legal.has(value));
 };
 
-const glossary = () => readFileSync(new URL("docs/GLOSSARY.md", root), "utf8");
+const glossary = () => readFileSync(new URL("docs/ARCHITECTURE.md", root), "utf8");
 
 /**
- * The components that take the theme's `Tone` (`docs/specs/api-unify.md` §4.3 R9): one type, one
+ * The components that take the theme's `Tone` (`docs/ARCHITECTURE.md`): one type, one
  * writing on a prop, a value or a function read where the control draws (`Live<Tone>`, which
  * `lib/utils` defines as `Tone | (() => Tone)`). `otp-input` reads a verdict that may be absent,
  * so a tone a look or a prop may not have is `Live<Tone | undefined>` (§4.4).

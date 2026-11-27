@@ -2,7 +2,7 @@
 
 > 本页由 `bun run docs:semantics` 生成，请勿手改：修改 `packages/theme/themes/` 源码或生成器 `scripts/theme/semantics-table.ts` 后重新生成。`bun run check` 中的 `docs:semantics --check` 会校验一致性。
 
-本页列出 Theme v5（`docs/decisions/0020-theme-v5.md`）下五套基准主题解析后的全部语义字段。颜色角标及结构设计含义见 [`theme-roles.md`](theme-roles.md)，控件槽位说明见 [`theme-slots.md`](theme-slots.md)，主题设计指南见 [`../theme-design.md`](../theme-design.md)。
+本页列出 Theme v5 下五套基准主题（NSH Gallery、shadcn/ui、Apple、Material、WinUI 3）解析后的语义字段。架构与角色见 [`theme.md`](theme.md)，组件怎么读这些值见 [`component-authoring.md`](component-authoring.md)。
 
 - **两值折叠**：`a / b` 表示两组取值不同（颜色与 `surfaces`/`elevation` 为 `light / dark`，`metrics` 为 `pointer / touch`）；一致时仅写一项。
 - **缺省标记**：`—` 表示该字段未设置或为 `null`。

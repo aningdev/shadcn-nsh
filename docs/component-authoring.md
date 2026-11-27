@@ -37,3 +37,9 @@
 - **`style` 优先于 `class`**。布局和静态微调用 `class`；要盖过主题或跟着状态机走的，用 `style`。
 - **不对称的左右用 `start` / `end`**（P7）。同一对象里左右同值的对称对可以留 `left` / `right`。
 - **每个导出都有 `/** … */`**（P9）。`registryDependencies` 等于实际 import（P6）。
+
+## 安全区
+
+纯 `padding*` / `margin*` 留白写原生 `"env(safe-area-inset-*)"` 或 `"calc(env(safe-area-inset-*) + …)"`，Tailwind 写成 `pt-[env(safe-area-inset-top)]`（其余三边同理）。原生侧直接更新，不经 JS 重算。
+
+只有要拿数值做算术或定位时才读 `safeArea()`：`maxHeight`、`top` / `end` 偏移、`safeArea().bottom + 16` 这一类。不要为了纯留白先读 `safeArea()` 再写回 padding。

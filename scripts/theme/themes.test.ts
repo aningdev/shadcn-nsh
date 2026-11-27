@@ -1,5 +1,5 @@
 /**
- * Structural invariants across all Theme v5 themes (`docs/decisions/0020-theme-v5.md`).
+ * Structural invariants across all Theme v5 themes (`docs/theme.md`).
  */
 import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
