@@ -117,7 +117,7 @@ export function codeBlockLook(): CodeBlockLook {
     }),
     code: (variant, size) => ({
       userSelect: "text",
-      fontFamily: "monospace",
+      fontFamily: font.mono,
       fontSize: font.size(codeRole(size)),
       lineHeight: font.lineHeight(codeRole(size)),
       color: variant === "destructive" ? colors.destructive : colors.foreground,
@@ -140,7 +140,7 @@ export function codeBlockLook(): CodeBlockLook {
     }),
     gutter: (variant, size, digits) => ({
       userSelect: "none",
-      fontFamily: "monospace",
+      fontFamily: font.mono,
       fontSize: font.size(codeRole(size)),
       lineHeight: font.lineHeight(codeRole(size)),
       width: Math.ceil(digits * font.size(codeRole(size)) * DIGIT),
@@ -151,7 +151,7 @@ export function codeBlockLook(): CodeBlockLook {
     }),
     marker: (variant, size) => ({
       userSelect: "none",
-      fontFamily: "monospace",
+      fontFamily: font.mono,
       fontSize: font.size(codeRole(size)),
       lineHeight: font.lineHeight(codeRole(size)),
       width: Math.ceil(font.size(codeRole(size)) * DIGIT * 2),

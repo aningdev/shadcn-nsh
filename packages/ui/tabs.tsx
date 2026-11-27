@@ -27,7 +27,7 @@ import {
 
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
-import { type Live, read } from "./lib/utils";
+import { joinClass, type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -236,6 +236,10 @@ export function TabTitle(props: {
   icon?: IconNode;
   underline?: boolean;
   onWidth?: (bare: number) => void;
+  /** Tailwind classes on the label row. The look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the label row. */
+  classList?: Record<string, boolean | null | undefined>;
 }) {
   const on = follow(() => (props.selected ? 1 : 0), motion.default);
   // An underlined strip's label takes the accent, a filled one the page's ink.
@@ -245,6 +249,8 @@ export function TabTitle(props: {
   const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
   return (
     <View
+      class={props.class}
+      classList={props.classList}
       onLayout={({ bounds }) =>
         props.onWidth?.(bounds.size.width - (props.icon ? TAB_ICON_ROOM : 0))
       }
@@ -322,7 +328,10 @@ export type TabsProps = {
   onValueChange?: (value: string) => void;
   orientation?: "horizontal" | "vertical";
   children?: JSX.Element;
+  /** Tailwind classes on the root, after its direction. */
   class?: string | null;
+  /** Tailwind classes toggled on the root. They pass through with the other view props. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -343,7 +352,10 @@ export type TabsTriggerProps = Omit<BaseTabProps, "selected" | "children"> & {
 export type TabsContentProps = {
   value: string;
   children?: JSX.Element;
+  /** Tailwind classes on the panel, after its visibility. */
   class?: string | null;
+  /** Tailwind classes toggled on the panel. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -388,7 +400,7 @@ export function Tabs(props: TabsProps) {
     >
       <View
         {...rest}
-        class={props.class ?? undefined}
+        class={joinClass(undefined, props.class)}
         style={[
           {
             // The list, then the panel, a gap apart — a row of the two when the list is vertical.
@@ -491,7 +503,8 @@ export function TabsContent(props: TabsContentProps) {
   const shown = () => (ctx ? ctx.value() === props.value : false);
   return (
     <View
-      class={props.class ?? undefined}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
       style={[{ display: shown() ? "flex" : "none" }, props.style ?? null]}
     >
       {props.children}

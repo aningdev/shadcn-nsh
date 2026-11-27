@@ -31,7 +31,7 @@ import {
   fieldRestEdge,
   fieldRing,
 } from "./lib/field-look";
-import { type Live, read } from "./lib/utils";
+import { joinClass, type Live, read } from "./lib/utils";
 // `fieldLook` is the well's own look in this file; the recipe's is read as `fieldRecipe`.
 const fieldRecipe = () => control("field");
 import { createRejectShake } from "./lib/motion";
@@ -645,7 +645,7 @@ export function Input(props: InputProps) {
         if (props.grow && props.multiline) contentHeight.set(event.size.height);
         props.onContentSizeChange?.(event);
       }}
-      class={props.class ? `${look.class} ${props.class}` : look.class}
+      class={joinClass(look.class, props.class)}
       style={[look.style, grown(), shake.style(), props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       focusStyle={[look.focusStyle, props.focusStyle ?? null]}

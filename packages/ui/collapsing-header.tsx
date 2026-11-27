@@ -6,7 +6,7 @@ import type { AnimatedNode, AnimatedValue, TextProps, TextStyle, ViewProps, View
 import { context, reduceMotion, split, Text, View } from "nsh";
 
 import { density } from "./lib/surface";
-import { AsText } from "./lib/utils";
+import { AsText, joinClass } from "./lib/utils";
 
 /** How much of the collapse the picture travels: half of it, so the header moves slower than the page. */
 const PARALLAX = 0.5;
@@ -323,7 +323,7 @@ export function CollapsingHeaderTitle(props: TextProps) {
   return (
     <Text
       {...rest}
-      class={mine.class ? `${look.titleClass} ${mine.class}` : look.titleClass}
+      class={joinClass(look.titleClass, mine.class)}
       style={[look.title(state.collapsed), mine.style ?? null]}
     >
       {props.children}

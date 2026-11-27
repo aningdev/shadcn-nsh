@@ -12,7 +12,7 @@ import {
 import { Button, type ButtonVariant } from "./button";
 import { PopIn, popupSurface } from "./lib/popup";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
-import { AsText } from "./lib/utils";
+import { AsText, joinClass } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -74,6 +74,8 @@ export type PopoverContentProps = Omit<
   width?: number;
   /** Classes of the panel's surface, over `popoverLook`. */
   class?: string;
+  /** Tailwind classes toggled on the panel's surface. */
+  classList?: Record<string, boolean | null | undefined>;
   /** The panel's surface, over `popoverLook` (`{ padding: 0 }` for content that brings its own). */
   style?: StyleProp<ViewStyle>;
   children?: JSX.Element;
@@ -96,14 +98,20 @@ export type PopoverTriggerProps = {
 /** The header block of a panel (not an `nsh/base` part): the app's layout and type. */
 export type PopoverHeaderProps = {
   children?: JSX.Element;
+  /** Tailwind classes on the block. */
   class?: string | null;
+  /** Tailwind classes toggled on the block. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
 /** A panel's title: a string is text, anything else is drawn as given. */
 export type PopoverTitleProps = {
   children?: string | JSX.Element;
+  /** Tailwind classes on the text a string child draws. */
   class?: string | null;
+  /** Tailwind classes toggled on that text. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<TextStyle>;
 };
 
@@ -203,6 +211,7 @@ export function PopoverContent(props: PopoverContentProps) {
         <PopIn
           side={placement()}
           class={props.class}
+          classList={props.classList}
           style={[popoverLook({ compact: props.compact, width: props.width }), props.style ?? null]}
         >
           {/* children-lint: the panel's contents, built when it opens, not before. */}
@@ -216,7 +225,7 @@ export function PopoverContent(props: PopoverContentProps) {
 /** The block around a panel's title and its description. */
 export function PopoverHeader(props: PopoverHeaderProps) {
   return (
-    <View class={props.class ?? undefined} style={props.style}>
+    <View class={joinClass(undefined, props.class)} classList={props.classList} style={props.style}>
       {props.children}
     </View>
   );
@@ -225,7 +234,11 @@ export function PopoverHeader(props: PopoverHeaderProps) {
 /** A panel's title; a string child is `Text` (give it the app's type with `style`). */
 export function PopoverTitle(props: PopoverTitleProps) {
   return (
-    <AsText class={props.class ?? undefined} style={props.style}>
+    <AsText
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={props.style}
+    >
       {props.children}
     </AsText>
   );
@@ -234,7 +247,11 @@ export function PopoverTitle(props: PopoverTitleProps) {
 /** A panel's text under the title; as `PopoverTitle`. */
 export function PopoverDescription(props: PopoverDescriptionProps) {
   return (
-    <AsText class={props.class ?? undefined} style={props.style}>
+    <AsText
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={props.style}
+    >
       {props.children}
     </AsText>
   );

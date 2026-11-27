@@ -9,7 +9,7 @@ import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } fro
 import { edgeClass, insetShade } from "./input";
 import { fieldCornerClass, fieldDrawn, fieldEdgeClass } from "./lib/field-look";
 import { createRejectShake } from "./lib/motion";
-import { type Live, read } from "./lib/utils";
+import { joinClass, type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -125,11 +125,11 @@ export function OtpInput(props: OtpInputProps) {
     <BaseOtpInput
       {...rest}
       style={fieldStyle()}
-      class={props.class ? `${fit} ${props.class}` : fit}
-      groupClass={props.groupClass ? `${fit} ${props.groupClass}` : fit}
-      cellClass={props.cellClass ? `${look.cellClass} ${props.cellClass}` : look.cellClass}
+      class={joinClass(fit, props.class)}
+      groupClass={joinClass(fit, props.groupClass)}
+      cellClass={joinClass(look.cellClass, props.cellClass)}
       cellStyle={[look.cellStyle, props.cellStyle ?? null]}
-      caretClass={props.caretClass ? `${look.caretClass} ${props.caretClass}` : look.caretClass}
+      caretClass={joinClass(look.caretClass, props.caretClass)}
       caretStyle={[look.caretStyle, props.caretStyle ?? null]}
     />
   );

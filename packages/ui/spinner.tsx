@@ -2,6 +2,7 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { alpha, control, iconSize } from "@shadcn-nsh/theme";
+import type { StyleProp, ViewStyle } from "nsh";
 import { reduceMotion, View } from "nsh";
 
 /** A spinner's size, on the theme's icon tiers: the ring's side is `iconSize`'s `sm`, `md` or
@@ -29,6 +30,12 @@ export interface SpinnerProps {
    * recipe's `trackOpacity`: an arc at that much of the tone where the theme states one, and an arc
    * alone where it states `0`. */
   tint: string;
+  /** Tailwind classes on the ring, after its look. */
+  class?: string;
+  /** Tailwind classes toggled on the ring. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the ring. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 }
 
 /** The color of the ring behind the arc: the tone at the `spinner` recipe's `trackOpacity`,
@@ -51,18 +58,23 @@ export function Spinner(props: SpinnerProps) {
   const stroke = () => Math.max(MIN_STROKE, side() / STROKE_SHARE);
   return (
     <View
-      style={{
-        width: side(),
-        height: side(),
-        borderRadius: side() / 2,
-        borderWidth: stroke(),
-        borderColor: grooveColor(props.tint),
-        borderTopColor: props.tint,
-        animationName: reduceMotion() ? undefined : "spin",
-        animationDuration: TURN_MS,
-        animationTimingFunction: "linear",
-        animationIterationCount: "infinite",
-      }}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        {
+          width: side(),
+          height: side(),
+          borderRadius: side() / 2,
+          borderWidth: stroke(),
+          borderColor: grooveColor(props.tint),
+          borderTopColor: props.tint,
+          animationName: reduceMotion() ? undefined : "spin",
+          animationDuration: TURN_MS,
+          animationTimingFunction: "linear",
+          animationIterationCount: "infinite",
+        },
+        props.style ?? null,
+      ]}
     />
   );
 }

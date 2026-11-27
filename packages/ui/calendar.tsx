@@ -14,7 +14,7 @@ import {
   stroke,
 } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
-import type { ViewStyle } from "nsh";
+import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 import { computed, platform, split, Text, View } from "nsh";
 import {
   Calendar as BaseCalendar,
@@ -25,6 +25,7 @@ import {
 import { timeFieldClass } from "./input";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
+import { joinClass } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -355,15 +356,27 @@ export function CalendarItem(props: CalendarItemProps) {
  * the fill while it has the keys (`group-focus:`), so moving between the
  * segments draws nothing.
  */
-export function TimeSegment(props: { label: string }) {
+export function TimeSegment(props: {
+  label: string;
+  /** Tailwind classes on the digits, after its own. */
+  class?: string;
+  /** Tailwind classes toggled on the digits. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the digits' look. `style` wins over `class`. */
+  style?: StyleProp<TextStyle>;
+}) {
   return (
     <Text
-      class="text-foreground group-focus:text-primary-foreground"
-      style={{
-        paddingHorizontal: terminal ? 3 : 2,
-        fontSize: controlSize.label,
-        fontVariant: ["tabular-nums"],
-      }}
+      class={joinClass("text-foreground group-focus:text-primary-foreground", props.class)}
+      classList={props.classList}
+      style={[
+        {
+          paddingHorizontal: terminal ? 3 : 2,
+          fontSize: controlSize.label,
+          fontVariant: ["tabular-nums"],
+        },
+        props.style ?? null,
+      ]}
     >
       {props.label}
     </Text>

@@ -36,6 +36,7 @@ import { fieldLook, fieldSize, fieldText } from "./input";
 import { Icon } from "./lib/icons";
 import { MenuMark, menuIndicator, PopIn } from "./lib/popup";
 import { useCopied } from "./lib/state";
+import { joinClass } from "./lib/utils";
 import { menuItemLabel, menuItemLook, menuItemNote, menuItemSize, menuPopup } from "./menu";
 import { popoverLook } from "./popover";
 import { Picker } from "./select";
@@ -317,6 +318,12 @@ export interface ColorFieldsProps {
   onFormatChange: (format: ColorFormat) => void;
   /** A field of the opacity at the end, in percent. */
   alpha?: boolean;
+  /** Tailwind classes on the well, after the field look. */
+  class?: string;
+  /** Tailwind classes toggled on the well. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the well. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -336,6 +343,23 @@ export function ColorFields(props: ColorFieldsProps) {
         : fieldLook({
             style: { height: fieldSize.height, alignItems: "stretch", overflow: "hidden" },
           }))}
+      class={joinClass(
+        terminal
+          ? undefined
+          : fieldLook({
+              style: { height: fieldSize.height, alignItems: "stretch", overflow: "hidden" },
+            }).class,
+        props.class,
+      )}
+      classList={props.classList}
+      style={[
+        terminal
+          ? { flexDirection: "row", height: TERMINAL_ROW }
+          : fieldLook({
+              style: { height: fieldSize.height, alignItems: "stretch", overflow: "hidden" },
+            }).style,
+        props.style ?? null,
+      ]}
     >
       <Menu
         align="start"
@@ -423,10 +447,22 @@ export function ColorFields(props: ColorFieldsProps) {
 }
 
 /** A copy button (this library's ghost icon button): it copies `text()` and shows a check for a moment. */
-export function ColorCopy(props: { name: string; text: () => string }) {
+export function ColorCopy(props: {
+  name: string;
+  text: () => string;
+  /** Tailwind classes on the button, after the icon-button look. */
+  class?: string;
+  /** Tailwind classes toggled on the button. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the button. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
   const { copied, mark } = useCopied();
   return (
     <IconButton
+      class={props.class}
+      classList={props.classList}
+      style={props.style}
       accessibilityLabel={copied() ? "Copied" : `Copy ${props.name.toLocaleLowerCase()}`}
       onPress={() => {
         void Clipboard.writeText(props.text());
@@ -447,12 +483,22 @@ export function ColorCopy(props: { name: string; text: () => string }) {
 }
 
 /** The system's eyedropper as the gallery's ghost icon button; hidden where the platform has none. */
-export function ColorDropper(props: { name: string }) {
+export function ColorDropper(props: {
+  name: string;
+  /** Tailwind classes on the button, after `disabled:hidden`. */
+  class?: string;
+  /** Tailwind classes toggled on the button. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the icon-button look. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
   return (
     <ColorEyeDropper
       accessibilityLabel={`Pick ${props.name.toLocaleLowerCase()} from the screen`}
       {...iconButtonLook()}
-      class="disabled:hidden"
+      class={joinClass("disabled:hidden", props.class)}
+      classList={props.classList}
+      style={[iconButtonLook().style, props.style ?? null]}
     >
       {terminal ? (
         <Text style={{ color: colors.mutedForeground }}>Pick</Text>
@@ -468,17 +514,30 @@ export function ColorDropper(props: { name: string }) {
  * edge, grown under the pointer; the picker's color shows a check in an ink that reads on it. A terminal's are two
  * Cells by a row.
  */
-export function ColorSwatches(props: { colors: readonly string[] }) {
+export function ColorSwatches(props: {
+  colors: readonly string[];
+  /** Tailwind classes on the row. */
+  class?: string;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the row. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
   const checker = colorChecker();
   return (
     <View
-      style={{
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: terminal ? "flex-start" : "space-between",
-        columnGap: terminal ? TERMINAL_COLUMN : 4,
-        rowGap: 6,
-      }}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        {
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: terminal ? "flex-start" : "space-between",
+          columnGap: terminal ? TERMINAL_COLUMN : 4,
+          rowGap: 6,
+        },
+        props.style ?? null,
+      ]}
     >
       {props.colors.map((color) => (
         <ColorSwatch
@@ -511,6 +570,12 @@ export function ColorSwatches(props: { colors: readonly string[] }) {
 export interface ColorPanelProps extends ColorFieldsProps {
   /** Preset swatches under the fields. */
   swatches?: readonly string[];
+  /** Tailwind classes on the panel. */
+  class?: string;
+  /** Tailwind classes toggled on the panel. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the panel. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -522,7 +587,11 @@ export interface ColorPanelProps extends ColorFieldsProps {
  */
 export function ColorPanel(props: ColorPanelProps) {
   return (
-    <View style={{ gap: terminal ? TERMINAL_ROW : 10 }}>
+    <View
+      class={props.class}
+      classList={props.classList}
+      style={[{ gap: terminal ? TERMINAL_ROW : 10 }, props.style ?? null]}
+    >
       <View>
         <ColorArea
           accessibilityLabel={`${props.name} saturation and brightness`}
@@ -570,6 +639,10 @@ export function ColorPanel(props: ColorPanelProps) {
 export function ColorTrigger(props: {
   open: boolean;
   value: string;
+  /** Tailwind classes on the field (`Picker`). The look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the field. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 }): JSX.Element {
   const checker = colorChecker();
@@ -577,6 +650,8 @@ export function ColorTrigger(props: {
     <Picker
       title={props.value}
       open={props.open}
+      class={props.class}
+      classList={props.classList}
       style={props.style}
       lead={
         <ColorSwatch
@@ -604,6 +679,10 @@ export interface ColorPopoverProps {
   format: ColorFormat;
   /** The opacity too: its slider and field, and a wider popover for the field. */
   alpha?: boolean;
+  /** Tailwind classes on the trigger, after its look. */
+  class?: string;
+  /** Tailwind classes toggled on the trigger. */
+  classList?: Record<string, boolean | null | undefined>;
   /** The trigger's own style (its width), over the look's. */
   style?: StyleProp<ViewStyle>;
   onChange: (value: string) => void;
@@ -635,6 +714,8 @@ export function ColorPopover(props: ColorPopoverProps): JSX.Element {
             <ColorTrigger
               open={open()}
               value={formatColor(props.value, props.format)}
+              class={props.class}
+              classList={props.classList}
               style={props.style}
             />
           </View>

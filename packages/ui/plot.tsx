@@ -11,9 +11,10 @@ import {
   surface,
   surfaceBorderWidth,
   terminal,
+  font,
 } from "@shadcn-nsh/theme";
 import { Text, View } from "nsh";
-import type { TextStyle, ViewStyle } from "nsh";
+import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 
 // Every mark, so a chart asks one module for its parts and their look.
 export {
@@ -129,7 +130,7 @@ export const plotWash = (color: string, top = 0.18): ViewStyle => ({
 export const plotAxisText = (): TextStyle => ({
   // No type role has this size: an axis value's 10.5.
   fontSize: 10.5,
-  fontFamily: "monospace",
+  fontFamily: font.mono,
   color: colors.faint,
   fontVariant: ["tabular-nums"],
 });
@@ -152,16 +153,30 @@ export const plotTooltip = (): ViewStyle => {
 export const plotTooltipTitle = (): TextStyle => ({
   // No type role has this size: a tooltip title's 10, tracked out.
   fontSize: 10,
-  fontFamily: "monospace",
+  fontFamily: font.mono,
   letterSpacing: 0.8,
   color: colors.mutedForeground,
 });
 
 /** A colored square and a label, for chart legends (the label alone in the
  * terminal, which draws no charts). */
-export function Legend(props: { color: string; label: string; value?: string }) {
+export function Legend(props: {
+  color: string;
+  label: string;
+  value?: string;
+  /** Tailwind classes on the row, after its look. */
+  class?: string;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the row. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
   return (
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+    <View
+      class={props.class}
+      classList={props.classList}
+      style={[{ flexDirection: "row", alignItems: "center", gap: 6 }, props.style ?? null]}
+    >
       <If when={!terminal}>
         <View style={{ width: 9, height: 9, borderRadius: 2.5, backgroundColor: props.color }} />
       </If>

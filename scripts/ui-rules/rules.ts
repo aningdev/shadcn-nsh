@@ -2,9 +2,11 @@
  * The rules `packages/ui` holds beyond what TypeScript and the theme check see (docs/ARCHITECTURE.md,
  * P8 and P9): a component never picks a theme's geometry by name, never paints a colour that is
  * not a theme role, and never writes a state's colour into a Tailwind class; an import stays inside
- * the layer it is written in; and every export says with a doc comment what it is for. The markers
- * `// color: <why>` and `// state: <why>` say why one line departs (on the line or the line above);
- * an import or an export that departs is on `allowlist` with its reason.
+ * the layer it is written in; and every export says with a doc comment what it is for. A font family
+ * is `font.sans` / `font.mono` (or a `font-sans` / `font-mono` class), never a `fontFamily` string,
+ * and a caller's `class` is appended with `joinClass`, never written over by hand. The markers
+ * `// color: <why>`, `// state: <why>` and `// font: <why>` say why one line departs (on the line or
+ * the line above); an import or an export that departs is on `allowlist` with its reason.
  *
  * Pure: no `node:fs`, so the unit test reads it and the script walks the files.
  */
@@ -19,7 +21,7 @@ export interface Violation {
   /** 1-based column. */
   column: number;
   /** Which rule failed. */
-  rule: "theme-name" | "colour" | "state" | "layer" | "jsdoc";
+  rule: "theme-name" | "colour" | "state" | "font-literal" | "class-merge" | "layer" | "jsdoc";
   /** The line's text, trimmed. */
   text: string;
   /** What an `Allowance` names to excuse this line: an import's specifier, or an export's name. */
@@ -67,6 +69,16 @@ const stateColour =
 
 /** A state variant whose utility name is interpolated, so Tailwind never sees it. */
 const stateComposed = /\b(?:hover|group-hover|active|group-active|focus|focus-within):\$\{/;
+
+/** A font family written out (`fontFamily: "monospace"`). Read `font.mono` / `font.sans` instead. */
+const fontLiteral = /fontFamily\s*:\s*["']/;
+
+/**
+ * A caller's `class` joined by hand: `props.class ? \`${own} ${props.class}\`` or `props.class ?? own`
+ * (and the same for `mine.class`, or a `*Class` prop spliced into a template). `joinClass(own, props.class)`
+ * is the one spelling. `props.class?.` is a read, and `props.itemClass ??` replaces a different prop.
+ */
+const classMerge = /(?:props|mine)\.class\s*\?(?:\?(?!\.)|\s*`)|(?:props|mine)\.\w*Class\s*\?\s*`/g;
 
 const colourLiteral = [
   /#[0-9a-fA-F]{3,8}\b/,
@@ -259,7 +271,18 @@ export function violations(
         }
       }
     }
+    if (!marked(lines, index, "// font:")) {
+      const fontHit = fontLiteral.exec(code);
+      if (fontHit) report("font-literal", fontHit.index + 1);
+    }
   });
+  // Across lines: `props.class` and the `? \`` that follows it may not share a line.
+  const stripped = lines.map(codeOf).join("\n");
+  classMerge.lastIndex = 0;
+  for (const hit of stripped.matchAll(classMerge)) {
+    const where = at(stripped, hit.index ?? 0);
+    found.push({ file, ...where, rule: "class-merge" });
+  }
   const excused = (violation: Violation): boolean =>
     allowed.some(
       (entry) =>

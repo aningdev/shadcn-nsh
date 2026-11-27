@@ -1,4 +1,4 @@
-import { alpha, colors, isDark, terminal } from "@shadcn-nsh/theme";
+import { alpha, colors, isDark, terminal, font } from "@shadcn-nsh/theme";
 // Menu: the official gallery's scene (`references/nsh/examples/gallery/demos/Menus.tsx`).
 // The rows, marks, popup and labels are this library's, and so are its `MenuTrigger`,
 // `MenuSubTrigger` and `MenuButton`; the trigger is one of the scene's own chips or rows, which
@@ -260,7 +260,7 @@ function Preview(props: { sidebar: boolean; minimap: boolean; sort: SortBy; zoom
                 style={{
                   numberOfLines: 1,
                   fontSize: 11,
-                  fontFamily: "monospace",
+                  fontFamily: font.mono,
                   color: i() === 0 ? colors.foreground : colors.mutedForeground,
                 }}
               >
@@ -1083,7 +1083,7 @@ function Events(props: { events: () => string[] }) {
               <Text
                 style={{
                   fontSize: 12,
-                  fontFamily: "monospace",
+                  fontFamily: font.mono,
                   color: i() === 0 ? colors.foreground : colors.faint,
                 }}
               >

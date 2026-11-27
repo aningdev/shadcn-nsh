@@ -22,7 +22,7 @@ import {
 import type { CollapsibleOpenChangeReason, CollapsibleProps } from "./collapsible";
 import { Icon } from "./lib/icons";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
-import { AsText } from "./lib/utils";
+import { AsText, joinClass } from "./lib/utils";
 import { Spinner } from "./spinner";
 
 /** A line's state: `running` spins its icon and pulses its title, `pending` is dimmed, `error` takes the destructive role. */
@@ -277,11 +277,7 @@ export function TraceTitle(props: TraceTitleProps) {
   return (
     <Text
       {...rest}
-      class={
-        props.class
-          ? `${traceLook().titleClass(line.status)} ${props.class}`
-          : traceLook().titleClass(line.status)
-      }
+      class={joinClass(traceLook().titleClass(line.status), props.class)}
       style={[traceLook().title, props.style ?? null]}
     >
       {props.children}
@@ -333,7 +329,10 @@ export type TraceCollapsibleTriggerProps = {
   /** A `TraceLine`; the trigger adds the chevron after it. */
   children?: JSX.Element;
   disabled?: boolean;
+  /** Tailwind classes on the row, after the line's look. */
   class?: string | null;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
   hoverStyle?: StyleProp<ViewStyle>;
   activeStyle?: StyleProp<ViewStyle>;
@@ -356,7 +355,8 @@ export function TraceCollapsibleTrigger(props: TraceCollapsibleTriggerProps) {
       role="button"
       accessibilityLabel={props.accessibilityLabel ?? undefined}
       accessibilityState={{ expanded: ctx.open(), disabled }}
-      class={props.class ? `${traceLook().lineClass} ${props.class}` : traceLook().lineClass}
+      class={joinClass(traceLook().lineClass, props.class)}
+      classList={props.classList}
       onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
       style={[traceLook().trigger, props.style ?? null]}
       hoverStyle={props.hoverStyle}

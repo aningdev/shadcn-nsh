@@ -11,6 +11,7 @@ import {
   terminal,
   tints,
   shape,
+  font,
 } from "@shadcn-nsh/theme";
 import { Bell, Play, Star, type IconNode } from "lucide";
 import type { GestureResponderEvent, JSX, MouseButton } from "nsh";
@@ -370,7 +371,7 @@ function TouchPad() {
                   style={{
                     width: 52,
                     fontSize: 12,
-                    fontFamily: "monospace",
+                    fontFamily: font.mono,
                     color: i() === 0 ? colors.brand : colors.faint,
                   }}
                 >
@@ -465,9 +466,7 @@ function PressEvents() {
                 }),
               }}
             >
-              <Text
-                style={{ fontSize: 11, fontFamily: "monospace", color: colors.mutedForeground }}
-              >
+              <Text style={{ fontSize: 11, fontFamily: font.mono, color: colors.mutedForeground }}>
                 {name()}
               </Text>
             </View>
@@ -478,7 +477,7 @@ function PressEvents() {
         style={{
           numberOfLines: 1,
           fontSize: 11,
-          fontFamily: "monospace",
+          fontFamily: font.mono,
           color: colors.faint,
           paddingHorizontal: 2,
         }}
@@ -773,7 +772,7 @@ function Accessibility() {
                   {item().hint}
                 </Text>
               </View>
-              <Text style={{ fontSize: 11, fontFamily: "monospace", color: colors.faint }}>
+              <Text style={{ fontSize: 11, fontFamily: font.mono, color: colors.faint }}>
                 button
               </Text>
             </Row>

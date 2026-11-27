@@ -20,7 +20,7 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { type Live, read } from "./lib/utils";
+import { joinClass, type Live, read } from "./lib/utils";
 import { hoverOf, type TabLook, type TabState } from "./tabs";
 
 const pointer = platform.desktop;
@@ -154,7 +154,10 @@ export type SegmentedProps = {
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   children?: JSX.Element;
+  /** Tailwind classes on the root. */
   class?: string | null;
+  /** Tailwind classes toggled on the root. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -216,7 +219,7 @@ export function Segmented(props: SegmentedProps) {
         },
       }}
     >
-      <View {...rest} class={props.class ?? undefined} style={props.style}>
+      <View {...rest} class={joinClass(undefined, props.class)} style={props.style}>
         {props.children}
       </View>
     </SegmentedContext.Provider>

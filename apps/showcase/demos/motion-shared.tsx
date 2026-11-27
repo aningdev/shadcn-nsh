@@ -11,6 +11,7 @@ import {
   terminal,
   TERMINAL_GAP,
   shape,
+  font,
 } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { createAnimatedValue, platform, Scroll, Text, View } from "nsh";
@@ -128,7 +129,7 @@ export function Api(props: { label: string; api: string }) {
           minWidth: 0,
           textAlign: "right",
           fontSize: density.note,
-          fontFamily: "monospace",
+          fontFamily: font.mono,
           color: colors.faint,
         }}
       >

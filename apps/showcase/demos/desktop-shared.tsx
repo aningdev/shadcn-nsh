@@ -1,7 +1,7 @@
 // What the desktop scenes share (Windows, Keyboard, the block editor): the gallery's card with an
 // icon in its header, and its caption row (a line of text with a monospaced note at the end).
 // Neither is a component of the library: the card builds on the library's `Card` and `CardAction`.
-import { colors, shape } from "@shadcn-nsh/theme";
+import { colors, shape, font } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { Text, View, windowSize } from "nsh";
@@ -102,7 +102,7 @@ export function CaptionLine(props: { label: string; note?: string }) {
         {props.label}
       </Text>
       <If when={props.note != null}>
-        <Text style={{ fontSize: 11, color: colors.faint, fontFamily: "monospace" }}>
+        <Text style={{ fontSize: 11, color: colors.faint, fontFamily: font.mono }}>
           {props.note ?? ""}
         </Text>
       </If>

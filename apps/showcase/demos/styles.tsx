@@ -3,7 +3,7 @@
 // (circular and continuous, per corner), a progressive blur that layers `backdropFilter` under
 // masks, borders per side in each style, shadows that glow rather than darken, clipping and
 // stacking order, 3D transforms with two faces, numerals, and a right-to-left layout.
-import { surface, alpha, colors, isDark, tints, shape } from "@shadcn-nsh/theme";
+import { surface, alpha, colors, isDark, tints, shape, font } from "@shadcn-nsh/theme";
 import {
   Animated,
   cleanup,
@@ -85,7 +85,7 @@ function Tile(props: {
               numberOfLines: 1,
               fontSize: 12,
               color: colors.mutedForeground,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
             }}
           >
             {props.code}
@@ -770,7 +770,7 @@ function Numerals() {
         </View>
         <View style={{ width: 1, backgroundColor: colors.line }} />
         <View style={{ flex: 1, gap: 4 }}>
-          <Text style={{ fontSize: 12, color: colors.brand, fontFamily: "monospace" }}>
+          <Text style={{ fontSize: 12, color: colors.brand, fontFamily: font.mono }}>
             tabular-nums
           </Text>
           <Text style={[figure(), { fontVariant: ["tabular-nums"] }]}>1,111.11</Text>

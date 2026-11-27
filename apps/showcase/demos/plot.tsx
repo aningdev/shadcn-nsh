@@ -13,7 +13,16 @@
 // half hour; factor exposure as a radar; a quarter's flows; two treemaps; and a watchlist of
 // sparklines. Values on the axes are small monospaced figures, grids hairlines, tooltips floating
 // cards with a caps title.
-import { alpha, chart, colors, focusRing, rounded, toneColor, type Tone } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  chart,
+  colors,
+  focusRing,
+  rounded,
+  toneColor,
+  type Tone,
+  font,
+} from "@shadcn-nsh/theme";
 import {
   Canvas,
   cleanup,
@@ -179,7 +188,7 @@ function Live() {
   return (
     <ChartCard title="Live price" subtitle="A tick a second, the last price tagged">
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-        <Text style={{ fontSize: 13, fontFamily: "monospace", color: colors.mutedForeground }}>
+        <Text style={{ fontSize: 13, fontFamily: font.mono, color: colors.mutedForeground }}>
           NSHL
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -213,7 +222,7 @@ function Live() {
           <Text
             style={{
               fontSize: 10,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               letterSpacing: 0.8,
               color: colors.faint,
             }}
@@ -382,7 +391,7 @@ function Live() {
                 ...rounded(6),
                 backgroundColor: toneColor(tone()),
                 fontSize: 11,
-                fontFamily: "monospace",
+                fontFamily: font.mono,
                 fontWeight: "600",
                 color: colors.card,
               },
@@ -1051,7 +1060,7 @@ function Capacity() {
             <Text
               style={{
                 fontSize: 10,
-                fontFamily: "monospace",
+                fontFamily: font.mono,
                 letterSpacing: 0.8,
                 color: colors.faint,
               }}
@@ -1228,7 +1237,7 @@ function Revenue() {
             labelStyle={{
               paddingHorizontal: 4,
               fontSize: 11,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               color: colors.mutedForeground,
               fontVariant: "tabular-nums",
             }}
@@ -1254,7 +1263,7 @@ function Revenue() {
             <Text
               style={{
                 fontSize: 10,
-                fontFamily: "monospace",
+                fontFamily: font.mono,
                 letterSpacing: 0.8,
                 color: colors.faint,
               }}
@@ -1398,7 +1407,7 @@ function Sales() {
   const tip = { topLeft: 3, topRight: 3 };
   const labelStyle = {
     fontSize: 10.5,
-    fontFamily: "monospace",
+    fontFamily: font.mono,
     paddingBottom: 3,
     color: colors.mutedForeground,
     fontVariant: "tabular-nums",
@@ -1614,7 +1623,7 @@ function Bridge() {
     s.kind === "increase" ? "success" : s.kind === "decrease" ? "destructive" : "neutral";
   const labelStyle = {
     fontSize: 10.5,
-    fontFamily: "monospace",
+    fontFamily: font.mono,
     paddingVertical: 3,
     color: colors.mutedForeground,
     fontVariant: "tabular-nums",
@@ -2278,7 +2287,7 @@ function Candles() {
     >
       <View style={{ gap: 4 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Text style={{ fontSize: 13, fontFamily: "monospace", color: colors.mutedForeground }}>
+          <Text style={{ fontSize: 13, fontFamily: font.mono, color: colors.mutedForeground }}>
             NSHL
           </Text>
           <Text style={tipTitle()}>{shown().date.toUpperCase()}</Text>
@@ -2385,7 +2394,7 @@ function Candles() {
               borderRadius: 5,
               backgroundColor: toneColor(last().dir),
               fontSize: 10.5,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               fontWeight: "600",
               color: colors.card,
               fontVariant: "tabular-nums",
@@ -3274,7 +3283,7 @@ const shares = (m: number) =>
   m === 0 ? "0" : m >= 1000 ? `${fixed(m / 1000, m % 1000 === 0 ? 0 : 1)}B` : `${fixed(m, 0)}M`;
 const AXIS_TITLE = () => ({
   fontSize: 10,
-  fontFamily: "monospace",
+  fontFamily: font.mono,
   letterSpacing: 0.8,
   color: colors.faint,
 });
@@ -3314,7 +3323,7 @@ function VolumePrice() {
     >
       <View style={{ gap: 4 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Text style={{ fontSize: 13, fontFamily: "monospace", color: colors.mutedForeground }}>
+          <Text style={{ fontSize: 13, fontFamily: font.mono, color: colors.mutedForeground }}>
             ORBX
           </Text>
           <Text style={tipTitle()}>{shown().title.toUpperCase()}</Text>
@@ -3815,7 +3824,7 @@ function Factors() {
                       width: 64,
                       numberOfLines: 1,
                       fontSize: 10.5,
-                      fontFamily: "monospace",
+                      fontFamily: font.mono,
                       textAlign: sin > 0.01 ? "left" : sin < -0.01 ? "right" : "center",
                       color: hover() === i() ? chart.chart1 : colors.faint,
                     }}
@@ -5291,7 +5300,7 @@ function Watchlist() {
                     fontSize: 13,
                     fontWeight: "600",
                     color: colors.foreground,
-                    fontFamily: "monospace",
+                    fontFamily: font.mono,
                   }}
                 >
                   {w().symbol}

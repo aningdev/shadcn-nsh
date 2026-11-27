@@ -188,3 +188,36 @@ describe("component sources (a finish is handed out as a copy)", () => {
     expect(sharedFinishes("boxShadow: finish.raised.boxShadow,")).toEqual([]);
   });
 });
+
+/**
+ * Fonts and corners follow the theme the same way colours do. A `fontFamily` string
+ * (`"monospace"`) ignores `font-mono` in the built-in `theme.json`, and the retired radius
+ * tokens (`radius-control`, `radius-container`, `radius-modal`) ignore `radius-md` / `lg` / `xl`.
+ * Colour exemptions still get this scan: a swatch may name a colour and must not name a font.
+ */
+describe("component sources (fonts and radius tokens)", () => {
+  const fontLiteral = /fontFamily\s*:\s*["']/;
+  const legacyRadius = /\bradius-(?:control|container|modal)\b/;
+  const paths = [...components, ...lib, ...demos];
+
+  test("no source writes a font family or a retired radius token", () => {
+    const offenders = paths.flatMap((path) => {
+      const text = code(path);
+      const hits: string[] = [];
+      if (fontLiteral.test(text)) hits.push(`${path}: font literal`);
+      if (legacyRadius.test(text)) hits.push(`${path}: legacy radius`);
+      return hits;
+    });
+    expect(offenders, offenders.join("\n")).toEqual([]);
+  });
+
+  test("the guard catches a font literal and a retired radius token", () => {
+    expect(fontLiteral.test('fontFamily: "monospace"')).toBe(true);
+    expect(fontLiteral.test("fontFamily: 'ui-monospace'")).toBe(true);
+    expect(fontLiteral.test("fontFamily: font.mono")).toBe(false);
+    expect(legacyRadius.test("radius-control")).toBe(true);
+    expect(legacyRadius.test("radius-container")).toBe(true);
+    expect(legacyRadius.test("radius-modal")).toBe(true);
+    expect(legacyRadius.test('class="rounded-(--radius-md)"')).toBe(false);
+  });
+});

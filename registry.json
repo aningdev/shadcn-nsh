@@ -517,7 +517,7 @@
       "type": "registry:ui",
       "title": "Time Field",
       "description": "A sunk well for a time of day, one segment at a time.",
-      "registryDependencies": ["calendar", "input"],
+      "registryDependencies": ["calendar", "input", "utils"],
       "files": [
         {
           "path": "packages/ui/time-field.tsx",
@@ -694,7 +694,7 @@
       "type": "registry:ui",
       "title": "Calendar",
       "description": "A month of days to pick a date or a range, on the shared calendar look.",
-      "registryDependencies": ["icons", "input", "surface", "theme"],
+      "registryDependencies": ["icons", "input", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/calendar.tsx",
@@ -778,7 +778,7 @@
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "A disclosure row that reveals a panel beneath it.",
-      "registryDependencies": ["accordion", "state", "surface", "theme"],
+      "registryDependencies": ["accordion", "state", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",
@@ -807,7 +807,7 @@
       "type": "registry:ui",
       "title": "Link",
       "description": "A text link with underline motion, on the shared nav look.",
-      "registryDependencies": ["icons", "theme"],
+      "registryDependencies": ["icons", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/link.tsx",
@@ -1050,7 +1050,7 @@
       "type": "registry:ui",
       "title": "Emoji picker",
       "description": "Gallery look for nsh/base EmojiPicker: tabs, search, tones and preview.",
-      "registryDependencies": ["icons", "theme"],
+      "registryDependencies": ["icons", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/emoji-picker.tsx",
@@ -1112,7 +1112,8 @@
         "popup",
         "select",
         "state",
-        "theme"
+        "theme",
+        "utils"
       ],
       "files": [
         {

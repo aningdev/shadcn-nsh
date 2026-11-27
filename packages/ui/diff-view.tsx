@@ -3,6 +3,7 @@
 
 import { alpha, colors, isDark, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
 import { Check, Undo2, type IconNode } from "lucide";
+import type { StyleProp, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 import {
   type DiffViewProps as BaseDiffViewProps,
@@ -128,6 +129,12 @@ export function DiffHunkActions(props: {
   tone?: Live<Tone>;
   onRevert: () => void;
   onKeep: () => void;
+  /** Tailwind classes on the action row. The row's look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the action row. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the row's look. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 }) {
   // On a backing of the row's own color (`tone`: the change's first row, an
   // added or a deleted line as `diffViewStyles` tints them; the card's
@@ -141,7 +148,9 @@ export function DiffHunkActions(props: {
   };
   return (
     <View
-      style={
+      class={props.class}
+      classList={props.classList}
+      style={[
         terminal
           ? { flexDirection: "row", gap: 4 }
           : {
@@ -153,8 +162,9 @@ export function DiffHunkActions(props: {
               paddingRight: 4 + diffPad,
               marginRight: -diffPad,
               backgroundImage: `linear-gradient(90deg, ${alpha(backing(), 0)} 0%, ${backing()} 12px)`,
-            }
-      }
+            },
+        props.style ?? null,
+      ]}
     >
       <HunkAction
         variant="secondary"

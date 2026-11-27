@@ -14,7 +14,7 @@ import {
 import { edgeClass, fieldLook as fieldWellLook, fieldSize } from "./input";
 import { fieldCornerClass, fieldDrawn, fieldEdgeClass } from "./lib/field-look";
 import { Icon } from "./lib/icons";
-import { type Live } from "./lib/utils";
+import { joinClass, type Live } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -182,8 +182,6 @@ export function NumberInput(props: NumberInputProps) {
   const width = pointer ? lanes.desktop : lanes.touch;
   const glyphSize = pointer ? 14 : 16;
   const buttons = numberInputSteps(kind, width, glyphSize);
-  const cls = () =>
-    look.class ? (props.class ? `${look.class} ${props.class}` : look.class) : props.class;
   return (
     <BaseNumberInput
       {...rest}
@@ -195,7 +193,7 @@ export function NumberInput(props: NumberInputProps) {
         focused.set(false);
         props.onBlur?.();
       }}
-      class={cls()}
+      class={joinClass(look.class, props.class)}
       style={[look.style ?? null, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       focusWithinStyle={[look.focusWithinStyle ?? null, props.focusWithinStyle ?? null]}

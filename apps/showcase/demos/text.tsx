@@ -1,4 +1,4 @@
-import { alpha, colors, rounded, tints, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, rounded, tints, shape, font } from "@shadcn-nsh/theme";
 // Text: the official gallery's Text scene (`references/nsh/examples/gallery/demos/TextDemo.tsx`):
 // spans and links, inline views, fonts and decorations, truncation, CJK, right-to-left and
 // alignment. `Text` is `nsh`'s primitive, kept as one; the cards, the like pill and the photo
@@ -42,7 +42,7 @@ function Specimen(props: { label: string; code?: string; first?: boolean; childr
               numberOfLines: 1,
               fontSize: 12,
               color: colors.faint,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
             }}
           >
             {props.code}
@@ -88,7 +88,7 @@ function Links() {
         {"Run "}
         <Text
           style={{
-            fontFamily: "monospace",
+            fontFamily: font.mono,
             backgroundColor: colors.surface,
             borderRadius: 4,
             paddingHorizontal: 4,

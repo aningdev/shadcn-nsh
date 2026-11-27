@@ -2,7 +2,7 @@
 // trailing control, the one-line event log the official scenes end on, a tooltip with a
 // shortcut, and the glyph table the tool demos draw from Lucide's grid. Colors come from the
 // theme only, never a literal.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, font } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Text, View } from "nsh";
 
@@ -51,7 +51,7 @@ export function LastEvent(props: { value: string | null; hint: string }) {
       when={props.value}
       else={<Text style={{ fontSize: 12, color: colors.faint }}>{props.hint}</Text>}
     >
-      <Text style={{ fontSize: 12, fontFamily: "monospace", color: colors.foreground }}>
+      <Text style={{ fontSize: 12, fontFamily: font.mono, color: colors.foreground }}>
         {props.value}
       </Text>
     </If>

@@ -8,7 +8,7 @@ import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base"
 
 import { Button, buttonSizes, type ButtonProps, type ButtonSize } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./input";
-import { AsText, type Live, read } from "./lib/utils";
+import { AsText, joinClass, type Live, read } from "./lib/utils";
 
 /** Options of `inputGroupLook`. */
 export interface InputGroupLookOptions {
@@ -201,7 +201,7 @@ export function InputGroup(props: InputGroupProps) {
       <View
         role="group"
         {...rest}
-        class={props.class ? `${look.class} ${props.class}` : look.class}
+        class={joinClass(look.class, props.class)}
         style={[look.style, props.style ?? null]}
         disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
       >

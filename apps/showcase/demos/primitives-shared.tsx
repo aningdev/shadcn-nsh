@@ -1,4 +1,4 @@
-import { colors, type Tone, toneColor } from "@shadcn-nsh/theme";
+import { colors, type Tone, toneColor, font } from "@shadcn-nsh/theme";
 // Shared pieces of the primitive demos (Text, Image, Scroll, List, WebView, Video): the gallery's
 // small readouts — a figure, a meter, an API line — and the settings row its scroll and list demos
 // put under a control. They are demo chrome, not components: the library's own parts do the work.
@@ -49,9 +49,7 @@ export function Meter(props: { value: number; tone?: Tone }) {
 /** The APIs a section shows, as code. */
 export function Api(props: { names: string }) {
   return (
-    <Text style={{ fontSize: 12, color: colors.faint, fontFamily: "monospace" }}>
-      {props.names}
-    </Text>
+    <Text style={{ fontSize: 12, color: colors.faint, fontFamily: font.mono }}>{props.names}</Text>
   );
 }
 
@@ -95,7 +93,7 @@ export function SwitchRow(props: {
       <View style={{ flex: 1, gap: 2 }}>
         <Text style={{ fontSize: 15, color: colors.foreground }}>{props.label}</Text>
         <If when={props.code !== undefined}>
-          <Text style={{ fontSize: 12, color: colors.faint, fontFamily: "monospace" }}>
+          <Text style={{ fontSize: 12, color: colors.faint, fontFamily: font.mono }}>
             {props.code}
           </Text>
         </If>

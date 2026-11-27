@@ -66,7 +66,7 @@ import {
   type Slot,
 } from "./lib/state";
 import { narrowWindow } from "./lib/surface";
-import { type Live, read } from "./lib/utils";
+import { joinClass, type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -161,19 +161,34 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
 const toggleSide = 24;
 
 /** A combobox's toggle (`triggerButton`): the chevron in a square that lights under the pointer. */
-export function ComboToggle(props: { open: boolean; id?: string; label?: string }) {
+export function ComboToggle(props: {
+  open: boolean;
+  id?: string;
+  label?: string;
+  /** Tailwind classes on the square. The look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the square. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the square's look. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
   return (
     <View
       testID={props.id}
       accessibilityLabel={props.label}
-      style={{
-        width: toggleSide,
-        height: toggleSide,
-        alignItems: "center",
-        justifyContent: "center",
-        // A step inside a control's corners (`radius-md`).
-        ...rounded(shape.control, 1),
-      }}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        {
+          width: toggleSide,
+          height: toggleSide,
+          alignItems: "center",
+          justifyContent: "center",
+          // A step inside a control's corners (`radius-md`).
+          ...rounded(shape.control, 1),
+        },
+        props.style ?? null,
+      ]}
       hoverStyle={feedback.hoverStyle()}
     >
       <Chevron open={props.open} />
@@ -383,6 +398,10 @@ export type ComboboxChipProps = {
   lead?: JSX.Element;
   /** The remove button (default `true`). */
   showRemove?: boolean;
+  /** Tailwind classes on the chip. The look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the chip. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -403,6 +422,10 @@ export type ComboboxEmptyProps = {
 /** A section of options under `ComboboxLabel`'s name (the list's header). */
 export type ComboboxGroupProps = {
   children?: JSX.Element;
+  /** Tailwind classes on the section's box. */
+  class?: string;
+  /** Tailwind classes toggled on the section's box. */
+  classList?: Record<string, boolean | null | undefined>;
 };
 
 /** A section's name. It draws nothing itself: the list's header shows it. */
@@ -584,7 +607,11 @@ export function ComboboxChip(props: ComboboxChipProps) {
   cleanup(() => pop?.stop());
   const remove = () => ctx.change({ value: ctx.value().filter((value) => value !== props.value) });
   return (
-    <View style={[look.style, pop?.style ?? null, props.style ?? null]}>
+    <View
+      class={props.class}
+      classList={props.classList}
+      style={[look.style, pop?.style ?? null, props.style ?? null]}
+    >
       {props.lead ?? null}
       <Text style={look.textStyle}>{title}</Text>
       {showRemove ? (
@@ -670,15 +697,11 @@ export function ComboboxContent(props: ComboboxContentProps) {
             clearButtonClass={props.clearButtonClass ?? clear.clearButtonClass}
             clearButtonStyle={props.clearButtonStyle ?? clear.clearButtonStyle}
             clearButton={props.clearButton ?? clear.clearButton}
-            class={
-              look.class ? (props.class ? `${look.class} ${props.class}` : look.class) : props.class
-            }
+            class={joinClass(look.class, props.class)}
             style={[look.style, props.style ?? null]}
             hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
             focusWithinStyle={[look.focusWithinStyle, props.focusWithinStyle ?? null]}
-            inputClass={
-              props.inputClass ? `${look.inputClass} ${props.inputClass}` : look.inputClass
-            }
+            inputClass={joinClass(look.inputClass, props.inputClass)}
             inputStyle={[look.inputStyle, props.inputStyle ?? null]}
             triggerButton={triggerOf(ctx)}
             offset={props.offset ?? chrome.offset}
@@ -718,7 +741,9 @@ export function ComboboxGroup(props: ComboboxGroupProps) {
   // `ComboboxLabel`), and a real element between the provider and the array keeps the scope.
   return (
     <ComboboxGroupContext.Provider value={group}>
-      <View>{props.children}</View>
+      <View class={props.class} classList={props.classList}>
+        {props.children}
+      </View>
     </ComboboxGroupContext.Provider>
   );
 }

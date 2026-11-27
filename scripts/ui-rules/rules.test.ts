@@ -57,6 +57,44 @@ const btn = control("button");`),
     expect(rules(`/** WinUI draws "material" with "#fff" here. */`)).toEqual([]);
     expect(rules(`// the material theme's 32×4`)).toEqual([]);
   });
+
+  test("flags a font family written out, and takes the marker", () => {
+    expect(rules(`style={{ fontFamily: "monospace" }}`)).toEqual(["font-literal"]);
+    expect(rules(`style={{ fontFamily: 'ui-monospace' }}`)).toEqual(["font-literal"]);
+    expect(rules(`style={{ fontFamily: font.mono }}`)).toEqual([]);
+    expect(rules(`class="font-mono"`)).toEqual([]);
+    expect(
+      rules(
+        `// font: the fixture names the family the engine already resolved\nstyle={{ fontFamily: "monospace" }}`,
+      ),
+    ).toEqual([]);
+    expect(rules(`style={{ fontFamily: "monospace" }} // font: resolved already`)).toEqual([]);
+  });
+
+  test("flags a caller's class joined by hand", () => {
+    expect(rules("class={props.class ? `${look.class} ${props.class}` : look.class}")).toEqual([
+      "class-merge",
+    ]);
+    expect(rules("class={props.class ?? look.class}")).toEqual(["class-merge"]);
+    expect(rules("class={mine.class ?? look.titleClass}")).toEqual(["class-merge"]);
+    expect(
+      rules(
+        "cellClass={props.cellClass ? `${look.cellClass} ${props.cellClass}` : look.cellClass}",
+      ),
+    ).toEqual(["class-merge"]);
+    expect(rules("class={\n  props.class\n    ? `${own} ${props.class}`\n    : own\n}")).toEqual([
+      "class-merge",
+    ]);
+  });
+
+  test("leaves joinClass, a bare pass-through, and a different prop", () => {
+    expect(rules("class={joinClass(look.class, props.class)}")).toEqual([]);
+    expect(rules("class={props.class}")).toEqual([]);
+    expect(rules("const name = props.class?.trim();")).toEqual([]);
+    expect(rules("itemClass={props.itemClass ?? calendarLook.itemClass}")).toEqual([]);
+    expect(rules("clearButtonClass={props.clearButtonClass ?? look.clear}")).toEqual([]);
+    expect(rules("classList={props.classList}")).toEqual([]);
+  });
 });
 
 describe("import direction", () => {

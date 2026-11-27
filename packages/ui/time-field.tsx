@@ -6,6 +6,7 @@ import { TimeField as BaseTimeField, type TimeFieldProps as BaseTimeFieldProps }
 
 import { calendarLook, TimeSegment } from "./calendar";
 import { timeFieldLook } from "./input";
+import { joinClass } from "./lib/utils";
 
 export { timeFieldClass, timeFieldLook } from "./input";
 
@@ -34,12 +35,10 @@ export function TimeField(props: TimeFieldProps) {
     "renderSegment",
   ]);
   const look = timeFieldLook({ disabled: () => !!props.disabled });
-  const cls = () =>
-    look.class ? (props.class ? `${look.class} ${props.class}` : look.class) : props.class;
   return (
     <BaseTimeField
       {...rest}
-      class={cls()}
+      class={joinClass(look.class, props.class)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       focusWithinStyle={[look.focusWithinStyle, props.focusWithinStyle ?? null]}

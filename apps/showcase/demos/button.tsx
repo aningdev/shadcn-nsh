@@ -16,6 +16,7 @@ import {
   shape,
   terminal,
   tints,
+  font,
 } from "@shadcn-nsh/theme";
 import {
   ArrowUp,
@@ -723,7 +724,7 @@ function CopyCard(props: Ctx) {
           numberOfLines: 1,
           fontSize: pointer ? 12 : 14,
           color: colors.foreground,
-          fontFamily: "monospace",
+          fontFamily: font.mono,
         }}
       >
         {props.text}

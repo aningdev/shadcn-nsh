@@ -1,4 +1,4 @@
-import { colors } from "@shadcn-nsh/theme";
+import { colors, font } from "@shadcn-nsh/theme";
 // The reference of `text-view.tsx`: the same scenes with `textViewLinkClasses` on `nsh/base`'s
 // TextView, the way the official examples (`references/nsh/website/demos/text-view.tsx`,
 // `el-text-selection.tsx`) write it. It differs from the component page only in the parts it
@@ -227,7 +227,7 @@ function App() {
                   />
                   <Text
                     style={{
-                      fontFamily: "monospace",
+                      fontFamily: font.mono,
                       fontSize: 13,
                       lineHeight: 16,
                       color: ui().text,

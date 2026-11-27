@@ -8,6 +8,7 @@ import { platform, split, Text, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
 import { Icon } from "./lib/icons";
+import { joinClass } from "./lib/utils";
 
 const pointer = platform.desktop;
 
@@ -151,7 +152,7 @@ export function Link(props: LinkProps) {
   return (
     <BaseLink
       {...rest}
-      class={props.class ? `${look().class} ${props.class}` : look().class}
+      class={joinClass(look().class, props.class)}
       focusVisibleStyle={[look().focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
       {(() => {

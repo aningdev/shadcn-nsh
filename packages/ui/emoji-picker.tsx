@@ -18,6 +18,7 @@ import {
   Utensils,
   Volleyball,
 } from "lucide";
+import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 import { platform, signal, Text, View } from "nsh";
 import {
   EmojiPicker,
@@ -32,6 +33,7 @@ import {
 } from "nsh/base";
 
 import { Icon } from "./lib/icons";
+import { joinClass } from "./lib/utils";
 
 /**
  * The groups, their names and their tabs' icons; in the terminal, which draws no icons, an emoji of
@@ -85,14 +87,27 @@ export const emojiPickerClasses = {
 };
 
 /** A group's heading: quiet semibold, as Slack's. */
-export function EmojiHeading(props: { group: EmojiGroup }) {
+export function EmojiHeading(props: {
+  group: EmojiGroup;
+  /** Tailwind classes on the heading. */
+  class?: string;
+  /** Tailwind classes toggled on the heading. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the heading. `style` wins over `class`. */
+  style?: StyleProp<TextStyle>;
+}) {
   return (
     <Text
-      style={{
-        fontSize: platform.desktop ? 11.5 : 13,
-        fontWeight: font.weight("title"),
-        color: colors.mutedForeground,
-      }}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        {
+          fontSize: platform.desktop ? 11.5 : 13,
+          fontWeight: font.weight("title"),
+          color: colors.mutedForeground,
+        },
+        props.style ?? null,
+      ]}
     >
       {props.group.label}
     </Text>
@@ -104,10 +119,21 @@ export function EmojiTabs(props: {
   group: string;
   groups: typeof emojiGroups;
   onPress: (id: EmojiGroupId) => void;
+  /** Tailwind classes on the tab row, after its own. */
+  class?: string;
+  /** Tailwind classes toggled on the tab row. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the tab row. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 }) {
   return (
     <Tabs
-      class={`flex-row justify-between ${platform.desktop ? "mx-2 mt-1.5 h-9 items-start" : "border-border mx-1 h-12 items-end border-t"}`}
+      class={joinClass(
+        `flex-row justify-between ${platform.desktop ? "mx-2 mt-1.5 h-9 items-start" : "border-border mx-1 h-12 items-end border-t"}`,
+        props.class,
+      )}
+      classList={props.classList}
+      style={props.style}
       indicatorClass={
         platform.desktop
           ? "bottom-0 mx-2 h-0.5 rounded-full bg-foreground"
@@ -144,26 +170,41 @@ export function EmojiTabs(props: {
 export function EmojiTones(props: {
   tone: EmojiSkinTone;
   onChange: (tone: EmojiSkinTone) => void;
+  /** Tailwind classes on the root (the hand while closed, the row while open), after its own. */
+  class?: string;
+  /** Tailwind classes toggled on that root. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over that root. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 }) {
   const open = signal(false);
   const current = () => tones.find((t) => t.tone === props.tone) ?? tones[0];
   // One hand: the chosen one sits on the page's fill, cut out of the panel — `selectedStyle`,
   // the same state it announces (`accessibilityState.selected`).
-  const hand = (t: (typeof tones)[number], onPress: () => void, selected = false) => (
+  const hand = (t: (typeof tones)[number], onPress: () => void, selected = false, root = false) => (
     <View
       role="button"
       accessibilityLabel={t.label}
       accessibilityState={{ selected }}
       onPress={onPress}
-      class={`hover:bg-accent items-center justify-center rounded-(--radius-md) active:scale-90 ${platform.desktop ? "size-6" : "size-8"}`}
+      class={joinClass(
+        `hover:bg-accent items-center justify-center rounded-(--radius-md) active:scale-90 ${platform.desktop ? "size-6" : "size-8"}`,
+        root ? props.class : undefined,
+      )}
+      classList={root ? props.classList : undefined}
+      style={root ? props.style : undefined}
       selectedStyle={{ backgroundColor: colors.background }}
     >
       <Text style={{ fontSize: platform.desktop ? 15 : 19 }}>{t.hand}</Text>
     </View>
   );
   return (
-    <If when={open()} else={hand(current(), () => open.set(true))}>
-      <View style={{ flexDirection: "row", gap: 1 }}>
+    <If when={open()} else={hand(current(), () => open.set(true), false, true)}>
+      <View
+        class={props.class}
+        classList={props.classList}
+        style={[{ flexDirection: "row", gap: 1 }, props.style ?? null]}
+      >
         {tones.map((t) =>
           hand(
             t,
@@ -183,9 +224,25 @@ export function EmojiTones(props: {
 const capitalized = (s: string) => (s ? s[0].toLocaleUpperCase() + s.slice(1) : s);
 
 /** The emoji under the pointer or the keys, named; a hint while none is. */
-export function EmojiPreview(props: { entry: EmojiEntry | null; hint: string }) {
+export function EmojiPreview(props: {
+  entry: EmojiEntry | null;
+  hint: string;
+  /** Tailwind classes on the preview, after its own. */
+  class?: string;
+  /** Tailwind classes toggled on the preview. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the preview. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
   return (
-    <View class="border-border h-12 flex-row items-center gap-2.5 border-t px-3">
+    <View
+      class={joinClass(
+        "border-border h-12 flex-row items-center gap-2.5 border-t px-3",
+        props.class,
+      )}
+      classList={props.classList}
+      style={props.style}
+    >
       <If
         when={props.entry}
         else={<Text style={{ fontSize: 12, color: colors.faint }}>{props.hint}</Text>}
@@ -225,7 +282,12 @@ export function EmojiPanel(props: {
   onCancel?: () => void;
   recent?: string[];
   fill?: boolean;
+  /** Tailwind classes on the picker, after its size. */
   class?: string;
+  /** Tailwind classes toggled on the picker. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the picker. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
   /** The id UI tests find the picker by. */
   testID?: string;
   /** What screen readers call the grid and its search field (default "Emoji"). */
@@ -248,10 +310,12 @@ export function EmojiPanel(props: {
     <EmojiPicker
       ref={(r) => (picker = r)}
       // In the terminal as wide as its grid: twelve cells of three columns and the rows' padding.
-      class={
-        props.class ??
-        (props.fill ? "flex-1" : terminal ? "h-[392px] w-[304px]" : "h-[392px] w-[342px]")
-      }
+      class={joinClass(
+        props.fill ? "flex-1" : terminal ? "h-[392px] w-[304px]" : "h-[392px] w-[342px]",
+        props.class,
+      )}
+      classList={props.classList}
+      style={props.style}
       recent={props.recent ?? []}
       skinTone={tone()}
       groupLabels={emojiGroupLabels}

@@ -3,7 +3,7 @@
 // animation and a hiding header. The library has no motion API for a scene, so the motion runs
 // on `nsh` (`Animated`, `createMotion`, `LayoutAnimation`); the cards, buttons, badges and
 // segmented choices are this library's.
-import { feedback, surface, alpha, colors, isDark, tints, shape } from "@shadcn-nsh/theme";
+import { feedback, surface, alpha, colors, isDark, tints, shape, font } from "@shadcn-nsh/theme";
 import { Activity, Search, Star } from "lucide";
 import type {
   AnimatedNode,
@@ -62,7 +62,7 @@ function trackWidth() {
 /** A plain label under a specimen, in code type. */
 function Code(props: { children: string }) {
   return (
-    <Text style={{ fontSize: 11, fontFamily: "monospace", color: colors.faint }}>
+    <Text style={{ fontSize: 11, fontFamily: font.mono, color: colors.faint }}>
       {props.children}
     </Text>
   );
@@ -282,7 +282,7 @@ function PresetTile(props: { name: MotionName; tone: string; onPlay: (status: st
           style={{
             numberOfLines: 1,
             fontSize: 12,
-            fontFamily: "monospace",
+            fontFamily: font.mono,
             color: looping() ? colors.foreground : colors.mutedForeground,
           }}
         >
@@ -629,7 +629,7 @@ function Keyframes() {
           <Text
             style={{
               fontSize: 11,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               color: colors.faint,
               fontVariant: ["tabular-nums"],
             }}
@@ -811,7 +811,7 @@ function Aurora() {
               borderColor: alpha(colors.foreground, 0.12),
             }}
           >
-            <Text style={{ fontSize: 11, fontFamily: "monospace", color: colors.foreground }}>
+            <Text style={{ fontSize: 11, fontFamily: font.mono, color: colors.foreground }}>
               4 × createMotion
             </Text>
           </View>
@@ -1578,7 +1578,7 @@ function HidingHeader() {
           <Text style={{ flex: 1, fontSize: 15, fontWeight: "600", color: colors.foreground }}>
             Search
           </Text>
-          <Text style={{ fontSize: 12, fontFamily: "monospace", color: colors.faint }}>
+          <Text style={{ fontSize: 12, fontFamily: font.mono, color: colors.faint }}>
             diffClamp(0, {H})
           </Text>
         </View>
@@ -1654,7 +1654,7 @@ function BoundedDrag() {
           }}
         />
       </View>
-      <Text style={{ fontSize: 12, fontFamily: "monospace", color: colors.faint }}>
+      <Text style={{ fontSize: 12, fontFamily: font.mono, color: colors.faint }}>
         drag.diffClamp(0, max)
       </Text>
     </Scene>

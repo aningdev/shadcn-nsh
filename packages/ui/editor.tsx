@@ -1,7 +1,7 @@
 // Editor: `editorClasses`, `editorFrame`, the `Editor` that wears them and the `EditorFindBar`
 // that finds in it.
 
-import { colors, control, surface } from "@shadcn-nsh/theme";
+import { colors, control, surface, font } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import {
   cleanup,
@@ -149,6 +149,8 @@ export type EditorFindBarProps = {
   onClose?: () => void;
   /** The bar's own classes, after `popupSurface`'s. */
   class?: string;
+  /** Tailwind classes toggled on the bar. They pass through with the other view props. */
+  classList?: Record<string, boolean | null | undefined>;
   /** Over the bar's look: its width, and where it sits. */
   style?: StyleProp<ViewStyle>;
 };
@@ -217,7 +219,7 @@ export function EditorFindBar(props: EditorFindBarProps) {
             style={{
               numberOfLines: 1,
               paddingHorizontal: 4,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               fontSize: 11,
               color: colors.mutedForeground,
               fontVariant: ["tabular-nums"],

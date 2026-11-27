@@ -72,6 +72,8 @@ export type ToolbarButtonProps = {
   foldable?: boolean;
   /** Classes for the box the tool stands in (see `style`). */
   class?: string;
+  /** Tailwind classes toggled on that box. */
+  classList?: Record<string, boolean | null | undefined>;
   /** The box the tool stands in, after the bar's own (`style` wins). */
   style?: StyleProp<ViewStyle>;
   /** The tool itself (`Button`, `Toggle`, `Link`, or a `Menu` / `Popover` trigger). */
@@ -594,6 +596,7 @@ export function ToolbarButton(props: ToolbarButtonProps) {
       <If when={!isFolded()}>
         <View
           class={props.class}
+          classList={props.classList}
           style={[
             { flexDirection: bar.vertical ? "column" : "row", alignItems: "center" },
             props.style ?? null,

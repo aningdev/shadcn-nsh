@@ -1,4 +1,4 @@
-import { colors } from "@shadcn-nsh/theme";
+import { colors, font } from "@shadcn-nsh/theme";
 // The official text-view scenes: the website's reply, streamed again a few characters at a time
 // (`references/nsh/website/demos/text-view.tsx`), and a card that is one selection across its
 // texts with what was pasted back (`el-text-selection.tsx`), with this library's `TextView`.
@@ -217,7 +217,7 @@ function App() {
                   />
                   <Text
                     style={{
-                      fontFamily: "monospace",
+                      fontFamily: font.mono,
                       fontSize: 13,
                       lineHeight: 16,
                       color: ui().text,

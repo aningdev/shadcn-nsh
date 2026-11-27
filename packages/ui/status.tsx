@@ -2,6 +2,7 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { colors, terminal, toneColor, type Tone, font } from "@shadcn-nsh/theme";
+import type { StyleProp, ViewStyle } from "nsh";
 import { Text, View } from "nsh";
 
 import { type Live, read } from "./lib/utils";
@@ -17,6 +18,12 @@ export type StatusProps = {
   label: string;
   /** The dot's and the word's tone: the text's quiet colors by default; a function is read where they are drawn. */
   tone?: Live<Tone>;
+  /** Tailwind classes on the row, after its look. */
+  class?: string;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the row. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 };
 
 /** A state in a list row or a header, quieter than a `Badge`: a round dot
@@ -31,7 +38,11 @@ export function Status(props: StatusProps) {
     return tone != null && tone !== "neutral" ? toneColor(tone) : undefined;
   };
   return (
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+    <View
+      class={props.class}
+      classList={props.classList}
+      style={[{ flexDirection: "row", alignItems: "center", gap: 6 }, props.style ?? null]}
+    >
       <If when={!terminal}>
         <View
           style={{

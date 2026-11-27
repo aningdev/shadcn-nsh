@@ -85,7 +85,7 @@ export function TableHeader(props: TableHeaderProps) {
 /** The body group. */
 export function TableBody(props: TableBodyProps) {
   const [, rest] = split(props, ["class"]);
-  return <BaseTableBody {...rest} class={props.class ?? undefined} />;
+  return <BaseTableBody {...rest} class={joinClass(undefined, props.class)} />;
 }
 
 /** The footer band. */

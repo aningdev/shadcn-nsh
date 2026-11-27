@@ -12,7 +12,7 @@ import {
 
 import { Button, type ButtonVariant } from "./button";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
-import { AsText } from "./lib/utils";
+import { AsText, joinClass } from "./lib/utils";
 
 /** Options of `tooltipLook`. */
 export interface TooltipLookOptions {
@@ -167,7 +167,7 @@ function Bubble(props: TooltipContentProps) {
     <BaseTooltip
       {...surface("inverse").platformProps}
       {...rest}
-      class={props.class ? `${look.class} ${props.class}` : look.class}
+      class={joinClass(look.class, props.class)}
       style={[look.style, props.style ?? null]}
     >
       <AsText style={tooltipTextStyle()}>{props.children}</AsText>

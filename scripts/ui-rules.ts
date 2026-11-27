@@ -1,9 +1,10 @@
 /**
  * The component rules `docs/ARCHITECTURE.md` P8 and P9 state: no theme geometry picked by name
  * (`Record<Controls>`, `controls()`), no theme-name comparison, no colour literal outside a theme
- * role, no state colour written into a Tailwind class; an import that stays inside its layer; and a
- * doc comment on every export. The rules, the two markers (`// color: <why>`, `// state: <why>`) and
- * the allowlist for the two checked conventions live in `scripts/ui-rules/rules.ts`.
+ * role, no state colour written into a Tailwind class, no `fontFamily` string, no hand-written
+ * `props.class` merge; an import that stays inside its layer; and a doc comment on every export.
+ * The rules, the markers (`// color: <why>`, `// state: <why>`, `// font: <why>`) and the allowlist
+ * for the two checked conventions live in `scripts/ui-rules/rules.ts`.
  *
  *   bun scripts/ui-rules.ts
  *
@@ -35,6 +36,9 @@ const advice: Record<(typeof problems)[number]["rule"], string> = {
   colour: "read a theme role (`colors.*`, `surface()`), or mark the line `// color: <why>`",
   state:
     "use `feedback.hoverStyle` / `feedback.press` / `feedback.hovered()`, or mark the line `// state: <why>`",
+  "font-literal":
+    "read `font.mono` / `font.sans` from `@shadcn-nsh/theme`, or a `font-mono` / `font-sans` class, or mark the line `// font: <why>`",
+  "class-merge": "append with `joinClass(own, props.class)` so the caller's class comes last",
   layer:
     "import inside the layer: a relative path in `packages/ui` (never a component from `lib/`), " +
     "`nsh` / `nsh/base`, `@shadcn-nsh/theme` itself, or `lucide`",
@@ -70,5 +74,6 @@ if (problems.length > 0 || stale.length > 0) {
 }
 console.log(
   "ui rules: OK — no theme preset or name in a component, colours from theme roles or marked " +
-    "`// color:`, imports inside their layer, every export documented",
+    "`// color:`, fonts from `font.sans` / `font.mono`, classes joined with `joinClass`, " +
+    "imports inside their layer, every export documented",
 );

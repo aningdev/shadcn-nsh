@@ -49,7 +49,7 @@ export function kbdLook(): KbdLook {
         fontSize: terminal ? 14 : 12,
         fontWeight: font.weight("label"),
         color: colors.mutedForeground,
-        ...(terminal ? { fontFamily: "monospace" } : {}),
+        ...(terminal ? { fontFamily: font.mono } : {}),
         numberOfLines: 1,
       };
     },

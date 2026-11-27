@@ -174,6 +174,8 @@ export function popInStyles(
 export function PopIn(props: {
   side?: PopupSide;
   class?: string;
+  /** Tailwind classes toggled on the surface. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
   children: JSX.Element;
 }) {
@@ -197,6 +199,7 @@ export function PopIn(props: {
                 maxSampleOffset={overlay.effect.maxSampleOffset}
                 {...overlay.platformProps}
                 class={props.class}
+                classList={props.classList}
                 style={style}
               >
                 {kids}
@@ -205,7 +208,12 @@ export function PopIn(props: {
           }
           if (overlay.effect.source.includes("sample_backdrop")) {
             return (
-              <View {...overlay.platformProps} class={props.class} style={style}>
+              <View
+                {...overlay.platformProps}
+                class={props.class}
+                classList={props.classList}
+                style={style}
+              >
                 <ShaderEffect
                   source={overlay.effect.source}
                   uniforms={overlay.effect.uniforms}
@@ -229,6 +237,7 @@ export function PopIn(props: {
               uniforms={overlay.effect.uniforms}
               {...overlay.platformProps}
               class={props.class}
+              classList={props.classList}
               style={style}
             >
               {kids}
@@ -236,7 +245,12 @@ export function PopIn(props: {
           );
         }
         return (
-          <View {...overlay.platformProps} class={props.class} style={style}>
+          <View
+            {...overlay.platformProps}
+            class={props.class}
+            classList={props.classList}
+            style={style}
+          >
             {kids}
           </View>
         );

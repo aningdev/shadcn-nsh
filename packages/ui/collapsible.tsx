@@ -18,6 +18,7 @@ import {
 } from "./accordion";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
 import { RowDivider, RowLabel } from "./lib/surface";
+import { joinClass } from "./lib/utils";
 
 /** Why a collapsible opened or closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type CollapsibleOpenChangeReason = OpenChangeReason;
@@ -52,7 +53,10 @@ export type CollapsibleTriggerProps = {
    */
   chevron?: "along" | "down";
   disabled?: boolean;
+  /** Tailwind classes on the row, after the disclosure look. */
   class?: string | null;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
   hoverStyle?: StyleProp<ViewStyle>;
   activeStyle?: StyleProp<ViewStyle>;
@@ -107,7 +111,8 @@ export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
       role="button"
       accessibilityLabel={props.accessibilityLabel ?? undefined}
       accessibilityState={{ expanded: ctx.open(), disabled }}
-      class={props.class ? `${look.class} ${props.class}` : look.class}
+      class={joinClass(look.class, props.class)}
+      classList={props.classList}
       onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}

@@ -222,6 +222,10 @@ export interface PickerProps {
   chevron?: boolean;
   /** `pickerLook`'s `variant`: the field's well (a select's, a date picker's: the default) or an outline button. */
   variant?: PickerVariant;
+  /** Tailwind classes on the trigger. The look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the trigger. */
+  classList?: Record<string, boolean | null | undefined>;
   /** Its own style, over its look: where the app places it. */
   style?: StyleProp<ViewStyle>;
   /** The id UI tests find the trigger by. */
@@ -255,6 +259,8 @@ export function Picker(props: PickerProps) {
         variant: props.variant,
         style: () => props.style ?? {},
       })}
+      class={props.class}
+      classList={props.classList}
     >
       <If when={props.icon && !terminal}>
         <Icon icon={props.icon!} size={triggerIcon} tint={colors.mutedForeground} />

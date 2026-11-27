@@ -1,7 +1,7 @@
 // The reference of `rich-editor.tsx`: the same scene on `nsh/base`'s RichEditor, the way the official
 // example (`references/nsh/website/demos/el-rich-editor.tsx`) writes it, with
 // `richEditorClasses` spread on it. It differs from the component page only in the parts it names.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, font } from "@shadcn-nsh/theme";
 import { Check, ExternalLink, Pencil, Undo2, Unlink, X } from "lucide";
 import { mount, openUrl, signal, Text, type TextStyle, View } from "nsh";
 import { RichEditor } from "nsh/base";
@@ -341,7 +341,7 @@ function App() {
         inspector={
           <>
             <Panel title="markdown">
-              <Text style={{ fontSize: 12, fontFamily: "monospace", color: colors.foreground }}>
+              <Text style={{ fontSize: 12, fontFamily: font.mono, color: colors.foreground }}>
                 {markdown()}
               </Text>
             </Panel>
@@ -454,7 +454,7 @@ function App() {
               {control(
                 "</>",
                 "Inline code",
-                { fontSize: 11, fontFamily: "monospace" },
+                { fontSize: 11, fontFamily: font.mono },
                 () => notesOn("code"),
                 command("toggleCode"),
               )}
