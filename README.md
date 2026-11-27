@@ -68,14 +68,13 @@ Each release of this library tracks one NSH CLI version; installing a newer CLI 
 Bun and the NSH CLI (installed, never built), then:
 
 ```sh
-git submodule update --init --recursive
 bun install
-bun run nsh:bootstrap   # checks the CLI and references/nsh against the baseline, writes each .nsh
+bun run prepare:types   # nsh check for the gallery, demos and showcase; writes each .nsh
 bun run dev:docs        # the docs site
 bun run check           # what CI runs, in one command
 ```
 
-[`CONTRIBUTING.md`](CONTRIBUTING.md) has the full setup, the checks a change must pass and how to port a component.
+The NSH CLI version this repo expects is `engines.nsh` in `package.json`. [`CONTRIBUTING.md`](CONTRIBUTING.md) has the full setup and the checks a change must pass.
 
 ## Layout
 
@@ -83,11 +82,9 @@ bun run check           # what CI runs, in one command
 | ---------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `packages/theme`             | `@shadcn-nsh/theme`   | `theme.json`, `semantics.json`, `{light,dark}.tokens.json`, `DESIGN.md`, `theme.ts` — base tokens + semantic layer (ours; `oklch()`); `themes/<name>/` is another theme's data, shipped as its `theme-<name>` item |
 | `packages/ui`                | `@shadcn-nsh/ui`      | one file per component: a look + shell (files that started upstream carry a credit line)                                                                                                                           |
-| `apps/website/demos`         | —                     | acceptance demos, reference pages, `port:render`                                                                                                                                                                   |
+| `apps/website/demos`         | —                     | acceptance demos and the demo adapter in `stage.tsx`                                                                                                                                                               |
 | `apps/website/content/docs`  | —                     | docs pages (`/docs/…`), rendered by `src/routes/docs/$.tsx`                                                                                                                                                        |
 | `apps/gallery`               | `@shadcn-nsh/gallery` | native behavior tests and smoke pages                                                                                                                                                                              |
+| `apps/showcase`              | —                     | the running gallery shell, embedded on the docs home                                                                                                                                                               |
 | `packages/cli`               | `shadcn-nsh` (npm)    | `init` / `add` / `list` / `view` / `diff` / `build` / `serve`                                                                                                                                                      |
 | `registry.json` → `public/r` | —                     | registry source → committed HTTP artifacts                                                                                                                                                                         |
-| `scripts/port`               | —                     | `port:new` / `port:vendor` / `port:check` / `port:review` / `port:render` / `port:bump`                                                                                                                            |
-| `port-map.json`              | —                     | where every upstream file and declaration goes                                                                                                                                                                     |
-| `references/`                | —                     | read-only submodules: the upstream baseline, the shadcn reference                                                                                                                                                  |

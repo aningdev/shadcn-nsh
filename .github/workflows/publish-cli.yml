@@ -1,7 +1,7 @@
 name: Publish shadcn-nsh CLI
 
 # A release is a `v*` tag on a commit whose `packages/cli/package.json` has that version
-# (docs/release.md). The CLI reads the registry at its own tag, so the tag is what ships.
+# (CONTRIBUTING.md, 发版). The CLI reads the registry at its own tag, so the tag is what ships.
 # A manual run only rehearses: it packs and runs `npm publish --dry-run`.
 on:
   push:
@@ -17,12 +17,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # The same gate as a pull request, without the render check: branch protection (strict, linear)
-  # means the tagged commit is the tree the release pull request already rendered.
+  # The same gate as a pull request. Branch protection means the tagged commit is the
+  # tree the release pull request already checked.
   check:
     uses: ./.github/workflows/check.yml
-    with:
-      render: false
 
   publish:
     needs: check

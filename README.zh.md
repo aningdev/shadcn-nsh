@@ -68,14 +68,13 @@ npx shadcn-nsh add theme-apple                    # 多带一套，运行时切�
 需要 Bun 与 NSH CLI（只安装，不编译），然后：
 
 ```sh
-git submodule update --init --recursive
 bun install
-bun run nsh:bootstrap   # 校验 CLI 与 references/nsh 在基线，生成各 .nsh
+bun run prepare:types   # gallery、演示、showcase 的 nsh check，并生成各 .nsh
 bun run dev:docs        # 文档站
 bun run check           # CI 跑的那一串
 ```
 
-完整环境、一次改动要过的检查、怎么移植一个组件，见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
+NSH CLI 的版本见根 `package.json` 的 `engines.nsh`。完整环境与一次改动要过的检查见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
 
 ## 目录
 
@@ -83,11 +82,9 @@ bun run check           # CI 跑的那一串
 | ---------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/theme`             | `@shadcn-nsh/theme`   | `theme.json`、`semantics.json`、`{light,dark}.tokens.json`、`DESIGN.md`、`theme.ts` —— 基础 token 与语义层（本库所有，oklch）；`themes/<name>/` 是另一套主题的数据，作为它的 `theme-<name>` 条目发布 |
 | `packages/ui`                | `@shadcn-nsh/ui`      | 一个组件一个文件：外观 + 外壳（起源于上游的文件带致谢行）                                                                                                                                            |
-| `apps/website/demos`         | —                     | 验收演示、参照页、`port:render`                                                                                                                                                                      |
+| `apps/website/demos`         | —                     | 验收演示，以及 `stage.tsx` 里的演示适配层                                                                                                                                                            |
 | `apps/website/content/docs`  | —                     | 文档页（`/docs/…`），由 `src/routes/docs/$.tsx` 渲染                                                                                                                                                 |
 | `apps/gallery`               | `@shadcn-nsh/gallery` | 原生行为测试与冒烟页                                                                                                                                                                                 |
+| `apps/showcase`              | —                     | 可运行的 Gallery 壳，嵌在文档站首页                                                                                                                                                                  |
 | `packages/cli`               | `shadcn-nsh`（npm）   | `init` / `add` / `list` / `view` / `diff` / `build` / `serve`                                                                                                                                        |
 | `registry.json` → `public/r` | —                     | registry 源 → 提交的 HTTP 产物                                                                                                                                                                       |
-| `scripts/port`               | —                     | `port:new` / `port:vendor` / `port:check` / `port:review` / `port:render` / `port:bump`                                                                                                              |
-| `port-map.json`              | —                     | 上游每个文件与声明的去向                                                                                                                                                                             |
-| `references/`                | —                     | 只读 submodule：上游基线、shadcn 参考                                                                                                                                                                |

@@ -1,6 +1,6 @@
 /**
- * Where a component can come from, and where each official one went here: shadcn/ui's
- * `registry/bases/base/ui/<id>.tsx` and NSH's `website/elements/<id>.md`.
+ * Where a component can come from, and where each official one went here: a shadcn/ui
+ * component (https://ui.shadcn.com/docs/components) and an NSH element (https://nsh.dev/elements).
  *
  * One row per official component, named by the page's file name. `ours` lists the pages here that
  * serve it (first closest, a renamed one shows the rename), and a row with nothing serving it
@@ -8,9 +8,8 @@
  * and its `textarea` — one field, multiline. The components index, each page's header links and
  * `/docs/components/coverage` read these tables; nothing there is written by hand.
  *
- * `bun run check:pages` fails when `references/` has an official component with no row, when a row
- * names a page that does not exist, and when a row serves nothing without saying why. A `planned`
- * row starts linking the day its page lands.
+ * `bun run check:pages` fails when a row names a page that does not exist, and when a row serves
+ * nothing without saying why. A `planned` row starts linking the day its page lands.
  */
 export type OfficialStatus = "planned" | "missing" | "not-doing" | "primitive";
 
@@ -33,8 +32,7 @@ export const shadcnUrl = (id: string): string => `https://ui.shadcn.com/docs/com
 export const nshElementUrl = (id: string): string => `https://nsh.dev/elements/${id}`;
 
 /**
- * shadcn/ui's components. Every file of `references/shadcn-ui/apps/v4/registry/bases/base/ui` is
- * one row, in file order.
+ * shadcn/ui's components, one row each, in the order of that set.
  */
 export const SHADCN_UI: readonly OfficialEntry[] = [
   { id: "accordion", ours: ["accordion"] },

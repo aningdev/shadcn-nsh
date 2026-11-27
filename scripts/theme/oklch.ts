@@ -2,7 +2,7 @@
  * The color codec the theme files are written with: sRGB ⇄ OKLCH, and the canonical `oklch()`
  * text a theme value carries (`packages/theme/theme.json`, `semantics.json`,
  * `packages/theme/themes/<name>/*.json`). NSH reads `oklch()` everywhere a color is a string, next to
- * hex and `rgb()` (references/nsh/website/docs/styling.md#colors), so a theme stores its colors
+ * hex and `rgb()` (https://nsh.dev/docs/styling#colors), so a theme stores its colors
  * in one space instead of sRGB's three channels.
  *
  *   bun scripts/theme/generate-shadcn.ts     # writes themes/shadcn/* from shadcn's palette

@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 // vp fmt already respects .gitignore + .prettierignore and skips node_modules.
 // oxlint discovery also skips .gitignore matches. Only list paths that are
 // tracked (or otherwise walked) but should stay out of fmt/lint.
-const ignoreVendored = ["references/**", ".agents/**"];
+const ignoreVendored = [".agents/**"];
 // TanStack Router writes this file on every build in its own style and asks to
 // be left out of formatters; formatting it would dirty the tree after a build.
 // The compiled runtime files, per-appearance DTCG files, and per-theme DESIGN.md docs
@@ -44,12 +44,10 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
     plugins: ["eslint", "typescript", "react", "import", "promise", "node", "vitest"],
     ignorePatterns: ignoreLint,
-    // A look began as upstream text and is this library's code (`docs/ARCHITECTURE.md`); these
-    // findings are upstream's own patterns, kept as they are. Each entry names the upstream file
-    // the text came from, so a change is made against that look, not around a lint rule.
+    // A few looks keep a pattern the rule would reject. Each entry names the file, so a change
+    // is made in that look, not by turning the rule off everywhere (`docs/ARCHITECTURE.md`).
     overrides: [
-      // progress.tsx's sweep (look/meter.ts upstream): `sweep.keyframes(…)` returns the animation's
-      // promise, dropped on purpose.
+      // progress.tsx's sweep: `sweep.keyframes(…)` returns the animation's promise, dropped on purpose.
       {
         files: ["packages/ui/progress.tsx"],
         rules: { "typescript/no-floating-promises": "off" },
@@ -65,7 +63,7 @@ export default defineConfig({
         files: ["packages/ui/emoji-picker.tsx"],
         rules: { "react/immutability": "off", "react/jsx-key": "off" },
       },
-      // look/color.tsx: menus and swatches mapped without keys; a `let` timer is reassigned in `onPress`.
+      // color-picker.tsx: menus and swatches mapped without keys; a `let` timer is reassigned in `onPress`.
       {
         files: ["packages/ui/color-picker.tsx"],
         rules: { "react/immutability": "off", "react/jsx-key": "off" },

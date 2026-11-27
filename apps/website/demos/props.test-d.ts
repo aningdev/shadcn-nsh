@@ -1,5 +1,5 @@
 /**
- * P5: every shell keeps the base props it claims to pass through. A missing base prop is a
+ * Every shell keeps the base props it claims to pass through. A missing base prop is a
  * type error here, caught by `nsh check apps/website/demos`.
  *
  * Each assertion names, on purpose, the base props the shell does not carry: they are on the

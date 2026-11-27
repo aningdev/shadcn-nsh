@@ -41,4 +41,4 @@ Windows 的平台主题（`id: "winui"`，标签 WinUI 3）。`nativeTheme()` �
 
 ## 验证
 
-`bun run theme:contrast`、`bun run port:render:theme --theme winui`。不要用 `continuous` 取代 `circular`。数值以 `packages/theme/themes/winui/index.ts` 为准。契约见 [`docs/theme.md`](../../../../docs/theme.md)。
+`bun run theme:contrast`、`bun run theme:diff`。不要用 `continuous` 取代 `circular`。数值以 `packages/theme/themes/winui/index.ts` 为准。契约见 [`docs/theme.md`](../../../../docs/theme.md)。

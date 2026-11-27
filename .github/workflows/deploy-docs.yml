@@ -1,6 +1,6 @@
 name: Deploy docs
 
-# Two docs sites, one Pages site, built from the `site` branch (docs/release.md):
+# Two docs sites, one Pages site, built from the `site` branch (CONTRIBUTING.md, 发版):
 # the root is the latest `v*` tag — the docs of what `npm i shadcn-nsh` installs — and `/dev/`
 # is `main`. A `main` push rewrites only `dev/`; a `v*` tag rewrites the root and keeps `dev/`.
 #
@@ -75,8 +75,8 @@ jobs:
             echo "ref=$ref"
           } >> "$GITHUB_OUTPUT"
 
-      # A release is built from its tag's tree: that tree's toolchain (port-map.json's CLI, its
-      # lockfile, its demos) is what the release documents.
+      # A release is built from its tag's tree: that tree's CLI (`engines.nsh`), lockfile
+      # and demos are what the release documents.
       - uses: actions/checkout@v7
         with:
           # Empty for the dev docs: the push's own commit.

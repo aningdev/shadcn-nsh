@@ -7,8 +7,9 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { repo } from "../port/lib";
 import { BUILD_ROOT_THEME, tokenKind } from "./tokens";
+
+const repo = path.resolve(import.meta.dir, "../..");
 
 type Json = Record<string, unknown>;
 export type Mode = "light" | "dark";

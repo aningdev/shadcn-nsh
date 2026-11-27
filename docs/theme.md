@@ -93,11 +93,9 @@ Theme v5 的现行契约。真源是 `packages/theme/themes/<id>/index.ts`：`ns
 ```sh
 bun run tokens:build          # 导出 theme.json、DTCG、DESIGN.md
 bun run check:theme           # theme-lint：键、分档、不变量
-bun run theme:parity          # nsh-gallery 与上游外观对齐
 bun run theme:contrast        # WCAG 2 AA 与填充分离
 bun run docs:semantics        # 重写 docs/theme-values.md
 bun run theme:diff            # 与 origin/main 比解析后的值；--same 不许已有键变
-bun run port:render:theme     # 五套主题下组件页与参照页成对；--against 比改动前后
 ```
 
-只改颜色时可以不画截图：`tokens:build --check`、`check:theme`、`theme:contrast`、`theme:diff` 足够。改了尺寸、材质、状态或动效，用 `port:render:theme --only <ids>`（或 `--changed`）看受影响的页。契约（`schema.ts`、`theme.ts`、`themes/nsh-gallery/index.ts`、导出脚本）或键的增删要全量画。分层见 [`port.md`](port.md#主题改动的验收)。
+只改颜色时，`tokens:build --check`、`check:theme`、`theme:contrast`、`theme:diff` 足够。改了尺寸、材质、状态或动效，打开受影响的演示看结果。契约（`schema.ts`、`theme.ts`、`themes/nsh-gallery/index.ts`、导出脚本）或键的增删要先跑 `theme:diff`，再看每一套主题下的演示。`theme:diff` 把每个改动键分成颜色、其余值、契约（键的增删）。

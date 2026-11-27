@@ -1,20 +1,14 @@
 name: Setup NSH
 description: >-
   Install the NSH CLI with the official installer, cache `~/.nsh`, put `nsh` on
-  PATH and print its version. Nothing is compiled, here or anywhere else: the
-  project installs the CLI with `install.sh` (docs/toolchain.md).
-
-  The baseline (`port-map.json`'s `upstream.commit`) is the commit the installed
-  CLI prints, so an installed commit that differs from it is reported as a
-  warning naming `bun run port:bump`, never as a failure — the nightly moves
-  daily, and failing here would break every build until someone bumps.
+  PATH and print its version. Nothing is compiled: the project installs the CLI
+  with `install.sh`. The version is `engines.nsh` in the root package.json.
 
 inputs:
   channel:
     description: >-
-      What to install: a release tag such as `v0.5.0`, or `nightly`. Empty (the
-      default) installs `port-map.json`'s `upstream.cli`, the CLI the baseline
-      was moved to, so CI runs exactly what the code is written for.
+      What to install: a release tag such as `v0.7.2`, or `nightly`. Empty (the
+      default) installs `engines.nsh` from the root package.json.
     required: false
     default: ""
 
@@ -35,7 +29,7 @@ runs:
         NSH_CHANNEL: ${{ inputs.channel }}
       run: |
         set -euo pipefail
-        channel="${NSH_CHANNEL:-$(node -p "require('./port-map.json').upstream.cli || 'nightly'")}"
+        channel="${NSH_CHANNEL:-$(node -p "require('./package.json').engines?.nsh || 'nightly'")}"
         echo "channel=$channel" >> "$GITHUB_OUTPUT"
         if [ "$channel" = nightly ]; then echo "day=$(date -u +%Y-%m-%d)"; else echo "day=release"; fi >> "$GITHUB_OUTPUT"
 
@@ -69,30 +63,9 @@ runs:
         mkdir -p "$HOME/.local/bin"
         ln -sfn "$HOME/.nsh/bin/nsh" "$HOME/.local/bin/nsh"
         echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-        # The installer leaves the web runtime out, and `--target web` adds it on
-        # first use. `port:render` runs two pages at once, so both would add it and
-        # one would read it half unpacked; add it here, so the cache holds it too.
+        # The installer leaves the web runtime out. Add it here so the cache holds it
+        # and later jobs do not unpack it at the same time.
         [ -f "$HOME/.nsh/runtime/web/nsh-syntaxes.bin" ] || "$HOME/.nsh/bin/nsh" component add web
         version="$("$HOME/.local/bin/nsh" --version)"
         echo "version=$version" >> "$GITHUB_OUTPUT"
         printf 'nsh: %s\n' "$version"
-
-    # A warning, not a failure: the baseline follows the installed CLI, and the
-    # nightly moves on its own (docs/toolchain.md).
-    - name: Compare the installed commit with the baseline
-      shell: bash
-      run: |
-        set -euo pipefail
-        version="$(nsh --version)"
-        cli="$(printf '%s\n' "$version" | sed -n 's/.*(\([0-9a-f]\{7,\}\).*/\1/p' | head -n 1)"
-        baseline="$(node -p "require('./port-map.json').upstream.commit")"
-        if [ -z "$cli" ]; then
-          echo "::warning::the nsh CLI prints no commit ($version): the baseline is ${baseline:0:7}"
-          exit 0
-        fi
-        case "$baseline" in
-          "$cli"*) ;;
-          *)
-            echo "::warning::installed CLI $cli differs from the baseline ${baseline:0:7}: run \`bun run port:bump\` and commit the result"
-            ;;
-        esac

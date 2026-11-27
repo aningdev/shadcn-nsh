@@ -4,7 +4,7 @@ description: >-
 
 inputs:
   nsh-channel:
-    description: Passed to setup-nsh as `channel` (empty installs `port-map.json`'s `upstream.cli`).
+    description: Passed to setup-nsh as `channel` (empty installs `engines.nsh`).
     required: false
     default: ""
 
@@ -28,9 +28,7 @@ runs:
       shell: bash
       run: bun install --frozen-lockfile
 
-    # Installed with the official installer, never built; the baseline follows
-    # the installed commit, so a moved nightly is a warning, not a failure
-    # (docs/toolchain.md).
+    # Installed with the official installer, never built. The version is engines.nsh.
     - name: Setup NSH
       uses: ./.github/actions/setup-nsh
       with:

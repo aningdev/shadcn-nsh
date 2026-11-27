@@ -1,0 +1,55 @@
+// A {{id}}: the look (`{{lookFn}}`) and the `{{Id}}` that wears it.
+import type { JSX, ViewStyle } from "nsh";
+import { split } from "nsh";
+import { {{Base}} as Base{{Id}}, type {{Base}}Props as Base{{Id}}Props } from "nsh/base";
+
+/**
+ * `nsh/base`'s {{Base}} with {{id}} feedback and nothing else. Every base prop passes through; the
+ * style props go over the look's.
+ */
+export type {{Id}}Props = Omit<Base{{Id}}Props, "children"> & {
+  /** A string is the label; anything else is drawn as given. */
+  children?: string | JSX.Element;
+};
+
+/** What a {{id}} draws, in the theme's roles. */
+function {{lookFn}}(): {
+  style: ViewStyle;
+  hoverStyle: ViewStyle;
+  activeStyle: ViewStyle;
+  focusVisibleStyle: ViewStyle;
+  disabledStyle: ViewStyle;
+} {
+  return {
+    style: {},
+    hoverStyle: {},
+    activeStyle: {},
+    focusVisibleStyle: {},
+    disabledStyle: {},
+  };
+}
+
+/** A {{id}}. */
+export function {{Id}}(props: {{Id}}Props) {
+  const [, rest] = split(props, [
+    "children",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+  ]);
+  const look = {{lookFn}}();
+  return (
+    <Base{{Id}}
+      {...rest}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
+      {props.children}
+    </Base{{Id}}>
+  );
+}

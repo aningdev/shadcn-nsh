@@ -9,7 +9,6 @@ import {
   catalog,
   CatalogError,
   checkCatalog,
-  checkOverrides,
   components,
   isGeneratedCurrent,
   renderGenerated,
@@ -41,7 +40,7 @@ type Fixture = {
   index?: string;
 };
 
-/** A repo-shaped directory: the registry, every component's four files, and the index export. */
+/** A repo-shaped directory: the registry, every component's three files, and the index export. */
 function fixture({ items, files = {}, index }: Fixture): string {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "nsh-catalog-"));
   roots.push(root);
@@ -55,7 +54,6 @@ function fixture({ items, files = {}, index }: Fixture): string {
     if (item.type !== "registry:ui") continue;
     defaults[`packages/ui/${item.name}.tsx`] = "export const value = 1;\n";
     defaults[`apps/website/demos/${item.name}.tsx`] = "// demo\n";
-    defaults[`apps/website/demos/${item.name}.ref.tsx`] = "// reference\n";
     defaults[`apps/website/content/docs/components/${item.name}.md`] = "## Installation\n";
   }
   for (const [rel, text] of Object.entries({ ...defaults, ...files })) {
@@ -85,7 +83,6 @@ describe("catalog", () => {
     expect(set[0]!.item.name).toBe("beta");
     expect(set[0]!.uiFile).toBe(path.join(root, "packages/ui/beta.tsx"));
     expect(set[0]!.demo).toBe(path.join(root, "apps/website/demos/beta.tsx"));
-    expect(set[0]!.reference).toBe(path.join(root, "apps/website/demos/beta.ref.tsx"));
     expect(set[0]!.page).toBe(path.join(root, "apps/website/content/docs/components/beta.md"));
   });
 
@@ -105,17 +102,15 @@ describe("checkCatalog", () => {
     expect(checkCatalog(catalog(root))).toEqual([]);
   });
 
-  test("reports a missing file, reference page, docs page and export", () => {
+  test("reports a missing file, docs page and export", () => {
     const root = fixture({ items: [ui("alpha")], index: 'export * from "./other";\n' });
     remove(root, "apps/website/demos/alpha.tsx");
-    remove(root, "apps/website/demos/alpha.ref.tsx");
     remove(root, "apps/website/content/docs/components/alpha.md");
     remove(root, "packages/ui/alpha.tsx");
 
     const problems = checkCatalog(catalog(root));
     expect(problems).toContain("alpha: no packages/ui/alpha.tsx");
     expect(problems).toContain("alpha: no demo apps/website/demos/alpha.tsx");
-    expect(problems).toContain("alpha: no reference page apps/website/demos/alpha.ref.tsx");
     expect(problems).toContain("alpha: no docs page apps/website/content/docs/components/alpha.md");
     expect(problems).toContain('alpha: packages/ui/index.ts does not export "./alpha"');
   });
@@ -143,9 +138,16 @@ describe("checkCatalog", () => {
       files: {
         "apps/website/demos/App.tsx": "",
         "apps/website/demos/kit.tsx": "",
-        "apps/website/demos/render-cases.ts": "",
-        "apps/website/demos/alpha.test.tsx": "",
-        "apps/website/demos/baseline/shot.png": "",
+        "apps/website/demos/stage.tsx": "",
+        "apps/website/demos/photos.ts": "",
+        "apps/website/demos/palettes.ts": "",
+        "apps/website/demos/apply-palette.ts": "",
+        "apps/website/demos/avatar-data.ts": "",
+        "apps/website/demos/editor-sample.ts": "",
+        "apps/website/demos/editor-server.ts": "",
+        "apps/website/demos/props.test-d.ts": "",
+        "apps/website/demos/narrow.test.tsx": "",
+        "apps/website/demos/catalog.generated.ts": "",
         "apps/website/content/docs/components/index.astro": "",
       },
     });
@@ -158,19 +160,17 @@ describe("checkCatalog", () => {
     expect(checkCatalog(catalog(root))).toEqual([]);
   });
 
-  test("reports demos, reference pages and docs pages for no component", () => {
+  test("reports demos and docs pages for no component", () => {
     const root = fixture({
       items: [ui("alpha")],
       files: {
         "apps/website/demos/orphan.tsx": "",
-        "apps/website/demos/orphan.ref.tsx": "",
         "apps/website/content/docs/components/orphan.md": "",
       },
     });
 
     expect(checkCatalog(catalog(root)).sort()).toEqual([
       "apps/website/content/docs/components/orphan.md: docs page for no component",
-      "apps/website/demos/orphan.ref.tsx: reference page for no component",
       "apps/website/demos/orphan.tsx: demo for no component",
     ]);
   });
@@ -200,18 +200,6 @@ describe("addComponent", () => {
     const root = fixture({ items: [ui("alpha")] });
     expect(() => addComponent(catalog(root), lib("press"))).toThrow("registry:ui");
     expect(() => addComponent(catalog(root), { ...ui("beta"), files: [] })).toThrow(CatalogError);
-  });
-});
-
-describe("checkOverrides", () => {
-  test("reports an override for an id the catalog does not list", () => {
-    const root = fixture({ items: [ui("alpha")] });
-    const where = path.join("apps/website/demos", "render-cases.ts");
-
-    expect(checkOverrides(catalog(root), ["alpha"])).toEqual([]);
-    expect(checkOverrides(catalog(root), ["ghost"])).toEqual([
-      `${where}: override for no component "ghost"`,
-    ]);
   });
 });
 

@@ -1,7 +1,7 @@
 // The theme a demo draws, as the docs site chose it: the palette in this app's storage, which the
 // site's switch writes before it loads a panel again (`nsh:<nsh.json's id>:palette` in the page's
 // localStorage). A page that is not switched to anything loads no theme file and keeps the
-// build-time theme, so its first frame is the one `port:render` records.
+// build-time theme.
 //
 // Every demo imports this module before it mounts (`kit.tsx` and the pages that skip the kit), and
 // the palette is applied as the app starts. `Storage.getItem` answers a promise (an app's entries
@@ -16,8 +16,7 @@
 // The engine takes a theme up one render behind `setTheme`: a view keeps the styles it drew with
 // until the next render. So the page is shown two frames after the theme is selected, and
 // `check:palette` (the colors of the first frame a visitor can see) and `check:first-frame` (that
-// it comes within budget) hold both ends. Then the palette's id goes into `PALETTE_DRAWN_KEY`, the
-// one sign from inside the app that its theme is drawn, which the theme render check waits on.
+// it comes within budget) hold both ends.
 //
 // The theme files are imported on demand: a page that is not switched to one carries neither its
 // tokens nor its finishes. A running app cannot see a later write (the engine loads its entries
@@ -27,7 +26,7 @@ import { selectTheme } from "@shadcn-nsh/theme";
 import { Storage } from "nsh";
 
 import { paletteTheme } from "./palette-themes";
-import { PALETTES, PALETTE_DRAWN_KEY, PALETTE_KEY, type PaletteId } from "./palettes";
+import { PALETTES, PALETTE_KEY } from "./palettes";
 
 /** A document, as far as this module needs one: `#app`, the element the player draws an app into. */
 type Page = { getElementById(id: string): { style: { visibility: string } } | null };
@@ -52,10 +51,8 @@ if (app) app.style.visibility = "hidden";
 
 void start();
 
-/** Applies the palette this page was switched to, shows the page once it is drawn, and records
- * that it is. */
+/** Applies the palette this page was switched to and shows the page once it is drawn. */
 async function start() {
-  let drawn: PaletteId | null = null;
   try {
     const stored = await Storage.getItem(PALETTE_KEY);
     /** An id nothing offers is as good as none: the page keeps the build-time theme. */
@@ -63,12 +60,10 @@ async function start() {
     if (chosen) {
       selectTheme(await paletteTheme(chosen.id));
       await twoFrames();
-      drawn = chosen.id;
     }
   } finally {
     if (app) app.style.visibility = "";
   }
-  if (drawn) await Storage.setItem(PALETTE_DRAWN_KEY, drawn);
 }
 
 /** Resolves once a theme selected now is on screen: `setTheme` reaches the views one render behind

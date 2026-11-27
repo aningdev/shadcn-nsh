@@ -1,5 +1,6 @@
 /**
- * The component rules `docs/ARCHITECTURE.md` P8 and P9 state: no theme geometry picked by name
+ * The component rules in `docs/ARCHITECTURE.md` (no theme name, layered imports, documented
+ * exports): no theme geometry picked by name
  * (`Record<Controls>`, `controls()`), no theme-name comparison, no colour literal outside a theme
  * role, no state colour written into a Tailwind class, no `fontFamily` string, no hand-written
  * `props.class` merge; an import that stays inside its layer; and a doc comment on every export.
@@ -13,8 +14,9 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { repo } from "./port/lib";
 import { allowlist, violations } from "./ui-rules/rules";
+
+const repo = path.resolve(import.meta.dir, "..");
 
 const ui = path.join(repo, "packages/ui");
 
@@ -68,7 +70,7 @@ if (problems.length > 0 || stale.length > 0) {
     );
   }
   console.error(
-    `\nui rules: ${problems.length} violation(s) in packages/ui (docs/ARCHITECTURE.md P8, P9)`,
+    `\nui rules: ${problems.length} violation(s) in packages/ui (docs/ARCHITECTURE.md)`,
   );
   process.exit(1);
 }

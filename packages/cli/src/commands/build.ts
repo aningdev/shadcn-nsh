@@ -44,7 +44,7 @@ async function holdsItem(file: string, name: string): Promise<boolean> {
  * its file. `-o` may point at a directory holding other JSON (`public`, or `.` with
  * `package.json`), and no file without that shape is deleted; `index.json` never is.
  *
- * Returns 1 when an item's `registryDependencies` disagree with what its files import (P6); the
+ * Returns 1 when an item's `registryDependencies` disagree with what its files import; the
  * output is left alone then.
  */
 export async function runBuild(registryFile: string, opts: BuildOptions): Promise<number> {

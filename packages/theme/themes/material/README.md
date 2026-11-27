@@ -43,4 +43,4 @@ Android 的平台主题（`id: "material"`）。`nativeTheme()` 在 `platform.os
 
 ## 验证
 
-`bun run theme:contrast`、`bun run port:render:theme --theme material`。数值以 `packages/theme/themes/material/index.ts` 为准。契约见 [`docs/theme.md`](../../../../docs/theme.md)。
+`bun run theme:contrast`、`bun run theme:diff`。数值以 `packages/theme/themes/material/index.ts` 为准。契约见 [`docs/theme.md`](../../../../docs/theme.md)。

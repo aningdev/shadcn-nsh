@@ -42,4 +42,4 @@ iOS 与 macOS 的平台主题（`id: "apple"`）。`nativeTheme()` 在 `platform
 
 ## 验证
 
-`bun run theme:contrast`、`bun run port:render:theme --theme apple`。不要用粗边或 `circular` 取代 0.5px 连续角。数值以 `packages/theme/themes/apple/index.ts` 为准；改后跑 `bun run tokens:build`。契约见 [`docs/theme.md`](../../../../docs/theme.md)。
+`bun run theme:contrast`、`bun run theme:diff`。不要用粗边或 `circular` 取代 0.5px 连续角。数值以 `packages/theme/themes/apple/index.ts` 为准；改后跑 `bun run tokens:build`。契约见 [`docs/theme.md`](../../../../docs/theme.md)。

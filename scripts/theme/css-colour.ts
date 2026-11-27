@@ -1,7 +1,7 @@
 /**
  * A theme value as a renderer paints it (ADR 0012 §7): `var(--name)` looked up in a declaration
  * block, `color-mix(in srgb, …)` mixed in premultiplied sRGB, everything else read by
- * `oklch.ts`'s `parseColor`. `theme:parity` compares two resolutions with it; a test can too.
+ * `oklch.ts`'s `parseColor`. `theme:diff` compares two resolutions with it; a test can too.
  */
 
 import { parseColor, type Rgb } from "./oklch";

@@ -1,6 +1,6 @@
 # Gallery
 
-`packages/ui` 的原生行为测试与冒烟页，组件与文档站相同。截图比对在 `apps/website/demos`（`port:render`）。
+`packages/ui` 的原生行为测试与冒烟页，组件与文档站相同。这里读原生状态，不比像素。
 
 ```sh
 bun run dev:gallery

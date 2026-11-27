@@ -1,98 +1,126 @@
 # 参与贡献
 
-谢谢你看这个库。欢迎的事：**本库还没有的组件**（上游有）、某个控件外观或行为的修正、文档与演示的改进、报告 bug。
-
-先花十分钟读这几份，改动才不会撞上既有规则：
-
-- [`AGENTS.md`](AGENTS.md) —— 各方的角色、能做什么、不能做什么。
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) —— 目录、分层、规则 P1–P9、归属与词汇表。
-- [`docs/component-authoring.md`](docs/component-authoring.md) —— 组件代码组织与编写黄金规范。
-- [`docs/port.md`](docs/port.md) —— 加一个组件要走的路：外壳怎么写、文件头怎么写、怎么检查。
+先读 [`AGENTS.md`](AGENTS.md)、[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)、[`docs/component-authoring.md`](docs/component-authoring.md) 和 [`docs/theme.md`](docs/theme.md)。
 
 ## 环境
 
-需要 [Bun](https://bun.sh) 与 NSH CLI。NSH CLI 只用于类型检查与运行演示，**不编译 NSH**。
+本地需要 [Bun](https://bun.sh) 和已安装的 NSH CLI。参考版本是根 `package.json` 的 `engines.nsh`。CLI 只做类型检查、运行演示和测试，**不编译 NSH**，也不初始化子模块。
 
 ```sh
-git submodule update --init --recursive   # references/ 是只读参考
 bun install
-bun run nsh:bootstrap                     # 校验 CLI 与 references/nsh 在基线，生成各 .nsh 的类型
+bun run prepare:types
 ```
 
-`bun run nsh:bootstrap` 会打印安装命令；CLI 的版本跟 `port-map.json` 的 `upstream.cli` 与 `upstream.commit` 走。细节见 [`docs/toolchain.md`](docs/toolchain.md)。
+`prepare:types` 对 gallery、演示和 showcase 做 `nsh check`，并留下各应用的 `.nsh` 类型宿主。
 
 ## 常用命令
 
-| 命令                                      | 做什么                                                 |
-| ----------------------------------------- | ------------------------------------------------------ |
-| `bun run dev:docs`                        | 文档站（含组件演示）                                   |
-| `bun run dev:gallery`                     | gallery：原生行为测试的页面                            |
-| `nsh run apps/website/demos/button.tsx`   | 跑单个演示                                             |
-| `bun run port:new <id> --from <上游文件>` | 新组件脚手架（路由、外壳、演示、文档、registry）       |
-| `bun run port:new <id> --base <符号>`     | 不来自上游的自有组件（不写路由、不 vendor）            |
-| `bun run port:new <id> --view`            | 只排版上色的自有组件（画在 `View` / `Text` 上）        |
-| `bun run port:vendor <id>`                | 从上游抽取初稿（只在新增时用，不覆盖已有代码）         |
-| `bun run port:check`                      | 上游变化提醒、清单完整、CLI 不落后于基线               |
-| `bun run port:review`                     | 审阅完上游的变化后记下来                               |
-| `bun run port:render`                     | 渲染比对：组件与"look 展开在 `nsh/base` 上"的截图相同  |
-| `bun run port:render --changed`           | 同上，但只跑这次 diff 能走到的页（默认 `origin/main`） |
-| `bun run registry:build`                  | 由 `registry.json` 重建 `public/r`                     |
-| `bun run registry:serve`                  | 本地起一个 registry，试装用                            |
+| 命令                                           | 做什么                             |
+| ---------------------------------------------- | ---------------------------------- |
+| `bun run dev:docs`                             | 文档站                             |
+| `bun run dev:gallery`                          | gallery                            |
+| `bun run dev:showcase`                         | showcase                           |
+| `nsh run apps/website/demos/button.tsx`        | 跑单个演示                         |
+| `bun run new:component <id> --base <Symbol>`   | 基于 `nsh/base` 的新组件           |
+| `bun run new:component <id> --view [--family]` | 只排版上色的新组件                 |
+| `bun run check:demos`                          | 演示盖住每个声明的轴               |
+| `bun run check:narrow`                         | 320 宽首帧不溢出                   |
+| `bun run registry:build`                       | 由 `registry.json` 重建 `public/r` |
+| `bun run registry:serve`                       | 本地 registry，试装用              |
 
 ## 分支与 PR
 
-`main` 受保护：不直接推，每个改动都是一个 PR，`check` 通过后 **squash 合并**，`main` 上一个 PR 一个提交，分支合并后自动删除。合并前不要求分支追上 `main`（不用反复 "Update branch"）：每次合并后 `main` 上会再跑一遍 `check`，主题改动带来的全页主题渲染也放在这一遍（PR 上只画改动代码触及的页）；它红了就开 PR 修，不回推。
+`main` 受保护。每个改动一个 PR，`check` 通过后 squash 合并。
 
-- **先有 issue**：bug 与新组件先开 issue，PR 正文写 `Closes #N`。错字、文档小修可以直接开 PR。三个模板：**Bug report**（受影响的组件、现象、最小复现、版本）、**Feature request**（想要什么、为什么、参照）、**Task**（维护者或代理在动手前写的计划：问题与证据、改什么、完成标准、不做什么与破坏性变更）。
-- **分支名** `<type>/<短描述>`，type 与提交信息的相同：`fix/field-label-wrap`、`feat/combobox-chips`、`docs/install-tabs`。
-- **一个 PR 一件事**：一个组件家族、一个 bug。不相关的改动分开提，review 和回滚都按 PR 来。
-- **PR 标题就是合并后的提交信息**，照下面「提交信息」的格式写；分支里的提交怎么写都行，合并时会压成一个。
-- **CHANGELOG**：用的人能感知到的改动，在 `CHANGELOG.md` 的 `## Unreleased` 下加一条（Added / Changed / Fixed），写在同一个 PR 里。只改内部工具、CI、测试的不用写。根目录 `.gitattributes` 给它设了 `merge=union`：本地 rebase 时两边的条目都保留，不再起冲突（GitHub 网页上的 "Update branch" 不用它，请在本地 rebase）；顺序发版时再理。
-- **发版**也是一个 PR（`chore(release): vX.Y.Z`），合并后打标签，见 [`docs/toolchain.md`](docs/toolchain.md)。
+- bug 与新组件先开 issue，PR 正文写 `Closes #N`。错字和文档小修可以直接开 PR。
+- 分支名 `<type>/<短描述>`，与提交类型相同：`fix/field-label-wrap`、`feat/combobox-chips`。
+- 一个 PR 一件事：一个组件家族，或一个 bug。
+- PR 标题就是合并后的提交信息。
+- 用的人能感知到的改动，在同一个 PR 里写入 `CHANGELOG.md` 的 `## Unreleased`（Added / Changed / Fixed）。只改内部工具、CI、测试的不用写。
 
 ## 提 PR 前
 
-一条命令覆盖大部分：**`bun run check`**（会 `vp check --fix` 改格式，所以先提交或先看 diff）。它跑
+`bun run check` 会执行 `vp check --fix`，先看 diff。它依次跑：
 
 ```text
-vp check --fix                    格式化、lint、工具面的类型
-bun run catalog --check           演示、参照页、文档页、导出是否一致
-bun run check:theme               主题数据是否符合 docs/theme.md 契约
-bun run registry:build --check    public/r 是否与 registry.json 同步
-bun run port:check                上游变化与清单完整性
-bun run port:coverage             每个组件有没有演示、文档页、参照
-nsh check apps/website/demos      演示与 UI 的类型
-nsh check apps/gallery            gallery 的类型
-bun run check:pages               文档站的页面与链接
-bun run check:docs                文档站自身
+vp check --fix
+bun run catalog --check
+bun run tokens:build --check
+bun run check:theme
+bun run theme:contrast
+bun run docs:semantics --check
+bun run check:children
+bun run check:rtl
+bun run check:ui
+bun run registry:build --check
+bun run check:demos
+nsh check apps/website/demos
+nsh check apps/gallery
+nsh check apps/showcase
+bun run check:pages
+bun run check:docs
 ```
 
-按改动涉及的东西再补：
+按改动再补：
 
-- **改组件或演示** → `bun run port:render`，四张截图人眼看过。迭代时加 `--changed`（不知道哪个 id 会动）或 `--only <id,...>`（知道）只跑受影响的页，一次几十秒；开 PR 前跑一次全量。`--jobs <n>` 控制同时开几个 `nsh test` 进程，默认 CPU 核数的一半、至多 6，`--jobs 1` 是逐页串行——只用来对照。
-- **改主题数据**（token、surface、角色、预设）→ 按 [`docs/port.md`](docs/port.md#主题改动的验收) 分层验收：`bun run theme:diff` 比解析后的值，`port:render:theme --only <ids> --against <目录>` 比改动前后，全量截图开 PR 前只跑一次。遵守 [`docs/theme.md`](docs/theme.md) 契约；平台表达不了的外观改值降级并记入对应主题的 `packages/theme/themes/<id>/README.md`。
-- **改行为** → `bun run test:gallery`（原生行为测试）。
-- **改 registry 条目或 CLI** → `bun run test:install`（在真实 NSH 应用里 `init` / `add`，逐条目）。
-- **改过 `registry.json` 或组件文件** → `bun run registry:build`，把 `public/r` 的改动一起提交；`check` 里的 `registry:build --check` 会拦下没重建的提交。
+- 改了演示布局 → `bun run check:narrow`。
+- 改了主题数据 → `bun run theme:diff`。只改颜色时，`tokens:build --check`、`check:theme`、`theme:contrast`、`theme:diff` 足够。尺寸、材质、状态或动效要看受影响的演示。平台表达不了的取舍写进 `packages/theme/themes/<id>/README.md`。契约见 [`docs/theme.md`](docs/theme.md)。
+- 改了行为 → `bun run test:gallery`。改了展示壳 → `nsh test apps/showcase`。
+- 改了 registry 条目或 CLI → `bun run test:install`。
+- 改了 `registry.json` 或组件文件 → `bun run registry:build`，`public/r` 一起提交。
 
 ## 提交信息
 
-英文、约定式：`type(scope): summary`。类型用 `feat`、`fix`、`docs`、`chore`、`refactor`、`test`；scope 是组件 id、区域或 `cli`：
+英文、约定式：`type(scope): summary`。类型用 `feat`、`fix`、`docs`、`chore`、`refactor`、`test`。scope 是组件 id、区域或 `cli`。
 
 ```text
 fix(menu): keep the sub menu inside the window
 feat(terminal): draw the program's output on the theme's well
-docs(readme): point the registry URL at the released tag
 ```
 
-PR 标题用这个格式，它就是 squash 之后 `main` 上的提交信息；正文说**为什么**改、改之前是什么样。PR 模板分四段：改了什么与为什么、破坏性变更（旧 → 新的 diff，没有就删）、截图（亮 / 暗，前 / 后，看不见的改动就删）、怎么确认的（跑过的命令与结果，上面哪些检查没跑及原因）。
+PR 正文写为什么改。模板分四段：改了什么与为什么、破坏性变更、截图、怎么确认的。
 
 ## 加一个组件
 
-1. `bun run port:new <id> --from <上游文件>` 生成骨架（外壳、演示、文档页、registry 条目、路由）。
-2. `bun run port:vendor <id>` 把文件里还缺的上游声明抽成初稿（已有的一律不动）；**抽进来就归本库**，可以直接改。
-3. 颜色只来自主题（`theme.json` 的 token 与 `semantics.json` 的 finish），组件文件里不写颜色字面量；外观上的决定写进对应文档。
-4. 补演示（手机与桌面两种画布）与文档页；`bun run catalog --check` 会查它们与导出是否齐全。
-5. `bun run registry:build`，然后按上一节跑检查。
+1. `bun run new:component <id> --base <Symbol>`，或 `--view`，需要零件时加 `--family`。
+2. 颜色只来自主题。外观上的决定写进组件文档页。
+3. 补演示（手机与桌面）与文档页。对得上官方组件时在 `apps/website/src/lib/official.ts` 登记。
+4. `bun run catalog --check`、`bun run check:demos`、`bun run registry:build`，再跑上一节的检查。
 
-维护者发版的步骤见 [`docs/toolchain.md`](docs/toolchain.md)。
+## 发版
+
+一次 `vX.Y.Z` 标签放出两样东西：npm 上的 `shadcn-nsh@X.Y.Z`，以及该标签下的 `public/r`。CLI 从与自己同版本的标签读 registry：
+
+`https://raw.githubusercontent.com/aningdev/shadcn-nsh/v<version>/public/r/{name}.json`
+
+`main` 上的 registry 不对外读。标签只用 `v*`。
+
+发版前：要带的 PR 都已合并，`check` 是绿的，本地跑过 `bun run test:install`。每个面向使用者的 PR 已写进 `CHANGELOG.md` 的 `Unreleased`。
+
+1.0 之前：组件 API、registry id 或主题数据的破坏性变化，以及新组件、新条目、新主题，升 minor。修 bug、只改外观细节、只改文档与演示，升 patch。1.0 之后，破坏性变化升 major。
+
+切版本时：
+
+- 把 `Unreleased` 改成这一版的标题，顶部留一个空的 `## Unreleased`。
+- `packages/cli/package.json` 的 `version` 改为 `X.Y.Z`。
+- `README.md` 与 `README.zh.md` 的兼容矩阵加一行（本库版本 ↔ `engines.nsh` 的 NSH CLI 版本）。
+- `bun run registry:build`。
+
+发版走 PR：分支 `chore/release-vX.Y.Z`，提交信息 `chore(release): vX.Y.Z`，正文用这一版的 CHANGELOG 节。合并后在 `main` 上打标签：
+
+```sh
+git switch main && git pull --ff-only
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+`publish-cli.yml` 在 `v*` 标签上发布 npm，并核对标签与 `packages/cli/package.json` 的版本。不要改已经发出去的标签。
+
+文档站在 GitHub Pages 的 `site` 分支上，由 `deploy-docs.yml` 构建：
+
+| 位置    | 内容                 | 何时重建          |
+| ------- | -------------------- | ----------------- |
+| 站点根  | 最新 `v*` 标签的文档 | 推 `v*` 标签      |
+| `/dev/` | `main` 的文档        | 每次合并到 `main` |
+
+`main` 的推送用 `DOCS_BASE=/dev/`，只替换 `site` 里的 `dev/`。`v*` 标签检出该标签的树，用根 base 构建，替换除 `dev/` 以外的全部。页面里的站点路径过 `sitePath()`，base 只来自构建时的 `DOCS_BASE`（`apps/website/vite.config.ts`）。

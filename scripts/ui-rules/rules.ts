@@ -1,6 +1,6 @@
 /**
- * The rules `packages/ui` holds beyond what TypeScript and the theme check see (docs/ARCHITECTURE.md,
- * P8 and P9): a component never picks a theme's geometry by name, never paints a colour that is
+ * The rules `packages/ui` holds beyond what TypeScript and the theme check see
+ * (`docs/ARCHITECTURE.md`): a component never picks a theme's geometry by name, never paints a colour that is
  * not a theme role, and never writes a state's colour into a Tailwind class; an import stays inside
  * the layer it is written in; and every export says with a doc comment what it is for. A font family
  * is `font.sans` / `font.mono` (or a `font-sans` / `font-mono` class), never a `fontFamily` string,

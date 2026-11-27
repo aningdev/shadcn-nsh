@@ -1,11 +1,11 @@
 /**
- * The component set: `registry.json`'s `registry:ui` items, and where each one's file, demo,
- * reference page and docs page live. This is the only module under `scripts/` that reads or
- * writes the registry, and the only one that knows the demos / docs layout; scripts ask it
- * instead of filtering the registry or walking the directories themselves.
+ * The component set: `registry.json`'s `registry:ui` items, and where each one's file, demo
+ * and docs page live. This is the only module under `scripts/` that reads or writes the
+ * registry, and the only one that knows the demos / docs layout; scripts ask it instead of
+ * filtering the registry or walking the directories themselves.
  *
  * The NSH runtime cannot import this module (`node:fs`), so the runtime's list is generated:
- * `apps/website/demos/catalog.generated.ts`, read by `App.tsx` and `render-cases.ts`.
+ * `apps/website/demos/catalog.generated.ts`, read by `App.tsx`.
  *
  *   bun run catalog           # write catalog.generated.ts
  *   bun run catalog --check   # fail when the set is inconsistent or the file is stale
@@ -30,15 +30,13 @@ export class CatalogError extends Error {
 
 /** One component: a `registry:ui` item and the files the set requires for it. */
 export type Component = {
-  /** The item's name; also the file, demo, reference page and docs page name. */
+  /** The item's name; also the file, demo and docs page name. */
   id: string;
   item: RegistryItem;
   /** `packages/ui/<id>.tsx`. */
   uiFile: string;
   /** `apps/website/demos/<id>.tsx`. */
   demo: string;
-  /** `apps/website/demos/<id>.ref.tsx`. */
-  reference: string;
   /** `apps/website/content/docs/components/<id>.md`. */
   page: string;
 };
@@ -52,8 +50,6 @@ export type CatalogPaths = {
   pages: string;
   index: string;
   generated: string;
-  /** Where a `TODO(port)` may hide: the component, theme, demo and docs directories. */
-  todoRoots: string[];
 };
 
 export type Catalog = {
@@ -88,10 +84,7 @@ export function catalog(root = DEFAULT_ROOT): Catalog {
     index: path.join(root, "packages/ui/index.ts"),
     generated: path.join(root, "apps/website/demos/catalog.generated.ts"),
   };
-  const paths: CatalogPaths = {
-    ...shared,
-    todoRoots: [shared.ui, shared.theme, shared.demos, shared.pages],
-  };
+  const paths: CatalogPaths = shared;
   const registry = readRegistry(paths.registry);
   const components: Component[] = [];
   for (const item of registry.items) {
@@ -102,7 +95,6 @@ export function catalog(root = DEFAULT_ROOT): Catalog {
       item,
       uiFile: path.join(root, declared?.path ?? `packages/ui/${item.name}.tsx`),
       demo: path.join(paths.demos, `${item.name}.tsx`),
-      reference: path.join(paths.demos, `${item.name}.ref.tsx`),
       page: path.join(paths.pages, `${item.name}.md`),
     });
   }
@@ -115,11 +107,14 @@ export function components(root = DEFAULT_ROOT): Component[] {
 }
 
 /**
- * Demo files that are not a component's demo: the app entry `nsh check` / `nsh test` need, the kit, the
- * demo adapter the official examples are written against (`stage.tsx`, demos only, never a registry
- * entry), and the page loop the theme render tests share (`render-theme-pages.tsx`).
+ * `.tsx` files in the demos directory that are not a component's demo. The app entry, the kit
+ * and the demo adapter (`stage.tsx`: `Split`, `Stage`, `Panel`, `Log`, `Segmented`, `Chips`)
+ * stay here and never become registry items. Other files in the directory are data or checks
+ * (`photos.ts`, `palettes.ts`, `apply-palette.ts`, `avatar-data.ts`, `editor-sample.ts`,
+ * `editor-server.ts`, `props.test-d.ts`, `narrow.test.tsx`, `catalog.generated.ts`) and are
+ * not demos, so this set does not name them.
  */
-const NON_COMPONENT_DEMOS = new Set(["App.tsx", "kit.tsx", "stage.tsx", "render-theme-pages.tsx"]);
+const NON_COMPONENT_DEMOS = new Set(["App.tsx", "kit.tsx", "stage.tsx"]);
 
 /**
  * Demos that belong to a page of the site rather than to a component: the themes page's showcase.
@@ -158,8 +153,8 @@ function exportsModule(index: string, id: string): boolean {
 }
 
 /**
- * Everything the set must satisfy: every component has its file, demo, reference page, docs page
- * and export, and no demo or page exists for an id the registry does not list.
+ * Everything the set must satisfy: every component has its file, demo, docs page and export,
+ * and no demo or page exists for an id the registry does not list.
  */
 export function checkCatalog(cat: Catalog): string[] {
   const { root, paths, components: set } = cat;
@@ -178,8 +173,6 @@ export function checkCatalog(cat: Catalog): string[] {
     }
     if (!isFile(component.uiFile)) problems.push(`${id}: no ${uiRel}`);
     if (!isFile(component.demo)) problems.push(`${id}: no demo ${rel(component.demo)}`);
-    if (!isFile(component.reference))
-      problems.push(`${id}: no reference page ${rel(component.reference)}`);
     if (!isFile(component.page)) problems.push(`${id}: no docs page ${rel(component.page)}`);
     if (index && !exportsModule(index, id)) {
       problems.push(`${id}: ${rel(paths.index)} does not export "./${id}"`);
@@ -188,10 +181,7 @@ export function checkCatalog(cat: Catalog): string[] {
 
   for (const file of filesIn(paths.demos)) {
     const where = rel(path.join(paths.demos, file));
-    if (file.endsWith(".ref.tsx")) {
-      const id = file.slice(0, -".ref.tsx".length);
-      if (!ids.has(id)) problems.push(`${where}: reference page for no component`);
-    } else if (file.endsWith(".tsx") && !file.endsWith(".test.tsx")) {
+    if (file.endsWith(".tsx") && !file.endsWith(".test.tsx")) {
       if (NON_COMPONENT_DEMOS.has(file)) continue;
       const id = file.slice(0, -".tsx".length);
       if (!ids.has(id) && !(PAGE_DEMOS as readonly string[]).includes(id)) {
@@ -212,22 +202,10 @@ export function checkCatalog(cat: Catalog): string[] {
 }
 
 /**
- * Render-case overrides that name no component: `render-cases.ts` would ignore them without a
- * word, so the catalog check reports them (`bun run catalog --check`).
- */
-export function checkOverrides(cat: Catalog, ids: readonly string[]): string[] {
-  const known = new Set(cat.components.map((component) => component.id));
-  const where = path.relative(cat.root, path.join(cat.paths.demos, "render-cases.ts"));
-  return ids
-    .filter((id) => !known.has(id))
-    .map((id) => `${where}: override for no component "${id}"`);
-}
-
-/**
  * Add a component to the registry and keep the generated module current: the catalog is the only
- * writer of `registry.json` under `scripts/`, so a caller (`port:new`) cannot add an item another
- * way. Refuses an id the registry has and an item that does not have the item shape. The file is
- * written as JSON (the caller formats it like the files it writes, `vp fmt`).
+ * writer of `registry.json` under `scripts/`, so a caller (`new:component`) cannot add an item
+ * another way. Refuses an id the registry has and an item that does not have the item shape. The
+ * file is written as JSON (the caller formats it like the files it writes, `vp fmt`).
  */
 export function addComponent(cat: Catalog, item: RegistryItem): void {
   let checked: RegistryItem;
@@ -269,7 +247,7 @@ export function renderGenerated(cat: Catalog): string {
   return `// Generated by \`bun run catalog\` from registry.json's registry:ui items, in registry order.
 // Do not edit: change the registry and run the script. Checked by \`bun run catalog --check\`.
 
-/** Every component's id; \`App.tsx\` and \`render-cases.ts\` read their list from here. */
+/** Every component's id; \`App.tsx\` reads its list from here. */
 ${list}
 `;
 }
@@ -296,9 +274,6 @@ if (import.meta.main) {
     if (!isFile(file))
       problems.push(`${path.relative(cat.root, file)}: listed in PAGE_DEMOS, but there is no file`);
   }
-  // The runtime's table is plain TypeScript (no `node:fs`), so the check can import its keys.
-  const { overrideIds } = await import("../apps/website/demos/render-cases");
-  problems.push(...checkOverrides(cat, overrideIds));
   if (problems.length > 0) {
     for (const problem of problems) console.error(`catalog: ${problem}`);
     console.error(`catalog: ${problems.length} problem(s)`);

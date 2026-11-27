@@ -2,18 +2,11 @@ name: Check
 
 on:
   pull_request:
-  # A merged pull request runs again on `main` with the full theme render (no `--code-only`): the
-  # pull request draws only the pages its code reaches, and `main` is not required to be up to date.
   push:
     branches: [main]
   workflow_dispatch:
-  # A release runs the same gate first (publish-cli.yml), without the render check.
+  # A release runs the same gate first (publish-cli.yml).
   workflow_call:
-    inputs:
-      render:
-        description: Run the render check.
-        type: boolean
-        default: true
 
 permissions:
   contents: read
@@ -25,14 +18,12 @@ concurrency:
 
 jobs:
   # Which of the slow checks this change can affect. A pull request runs them only when it
-  # touches what they check; anything that drives every check (scripts, dependencies, the
-  # NSH baseline, CI itself) runs them all, and so does a run that is not a pull request.
+  # touches what they check; anything that drives every check (scripts, dependencies, CI
+  # itself) runs them all, and so does a run that is not a pull request.
   changes:
     runs-on: ubuntu-latest
     outputs:
-      render: ${{ steps.paths.outputs.render }}
       install: ${{ steps.paths.outputs.install }}
-      contract: ${{ steps.paths.outputs.contract }}
       gallery: ${{ steps.paths.outputs.gallery }}
     steps:
       - name: Checkout
@@ -46,58 +37,43 @@ jobs:
         env:
           EVENT: ${{ github.event_name }}
           BASE: ${{ github.event.pull_request.base.sha }}
-          RENDER_INPUT: ${{ inputs.render }}
         run: |
           if [ "$EVENT" != "pull_request" ]; then
-            if [ "$RENDER_INPUT" = "false" ]; then echo "render=false"; else echo "render=true"; fi >> "$GITHUB_OUTPUT"
             echo "install=true" >> "$GITHUB_OUTPUT"
             echo "gallery=true" >> "$GITHUB_OUTPUT"
-            # The contract gate judges a pull request; `main` has passed it already.
-            if [ "$EVENT" = "push" ]; then echo "contract=false"; else echo "contract=true"; fi >> "$GITHUB_OUTPUT"
             exit 0
           fi
           files="$(git diff --name-only "$BASE" HEAD)"
           echo "$files"
           matches() { grep -qE "$1" <<< "$files" && echo true || echo false; }
-          all='^(scripts/|\.github/workflows/check\.yml|\.github/actions/|package\.json|bun\.lock|port-map\.json|references/)'
-          render='^(packages/ui/|packages/theme/|apps/website/demos/)'
+          all='^(scripts/|\.github/workflows/check\.yml|\.github/actions/|package\.json|bun\.lock)'
           install='^(packages/cli/|packages/ui/|packages/theme/|registry\.json|public/r/)'
-          contract='^(packages/theme/|scripts/theme/|scripts/tokens/)'
-          gallery='^(packages/ui/|packages/theme/|apps/gallery/)'
+          gallery='^(packages/ui/|packages/theme/|apps/gallery/|apps/showcase/)'
           if [ "$(matches "$all")" = true ]; then
-            echo "render=true" >> "$GITHUB_OUTPUT"
             echo "install=true" >> "$GITHUB_OUTPUT"
-            echo "contract=true" >> "$GITHUB_OUTPUT"
             echo "gallery=true" >> "$GITHUB_OUTPUT"
           else
-            echo "render=$(matches "$render")" >> "$GITHUB_OUTPUT"
             echo "install=$(matches "$install")" >> "$GITHUB_OUTPUT"
-            echo "contract=$(matches "$contract")" >> "$GITHUB_OUTPUT"
             echo "gallery=$(matches "$gallery")" >> "$GITHUB_OUTPUT"
           fi
 
-  # Every change: about a minute.
+  # Every change. The steps stay in step with `bun run check`, plus `test:unit`.
+  # `vp check` has no `--fix`: CI reports what `bun run check` would change.
+  # `prepare:types` is the three `nsh check`s.
   fast:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        with:
-          # `port:check` compares the repo with references/nsh at the baseline.
-          submodules: recursive
 
       - name: Setup
         uses: ./.github/actions/setup
         with:
           nsh-channel: ${{ vars.NSH_CHANNEL }}
 
-      # Type checks the demos, the gallery and the showcase app, and leaves the `.nsh` types hosts
-      # (gitignored) that `vp check` resolves `nsh` and `nsh/base` from — as `bun run nsh:bootstrap`
-      # does locally.
       - name: Type check the demos, the gallery and the showcase app
         run: bun run prepare:types
 
-      # Format and lint, without `--fix`: CI reports what `bun run check` would change.
       - name: Format and lint
         run: bunx vp check
 
@@ -110,20 +86,26 @@ jobs:
       - name: Theme roles
         run: bun run check:theme
 
+      - name: Theme contrast
+        run: bun run theme:contrast
+
+      - name: Theme semantics
+        run: bun run docs:semantics --check
+
+      - name: Children read once
+        run: bun run check:children
+
       - name: Right-to-left sides
         run: bun run check:rtl
 
-      # The port's gate: map complete, `// @port` regions equal to upstream, the
-      # installed CLI against the baseline (docs/ARCHITECTURE.md P1–P3).
-      - name: Port check
-        run: bun run port:check
+      - name: UI rules
+        run: bun run check:ui
 
-      - name: Port coverage
-        run: bun run port:coverage
-
-      # What apps install: public/r must be what registry.json builds.
       - name: Registry check
         run: bun run registry:build --check
+
+      - name: Demo coverage
+        run: bun run check:demos
 
       - name: Unit tests
         run: bun run test:unit
@@ -134,107 +116,8 @@ jobs:
       - name: Check the docs site
         run: bun run check:docs
 
-  # The contract changes only with a decision record (docs/decisions/0004-theme-contract-freeze.md):
-  # adding or removing a key, or moving a source outside the theme values, needs one in the same
-  # pull request. Seconds, so it is its own job rather than part of `fast`.
-  contract:
-    needs: changes
-    if: needs.changes.outputs.contract == 'true'
-    runs-on: ubuntu-latest
-    env:
-      BASE: ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          # `--gate` compares the branch with its base, and reads the files it adds.
-          fetch-depth: 0
-
-      # The gate reads git and the repo's own TypeScript: no dependencies to install.
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
-
-      - name: Theme contract gate
-        run: bun run theme:diff --gate "$BASE"
-
-  # Each component's screenshot must equal the same page written against nsh/base
-  # directly (P4). Four runners split the pages between them (`--shard`): the drawing is
-  # nearly all of the time, the setup about twenty seconds.
-  render:
-    needs: changes
-    if: needs.changes.outputs.render == 'true'
-    runs-on: ubuntu-latest
-    env:
-      # `--changed` needs the merge base, so the checkout below is full depth. A pull request
-      # names its base; a push names the commit before it; a dispatch falls back to `origin/main`.
-      BASE: ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4]
-    name: render (${{ matrix.shard }}/4)
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          submodules: recursive
-
-      - name: Setup
-        uses: ./.github/actions/setup
-        with:
-          nsh-channel: ${{ vars.NSH_CHANNEL }}
-
-      # `nsh test --target web` drives a headless Chrome, which the runner image has; say so
-      # plainly when it does not.
-      - name: Find Chrome
-        run: |
-          for browser in google-chrome google-chrome-stable chromium chromium-browser; do
-            if command -v "$browser" >/dev/null 2>&1; then
-              "$browser" --version
-              exit 0
-            fi
-          done
-          echo "::error::no Chrome, Edge or Chromium on PATH: bun run port:render runs nsh test --target web in a headless browser"
-          exit 1
-
-      # The committed baseline was recorded on macOS; Linux draws text differently, so here
-      # only the component ↔ reference pairs gate.
-      - name: Render check
-        run: bun run port:render --no-baseline --shard ${{ matrix.shard }}/4
-
-      # The five themed passes, narrowed to what this change can move: a colour alone draws
-      # nothing, a dimension only the themes that carry it, a contract every page in every theme.
-      # A pull request draws only the pages its code reaches (`--code-only`); what a theme change
-      # moves is drawn by the push to `main` once it lands.
-      - name: Theme render check
-        env:
-          CODE_ONLY: ${{ github.event_name == 'pull_request' && '--code-only' || '' }}
-        run: bun run port:render:theme --shard ${{ matrix.shard }}/4 --changed "$BASE" ${CODE_ONLY:-}
-
-      - name: Upload render screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: render-shots-${{ matrix.shard }}
-          path: apps/website/demos/shots
-          if-no-files-found: ignore
-          retention-days: 7
-
-      - name: Upload theme screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: theme-shots-${{ matrix.shard }}
-          path: apps/website/demos/shots-theme
-          if-no-files-found: ignore
-          retention-days: 7
-
-  # What the components do in a running app (docs/ARCHITECTURE.md): `nsh test apps/gallery` opens
-  # each fixture on a native engine and presses, types and reads it back, so it needs the nsh CLI
-  # that Setup installs and no browser.
+  # What the components do in a running app: gallery fixtures on a native engine, and the
+  # showcase shell. Neither needs a browser.
   gallery:
     needs: changes
     if: needs.changes.outputs.gallery == 'true'
@@ -242,8 +125,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        with:
-          submodules: recursive
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -253,8 +134,11 @@ jobs:
       - name: Gallery tests
         run: bun run test:gallery
 
-  # The registry as an app receives it (docs/port.md): `init` + `add` copy every item into a
-  # real NSH app and `nsh check` it — the whole registry, and once per `registry:ui` item alone.
+      - name: Showcase tests
+        run: nsh test apps/showcase
+
+  # The registry as an app receives it: `init` + `add` copy every item into a real NSH app
+  # and `nsh check` it.
   install:
     needs: changes
     if: needs.changes.outputs.install == 'true'
@@ -262,8 +146,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        with:
-          submodules: recursive
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -276,7 +158,7 @@ jobs:
   # The one status branch protection requires. A skipped job passed: the change could not
   # affect it.
   check:
-    needs: [changes, fast, contract, render, gallery, install]
+    needs: [changes, fast, gallery, install]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -284,7 +166,7 @@ jobs:
         env:
           RESULTS: ${{ join(needs.*.result, ' ') }}
         run: |
-          echo "changes fast contract render gallery install: $RESULTS"
+          echo "changes fast gallery install: $RESULTS"
           for result in $RESULTS; do
             case "$result" in
               success | skipped) ;;

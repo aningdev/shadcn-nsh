@@ -3,9 +3,11 @@
  * own. The sidebar, the components index and the coverage page group the set by these,
  * one kind per component, in this order.
  *
- * A component is not filed by hand: `src/lib/official.ts` says which NSH element (one per
- * `references/nsh/website/elements/*.md`) each page answers for, and a page listed by an
- * `NSH_ELEMENTS` row is aligned; one listed by none is ours, whether or not shadcn/ui has one. Adding a component therefore means registering it in `official.ts` and its kind follows. `bun run check:pages` checks the generated list.
+ * A component is not filed by hand: `src/lib/official.ts` says which NSH element
+ * (https://nsh.dev/elements) each page answers for, and a page listed by an `NSH_ELEMENTS` row is
+ * aligned; one listed by none is ours, whether or not shadcn/ui has one. Adding a component
+ * therefore means registering it in `official.ts` and its kind follows. `bun run check:pages`
+ * checks the generated list.
  */
 import { NSH_ELEMENTS } from "./official";
 

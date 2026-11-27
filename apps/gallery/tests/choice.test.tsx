@@ -37,6 +37,4 @@ test("a checkbox checked after mount reports checked", async () => {
   await app.press("text:Check it");
   await app.wait(50);
   expect(has(app.texts(), "checked=true")).toBe(true);
-  // The box's mark and fill are compared against the reference page by `port:render`
-  // (its checkbox case presses a row after the page opened).
 });

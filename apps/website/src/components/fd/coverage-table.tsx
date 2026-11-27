@@ -4,8 +4,8 @@
  * `/docs/components/coverage`: one table per official set — shadcn/ui's components, the `nsh/base`
  * elements and the NSH primitives — saying what this library has for each row. Nothing here is
  * written by hand: the rows are `src/lib/official.ts`, the pages they point at are the generated
- * component list, and the state of a row is `stateOf`. `bun run check:pages` holds both sides to
- * `references/`.
+ * component list, and the state of a row is `stateOf`. `bun run check:pages` holds the rows to
+ * the pages that exist.
  *
  * The three tables and their headings' prose stay in `content/docs/components/coverage.mdx`, which
  * asks for each table by `group`; this module only draws the rows.

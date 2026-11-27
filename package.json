@@ -7,7 +7,6 @@
     "packages/*"
   ],
   "scripts": {
-    "nsh:bootstrap": "bash scripts/nsh-bootstrap.sh",
     "prepare:types": "nsh check apps/gallery && nsh check apps/website/demos && nsh check apps/showcase",
     "dev:gallery": "nsh run apps/gallery",
     "dev:showcase": "nsh run apps/showcase",
@@ -24,33 +23,23 @@
     "check:rtl": "bun scripts/rtl-lint.ts",
     "check:ui": "bun scripts/ui-rules.ts",
     "check:palette": "bun apps/website/scripts/check-palette.ts",
-    "check:narrow": "bun scripts/port/narrow.ts",
+    "check:narrow": "bun scripts/narrow-check.ts",
+    "check:demos": "bun scripts/demo-coverage.ts",
+    "new:component": "bun scripts/new-component.ts",
     "check:first-frame": "bun apps/website/scripts/check-first-frame.ts",
     "catalog": "bun scripts/catalog.ts",
     "registry:build": "bun scripts/registry-build.ts",
     "registry:serve": "bun packages/cli/src/index.ts serve",
     "shadcn-nsh": "bun packages/cli/src/index.ts",
     "cli:build": "bun --filter shadcn-nsh build",
-    "check": "vp check --fix && bun run catalog --check && bun run tokens:build --check && bun run check:theme && bun run theme:parity && bun run theme:contrast && bun run docs:semantics --check && bun run check:children && bun run check:rtl && bun run check:ui && bun run registry:build --check && bun run port:check && bun run port:coverage && nsh check apps/website/demos && nsh check apps/gallery && nsh check apps/showcase && bun run check:pages && bun run check:docs",
+    "check": "vp check --fix && bun run catalog --check && bun run tokens:build --check && bun run check:theme && bun run theme:contrast && bun run docs:semantics --check && bun run check:children && bun run check:rtl && bun run check:ui && bun run registry:build --check && bun run check:demos && nsh check apps/website/demos && nsh check apps/gallery && nsh check apps/showcase && bun run check:pages && bun run check:docs",
     "test:gallery": "nsh test apps/gallery",
     "test:install": "bun scripts/install-test.ts",
-    "test:unit": "bun test ./packages/cli ./scripts/children ./scripts/theme ./scripts/tokens ./scripts/rtl ./scripts/ui-rules ./scripts/catalog.test.ts ./scripts/port/coverage.test.ts",
+    "test:unit": "bun test ./packages/cli ./scripts/children ./scripts/theme ./scripts/tokens ./scripts/rtl ./scripts/ui-rules ./scripts/catalog.test.ts",
     "tokens:build": "bun scripts/tokens/build.ts",
     "theme:diff": "bun scripts/theme/diff.ts",
     "theme:contrast": "bun scripts/theme/contrast.ts",
-    "shots": "bash scripts/shots.sh",
-    "port:vendor": "bun scripts/port/vendor.ts",
-    "port:check": "bun scripts/port/check.ts",
-    "port:review": "bun scripts/port/review.ts",
-    "port:render": "bun scripts/port/render.ts",
-    "port:render:theme": "bun scripts/port/render-theme.ts",
-    "port:render:touch": "bun scripts/port/render-touch.ts",
-    "port:new": "bun scripts/port/new.ts",
-    "port:bump": "bun scripts/port/bump.ts",
-    "port:coverage": "bun scripts/port/coverage.ts",
-    "port:sheet": "bun scripts/port/sheet.ts",
-    "port:baseline": "bun scripts/port/baseline.ts",
-    "theme:parity": "bun scripts/theme/parity.ts"
+    "shots": "bash scripts/shots.sh"
   },
   "devDependencies": {
     "@google/design.md": "0.4.0",
@@ -60,6 +49,9 @@
     "oxc-parser": "^0.159.0",
     "typescript": "^7.0.2",
     "vite-plus": "^1.7.0"
+  },
+  "engines": {
+    "nsh": "v0.7.2"
   },
   "packageManager": "bun@1.4.4"
 }

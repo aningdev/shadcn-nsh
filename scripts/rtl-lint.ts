@@ -11,8 +11,9 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { repo } from "./port/lib";
 import { violations } from "./rtl/rules";
+
+const repo = path.resolve(import.meta.dir, "..");
 
 const ui = path.join(repo, "packages/ui");
 

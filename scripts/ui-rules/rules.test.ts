@@ -126,12 +126,12 @@ describe("import direction", () => {
   });
 
   test("nothing in packages/ui reaches into apps, scripts or another package", () => {
-    expect(imports(`import { cases } from "../../apps/website/demos/render-cases";`)).toEqual([
-      ["layer", "../../apps/website/demos/render-cases"],
+    expect(imports(`import { PALETTES } from "../../apps/website/demos/palettes";`)).toEqual([
+      ["layer", "../../apps/website/demos/palettes"],
     ]);
     expect(
-      imports(`import { repo } from "../../../scripts/port/lib";`, "packages/ui/lib/tool.ts"),
-    ).toEqual([["layer", "../../../scripts/port/lib"]]);
+      imports(`import { catalog } from "../../../scripts/catalog";`, "packages/ui/lib/tool.ts"),
+    ).toEqual([["layer", "../../../scripts/catalog"]]);
     expect(imports(`import { z } from "zod";`)).toEqual([["layer", "zod"]]);
     expect(imports(`import { Button } from "@shadcn-nsh/ui";`)).toEqual([
       ["layer", "@shadcn-nsh/ui"],

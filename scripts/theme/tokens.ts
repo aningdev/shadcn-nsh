@@ -1,5 +1,5 @@
 /**
- * Shared token helper primitives for diff and parity scripts.
+ * Shared token helper primitives for the theme diff.
  * Pure: no `node:fs`.
  */
 export const BUILD_ROOT_THEME = "nsh-gallery";

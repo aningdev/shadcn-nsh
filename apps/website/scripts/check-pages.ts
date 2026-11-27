@@ -7,19 +7,18 @@
  *   and nothing else; Composition is a one-line lead and
  *   one `text` fence whose tree names only parts the component exports; Examples' subsections run
  *   variant, size, state, the rest, controlled; API opens with the | Part | Props | Description |
- *   table (docs/port.md, 文档页);
+ *   table (docs/component-authoring.md, 文档页);
  * - a `demo:` names the page's own demo;
  * - every name a fenced snippet imports from `@/components/ui/<id>` is
  *   exported by that component's file; `@/components/ui/lib/<name>` is
  *   `packages/ui/lib/<name>.ts` or `.tsx`;
  * - a page's kind is derived from the official tables, so there is no
  *   hand-kept list of kinds to fall out of step;
- * - the official tables in `src/lib/official.ts` cover every file of
- *   `references/shadcn-ui`'s ui directory and every `references/nsh` element,
- *   name only pages that exist, and say why when they serve nothing;
+ * - the official tables in `src/lib/official.ts` name only pages that exist,
+ *   and say why when they serve nothing;
  * - `components.generated.ts` is what `bun run docs:components` would write.
  *
- * The component set itself (page, demo and reference page exist, no orphans) is
+ * The component set itself (page and demo exist, no orphans) is
  * `bun run catalog --check`.
  *
  *   bun run check:pages
@@ -118,7 +117,7 @@ function outline(source: string): Section[] {
 }
 
 /**
- * Where an Examples subsection sits (docs/port.md, 文档页): variants, then sizes, then states, then
+ * Where an Examples subsection sits (docs/component-authoring.md, 文档页): variants, then sizes, then states, then
  * everything else, then controlled. A title is placed by its first word.
  */
 function exampleRank(title: string): number {
@@ -225,56 +224,6 @@ for (const { label, entries } of tables) {
   }
 }
 
-// The official sets themselves: a component added upstream with no row here fails.
-const references = path.join(repo, "references");
-const names = (dir: string, extension: string): string[] | undefined => {
-  if (!fs.existsSync(dir)) return undefined;
-  return fs
-    .readdirSync(dir)
-    .filter((file) => file.endsWith(extension) && file !== "index.md")
-    .map((file) => file.slice(0, -extension.length))
-    .sort();
-};
-
-const shadcnDir = path.join(references, "shadcn-ui/apps/v4/registry/bases/base/ui");
-const shadcnFiles = names(shadcnDir, ".tsx");
-if (shadcnFiles) {
-  const rows = new Set(SHADCN_UI.map((entry) => entry.id));
-  for (const id of shadcnFiles) {
-    if (!rows.has(id)) {
-      fail(`references/shadcn-ui …/ui/${id}.tsx: no row in SHADCN_UI (src/lib/official.ts)`);
-    }
-  }
-  for (const id of rows) {
-    if (!shadcnFiles.includes(id))
-      fail(`SHADCN_UI: "${id}" is no file in references/shadcn-ui …/ui`);
-  }
-}
-
-const nshDir = path.join(references, "nsh/website/elements");
-const nshFiles = names(nshDir, ".md");
-if (nshFiles) {
-  const rows = new Map(NSH_ELEMENTS.map((entry) => [entry.id, entry]));
-  for (const id of nshFiles) {
-    if (!rows.has(id)) {
-      fail(
-        `references/nsh/website/elements/${id}.md: no row in NSH_ELEMENTS (src/lib/official.ts)`,
-      );
-    }
-  }
-  for (const [id, entry] of rows) {
-    if (!nshFiles.includes(id)) {
-      fail(`NSH_ELEMENTS: "${id}" is no element in references/nsh/website/elements`);
-      continue;
-    }
-    const source = fs.readFileSync(path.join(nshDir, `${id}.md`), "utf8");
-    const group = /^group:\s*(\S+)\s*$/m.exec(source)?.[1];
-    if (group && group !== entry.group) {
-      fail(`NSH_ELEMENTS: "${id}" is "${group}" in references/nsh, not "${entry.group}"`);
-    }
-  }
-}
-
 let importCount = 0;
 let treeCount = 0;
 const required = ["Installation", "Usage", "Examples", "API"];
@@ -311,7 +260,7 @@ for (const component of cat.components) {
     if (old.has(section)) fail(`${where}: old section "## ${section}"`);
   }
 
-  // The sections, in their order, and nothing else at `##` (docs/port.md, 文档页).
+  // The sections, in their order, and nothing else at `##` (docs/component-authoring.md, 文档页).
   const sections = outline(source);
   const titles = sections.map((section) => section.title);
   const expected = ["Installation", "Usage"];
@@ -400,10 +349,10 @@ for (const component of cat.components) {
     );
   }
 
-  if (nshFiles) {
-    for (const link of source.matchAll(/nsh\.dev\/elements\/([a-z-]+)/g)) {
-      if (!nshFiles.includes(link[1]!))
-        fail(`${where}: nsh.dev/elements/${link[1]} is no NSH element`);
+  const nshIds = new Set(NSH_ELEMENTS.map((entry) => entry.id));
+  for (const link of source.matchAll(/nsh\.dev\/elements\/([a-z-]+)/g)) {
+    if (!nshIds.has(link[1]!)) {
+      fail(`${where}: nsh.dev/elements/${link[1]} is no row in NSH_ELEMENTS`);
     }
   }
 
@@ -605,10 +554,6 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-const official = [
-  shadcnFiles ? `${SHADCN_UI.length} shadcn/ui` : "shadcn/ui (references/ empty)",
-  nshFiles ? `${NSH_ELEMENTS.length} NSH` : "NSH (references/ empty)",
-];
 console.log(
-  `check:pages ok — ${cat.components.length} components, ${importCount} imported names, ${treeCount} composition parts; ${official.join(", ")} answered for`,
+  `check:pages ok — ${cat.components.length} components, ${importCount} imported names, ${treeCount} composition parts; ${SHADCN_UI.length} shadcn/ui, ${NSH_ELEMENTS.length} NSH answered for`,
 );

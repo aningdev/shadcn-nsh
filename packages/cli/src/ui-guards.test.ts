@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 
 /**
- * P3 over the component sources: every color a component draws comes from the theme
+ * Colors come from the theme: every color a component draws comes from the theme
  * (`colors.*`, `token()`, `finish`, `alpha()`, `mix()`), so the appearance follows light and dark
  * and a theme change reaches every control. A color written out, or a palette color spliced into a
  * class string, would not.
@@ -65,17 +65,15 @@ const exempt: Record<string, string> = {
   "packages/ui/avatar.tsx":
     "the identity ring: twelve hues computed from the name (gpui-component's avatar), each with its own background, ink and edge; no token can name a color derived from a name",
   "packages/ui/title-bar.tsx":
-    "the traffic lights keep macOS's own hues (#FF5F57, #FEBC2E, #28C840), their 50% black ink and 12% black edge: a window's close, minimize and zoom are Apple's whatever the theme, the one place a color is written out (ARCHITECTURE.md P3)",
+    "the traffic lights keep macOS's own hues (#FF5F57, #FEBC2E, #28C840), their 50% black ink and 12% black edge: a window's close, minimize and zoom are Apple's whatever the theme, the one place a color is written out (ARCHITECTURE.md, 颜色只来自主题)",
   "packages/ui/lib/icons.tsx":
     "the check mark's SVG carries #000 as template ink; `CheckMark` draws it in the caller's `tint` (`tintColor`), so the color shown is the theme's",
   "packages/ui/color-picker.tsx":
     'the swatch\'s white ring and black hairline read on the user\'s color in either appearance; "red" / "green" / "blue" here are RGB channel names; `formatColor` spells out a color the user picked (rgb() / hsl() / oklch() built from its value) and `inkOn` picks black or white ink to read on it',
   "apps/website/demos/color-picker.tsx":
     "the palette is the demo's content: the colors the user picks, and the ink that reads on them",
-  "apps/website/demos/color-picker.ref.tsx": "the same page, its look expanded onto `nsh/base`",
   "apps/website/demos/plot.tsx":
     "chart labels sit on a series' fill: black or white reads on any of them, the theme's ink does not",
-  "apps/website/demos/plot.ref.tsx": "the same page, its look expanded onto `nsh/base`",
 };
 
 const violations = (paths: string[]) =>
@@ -85,7 +83,7 @@ const violations = (paths: string[]) =>
       .map(([rule]) => `${path}: ${rule}`),
   );
 
-describe("component sources (P3: colors come from the theme)", () => {
+describe("component sources (colors come from the theme)", () => {
   test("no source outside the list of exemptions writes a color", () => {
     const offenders = violations(sources.filter((path) => !(path in exempt)));
     expect(offenders, `colors written out:\n${offenders.join("\n")}`).toEqual([]);

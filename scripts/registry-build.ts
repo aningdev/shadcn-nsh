@@ -1,12 +1,11 @@
 /**
  * `bun run registry:build`, defined once: write `public/r` from `registry.json` (and check each
- * item's imports, P6), then format it. `bun run test:install` calls the same function to build a
- * fresh copy in a temporary directory, so the committed artifact and what the test compares it
- * with cannot be built two ways.
+ * item's imports match its registry dependencies), then format it. `bun run test:install` calls
+ * the same function to build a fresh copy in a temporary directory, so the committed artifact
+ * and what the test compares it with cannot be built two ways.
  *
- * A copied file is the file itself, headers and credit line included: which upstream file a
- * component started from is `port-map.json`'s to say, and an app that reads a copied file
- * reads the same text as this repository (`docs/port.md`).
+ * A copied file is the file itself, headers and credit line included: an app that reads a
+ * copied file reads the same text as this repository.
  *
  *   bun run registry:build
  *   bun run registry:build --check   # fail when the committed `public/r` is not what a build writes

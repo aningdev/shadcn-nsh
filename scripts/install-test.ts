@@ -2,7 +2,7 @@
  * The copy-into-app gate, run from the app's side: build the registry, serve it, install it into
  * real NSH apps with this repository's CLI, and type check — and run — what landed there.
  *
- * Three passes, because they catch different things (docs/port.md#检查):
+ * Four passes, because they catch different things (CONTRIBUTING.md):
  *
  * - **all at once**: one app, `init`, `add --all`, `nsh check`, then `nsh test` on a page that
  *   imports every item: a component that cannot resolve, or throws while it loads, fails here;
@@ -826,7 +826,7 @@ async function main(): Promise<number> {
   if (!installed) {
     console.error("install test: no nsh to run");
     console.error(
-      "      install it with `curl -fsSL https://nsh.dev/install.sh | sh` (docs/toolchain.md)",
+      "      install it with `curl -fsSL https://nsh.dev/install.sh | sh` (see CONTRIBUTING.md)",
     );
     return 1;
   }

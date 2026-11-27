@@ -13,7 +13,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { files, violations } from "./children/rules";
-import { repo } from "./port/lib";
+
+const repo = path.resolve(import.meta.dir, "..");
 
 const FILES = files(repo);
 
