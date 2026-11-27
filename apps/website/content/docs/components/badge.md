@@ -61,7 +61,7 @@ import { Badge } from "@/components/ui/badge";
 
 ## API
 
-Gallery atom: no `nsh/base` counterpart. The children are the label, and the axes take the vocabulary of [`api-unify.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/api-unify.md).
+Gallery atom: no `nsh/base` counterpart. The children are the label, and the variant/tone/size axes follow the library's unified component conventions.
 
 | Part    | Props                                                                                                                                                                                                    | Description                                                  |
 | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -69,4 +69,4 @@ Gallery atom: no `nsh/base` counterpart. The children are the label, and the axe
 
 The view props (`style`, `class`, `testID`, `role`, the accessibility ones) are spread on the capsule after the badge's own, so an app can name it to a screen reader or take it out of the layout without a wrapper.
 
-`BadgeVariant` is `"default" | "outline"`: the two the capsule's look has. `BadgeSize` is `"sm" | "default"`, and `badgeSizes` is the table: `height`, `font` and `pad`, by size.
+`BadgeVariant` is `"default" | "outline"`: the two the capsule's look has. `BadgeSize` is `"sm" | "default"`: 18 points tall, or 20.

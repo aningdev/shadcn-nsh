@@ -1,20 +1,10 @@
 // An attachment: a file, an image or a link that a message or a composer carries, with what it is
 // called, how it is doing, and what can be done to it.
 
-import {
-  alpha,
-  colors,
-  focusRing,
-  hovered,
-  rounded,
-  tints,
-  font,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, Scroll, split, Text, token, View } from "nsh";
 
+import { alpha, colors, focusRing, hovered, rounded, tints, font, shape, stroke } from "../theme";
 import { Button, type ButtonProps } from "./button";
 import { density } from "./lib/surface";
 
@@ -34,6 +24,233 @@ export type AttachmentOrientation = "horizontal" | "vertical";
  * draws inside it, faded until the attachment is done or idle. */
 export type AttachmentMediaVariant = "icon" | "image";
 
+/** An attachment's props. Every `nsh` view prop passes through; `style` goes over the look's. */
+export type AttachmentProps = ViewProps & {
+  /** Default `done`. */
+  state?: AttachmentState;
+  /** Default `default`. */
+  size?: AttachmentSize;
+  /** Default `horizontal`. */
+  orientation?: AttachmentOrientation;
+};
+
+/** A group's props: the view's, but its `ref` is the scroll view's. */
+export type AttachmentGroupProps = Omit<ViewProps, "ref">;
+
+/** The media's props: an `Icon` (size it with `attachmentGlyph`) or a picture. */
+export type AttachmentMediaProps = ViewProps & {
+  /** Default `icon`. */
+  variant?: AttachmentMediaVariant;
+};
+
+/** The text's props: a view's. */
+export type AttachmentContentProps = ViewProps;
+
+/** The title: a string in the look's type, one line, truncated. */
+export type AttachmentTitleProps = Omit<TextProps, "children"> & {
+  /** What the file is called. */
+  children?: string;
+};
+
+/** The description: a string in the look's type, one line, truncated. */
+export type AttachmentDescriptionProps = Omit<TextProps, "children"> & {
+  /** What it is doing, or what it weighs. */
+  children?: string;
+};
+
+/** The actions' props: a view's. */
+export type AttachmentActionsProps = ViewProps;
+
+/** An action on an attachment: this library's `Button`, ghost and small unless told otherwise. */
+export type AttachmentActionProps = ButtonProps;
+
+/** The trigger's props: the frame's own pressable, so `onPress`, `accessibilityLabel` and the
+ * view's props. */
+export type AttachmentTriggerProps = Omit<ViewProps, "children">;
+
+/**
+ * A file or a picture carried by a message or a composer, after shadcn/ui's attachment: its media,
+ * what it is called, how it is doing, and what can be done to it. `state` says how it is doing,
+ * `size` how big it is, `orientation` whether the media sits beside the text or above it.
+ */
+export function Attachment(props: AttachmentProps) {
+  const state = () => props.state ?? "done";
+  const size = () => props.size ?? "default";
+  const orientation = () => props.orientation ?? "horizontal";
+  const [, rest] = split(props, [
+    "state",
+    "size",
+    "orientation",
+    "children",
+    "class",
+    "classList",
+    "style",
+  ]);
+  return (
+    <AttachmentContext.Provider value={{ state, size, orientation }}>
+      <View
+        {...rest}
+        class={props.class}
+        classList={props.classList}
+        style={[attachmentLook().root(state(), size(), orientation()), props.style ?? null]}
+      >
+        {props.children}
+      </View>
+    </AttachmentContext.Provider>
+  );
+}
+
+/**
+ * Attachments in a row that scrolls sideways when they do not fit, 12 points apart. A row of
+ * files under a message, a strip of pictures in a composer.
+ */
+export function AttachmentGroup(props: AttachmentGroupProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <Scroll
+      {...rest}
+      horizontal
+      scrollbar={false}
+      class={props.class}
+      classList={props.classList}
+      style={[attachmentLook().group, props.style ?? null]}
+      contentStyle={attachmentLook().groupContent}
+    >
+      {props.children}
+    </Scroll>
+  );
+}
+
+/** The media of an attachment: an `Icon` of `attachmentGlyph(size, orientation)` points, or a
+ * picture drawn into a square. */
+export function AttachmentMedia(props: AttachmentMediaProps) {
+  const attachment = AttachmentContext() ?? unattached;
+  const variant = () => props.variant ?? "icon";
+  const [, rest] = split(props, ["variant", "children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        attachmentLook().media(
+          attachment.size(),
+          attachment.orientation(),
+          variant(),
+          attachment.state(),
+        ),
+        props.style ?? null,
+      ]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** The text of an attachment: its title and its description, in a column that takes the room
+ * left. */
+export function AttachmentContent(props: AttachmentContentProps) {
+  const attachment = AttachmentContext() ?? unattached;
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[attachmentLook().content(attachment.orientation()), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** What the file is called, in one line. */
+export function AttachmentTitle(props: AttachmentTitleProps) {
+  const attachment = AttachmentContext() ?? unattached;
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[attachmentLook().title(attachment.size()), props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** What the attachment is doing, or what it weighs, in one line under its title. */
+export function AttachmentDescription(props: AttachmentDescriptionProps) {
+  const attachment = AttachmentContext() ?? unattached;
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[attachmentLook().description(attachment.state()), props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** The actions on an attachment: a remove, a retry, a preview. They sit beside the text, or in the
+ * corner of a vertical attachment. */
+export function AttachmentActions(props: AttachmentActionsProps) {
+  const attachment = AttachmentContext() ?? unattached;
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[attachmentLook().actions(attachment.orientation()), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** An action on an attachment: ghost and small, an icon or a label. */
+export function AttachmentAction(props: AttachmentActionProps) {
+  const [, rest] = split(props, ["variant", "size", "class", "classList", "style"]);
+  return (
+    <Button
+      {...rest}
+      variant={props.variant ?? "ghost"}
+      size={props.size ?? "sm"}
+      class={props.class}
+      classList={props.classList}
+      style={props.style}
+    />
+  );
+}
+
+/**
+ * A pressable over the whole attachment: press it to open the file. Give it a name for screen
+ * readers (`accessibilityLabel`). shadcn/ui's `asChild`, which turns a link of yours into the
+ * trigger, has no equivalent here — the trigger is the frame's own pressable.
+ */
+export function AttachmentTrigger(props: AttachmentTriggerProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "hoverStyle", "focusVisibleStyle"]);
+  return (
+    <View
+      {...rest}
+      role="button"
+      class={props.class}
+      classList={props.classList}
+      style={[attachmentLook().trigger, props.style ?? null]}
+      hoverStyle={[hovered(), props.hoverStyle ?? null]}
+      focusVisibleStyle={[focusRing(), props.focusVisibleStyle ?? null]}
+    />
+  );
+}
+
+// Shared attachment primitives
+// Demos size an icon with `attachmentGlyph`.
+
 /** The gaps and sizes of an attachment, by `size`. Its corners are not here: a theme is read where
  * the frame is drawn (`corners`), never into a module's constant. */
 const sizes = {
@@ -41,6 +258,12 @@ const sizes = {
   sm: { gap: 10, padX: 8, padY: 6, media: 32, glyph: 16, title: density.note, minWidth: 0 },
   xs: { gap: 6, padX: 6, padY: 4, media: 28, glyph: 14, title: density.note, minWidth: 0 },
 } as const;
+
+/** The illustration of a media's glyph, by size and orientation. */
+export const attachmentGlyph = (size: AttachmentSize, orientation: AttachmentOrientation): number =>
+  orientation === "vertical" ? 24 : sizes[size].glyph;
+
+// Private helpers & looks
 
 /** The frame's corners at a size: container, and control at `xs`. Read where the frame is
  * drawn — `radius` is the theme's. */
@@ -69,7 +292,7 @@ const unattached: AttachmentAxes = {
 };
 
 /** An attachment's parts as the styles they wear: spread each one onto the part that matches its name. */
-export interface AttachmentLook {
+interface AttachmentLook {
   /** The group of attachments (`AttachmentGroup`): a row 12 points apart that scrolls sideways. */
   readonly group: ViewStyle;
   /** Its content: the same row, as a scroll view's. */
@@ -103,10 +326,6 @@ export interface AttachmentLook {
   readonly trigger: ViewStyle;
 }
 
-/** The illustration of a media's glyph, by size and orientation. */
-export const attachmentGlyph = (size: AttachmentSize, orientation: AttachmentOrientation): number =>
-  orientation === "vertical" ? 24 : sizes[size].glyph;
-
 /**
  * An attachment's look, after shadcn/ui's: a frame as wide as it holds in the card's fill with a
  * hairline edge — dashed when `idle`, in the danger tone when failed — the card's corners (the
@@ -115,7 +334,7 @@ export const attachmentGlyph = (size: AttachmentSize, orientation: AttachmentOri
  * line and the description the note's size under it in the muted ink, 10 / 8 / 6 points in from the
  * frame's edge and 8 / 6 / 4 above and below.
  */
-export function attachmentLook(): AttachmentLook {
+function attachmentLook(): AttachmentLook {
   return {
     get group(): ViewStyle {
       return { width: "100%", flexGrow: 0, flexShrink: 0 };
@@ -203,188 +422,4 @@ export function attachmentLook(): AttachmentLook {
       };
     },
   };
-}
-
-/** An attachment's props. Every `nsh` view prop passes through; `style` goes over the look's. */
-export type AttachmentProps = ViewProps & {
-  /** Default `done`. */
-  state?: AttachmentState;
-  /** Default `default`. */
-  size?: AttachmentSize;
-  /** Default `horizontal`. */
-  orientation?: AttachmentOrientation;
-};
-
-/** A group's props: the view's, but its `ref` is the scroll view's. */
-export type AttachmentGroupProps = Omit<ViewProps, "ref">;
-
-/** The media's props: an `Icon` (size it with `attachmentGlyph`) or a picture. */
-export type AttachmentMediaProps = ViewProps & {
-  /** Default `icon`. */
-  variant?: AttachmentMediaVariant;
-};
-
-/** The title: a string in the look's type, one line, truncated. */
-export type AttachmentTitleProps = Omit<TextProps, "children"> & {
-  /** What the file is called. */
-  children?: string;
-};
-
-/** The description: a string in the look's type, one line, truncated. */
-export type AttachmentDescriptionProps = Omit<TextProps, "children"> & {
-  /** What it is doing, or what it weighs. */
-  children?: string;
-};
-
-/** An action on an attachment: this library's `Button`, ghost and small unless told otherwise. */
-export type AttachmentActionProps = ButtonProps;
-
-/** The trigger's props: the frame's own pressable, so `onPress`, `accessibilityLabel` and the
- * view's props. */
-export type AttachmentTriggerProps = Omit<ViewProps, "children">;
-
-/**
- * A file or a picture carried by a message or a composer, after shadcn/ui's attachment: its media,
- * what it is called, how it is doing, and what can be done to it. `state` says how it is doing,
- * `size` how big it is, `orientation` whether the media sits beside the text or above it.
- */
-export function Attachment(props: AttachmentProps) {
-  const state = () => props.state ?? "done";
-  const size = () => props.size ?? "default";
-  const orientation = () => props.orientation ?? "horizontal";
-  const [, rest] = split(props, ["state", "size", "orientation", "children", "style"]);
-  return (
-    <AttachmentContext.Provider value={{ state, size, orientation }}>
-      <View
-        {...rest}
-        style={[attachmentLook().root(state(), size(), orientation()), props.style ?? null]}
-      >
-        {props.children}
-      </View>
-    </AttachmentContext.Provider>
-  );
-}
-
-/**
- * Attachments in a row that scrolls sideways when they do not fit, 12 points apart. A row of
- * files under a message, a strip of pictures in a composer.
- */
-export function AttachmentGroup(props: AttachmentGroupProps) {
-  const [, rest] = split(props, ["children", "style"]);
-  return (
-    <Scroll
-      {...rest}
-      horizontal
-      scrollbar={false}
-      style={[attachmentLook().group, props.style ?? null]}
-      contentStyle={attachmentLook().groupContent}
-    >
-      {props.children}
-    </Scroll>
-  );
-}
-
-/** The media of an attachment: an `Icon` of `attachmentGlyph(size, orientation)` points, or a
- * picture drawn into a square. */
-export function AttachmentMedia(props: AttachmentMediaProps) {
-  const attachment = AttachmentContext() ?? unattached;
-  const variant = () => props.variant ?? "icon";
-  const [, rest] = split(props, ["variant", "children", "style"]);
-  return (
-    <View
-      {...rest}
-      style={[
-        attachmentLook().media(
-          attachment.size(),
-          attachment.orientation(),
-          variant(),
-          attachment.state(),
-        ),
-        props.style ?? null,
-      ]}
-    >
-      {props.children}
-    </View>
-  );
-}
-
-/** The text's props: a view's. */
-export type AttachmentContentProps = ViewProps;
-
-/** The text of an attachment: its title and its description, in a column that takes the room
- * left. */
-export function AttachmentContent(props: AttachmentContentProps) {
-  const attachment = AttachmentContext() ?? unattached;
-  const [, rest] = split(props, ["children", "style"]);
-  return (
-    <View
-      {...rest}
-      style={[attachmentLook().content(attachment.orientation()), props.style ?? null]}
-    >
-      {props.children}
-    </View>
-  );
-}
-
-/** What the file is called, in one line. */
-export function AttachmentTitle(props: AttachmentTitleProps) {
-  const attachment = AttachmentContext() ?? unattached;
-  const [, rest] = split(props, ["children", "style"]);
-  return (
-    <Text {...rest} style={[attachmentLook().title(attachment.size()), props.style ?? null]}>
-      {props.children}
-    </Text>
-  );
-}
-
-/** What the attachment is doing, or what it weighs, in one line under its title. */
-export function AttachmentDescription(props: AttachmentDescriptionProps) {
-  const attachment = AttachmentContext() ?? unattached;
-  const [, rest] = split(props, ["children", "style"]);
-  return (
-    <Text {...rest} style={[attachmentLook().description(attachment.state()), props.style ?? null]}>
-      {props.children}
-    </Text>
-  );
-}
-
-/** The actions' props: a view's. */
-export type AttachmentActionsProps = ViewProps;
-
-/** The actions on an attachment: a remove, a retry, a preview. They sit beside the text, or in the
- * corner of a vertical attachment. */
-export function AttachmentActions(props: AttachmentActionsProps) {
-  const attachment = AttachmentContext() ?? unattached;
-  const [, rest] = split(props, ["children", "style"]);
-  return (
-    <View
-      {...rest}
-      style={[attachmentLook().actions(attachment.orientation()), props.style ?? null]}
-    >
-      {props.children}
-    </View>
-  );
-}
-
-/** An action on an attachment: ghost and small, an icon or a label. */
-export function AttachmentAction(props: AttachmentActionProps) {
-  return <Button variant="ghost" size="sm" {...props} />;
-}
-
-/**
- * A pressable over the whole attachment: press it to open the file. Give it a name for screen
- * readers (`accessibilityLabel`). shadcn/ui's `asChild`, which turns a link of yours into the
- * trigger, has no equivalent here — the trigger is the frame's own pressable.
- */
-export function AttachmentTrigger(props: AttachmentTriggerProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <View
-      {...rest}
-      role="button"
-      style={[attachmentLook().trigger, props.style ?? null]}
-      hoverStyle={hovered()}
-      focusVisibleStyle={focusRing()}
-    />
-  );
 }

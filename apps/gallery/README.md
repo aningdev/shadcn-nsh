@@ -1,8 +1,6 @@
-# @shadcn-nsh/gallery
+# Gallery
 
-[中文](./README.zh.md)
-
-Native behavior tests and smoke pages for [`@shadcn-nsh/ui`](../../packages/ui), on the same components the docs site documents. Screenshot comparison stays in `apps/website/demos` (`port:render`); this app proves behavior.
+`packages/ui` 的原生行为测试与冒烟页，组件与文档站相同。这里读原生状态，不比像素。
 
 ```sh
 bun run dev:gallery
@@ -10,4 +8,4 @@ bun run check:gallery
 bun run test:gallery
 ```
 
-Authoring rules: [`AGENTS.md`](./AGENTS.md). The component list and pages: [`apps/website`](../docs).
+一族增加：`packages/ui` 里的组件、`tests/<family>.fixture.tsx`、`tests/<family>.test.tsx`；需要上冒烟页时再在 `App.tsx` 加一节。测试驱动原生事件、读原生状态，不比像素。约定见根 [`AGENTS.md`](../../AGENTS.md)。

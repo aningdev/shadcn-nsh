@@ -2,16 +2,18 @@
   "name": "Apple",
   "cssVars": {
     "theme": {
+      "font-sans": "system-ui",
+      "font-mono": "monospace",
       "radius": "8px",
-      "radius-control": "8px",
-      "radius-container": "12px",
-      "radius-modal": "16px",
+      "radius-md": "8px",
+      "radius-lg": "12px",
+      "radius-xl": "16px",
       "scrim": "oklch(0 0 0 / 0.4)",
       "media": "oklch(0.1869 0.0151 266.766)",
       "on-media": "oklch(1 0 0)"
     },
     "light": {
-      "background": "oklch(0.96257 0.00665 286.274)",
+      "background": "oklch(1 0 0)",
       "card": "oklch(1 0 0)",
       "popover": "oklch(1 0 0)",
       "muted": "oklch(0.93459 0.00268 286.348)",

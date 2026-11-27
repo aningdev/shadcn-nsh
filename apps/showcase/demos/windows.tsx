@@ -5,7 +5,7 @@
 // pops up over everything. Every window reads the same signals, so the inspector's edits show in the
 // document at once. The windows, their state and the palette's search are `nsh/desktop` and
 // `nsh/base`'s; the cards, buttons, badges, stats and command rows are this library's.
-import { colors, alpha, terminal, tints, shape } from "@shadcn-nsh/theme";
+import { colors, alpha, terminal, tints, shape, font as themeFont } from "@shadcn-nsh/theme";
 import {
   AppWindow,
   Check,
@@ -862,7 +862,7 @@ function BlockInput(props: { block: Block; first: boolean }) {
   const text = () => ({
     fontSize: font(),
     lineHeight: lineHeight(),
-    fontFamily: doc.mono() ? "monospace" : undefined,
+    fontFamily: doc.mono() ? themeFont.mono : undefined,
     color: colors.foreground,
     selectionColor: colors.brand,
     caretColor: colors.brand,
@@ -953,7 +953,7 @@ function DocumentWindow() {
       {/* The title bar: dragging it moves the window, a double click zooms or maximizes it; its
           buttons stay buttons. Its padding is the writing app's own: 14 points before the document's
           name, and the caption buttons flush against the window's corner. */}
-      <TitleBar style={{ paddingStart: 14, paddingEnd: mac ? 10 : 0 }}>
+      <TitleBar contentStyle={{ paddingStart: 14, paddingEnd: mac ? 10 : 0 }}>
         <If when={mac}>
           <WindowControls />
         </If>

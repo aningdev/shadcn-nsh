@@ -1,4 +1,4 @@
-import { surface, colors, type Tone, toneColor, toneTint, shape } from "@shadcn-nsh/theme";
+import { surface, colors, type Tone, toneColor, toneTint, shape, font } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Plus } from "lucide";
 // Lists: the official gallery's Lists scene (`references/nsh/examples/gallery/demos/Lists.tsx`)
 // in five tabs — a grid of columns with viewability, sticky contact sections, a chat, two lists
@@ -691,7 +691,7 @@ function More() {
             <Text style={{ flex: 1, fontSize: 15, fontWeight: "600", color: colors.foreground }}>
               More list features
             </Text>
-            <Text style={{ fontSize: 13, color: colors.faint, fontFamily: "monospace" }}>
+            <Text style={{ fontSize: 13, color: colors.faint, fontFamily: font.mono }}>
               position: sticky
             </Text>
           </View>
@@ -942,11 +942,11 @@ function More() {
               )}
             </List>
             <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-              <Text style={{ fontFamily: "monospace", color: colors.foreground }}>
+              <Text style={{ fontFamily: font.mono, color: colors.foreground }}>
                 ListEmptyComponent
               </Text>{" "}
               while empty, separators between rows. In the page (
-              <Text style={{ fontFamily: "monospace", color: colors.foreground }}>
+              <Text style={{ fontFamily: font.mono, color: colors.foreground }}>
                 viewport="parent"
               </Text>
               ), the list is as tall as its rows.

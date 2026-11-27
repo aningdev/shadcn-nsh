@@ -67,7 +67,7 @@ SidebarProvider
 
 ### The column
 
-`Sidebar` is a column as wide as the sidebar (`sidebarSize.width`, 256 points) on the sidebar's fill,
+`Sidebar` is a column 256 points wide on the sidebar's fill,
 its edge against the page, holding a `SidebarHeader`, the groups in a `SidebarContent` that scrolls
 when they do not fit, and a `SidebarFooter`.
 
@@ -78,7 +78,7 @@ Three axes say how it meets the window:
   window's air, 8 points of room around it; `inset` a card on the sidebar's ground, with the page's
   own card beside it on that same ground, 8 points from it and from the window's edges.
 - `collapsible` — `offcanvas` (default) leaves the window when it closes; `icon` folds to a strip of
-  icons (`sidebarSize.icon`, 48 points); `none` never closes.
+  icons (48 points); `none` never closes.
 
 ```tsx
 <Sidebar side="right" variant="inset" collapsible="icon">
@@ -178,7 +178,7 @@ const row = sidebarMenuButtonLook({ size: () => "sm" });
 </SidebarMenuButton>;
 ```
 
-Folded to icons, the row is a square the height of a row (`sidebarSize.folded`) with its icon, and
+Folded to icons, the row is a square the height of a row with its icon, and
 `tooltip` names it on a desktop: a
 string is the name, or the tooltip's own props (`placement`, `delay`, …). It also names the row for
 screen readers when nothing else does — and it replaces `nsh/base`'s element `tooltip`, which is what
@@ -197,17 +197,15 @@ they need, so the row's name stops short of them; both on one row, the action st
 badge's width rather than drawing over it.
 
 ```tsx
-const action = sidebarMenuActionLook();
-
 <SidebarMenuItem>
   <SidebarMenuButton size="sm" tooltip={project.name}>
     {project.name}
   </SidebarMenuButton>
   <SidebarMenuBadge>{project.unread}</SidebarMenuBadge>
   <SidebarMenuAction accessibilityLabel={`More about ${project.name}`} onPress={more}>
-    <Icon icon={Ellipsis} size={action.glyph.size} tint={action.glyph.tint} />
+    <Icon icon={Ellipsis} size={16} />
   </SidebarMenuAction>
-</SidebarMenuItem>;
+</SidebarMenuItem>
 ```
 
 An action is always there: hover alone is something a touch screen has no way to do.
@@ -291,10 +289,5 @@ library's `Sheet`). Every `nsh` view prop passes through; a row is an `nsh/base`
 | `SidebarMenuSkeleton`  | `showIcon`, `width`                                                                                                             | The skeleton's blocks where an icon and a name will be                                                                          |
 | `useSidebar()`         | —                                                                                                                               | What the parts read inside the provider: `state`, `open`, `openMobile`, `isMobile`, `setOpen`, `setOpenMobile`, `toggleSidebar` |
 
-The looks — spread them on the view they name, or read their words for content of your own:
-`sidebarLook({ side, variant, collapsible, open, isMobile })` (`root`, `frame`, `column`, `inset`,
-`rail`, `railLine`, `header`, `footer`, `content`, `contentRows`, `separator`),
-`sidebarGroupLook()`, `sidebarMenuButtonLook({ size, variant, isActive, trailing })`,
-`sidebarMenuActionLook({ trailing })`, `sidebarMenuBadgeLook()`, `sidebarMenuSubLook()`,
-`sidebarMenuSubButtonLook({ size, isActive })`, `sidebarMenuSkeletonLook()` and
-`sidebarInputLook()`. `sidebarSize` has the numbers.
+`sidebarMenuButtonLook({ size, variant, active, trailing })` is exported for a row the app draws
+itself: its `label` and its `glyph` (`size`, `tint`). The other looks stay with the parts.

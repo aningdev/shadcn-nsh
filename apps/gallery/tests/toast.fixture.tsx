@@ -1,9 +1,10 @@
 import { mount, Text, View } from "nsh";
 
-import { Toast, toastCloseLook, toastText, toastTitle } from "../../../packages/ui";
+import { Toast, pressSink } from "../../../packages/ui";
 
 function closeSink() {
-  const active = toastCloseLook().activeStyle;
+  // The close control's pressed transform is `pressSink(0.9)`; reduced motion sinks nothing.
+  const active = pressSink(0.9).activeStyle;
   return active?.transform ? "sink" : "still";
 }
 
@@ -14,11 +15,8 @@ function App() {
       <Toast title="Pinned" description="Stays" />
       <Toast>
         <View style={{ flex: 1, gap: 2 }}>
-          <Text style={toastTitle()}>Hello</Text>
-          <Text style={toastText()}>There</Text>
-        </View>
-        <View {...toastCloseLook()} accessibilityLabel="Dismiss">
-          <Text style={{ fontSize: 14 }}>×</Text>
+          <Text>Hello</Text>
+          <Text>There</Text>
         </View>
       </Toast>
     </View>

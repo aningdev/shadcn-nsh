@@ -1,51 +1,42 @@
 # shadcn-nsh Architecture
 
-一个文件一个**组件**，经 registry 与 CLI 以 **Copy-into-app** 交付。组件归本库所有：外观以**上游**（`references/nsh/examples/nsh-gallery-ui`）与官方推荐为参考规范自行抽取，行为来自 `nsh/base`，分发、组合角色与 API 命名参照 shadcn。词汇见 [`GLOSSARY.md`](GLOSSARY.md)。
+一个文件一个**组件**，经 registry 与 CLI 以 **Copy-into-app** 交付。复制进应用后归应用所有。外观、状态、几何和对外 API 由本库决定；行为与无障碍来自 `nsh/base`（不改）；分发、目录、组合角色（`Trigger` / `Content` / `Item`）与 API 命名参照 shadcn。词汇在文末。组件怎么写见 [`component-authoring.md`](component-authoring.md)，主题见 [`theme.md`](theme.md)。
 
 ## Stack
 
-**运行时与组件**：NSH（`nsh`、`nsh/base`），CLI 安装、从不编译；版本等于 **Baseline**（见 [`toolchain.md`](toolchain.md)）
+**运行时与组件**：NSH（`nsh`、`nsh/base`）。CLI 只安装、不编译。版本见根 `package.json` 的 `engines.nsh`。
 _Avoid_: 编译 NSH、设 `NSH_RUNTIME`、自定 primitive 层
 
-**脚本与依赖**：Bun；格式化、lint、工具面类型用 Vite+（`vp`），配置只在根 `vite.config.ts`
+**脚本与依赖**：Bun。格式化、lint、工具面类型用 Vite+（`vp`），配置只在根 `vite.config.ts`。
 _Avoid_: Prettier、npm / pnpm 脚本
 
-**上游解析**：`oxc-parser`
-_Avoid_: TypeScript 编译器 API、正则切声明
+**文档站**：TanStack Start + Fumadocs（`apps/website`），静态预渲染。演示由 `nsh package --target web` 打包后嵌进 iframe。
 
-**文档站**：TanStack Start + Fumadocs（`apps/website`，React + Tailwind），静态预渲染；演示由 `nsh package --target web` 打包后嵌进 iframe
+**分发**：两条路。Copy-into-app 走 shadcn registry（`registry.json` → `public/r`）和 CLI `shadcn-nsh`。TSX `nshm` 走根目录 `nsh.json`（`nsh add github:aningdev/shadcn-nsh`），零 npm 依赖。
+_Avoid_: 把组件做成 npm 包、为旧 registry id 留别名
 
-**分发**：shadcn registry 格式（`registry.json` → `public/r`）+ 本仓 CLI `shadcn-nsh`
-_Avoid_: 发布组件 npm 包、旧 registry id 的别名
-
-**许可**：源自上游的内容保持 Apache-2.0，文件头与 `NOTICE` 注明来源
+**许可**：MIT。改编自 NSH 的文件保持 Apache-2.0，文件头致谢行与根目录 `NOTICE` 注明来源。
 
 ## Layout
 
-- `registry.json`：**Catalog** 的真源，其 `registry:ui` 条目就是组件集合
-- `port-map.json`：**Port Map**，上游每个声明的来源去向表与已审阅的上游提交；目标不一定是组件——`demo.ts` 的 `Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` 等去向 `apps/website/demos/stage.tsx`（演示适配层，不进 registry）
-- `packages/theme/`：全部 6 套主题（`nsh-gallery`（NSH Gallery）、`shadcn`、`solid-glass`、`apple`、`material`、`winui`）的 **Theme Source** 是 `tokens/`（DTCG 2025.10，`tokens/base/` 与 `tokens/themes/<id>/`），经 `bun run tokens:build` 编译为运行时 `theme.json`、`semantics.json` 与 `themes/<id>/{theme,semantics}.json`（oklch，归本库；标准见 [`specs/design-semantics.md`](specs/design-semantics.md)）；`theme.ts` 读取它们与运行时的 `selectTheme` / `currentTheme`；`themes/<name>/` 一套一个 `AppTheme`（`theme.json`、`semantics.json`、`index.ts`），经 `theme-<name>` 条目分发；不放组件
-- `packages/ui/<id>.tsx`：一个**组件** = look + **Shell**；一个 registry 条目一个文件。起源于上游的文件在文件头一行致谢（**Credit Line**），代码归本库
-- `packages/ui/lib/`：跨多个外壳共用的接线与工具（作为 `registry:lib` 条目分发，收敛为 8 个高内聚模块：`utils.tsx`、`state.ts`、`motion.tsx`、`surface.tsx`、`field-look.ts`、`icons.tsx`、`popup.tsx`、`listbox.tsx`），每条按责任命名且至少两个控件在用——只有一个控件用的收回该控件（如 `switch-geometry` 并入 `switch.tsx`、`color-picker` 的 `formatColor`/`inkOn`、`icon-drawing` 并入 `icons.tsx`）
-- `apps/website/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `Chips` / `desktop` / `wide` / `ui()`，见 [`port.md`](port.md#演示)），`photos.ts` 是照片页用的图（上游 `photos.ts`，原样搬运），都不进 registry；`shots/` 与 `shots-theme/` 是渲染比对的截图（`port:render` / `port:render:theme`），不提交
-- `apps/website/public/demos/`：`docs:demos` 的打包产物（页面、运行时、wasm），不进仓库；`apps/website/scripts/build-demos.ts` 打包每个演示，`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`
-- `apps/showcase/`：展示应用（#78）——NSH 官方 Gallery 的壳（桌面侧栏、手机索引推入 nav stack、搜索）与其场景演示，全部用 `packages/ui` 重建，分批实现（`groups/<group>.ts` 一个目的一个文件，未建的入口指向共享占位屏）；调色板与外观在应用内经 `theme.ts` 实时切换并持久化，`nsh test apps/showcase` 测壳的行为；由 `build-demos.ts` 打包到 `apps/website/public/showcase/`，站点首页的 “See it running” 以 `ShowcaseFrame` 嵌入，不进文档菜单
-- `apps/website/content/docs/`：文档页（MDX / Markdown，`createFileRoute("/docs/$")` 渲染）；组件页 `<id>.md` 按固定次序分节：Installation、Usage、可选 Composition、Examples、API（规则见 [`port.md`](port.md#文档页)）。`components.mdx`（组件索引）与 `components/coverage.mdx`（对照页）由 `apps/website/src/components/fd/` 里的 React 组件画，行来自生成表。`themes.mdx` 是总览；每个主题一页 `themes/<id>.mdx`，标题写在 markdown 里（目录来自标题），token 与 finish 仍由组件按 `demos/palettes.ts` 画。`apps/website/src/lib/official.ts` 是文档站唯一的登记表（shadcn/ui 与 NSH 元素各一张：来源、去向、没做的理由）；分类从它推导——页被 NSH 元素表（`references/nsh/website/elements`）某行的 `ours` 列出就是**对齐官方**，否则是**自研**（shadcn/ui 有没有对应都不影响）——`apps/website/src/lib/kinds.ts` 只留两个类名、顺序与这条推导。侧边栏分组、索引分节、每页页头的官方链接（`Official: shadcn/ui · … | NSH · …`）与对照页都从它们生成，页面自己不写。新增组件只在该表登记（若对得上某个官方组件），分类自动得出；`bun run check:pages` 会拦下没登记或没建的页
-- `apps/gallery/`：原生行为测试与冒烟页，用同一套 `packages/ui`；不做公开文档，不比截图
-- `packages/cli/`：`shadcn-nsh` CLI（`init`、`add`、`list`、`view`、`diff`、`build`、`serve`）
-- `scripts/catalog.ts`：**Catalog** 模块，脚本读写 `registry.json` 与取组件集合的唯一入口（`addComponent` 写入新条目）；生成 `apps/website/demos/catalog.generated.ts` 供 NSH 运行时使用（不手改）；`demos/` 下不是组件演示的文件（`App.tsx`、`kit.tsx`、`stage.tsx`）在 `NON_COMPONENT_DEMOS` 登记，新增这样的文件要加进去，否则 `catalog --check` 把它当成没有组件的演示
-- `scripts/registry-build.ts`：`registry:build` 与 `test:install` 共用的构建（CLI `build` 加格式化）
-- `scripts/install-test.ts`：`test:install`，从应用一侧验证 Copy-into-app
-- `scripts/failure.ts`：脚本报错的约定，`StepFailure` 带失败的步骤名与 `cause`
-- `scripts/port/`：抽取与上游变化提醒工具（读 `references/nsh`，见下）
-- `references/`：只读子模块
+- `registry.json`：组件集合的真源。`registry:ui` 条目就是组件。
+- `packages/theme/`：六套主题（`nsh-gallery`、`shadcn`、`solid-glass`、`apple`、`material`、`winui`）。真源是 `themes/<id>/index.ts`：`nsh-gallery` 为完整 `base`，其余 `defineTheme()` 稀疏覆写。`bun run theme:build` 单向导出 `theme.json`、W3C DTCG `{light,dark}.tokens.json` 与 `DESIGN.md`（生成，不手改）。运行时经 `theme.ts` 读 `AppTheme`（`selectTheme` / `currentTheme`）。`themes/native` 的 `nativeTheme()` 按 `platform.os` 选平台主题。契约见 [`theme.md`](theme.md)。
+- `packages/ui/<id>.tsx`：一个组件 = 私有 Look + 外壳，一个 registry 条目一个文件。起源于 NSH gallery 的文件在文件头一行致谢，代码归本库。
+- `packages/ui/lib/`：没有所属控件、且至少两个组件复用的原语（`utils`、`state`、`motion`、`surface`、`field-look`、`choice`、`icons`、`popup`、`listbox`），作为 `registry:lib` 分发。只被一个控件用的收回该控件。
+- `apps/website/demos/`：每个组件一份 `<id>.tsx`。`kit.tsx` 是页面外框，`stage.tsx` 是演示适配层（`Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` / `Chips`）。`photos.ts` 等数据只供演示，不进 registry。窄屏截图在 `shots/narrow/`，不提交。
+- `apps/website/content/docs/`：文档页。组件页章节见 [`component-authoring.md`](component-authoring.md#文档页)。`official.ts` 登记 shadcn/ui 与 NSH 元素的来源、去向和没做的理由；`kinds.ts` 由此推出 Base / Enhanced。生成的行不手写。
+- `apps/website/public/demos/`：`docs:demos` 的打包产物，不进仓库。`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`。
+- `apps/showcase/`：展示应用。壳与场景用 `packages/ui` 重建，`nsh test apps/showcase` 测壳，首页 “See it running” 嵌入其打包产物。
+- `apps/gallery/`：原生行为测试与冒烟，不比截图。
+- `packages/cli/`：`init`、`add`、`list`、`view`、`diff`、`build`、`serve`。
+- 根 `nsh.json`：TSX `nshm` 清单。`version` 与 `packages/cli/package.json` 相同，`bun run catalog` 按 CLI 版本重写它。`exports` 覆盖 `shadcn-nsh`、主题和每个 `registry:ui` 组件。
+- `scripts/registry/catalog.ts`：读写 `registry.json` 的唯一入口，并生成 `catalog.generated.ts` 与根 `nsh.json`（不手改）。
+- `scripts/` 按职能分四层：`lint/`（UI 静态检查与演示覆盖）、`theme/`（主题构建、对比度、不变量、语义表与 diff）、`registry/`（目录、构建与安装端到端）、`scaffold/`（新组件脚手架与模板）。
 
 ## Layers
 
 ```mermaid
 flowchart TD
-  upstream["上游 nsh-gallery-ui（参考规范）<br/>(references/nsh, 固定在 Baseline)"]
-  port["scripts/port"]
   theme["packages/theme"]
   lib["packages/ui/lib"]
   ui["packages/ui/&lt;id&gt;"]
@@ -53,12 +44,10 @@ flowchart TD
   nsh["nsh"]
   demos["apps/website/demos"]
   gallery["apps/gallery"]
-  site["apps/website 站点"]
+  site["apps/website"]
   registry["registry.json → public/r"]
   cli["packages/cli"]
 
-  upstream -. port:check 提醒变化 .-> port
-  port -. 新组件时抽取初稿 .-> lib & ui
   ui --> lib --> theme
   ui --> theme
   ui & lib --> base --> nsh
@@ -67,75 +56,56 @@ flowchart TD
   site -. 嵌入打包产物 .-> demos
   ui & lib & theme -. registry:build .-> registry
   cli -. 读取 .-> registry
-  tools["scripts/catalog、install-test"] -- 当库 import --> cli
-  tools -. 读写 registry.json .-> registry
 ```
 
-- `packages/ui/lib` 不 import `packages/ui/<id>`；组件之间可以 import（`./button`），依赖写进该条目的 `registryDependencies`（`bun run check:ui` 判定，见 [Rules](#rules) P9）
-- `packages/theme` 不 import `packages/ui`；反过来，组件只经 `@shadcn-nsh/theme` 的 token 与 finish 取外观（`colors`、`finish`、`shape`、`stroke`），不直接读两个 JSON，也不读 `themes/<name>/`
-- `packages/*` 不 import `apps/*`、`scripts/*` 或 `references/*`；运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base`、`lucide`（图标库，应用经 registry 的 `dependencies` 安装）与相对路径；主题的值只经 `@shadcn-nsh/theme` 的入口（`theme.ts`）读，不直接读两个 JSON 或 `themes/<name>/`（`bun run check:ui` 判定，见 [Rules](#rules) P9）
-- 只有 `scripts/port`（抽取与变化提醒）读 `references/nsh`；`apps/website` 的构建不需要子模块
-- 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
-- `scripts/*` 可以把 `packages/cli/src/*` 当库 import（构建、serve、registry 形状校验）：它是工具，不是应用代码；CLI 本身仍只经 Registry 拿组件
-- registry JSON 的形状只在 `packages/cli/src/utils/registry-schema.ts` 校验；读到的 JSON 经它变成类型，不用 `as` 断言
-- `scripts/*` 可以 import `apps/website/demos/render-cases.ts`（渲染用例与特例）、`apps/website/demos/palettes.ts`（可切换的主题清单：站点与主题渲染检查读同一份）与 `apps/website/scripts/player-options.ts`（演示包的 `?idiom=` / `?theme=`），不 import `apps/website` 的其他代码
-- 每个组件的特例（渲染前的 steps、`selfReference`）只写在 `render-cases.ts`，按 id 覆盖；`packages/ui/index.ts` 手写，由检查保证它导出每个组件
+- `lib` 不 import 组件；组件之间可以 import，依赖写进该条目的 `registryDependencies`（`check:ui`）。
+- `packages/theme` 不 import `packages/ui`。组件经 `../theme` 取外观（`lib/` 经 `../../theme`），不直接读 `theme.json` 或 `themes/<name>/`。CLI `add` 把这两条相对路径重写成消费方的 theme alias。
+- `packages/*` 不 import `apps/*` 或 `scripts/*`。`packages/ui` 运行时代码只认相对路径、`nsh` 和 `nsh/base`。基础图标在 `packages/ui/lib/icons.tsx`（39 个与 lucide `IconNode` 同结构的节点）。应用仍可把 `lucide` 的图标传进来。
+- 组件集合只从 `scripts/registry/catalog.ts` 或 `catalog.generated.ts` 取。`packages/ui/index.ts` 手写导出，`catalog --check` 保证它覆盖每个组件。
+- registry JSON 的形状只在 `packages/cli/src/utils/registry-schema.ts` 校验。`scripts/*` 可以把 `packages/cli/src/*` 当库 import。
 
 ## Themes
 
-两件事，名字不混用：
+| 词             | 是什么                                                   | 谁定                                                                |
+| -------------- | -------------------------------------------------------- | ------------------------------------------------------------------- |
+| **构建时主题** | `nsh.json` 指向的 `theme.json`，以及 `init` 装上的读取层 | `init --theme <name>`（记在 `nsh-ui.json`）                         |
+| **AppTheme**   | `{ id, label, theme, spec }`                             | `theme-<name>` 条目；`add theme-<name>` 多装一套到 `themes/<name>/` |
 
-| 词             | 是什么                                                                                   | 谁定                                                                                                       |
-| -------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **构建时主题** | `nsh.json` 的 `theme` 指向的 `theme.json`，以及 `lib/ui/semantics.json`                  | `init --theme <name>`（`nsh-ui.json` 的 `theme` 也记这一个）；换就是重跑 `init --theme <name> --overwrite` |
-| **AppTheme**   | 应用装进 `themes/<name>/` 的一套 `{ id, label, theme, semantics }`，一个 `index.ts` 导出 | registry 的 `theme-<name>` 条目，`add theme-<name>` 多装一套                                               |
-
-- 颜色、3 个层圆角（外加从 `radius-control` 派生的 A 层 `radius` 槽）、字体经 `token()` 读，`setTheme` 与宿主 `setThemeOverrides` 一换就跟；语义层（`semantics.json`：风格数据、`state["press-scale"]` 与 `finishes` 的 `shared` + 稀疏 `light`/`dark`）通过 `{token}` 引用基础层，由 `theme.ts` 响应式解析。两者拼成 `selectTheme(theme)`；`selectTheme(null)` 回到构建时主题。平面主题（shadcn）把 `state["press-scale"]` 写成 `1`：按下不缩放。标准与分层规则见 [`specs/design-semantics.md`](specs/design-semantics.md)，圆角按层收拢的决策见 [`decisions/0002-radius-roles-by-layer.md`](decisions/0002-radius-roles-by-layer.md)。
-- 圆角一律经 `shape.*`（`semantics.json` 的 `dimension.shape` 以 `{radius-…}` 引用 `theme.json` 的 3 个层圆角 token：`control`、`container`、`modal`，另有 `shape.button`：`shape.corners.button` 是 `full` 时取胶囊 `999`，否则解成它引用的圆角）：组件按所在层读对应角色，没有写死的数值；读主题圆角的角一律用 `rounded(radius, inset?)`，`shape.curve` 只在那里给；嵌在另一个面里的面用 `inset` 参数取同心圆角（`Math.max(radius - inset, 0)`）。线宽读 `stroke`（`hairline`、`surface`、`control`），按下与禁用的透明度读 `dimmed`，按钮高、图标、触控目标读 `controlHeight`、`iconSize`、`hitTarget()`。
-- `theme` 条目仍是构建时那套的三个文件（`theme.json`、`lib/ui/semantics.json`、`lib/ui/theme.ts`）；`theme-<name>` 只装 `themes/<name>/`，不碰它们。组件条目的 `theme` 依赖按 `nsh-ui.json` 解析，所以装主题不会把另一套主题写回来。
-- **构建时主题也能当"多装的一套"**：`theme-nsh-gallery` 装 `themes/nsh-gallery/`，里面是构建时那两个 JSON 的副本（均由 `tokens:build` 从 `tokens/themes/nsh-gallery/` 编译并由 `scripts/theme/themes.test.ts` 与 `tokens:build --check` 保证逐字节相同）加一个导出 `nshGallery` 的 `index.ts`。构建时用 shadcn 的应用这样就能两边切。
-- 应用的清单与持久化都是应用的：库只给 `selectTheme` / `currentTheme`，不写清单、不存 `id`（示例见 [`packages/theme/README.md`](../packages/theme/README.md)）。
-- finish 在 JSX 里读（见下）；把 `finish.*` 存进模块级常量，运行时切换就不会跟着变。
+`selectTheme(theme)` 换一整套，`selectTheme(null)` 回到构建时主题。圆角经 `shape.*` 与 `rounded()`，线宽读 `stroke`，字体读 `font.sans` / `font.mono`。`surface()` 与 `control()` 在 JSX 里读；存进模块级常量后，运行时切换不会跟着变。键与角色见 [`theme.md`](theme.md)。
 
 ## Rules
 
-每条规则都有脚本判定；没有判定的不写进来。判定与命令见 [`port.md`](port.md#检查)。
+每条都有脚本判定。
 
-| #   | 规则                                                                                                                                                                                                                                                                                                                                                                                                             |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| P1  | **清单唯一。** 上游每个文件、每个顶层声明在 Port Map 里有去向，或是带理由的 `exclude`                                                                                                                                                                                                                                                                                                                            |
-| P2  | **上游变化必经审阅。** 自 Port Map 记录的已审阅提交以来，上游改动了我们有去向的声明，`port:check` 列为待审阅；审阅后更新记录                                                                                                                                                                                                                                                                                     |
-| P3  | **颜色只来自主题。** 组件、lib 与演示适配层的代码里不出现颜色字面量（look 与外壳同等）；主题文件以 oklch 存储。例外只有不随主题变的颜色（macOS 的三颗窗口按钮、头像的身份色相、图标的模板墨色、取色器拇指的边与环），每处在该行或上一行标 `// color: <原因>`，由 P8 的 `check:ui` 判定                                                                                                                           |
-| P4  | **外壳不改变渲染。** 组件页与它的 Reference Page 截图相同（指针与触屏，亮与暗）；没有外壳的组件声明 `selfReference`                                                                                                                                                                                                                                                                                              |
-| P5  | **外壳不缩减能力。** 组件 props 是对应 `nsh/base` props 加自己的轴；样式类 props 叠在 look 之上，使用者优先                                                                                                                                                                                                                                                                                                      |
-| P6  | **依赖如实。** registry 条目的依赖等于实际 import，相对 import 的文件必须有条目分发                                                                                                                                                                                                                                                                                                                              |
-| P7  | **侧向随阅读方向。** `packages/ui` 里不对称的 left/right 侧向属性用 `start`/`end`，`direction: "rtl"` 才会镜像；同一对象里两侧同值的对称对与标了 `// physical: <原因>` 的对象例外                                                                                                                                                                                                                                |
-| P8  | **组件不点名主题。** `packages/ui` 里不出现 `Record<Controls>`、`controls()`，也不与主题名（`material` / `winui` / `apple` / `shadcn` / `solid-glass`）比较；颜色只来自主题角色，字面量须在该行或上一行标 `// color: <原因>`（如平台的固定身份色、头像的身份色相、模板墨色）；状态外观不写成带颜色值的 Tailwind 状态类，须标 `// state: <原因>`。`bun run check:ui` 检查（规则与两个标记见该脚本）               |
-| P9  | **分层与导出说明。** `packages/ui/lib` 不 import 组件（从 lib 看不到组件，只能反过来）；`packages/ui` 不 import `apps/**`、`scripts/**`、别的包，也不直接读主题的两个 JSON 或 `themes/<name>/`；每个导出的函数、组件、类型与常量上方有 `/** … */` 说明它是做什么的（重新导出取声明处的说明）。例外写进 `scripts/ui-rules/rules.ts` 的 `allowlist`，每条一行理由，条目不再需要时检查失败。`bun run check:ui` 检查 |
+| 规则                  | 判定                                                                                                                                                                                                                         |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **颜色只来自主题**    | 组件、`lib` 与演示不写颜色字面量。例外在该行或上一行标 `// color: <原因>`。`scripts/lint/ui-guards.test.ts`                                                                                                                  |
+| **外壳透传 props**    | props 是对应 `nsh/base` props 加自己的轴。`props.test-d.ts`，由 `nsh check apps/website/demos` 跑                                                                                                                            |
+| **registry 依赖如实** | `registryDependencies` 等于实际 import，相对 import 必须有条目分发。`registry:build`                                                                                                                                         |
+| **侧向随阅读方向**    | 不对称的 left/right 用 `start`/`end`。两侧同值，或标了 `// physical: <原因>` 的，除外。`check:ui -- --only rtl`                                                                                                              |
+| **不点名主题**        | 不写 `controls()`，不与主题 id 比较，不写 `fontFamily` 字面量（读 `font.sans` / `font.mono`，例外标 `// font: <原因>`）。带颜色的状态 class 标 `// state: <原因>`。自带 `class` 用 `joinClass(own, props.class)`。`check:ui` |
+| **分层与导出说明**    | `lib` 不 import 组件；`packages/ui` 不 import `apps/**`、`scripts/**`，不直接读主题文件。每个导出上方有 `/** … */`。例外在 `scripts/lint/ui-rules.ts` 的 `allowlist`。`check:ui`                                             |
 
-**Credit Line** 是**来源标注**，不是只读区：look 与外壳都可以直接修改；`port:vendor` 只为新组件抽取初稿，不覆盖已有代码。
+**`class` 与 `style`。** `style` 优先于 `class`。根节点透传 `class` 与 `classList`。布局和静态微调用 `class`；要盖过主题或跟着状态走的，用 `style`。
 
-**归属**（抽取时，一个上游声明去哪个文件）：
+**children 只读一次**，读在画它的 JSX 里。门户的内容构建函数是例外，注释写 `children-lint: <原因>`。`check:ui -- --only children`。
 
-1. 描述某个控件的 look，进该控件的组件文件；别的组件需要时 import 那个组件
-2. 上游一个文件服务多个控件时，按声明拆到各自的组件；文件私有的常量可以路由到多个目标
-3. 没有所属控件的，进 `packages/ui/lib/<上游文件名>`
-4. 主题相关的进 `packages/theme`
+**状态进 state 样式**（`hoverStyle`、`focusVisibleStyle`、`activeStyle`、`disabledStyle`、`selectedStyle`、`expandedStyle`、`pressedStyle` 等）。平台按变体顺序叠，后面的胜。`expanded` 与 `pressed` 排在 `hover` 与 `focus-visible` 之后；要让指针或键盘焦点盖过打开态时，打开态留在 `style` 里并写明理由。
 
-导出的声明只有一个归属（只有文件私有的常量能路由到多个目标）。组件文件不再导出 `lib/` 的声明：用 `lib/<x>` 的人（应用、演示）直接从那里 import。
+**Credit Line** 是来源标注，不是只读区：`Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.` 本库自己的组件没有这一行。
 
-**Provider 的 children 在 Provider 里求值。** 组合控件的子元素要看见 Provider 的值，所以只在它内部求值：那里的读写成就地执行的 `(() => …)()`（见 `marker.tsx`），既在孩子们真正建出来的位置读，又只读一次。
+不做：改 `nsh` / `nsh/base`；在组件里写颜色字面量；把演示适配层放进组件库或 registry；为旧 registry id 提供别名。
 
-**children 只读一次，读在画它的地方。** 每读一次 `props.children` 都会把子元素重新建一遍（新的原生视图），所以控件只读一次：读在画它们的 JSX 里，或交给宿主画的元素里；字符串 child 就地交给 `AsText`（`packages/ui/lib/utils.tsx`，一个组件，props 即 getter、在应用处求值）画成 `Text`，函数 child 直接画（renderer 跟着它读的 signal 更新）。读写在组件自己的主体或就地执行的 `(() => …)()` 里；唯一的例外是门户的内容构建函数（`nsh/base` 每次打开才建它），那一个读带 `children-lint: <原因>` 注释。`bun run check:children` 检查每一条。
+## 词汇
 
-**外观随外观模式变化**：颜色与依赖 props 的 look 在 JSX 里读，不在组件体里读一次存下（web 上是 CSS 变量看不出来，原生上会冻结）。这一条同样管主题：`finish` 的 getter 读的是当前主题（`selectTheme`）与当前外观，组件若把 finish 的值存进模块级常量、或读进变量后不再读，运行时切换就不会跟着变。
+**Look** 把 variant、size 与状态算成节点上的样式。默认不导出。
 
-**状态的外观进 state 样式。** 一个状态下的静态外观（底色、边框、透明度、缩放）交给 `hoverStyle` / `focusStyle` / `focusVisibleStyle` / `activeStyle` / `disabledStyle` / `selectedStyle` / `checkedStyle` / `indeterminateStyle` / `expandedStyle` / `pressedStyle`，不在 `style` 里按 `disabled`、`open`、`selected` 用 JS 再算一遍：状态本来就在元素上（它自己的 `disabled`、`accessibilityState`，或 `nsh/base` 投影给部件的状态），平台按 Tailwind 的变体顺序叠，后面的胜：`checked` → `indeterminate` → `selected` → `focus-within` → `hover` → `focus` → `focus-visible` → `active` → `disabled` → `aria-busy` → `aria-checked` → `expanded` → `aria-invalid` → `aria-pressed`（`references/nsh/crates/nsh-core/src/tailwind/mod.rs` 的 `rank`）。注意 `expanded` 与 `pressed` 排在 `hover`、`focus-visible`、`active` 之后：一个打开时的外观若要让 hover 或键盘焦点盖过它（导航菜单打开时指针在上面要显示完整底色；select 打开时触发器仍持有焦点，焦点边框要露出来），它留在 `style` 里，并在注释里写明这个理由。`disabledStyle` 只在元素真的 `disabled` 时生效，`expandedStyle` 只在元素真的 `expanded` 时生效——look 不是那个元素时，要由画它的外壳把状态写上。JS 只留 nsh 没有的状态，或排位不对的状态：数据驱动的 `active`（应用说“就是当前这页”，不是可访问性状态）、跟着状态换的内容（`●`/`○`、图标的字形）、`Text` 自己的字色字重（状态样式落在 `View` 上，盖不过子节点的 `color`）、需要插值的量（`follow` 的进度、动效），以及上面那种要被低位状态盖过的外观。元素已经 `disabled` 时，`hoverStyle` / `activeStyle` 不必再用 `disabled` 关掉：平台不给 hover，也不给按下。
+**Shell（外壳）** 读 props、展开 look、提供组合角色。与 look 同文件。
 
-## Seams
+**Component（组件）** 一个文件：look 加外壳。以 copy-into-app 交付。
 
-**Registry**（`registry.json` 的 shadcn 格式）：CLI 只经它拿组件，不读仓库源码
-_Adapters_: GitHub Pages 上的 `public/r`、本地 `registry:serve`、CLI 测试的夹具 registry
+**Credit Line（致谢行）** 起源于 NSH gallery 的文件头那一行。
 
-**渲染用例表**（`apps/website/demos/render-cases.ts`）：哪些页、怎么定身、怎么比较，只在这里定义
-_Adapters_: web 指针（`port:render`）、iOS 触屏（`port:render:touch`）、shadcn 主题（`port:render:theme`）、外观切换检查
+**Demo Adapter（演示适配层）** `Stage`、`Split`、`Inspector`、`Panel`、`Log`、`Segmented`、`Chips`，只在 `apps/website/demos/stage.tsx`。
+
+**Variant（变体）** shadcn 的取值是 `default`、`secondary`、`outline`、`ghost`、`destructive`、`link`。本库另外这些：`tile`（radio 画成卡片）、`line`（下划线页签）、`legend` 与 `label`（字段图例）、`muted`、`icon`、`image`（item 的面与媒体）、`tinted`（bubble 的强调浅底）、`border` 与 `separator`（marker 的发丝线）、`sidebar`、`floating`、`inset`（侧栏如何贴窗口）、`highlighted`、`added`、`removed`（代码行）、`traffic-lights` 与 `caption`（窗口按钮在前缘或后缘）。`size` 用 `xs`、`sm`、`default`、`lg` 与 icon 档。`tone` 用主题的 `Tone`。

@@ -68,6 +68,9 @@ test("a select and a combobox are compact with a pointer and roomier on a touch 
   // Trigger 32×180, row 30. Touch: 44 (`dimension.size.hit.touch`), no min width, row 44.
   expect(find(desktop.texts(), "select-size=")).toBe("32|180|30");
   expect(find(touch.texts(), "select-size=")).toBe("44|0|44");
+  expect(desktop.layout("id:fruit")?.height).toBe(32);
+  expect(desktop.layout("id:fruit")?.width).toBeGreaterThanOrEqual(180);
+  expect(touch.layout("id:fruit")?.height).toBe(44);
   expect(find(desktop.texts(), "combo-size=")).toBe("32|30");
   expect(find(touch.texts(), "combo-size=")).toBe("44|44");
   // Pointer: floating popup, padding 6. Touch: bottom sheet, top radius 20, max 70%, pad 34.

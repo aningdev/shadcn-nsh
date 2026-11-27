@@ -7,7 +7,7 @@
  * is fine — a generator names the theme it emits (`id: "apple",`), and paths are built from it — but
  * comparing one (`theme === "winui"`, `case "apple":`, `ids.includes("material")`) is not.
  *
- * `scripts/ui-rules/rules.ts` states the same rule for `packages/ui` (and `bun run check` runs it);
+ * `scripts/lint/ui-rules.ts` states the same rule for `packages/ui` (and `bun run check:ui` runs it);
  * this one covers the scripts that compile and lint the themes, which `test:unit` runs.
  */
 import { describe, expect, test } from "bun:test";
@@ -23,7 +23,7 @@ const THEME_IDS = readdirSync(join(root, "packages/theme/themes"), { withFileTyp
   .map((entry) => entry.name);
 
 /** The scripts this rule covers: everything that reads tokens or compiles them. */
-const SOURCES = ["scripts/theme", "scripts/tokens", "scripts/theme-lint.ts"];
+const SOURCES = ["scripts/theme"];
 
 /** A line that compares, switches on, or asks a collection about a value. */
 const COMPARISON = /(===|!==|==|!=|\bcase\b|\.includes\(|\.startsWith\(|\.endsWith\(|\bswitch\b)/;

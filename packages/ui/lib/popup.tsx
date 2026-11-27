@@ -2,6 +2,9 @@
 // list, and the mark of a checkable menu item and the scrim behind what is modal.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
+import { createMotion, reduceMotion, Shader, ShaderEffect, shadersAvailable, View } from "nsh";
+
 import {
   colors,
   control,
@@ -13,10 +16,7 @@ import {
   surfaceBorderWidth,
   terminal,
   TERMINAL_COLUMN,
-} from "@shadcn-nsh/theme";
-import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
-import { createMotion, reduceMotion, View } from "nsh";
-
+} from "../../theme";
 import { CheckMark } from "./icons";
 
 /**
@@ -159,7 +159,7 @@ export function popInStyles(
   return {
     style: {
       transformOrigin: origins[side],
-      ...motion.transition("opacity, transform", preset.role),
+      ...motion.transition("opacity, transform", preset.role, preset.spring),
     },
     starting: { opacity: 0, transform: [{ scale: preset.fromScale }, slide] },
   };
@@ -174,21 +174,88 @@ export function popInStyles(
 export function PopIn(props: {
   side?: PopupSide;
   class?: string;
+  /** Tailwind classes toggled on the surface. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
   children: JSX.Element;
 }) {
   const m = createMotion({ enter: popIn(props.side) });
+  // Read once (`check:ui`); the branch below reads `surface("overlay")` on theme switches.
+  const kids = props.children;
   return (
-    <View
-      {...surface("overlay").platformProps}
-      class={props.class}
-      style={[
-        props.style ?? null,
-        { transformOrigin: origins[props.side ?? "bottom"], ...m.style },
-      ]}
-    >
-      {props.children}
-    </View>
+    <>
+      {() => {
+        const overlay = surface("overlay");
+        const style = [
+          props.style ?? null,
+          { transformOrigin: origins[props.side ?? "bottom"], ...m.style },
+        ];
+        if (overlay.effect && shadersAvailable() && !terminal) {
+          if (overlay.effect.source.includes("sample_content")) {
+            return (
+              <ShaderEffect
+                source={overlay.effect.source}
+                uniforms={overlay.effect.uniforms}
+                maxSampleOffset={overlay.effect.maxSampleOffset}
+                {...overlay.platformProps}
+                class={props.class}
+                classList={props.classList}
+                style={style}
+              >
+                {kids}
+              </ShaderEffect>
+            );
+          }
+          if (overlay.effect.source.includes("sample_backdrop")) {
+            return (
+              <View
+                {...overlay.platformProps}
+                class={props.class}
+                classList={props.classList}
+                style={style}
+              >
+                <ShaderEffect
+                  source={overlay.effect.source}
+                  uniforms={overlay.effect.uniforms}
+                  maxSampleOffset={overlay.effect.maxSampleOffset}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    pointerEvents: "none",
+                  }}
+                />
+                {kids}
+              </View>
+            );
+          }
+          return (
+            <Shader
+              source={overlay.effect.source}
+              uniforms={overlay.effect.uniforms}
+              {...overlay.platformProps}
+              class={props.class}
+              classList={props.classList}
+              style={style}
+            >
+              {kids}
+            </Shader>
+          );
+        }
+        return (
+          <View
+            {...overlay.platformProps}
+            class={props.class}
+            classList={props.classList}
+            style={style}
+          >
+            {kids}
+          </View>
+        );
+      }}
+    </>
   );
 }
 

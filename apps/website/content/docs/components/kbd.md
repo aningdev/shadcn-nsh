@@ -91,10 +91,10 @@ and no edge.
 
 ## API
 
-| Part       | Props                                                                            | Description         |
-| ---------- | -------------------------------------------------------------------------------- | ------------------- |
-| `Kbd`      | `children`: `string \| JSX.Element`; every `nsh` View prop; look `kbdLook().kbd` | A key of a shortcut |
-| `KbdGroup` | every `nsh` View prop; look `kbdLook().group`                                    | Keys side by side   |
+| Part       | Props                                                      | Description         |
+| ---------- | ---------------------------------------------------------- | ------------------- |
+| `Kbd`      | `children`: `string \| JSX.Element`; every `nsh` View prop | A key of a shortcut |
+| `KbdGroup` | every `nsh` View prop                                      | Keys side by side   |
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on both parts (`style`, `accessibilityLabel`, …); `style` goes over the look's.
 
@@ -104,5 +104,4 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on both
 
 A `Kbd` is one line high with a minimum width (20 points with a pointer, one Cell row in the
 terminal), a hairline edge and the `muted` fill; its name is small type in the muted ink. There is
-no axis. `kbdLook()` is exported — `kbd`, `text` and `group` — for a cap or a row the app draws
-itself.
+no axis. A key is one cap; a group is those caps in a row.

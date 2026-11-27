@@ -174,13 +174,13 @@ truncated.
 
 | Part                    | Props                          | Description                                                                                            |
 | ----------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `Attachment`            | `state`, `size`, `orientation` | The frame that carries one file: `attachmentLook().root(state, size, orientation)`.                    |
-| `AttachmentGroup`       | —                              | A row 12 points apart that scrolls sideways when the files do not fit: `.group`, `.groupContent`.      |
-| `AttachmentMedia`       | `variant`                      | The file's icon or picture: `attachmentLook().media(size, orientation, variant, state)`.               |
-| `AttachmentContent`     | —                              | The text beside the media: `attachmentLook().content(orientation)`.                                    |
-| `AttachmentTitle`       | —                              | The file's name, one line, truncated: `attachmentLook().title(size)`.                                  |
-| `AttachmentDescription` | —                              | How the file is doing, one line: `attachmentLook().description(state)`.                                |
-| `AttachmentActions`     | —                              | What can be done to it: `attachmentLook().actions(orientation)`.                                       |
+| `Attachment`            | `state`, `size`, `orientation` | The frame that carries one file, in the card's fill, as wide as it holds.                              |
+| `AttachmentGroup`       | —                              | A row 12 points apart that scrolls sideways when the files do not fit.                                 |
+| `AttachmentMedia`       | `variant`                      | The file's icon or picture, a square of the muted fill.                                                |
+| `AttachmentContent`     | —                              | The text beside the media, a column that takes the room left.                                          |
+| `AttachmentTitle`       | —                              | The file's name, one line, truncated.                                                                  |
+| `AttachmentDescription` | —                              | How the file is doing, one line, in the muted ink (the danger tone on a failure).                      |
+| `AttachmentActions`     | —                              | What can be done to it: beside the text, or in the corner of a vertical attachment.                    |
 | `AttachmentTrigger`     | —                              | A pressable over the whole frame: press it to open the file.                                           |
 | `AttachmentAction`      | —                              | An action on the file, this library's `Button` ghost and small: `buttonLook("ghost", { size: "sm" })`. |
 
@@ -195,5 +195,4 @@ The frame is as wide as what it holds (`default` 160 points wide at least, 120 w
 the card's fill with a hairline edge and the card's corners (`inset`'s at `xs`), 10 / 8 / 6 points
 in from its edge and 8 / 6 / 4 above and below; the title is medium in the page's ink and the
 description the note's size in the muted ink. The frame always pads as if it holds text, so a
-media on its own sits in that padding. `attachmentLook()` and
-`attachmentGlyph(size, orientation)` are exported for a frame an app draws itself.
+media on its own sits in that padding. `attachmentGlyph(size, orientation)` is exported for a glyph an app draws itself.

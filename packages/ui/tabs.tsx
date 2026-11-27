@@ -1,21 +1,6 @@
 // Tabs: the looks (`tabsLook`, `underlineTabsLook`, `TabTitle`) and the parts that wear them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  CAPSULE_RADIUS,
-  colors,
-  control,
-  feedback,
-  follow,
-  motion,
-  terminal,
-  rounded,
-  font,
-  shape,
-  stroke,
-  surface,
-} from "@shadcn-nsh/theme";
-import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { computed, context, platform, signal, split, Text, View } from "nsh";
 import {
@@ -25,11 +10,332 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import {
+  CAPSULE_RADIUS,
+  colors,
+  control,
+  feedback,
+  follow,
+  font,
+  motion,
+  rounded,
+  shape,
+  stroke,
+  surface,
+  terminal,
+} from "../theme";
+import { Icon, type IconNode } from "./lib/icons";
 import { controlSize } from "./lib/surface";
-import { type Live, read } from "./lib/utils";
+import { joinClass, type Live, read } from "./lib/utils";
 
-const pointer = platform.desktop;
+/** Pill track (`default`) or underlined (`line`) tab list. */
+export type TabsListVariant = "default" | "line";
+
+/**
+ * Composition root: the selected tab value, then lists and panels. `nsh/base`
+ * has no value-holding root — the list is {@link TabsList}.
+ */
+export type TabsProps = {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  orientation?: "horizontal" | "vertical";
+  children?: JSX.Element;
+  /** Tailwind classes on the root, after its direction. */
+  class?: string | null;
+  /** Tailwind classes toggled on the root. They pass through with the other view props. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<ViewStyle>;
+};
+
+/** `nsh/base`'s Tabs (the tablist). Base props pass through. */
+export type TabsListProps = BaseTabsProps & {
+  variant?: TabsListVariant;
+  /** Span the row, the tabs sharing its width (a touch screen always does). */
+  fill?: Live<boolean>;
+};
+
+/** A tab in the list. String children become the label. */
+export type TabsTriggerProps = Omit<BaseTabProps, "selected" | "children"> & {
+  value: string;
+  children?: string | JSX.Element;
+};
+
+/** Panel for one `value`. Hidden while another value is selected. */
+export type TabsContentProps = {
+  value: string;
+  children?: JSX.Element;
+  /** Tailwind classes on the panel, after its visibility. */
+  class?: string | null;
+  /** Tailwind classes toggled on the panel. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<ViewStyle>;
+};
+
+/** Composition root: selected value, then list and content. */
+export function Tabs(props: TabsProps) {
+  const [, rest] = split(props, [
+    "value",
+    "defaultValue",
+    "onValueChange",
+    "orientation",
+    "children",
+    "class",
+    "classList",
+    "style",
+  ]);
+  const uncontrolled = signal(props.value ?? props.defaultValue ?? "");
+  const value = () => (props.value != null ? props.value : uncontrolled());
+  const orientation = () => props.orientation ?? "horizontal";
+
+  return (
+    <TabsContext.Provider
+      value={{
+        value,
+        orientation,
+        onValueChange: (next) => {
+          if (props.value == null) uncontrolled.set(next);
+          props.onValueChange?.(next);
+        },
+      }}
+    >
+      <View
+        {...rest}
+        class={joinClass(undefined, props.class)}
+        classList={props.classList}
+        style={[
+          {
+            // The list, then the panel, a gap apart — a row of the two when the list is vertical.
+            flexDirection: orientation() === "vertical" ? "row" : "column",
+            alignItems: "stretch",
+            gap: 8,
+          },
+          props.style ?? null,
+        ]}
+      >
+        {props.children}
+      </View>
+    </TabsContext.Provider>
+  );
+}
+
+/** The tab list: a pill track or an underline, with the traveling indicator. */
+export function TabsList(props: TabsListProps) {
+  const [, rest] = split(props, [
+    "variant",
+    "fill",
+    "class",
+    "classList",
+    "style",
+    "indicatorStyle",
+    "children",
+  ]);
+  const variant = () => props.variant ?? "default";
+  const look = computed(() => listLook(variant(), () => !!props.fill));
+
+  const list = (
+    <ListVariantContext.Provider value={variant()}>
+      <BaseTabs
+        {...rest}
+        class={props.class}
+        classList={props.classList}
+        indicatorStyle={[look().indicatorStyle, props.indicatorStyle ?? null]}
+        style={[look().style, props.style ?? null]}
+      >
+        {props.children}
+      </BaseTabs>
+    </ListVariantContext.Provider>
+  );
+
+  if (variant() !== "line") return list;
+  return (
+    <View style={{ alignSelf: "stretch" }}>
+      <View testID="tabs-rule" style={underlineTabsLook().rule} />
+      {list}
+    </View>
+  );
+}
+
+/** A tab in the list. Selection follows the root {@link Tabs} value. */
+export function TabsTrigger(props: TabsTriggerProps) {
+  const ctx = useTabs();
+  const variant = ListVariantContext();
+  const [, rest] = split(props, [
+    "value",
+    "children",
+    "class",
+    "classList",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "selectedStyle",
+    "onPress",
+  ]);
+  const look = computed(() => listLook(variant));
+  const selected = () => (ctx ? ctx.value() === props.value : false);
+  const tab = computed(() =>
+    look().tab({
+      selected: () => selected(),
+      disabled: () => !!props.disabled,
+    }),
+  );
+
+  return (
+    <BaseTab
+      {...rest}
+      selected={selected()}
+      onPress={() => {
+        ctx?.onValueChange(props.value);
+        props.onPress?.();
+      }}
+      class={props.class}
+      classList={props.classList}
+      style={[tab().style, props.style ?? null]}
+      hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[tab().focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
+      selectedStyle={props.selectedStyle}
+    >
+      {(() => {
+        // Read once, here where the tab is drawn (`marker.tsx` reads in the same shape): a
+        // string is `TabTitle`, anything else as it is.
+        const kids = props.children;
+        return typeof kids === "string" ? <TabTitle name={kids} selected={selected()} /> : kids;
+      })()}
+    </BaseTab>
+  );
+}
+
+/** Content for one value. Hidden, not unmounted, while another value is selected. */
+export function TabsContent(props: TabsContentProps) {
+  const ctx = useTabs();
+  const [, rest] = split(props, ["value", "children", "class", "classList", "style"]);
+  const shown = () => (ctx ? ctx.value() === props.value : false);
+  return (
+    <View
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[{ display: shown() ? "flex" : "none" }, props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** A tab title's icon: 14 points square. */
+const TAB_ICON = 14;
+
+/** The room a tab title's icon takes: the icon and the gap after it. */
+export const TAB_ICON_ROOM = TAB_ICON + 6;
+
+/**
+ * A tab's label (and icon, and a count in a capsule): the text color while
+ * selected, fading in as the indicator arrives (`motion.default`), the icon's
+ * two tints crossing over. It keeps its natural width (never truncated) and
+ * reports it without the icon (`onWidth`): the same whether the icon shows
+ * or not, so a row deciding on its icons by it never flips back.
+ * `underline`: a terminal marks the selected tab of an underlined strip by
+ * underlining its label, where the strip's indicator, thinner than a Cell,
+ * does not show.
+ */
+export function TabTitle(props: {
+  name: string;
+  selected: boolean;
+  count?: number;
+  icon?: IconNode;
+  underline?: boolean;
+  onWidth?: (bare: number) => void;
+  /** Tailwind classes on the label row. The look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the label row. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the label row. */
+  style?: StyleProp<ViewStyle>;
+}) {
+  const on = follow(() => (props.selected ? 1 : 0), motion.default);
+  // An underlined strip's label takes the accent, a filled one the page's ink.
+  const listVariant = ListVariantContext();
+  const chosenInk = () =>
+    listVariant === "line" || props.underline ? colors.brand : colors.foreground;
+  const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
+  return (
+    <View
+      class={props.class}
+      classList={props.classList}
+      onLayout={({ bounds }) =>
+        props.onWidth?.(bounds.size.width - (props.icon ? TAB_ICON_ROOM : 0))
+      }
+      style={[
+        { flexDirection: "row", alignItems: "center", gap: 6, flexShrink: 0 },
+        props.style ?? null,
+      ]}
+    >
+      <If when={props.icon}>
+        <View style={{ width: TAB_ICON, height: TAB_ICON }}>
+          <View style={{ position: "absolute", opacity: away }}>
+            <Icon icon={props.icon!} size={TAB_ICON} tint={colors.mutedForeground} />
+          </View>
+          <View style={{ position: "absolute", opacity: on }}>
+            <Icon icon={props.icon!} size={TAB_ICON} tint={chosenInk()} />
+          </View>
+        </View>
+      </If>
+      <Text
+        // The tab strip is a fixed height: the text follows the system size, but only so far.
+        maxFontSizeMultiplier={1.2}
+        style={{
+          numberOfLines: 1,
+          // No type role has this size: a tab's label is 13 in both tiers (`label` is 14 / 15).
+          fontSize: 13,
+          fontWeight: font.weight("label"),
+          color: on.interpolate({
+            inputRange: [0, 1],
+            outputRange: [colors.mutedForeground, chosenInk()],
+          }),
+          textDecorationLine: terminal && props.underline && props.selected ? "underline" : "none",
+        }}
+      >
+        {props.name}
+      </Text>
+      <If when={props.count !== undefined}>
+        <View
+          style={{
+            minWidth: 18,
+            height: 16,
+            paddingHorizontal: 5,
+            ...rounded(shape.control),
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: surface("inset").style.backgroundColor,
+            borderWidth: stroke.control,
+            borderColor: colors.line,
+          }}
+        >
+          <Text
+            maxFontSizeMultiplier={1.2}
+            style={{
+              // No type role has this size: a tab's count is 10.
+              fontSize: 10,
+              fontWeight: font.weight("title"),
+              color: colors.mutedForeground,
+              fontVariant: ["tabular-nums"],
+            }}
+          >
+            {props.count}
+          </Text>
+        </View>
+      </If>
+    </View>
+  );
+}
+
+// Shared tabs primitives
+// `segmented` reads `hoverOf`, `TabState` and `TabLook`. Gallery reads `tabsLook` and
+// `underlineTabsLook`.
 
 /** The state of one tab or segment, read where the look is applied. */
 export interface TabState {
@@ -58,9 +364,6 @@ export interface TabsLookOptions {
   /** Span the strip, the tabs sharing its width (always on a touch screen). */
   fill?: Live<boolean>;
 }
-
-/** Whether a strip spans the row: on a touch screen, or with `fill`. */
-const spreadOf = (o?: TabsLookOptions) => !pointer || !!read(o?.fill);
 
 /**
  * A tab strip's look: a track `controlSize.tabs` high (the theme's tallest control) sunk into the
@@ -144,12 +447,6 @@ export function tabsLook(o?: TabsLookOptions) {
   };
 }
 
-/** The pad at a tab's sides. */
-const TAB_PAD = 8;
-
-/** The line an underlined strip draws: 2 points, the accent, over the whole tab. */
-const TAB_LINE = 2;
-
 /**
  * An underlined tab strip's look: tabs as wide as their labels
  * (`controlSize.tabs` high), a 2-point accent line (`indicatorStyle`) at the
@@ -213,139 +510,22 @@ export function underlineTabsLook() {
   };
 }
 
-/** A tab title's icon: 14 points square. */
-const TAB_ICON = 14;
+// Private helpers & looks
 
-/** The room a tab title's icon takes: the icon and the gap after it. */
-export const TAB_ICON_ROOM = TAB_ICON + 6;
+const pointer = platform.desktop;
 
-/**
- * A tab's label (and icon, and a count in a capsule): the text color while
- * selected, fading in as the indicator arrives (`motion.default`), the icon's
- * two tints crossing over. It keeps its natural width (never truncated) and
- * reports it without the icon (`onWidth`): the same whether the icon shows
- * or not, so a row deciding on its icons by it never flips back.
- * `underline`: a terminal marks the selected tab of an underlined strip by
- * underlining its label, where the strip's indicator, thinner than a Cell,
- * does not show.
- */
-export function TabTitle(props: {
-  name: string;
-  selected: boolean;
-  count?: number;
-  icon?: IconNode;
-  underline?: boolean;
-  onWidth?: (bare: number) => void;
-}) {
-  const on = follow(() => (props.selected ? 1 : 0), motion.default);
-  // An underlined strip's label takes the accent, a filled one the page's ink.
-  const listVariant = ListVariantContext();
-  const chosenInk = () =>
-    listVariant === "line" || props.underline ? colors.brand : colors.foreground;
-  const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
-  return (
-    <View
-      onLayout={({ bounds }) =>
-        props.onWidth?.(bounds.size.width - (props.icon ? TAB_ICON_ROOM : 0))
-      }
-      style={{ flexDirection: "row", alignItems: "center", gap: 6, flexShrink: 0 }}
-    >
-      <If when={props.icon}>
-        <View style={{ width: TAB_ICON, height: TAB_ICON }}>
-          <View style={{ position: "absolute", opacity: away }}>
-            <Icon icon={props.icon!} size={TAB_ICON} tint={colors.mutedForeground} />
-          </View>
-          <View style={{ position: "absolute", opacity: on }}>
-            <Icon icon={props.icon!} size={TAB_ICON} tint={chosenInk()} />
-          </View>
-        </View>
-      </If>
-      <Text
-        // The tab strip is a fixed height: the text follows the system size, but only so far.
-        maxFontSizeMultiplier={1.2}
-        style={{
-          numberOfLines: 1,
-          // No type role has this size: a tab's label is 13 in both tiers (`label` is 14 / 15).
-          fontSize: 13,
-          fontWeight: font.weight("label"),
-          color: on.interpolate({
-            inputRange: [0, 1],
-            outputRange: [colors.mutedForeground, chosenInk()],
-          }),
-          textDecorationLine: terminal && props.underline && props.selected ? "underline" : "none",
-        }}
-      >
-        {props.name}
-      </Text>
-      <If when={props.count !== undefined}>
-        <View
-          style={{
-            minWidth: 18,
-            height: 16,
-            paddingHorizontal: 5,
-            ...rounded(shape.control),
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: surface("inset").style.backgroundColor,
-            borderWidth: stroke.control,
-            borderColor: colors.line,
-          }}
-        >
-          <Text
-            maxFontSizeMultiplier={1.2}
-            style={{
-              // No type role has this size: a tab's count is 10.
-              fontSize: 10,
-              fontWeight: font.weight("title"),
-              color: colors.mutedForeground,
-              fontVariant: ["tabular-nums"],
-            }}
-          >
-            {props.count}
-          </Text>
-        </View>
-      </If>
-    </View>
-  );
+/** Whether a strip spans the row: on a touch screen, or with `fill`. */
+const spreadOf = (o?: TabsLookOptions) => !pointer || !!read(o?.fill);
+
+/** The pad at a tab's sides. */
+const TAB_PAD = 8;
+
+/** The line an underlined strip draws: 2 points, the accent, over the whole tab. */
+const TAB_LINE = 2;
+
+function listLook(variant: TabsListVariant, fill?: Live<boolean>) {
+  return variant === "line" ? underlineTabsLook() : tabsLook({ fill });
 }
-
-/** Pill track (`default`) or underlined (`line`) tab list. */
-export type TabsListVariant = "default" | "line";
-
-/**
- * Composition root: the selected tab value, then lists and panels. `nsh/base`
- * has no value-holding root — the list is {@link TabsList}.
- */
-export type TabsProps = {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
-  orientation?: "horizontal" | "vertical";
-  children?: JSX.Element;
-  class?: string | null;
-  style?: StyleProp<ViewStyle>;
-};
-
-/** `nsh/base`'s Tabs (the tablist). Base props pass through. */
-export type TabsListProps = BaseTabsProps & {
-  variant?: TabsListVariant;
-  /** Span the row, the tabs sharing its width (a touch screen always does). */
-  fill?: Live<boolean>;
-};
-
-/** A tab in the list. String children become the label. */
-export type TabsTriggerProps = Omit<BaseTabProps, "selected" | "children"> & {
-  value: string;
-  children?: string | JSX.Element;
-};
-
-/** Panel for one `value`. Hidden while another value is selected. */
-export type TabsContentProps = {
-  value: string;
-  children?: JSX.Element;
-  class?: string | null;
-  style?: StyleProp<ViewStyle>;
-};
 
 type TabsContextValue = {
   value: () => string;
@@ -358,143 +538,4 @@ const ListVariantContext = context<TabsListVariant>("default");
 
 function useTabs() {
   return TabsContext();
-}
-
-/** Composition root: selected value, then list and content. */
-export function Tabs(props: TabsProps) {
-  const [, rest] = split(props, [
-    "value",
-    "defaultValue",
-    "onValueChange",
-    "orientation",
-    "children",
-    "class",
-    "style",
-  ]);
-  const uncontrolled = signal(props.value ?? props.defaultValue ?? "");
-  const value = () => (props.value != null ? props.value : uncontrolled());
-  const orientation = () => props.orientation ?? "horizontal";
-
-  return (
-    <TabsContext.Provider
-      value={{
-        value,
-        orientation,
-        onValueChange: (next) => {
-          if (props.value == null) uncontrolled.set(next);
-          props.onValueChange?.(next);
-        },
-      }}
-    >
-      <View
-        {...rest}
-        class={props.class ?? undefined}
-        style={[
-          {
-            // The list, then the panel, a gap apart — a row of the two when the list is vertical.
-            flexDirection: orientation() === "vertical" ? "row" : "column",
-            alignItems: "stretch",
-            gap: 8,
-          },
-          props.style ?? null,
-        ]}
-      >
-        {props.children}
-      </View>
-    </TabsContext.Provider>
-  );
-}
-
-function listLook(variant: TabsListVariant, fill?: Live<boolean>) {
-  return variant === "line" ? underlineTabsLook() : tabsLook({ fill });
-}
-
-/** The tab list: a pill track or an underline, with the traveling indicator. */
-export function TabsList(props: TabsListProps) {
-  const [, rest] = split(props, ["variant", "fill", "style", "indicatorStyle", "children"]);
-  const variant = () => props.variant ?? "default";
-  const look = computed(() => listLook(variant(), () => !!props.fill));
-
-  const list = (
-    <ListVariantContext.Provider value={variant()}>
-      <BaseTabs
-        {...rest}
-        indicatorStyle={[look().indicatorStyle, props.indicatorStyle ?? null]}
-        style={[look().style, props.style ?? null]}
-      >
-        {props.children}
-      </BaseTabs>
-    </ListVariantContext.Provider>
-  );
-
-  if (variant() !== "line") return list;
-  return (
-    <View style={{ alignSelf: "stretch" }}>
-      <View testID="tabs-rule" style={underlineTabsLook().rule} />
-      {list}
-    </View>
-  );
-}
-
-/** A tab in the list. Selection follows the root {@link Tabs} value. */
-export function TabsTrigger(props: TabsTriggerProps) {
-  const ctx = useTabs();
-  const variant = ListVariantContext();
-  const [, rest] = split(props, [
-    "value",
-    "children",
-    "style",
-    "hoverStyle",
-    "activeStyle",
-    "focusVisibleStyle",
-    "disabledStyle",
-    "selectedStyle",
-    "onPress",
-  ]);
-  const look = computed(() => listLook(variant));
-  const selected = () => (ctx ? ctx.value() === props.value : false);
-  const tab = computed(() =>
-    look().tab({
-      selected: () => selected(),
-      disabled: () => !!props.disabled,
-    }),
-  );
-
-  return (
-    <BaseTab
-      {...rest}
-      selected={selected()}
-      onPress={() => {
-        ctx?.onValueChange(props.value);
-        props.onPress?.();
-      }}
-      style={[tab().style, props.style ?? null]}
-      hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
-      activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}
-      focusVisibleStyle={[tab().focusVisibleStyle, props.focusVisibleStyle ?? null]}
-      disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
-      selectedStyle={props.selectedStyle}
-    >
-      {(() => {
-        // Read once, here where the tab is drawn (`marker.tsx` reads in the same shape): a
-        // string is `TabTitle`, anything else as it is.
-        const kids = props.children;
-        return typeof kids === "string" ? <TabTitle name={kids} selected={selected()} /> : kids;
-      })()}
-    </BaseTab>
-  );
-}
-
-/** Content for one value. Hidden, not unmounted, while another value is selected. */
-export function TabsContent(props: TabsContentProps) {
-  const ctx = useTabs();
-  const shown = () => (ctx ? ctx.value() === props.value : false);
-  return (
-    <View
-      class={props.class ?? undefined}
-      style={[{ display: shown() ? "flex" : "none" }, props.style ?? null]}
-    >
-      {props.children}
-    </View>
-  );
 }

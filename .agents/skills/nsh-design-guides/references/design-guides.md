@@ -8,8 +8,13 @@ group: ui
 # Design Guides
 
 Use this guide before choosing components or writing layout code for an app built with Native Shell. It records the
-product judgment GPUI Kit accumulated through years of desktop work, carried over to NSH: an interface should feel
-native, restrained, precise, and understandable without guesswork.
+product judgment NSH apps follow: an interface should feel native, restrained, precise, and understandable without
+guesswork.
+
+It is a general guide, not a visual style. Applied to an app's own style, it should lead to UI that is complete,
+refined and consistent: every state of every control designed, motion where things change, and one system of sizes,
+radii, type and spacing from the first screen to the last. The app decides how it looks; this guide decides what must
+be true however it looks.
 
 This is a normative guide. **Must** identifies a correctness or ecosystem constraint, **should** is the default that
 needs a concrete reason to override, and **may** is an optional technique. The [Elements](../elements/index.md) and
@@ -41,6 +46,8 @@ decoration should support them rather than compete with them.
    surfaces overlap.
 7. **Feedback reflects reality.** Loading, tooltips, and motion should clarify a real state or transition, not add
    ceremony to an immediate action.
+8. **Accessibility and keyboard are requirements.** Every action works by keyboard and with a screen reader; an
+   interface that fails either is broken.
 
 ## Establish the app's design system first
 
@@ -58,31 +65,124 @@ named after a role such as `warning` communicates more than a palette name such 
 Build an app-owned styled layer on `nsh/base` before composing pages. Cover the controls and their parts needed by
 the app: buttons, fields, selection controls, navigation, surfaces, menus, dialogs and feedback. Give them coherent
 variants, sizes, density and hover, pressed, focus, selected, disabled, loading and validation states. Pages compose
-these components; they should not restyle base controls independently. Grow this library with the app's actual
-needs, keeping every control used in a feature complete rather than prebuilding an unrelated catalog.
+these components; they should not restyle base controls independently. Start it with the core set below and grow it
+with the app's needs, keeping every control complete.
 
-NSH's layering parallels GPUI Kit: `nsh-core` corresponds to GPUI and `nsh-base` to [`gpui-base`](https://gpui-kit.com/base), providing behavior,
-state, focus and accessibility. The styled layer corresponding to [`gpui-component`](https://gpui-kit.com/component) belongs to the app or a community
-library. The default theme supplies starting tokens; the app's styled components turn them into a complete visual
+NSH has three layers: `nsh-core` provides the primitives, layout and rendering; `nsh-base` (`nsh/base`) provides
+unstyled components with behavior, state, focus and accessibility; the styled layer above them belongs to the app (its
+`ui` layer) or a community library. The default theme supplies starting tokens; the app's styled components turn them into a complete visual
 system. See [Coding Guides](./coding-guides.md#build-the-apps-ui-foundations-before-pages).
+
+### The app's `ui` layer
+
+Apps stay consistent when their screens are built from components with a limited API: a `Button` that takes a
+variant, a size and a few states behaves and looks the same on every screen. `nsh/base` has behavior and no look, so
+an app without its own component layer drifts: each screen restyles its own buttons, rows and popups, and
+as features grow their design, interaction and behavior stop agreeing. Every NSH app therefore creates its own `ui`
+layer when it is created, and builds every feature from it.
+
+- **Where.** A `ui` module beside the features (`src/ui/` in Rust, `ui/` or `src/ui/` in TSX), one file per
+  component or family (`button`, `input`, `menu`, ...), with its tokens (`tokens`, `motion`) and icons. Features live
+  in their own modules and import from `ui`.
+- **Start with a core set**, before the first screen, so features never need to improvise: `Icon`; `Button` and
+  `IconButton` (variants such as primary, secondary, ghost, outline, danger; sizes); `Input`, `Textarea` and a `Field`
+  (label, control, description, error); `Checkbox`, `Switch`, `Select`; `Tabs` or a segmented control; `Menu`,
+  `Popover`, `Tooltip`; `Dialog`, `AlertDialog`, `Sheet`; `Toast`; a `ListItem` / row; a `Surface` or card; `Badge`;
+  `Avatar`; `Separator`; `Empty`, `Skeleton`, `Spinner`. Add others (a data table, a date picker, a toolbar) as the
+  first feature needs them, built to the same standard.
+- **A limited API.** Each component exposes what varies by meaning: `variant`, `size`,
+  states (`selected`, `disabled`, `loading`, `invalid`), content slots (label, icon, children) and events. Its look,
+  hover, pressed, focus and motion are inside it, from tokens. It takes layout from its caller (width, flex, margin,
+  alignment), never colors, radii, paddings or fonts: a look a feature needs becomes a new variant or size in `ui`,
+  for every screen, not an override on one.
+- **Features compose `ui`, they do not style.** Feature code uses `ui` components and layout primitives (`View`,
+  `Text`, `Scroll`, `List` with spacing classes and text tokens). It does not import controls from `nsh/base`
+  directly, write colors, radii or font sizes, or hand-build a control from a pressable view. When `ui` lacks
+  something, add it to `ui` first, then use it.
+- **Consistency by construction.** One `Button` means one press feedback, one focus ring and one disabled look
+  everywhere; one `Menu` means every menu opens, moves through items and closes the same way. Fixing a component
+  fixes every screen.
+- **Show it.** Keep a page (a debug screen or the app's own gallery) that shows every `ui` component in every
+  variant, size and state, in light and dark; review new components there before features use them.
+
+### Build each `ui` control on its `nsh/base` counterpart
+
+A `ui` component is a styled wrapper around the `nsh/base` element that owns the behavior. It adds the look, never
+re-implements the behavior: popup placement and width, focus, keyboard, typeahead, dismissal, cascading and
+accessibility come from the element. A control rebuilt from `View` and a pressable is missing those details even when a
+screenshot looks right.
+
+| `ui` component | Wraps | Not |
+|---|---|---|
+| `Button`, `IconButton` | `Button` | a pressable `View` with a `Text` |
+| `Select` | `Select` (popup as wide as the trigger on desktop, sheet on phones) | a `Popover` with a list, a `Menu` of values |
+| `Combobox` | `Combobox` | an `Input` plus a hand-placed list |
+| `Menu`, context menus | `Menu` with `Submenu` for nested items | rows that expand nested items in place, `MenuButton` as an anchored drop-down |
+| `Tabs`, segmented control | `Tabs` / `Tab`, `ToggleGroup` | a row of pressables with a selected flag |
+| `Checkbox`, `Switch`, `Radio`, `Slider` | the element of the same name | a drawn box or track with an `onPress` |
+| `Dialog`, `AlertDialog`, `Sheet`, `Popover`, `Tooltip`, `HoverCard` | the element of the same name | an absolutely positioned `View` |
+| `Toast` | `Toast` | a timed overlay `View` |
+| `Input`, `Textarea`, `NumberInput`, `DatePicker` | the element of the same name | a `Text` that edits itself |
+
+When no element fits, look again in the element index (nsh.dev/elements) before building one; a new control is still
+built in `ui`, from the closest element, and keeps its keyboard and accessibility behavior.
+
+**Icons are drawn, never typed.** The `ui` layer has one `Icon` component over one SVG icon family (Lucide unless the
+app's design system names another), imported as `.svg` assets or `data:` URIs and colored from tokens. Chevrons,
+checks, close, menu, arrows and disclosure triangles are icons. Never use text characters (`▾ ▼ › ✕ ☰ ✓ …`) or emoji
+as icons in GUI targets: they change with the font, misalign with the text baseline and ignore the icon size scale.
+TUI targets, which draw cells, are the exception.
+
+**Common mistakes** (each seen in generated apps):
+- A select built from `Popover`, whose list is narrower or wider than the field. Wrap `Select`; its popup already
+  matches the trigger width.
+- A `▾` character as the drop-down indicator. Use the `ui` `Icon` chevron in the trigger.
+- A text (I-beam) cursor over a button, tab or menu item, usually from a selectable region or `cursor` set around it.
+  Leave `cursor` unset on controls; keep text selection off containers of controls.
+- Hand-made tabs with their own selected state. Wrap `Tabs` (or `ToggleGroup` for a segmented control).
+- Nested menu items listed inline inside the parent menu. Use `Submenu`, which cascades beside its row.
+- `MenuButton` used as an anchored drop-down: on desktop it opens the system menu at the pointer. Use `Menu` for a
+  drop-down attached to a trigger.
 
 ### Design for the platforms the app targets
 
-Choose the supported targets before defining component variants. Share semantics, tokens and state while adapting
-presentation and interaction to the targets the app actually needs:
+Choose the supported targets before defining component variants. NSH apps run in three families of interfaces; share
+semantics, tokens and state across them, and adapt interaction, presentation and sizes to each family the app targets:
 
-| Target | Design decisions |
-| --- | --- |
-| Desktop | Compact pointer controls, keyboard shortcuts, visible focus, persistent navigation, context menus and resizable panes where useful |
-| Mobile | Touch targets, safe areas, software-keyboard space, navigation back behavior and touch-appropriate sheets and menus |
-| Web | Responsive browser viewports, browser text selection and input, and touch or pointer behavior for the device running the page |
-| TUI | Whole-cell layout, terminal colors, text labels for actions, keyboard-first navigation, visible focus, terminal mouse input and compact line-based controls |
+**Desktop and Web: one family.** macOS, Windows, Linux and the web in the desktop idiom share interaction, design
+and sizes; the web is not a separate design.
+- Pointer and keyboard first: hover on everything pressable, visible focus, keyboard shortcuts for frequent commands,
+  context menus, tooltips for icon-only controls, text selection where content is read.
+- Compact controls: about 24–32pt tall (32 the default), icons 14–16pt, rows 28–36pt, dense tables and toolbars.
+- Persistent navigation (sidebars, tabs, toolbars), resizable panes, popovers and menus anchored to their triggers,
+  dialogs centered in the window, Escape to dismiss.
+- Responsive windows: the layout holds from the minimum window size up; a web page on a phone follows Mobile.
 
-Web may run on a phone or a desktop; TUI has its own `platform.idiom === "terminal"` even though
-`platform.desktop` is true. Use device and idiom information rather than assuming every desktop has window chrome.
-A component may use a popup with a pointer, a sheet on a phone and a framed list in TUI while preserving its value,
-events and accessibility meaning. Validate the component library in the app's supported appearances, input modes
-and viewports, including terminal Cells when TUI is a target ([TUI](./tui.md)).
+**Mobile: iOS and Android conventions.** Mac Catalyst counts as mobile. Follow each platform's interaction design and
+control sizes rather than shrinking the desktop.
+- Touch targets at least 44 × 44pt on iOS and 48 × 48dp on Android, even when the drawn control is smaller; controls
+  and rows usually 44–56pt tall; body text at least 16pt.
+- Navigation as the platform does it: a stack with a back gesture and back button, a tab bar for top-level sections,
+  the system headers; Android's back button and predictive back.
+- Menus, pickers and secondary panels become sheets or full pages; no hover, no tooltips, no pointer-only actions;
+  long press and swipe for secondary actions, always with a visible alternative.
+- Safe areas, the software keyboard (inputs stay visible, Return moves to the next field), Dynamic Type / font size,
+  the system's press and scroll physics.
+
+**TUI: keyboard and cells.** In a terminal (`platform.idiom === "terminal"`) design for the keyboard and the
+character grid.
+- Every action has a key; Tab and arrows move focus visibly; Enter activates, Escape goes back; show the keys that
+  matter in a footer or help line.
+- Layout snaps to whole cells: no fractional spacing, no radii or shadows that cannot render; boxes drawn with line
+  characters, separators as single lines.
+- Terminal colors and attributes (bold, dim, reverse) carry state; never color alone; works in 16 colors and in
+  monochrome.
+- Text labels instead of icons whose glyphs may be missing; terminal mouse input is a bonus, never required.
+
+A component keeps its value, events and accessibility meaning across families while its presentation changes: a popup
+with a pointer, a sheet on a phone, a framed list in TUI. Use device and idiom information (`platform.idiom`,
+`platform.desktop`), not assumptions. Validate the `ui` layer in each target's appearances, input modes and viewports,
+including terminal cells when TUI is a target ([TUI](./tui.md)).
 
 ## Learning from Shadcn
 
@@ -109,6 +209,7 @@ Do not copy these web assumptions blindly:
 | Mobile-first single column | One column on phones, a resizable shell with a defined minimum window size on the desktops |
 | Hover-revealed critical actions | Keyboard-, touch- and pointer-reachable actions that do not depend on hover |
 | A row of hover-only icon buttons | A visible primary action plus `Menu` or `ContextMenu` for secondary commands |
+| A row in a menu that expands its nested items in place (accordion) | A `Submenu`: it cascades beside its item on the desktops and takes the menu's place in a phone's sheet |
 | Link-styled text for application commands | A `Button` in the app's default, outline, or ghost style; link styling only for URLs, web resources, or email addresses |
 | Large touch density everywhere | Touch-sized targets on touch screens; medium density with a pointer, compact only where information work benefits |
 | A drawn header and alert card on every platform | The system's header and `AlertDialog` on iOS and Android; the page's `header` slot on the desktops and the web |
@@ -184,6 +285,13 @@ Read colors from the theme (`theme()` in Rust, token classes in TSX) and use the
 - `chart-1` to `chart-5` for data series;
 - `border`, `input`, and `ring` for structure and interaction.
 
+```tsx tabs
+<View class="gap-1 rounded-(--radius) border border-border bg-background p-4">
+  <Text class="text-foreground">Balance</Text>
+  <Text class="text-sm text-muted-foreground">Updated just now</Text>
+</View>
+```
+
 ```rust tabs
 use nsh_base::theme;
 
@@ -196,13 +304,6 @@ view()
     .gap_1()
     .child(text("Balance").text_color(move || theme().foreground))
     .child(text("Updated just now").text_sm().text_color(move || theme().muted_foreground))
-```
-
-```tsx tabs
-<View class="gap-1 rounded-(--radius) border border-border bg-background p-4">
-  <Text class="text-foreground">Balance</Text>
-  <Text class="text-sm text-muted-foreground">Updated just now</Text>
-</View>
 ```
 
 Do not use a semantic status color as decoration. Do not encode meaning by color alone. Verify every custom surface in
@@ -471,8 +572,23 @@ Keep global navigation stable while content changes. Give the primary work area 
 (`.flex_1()`) and `min-w-0` / `min-h-0` where overflowing children must shrink. Use `Scroll` and `List` for their
 intended behavior instead of rebuilding scrolling or virtualization from nested views.
 
-On the desktops, a title bar of the app's own ([`nsh/desktop`](../modules/nsh-desktop.md)) is window chrome first.
-Preserve its drag region (`.window_drag(true)`) and avoid binding ordinary title clicks to infrequent editing
+On the desktops, draw the app's own title bar by default. The system's title bar is painted in the operating system's
+colors, so on top of a themed app it reads as a light strip above a dark window (or the reverse), repeats the app name the
+sidebar already shows, and spends a row of height on nothing. Hide it (`titleBar: { style: "hidden", height }` in
+[`nsh/desktop`](../modules/nsh-desktop.md#a-title-bar-of-your-own), `TitleBarStyle::Hidden` in Rust) and let the app's
+first row take its place:
+
+- the bar uses the app's surface tokens, so it follows the app's light, dark and custom themes; in a sidebar workspace the
+  sidebar and content each carry their own color up to the window's top edge, with no full-width strip above them;
+- reserve the native window controls' room with `titleBar()` / `title_bar()` (`left` for macOS's traffic lights,
+  `right` for the Windows and Linux buttons) instead of hard-coded padding, and keep the bar's height from that API;
+- put real content in it: the sidebar's brand or navigation toggle, the page title, search, primary actions — not a
+  second, empty header under the bar;
+- mark the bar's background `.window_drag(true)` and give interactive children `.window_drag(false)`; keep the
+  platform's double-click behavior.
+
+Keep the system's title bar only for a quick prototype, a utility window without a theme of its own, or a
+document-style window the platform styles anyway. Ordinary title clicks must not be bound to infrequent editing
 commands. Rename belongs behind an explicit object command, with a keyboard path where appropriate.
 
 ### Responsive windows
@@ -502,6 +618,25 @@ choices, a [`RadioGroup`](../elements/radio.md) of `Radio`s for a small visible 
 and [`Switch`](../elements/switch.md) for a setting that takes effect immediately. Their parts (the switch's track and
 thumb, the checkbox's indicator) are the app's to style, with `checked:`, `indeterminate:` and `disabled:` classes
 that follow the control:
+
+```tsx tabs
+import { Text } from "nsh";
+import { Switch } from "nsh/base";
+
+function SettingSwitch(props: { label: string; on: boolean; onChange: (e: { checked: boolean }) => void }) {
+  return (
+    <Switch
+      checked={props.on}
+      onChange={props.onChange}
+      class="flex-row items-center gap-3"
+      trackClass="w-11 rounded-full bg-muted p-0.5 transition-colors checked:bg-primary"
+      thumbClass="size-5 rounded-full bg-background shadow-sm transition-transform checked:translate-x-5"
+    >
+      <Text class="text-foreground">{props.label}</Text>
+    </Switch>
+  );
+}
+```
 
 ```rust tabs
 use nsh_base::{switch, theme};
@@ -533,26 +668,31 @@ fn setting_switch(label: &'static str, on: Signal<bool>) -> impl IntoElement {
 }
 ```
 
+A "select all" checkbox shows a partial selection with its indeterminate state:
+
 ```tsx tabs
 import { Text } from "nsh";
-import { Switch } from "nsh/base";
+import { Checkbox } from "nsh/base";
 
-function SettingSwitch(props: { label: string; on: boolean; onChange: (e: { checked: boolean }) => void }) {
+function SelectAll(props: { selected: number; total: number; onChange: (e: { checked: boolean }) => void }) {
   return (
-    <Switch
-      checked={props.on}
+    <Checkbox
+      checked={props.selected === props.total}
+      indeterminate={props.selected > 0 && props.selected < props.total}
       onChange={props.onChange}
-      class="flex-row items-center gap-3"
-      trackClass="w-11 rounded-full bg-muted p-0.5 transition-colors checked:bg-primary"
-      thumbClass="size-5 rounded-full bg-background shadow-sm transition-transform checked:translate-x-5"
+      class="flex-row items-center gap-2"
+      indicatorClass="size-5 items-center justify-center rounded-(--radius) border-2 border-border checked:border-primary checked:bg-primary indeterminate:border-primary indeterminate:bg-primary"
+      indicator={
+        <Text class="text-primary-foreground">
+          {props.selected === props.total ? "✓" : props.selected > 0 ? "–" : ""}
+        </Text>
+      }
     >
-      <Text class="text-foreground">{props.label}</Text>
-    </Switch>
+      <Text class="text-foreground">Select all</Text>
+    </Checkbox>
   );
 }
 ```
-
-A "select all" checkbox shows a partial selection with its indeterminate state:
 
 ```rust tabs
 use nsh_base::{checkbox, theme};
@@ -584,30 +724,6 @@ fn mark(selected: usize, total: usize) -> &'static str {
 }
 ```
 
-```tsx tabs
-import { Text } from "nsh";
-import { Checkbox } from "nsh/base";
-
-function SelectAll(props: { selected: number; total: number; onChange: (e: { checked: boolean }) => void }) {
-  return (
-    <Checkbox
-      checked={props.selected === props.total}
-      indeterminate={props.selected > 0 && props.selected < props.total}
-      onChange={props.onChange}
-      class="flex-row items-center gap-2"
-      indicatorClass="size-5 items-center justify-center rounded-(--radius) border-2 border-border checked:border-primary checked:bg-primary indeterminate:border-primary indeterminate:bg-primary"
-      indicator={
-        <Text class="text-primary-foreground">
-          {props.selected === props.total ? "✓" : props.selected > 0 ? "–" : ""}
-        </Text>
-      }
-    >
-      <Text class="text-foreground">Select all</Text>
-    </Checkbox>
-  );
-}
-```
-
 Disable submission while an operation is in flight, keep the user's input, and show the result near the action. Keep
 inputs above the software keyboard (`env(keyboard-inset-height)`). Reserve dialogs for short, focused decisions; use a full
 page or sheet for workflows that need exploration or many fields.
@@ -635,9 +751,35 @@ semantics.
 - Preserve the component family's geometry. Menu rows share vertical and horizontal padding, height, icon and
   checkmark slots, separators, radius, and state treatment. Do not imitate one menu with a custom popup whose spacing
   only approximates the system.
+- Nest menu items with `Submenu`. A group under one row of a menu (Language, Appearance, Open Recent, Export as)
+  is a `Submenu` whose trigger ends in a trailing chevron: on the desktops it cascades beside its row as the
+  pointer comes over it, its first item level with that row, as macOS, Windows and GTK menus do; on phones it
+  takes the menu's place in the sheet. Never expand nested items in place with a chevron that turns down and
+  indented rows: no platform's menu does that, the menu grows and moves under the pointer, and the rows lose the
+  submenu's Right and Left keys and its screen reader role. A short choice that should stay visible is a section
+  instead, flat and unindented: a title that is not an item, its checked items under it, separators around it.
 - Do not wrap a component merely to rename every prop or freeze all of its capabilities.
 - Move reusable behavior without product styling to `nsh/base`, or to a crate the app's products share; keep themed,
   opinionated presentation in the application's components.
+
+```tsx tabs
+import { Text, View } from "nsh";
+import { Button } from "nsh/base";
+
+// The footer of a form: a default Cancel and the primary commit.
+function FormActions(props: { onCancel: () => void; onCreate: () => void }) {
+  return (
+    <View class="flex-row justify-end gap-2">
+      <Button onPress={props.onCancel} class="rounded-(--radius) border border-border px-4 py-2 active:bg-muted">
+        <Text class="text-foreground">Cancel</Text>
+      </Button>
+      <Button onPress={props.onCreate} class="rounded-(--radius) bg-primary px-4 py-2 active:bg-primary/90">
+        <Text class="text-primary-foreground">Create</Text>
+      </Button>
+    </View>
+  );
+}
+```
 
 ```rust tabs
 use nsh_base::{button, theme};
@@ -672,24 +814,35 @@ fn form_actions(cancel: impl Fn() + 'static, create: impl Fn() + 'static) -> imp
 }
 ```
 
-```tsx tabs
-import { Text, View } from "nsh";
-import { Button } from "nsh/base";
+### Component standards
 
-// The footer of a form: a default Cancel and the primary commit.
-function FormActions(props: { onCancel: () => void; onCreate: () => void }) {
-  return (
-    <View class="flex-row justify-end gap-2">
-      <Button onPress={props.onCancel} class="rounded-(--radius) border border-border px-4 py-2 active:bg-muted">
-        <Text class="text-foreground">Cancel</Text>
-      </Button>
-      <Button onPress={props.onCreate} class="rounded-(--radius) bg-primary px-4 py-2 active:bg-primary/90">
-        <Text class="text-primary-foreground">Create</Text>
-      </Button>
-    </View>
-  );
-}
-```
+These standards are general; the app's style supplies the values. The numbers quoted are a starting point for an
+app that has no style of its own yet. An app with its own look (larger radii, taller controls, its own palette) keeps
+it, and applies the same relationships to its own values, so its controls agree with each other without per-screen
+tuning:
+
+- **One size scale drives everything.** A control takes one `size` (xs, sm, md default, lg), and the size sets its
+  height, horizontal padding, text size, icon size, gap and radius together; never set them one by one per use. Sizes
+  differ by family: on desktop and web, as a starting point, buttons are 20 / 24 / 32pt tall (xs / sm / md and lg), inputs share those heights, table rows 26 / 30 / 32 /
+  40pt with cell padding growing in step. On mobile, controls follow iOS and Android (44pt / 48dp targets, 44–56pt
+  rows); in TUI, sizes are whole cells. A `compact` variant tightens padding, not height.
+- **Icon buttons are squares of the control height** (20 / 24 / 32pt) with a 14–16pt icon; a button's icon is one step
+  smaller than its text line. A button group or toolbar uses one size throughout.
+- **Radius comes from two tokens.** `radius` (6pt as a starting point) for controls and popups, `radius-lg` (8pt) for
+  containers that hold controls; small controls and tags take half the radius. Fully round shapes come from the theme
+  too (`radius-full`), so a theme that squares its corners squares avatars, dots and thumbs as well.
+- **States are tokens per variant.** Each variant (default, primary, secondary, danger, ghost, outline) has a normal,
+  hover and active color in the theme (`primary`, `primary-hover`, `primary-active`); tinted and ghost variants use
+  one hue at rising strength, about 10% at rest, 20% hovered, 40% pressed. A selected button and a button whose menu
+  is open share one style. Disabled shows no hover or press; loading dims the control slightly and keeps its size.
+- **Composite controls read as one.** In a split button or segmented group, hovering one part shows the others'
+  hover at half strength; only the outer corners are rounded.
+- **One popup surface.** Popover, menu, select, combobox and date picker share one style: the popover background, a
+  ring-and-shadow edge, the theme radius. A new anchored surface reuses it.
+- **Focus ring outside the border.** The ring is drawn outside the control (its radius the control's plus the ring
+  width), so translucent backgrounds stay intact; leave it room where an ancestor clips.
+- **Inputs and lists share padding.** Text inputs, selects and the lists they open use the same horizontal padding
+  per size, so text in a field and in its dropdown starts on one line.
 
 ## Interaction states
 
@@ -733,6 +886,23 @@ and navigation destinations must show a persistent selected state (`selected`, w
 button that owns a menu must remain visibly pressed or open until the popup closes; hover alone cannot explain the
 relationship between trigger and surface.
 
+```tsx tabs
+import { Text } from "nsh";
+import { Tab } from "nsh/base";
+
+function SectionTab(props: { label: string; selected: boolean; onPress: () => void }) {
+  return (
+    <Tab
+      selected={props.selected}
+      onPress={props.onPress}
+      class="group rounded-(--radius) px-3 py-2 selected:bg-muted"
+    >
+      <Text class="text-muted-foreground group-selected:text-foreground">{props.label}</Text>
+    </Tab>
+  );
+}
+```
+
 ```rust tabs
 use nsh_base::{tab, theme};
 
@@ -748,23 +918,6 @@ fn section_tab(label: &'static str, id: Section, current: Signal<Section>) -> im
         .child(text(label).text_color(move || {
             if selected() { theme().foreground } else { theme().muted_foreground }
         }))
-}
-```
-
-```tsx tabs
-import { Text } from "nsh";
-import { Tab } from "nsh/base";
-
-function SectionTab(props: { label: string; selected: boolean; onPress: () => void }) {
-  return (
-    <Tab
-      selected={props.selected}
-      onPress={props.onPress}
-      class="group rounded-(--radius) px-3 py-2 selected:bg-muted"
-    >
-      <Text class="text-muted-foreground group-selected:text-foreground">{props.label}</Text>
-    </Tab>
-  );
 }
 ```
 
@@ -808,6 +961,35 @@ This is more than a visual preference. `nsh/base`'s menus already own placement 
 the desktops and a sheet with submenus in place on phones, dismissal by choosing an item, a press outside, Escape or
 back, and the menu and menu item roles for screen readers. A custom strip of hover buttons must rebuild those behaviors
 and is invisible to touch, keyboard-only, and many assistive technology workflows.
+
+```tsx tabs
+import { Text, View } from "nsh";
+import { Menu, MenuItem, MenuSeparator } from "nsh/base";
+
+/** The app's popup surface, shared by its menus, popovers and tooltips. */
+export const popup = "min-w-48 rounded-(--radius) border border-border bg-popover p-1 shadow-lg";
+const item = "rounded-(--radius) px-3 py-2 hover:bg-muted active:bg-muted";
+
+function MoreMenu(props: { onRename: () => void; onDuplicate: () => void; onDelete: () => void }) {
+  return (
+    <Menu
+      offset={4}
+      popupClass={popup}
+      backdropClass="bg-black/50"
+      trigger={
+        <View accessibilityLabel="More actions" class="size-11 items-center justify-center rounded-full active:bg-muted">
+          <Text class="text-foreground">⋯</Text>
+        </View>
+      }
+    >
+      <MenuItem onSelect={props.onRename} class={item}><Text class="text-foreground">Rename…</Text></MenuItem>
+      <MenuItem onSelect={props.onDuplicate} class={item}><Text class="text-foreground">Duplicate</Text></MenuItem>
+      <MenuSeparator class="my-1 h-px bg-border" />
+      <MenuItem onSelect={props.onDelete} class={item}><Text class="text-foreground">Delete…</Text></MenuItem>
+    </Menu>
+  );
+}
+```
 
 ```rust tabs
 use nsh_base::{menu, menu_item, menu_separator, theme};
@@ -854,35 +1036,6 @@ fn more_menu(rename: impl Fn() + 'static, duplicate: impl Fn() + 'static, delete
         .child(item("Duplicate", duplicate))
         .child(menu_separator().h(px(1.0)).my_1().bg(move || theme().border))
         .child(item("Delete…", delete))
-}
-```
-
-```tsx tabs
-import { Text, View } from "nsh";
-import { Menu, MenuItem, MenuSeparator } from "nsh/base";
-
-/** The app's popup surface, shared by its menus, popovers and tooltips. */
-export const popup = "min-w-48 rounded-(--radius) border border-border bg-popover p-1 shadow-lg";
-const item = "rounded-(--radius) px-3 py-2 hover:bg-muted active:bg-muted";
-
-function MoreMenu(props: { onRename: () => void; onDuplicate: () => void; onDelete: () => void }) {
-  return (
-    <Menu
-      offset={4}
-      popupClass={popup}
-      backdropClass="bg-black/50"
-      trigger={
-        <View accessibilityLabel="More actions" class="size-11 items-center justify-center rounded-full active:bg-muted">
-          <Text class="text-foreground">⋯</Text>
-        </View>
-      }
-    >
-      <MenuItem onSelect={props.onRename} class={item}><Text class="text-foreground">Rename…</Text></MenuItem>
-      <MenuItem onSelect={props.onDuplicate} class={item}><Text class="text-foreground">Duplicate</Text></MenuItem>
-      <MenuSeparator class="my-1 h-px bg-border" />
-      <MenuItem onSelect={props.onDelete} class={item}><Text class="text-foreground">Delete…</Text></MenuItem>
-    </Menu>
-  );
 }
 ```
 
@@ -972,10 +1125,106 @@ now, what scope does it affect, and what visible state changes after activation?
 
 ## Motion
 
-Motion explains change; it is not ambient decoration. Use short transitions for appearance, dismissal, expansion, and
-spatial continuity. Avoid animating large layout changes when opacity or transform communicates the same relationship.
-Honor reduced-motion preferences (`motion-reduce:`, `reduceMotion()`), never require animation to understand state,
-and do not add a default animation to every component.
+Motion explains change: where something came from, where it went, what the press did, what is live. It is part of an
+NSH app's quality, not an afterthought, and NSH runs it natively: transitions, motions, springs, layout animations
+and shaders play on the UI thread at the display's frame rate, with no JS per frame. Use them wherever they make a
+change easier to follow, and nowhere else. Motion is never ambient decoration, never needed to understand state, and
+never a default animation added to every component.
+
+### Choose the tool by what changes
+
+| What changes | Tool | Example |
+|---|---|---|
+| A state style: hover, press, selected, open, disabled, a color | Transitions: `transition` / `duration-*` / `ease-*` classes, `transition_*()` in Rust | A row's hover wash, a button pressing to 0.97 |
+| A view appears or leaves | A motion (`createMotion({ enter })`, `motion().entering(..)`), or a popup's `*StartingStyle` / `*EndingStyle` | A dialog rising 10pt, a menu growing out of its trigger |
+| Items arrive together | Motions with a capped, index-based delay, or `Animated.stagger` | A list's rows coming in as a wave |
+| One element moves between places | An animated value with `timing` | A tab or sidebar selection sliding to the chosen item |
+| The user throws, drags or releases | `spring` / `decay` with the gesture's velocity | A sheet snapping open, a card returning to rest |
+| A small playful acknowledgement | `spring` with low damping, or keyframes that overshoot | A like's heart popping |
+| Frames change because the layout changed | `LayoutAnimation` before that one update | A sidebar collapsing at a breakpoint, an item removed |
+| Something is live or continuous | A `Shader` with uniforms (animated values, `nsh.time`) | Playing bars, an audio-reactive glow, a loading shimmer |
+| The value follows a scroll offset or pointer | Animated values bound to it (`interpolate`, arithmetic) | A sticky header folding, a selection following a scrolled list |
+
+Pick the lightest tool that says the change: a transition before a motion, a motion before an animated value, an
+animated value before a shader. See [Animation](./animation.md) for the APIs and
+[Shader](../elements/shader.md) for shaders.
+
+### Motion inventory (required)
+
+Motion that is left to judgment gets skipped. Every screen an app adds or changes therefore has a written motion
+inventory, kept in the app's design document (`DESIGN.md`) or the pull request, written **before** the screen's code
+and checked **before** the work is called done.
+
+1. **List every state change on the screen**, going through these kinds one by one and writing "none" only for a
+   kind the screen truly lacks:
+   - press and hover on each control;
+   - a glyph or label that changes (play / pause, send / stop, a count, a status);
+   - a selection that moves (tabs, a sidebar's current item, a segmented control);
+   - content that arrives or leaves (a page, a list's rows, a message, a result, a toast);
+   - a surface that opens or closes (a menu, popover, dialog, sheet, panel);
+   - a layout that changes by the user's action (a sidebar collapsing, an item added or removed);
+   - a drag, swipe or throw that is released;
+   - loading and progress (a skeleton, a streaming reply, a spinner);
+   - something live or continuous (playback, recording, a reply being written, data that updates).
+2. **For each, name the tool and the tokens** ("Choose the tool by what changes"): for example "send / stop: glyph swap,
+   `base`, ease-in-out", "current chat: one sliding selection, `base`", "new message: rise 8pt and fade, `slow`,
+   ease-out", "streaming: a breathing caret, paused at rest".
+3. **Mark what reduced motion does** for each line.
+4. **Verify each line in the running app** before finishing, and say which ones were checked.
+
+An inventory in which every line is "fade in" or "hover color" is not done: it is the default the inventory exists
+to replace. A line may say "no motion" with a reason (a value that updates many times a second, a dense data cell).
+
+A chat screen, as an example:
+
+| Change | Motion |
+|---|---|
+| Send button pressed | Scale 0.95, `fast`, soft settle |
+| Send ↔ Stop while streaming | Glyph swap (shrink and fade out, grow in), `base` |
+| User message sent | Rises 8pt and fades in from the composer, `slow`, ease-out |
+| Reply streaming | Caret or thinking mark breathing; paused when idle |
+| Reply finished | Actions (copy, retry) fade in under it, `fast` |
+| Current conversation changes | One selection background slides to it, `base`, ease-in-out |
+| Sidebar collapses | `LayoutAnimation` for that update, `base` |
+| Conversation menu opens | Grows from the trigger's corner, slides 8pt, `slow`; leaves in `base` |
+| A conversation opens | Its messages cross-fade in; the list keeps the reader's position |
+| Reduced motion | All of the above instant; the caret rests |
+
+### Define motion tokens once
+
+Like color and spacing, motion comes from the app's tokens, not from numbers written in components; the values
+below are a starting point, and an app's character (calm, playful, dense) may tune them. Define one small
+set and use it everywhere (as Tailwind classes and as the options of motions and animations):
+
+| Token | Typical value | For |
+|---|---|---|
+| `instant` | 120ms | A hover wash, a color change |
+| `fast` | 180ms | A press, a control's state |
+| `base` | 240ms | Moving into place: a selection sliding, an icon swapping, a menu leaving |
+| `slow` | 360ms | Reveals: a menu or dialog opening, a pop |
+| `slower` | 500ms | Unhurried entrances: a list's wave |
+| Easings | ease-out entering, ease-in-out between two places, ease-in leaving; a soft settle `cubic-bezier(0.22, 1, 0.36, 1)` for presses | |
+| Distances | 4 / 8 / 16pt | A label rising / a popup sliding / items entering |
+| Scales | press 0.95–0.97, enter 0.9–0.97 | |
+
+Keep durations short (most under 300ms; desktop pointer feedback under 200ms). Leaving is faster than entering.
+Springs are for things the user throws or that should feel physical; time-based curves are for everything else.
+
+### Layered feedback on controls
+
+Every interactive control answers the pointer in layers, each small:
+
+- **Hover** brings a translucent wash in (120ms ease-out); it does not grow the control or move its neighbors.
+- **Press** scales the whole control to about 0.97 (an icon button to 0.95) on a soft settle, and deepens the wash.
+  Press feedback is the app's (`active:` / `activeStyle`); NSH draws none of its own.
+- **A changed glyph swaps**, it does not jump: play becomes pause by the old icon shrinking and fading while the new one
+  grows in (240ms). A glyph that only changes color fades.
+- **A changed label** fades in rising a few points, rather than replacing its text in place.
+- Cards do not lift or resize on hover: a wash, a cover growing about 1%, a revealed action rising is enough.
+
+```tsx tabs
+<View onPress={open} class="transition-transform duration-150 active:scale-[0.97] motion-reduce:active:scale-100" />
+```
 
 ```rust tabs
 view()
@@ -985,20 +1234,100 @@ view()
     .when(!reduce_motion(), |v| v.active(|s| s.scale(0.97)))
 ```
 
+### Surfaces, lists and navigation
+
+- **Popups grow from where they belong.** A menu or popover grows out of the corner nearest its trigger
+  (`transformOrigin`), slid a few points toward it, from about 0.97 scale and transparent; it leaves the same way,
+  faster and without overshoot. Use the popup's `popupStartingStyle` / `popupEndingStyle` so it animates both ways.
+- **Dialogs** rise about 10pt from 0.97 while the scrim fades; **toasts** slide in from the edge they live on.
+- **One selection, sliding.** For tabs, segmented controls and a sidebar's current item, draw one selection background
+  and slide it to the chosen item (an animated value with `timing`, ease-in-out), rather than one background per item
+  switching on and off. When the list scrolls, bind it to the scroll offset so it follows natively.
+- **Lists enter as a wave**, once per page entry: rows fade in from a few points away, about 50ms apart, the delay
+  capped at the first 10–12 rows so a long list never waits. A recycled cell, a re-render or a data tick plays
+  nothing; rows scrolled into view later come in on their own, quickly.
+- **Loading gives way, it does not pop.** A skeleton pulses slowly and fades out while the content fades in over it.
+- **Navigation follows history**: going back animates back, going forward animates forward; switching between sibling
+  sections cross-fades rather than sliding.
+- **Layout changes glide only when they are the user's doing** (a sidebar collapsing, an item added or removed, a
+  breakpoint): call `LayoutAnimation` before that update, not on every resize.
+
+### Springs and gestures
+
+What the user moves follows the pointer or finger 1:1 in the same frame: a dragged thumb, a scroll bar, a resizer, a
+swipe are set, never eased toward the pointer. When the user lets go, hand the gesture's velocity to a spring (or a
+decay) so the element continues the throw and settles; interrupting it picks up from the current value.
+
 ```tsx tabs
-<View onPress={open} class="transition-transform duration-150 active:scale-[0.97] motion-reduce:active:scale-100" />
+x.spring(0, { velocity: e.velocity.x });
 ```
 
-Motion policy belongs to the application layer. `nsh/base` owns the lifecycle mechanism or geometry needed for a
-transition, but it does not decide that every product fades or slides. Give independently animated values stable
-identity, and make interruption reverse smoothly from the currently sampled value rather than restarting from an old
-endpoint.
+```rust tabs
+let spring = |velocity| Spring { velocity: Some(velocity), ..Spring::default() };
+x.spring(0.0, spring(e.velocity_x));
+```
 
-Motion follows the continuity of the interaction. While a pointer or scroll position moves among related targets, keep
-the preview surface stable and update its content or position in place. Dismiss it only after the interaction ends;
-repeated fade-out and re-entry on each update reads as flicker.
+Keep springs critically damped or nearly so for structural motion (sheets, drawers, snapping); save visible overshoot
+(stiffness about 180, damping under 12) for small, joyful acknowledgements such as a like.
+
+### Shaders for what is live
+
+Use a `Shader` when a surface shows something continuous or generated that styles cannot draw: a playing indicator, an
+audio- or data-reactive glow, a loading shimmer, a background that responds to the content's colors. A shader draws on
+the GPU under its children, so the controls on top stay as they are.
+
+- Feed changing data as animated values in its uniforms, so new values do not resend the view; read `nsh.time` only
+  for motion of its own.
+- Set `paused` whenever nothing is happening (paused media, offscreen, reduced motion): a shader that reads `nsh.time`
+  redraws every display frame while it runs.
+- Keep its colors from theme tokens and tame their brightness, so text and controls over it keep their contrast.
+- Give it a still fallback that reads the same at rest, and hide it from accessibility (`accessibilityElementsHidden`).
+
+### What NSH takes from web motion systems
+
+The web's best component and motion libraries agree on a few patterns; NSH apps adopt their intent, built on native
+motions instead of CSS:
+
+- **shadcn/ui**: every overlay animates by its open state, in and out, a short fade with a slight zoom (from 95%) and
+  a slide of a few points from the side it opens on, about 150–200ms. In NSH: a popup's `popupStartingStyle` /
+  `popupEndingStyle`, a dialog's motion.
+- **ReUI**: motion is part of a component's parts, not a wrapper around it: entrances, counters and indicators are
+  composed into the component and switched off together with reduced motion.
+- **AffectUI**: feedback is layered and tactile: a wash on hover, a whole-button press to 0.97 on a long soft settle
+  (`cubic-bezier(0.22, 1, 0.36, 1)`), an icon reacting once.
+- **transitions.dev**: motion is tokenized by kind (duration, easing, distance, scale, blur) and reused as named
+  patterns: a dropdown morphing out of its trigger, tabs with one sliding indicator, an icon swap (shrink to a
+  quarter, fade and blur out while the next grows in), a like button that squashes and springs past its size.
+
+Borrow the intent and the numbers, then check them on each target platform: a desktop pointer wants shorter feedback
+than a phone's finger, and iOS and Android system transitions stay the platform's.
+
+### Performance and correctness
+
+- **Create a motion once, in a component body**, and bind its style. A motion created inside a binding that re-runs
+  (a prop that ticks with playback, a style that reads a signal) plays again every time.
+- **Animate opacity and transform**, not width, height or position, when they say the same thing; animating layout
+  costs a layout per frame.
+- **Make only what moves.** Thousands of list cells each with a full motion cost native nodes; animate only the
+  channels you need, and create a motion lazily on a control that may never move.
+- **Interruptions reverse from where the value is**, never restart from an old endpoint; give independently animated
+  values stable identity.
+- **A continuous preview stays put.** While a pointer moves among related targets, update the preview's content or
+  position in place and dismiss it only when the interaction ends; repeated fade-out and re-entry reads as flicker.
+- Motion policy belongs to the app: `nsh/base` owns the lifecycle and geometry a transition needs, never a default
+  fade or slide.
+
+### Reduced motion
+
+Honor `motion-reduce:` and `reduceMotion()` everywhere: transitions become instant, waves and swaps do not play,
+popups appear at once, layout changes jump, and shaders rest (`paused`). Every state stays understandable with all
+motion off.
 
 ## Sound
+
+Sound is not a default. Most apps are best silent; but in an app it suits (media, messaging, timers, games, or
+controls meant to feel tactile), a touch of sound at one or two key moments can be the finishing detail: a message
+sent, a switch flipped, a task done. Decide first whether the app needs it, then add it sparingly by these rules.
 
 Sound confirms what the eye already sees; it never carries meaning alone. Keep a small set of short, quiet sounds of
 one family, each for one job, so the material says the kind of event before the user knows which one: a choice, a
@@ -1008,18 +1337,18 @@ Play them where a change completes (a switch turning, a message sent, a toast's 
 per streamed token or for a number that updates constantly. Silence is the default; a sound that repeats while the
 user works soon reads as noise.
 
-```rust tabs
-const TOGGLE: FileAsset = asset!("sounds/toggle.wav");
-
-let toggle = load_sound(TOGGLE.uri).await?; // once, ahead of the first press
-toggle.play(0.6, if on { 1.0 } else { 0.9 }); // a little lower turning off
-```
-
 ```tsx tabs
 import toggleFile from "./sounds/toggle.wav";
 
 const toggle = await Sound.load(toggleFile); // once, ahead of the first press
 toggle.play({ volume: 0.6, rate: on ? 1 : 0.9 }); // a little lower turning off
+```
+
+```rust tabs
+const TOGGLE: FileAsset = asset!("sounds/toggle.wav");
+
+let toggle = load_sound(TOGGLE.uri).await?; // once, ahead of the first press
+toggle.play(0.6, if on { 1.0 } else { 0.9 }); // a little lower turning off
 ```
 
 Load sounds once, ahead of use, so they play within the frame of the change they accompany. Vary one sound with
@@ -1188,6 +1517,14 @@ NSH apps run on phones, tablets, desktops, and the web, and often inside a host 
   subtree; start and end properties mirror ([Right to left](./layout.md#right-to-left)).
 - **Touch and pointer.** Touch targets are at least 44 × 44 points; hover and tooltips exist only with a pointer.
 
+```tsx tabs
+import { NavPage } from "nsh/base";
+
+<NavPage title="Inbox" header={<PageHeader title="Inbox" />}>
+  <Inbox />
+</NavPage>
+```
+
 ```rust tabs
 use nsh_base::nav_page;
 
@@ -1195,14 +1532,6 @@ nav_page()
     .title("Inbox")
     .header(page_header("Inbox"))
     .child(inbox())
-```
-
-```tsx tabs
-import { NavPage } from "nsh/base";
-
-<NavPage title="Inbox" header={<PageHeader title="Inbox" />}>
-  <Inbox />
-</NavPage>
 ```
 
 ## Guidance for AI-generated interfaces
@@ -1213,13 +1542,44 @@ composition, and keyboard and touch paths before generating code. It must not in
 or Shadcn examples or invent an NSH prop or method because the name seems plausible; `nsh check` and the build's class
 check report what does not exist.
 
+When it builds or changes an interactive surface, it plans the motion with the layout, not after it: for each state
+change on the screen (press, hover, selection, a glyph or label changing, a popup, arriving content, a drag released,
+something live) it writes the screen's motion inventory ("Motion inventory") before the code, picks each tool from "Motion", uses the app's motion tokens
+(defining them if the app has none), and honors reduced motion. A screen whose every change is an instant swap is
+unfinished; so is one that moves without a reason. Sound is added only where the app calls for it ("Sound").
+
 AI output is incomplete until a human can explain why the hierarchy, density, component choice, and exceptional
 literal values belong in this product. A visually plausible screenshot is not proof: keyboard and touch behavior,
 focus, dynamic content, themes, resizing, text size, and failure states are part of the design.
 
+## Accessibility and keyboard (required)
+
+Accessibility and keyboard operation are requirements, not polish: a screen that a keyboard or a screen reader cannot
+complete is broken, however it looks. These rules are **musts** on every target.
+
+- **Every action works by keyboard.** On desktop, web and TUI, everything a pointer can do can be done from the
+  keyboard: Tab / Shift-Tab move through controls in visual order, arrows move within a group (lists, menus, tabs,
+  radios, grids), Enter / Space activate, Escape closes the topmost surface. Frequent commands have shortcuts shown in
+  menus and tooltips.
+- **Focus is visible and managed.** Every focusable control shows a focus ring when the keyboard moved focus
+  (`focus-visible:`); opening a dialog, sheet or menu moves focus into it and closing returns it to the trigger;
+  focus never lands on something hidden or disappears.
+- **Use semantic components.** Build controls on `nsh/base` (Button, Menu, Dialog, Select, Tabs, ...), which carry
+  roles, states and keyboard behavior; a control hand-built from a pressable view has none of them.
+- **Everything has a name.** Icon-only controls have an `accessibilityLabel`; images that mean something have a
+  description, decorative ones are hidden; states (selected, expanded, checked, disabled, busy) are exposed, not only
+  drawn.
+- **Never by color or motion alone.** Status has text or an icon besides its color; text and meaningful boundaries
+  meet contrast in light and dark; nothing requires animation or sound to be understood.
+- **It scales and adapts.** Larger text, right to left, longer translations and reduced motion keep the screen
+  complete.
+- **Test it.** Complete the main task with the keyboard only, and with the platform's screen reader (VoiceOver,
+  TalkBack, Narrator, Orca) on at least one target; `nsh test` selects by role and label, so tests that find
+  controls by `role:button[Send]` also check their names.
+
 ## Accessibility checklist
 
-Before considering a screen complete, verify that:
+Before considering a screen complete, verify every item; any failure blocks finishing:
 
 - every action is reachable and operable by keyboard, touch, and screen reader;
 - focus order follows visual and task order;
@@ -1231,7 +1591,123 @@ Before considering a screen complete, verify that:
 - disabled and read-only states are distinguishable;
 - labels, errors, and descriptions remain near their controls;
 - content remains usable with longer translations, right to left, and larger text;
-- touch targets are at least 44 × 44 points, and pointer targets are comfortably sized even in a dense layout.
+- every action can be completed with the keyboard alone, with visible focus, and with a screen reader;
+- touch targets are at least 44 × 44pt on iOS and 48 × 48dp on Android, and pointer targets are comfortably sized
+  even in a dense layout.
+
+## Finishing checklist
+
+The review checklist below asks whether the design made the right decisions; this one checks the execution, item by
+item, on the running app. It checks consistency with the app's own design system (its tokens, sizes, radii and motion),
+not particular numbers: the same guide serves every app's style. Run it on every screen the work added or changed, against screenshots in light and dark, and
+report each group as passed or as what was fixed. A group not checked is not passed.
+
+**Radius**
+- [ ] Every radius comes from the theme's scale (`rounded-(--radius)`, the app's named tokens, `rounded-sm` …
+  `rounded-2xl`); no one-off values.
+- [ ] The scale has a clear order: the largest surfaces (a composer, a card, a sheet) softest, controls next, small
+  parts (badges, icons, checkboxes) tightest; small buttons do not become pills.
+- [ ] Nested shapes are concentric: inner radius ≈ outer radius − gap.
+- [ ] `rounded-full` only on intentional circles and pills; no rectangle has a radius near half its height by accident.
+- [ ] Children, selection fills and scrolled content stay inside the rounded corners.
+
+**Typography**
+- [ ] Every size is a step of the type scale (`text-xs` … `text-xl` and the app's display sizes); no literal font sizes.
+- [ ] Hierarchy uses at most three or four sizes and two weights per screen; bold and color stay scarce.
+- [ ] The UI font for interface text, monospace only for code, identifiers, shortcuts and aligned numbers.
+- [ ] Secondary text uses `muted-foreground`, not a smaller size alone; nothing below 12pt for reading.
+- [ ] Long text truncates or wraps on purpose; it works at a larger text size.
+
+**Spacing and gaps**
+- [ ] Every gap and padding is a step of the spacing scale; no literal points except audited exceptions.
+- [ ] Gaps grow with the distance of the relationship: parts of a control < related controls < one group < groups in
+  a section < sections. Equal gaps mean equal relationships.
+- [ ] Padding belongs to the component, gaps to the parent; no doubled insets.
+- [ ] Peers share alignment spines; repeated rows keep their columns; leading and trailing written as start / end.
+
+**Alignment**
+- [ ] Each surface has a few named spines (leading and trailing content edges, a baseline or center line per band,
+  fixed lanes); every element at one level sits on one of them.
+- [ ] Sibling regions (header, toolbar, rows, empty state, footer) share one content inset; nested levels return
+  exactly to the parent spine.
+- [ ] Repeated rows keep fixed lanes for icon, label, metadata, numbers and trailing actions; a missing icon or badge
+  does not move the rest (icons centered in a fixed slot).
+- [ ] Mixed text sizes in a row align by baseline; icons and text by center line; numbers end-aligned with
+  `tabular-nums`.
+- [ ] Equal edges and gaps are equal to the rendered pixel at the window sizes, text sizes and scales checked; a
+  difference is fixed at its shared owner, never with a literal offset.
+- [ ] Indentation only for real hierarchy; `justify-between` only when both sides own opposite edges.
+- [ ] Hairlines drawn once by the boundary's owner; scrollbars at the scrolling region's trailing edge.
+
+**Color and surfaces**
+- [ ] Every color is a theme token; no raw hex, RGB or palette classes in presentation code.
+- [ ] One primary action per surface; strong color, badges and alerts scarce.
+- [ ] Popups share one surface treatment; shadows only on what floats; base regions separated by background and hairlines.
+- [ ] Light and dark are balanced; no leftover colors of an earlier palette.
+
+**Hover**
+- [ ] Every pressable element on desktop and web answers hover; nothing that cannot be pressed reacts to it.
+- [ ] Hover is a quiet wash (a `muted` / `accent` background, a slightly stronger border or text), weaker than
+  selected and pressed, the same treatment for every control of one kind.
+- [ ] Hover does not change size, weight, padding or layout, and does not move neighbors; it does not reveal the
+  only way to reach an action (it is also in a menu or keyboard).
+- [ ] It comes in fast (`instant`, ease-out) and leaves without lag; it is absent on touch (no stuck hover after a tap).
+- [ ] Rows: the wash fills the row's full hit area, inside the list's radius, and does not double with selection.
+
+**Pressed**
+- [ ] Every pressable element has a pressed state the app styles (`active:` / `activeStyle`), visible within the
+  frame of the touch or click, stronger than hover.
+- [ ] Buttons scale slightly (0.97, icon buttons 0.95) and/or deepen their wash on the soft settle; rows and list
+  items deepen their background instead of scaling.
+- [ ] The pressed state covers the whole hit area, keeps the label readable, and does not shift layout.
+- [ ] Releasing outside cancels without firing; a control owning a menu stays visibly open until the menu closes.
+- [ ] Disabled controls show neither hover nor pressed.
+
+**The `ui` layer**
+- [ ] The app has a `ui` module with the core set, shown in every variant, size and state on one page.
+- [ ] Feature code uses only `ui` components and layout primitives: no controls imported from `nsh/base`, no colors,
+  radii, paddings or font sizes, no controls hand-built from pressable views.
+- [ ] Every new look or behavior a feature needed was added to `ui` as a variant, size or component.
+- [ ] Every `ui` control wraps its `nsh/base` counterpart ("Build each `ui` control on its `nsh/base` counterpart");
+  none is rebuilt from a view and a pressable.
+- [ ] Select and combobox popups are as wide as their trigger on desktop and web.
+- [ ] Every icon comes from the `ui` `Icon` component; no text characters or emoji used as icons in GUI targets.
+- [ ] Buttons, tabs, menu items and rows show the default cursor, never the text cursor.
+
+**Component standards**
+- [ ] Each styled control takes one `size` that sets its height, padding, text, icon and radius together; heights
+  and paddings match across buttons, inputs, selects and toolbars of one size.
+- [ ] State colors come from per-variant tokens (normal, hover, active); selected and menu-open share one style.
+- [ ] Popups share one surface; focus rings sit outside the border with room to show.
+- [ ] Nested menu items are a `Submenu` that cascades beside its row; no row of a menu expands its items in place.
+
+**Other states**
+- [ ] Focus-visible rings on every keyboard-reachable control, outside the clip; selected, disabled and loading
+  distinct from each other and from hover.
+- [ ] Icon-only buttons are square, the same size within a group, and have an accessibility label.
+- [ ] One icon family, one stroke weight, sizes from the scale.
+
+**Motion and sound**
+- [ ] The screen's motion inventory exists and every line was verified in the running app ("Motion inventory").
+- [ ] Durations and easings come from the app's motion tokens; nothing moves without a reason; reduced motion checked.
+- [ ] Sound only if the app calls for it, at completed changes, quiet, and the screen works silent.
+
+**Accessibility and keyboard (blocking)**
+- [ ] The main task completes with the keyboard alone: Tab order follows the screen, arrows within groups, Enter /
+  Space activate, Escape closes; focus visible and returned after overlays.
+- [ ] Every control has a role and name (icon-only included), states exposed; checked with a screen reader on one
+  target.
+- [ ] Nothing relies on color, motion or sound alone; contrast holds in light and dark.
+
+**Platforms**
+- [ ] Desktop and web share one design; mobile follows iOS / Android sizes and navigation (44pt / 48dp targets,
+  sheets, back); TUI works by keyboard on whole cells in 16 colors.
+- [ ] Desktop windows draw their own title bar in the app's theme (hidden system bar, controls' room from
+  `titleBar()`, drag region kept); no OS-colored strip above the app.
+
+**Platforms and states of content**
+- [ ] Empty, loading, error and long-content states designed, not left blank.
+- [ ] Checked at the minimum window size or a phone width, at a larger text size, and on each target platform.
 
 ## Design review checklist
 
@@ -1252,5 +1728,8 @@ A review does not inventory components; it judges whether the interface made the
 7. **Does it remain usable in every state and constraint?** Verify keyboard, touch and focus behavior,
    empty/loading/failure/permission states, longer translations, larger text, right to left, both appearances,
    minimum window size, and reduced motion.
-8. **Has it been tested on real platforms?** Complete the task with real components, copy, and representative content
+8. **Does motion explain the change?** Is there a motion inventory for every changed screen, each line verified? Do presses, swaps, popups, selections and arriving content move with the
+   app's motion tokens, natively, interruptibly, and not at all with reduced motion, while nothing moves without a
+   reason?
+9. **Has it been tested on real platforms?** Complete the task with real components, copy, and representative content
    on each platform it ships to (`nsh run --target …`, `nsh test --target …`)—not only an ideal screenshot.

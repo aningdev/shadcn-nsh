@@ -1,16 +1,6 @@
 // A segmented control: the look (`segmentedLook`) and the parts that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  controlHeight,
-  feedback,
-  rounded,
-  font,
-  shape,
-  stroke,
-  surface,
-} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, signal, split, Text, View } from "nsh";
 import {
@@ -20,16 +10,177 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { type Live, read } from "./lib/utils";
+import { colors, controlHeight, feedback, font, rounded, shape, stroke, surface } from "../theme";
+import { joinClass, type Live, read } from "./lib/utils";
 import { hoverOf, type TabLook, type TabState } from "./tabs";
-
-const pointer = platform.desktop;
 
 /**
  * A segmented control's size: the theme's middle height (`height.md`) by default, its small one
  * (`height.sm`) for `sm`.
  */
 export type SegmentedSize = "sm" | "default";
+
+/** Composition root: the selected segment value. */
+export type SegmentedProps = {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  children?: JSX.Element;
+  /** Tailwind classes on the root. */
+  class?: string | null;
+  /** Tailwind classes toggled on the root. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<ViewStyle>;
+};
+
+/** The sink the segments sit in (`nsh/base`'s `Tabs`): the track and its thumb. */
+export type SegmentedListProps = Omit<BaseTabsProps, "children"> & {
+  size?: SegmentedSize;
+  fill?: boolean;
+  children?: JSX.Element;
+};
+
+/** One segment. String children are the label. */
+export type SegmentedItemProps = Omit<BaseTabProps, "selected" | "children"> & {
+  value: string;
+  count?: number;
+  children?: string | JSX.Element;
+};
+
+/** Holds the selected value; wrap {@link SegmentedList} and panels. */
+export function Segmented(props: SegmentedProps) {
+  const [, rest] = split(props, [
+    "value",
+    "defaultValue",
+    "onValueChange",
+    "children",
+    "class",
+    "classList",
+    "style",
+  ]);
+  const uncontrolled = signal(props.value ?? props.defaultValue ?? "");
+  const value = () => (props.value != null ? props.value : uncontrolled());
+
+  return (
+    <SegmentedContext.Provider
+      value={{
+        value,
+        onValueChange: (next) => {
+          if (props.value == null) uncontrolled.set(next);
+          props.onValueChange?.(next);
+        },
+      }}
+    >
+      <View
+        {...rest}
+        class={joinClass(undefined, props.class)}
+        classList={props.classList}
+        style={props.style ?? null}
+      >
+        {props.children}
+      </View>
+    </SegmentedContext.Provider>
+  );
+}
+
+/** The track list. Pass `size` and `fill` here (they are read once per control). */
+export function SegmentedList(props: SegmentedListProps) {
+  const [, rest] = split(props, [
+    "size",
+    "fill",
+    "class",
+    "classList",
+    "style",
+    "indicatorStyle",
+    "children",
+  ]);
+  const size = () => props.size ?? "default";
+  const fill = () => !!props.fill;
+  const look = segmentedLook({ size, fill });
+  const value: SegmentedListValue = { size, fill };
+
+  return (
+    <SegmentedListContext.Provider value={value}>
+      <BaseTabs
+        {...rest}
+        class={props.class}
+        classList={props.classList}
+        indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
+        style={[look.style, props.style ?? null]}
+      >
+        {props.children}
+      </BaseTabs>
+    </SegmentedListContext.Provider>
+  );
+}
+
+/** A segment in the list. */
+export function SegmentedItem(props: SegmentedItemProps) {
+  const ctx = useSegmented();
+  const list = SegmentedListContext();
+  const [, rest] = split(props, [
+    "value",
+    "count",
+    "children",
+    "class",
+    "classList",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "selectedStyle",
+    "onPress",
+    "accessibilityLabel",
+  ]);
+  const look = segmentedLook({
+    size: () => list?.size() ?? "default",
+    fill: () => !!list?.fill(),
+  });
+  const selected = () => ctx.value() === props.value;
+  const segment = look.segment({
+    selected: () => selected(),
+    disabled: () => !!props.disabled,
+  });
+
+  return (
+    <BaseTab
+      {...rest}
+      selected={selected()}
+      onPress={() => {
+        ctx.onValueChange(props.value);
+        props.onPress?.();
+      }}
+      class={props.class}
+      classList={props.classList}
+      style={[segment.style, props.style ?? null]}
+      hoverStyle={[segment.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[segment.activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[segment.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[segment.disabledStyle, props.disabledStyle ?? null]}
+      selectedStyle={props.selectedStyle}
+    >
+      {(() => {
+        // Read once, here where the segment is drawn (`marker.tsx` reads in the same shape): a
+        // string is the label (with its count), anything else as it is.
+        const kids = props.children;
+        return typeof kids === "string" ? (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: look.gap }}>
+            <Text style={look.label(selected())}>{kids}</Text>
+            <If when={props.count !== undefined}>
+              <Text style={look.count}>{props.count}</Text>
+            </If>
+          </View>
+        ) : (
+          kids
+        );
+      })()}
+    </BaseTab>
+  );
+}
+
+// Shared segmented primitives
+// `radio-group` and the segmented demo wear `segmentedLook`.
 
 /** Options of `segmentedLook`. */
 export interface SegmentedLookOptions {
@@ -148,29 +299,9 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   };
 }
 
-/** Composition root: the selected segment value. */
-export type SegmentedProps = {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
-  children?: JSX.Element;
-  class?: string | null;
-  style?: StyleProp<ViewStyle>;
-};
+// Private helpers & looks
 
-/** The sink the segments sit in (`nsh/base`'s `Tabs`): the track and its thumb. */
-export type SegmentedListProps = Omit<BaseTabsProps, "children"> & {
-  size?: SegmentedSize;
-  fill?: boolean;
-  children?: JSX.Element;
-};
-
-/** One segment. String children are the label. */
-export type SegmentedItemProps = Omit<BaseTabProps, "selected" | "children"> & {
-  value: string;
-  count?: number;
-  children?: string | JSX.Element;
-};
+const pointer = platform.desktop;
 
 type SegmentedContextValue = {
   value: () => string;
@@ -191,116 +322,4 @@ function useSegmented() {
   const ctx = SegmentedContext();
   if (!ctx) throw new Error("Segmented parts must be used within <Segmented>");
   return ctx;
-}
-
-/** Holds the selected value; wrap {@link SegmentedList} and panels. */
-export function Segmented(props: SegmentedProps) {
-  const [, rest] = split(props, [
-    "value",
-    "defaultValue",
-    "onValueChange",
-    "children",
-    "class",
-    "style",
-  ]);
-  const uncontrolled = signal(props.value ?? props.defaultValue ?? "");
-  const value = () => (props.value != null ? props.value : uncontrolled());
-
-  return (
-    <SegmentedContext.Provider
-      value={{
-        value,
-        onValueChange: (next) => {
-          if (props.value == null) uncontrolled.set(next);
-          props.onValueChange?.(next);
-        },
-      }}
-    >
-      <View {...rest} class={props.class ?? undefined} style={props.style}>
-        {props.children}
-      </View>
-    </SegmentedContext.Provider>
-  );
-}
-
-/** The track list. Pass `size` and `fill` here (they are read once per control). */
-export function SegmentedList(props: SegmentedListProps) {
-  const [, rest] = split(props, ["size", "fill", "style", "indicatorStyle", "children"]);
-  const size = () => props.size ?? "default";
-  const fill = () => !!props.fill;
-  const look = segmentedLook({ size, fill });
-  const value: SegmentedListValue = { size, fill };
-
-  return (
-    <SegmentedListContext.Provider value={value}>
-      <BaseTabs
-        {...rest}
-        indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
-        style={[look.style, props.style ?? null]}
-      >
-        {props.children}
-      </BaseTabs>
-    </SegmentedListContext.Provider>
-  );
-}
-
-/** A segment in the list. */
-export function SegmentedItem(props: SegmentedItemProps) {
-  const ctx = useSegmented();
-  const list = SegmentedListContext();
-  const [, rest] = split(props, [
-    "value",
-    "count",
-    "children",
-    "style",
-    "hoverStyle",
-    "activeStyle",
-    "focusVisibleStyle",
-    "disabledStyle",
-    "selectedStyle",
-    "onPress",
-    "accessibilityLabel",
-  ]);
-  const look = segmentedLook({
-    size: () => list?.size() ?? "default",
-    fill: () => !!list?.fill(),
-  });
-  const selected = () => ctx.value() === props.value;
-  const segment = look.segment({
-    selected: () => selected(),
-    disabled: () => !!props.disabled,
-  });
-
-  return (
-    <BaseTab
-      {...rest}
-      selected={selected()}
-      onPress={() => {
-        ctx.onValueChange(props.value);
-        props.onPress?.();
-      }}
-      style={[segment.style, props.style ?? null]}
-      hoverStyle={[segment.hoverStyle ?? null, props.hoverStyle ?? null]}
-      activeStyle={[segment.activeStyle ?? null, props.activeStyle ?? null]}
-      focusVisibleStyle={[segment.focusVisibleStyle, props.focusVisibleStyle ?? null]}
-      disabledStyle={[segment.disabledStyle, props.disabledStyle ?? null]}
-      selectedStyle={props.selectedStyle}
-    >
-      {(() => {
-        // Read once, here where the segment is drawn (`marker.tsx` reads in the same shape): a
-        // string is the label (with its count), anything else as it is.
-        const kids = props.children;
-        return typeof kids === "string" ? (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: look.gap }}>
-            <Text style={look.label(selected())}>{kids}</Text>
-            <If when={props.count !== undefined}>
-              <Text style={look.count}>{props.count}</Text>
-            </If>
-          </View>
-        ) : (
-          kids
-        );
-      })()}
-    </BaseTab>
-  );
 }

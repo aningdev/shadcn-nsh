@@ -1,6 +1,7 @@
 // shadcn's code-block scenes with this library's parts: a titled snippet with line numbers and a
 // copy button, a tool's result in the small size with a footer, an error log in the destructive
 // variant, and lines of the app's own (called out, added, removed).
+import { font } from "@shadcn-nsh/theme";
 import { mount, Text } from "nsh";
 
 import {
@@ -54,7 +55,7 @@ function App() {
                 style={{
                   fontSize: density.note,
                   flexGrow: 1,
-                  fontFamily: "monospace",
+                  fontFamily: font.mono,
                   color: ui().up,
                 }}
               >

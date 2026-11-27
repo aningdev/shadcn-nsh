@@ -1,12 +1,12 @@
 /**
  * The themes the docs site shows: each palette of the demos (`demos/palettes.ts`) with the theme it
  * draws — `packages/theme/themes/<id>/index.ts` as `defineTheme()` compiled it (`ALL_THEMES`) and the
- * `theme.json` that `bun run tokens:build` exports from the same spec. `ALL_THEMES` is imported
+ * `theme.json` that `bun run theme:build` exports from the same spec. `ALL_THEMES` is imported
  * once, eagerly, so a theme page is drawn from the same data at build time and in the browser — no
  * `node:fs`, and the page prerenders like any other. `check:pages` holds the registry items and the
  * theme pages to the same list, so a theme is never written twice here.
  *
- * The spec is the single source (`docs/decisions/0020-theme-v5.md`): the appearance roles are
+ * The spec is the single source (`docs/theme.md`): the appearance roles are
  * `tokens.light`'s keys, the shared values are `cssVars.theme`, and the surfaces are `surfaces` —
  * eleven structural roles (`SurfaceRole`), each with the ink it falls back to. What a surface is for
  * is the one list this file keeps (`SURFACE_DUTIES`): the duties used to be read out of a spec page,
@@ -22,6 +22,7 @@ import type {
   FaceExpr,
   Mode,
   ShadowExpr,
+  SurfaceMaterial,
   SurfaceRole,
   SurfaceSpec,
   ThemeSpec,
@@ -59,6 +60,8 @@ export type SurfaceRow = {
   reads: string;
   /** Every token any of its values names, in the order they appear. */
   tokens: string[];
+  /** Whether this surface blurs or wears a translucent backdrop material in either appearance. */
+  translucent: boolean;
 };
 
 /** One palette as the themes page shows it. */
@@ -205,6 +208,14 @@ function tokensOf(spec: ThemeSpec, role: SurfaceRole): string[] {
   return names;
 }
 
+function isTranslucentSurface(surface: SurfaceSpec): boolean {
+  for (const scheme of ["light", "dark"] as const) {
+    const layer = layerOf(surface, scheme);
+    if (layer.material != null || typeof layer.backdropFilter === "string") return true;
+  }
+  return false;
+}
+
 /** Every palette the demos offer, with its theme read. */
 export function themePages(): ThemePage[] {
   return PALETTES.map((palette) => {
@@ -234,6 +245,7 @@ export function themePages(): ThemePage[] {
           role,
           ...SURFACE_DUTIES[role],
           tokens: tokensOf(spec, role),
+          translucent: isTranslucentSurface(spec.surfaces[role]!),
         })),
     };
   });
@@ -270,6 +282,19 @@ function colorCss(theme: AppTheme, scheme: Mode, expression: ColorExpr | FaceExp
   return `color-mix(in srgb, ${color} ${Math.round(expression.alpha * 100)}%, transparent)`;
 }
 
+const MATERIAL_DEFAULT_BLUR = { glass: 30, acrylic: 30, blur: 16 } as const;
+
+function materialOptics(material: SurfaceMaterial) {
+  if (typeof material === "string") {
+    return { blur: MATERIAL_DEFAULT_BLUR[material], saturate: undefined, specular: null };
+  }
+  return {
+    blur: material.blur ?? MATERIAL_DEFAULT_BLUR[material.kind],
+    saturate: material.saturate,
+    specular: material.specular ?? null,
+  };
+}
+
 /**
  * The stylesheet the surface samples draw with: one rule per surface of every theme, its values
  * taken from that theme's spec with the references filled in, and a ground of that theme's
@@ -284,8 +309,20 @@ export function surfaceSampleCss(): string {
       const vars = varsOf(theme.theme, scheme);
       return `background-color:${filled(vars.background ?? "transparent", vars)};`;
     };
+    const glassGround = (scheme: Mode) => {
+      const vars = varsOf(theme.theme, scheme);
+      const brand = filled(vars.brand ?? vars.primary ?? "transparent", vars);
+      const info = filled(vars.info ?? brand, vars);
+      const warn = filled(vars.warning ?? brand, vars);
+      const ok = filled(vars.success ?? info, vars);
+      return `background-image:linear-gradient(135deg,${brand} 0%,${info} 38%,${ok} 68%,${warn} 100%);`;
+    };
     rules.push(`[data-ground="${palette.id}"]{${ground("light")}}`);
     rules.push(`html.dark [data-ground="${palette.id}"]{${ground("dark")}}`);
+    rules.push(`[data-ground="${palette.id}"][data-translucent="true"]{${glassGround("light")}}`);
+    rules.push(
+      `html.dark [data-ground="${palette.id}"][data-translucent="true"]{${glassGround("dark")}}`,
+    );
     for (const scheme of ["light", "dark"] as const) {
       const prefix = scheme === "dark" ? "html.dark " : "";
       const surfaces = Object.entries(theme.spec.surfaces) as [SurfaceRole, SurfaceSpec][];
@@ -297,10 +334,28 @@ export function surfaceSampleCss(): string {
             declarations.push(`${name}:${value};`);
           }
         };
+        const resolved = layer.material ? materialOptics(layer.material) : undefined;
         push("background-color", layer.background && colorCss(theme, scheme, layer.background));
         push("background-image", layer.gradient);
-        push("box-shadow", layer.shadow ? shadowCss(theme, scheme, layer.shadow) : null);
-        push("backdrop-filter", layer.backdropFilter);
+        const baseShadow = layer.shadow ? shadowCss(theme, scheme, layer.shadow) : null;
+        const specShadow =
+          resolved?.specular !== undefined && resolved.specular !== null
+            ? colorCss(theme, scheme, resolved.specular)
+            : null;
+        const combinedShadow = [specShadow ? `inset 0 1px 0 ${specShadow}` : null, baseShadow]
+          .filter((value): value is string => value !== null)
+          .join(", ");
+        push("box-shadow", combinedShadow === "" ? null : combinedShadow);
+        const filter =
+          typeof layer.backdropFilter === "string"
+            ? layer.backdropFilter
+            : resolved
+              ? resolved.saturate !== undefined
+                ? `blur(${resolved.blur}px) saturate(${Math.round(resolved.saturate * 100)}%)`
+                : `blur(${resolved.blur}px)`
+              : null;
+        push("backdrop-filter", filter);
+        push("-webkit-backdrop-filter", filter);
         const border = layer.border && colorCss(theme, scheme, layer.border);
         push("border", border ? `1px solid ${border}` : null);
         push("border-top-color", layer.borderTop && colorCss(theme, scheme, layer.borderTop));

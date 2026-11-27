@@ -90,11 +90,10 @@ const logs: TreeItem[] = Array.from({ length: 100 }, (_, f) => ({
 
 ## API
 
-Uses `treeItemClass` and `TreeRow` by default. Every prop of [`nsh/base` Tree](https://nsh.dev/elements/tree) passes through.
+Uses `TreeRow` by default. Every prop of [`nsh/base` Tree](https://nsh.dev/elements/tree) passes through.
 
 | Part            | Props                                                                                | Description                                                     |
 | --------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
 | `Tree`          | `items`, `defaultExpanded`, `renderItem`, `onSelect`, and every `nsh/base` Tree prop | The virtualized list of rows, in a card, `TreeRow` by default   |
 | `TreeRow`       | `entry`, `icon`, `tint`, `detail`                                                    | A row: its chevron, its icon, its label and a detail at the end |
-| `treeItemClass` | —                                                                                    | The row's look, for a row you draw yourself                     |
 | `treeRowHeight` | —                                                                                    | A row's height: 28 with a pointer, 44 on a touch screen         |

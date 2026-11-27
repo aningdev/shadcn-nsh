@@ -3,9 +3,8 @@
  *
  * The panel gives a demo the layout's idiom (`?idiom=phone|desktop`) and the site's theme
  * (`?theme=light|dark`, and a `postMessage({ theme })` when it changes), as the website's player
- * page takes them (`references/nsh/crates/nsh-platform-web/web/index.html`). The release template
- * (`references/nsh/crates/nsh-cli/src/web/index.html` and its `start.js`) has no entry for
- * either, so this module adds them to the page after packaging.
+ * page takes them (the player page on nsh.dev). The release template the installed CLI writes
+ * has no entry for either, so this module adds them to the page after packaging.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -61,10 +60,9 @@ const START_THEME = '  if (window.nshDemo.theme) player.setDark(window.nshDemo.t
  * The release template has no entry for either: `nsh package --target web` writes a page whose
  * `createPlayer` passes no `idiom` and no `dark`, and whose runtime then measures the idiom from
  * the browser's pointer (`pointer: fine` and `hover: hover`: always desktop on a mouse) and
- * follows `prefers-color-scheme`. The website's player page
- * (`references/nsh/crates/nsh-platform-web/web/index.html`) has both, but it is built by
- * `cargo xtask web` — compiling NSH, which this repository does not do. So the two options are
- * added to the page the installed CLI writes, here and only here. `idiom` and `dark` are the
+ * follows `prefers-color-scheme`. The website's player page has both, and it is built with NSH
+ * itself, which this repository does not compile. So the two options are added to the page the
+ * installed CLI writes, here and only here. `idiom` and `dark` are the
  * runtime's own options (`nsh.js`'s `createPlayer`); `player.setDark` its own method.
  *
  * Since v0.6.0 the template is a thin shell: the page carries only the app's JSON and a
@@ -78,8 +76,8 @@ const START_THEME = '  if (window.nshDemo.theme) player.setDark(window.nshDemo.t
  * (the engine's environment starts light; `nsh_environment` carries no appearance).
  *
  * Markers are the template's exact text: a `nsh` release that changes them fails the build
- * loudly instead of shipping demos that ignore the panel (`docs/toolchain.md` says what to do
- * then).
+ * loudly instead of shipping demos that ignore the panel. A CLI whose template no longer
+ * matches these markers needs this file updated in the same change.
  */
 export function addPlayerOptions(outDir: string, name: string) {
   const index = path.join(outDir, "index.html");

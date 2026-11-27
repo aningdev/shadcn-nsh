@@ -5,7 +5,7 @@
 // inside all of it. `captureKeys` is the mounted policy the platform reads before native defaults
 // run; `defaultPrevented` reports that decision on each transition. It is not a callback that could
 // veto natively from JS: both listeners hear every transition, the capture decision included.
-import { alpha, colors, TERMINAL_ROW, terminal, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, TERMINAL_ROW, terminal, shape, font } from "@shadcn-nsh/theme";
 import { Check, GitBranch, Keyboard, Move, Terminal, TextCursorInput } from "lucide";
 import {
   Canvas,
@@ -84,7 +84,7 @@ function Keycap(props: { label: string; name?: string; down?: boolean; wide?: bo
         style={{
           fontSize: 12,
           fontWeight: "600",
-          fontFamily: "monospace",
+          fontFamily: font.mono,
           color: props.down ? colors.brand : colors.mutedForeground,
           numberOfLines: 1,
         }}
@@ -130,7 +130,7 @@ function InspectRow(props: { label: string; value: string; tone?: "accent" | "te
         style={{
           flex: 1,
           fontSize: 12.5,
-          fontFamily: "monospace",
+          fontFamily: font.mono,
           color: color(),
           textAlign: "right",
           numberOfLines: 1,
@@ -538,7 +538,7 @@ function ModifierChords() {
             style={{
               flex: 1,
               fontSize: 11.5,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               color: colors.mutedForeground,
               numberOfLines: 1,
             }}
@@ -549,7 +549,7 @@ function ModifierChords() {
             style={{
               fontSize: 11,
               color: colors.faint,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               fontVariant: ["tabular-nums"],
             }}
           >{`${prevented()} captured`}</Text>
@@ -583,7 +583,7 @@ function ModifierChords() {
               style={{
                 flex: 1,
                 fontSize: 11.5,
-                fontFamily: "monospace",
+                fontFamily: font.mono,
                 color: colors.faint,
                 numberOfLines: 2,
               }}
@@ -609,7 +609,7 @@ function ModifierChords() {
           <Text
             style={{
               fontSize: 10.5,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               color: colors.faint,
               numberOfLines: 2,
             }}
@@ -633,7 +633,7 @@ function ModifierChords() {
               }}
             >
               <Text
-                style={{ fontSize: 11.5, fontFamily: "monospace", color: colors.mutedForeground }}
+                style={{ fontSize: 11.5, fontFamily: font.mono, color: colors.mutedForeground }}
               >
                 {keymap.label(chord())}
               </Text>
@@ -750,7 +750,7 @@ function CaptureAndBubbling() {
           <Text
             style={{
               fontSize: 11.5,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               color: colors.faint,
               numberOfLines: 2,
             }}
@@ -770,7 +770,7 @@ function CaptureAndBubbling() {
             >
               Parent
             </Text>
-            <Text style={{ fontSize: 11, fontFamily: "monospace", color: colors.faint }}>
+            <Text style={{ fontSize: 11, fontFamily: font.mono, color: colors.faint }}>
               onKeyDown · onKeyUp
             </Text>
           </View>
@@ -789,7 +789,7 @@ function CaptureAndBubbling() {
             <If
               when={parentLog().length > 0}
               else={
-                <Text style={{ fontSize: 11.5, fontFamily: "monospace", color: colors.faint }}>
+                <Text style={{ fontSize: 11.5, fontFamily: font.mono, color: colors.faint }}>
                   No transitions yet
                 </Text>
               }
@@ -799,7 +799,7 @@ function CaptureAndBubbling() {
                   <Text
                     style={{
                       fontSize: 11.5,
-                      fontFamily: "monospace",
+                      fontFamily: font.mono,
                       color: colors.mutedForeground,
                       numberOfLines: 1,
                     }}
@@ -874,7 +874,7 @@ function TypingStaysInInput() {
         testID="keyboard-ancestry"
       >
         <Text
-          style={{ fontSize: 11.5, fontFamily: "monospace", color: colors.faint, numberOfLines: 2 }}
+          style={{ fontSize: 11.5, fontFamily: font.mono, color: colors.faint, numberOfLines: 2 }}
         >{`captureKeys={${JSON.stringify(INPUT_ANCESTRY)}}`}</Text>
         <View style={{ flexDirection: "row", paddingHorizontal: 4 }}>
           <Stat width="34%" label="Raw actions" value={String(rawCount())} />
@@ -912,7 +912,7 @@ function TypingStaysInInput() {
               style={{
                 fontSize: 11.5,
                 color: colors.faint,
-                fontFamily: "monospace",
+                fontFamily: font.mono,
                 numberOfLines: 1,
               }}
             >
@@ -938,7 +938,7 @@ function TypingStaysInInput() {
             style={{
               flex: 1,
               fontSize: 12.5,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               color: colors.foreground,
               numberOfLines: 2,
             }}

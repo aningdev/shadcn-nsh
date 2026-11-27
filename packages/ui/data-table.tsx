@@ -1,7 +1,6 @@
 // Data table: `dataTableClasses` and the `DataTable` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { terminal } from "@shadcn-nsh/theme";
 import { split } from "nsh";
 import {
   DataTable as BaseDataTable,
@@ -9,7 +8,38 @@ import {
   type DataTableProps as BaseDataTableProps,
 } from "nsh/base";
 
+import { terminal } from "../theme";
 import { mergeClasses } from "./lib/utils";
+
+/**
+ * `nsh/base` DataTable with `dataTableClasses` by default. Sorting, selection,
+ * resize, and column moves stay in base.
+ */
+export type DataTableProps<T = unknown> = BaseDataTableProps<T>;
+
+/** The classes of a table's parts (`dataTableClasses`), from `nsh/base`. */
+export type { DataTableClasses };
+
+/**
+ * A table that scrolls both ways over any number of rows and columns. Its rows stay 32 points in
+ * both idioms (the table has no size axis): nine of a phone's fit, where six finger-sized rows
+ * would.
+ */
+export function DataTable<T>(props: DataTableProps<T>) {
+  const [, rest] = split(props, ["classes", "class", "classList", "style"]);
+  return (
+    <BaseDataTable
+      {...rest}
+      classes={mergeClasses(dataTableClasses, props.classes)}
+      class={props.class}
+      classList={props.classList}
+      style={props.style}
+    />
+  );
+}
+
+// Shared data-table primitives
+// `table`, the showcase and gallery read `dataTableClasses`.
 
 /** The chosen column's arrow: both directions print it at the same strength, so only the arrow's turn says which. */
 const sortChosen = "text-muted-foreground opacity-60 selected:text-foreground selected:opacity-100";
@@ -17,7 +47,7 @@ const sortChosen = "text-muted-foreground opacity-60 selected:text-foreground se
 /** The shared table look. nsh/base owns its structure and interaction. */
 export const dataTableClasses: DataTableClasses = {
   // On the card, so the stripes and the header (muted) stand off it in light as in dark.
-  root: "rounded-(--radius-container) border border-border bg-card text-foreground",
+  root: "rounded-(--radius-lg) border border-border bg-card text-foreground",
   header: "border-b border-border bg-muted/70 text-muted-foreground",
   headerCell: "pl-2 pr-1",
   headerContent: "gap-1",
@@ -45,22 +75,3 @@ export const dataTableClasses: DataTableClasses = {
   rowHeader: "text-muted-foreground",
   fixedEdge: "bg-border",
 };
-
-/**
- * `nsh/base` DataTable with `dataTableClasses` by default. Sorting, selection,
- * resize, and column moves stay in base.
- */
-export type DataTableProps<T = unknown> = BaseDataTableProps<T>;
-
-/**
- * A table that scrolls both ways over any number of rows and columns. Its rows stay 32 points in
- * both idioms (the table has no size axis): nine of a phone's fit, where six finger-sized rows
- * would.
- */
-export function DataTable<T>(props: DataTableProps<T>) {
-  const [, rest] = split(props, ["classes"]);
-  return <BaseDataTable {...rest} classes={mergeClasses(dataTableClasses, props.classes)} />;
-}
-
-/** The classes of a table's parts (`dataTableClasses`), from `nsh/base`. */
-export type { DataTableClasses };

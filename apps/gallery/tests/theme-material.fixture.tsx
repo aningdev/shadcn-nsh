@@ -1,4 +1,4 @@
-import { defineTheme, motion, selectTheme, surface } from "@shadcn-nsh/theme";
+import { activeSpec, defineTheme, isDark, motion, selectTheme, surface } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import apple from "../../../packages/theme/themes/apple/index";
@@ -52,6 +52,16 @@ const switchLine = () => {
   return `${sw.kind}:${shader}`;
 };
 
+const fillAlpha = (role: "glass" | "overlay") => {
+  const spec = activeSpec().surfaces[role];
+  const layer = { ...spec, ...(isDark() ? spec.dark : spec.light) };
+  const background = layer.background;
+  if (background && typeof background === "object" && "alpha" in background) {
+    return background.alpha === undefined ? "solid" : String(background.alpha);
+  }
+  return "solid";
+};
+
 const useTheme = (id: string, theme: Parameters<typeof selectTheme>[0]) => {
   shown.set(id);
   selectTheme(theme);
@@ -74,6 +84,10 @@ function App() {
         <Text>panel</Text>
       </View>
       <Text>{`fx=${effectLine()}`}</Text>
+      <Text>{`glassBlur=${String(surface("glass").style.backdropFilter ?? "none")}`}</Text>
+      <Text>{`menuBlur=${String(surface("overlay").style.backdropFilter ?? "none")}`}</Text>
+      <Text>{`glassAlpha=${fillAlpha("glass")}`}</Text>
+      <Text>{`menuAlpha=${fillAlpha("overlay")}`}</Text>
       <Text>{`sw=${switchLine()}`}</Text>
       <Text>live</Text>
       <ThemedSurface role="glass">

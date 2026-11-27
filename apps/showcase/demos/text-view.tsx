@@ -1,4 +1,4 @@
-import { colors, rounded, tints, shape } from "@shadcn-nsh/theme";
+import { colors, rounded, tints, shape, font } from "@shadcn-nsh/theme";
 // TextView: the official gallery's scene (`references/nsh/examples/gallery/demos/TextViewDemo.tsx`)
 // with this library's text view — Markdown, HTML, extensions, a streaming reply, and a selection
 // that crosses views. Images open in this library's `ImageViewer`.
@@ -465,7 +465,7 @@ function InlineChips() {
               />
               <Text
                 style={{
-                  fontFamily: "monospace",
+                  fontFamily: font.mono,
                   fontSize: 13,
                   lineHeight: 16,
                   color: colors.foreground,
@@ -658,7 +658,7 @@ function SelectionRead() {
         <View style={{ ...rounded(shape.control), backgroundColor: colors.muted, padding: 12 }}>
           <Text
             style={{
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               fontSize: 12,
               userSelect: "text",
               color: colors.foreground,

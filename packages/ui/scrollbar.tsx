@@ -1,7 +1,6 @@
 // Scrollbar: `scrollbarTheme` and the `Scrollbar` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { feedback, motion } from "@shadcn-nsh/theme";
 import { platform, reduceMotion, split } from "nsh";
 import {
   Scrollbar as BaseScrollbar,
@@ -9,39 +8,51 @@ import {
   type ScrollbarTheme,
 } from "nsh/base";
 
+import { feedback, motion } from "../theme";
 import { cssMotion } from "./lib/motion";
 import { joinClass } from "./lib/utils";
 
-/** Whether the screen is a finger's, which takes a thinner bar and its smaller inset. */
-const touch = !platform.desktop;
+/** Theme layer on `nsh/base` Scrollbar. Every base prop passes through. */
+export type ScrollbarProps = BaseScrollbarProps;
 
-/** The thumb's thickness at rest: 6 points, or 3, the system's indicator, on a touch screen. */
-const thickness = touch ? 3 : 6;
+/** The bar itself: `Scrollbar` adds the static `setTheme` to it. */
+function Bar(props: ScrollbarProps) {
+  const axis = props.axis ?? "vertical";
+  const part = (axis === "horizontal" ? scrollbarTheme.horizontal : scrollbarTheme.vertical) ?? {};
+  const [, rest] = split(props, ["class", "thumbClass", "thumbStyle", "mode", "motion", "axis"]);
+  return (
+    <BaseScrollbar
+      {...rest}
+      axis={axis}
+      mode={props.mode ?? scrollbarTheme.mode}
+      motion={props.motion ?? scrollbarTheme.motion}
+      class={joinClass(part.class ?? "", props.class)}
+      thumbClass={joinClass(part.thumbClass ?? "", props.thumbClass)}
+      thumbStyle={[part.thumbStyle ?? null, props.thumbStyle ?? null]}
+    />
+  );
+}
 
-/** The thumb's thickness under the pointer or while dragged: 8 points. It is reached by a scale
- * from the bar's outer edge, so the thumb keeps its place and no layout property moves; the caps
- * grow with the box, rounding 4 × 3 instead of 4 × 4 — a third of a point of anisotropy, at rest
- * again as soon as the pointer leaves. */
-const engaged = 8;
-const engagement = Number((engaged / thickness).toFixed(4));
-
-/** The thumb's transition: its size and its fill, paced by the theme's `motion.fast`, and none of
- * it when motion is reduced (the thumb then takes the new size and fill at once). */
-const thumbMotion = () => ({
-  transitionProperty: reduceMotion() ? "none" : "transform, background-color",
-  ...cssMotion(motion.fast),
-});
-
-/** The thumb's fill: the muted foreground at `feedback.passive.restOpacity`, so it sits quiet over
- * the rows, rising to `feedback.passive.pressedOpacity` while the pointer is over it or it is dragged, which is the
- * step an engaged control's content takes: every theme darkens it. Built in the class string
- * because a hover is the classes' (`hover:`), read on each render, so a theme with other opacities
- * repaints, and a role, so a switch of appearance recolours it. */
-const thumbFill = (): string => {
-  const rest = Math.round(feedback.passive.restOpacity * 100);
-  const engaged = Math.round(feedback.passive.pressedOpacity * 100);
-  return `bg-muted-foreground/${rest} hover:bg-muted-foreground/${engaged} active:bg-muted-foreground/${engaged}`;
+/**
+ * A scroll bar for the scroll view or list named by `scroll`.
+ * `setTheme` paints the same bar on every view that still uses the platform indicator.
+ */
+export const Scrollbar = Bar as typeof Bar & {
+  /**
+   * Installs `theme` on every scroll view and list. No argument uses this package's look.
+   * `null` gives the views the platform indicator back.
+   */
+  setTheme(theme?: ScrollbarTheme | null): void;
 };
+
+Scrollbar.setTheme = (theme?: ScrollbarTheme | null) => {
+  BaseScrollbar.setTheme(theme === undefined ? scrollbarTheme : theme);
+};
+
+/** The colors of a scrollbar's parts (`theme`), from `nsh/base`. */
+export type { ScrollbarTheme };
+
+// Shared scrollbar primitives. Gallery and the showcase spread `scrollbarTheme`.
 
 /**
  * The scroll bars every scroll view and list wears, in place of the
@@ -85,42 +96,35 @@ export const scrollbarTheme: ScrollbarTheme = {
   },
 };
 
-/** Theme layer on `nsh/base` Scrollbar. Every base prop passes through. */
-export type ScrollbarProps = BaseScrollbarProps;
+// Private helpers & looks
 
-/** The bar itself: `Scrollbar` adds the static `setTheme` to it. */
-function Bar(props: ScrollbarProps) {
-  const axis = props.axis ?? "vertical";
-  const part = (axis === "horizontal" ? scrollbarTheme.horizontal : scrollbarTheme.vertical) ?? {};
-  const [, rest] = split(props, ["class", "thumbClass", "thumbStyle", "mode", "motion", "axis"]);
-  return (
-    <BaseScrollbar
-      {...rest}
-      axis={axis}
-      mode={props.mode ?? scrollbarTheme.mode}
-      motion={props.motion ?? scrollbarTheme.motion}
-      class={joinClass(part.class ?? "", props.class)}
-      thumbClass={joinClass(part.thumbClass ?? "", props.thumbClass)}
-      thumbStyle={props.thumbStyle ?? part.thumbStyle ?? undefined}
-    />
-  );
-}
+/** Whether the screen is a finger's, which takes a thinner bar and its smaller inset. */
+const touch = !platform.desktop;
 
-/**
- * A scroll bar for the scroll view or list named by `scroll`.
- * `setTheme` paints the same bar on every view that still uses the platform indicator.
- */
-export const Scrollbar = Bar as typeof Bar & {
-  /**
-   * Installs `theme` on every scroll view and list. No argument uses this package's look.
-   * `null` gives the views the platform indicator back.
-   */
-  setTheme(theme?: ScrollbarTheme | null): void;
+/** The thumb's thickness at rest: 6 points, or 3, the system's indicator, on a touch screen. */
+const thickness = touch ? 3 : 6;
+
+/** The thumb's thickness under the pointer or while dragged: 8 points. It is reached by a scale
+ * from the bar's outer edge, so the thumb keeps its place and no layout property moves; the caps
+ * grow with the box, rounding 4 × 3 instead of 4 × 4 — a third of a point of anisotropy, at rest
+ * again as soon as the pointer leaves. */
+const engaged = 8;
+const engagement = Number((engaged / thickness).toFixed(4));
+
+/** The thumb's transition: its size and its fill, paced by the theme's `motion.fast`, and none of
+ * it when motion is reduced (the thumb then takes the new size and fill at once). */
+const thumbMotion = () => ({
+  transitionProperty: reduceMotion() ? "none" : "transform, background-color",
+  ...cssMotion(motion.fast),
+});
+
+/** The thumb's fill: the muted foreground at `feedback.passive.restOpacity`, so it sits quiet over
+ * the rows, rising to `feedback.passive.pressedOpacity` while the pointer is over it or it is dragged, which is the
+ * step an engaged control's content takes: every theme darkens it. Built in the class string
+ * because a hover is the classes' (`hover:`), read on each render, so a theme with other opacities
+ * repaints, and a role, so a switch of appearance recolours it. */
+const thumbFill = (): string => {
+  const rest = Math.round(feedback.passive.restOpacity * 100);
+  const engaged = Math.round(feedback.passive.pressedOpacity * 100);
+  return `bg-muted-foreground/${rest} hover:bg-muted-foreground/${engaged} active:bg-muted-foreground/${engaged}`;
 };
-
-Scrollbar.setTheme = (theme?: ScrollbarTheme | null) => {
-  BaseScrollbar.setTheme(theme === undefined ? scrollbarTheme : theme);
-};
-
-/** The colors of a scrollbar's parts (`theme`), from `nsh/base`. */
-export type { ScrollbarTheme };

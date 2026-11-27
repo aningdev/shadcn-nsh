@@ -1,9 +1,25 @@
 /**
  * Solid Glass (`deeplethe/solid-glass`, MIT) as a sparse Theme v5 override over `base`
- * (`docs/decisions/0020-theme-v5.md`).
+ * (`docs/theme.md`).
  */
-import { defineTheme } from "../../schema";
+import { defineTheme, type MaterialSpec } from "../../schema";
 import { base } from "../nsh-gallery";
+
+/** Smoky blur + specular top rim per appearance (`solidBlur` keeps `kind: "blur"`). */
+function solidBlur(
+  blur: number,
+  saturate: number,
+  minOpacity: number,
+  mode: "light" | "dark",
+): MaterialSpec {
+  return {
+    kind: "blur",
+    blur,
+    saturate,
+    minOpacity,
+    specular: mode === "light" ? "oklch(1 0 0 / 0.65)" : "oklch(1 0 0 / 0.14)",
+  };
+}
 
 export const solidGlass = defineTheme({
   id: "solid-glass",
@@ -122,14 +138,42 @@ export const solidGlass = defineTheme({
       dark: { background: "oklch(1 0 0 / 0.06)", border: "line" },
     },
     overlay: {
-      light: { border: "oklch(0.38 0.03 265 / 0.22)" },
-      dark: { border: "oklch(1 0 0 / 0.13)" },
+      effect: { kind: "specular-rim", intensity: 0.35 },
+      light: {
+        background: { color: "popover", alpha: 0.8 },
+        border: "oklch(0.38 0.03 265 / 0.22)",
+        material: solidBlur(18, 1.5, 0.72, "light"),
+      },
+      dark: {
+        background: { color: "popover", alpha: 0.82 },
+        border: "oklch(1 0 0 / 0.13)",
+        material: solidBlur(18, 1.4, 0.72, "dark"),
+      },
+    },
+    modal: {
+      effect: { kind: "specular-rim", intensity: 0.25 },
+      light: {
+        background: { color: "card", alpha: 0.86 },
+        material: solidBlur(22, 1.35, 0.8, "light"),
+      },
+      dark: {
+        background: { color: "card", alpha: 0.88 },
+        material: solidBlur(22, 1.3, 0.8, "dark"),
+      },
     },
     inverse: {
-      background: "popover",
       foreground: "foreground",
-      light: { border: "oklch(0.38 0.03 265 / 0.22)" },
-      dark: { border: "oklch(1 0 0 / 0.13)" },
+      effect: { kind: "specular-rim", intensity: 0.3 },
+      light: {
+        background: { color: "popover", alpha: 0.82 },
+        border: "oklch(0.38 0.03 265 / 0.22)",
+        material: solidBlur(16, 1.4, 0.75, "light"),
+      },
+      dark: {
+        background: { color: "popover", alpha: 0.84 },
+        border: "oklch(1 0 0 / 0.13)",
+        material: solidBlur(16, 1.3, 0.75, "dark"),
+      },
     },
     glass: {
       background: "surface",
@@ -195,10 +239,16 @@ export const solidGlass = defineTheme({
   },
   motion: {
     spring: { stiffness: 280, damping: 26, mass: 1 },
+    springs: {
+      snappy: { stiffness: 420, damping: 32, mass: 1 },
+      smooth: { stiffness: 280, damping: 30, mass: 1 },
+      bouncy: { stiffness: 300, damping: 24, mass: 1 },
+    },
     presets: {
-      popoverEnter: { spring: true },
-      dialogEnter: { spring: true },
-      indicatorGlide: { timing: "fast", spring: true },
+      popoverEnter: { spring: "smooth" },
+      dialogEnter: { spring: "bouncy" },
+      indicatorGlide: { timing: "fast", spring: "snappy" },
+      reveal: { spring: "smooth" },
       themeSwitch: { kind: "dissolve", duration: 260 },
     },
   },
@@ -237,9 +287,9 @@ export const solidGlass = defineTheme({
   },
   meta: {
     overview:
-      "Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass with top-edge light rims, hairline glass borders, and ambient drop shadows (`press.scale: 1`).",
+      "Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass (`glass`, `overlay`, `inverse`, `modal`) with top-edge light rims (`specular-rim`), hairline glass borders, ambient drop shadows (`press.scale: 1`), and smooth multi-tier springs (`snappy`, `smooth`, `bouncy`).",
     elevationNote:
-      "Layered glass elevation combining translucent fills, top-edge inset highlights, soft ambient shadows, and backdrop blur.",
+      "Layered smoky glass elevation combining translucent fills, backdrop blur + saturate, top-edge inset highlights (`specular-rim`), and soft ambient shadows.",
     dos: [
       "Keep press interactions flat (`press.scale: 1`); pressed panes deepen and drop shadow rather than shrinking.",
     ],

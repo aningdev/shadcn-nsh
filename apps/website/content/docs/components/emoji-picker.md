@@ -157,5 +157,3 @@ then a `Popover` whose trigger is a plus, with the same `EmojiPanel` inside it a
 | `EmojiPreview` | `entry`, `hint`                                                                                                                                                 | The emoji under the pointer, named                           |
 
 `EmojiPanel` wraps [`nsh/base` EmojiPicker](https://nsh.dev/elements/emoji-picker) with gallery classes and chrome. Pass through any base picker prop via extending the shell later; today only the upstream panel props are supported.
-
-Also exports `emojiGroups`, `emojiGroupLabels` and `emojiPickerClasses` for custom layouts.

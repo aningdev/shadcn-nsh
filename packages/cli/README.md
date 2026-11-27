@@ -1,7 +1,5 @@
 # shadcn-nsh
 
-[中文](./README.zh.md)
-
 CLI for adding styled NSH components (copy-into-app) from the shadcn-nsh registry.
 
 ```sh
@@ -9,7 +7,7 @@ bunx shadcn-nsh@latest init -c apps/web
 bunx shadcn-nsh@latest add button
 ```
 
-Default registry: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`.
+Default registry: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/v<version>/public/r/{name}.json`, where `<version>` is this package's version. `add` reads the files that release published.
 
 ## Commands
 
@@ -28,7 +26,7 @@ Every command takes `-c, --cwd <dir>` (default: the current directory). `init`, 
 `list`, `view` and `diff` use the one in `nsh-ui.json`, and `init` uses the public registry.
 `init` also takes `--overwrite`, `-y` (accepted; nothing prompts today) and `--theme <name>`,
 `nsh-gallery`, `shadcn`, `solid-glass`, `apple`, `material`, `winui`, or `native` — the theme the app is **built** with:
-`theme.json`, `lib/ui/semantics.json`, and what `nsh.json` points at.
+`theme.json`, `DESIGN.md`, and what `nsh.json` points at. `native` builds on NSH Gallery and installs Apple, Material, WinUI 3, and NSH Gallery under `themes/` for `selectTheme(nativeTheme())`.
 
 ## add
 
@@ -42,26 +40,25 @@ shadcn-nsh add button --overwrite
 - A file the app does not have is written; one identical to the registry's is skipped.
 - A file the app changed is kept and reported: `kept components/ui/button.tsx, differs (run diff)`.
   `--overwrite` (`-o`) replaces it and prints the change: `overwrite components/ui/button.tsx (+2 -1)`.
-- `theme.json` and `semantics.json` are merged by key: the app keeps its colors, style values
-  and finishes and gains any tokens, style keys, or finishes it lacks. Customized theme files
-  with no missing keys are kept as they are (`kept theme.json (the app's colors stay)`,
-  `kept lib/ui/semantics.json (the app's semantics stay)`).
+- `theme.json` is merged by key: the app keeps its colors and gains any keys it lacks.
+  A customized `theme.json` with no missing keys is kept (`kept theme.json (the app's colors stay)`).
+  `DESIGN.md` is an ordinary file: a local edit is kept unless `--overwrite` replaces it.
 - `--all` (`-a`) adds every `registry:ui` item the catalog lists, dependencies included.
 - Naming a theme (`add theme-shadcn`) installs **one more theme**: its files land in
   `themes/<name>/` and can be switched to while the app runs (`selectTheme`, see
-  [`packages/theme/README.md`](../theme/README.md#more-than-one-theme)). It does not touch the
+  [`packages/theme/README.md`](../theme/README.md)). It does not touch the
   app's build-time theme, and `nsh-ui.json` stays as it is. To make a theme the build-time one,
   re-run `init --theme <name> --overwrite`.
 - **This library's own theme is one of them**: `add theme-nsh-gallery` installs NSH Gallery into
-  `themes/nsh-gallery/` (its `theme.json` and `semantics.json` are the ones an app is built with, and
-  an `index.ts` exports `nshGallery`). An app built with `init --theme shadcn` lists both and
-  switches between them; `selectTheme(null)` still means its build-time theme.
+  `themes/nsh-gallery/` (its `theme.json` is the one an app is built with, and an `index.ts` exports
+  `nshGallery`). An app built with `init --theme shadcn` lists both and switches between them;
+  `selectTheme(null)` still means its build-time theme.
 - `theme`, named or as a dependency, is the theme in `nsh-ui.json`: in an app on `theme-shadcn`
   it writes shadcn's data at the build-time paths, the roles module and `themes/shadcn/`, so
   `add theme --overwrite`, `add button --overwrite` and `add --all --overwrite` never write another theme back.
-- The packages the items import (`lucide`) are installed with the app's package manager, except
-  one `package.json` already declares in range: an exact `"lucide": "1.66.0"` stays as written
-  (`keep lucide (package.json has it in range)`), and only an older one is raised.
+- UI components ship built-in icon paths and declare zero runtime npm dependencies. When a
+  custom registry item declares npm `dependencies`, they are installed with the app's package
+  manager, keeping existing versions already in range (`keep <pkg> (package.json has it in range)`).
 - `--dry-run` prints the same lines as `would write …` / `would overwrite …` and writes nothing —
   not even `nsh-ui.json` or the theme `init` would install first.
 
@@ -89,8 +86,8 @@ shadcn-nsh diff || echo "run shadcn-nsh add <item> --overwrite"
 ```
 
 Lines are the registry's version against the app's: `-` is a line of the app's file that
-overwriting would drop, `+` one it would add. `theme.json` and `semantics.json` compare keys, not
-values — a recolored or customized theme is the app's own, and only `add --overwrite` replaces it.
+overwriting would drop, `+` one it would add. `theme.json` compares keys, not values — a recolored
+theme is the app's own, and only `add --overwrite` replaces it.
 
 ## nsh-ui.json
 
@@ -98,7 +95,7 @@ values — a recolored or customized theme is the app's own, and only `add --ove
 
 ```json
 {
-  "registry": "https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json",
+  "registry": "https://raw.githubusercontent.com/aningdev/shadcn-nsh/v<version>/public/r/{name}.json",
   "theme": "theme",
   "aliases": {
     "components": "./components",

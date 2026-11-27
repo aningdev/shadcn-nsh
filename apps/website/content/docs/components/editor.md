@@ -21,7 +21,7 @@ import { Editor } from "@/components/ui/editor";
 <Editor defaultValue={source} language="typescript" style={{ height: 240 }} />
 ```
 
-Every prop of [`nsh/base` Editor](https://nsh.dev/elements/editor) passes through: the text (`value` / `defaultValue`, `onChange`), the language and its highlighting, folding, soft wrap, search, the editing keys and the diagnostics. The shell adds the look (`editorClasses`) and the surface (`editorFrame()`).
+Every prop of [`nsh/base` Editor](https://nsh.dev/elements/editor) passes through: the text (`value` / `defaultValue`, `onChange`), the language and its highlighting, folding, soft wrap, search, the editing keys and the diagnostics. The shell adds the look of the editor's parts and the field's well.
 
 ## Composition
 
@@ -120,7 +120,7 @@ keymap.bind("mod+f", () => finding.set(true));
 
 ### Parts
 
-`classes` goes over `editorClasses` part by part (an app's classes come after ours; `null` drops ours), and `style` over `editorFrame()`. The font is set with `fontFamily`, `fontSize` and `lineHeight`, which the editor measures its rows in.
+`classes` goes over the shell's classes part by part (an app's classes come after the shell's; `null` drops the shell's), and `style` over the field's well. The font is set with `fontFamily`, `fontSize` and `lineHeight`, which the editor measures its rows in.
 
 ```tsx
 <Editor
@@ -233,7 +233,5 @@ const source = signal(SAMPLE);
 | `EditorProps`        | —                                                               | `nsh/base`'s `EditorProps`, unchanged.                                       |
 | `EditorFindBar`      | `EditorFindBarProps`                                            | The find bar: the query with its count, its modes, and replace.              |
 | `EditorFindBarProps` | —                                                               | `editor`, `search`, `onSearchChange`, `result`, `onClose`, `class`, `style`. |
-| `editorClasses`      | —                                                               | The look of the editor's parts (classes, by part).                           |
-| `editorFrame`        | —                                                               | The surface's style: the field's fill, edge and control corners.             |
 
 The session types the props name are re-exported from this file, so an app does not import them from `nsh/base`: `EditorRef`, `EditorDecoration`, `EditorDiagnostic`, `EditorPosition`, `EditorRange`, `EditorSelection`, `EditorSearchResult`, `EditorCommand`, `EditorCompletionItem`, and the rest of the editor's value types.

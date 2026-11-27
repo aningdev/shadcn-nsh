@@ -29,7 +29,7 @@ Closes #
 <!-- The commands you ran and what they showed, and what you looked at by hand. Leave unticked what does not apply or was skipped, and say why. -->
 
 - [ ] `bun run check`
-- [ ] Components or demos: `bun run port:render`, the screenshots looked at
+- [ ] Components or demos: `bun run check:demos`; layout changes also `bun run check:narrow`, the narrow shots looked at
 - [ ] Behaviour: `bun run test:gallery`
 - [ ] Registry items or the CLI: `bun run test:install`
 - [ ] `registry.json` or component files: `bun run registry:build`, `public/r` committed

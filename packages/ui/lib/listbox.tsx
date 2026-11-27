@@ -1,24 +1,24 @@
 // Shared list looks: popup, rows, search, chevron, clear — used by select, combobox, calendar, date-picker.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, ViewStyle } from "nsh";
+import { platform, Text, View } from "nsh";
+import type { SelectEntry, SelectGroup } from "nsh/base";
+
 import {
   colors,
   control,
   cornerCurve,
+  metrics,
   rounded,
   terminal,
   font,
   shape,
   stroke,
   surface,
-} from "@shadcn-nsh/theme";
-import { Check, ChevronRight, X } from "lucide";
-import type { JSX, ViewStyle } from "nsh";
-import { platform, Text, View } from "nsh";
-import type { SelectEntry, SelectGroup } from "nsh/base";
-
+} from "../../theme";
 import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./field-look";
-import { Icon } from "./icons";
+import { Check, ChevronRight, Icon, X } from "./icons";
 import {
   backdrop,
   itemRadius,
@@ -157,6 +157,8 @@ export interface ClearButtonOptions {
   over?: boolean;
 }
 
+const fieldHeight = () => (pointer ? 32 : metrics.hit);
+
 /**
  * A clear button's look (spread it with `cleanable` and the app's
  * `clearButtonAccessibilityLabel`): a round target lit under the pointer, an
@@ -172,7 +174,7 @@ export function clearButtonLook(o?: ClearButtonOptions) {
         : o?.over
           ? {
               position: "absolute",
-              top: (controlSize.line - controlSize.clear) / 2,
+              top: (fieldHeight() - controlSize.clear) / 2,
               end: clearInset(),
               width: controlSize.clear,
               height: controlSize.clear,

@@ -9,6 +9,7 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
+import { motion } from "../theme";
 import {
   disclosurePanel,
   disclosureTriggerLook,
@@ -17,6 +18,7 @@ import {
 } from "./accordion";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
 import { RowDivider, RowLabel } from "./lib/surface";
+import { joinClass } from "./lib/utils";
 
 /** Why a collapsible opened or closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type CollapsibleOpenChangeReason = OpenChangeReason;
@@ -51,7 +53,10 @@ export type CollapsibleTriggerProps = {
    */
   chevron?: "along" | "down";
   disabled?: boolean;
+  /** Tailwind classes on the row, after the disclosure look. */
   class?: string | null;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
   hoverStyle?: StyleProp<ViewStyle>;
   activeStyle?: StyleProp<ViewStyle>;
@@ -63,18 +68,6 @@ export type CollapsibleTriggerProps = {
   first?: boolean;
   start?: number;
 };
-
-type CollapsibleContextValue = OpenState & {
-  trigger: Slot<JSX.Element>;
-};
-
-const CollapsibleContext = context<CollapsibleContextValue | null>(null);
-
-function useCollapsible() {
-  const ctx = CollapsibleContext();
-  if (!ctx) throw new Error("Collapsible parts must be used within <Collapsible>");
-  return ctx;
-}
 
 /** Owns open state for `CollapsibleTrigger` and `CollapsibleContent`. */
 export function Collapsible(props: CollapsibleProps) {
@@ -90,6 +83,21 @@ export function Collapsible(props: CollapsibleProps) {
 /** Registers the disclosure row; `CollapsibleContent` renders it as the base child. */
 export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
   const ctx = useCollapsible();
+  const [, rest] = split(props, [
+    "children",
+    "chevron",
+    "disabled",
+    "class",
+    "classList",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "accessibilityLabel",
+    "first",
+    "start",
+  ]);
   // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
   // upstream's demos use): built once, here, and placed by the content without building it again
   // on every layout. Its children are read where they are drawn, below, so a child that reads a
@@ -102,11 +110,13 @@ export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
   const disabled = Boolean(props.disabled);
   ctx.trigger.set(
     <View
+      {...rest}
       accessible
       role="button"
       accessibilityLabel={props.accessibilityLabel ?? undefined}
       accessibilityState={{ expanded: ctx.open(), disabled }}
-      class={props.class ? `${look.class} ${props.class}` : look.class}
+      class={joinClass(look.class, props.class)}
+      classList={props.classList}
       onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -137,17 +147,43 @@ export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
 export function CollapsibleContent(props: CollapsibleContentProps) {
   const ctx = useCollapsible();
   const trigger = ctx.trigger.get();
-  const [, rest] = split(props, ["style", "children", "reveal", "panel"]);
+  const [, rest] = split(props, [
+    "class",
+    "classList",
+    "style",
+    "children",
+    "reveal",
+    "revealSpring",
+    "panel",
+  ]);
   const panel = props.panel;
+  const revealSpring = props.revealSpring ?? motion.revealSpring;
   return (
     <BaseCollapsible
       {...rest}
       open={ctx.open()}
       reveal={props.reveal ?? true}
+      {...(revealSpring !== undefined ? { revealSpring } : {})}
+      class={props.class}
+      classList={props.classList}
       style={[{ alignItems: "stretch" }, props.style ?? null]}
       content={<View style={disclosurePanel(panel)}>{props.children}</View>}
     >
       {trigger ?? <View />}
     </BaseCollapsible>
   );
+}
+
+// Private helpers & looks
+
+type CollapsibleContextValue = OpenState & {
+  trigger: Slot<JSX.Element>;
+};
+
+const CollapsibleContext = context<CollapsibleContextValue | null>(null);
+
+function useCollapsible() {
+  const ctx = CollapsibleContext();
+  if (!ctx) throw new Error("Collapsible parts must be used within <Collapsible>");
+  return ctx;
 }

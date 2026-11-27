@@ -3,6 +3,7 @@
 import { sitePath } from "@/lib/base";
 import { REPO_URL } from "@/lib/layout.shared";
 import { choosePalette } from "@/lib/palette";
+import { THEME_META, themeBinding } from "@/lib/theme-meta";
 import { surfaceSampleCss, themePages, type ThemePage, type TokenGroup } from "@/lib/themes";
 
 /**
@@ -16,14 +17,14 @@ import { surfaceSampleCss, themePages, type ThemePage, type TokenGroup } from "@
  * this theme and opens that overview.
  */
 import type { PaletteId } from "../../../demos/palettes";
+import { CommandBlock } from "./command-block";
 import { InstallTabs } from "./install-tabs";
 
 const themes = themePages();
 const samples = surfaceSampleCss();
 
-/** The spec on GitHub: the page's lists are its, so the reader can read the reasons behind them. */
-const SPEC_URL = `${REPO_URL}/blob/main/docs/specs/theme-roles.md`;
-const ADR_URL = `${REPO_URL}/blob/main/docs/decisions/0020-theme-v5.md`;
+/** The spec on GitHub: the page's lists are its, so the reader can read the rules behind them. */
+const THEME_DOC_URL = `${REPO_URL}/blob/main/docs/theme.md`;
 
 function themeOf(id: PaletteId): ThemePage {
   const theme = themes.find((page) => page.palette.id === id);
@@ -77,16 +78,25 @@ function ShowInPreview({ id }: { id: PaletteId }) {
  * the build-time note the NSH Gallery theme carries. */
 export function ThemeIntro({ id }: { id: PaletteId }) {
   const theme = themeOf(id);
+  const meta = THEME_META[id];
   return (
     <>
       {theme.overview === null ? null : <p>{theme.overview}</p>}
+      <p>
+        Style inspiration rather than a 1:1 native clone. This theme distills the colors, radii,
+        surfaces, and motion of {meta.reference.name}
+        {meta.platforms.length > 0 ? ` (${meta.platforms.join(", ")})` : ""}.{" "}
+        <a href={meta.reference.href} target="_blank" rel="noopener noreferrer">
+          {meta.reference.name} ↗
+        </a>
+      </p>
       <p>
         A theme is one TypeScript module — <code>index.ts</code> for its spec, the tokens, metrics,
         elevation, surfaces, feedback, motion and controls <code>defineTheme()</code> compiles — and
         two files that same build exports from it: <code>theme.json</code> for NSH&apos;s variables
         and <code>DESIGN.md</code> for the language in words. Which tokens there are, and what each
-        surface draws, is <a href={SPEC_URL}>the theme spec on GitHub</a> (the reasons are{" "}
-        <a href={ADR_URL}>the Theme v5 decision</a>); this page reads the specs themselves.
+        surface draws, is <a href={THEME_DOC_URL}>the Theme v5 spec on GitHub</a>; this page reads
+        the specs themselves.
       </p>
       <p>
         A token is a colour, length or font family under a name, a surface is a layer a component
@@ -114,19 +124,33 @@ export function ThemeIntro({ id }: { id: PaletteId }) {
   );
 }
 
-/** The install command and what <code>add</code> writes beside the build-time theme. */
+/** CLI install, and the same theme as an `nshm` import. */
 export function ThemeInstall({ id }: { id: PaletteId }) {
   const theme = themeOf(id);
+  const binding = themeBinding(theme.palette.id);
+  const nshm = `import ${binding} from "shadcn-nsh/themes/${theme.palette.id}";
+import { selectTheme } from "shadcn-nsh/theme";
+
+selectTheme(${binding});`;
   return (
     <>
+      <p>
+        <strong>TSX nshm.</strong> The module is the theme. <code>selectTheme</code> switches to it
+        while the app runs. <code>selectTheme(null)</code> returns to the theme the app was built
+        with.
+      </p>
+      <CommandBlock code={nshm} label="Copy" />
+      <p>
+        <strong>CLI.</strong> <code>init --theme {theme.palette.id}</code> builds the app on this
+        theme. <code>add {theme.item}</code> installs <code>themes/{theme.palette.id}.ts</code> and{" "}
+        <code>themes/{theme.palette.id}/</code> beside the build-time theme and leaves that one as
+        it is.
+      </p>
+      <InstallTabs command={`npx shadcn-nsh@latest init --theme ${theme.palette.id}`} />
       <InstallTabs command={`npx shadcn-nsh@latest add ${theme.item}`} />
       <p>
-        <code>add {theme.item}</code> installs <code>themes/{theme.palette.id}/</code> beside the
-        app&apos;s build-time theme and leaves that one as it is; the app lists the theme and calls{" "}
-        <code>selectTheme</code> to switch to it. To build the app on this theme instead, run{" "}
-        <code>init --theme {theme.palette.id}</code> (or{" "}
-        <code>init --theme {theme.palette.id} --overwrite</code> on an app that already has one
-        theme).
+        On an app that already has a theme, <code>init --theme {theme.palette.id} --overwrite</code>{" "}
+        replaces the build-time theme. <code>add {theme.item}</code> does not.
       </p>
     </>
   );
@@ -237,11 +261,12 @@ export function ThemeSurfaces({ id }: { id: PaletteId }) {
               <td>
                 <span
                   data-ground={theme.palette.id}
-                  className="inline-flex items-center justify-center rounded-md p-2"
+                  data-translucent={surface.translucent ? "true" : undefined}
+                  className="border-fd-border/50 inline-flex items-center justify-center rounded-lg border p-2.5"
                 >
                   <span
                     data-sample={`${theme.palette.id}-${surface.role}`}
-                    className="block h-8 w-16 rounded-md"
+                    className="block h-9 w-20 rounded-md"
                   />
                 </span>
               </td>

@@ -1,8 +1,24 @@
 /**
- * Windows 11 WinUI 3 as a sparse Theme v5 override over `base` (`docs/decisions/0020-theme-v5.md`).
+ * Windows 11 WinUI 3 as a sparse Theme v5 override over `base` (`docs/theme.md`).
  */
-import { defineTheme } from "../../schema";
+import { defineTheme, type MaterialSpec } from "../../schema";
 import { base } from "../nsh-gallery";
+
+/** In-app Acrylic. Specular is the top highlight, so each appearance carries its own recipe. */
+function winuiAcrylic(
+  blur: number,
+  saturate: number,
+  minOpacity: number,
+  mode: "light" | "dark",
+): MaterialSpec {
+  return {
+    kind: "acrylic",
+    blur,
+    saturate,
+    minOpacity,
+    specular: mode === "light" ? "oklch(1 0 0 / 0.6)" : "oklch(1 0 0 / 0.09)",
+  };
+}
 
 export const winui = defineTheme({
   id: "winui",
@@ -29,7 +45,7 @@ export const winui = defineTheme({
       line: "oklch(0.92191 0 0)",
       input: "oklch(0.62006 0 0)",
       ring: "oklch(0.21779 0 0)",
-      info: "oklch(0.56769 0.16654 251.313)",
+      info: "oklch(0.49147 0.15959 254.594)",
       success: "oklch(0.50725 0.16489 142.658)",
       warning: "oklch(0.53885 0.12069 65.216)",
       destructive: "oklch(0.53615 0.19119 30.071)",
@@ -60,14 +76,14 @@ export const winui = defineTheme({
     tints: {
       light: {
         brand: "oklch(0.91469 0.01564 247.999)",
-        info: "oklch(0.97015 0 0)",
+        info: "oklch(0.9521 0.01859 242.967)",
         warning: "oklch(0.96621 0.05066 93.747)",
         destructive: "oklch(0.9462 0.02418 11.286)",
         success: "oklch(0.94958 0.04104 143.026)",
       },
       dark: {
         brand: "oklch(0.30508 0.01746 227.257)",
-        info: "oklch(0.27274 0 0)",
+        info: "oklch(0.30996 0.04454 249.438)",
         warning: "oklch(0.33731 0.04713 83.238)",
         destructive: "oklch(0.30954 0.04407 22.054)",
         success: "oklch(0.34726 0.05298 114.732)",
@@ -160,37 +176,60 @@ export const winui = defineTheme({
       dark: { background: "card", border: "transparent" },
     },
     overlay: {
-      material: "acrylic",
-      effect: { kind: "acrylic-noise", intensity: 0.035 },
+      effect: { kind: "acrylic-noise", intensity: 0.04 },
       light: {
         background: { color: "popover", alpha: 0.85 },
+        material: winuiAcrylic(30, 1.25, 0.85, "light"),
         border: "oklch(0 0 0 / 0.059)",
         shadow: "lg",
       },
       dark: {
-        background: { color: "popover", alpha: 0.96 },
+        background: { color: "popover", alpha: 0.9 },
+        material: winuiAcrylic(30, 1.25, 0.85, "dark"),
         border: "oklch(0 0 0 / 0.2)",
         shadow: "lg",
       },
     },
     modal: {
-      background: "background",
       border: "oklch(0.5624 0 0 / 0.4)",
+      effect: { kind: "acrylic-noise", intensity: 0.025 },
+      light: {
+        background: { color: "background", alpha: 0.94 },
+        material: winuiAcrylic(24, 1.15, 0.9, "light"),
+      },
+      dark: {
+        background: { color: "background", alpha: 0.94 },
+        material: winuiAcrylic(24, 1.15, 0.9, "dark"),
+      },
     },
     inverse: {
-      background: "popover",
       foreground: "foreground",
       border: "line",
       shadow: "md",
+      effect: { kind: "acrylic-noise", intensity: 0.03 },
+      light: {
+        background: { color: "popover", alpha: 0.88 },
+        material: winuiAcrylic(24, 1.2, 0.85, "light"),
+      },
+      dark: {
+        background: { color: "popover", alpha: 0.92 },
+        material: winuiAcrylic(24, 1.2, 0.85, "dark"),
+      },
     },
     glass: {
       border: "line",
       shadow: null,
-      backdropFilter: "blur(30px)",
-      material: "acrylic",
-      effect: { kind: "acrylic-noise", intensity: 0.035 },
-      light: { background: { color: "popover", alpha: 0.85 } },
-      dark: { background: { color: "popover", alpha: 0.96 } },
+      // Clears the base `blur(20px)` so this layer's material writes `blur(32px) saturate(130%)`.
+      backdropFilter: null,
+      effect: { kind: "acrylic-noise", intensity: 0.045 },
+      light: {
+        background: { color: "popover", alpha: 0.8 },
+        material: winuiAcrylic(32, 1.3, 0.78, "light"),
+      },
+      dark: {
+        background: { color: "popover", alpha: 0.86 },
+        material: winuiAcrylic(32, 1.3, 0.78, "dark"),
+      },
     },
     accent: {
       shadow: null,
@@ -283,13 +322,21 @@ export const winui = defineTheme({
   },
   motion: {
     state: { duration: 83, easing: "decelerate" },
-    fast: { duration: 83, easing: "decelerate" },
-    default: { duration: 167, easing: "decelerate" },
-    slow: { duration: 250, easing: "decelerate" },
+    fast: { duration: 167, easing: "point-to-point" },
+    default: { duration: 250, easing: "decelerate" },
+    slow: { duration: 333, easing: "decelerate" },
+    // zeta = damping / (2 * sqrt(stiffness * mass)) stays at or above 1: no overshoot.
+    spring: { stiffness: 500, damping: 46, mass: 1 },
+    springs: {
+      snappy: { stiffness: 650, damping: 52, mass: 1 },
+      smooth: { stiffness: 420, damping: 42, mass: 1 },
+      bouncy: { stiffness: 360, damping: 40, mass: 1 },
+    },
     presets: {
-      popoverEnter: { fromScale: 1, fromY: -6, timing: "fast" },
-      dialogEnter: { fromScale: 1.04, fromY: 0, timing: "default" },
-      indicatorGlide: { timing: "fast" },
+      popoverEnter: { fromScale: 0.98, fromY: -6, timing: "fast", spring: "smooth" },
+      dialogEnter: { fromScale: 1.05, fromY: 0, timing: "default", spring: "bouncy" },
+      indicatorGlide: { timing: "fast", spring: "snappy" },
+      reveal: { spring: "smooth" },
       themeSwitch: { kind: "fade", duration: 167 },
     },
   },
@@ -368,9 +415,9 @@ export const winui = defineTheme({
   },
   meta: {
     overview:
-      "Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, Acrylic backdrop overlays, double focus rings, and fast decelerate motion.",
+      "Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with backdrop blur, specular rim and acrylic-noise grain, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring).",
     elevationNote:
-      "WinUI 3 soft ambient elevation (`md`, `lg`, `xl`), beveled 1px border strokes on raised controls, and Acrylic backdrop on overlays.",
+      "WinUI 3 soft ambient elevation (`md`, `lg`, `xl`) and beveled 1px strokes on raised controls. Acrylic layers: `overlay` blur 30 saturate 1.25 minOpacity 0.85 (noise 0.04), `glass` blur 32 saturate 1.3 minOpacity 0.78 (noise 0.045), `inverse` blur 24 saturate 1.2 minOpacity 0.85 (noise 0.03), `modal` blur 24 saturate 1.15 minOpacity 0.9 (noise 0.025). Each fill stays at or above its minOpacity. Motion uses critically damped snappy, smooth, and bouncy springs; press stays a color change.",
     dos: [
       'Use `focus.style: "double"` (2px outer ring + 1px inner separator) and WinUI decelerate motion.',
     ],

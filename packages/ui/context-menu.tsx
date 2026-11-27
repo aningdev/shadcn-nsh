@@ -10,6 +10,7 @@ import {
 } from "nsh/base";
 
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
+import { joinClass } from "./lib/utils";
 import { menuPopup } from "./menu";
 
 /** Why a context menu closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
@@ -39,23 +40,11 @@ export type ContextMenuContentProps = Omit<
 export type ContextMenuTriggerProps = {
   children?: JSX.Element;
   style?: StyleProp<ViewStyle>;
+  /** Tailwind classes on the view that wraps the trigger when `class`, `classList` or `style` is set. */
+  class?: string;
+  /** Tailwind classes toggled on that view. */
+  classList?: Record<string, boolean | null | undefined>;
 };
-
-type ContextMenuContextValue = OpenState & {
-  trigger: Slot<JSX.Element>;
-  disabled?: boolean;
-  onOpen?: () => void;
-  onClose?: () => void;
-  onCancel?: () => void;
-};
-
-const ContextMenuContext = context<ContextMenuContextValue | null>(null);
-
-function useContextMenu() {
-  const ctx = ContextMenuContext();
-  if (!ctx) throw new Error("ContextMenu parts must be used within <ContextMenu>");
-  return ctx;
-}
 
 /** Composition root: a menu opened at the pointer. */
 export function ContextMenu(props: ContextMenuProps) {
@@ -85,16 +74,27 @@ export function ContextMenu(props: ContextMenuProps) {
   );
 }
 
-/** The area that opens the menu: its children in a `View` when it has a `style`, as given otherwise. */
+/** The area that opens the menu: its children in a `View` when it has a class or a `style`, as given otherwise. */
 export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
   const ctx = useContextMenu();
   // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
-  // upstream's demos use): read once, here, and handed as it is — with a `style`, in a view that
-  // wears it — and placed by the menu without building it again on every layout. A region's own
-  // children stay live through their getters; the region itself is one element.
+  // upstream's demos use): read once, here, and handed as it is — with a class or a `style`, in a
+  // view that wears it — and placed by the menu without building it again on every layout. A
+  // region's own children stay live through their getters; the region itself is one element.
   const kids = props.children;
+  const framed = props.style != null || props.class != null || props.classList != null;
   ctx.trigger.set(
-    props.style != null ? <View style={props.style}>{kids ?? <View />}</View> : (kids ?? <View />),
+    framed ? (
+      <View
+        class={joinClass(undefined, props.class)}
+        classList={props.classList}
+        style={props.style}
+      >
+        {kids ?? <View />}
+      </View>
+    ) : (
+      (kids ?? <View />)
+    ),
   );
   // No layout node: a zero-size view would still take a flex `gap` in a row of triggers.
   return null;
@@ -162,3 +162,21 @@ export {
   type MenuSubProps as ContextMenuSubProps,
   type MenuSubTriggerProps as ContextMenuSubTriggerProps,
 } from "./menu";
+
+// Private helpers
+
+type ContextMenuContextValue = OpenState & {
+  trigger: Slot<JSX.Element>;
+  disabled?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
+};
+
+const ContextMenuContext = context<ContextMenuContextValue | null>(null);
+
+function useContextMenu() {
+  const ctx = ContextMenuContext();
+  if (!ctx) throw new Error("ContextMenu parts must be used within <ContextMenu>");
+  return ctx;
+}

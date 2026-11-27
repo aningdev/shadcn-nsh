@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,effects,paradigm,base,preset,theme}.ts).",
+      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,effects,paradigm,base,preset,terminal-metrics,theme}.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -47,6 +47,11 @@
           "path": "packages/theme/preset.ts",
           "type": "registry:lib",
           "target": "lib/ui/preset.ts"
+        },
+        {
+          "path": "packages/theme/terminal-metrics.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/terminal-metrics.ts"
         },
         {
           "path": "packages/theme/theme.ts",
@@ -246,10 +251,23 @@
       ]
     },
     {
+      "name": "choice",
+      "type": "registry:lib",
+      "title": "Choice",
+      "description": "The well, edge, press, fill and tile a checkbox and a radio share.",
+      "files": [
+        {
+          "path": "packages/ui/lib/choice.tsx",
+          "type": "registry:lib",
+          "target": "lib/ui/choice.tsx"
+        }
+      ]
+    },
+    {
       "name": "field-look",
       "type": "registry:lib",
       "title": "Field frame",
-      "description": "The shared frame of every text-input control: corners, edges, resting line and focus ring.",
+      "description": "The shared frame, well, text, size and time-field classes every text-input control reads.",
       "files": [
         {
           "path": "packages/ui/lib/field-look.ts",
@@ -262,7 +280,7 @@
       "name": "icons",
       "type": "registry:lib",
       "title": "Icons",
-      "description": "Lucide icon rendering (`Icon`, `IconLabel`, `CheckMark`) and SVG data URL helper (`iconImage`).",
+      "description": "Built-in UI icon nodes (lucide-compatible `IconNode`) plus `Icon`, `IconLabel`, `CheckMark` and `iconImage`.",
       "files": [
         {
           "path": "packages/ui/lib/icons.tsx",
@@ -340,7 +358,7 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A button, an icon button, a round button, and a split button.",
+      "description": "A button, an icon button, and a round button.",
       "files": [
         {
           "path": "packages/ui/button.tsx",

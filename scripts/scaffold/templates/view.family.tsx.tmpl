@@ -1,0 +1,73 @@
+// A {{id}}: the look (`{{lookFn}}`) and the parts that wear it, on `nsh`'s own View and Text.
+import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
+import { split, Text, View } from "nsh";
+
+import { colors } from "../theme";
+
+/** A {{id}}'s variant axis. */
+export type {{Id}}Variant = "default";
+
+/** A {{id}}'s parts as the styles they wear: spread each one. */
+export interface {{Id}}Look {
+  /** The root surface. */
+  readonly root: ViewStyle;
+  readonly title: TextStyle;
+  readonly description: TextStyle;
+}
+
+/** What a {{id}} draws, in the theme's roles. */
+export function {{lookFn}}(): {{Id}}Look {
+  return {
+    get root(): ViewStyle {
+      return { backgroundColor: colors.background };
+    },
+    get title(): TextStyle {
+      return { color: colors.foreground };
+    },
+    get description(): TextStyle {
+      return {};
+    },
+  };
+}
+
+/** The {{id}} and its parts. */
+export type {{Id}}Props = ViewProps & {
+  /** Default `default`. */
+  variant?: {{Id}}Variant;
+};
+
+/** The {{id}}'s title. */
+export type {{Id}}TitleProps = TextProps;
+
+/** A quieter line under the {{id}}'s title. */
+export type {{Id}}DescriptionProps = TextProps;
+
+/** A {{id}}. */
+export function {{Id}}(props: {{Id}}Props) {
+  const [, rest] = split(props, ["variant", "style"]);
+  return (
+    <View {...rest} style={[{{lookFn}}().root, props.style ?? null]}>
+      {props.children}
+    </View>
+  );
+}
+
+/** A {{id}}'s title. */
+export function {{Id}}Title(props: {{Id}}TitleProps) {
+  const [, rest] = split(props, ["style"]);
+  return (
+    <Text {...rest} style={[{{lookFn}}().title, props.style ?? null]}>
+      {props.children}
+    </Text>
+  );
+}
+
+/** A quieter line under a {{id}}'s title. */
+export function {{Id}}Description(props: {{Id}}DescriptionProps) {
+  const [, rest] = split(props, ["style"]);
+  return (
+    <Text {...rest} style={[{{lookFn}}().description, props.style ?? null]}>
+      {props.children}
+    </Text>
+  );
+}

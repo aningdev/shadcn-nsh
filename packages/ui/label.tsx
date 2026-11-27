@@ -1,53 +1,16 @@
 // A label: the visible name of a field or a choice, drawn on `nsh`'s own View and Text.
 
-import { colors, font, dimmed } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 
+import { colors, dimmed, font } from "../theme";
 import { controlSize } from "./lib/surface";
 import { AsText } from "./lib/utils";
 
-/** A label's look: the row it is (a control can sit before its text) and the type of its text. */
-export interface LabelLook {
-  /** A row, its content a gap apart, dimmed to half while the control beside it is off. */
-  readonly root: ViewStyle;
-  /** The label's own type: the control labels' size, medium, in the text color. */
-  readonly text: TextStyle;
-}
-
-/** Options of `labelLook`. */
-export interface LabelLookOptions {
-  /** The control beside it is off: the label dims with it, as shadcn's `peer-disabled` does. */
-  disabled?: boolean;
-}
-
 /**
- * A label's look, after shadcn/ui's `Label`: a row, its content a small gap apart, the text in
- * the control labels' size (14 points with a pointer, 15 on a touch screen) and weight, and the
- * theme's text color. `disabled` dims the whole label to half, which is how a label says that the
- * control beside it cannot be used.
+ * A label's props. Besides `disabled`, every `nsh` view prop passes through; `class` and
+ * `classList` follow the look, and `style` goes over it.
  */
-export function labelLook(o?: LabelLookOptions): LabelLook {
-  return {
-    get root(): ViewStyle {
-      return {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        opacity: o?.disabled ? dimmed.disabled : 1,
-      };
-    },
-    get text(): TextStyle {
-      return {
-        fontSize: controlSize.label,
-        fontWeight: font.weight("label"),
-        color: colors.foreground,
-      };
-    },
-  };
-}
-
-/** A label's props. Besides `disabled`, every `nsh` view prop passes through; `style` goes over the look's. */
 export type LabelProps = Omit<ViewProps, "children"> & {
   /** A string is the label's text, in the look's type; anything else (an icon, a note) is drawn as given. */
   children?: string | JSX.Element;
@@ -69,11 +32,58 @@ export type LabelProps = Omit<ViewProps, "children"> & {
  * `TextField` is also named by the texts it draws.
  */
 export function Label(props: LabelProps) {
-  const [, rest] = split(props, ["children", "disabled", "style"]);
+  const [, rest] = split(props, ["children", "disabled", "class", "classList", "style"]);
   const look = labelLook({ disabled: props.disabled });
   return (
-    <View {...rest} style={[look.root, props.style ?? null]}>
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[look.root, props.style ?? null]}
+    >
       <AsText style={look.text}>{props.children}</AsText>
     </View>
   );
+}
+
+// Private helpers
+
+/** A label's look: the row it is (a control can sit before its text) and the type of its text. */
+interface LabelLook {
+  /** A row, its content a gap apart, dimmed to half while the control beside it is off. */
+  readonly root: ViewStyle;
+  /** The label's own type: the control labels' size, medium, in the text color. */
+  readonly text: TextStyle;
+}
+
+/** Options of `labelLook`. */
+interface LabelLookOptions {
+  /** The control beside it is off: the label dims with it, as shadcn's `peer-disabled` does. */
+  disabled?: boolean;
+}
+
+/**
+ * A label's look, after shadcn/ui's `Label`: a row, its content a small gap apart, the text in
+ * the control labels' size (14 points with a pointer, 15 on a touch screen) and weight, and the
+ * theme's text color. `disabled` dims the whole label to half, which is how a label says that the
+ * control beside it cannot be used.
+ */
+function labelLook(o?: LabelLookOptions): LabelLook {
+  return {
+    get root(): ViewStyle {
+      return {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        opacity: o?.disabled ? dimmed.disabled : 1,
+      };
+    },
+    get text(): TextStyle {
+      return {
+        fontSize: controlSize.label,
+        fontWeight: font.weight("label"),
+        color: colors.foreground,
+      };
+    },
+  };
 }

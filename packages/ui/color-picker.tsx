@@ -1,21 +1,9 @@
-// A color picker: the look (`colorChecker`, `colorAreaLook`, `colorSliderLook`) and the fields, panel, trigger and
-// popover that wear it.
+// A color picker: the fields, panel, trigger and popover, and the looks a custom layout spreads
+// (`formatColor`, `inkOn`, `colorAreaLook`, `colorSliderLook`).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  hovered,
-  rounded,
-  terminal,
-  TERMINAL_COLUMN,
-  TERMINAL_ROW,
-  font,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
-import { Check, ChevronDown, Copy, Pipette } from "lucide";
 import type { InputStyle, JSX, StyleProp, ViewStyle } from "nsh";
-import { Clipboard, platform, signal, Text, token, View } from "nsh";
+import { Clipboard, platform, signal, split, Text, token, View } from "nsh";
 import {
   type ColorChannel,
   ColorArea,
@@ -31,38 +19,511 @@ import {
   Popover,
 } from "nsh/base";
 
+import {
+  colors,
+  hovered,
+  rounded,
+  terminal,
+  TERMINAL_COLUMN,
+  TERMINAL_ROW,
+  font,
+  shape,
+  stroke,
+} from "../theme";
 import { IconButton, iconButtonLook } from "./button";
-import { fieldLook, fieldSize, fieldText } from "./input";
-import { Icon } from "./lib/icons";
+import { fieldLook, fieldSize, fieldText } from "./lib/field-look";
+import { Check, ChevronDown, Copy, Icon, Pipette } from "./lib/icons";
 import { MenuMark, menuIndicator, PopIn } from "./lib/popup";
 import { useCopied } from "./lib/state";
+import { joinClass } from "./lib/utils";
 import { menuItemLabel, menuItemLook, menuItemNote, menuItemSize, menuPopup } from "./menu";
 import { popoverLook } from "./popover";
 import { Picker } from "./select";
 
-/** `v` to `decimals` places, trailing zeros dropped (as the picker writes its numbers). */
-function numberText(v: number, decimals: number): string {
-  const text = v.toFixed(decimals);
-  const trimmed = text.includes(".") ? text.replace(/0+$/, "").replace(/\.$/, "") : text;
-  return trimmed === "-0" ? "0" : trimmed;
+/** Props of `ColorFields`. */
+export interface ColorFieldsProps {
+  /** The color as the picker last reported it (`#rrggbbaa`): the menu's previews. */
+  value: string;
+  /** What the fields' labels start with ("Fill color"): screen readers hear "Fill color hex", "Fill color red value". */
+  name: string;
+  /** The format the fields show: hex, or the channels of its space. */
+  format: ColorFormat;
+  /** A format chosen from the fields' menu. */
+  onFormatChange: (format: ColorFormat) => void;
+  /** A field of the opacity at the end, in percent. */
+  alpha?: boolean;
+  /** Tailwind classes on the well, after the field look. */
+  class?: string;
+  /** Tailwind classes toggled on the well. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the well. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 }
 
-/** The hue of an sRGB color, in degrees: `max` its largest channel, `delta` its largest less its smallest. */
-function hue([r, g, b]: number[], max: number, delta: number): number {
-  if (delta <= 0) return 0;
-  const h =
-    max === r ? ((g - b) / delta) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
-  return (h * 60 + 360) % 360;
+/** Props of `ColorPanel`. */
+export interface ColorPanelProps extends ColorFieldsProps {
+  /** Preset swatches under the fields. */
+  swatches?: readonly string[];
+  /** Tailwind classes on the panel. */
+  class?: string;
+  /** Tailwind classes toggled on the panel. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the panel. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
 }
 
-const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-
-/** A `#rrggbbaa` color's channels, 0 to 1: red, green, blue, and the alpha (1 when it is left out). */
-function channels(value: string): [number, number, number, number] {
-  const hex = value.replace(/^#/, "");
-  const at = (i: number) => parseInt(hex.slice(i, i + 2), 16) / 255;
-  return [at(0), at(2), at(4), hex.length >= 8 ? at(6) : 1];
+/** Props of `ColorPopover`. */
+export interface ColorPopoverProps {
+  /** What screen readers call the trigger and the panel's parts; the trigger reads `<name>, <value>`. */
+  name: string;
+  /** The color, `#rrggbbaa`, as the picker reports it. */
+  value: string;
+  /** The format the fields, the trigger and `onChangeEnd`'s text use. */
+  format: ColorFormat;
+  /** The opacity too: its slider and field, and a wider popover for the field. */
+  alpha?: boolean;
+  /** Tailwind classes on the trigger, after its look. */
+  class?: string;
+  /** Tailwind classes toggled on the trigger. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** The trigger's own style (its width), over the look's. */
+  style?: StyleProp<ViewStyle>;
+  onChange: (value: string) => void;
+  onFormatChange: (format: ColorFormat) => void;
+  onChangeEnd?: (formatted: string) => void;
 }
+
+/** What a channel of the panel edits (red, hue, chroma…), from `nsh/base`. */
+export type { ColorChannel };
+
+/** How a color is written out (`hex`, `rgb`, `hsl`, `oklch`…), from `nsh/base`. */
+export type { ColorFormat };
+
+/** The space the sliders and the plane work in, from `nsh/base`. */
+export type { ColorSpace };
+
+/**
+ * The color's fields joined in one field's well (`fieldLook`): a menu of the formats first, then the hex field or the
+ * channels of the format's space, then the opacity, parted by the field's inner line. Each item of the menu shows the
+ * color in its format.
+ */
+export function ColorFields(props: ColorFieldsProps) {
+  const [, rest] = split(props, [
+    "value",
+    "name",
+    "format",
+    "onFormatChange",
+    "alpha",
+    "class",
+    "classList",
+    "style",
+  ]);
+  const fields = () => FORMAT_FIELDS[props.format];
+  const label = () => colorFormats.find((f) => f.value === props.format)?.label ?? props.format;
+  return (
+    // In the terminal one row with no frame of its own, as the panel's other rows: a framed well is
+    // three rows for one line of numbers.
+    <View
+      {...rest}
+      {...(terminal
+        ? { style: { flexDirection: "row", height: TERMINAL_ROW } }
+        : fieldLook({
+            style: { height: fieldSize.height, alignItems: "stretch", overflow: "hidden" },
+          }))}
+      class={joinClass(
+        terminal
+          ? undefined
+          : fieldLook({
+              style: { height: fieldSize.height, alignItems: "stretch", overflow: "hidden" },
+            }).class,
+        props.class,
+      )}
+      classList={props.classList}
+      style={[
+        terminal
+          ? { flexDirection: "row", height: TERMINAL_ROW }
+          : fieldLook({
+              style: { height: fieldSize.height, alignItems: "stretch", overflow: "hidden" },
+            }).style,
+        props.style ?? null,
+      ]}
+    >
+      <Menu
+        align="start"
+        offset={4}
+        margin={8}
+        // As wide as the longest preview (an HSL with its opacity), which it grows past rather than cutting one short.
+        {...menuPopup({ minWidth: 264 })}
+        // The menu's root holds the trigger in a column: centered down the well's height, level with the fields' text.
+        style={{ justifyContent: "center" }}
+        trigger={
+          <View accessibilityLabel={`${props.name} format, ${label()}`}>
+            <FormatButton label={label()} />
+          </View>
+        }
+      >
+        {colorFormats.map((f) => (
+          <MenuItem
+            checked={props.format === f.value}
+            role="menuitemradio"
+            onSelect={() => props.onFormatChange(f.value)}
+            indicatorClass={menuIndicator}
+            indicator={<MenuMark kind="dot" size={menuItemSize.icon} tint={colors.brand} />}
+            {...menuItemLook()}
+          >
+            <Text style={{ ...menuItemLabel(), flexGrow: 0, width: 52 }}>{f.label}</Text>
+            {/* Whole, never ellipsized: the row (and the menu) takes its width. */}
+            <Text style={{ ...menuItemNote(), flexShrink: 0, fontVariant: ["tabular-nums"] }}>
+              {formatColor(props.value, f.value).replace(/^\w+\(|\)$/g, "")}
+            </Text>
+          </MenuItem>
+        ))}
+      </Menu>
+      <Divider />
+      {() => {
+        const f = fields();
+        if (!f)
+          return (
+            <ColorField
+              format="hex"
+              accessibilityLabel={`${props.name} hex`}
+              style={joinedText()}
+            />
+          );
+        return f.channels.map((c, i) => (
+          <>
+            {i > 0 ? <Divider /> : null}
+            <ColorField
+              colorSpace={f.space}
+              channel={c.channel}
+              accessibilityLabel={`${props.name} ${c.name.toLocaleLowerCase()} value`}
+              style={joinedText()}
+            />
+          </>
+        ));
+      }}
+      {props.alpha ? (
+        <>
+          <Divider />
+          <ColorField
+            channel="alpha"
+            accessibilityLabel={`${props.name} opacity value`}
+            // Aligned against its suffix, as a number before its unit (a class: the field's style is a view's).
+            class="text-end"
+            style={{
+              ...joinedText({ width: terminal ? 3 * TERMINAL_COLUMN : 40 }),
+              paddingEnd: 0,
+            }}
+          />
+          {/* Percent, as a field's suffix: quiet text inside the well after the number. */}
+          <Text
+            style={{
+              alignSelf: "center",
+              paddingStart: terminal ? 0 : 2,
+              paddingEnd: terminal ? 0 : 8,
+              fontSize: fieldSize.font,
+              color: colors.mutedForeground,
+            }}
+          >
+            %
+          </Text>
+        </>
+      ) : null}
+    </View>
+  );
+}
+
+/** A copy button (this library's ghost icon button): it copies `text()` and shows a check for a moment. */
+export function ColorCopy(props: {
+  name: string;
+  text: () => string;
+  /** Tailwind classes on the button, after the icon-button look. */
+  class?: string;
+  /** Tailwind classes toggled on the button. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the button. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
+  const [, rest] = split(props, ["name", "text", "class", "classList", "style"]);
+  const { copied, mark } = useCopied();
+  return (
+    <IconButton
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={props.style}
+      accessibilityLabel={copied() ? "Copied" : `Copy ${props.name.toLocaleLowerCase()}`}
+      onPress={() => {
+        void Clipboard.writeText(props.text());
+        mark();
+      }}
+    >
+      {terminal ? (
+        <Text style={{ color: colors.mutedForeground }}>{copied() ? "✓" : "Copy"}</Text>
+      ) : (
+        <Icon
+          icon={copied() ? Check : Copy}
+          size={16}
+          tint={copied() ? colors.brand : colors.mutedForeground}
+        />
+      )}
+    </IconButton>
+  );
+}
+
+/** The system's eyedropper as the gallery's ghost icon button; hidden where the platform has none. */
+export function ColorDropper(props: {
+  name: string;
+  /** Tailwind classes on the button, after `disabled:hidden`. */
+  class?: string;
+  /** Tailwind classes toggled on the button. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the icon-button look. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
+  const [, rest] = split(props, ["name", "class", "classList", "style"]);
+  return (
+    <ColorEyeDropper
+      {...rest}
+      accessibilityLabel={`Pick ${props.name.toLocaleLowerCase()} from the screen`}
+      {...iconButtonLook()}
+      class={joinClass("disabled:hidden", props.class)}
+      classList={props.classList}
+      style={[iconButtonLook().style, props.style ?? null]}
+    >
+      {terminal ? (
+        <Text style={{ color: colors.mutedForeground }}>Pick</Text>
+      ) : (
+        <Icon icon={Pipette} size={16} tint={colors.mutedForeground} />
+      )}
+    </ColorEyeDropper>
+  );
+}
+
+/**
+ * Preset swatches in a row, spread to its width: 24-point chips with the control's radius less one and a hairline
+ * edge, grown under the pointer; the picker's color shows a check in an ink that reads on it. A terminal's are two
+ * Cells by a row.
+ */
+export function ColorSwatches(props: {
+  colors: readonly string[];
+  /** Tailwind classes on the row. */
+  class?: string;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the row. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}) {
+  const [, rest] = split(props, ["colors", "class", "classList", "style"]);
+  const checker = colorChecker();
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[
+        {
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: terminal ? "flex-start" : "space-between",
+          columnGap: terminal ? TERMINAL_COLUMN : 4,
+          rowGap: 6,
+        },
+        props.style ?? null,
+      ]}
+    >
+      {props.colors.map((color) => (
+        <ColorSwatch
+          color={color}
+          class={
+            terminal
+              ? undefined
+              : `group items-center justify-center ${EDGE} bg-background transition-transform duration-150 hover:scale-110 motion-reduce:transition-none`
+          }
+          style={
+            terminal
+              ? { width: 2 * TERMINAL_COLUMN, height: TERMINAL_ROW }
+              : { width: 24, height: 24, ...rounded(shape.control, 1) }
+          }
+          checkerboardColor={checker.checkerboardColor}
+          checkerboardSize={checker.checkerboardSize}
+        >
+          {terminal ? null : (
+            <View class="group-selected:flex hidden">
+              <Icon icon={Check} size={14} tint={inkOn(color)} />
+            </View>
+          )}
+        </ColorSwatch>
+      ))}
+    </View>
+  );
+}
+
+/**
+ * The whole picker in place (inside a `ColorPicker`, or a popover in one): the area; the eyedropper, the hue slider
+ * (and the opacity's, `alpha`) and the copy button on one row; the joined fields; the swatches. Its parts are named
+ * after `name` for screen readers. It has to sit inside `nsh/base`'s `ColorPicker`: outside one, its parts log that
+ * they are outside a `ColorPicker` and take no input (`nsh-base`'s `color_picker/mod.rs`), so this shell has no root
+ * of its own to fall back on.
+ */
+export function ColorPanel(props: ColorPanelProps) {
+  const [, rest] = split(props, [
+    "value",
+    "name",
+    "format",
+    "onFormatChange",
+    "alpha",
+    "swatches",
+    "class",
+    "classList",
+    "style",
+  ]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[{ gap: terminal ? TERMINAL_ROW : 10 }, props.style ?? null]}
+    >
+      <View>
+        <ColorArea
+          accessibilityLabel={`${props.name} saturation and brightness`}
+          {...colorAreaLook()}
+        />
+        <AreaEdge />
+      </View>
+      <View
+        style={{ flexDirection: "row", alignItems: "center", gap: terminal ? TERMINAL_COLUMN : 8 }}
+      >
+        <ColorDropper name={props.name} />
+        <View style={{ flex: 1, minWidth: 0, gap: terminal ? 0 : 8 }}>
+          <ColorSlider
+            colorSpace="hsb"
+            channel="hue"
+            accessibilityLabel={`${props.name} hue`}
+            {...colorSliderLook()}
+          />
+          {props.alpha ? (
+            <ColorSlider
+              channel="alpha"
+              accessibilityLabel={`${props.name} opacity`}
+              {...colorSliderLook({ alpha: true })}
+            />
+          ) : null}
+        </View>
+        <ColorCopy name={props.name} text={() => formatColor(props.value, props.format)} />
+      </View>
+      <ColorFields
+        value={props.value}
+        name={props.name}
+        format={props.format}
+        onFormatChange={props.onFormatChange}
+        alpha={props.alpha}
+      />
+      {props.swatches ? <ColorSwatches colors={props.swatches} /> : null}
+    </View>
+  );
+}
+
+/**
+ * A picker's trigger in a popover: a field, as a select's and a date picker's (`Picker`), led by the picker's
+ * color as a chip (a `ColorSwatch` with no color, over the checkerboard), the value as text and the chevron.
+ */
+export function ColorTrigger(props: {
+  open: boolean;
+  value: string;
+  /** Tailwind classes on the field (`Picker`). The look is style, so these stand alone. */
+  class?: string;
+  /** Tailwind classes toggled on the field. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<ViewStyle>;
+}): JSX.Element {
+  const [, rest] = split(props, ["open", "value", "class", "classList", "style"]);
+  const checker = colorChecker();
+  return (
+    <Picker
+      {...rest}
+      title={props.value}
+      open={props.open}
+      class={props.class}
+      classList={props.classList}
+      style={props.style}
+      lead={
+        <ColorSwatch
+          class={terminal ? undefined : `${EDGE} bg-background`}
+          style={
+            terminal
+              ? { width: 2 * TERMINAL_COLUMN, height: TERMINAL_ROW }
+              : { width: 16, height: 16, borderRadius: 4 }
+          }
+          checkerboardColor={checker.checkerboardColor}
+          checkerboardSize={checker.checkerboardSize}
+        />
+      }
+    />
+  );
+}
+
+/**
+ * A picker opened from a field's trigger: `ColorTrigger` shows the color and its value in the fields' format, the
+ * popover (the gallery's popover surface, popping in under the trigger) the whole `ColorPanel`.
+ */
+export function ColorPopover(props: ColorPopoverProps): JSX.Element {
+  const [, rest] = split(props, [
+    "name",
+    "value",
+    "format",
+    "alpha",
+    "class",
+    "classList",
+    "style",
+    "onChange",
+    "onFormatChange",
+    "onChangeEnd",
+  ]);
+  const open = signal(false);
+  return (
+    <ColorPicker
+      {...rest}
+      value={props.value}
+      format={props.format}
+      onChange={({ value }) => props.onChange(value)}
+      onChangeEnd={({ formatted }) => props.onChangeEnd?.(formatted)}
+    >
+      <Popover
+        placement="bottom"
+        align="start"
+        offset={4}
+        margin={8}
+        onOpenChange={({ open: next }) => open.set(next)}
+        trigger={
+          <View accessibilityLabel={`${props.name}, ${formatColor(props.value, props.format)}`}>
+            <ColorTrigger
+              open={open()}
+              value={formatColor(props.value, props.format)}
+              class={props.class}
+              classList={props.classList}
+              style={props.style}
+            />
+          </View>
+        }
+      >
+        <PopIn side="bottom" style={popoverLook({ width: props.alpha ? 320 : 288 })}>
+          <ColorPanel
+            name={props.name}
+            value={props.value}
+            format={props.format}
+            onFormatChange={props.onFormatChange}
+            alpha={props.alpha}
+          />
+        </PopIn>
+      </Popover>
+    </ColorPicker>
+  );
+}
+
+// Shared color picker primitives
+// Showcase reads `formatColor` and `inkOn`. A custom layout spreads `colorAreaLook` and `colorSliderLook`.
 
 /**
  * A color the picker reported (`value`: `#rrggbbaa`) written as `format` writes it, as the picker writes it: for the
@@ -106,57 +567,10 @@ export function formatColor(value: string, format: ColorFormat): string {
   }
 }
 
-/** The relative luminance at which black ink starts to read better than white on a color (sRGB's weights). */
-const BLACK_INK_FROM = 0.36;
-
 /** Ink that reads on `value` (a color the user picks, not the theme's): black on a light one, white on a dark one. */
 export function inkOn(value: string): string {
   const [r, g, b] = channels(value).slice(0, 3).map(toLinear);
   return 0.2126 * r + 0.7152 * g + 0.0722 * b > BLACK_INK_FROM ? "black" : "white";
-}
-
-const pointer = platform.desktop;
-
-/** The thumbs' side and the sliders' tracks' height: 16 and 12 with a pointer, 22 and 14 on a touch screen. */
-const THUMB = pointer ? 16 : 22;
-
-const TRACK = pointer ? 12 : 14;
-
-/**
- * A thumb: the color in a white ring with a hairline outline and a small shadow, so it shows on any color under it
- * (a color the user picks, not the theme's, so the ring is white in either appearance).
- */
-const thumbClass = "rounded-full border-2 border-white ring-1 ring-black/15 shadow-sm"; // color: edge and ring that read on any user colour
-
-const thumbStyle = { width: THUMB, height: THUMB };
-
-/** A hairline inside the edge of a field of colors, so the area's white corner and a track's light end show on the card. */
-const EDGE = "border border-foreground/10";
-
-/**
- * The area's hairline: a frame laid over the colors. A border of the panel itself would show the hue under it (the
- * panel's own fill is the hue, its gradients lie inside the border), a saturated line round a white or black corner.
- */
-function AreaEdge() {
-  return terminal ? null : (
-    <View
-      class="border-foreground/10 absolute inset-0 border"
-      style={{ pointerEvents: "none", ...rounded(shape.control) }}
-    />
-  );
-}
-
-/**
- * The checkerboard under translucent colors, in the theme's tokens: the muted fill's squares over the page color
- * (spread it on an alpha `ColorSlider` or a `ColorSwatch`).
- */
-export function colorChecker() {
-  return {
-    get checkerboardColor(): string {
-      return token("muted");
-    },
-    checkerboardSize: 4,
-  };
 }
 
 /** The saturation and brightness area's props (`<ColorArea {...colorAreaLook()} />`): 160 high with a pointer, the thumb filled with the color. A terminal's is eight rows of Cells. */
@@ -204,8 +618,81 @@ export function colorSliderLook(o?: { alpha?: boolean; style?: ViewStyle }) {
   };
 }
 
+// Private helpers & looks
+
+/** `v` to `decimals` places, trailing zeros dropped (as the picker writes its numbers). */
+function numberText(v: number, decimals: number): string {
+  const text = v.toFixed(decimals);
+  const trimmed = text.includes(".") ? text.replace(/0+$/, "").replace(/\.$/, "") : text;
+  return trimmed === "-0" ? "0" : trimmed;
+}
+
+/** The hue of an sRGB color, in degrees: `max` its largest channel, `delta` its largest less its smallest. */
+function hue([r, g, b]: number[], max: number, delta: number): number {
+  if (delta <= 0) return 0;
+  const h =
+    max === r ? ((g - b) / delta) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
+  return (h * 60 + 360) % 360;
+}
+
+const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+
+/** A `#rrggbbaa` color's channels, 0 to 1: red, green, blue, and the alpha (1 when it is left out). */
+function channels(value: string): [number, number, number, number] {
+  const hex = value.replace(/^#/, "");
+  const at = (i: number) => parseInt(hex.slice(i, i + 2), 16) / 255;
+  return [at(0), at(2), at(4), hex.length >= 8 ? at(6) : 1];
+}
+
+/** The relative luminance at which black ink starts to read better than white on a color (sRGB's weights). */
+const BLACK_INK_FROM = 0.36;
+
+const pointer = platform.desktop;
+
+/** The thumbs' side and the sliders' tracks' height: 16 and 12 with a pointer, 22 and 14 on a touch screen. */
+const THUMB = pointer ? 16 : 22;
+
+const TRACK = pointer ? 12 : 14;
+
+/**
+ * A thumb: the color in a white ring with a hairline outline and a small shadow, so it shows on any color under it
+ * (a color the user picks, not the theme's, so the ring is white in either appearance).
+ */
+const thumbClass = "rounded-full border-2 border-white ring-1 ring-black/15 shadow-sm"; // color: edge and ring that read on any user colour
+
+const thumbStyle = { width: THUMB, height: THUMB };
+
+/** A hairline inside the edge of a field of colors, so the area's white corner and a track's light end show on the card. */
+const EDGE = "border border-foreground/10";
+
+/**
+ * The area's hairline: a frame laid over the colors. A border of the panel itself would show the hue under it (the
+ * panel's own fill is the hue, its gradients lie inside the border), a saturated line round a white or black corner.
+ */
+function AreaEdge() {
+  return terminal ? null : (
+    <View
+      class="border-foreground/10 absolute inset-0 border"
+      style={{ pointerEvents: "none", ...rounded(shape.control) }}
+    />
+  );
+}
+
+/**
+ * The checkerboard under translucent colors, in the theme's tokens: the muted fill's squares over the page color
+ * (spread it on an alpha `ColorSlider` or a `ColorSwatch`).
+ */
+function colorChecker() {
+  return {
+    get checkerboardColor(): string {
+      return token("muted");
+    },
+    checkerboardSize: 4,
+  };
+}
+
 /** The formats the fields' menu offers, as their menu names them. */
-export const colorFormats: readonly { value: ColorFormat; label: string }[] = [
+const colorFormats: readonly { value: ColorFormat; label: string }[] = [
   { value: "hex", label: "HEX" },
   { value: "rgb", label: "RGB" },
   { value: "hsl", label: "HSL" },
@@ -304,361 +791,3 @@ function FormatButton(props: { label: string }) {
     </View>
   );
 }
-
-/** Props of `ColorFields`. */
-export interface ColorFieldsProps {
-  /** The color as the picker last reported it (`#rrggbbaa`): the menu's previews. */
-  value: string;
-  /** What the fields' labels start with ("Fill color"): screen readers hear "Fill color hex", "Fill color red value". */
-  name: string;
-  /** The format the fields show: hex, or the channels of its space. */
-  format: ColorFormat;
-  /** A format chosen from the fields' menu. */
-  onFormatChange: (format: ColorFormat) => void;
-  /** A field of the opacity at the end, in percent. */
-  alpha?: boolean;
-}
-
-/**
- * The color's fields joined in one field's well (`fieldLook`): a menu of the formats first, then the hex field or the
- * channels of the format's space, then the opacity, parted by the field's inner line. Each item of the menu shows the
- * color in its format.
- */
-export function ColorFields(props: ColorFieldsProps) {
-  const fields = () => FORMAT_FIELDS[props.format];
-  const label = () => colorFormats.find((f) => f.value === props.format)?.label ?? props.format;
-  return (
-    // In the terminal one row with no frame of its own, as the panel's other rows: a framed well is
-    // three rows for one line of numbers.
-    <View
-      {...(terminal
-        ? { style: { flexDirection: "row", height: TERMINAL_ROW } }
-        : fieldLook({
-            style: { height: fieldSize.height, alignItems: "stretch", overflow: "hidden" },
-          }))}
-    >
-      <Menu
-        align="start"
-        offset={4}
-        margin={8}
-        // As wide as the longest preview (an HSL with its opacity), which it grows past rather than cutting one short.
-        {...menuPopup({ minWidth: 264 })}
-        // The menu's root holds the trigger in a column: centered down the well's height, level with the fields' text.
-        style={{ justifyContent: "center" }}
-        trigger={
-          <View accessibilityLabel={`${props.name} format, ${label()}`}>
-            <FormatButton label={label()} />
-          </View>
-        }
-      >
-        {colorFormats.map((f) => (
-          <MenuItem
-            checked={props.format === f.value}
-            role="menuitemradio"
-            onSelect={() => props.onFormatChange(f.value)}
-            indicatorClass={menuIndicator}
-            indicator={<MenuMark kind="dot" size={menuItemSize.icon} tint={colors.brand} />}
-            {...menuItemLook()}
-          >
-            <Text style={{ ...menuItemLabel(), flexGrow: 0, width: 52 }}>{f.label}</Text>
-            {/* Whole, never ellipsized: the row (and the menu) takes its width. */}
-            <Text style={{ ...menuItemNote(), flexShrink: 0, fontVariant: ["tabular-nums"] }}>
-              {formatColor(props.value, f.value).replace(/^\w+\(|\)$/g, "")}
-            </Text>
-          </MenuItem>
-        ))}
-      </Menu>
-      <Divider />
-      {() => {
-        const f = fields();
-        if (!f)
-          return (
-            <ColorField
-              format="hex"
-              accessibilityLabel={`${props.name} hex`}
-              style={joinedText()}
-            />
-          );
-        return f.channels.map((c, i) => (
-          <>
-            {i > 0 ? <Divider /> : null}
-            <ColorField
-              colorSpace={f.space}
-              channel={c.channel}
-              accessibilityLabel={`${props.name} ${c.name.toLocaleLowerCase()} value`}
-              style={joinedText()}
-            />
-          </>
-        ));
-      }}
-      {props.alpha ? (
-        <>
-          <Divider />
-          <ColorField
-            channel="alpha"
-            accessibilityLabel={`${props.name} opacity value`}
-            // Aligned against its suffix, as a number before its unit (a class: the field's style is a view's).
-            class="text-end"
-            style={{
-              ...joinedText({ width: terminal ? 3 * TERMINAL_COLUMN : 40 }),
-              paddingEnd: 0,
-            }}
-          />
-          {/* Percent, as a field's suffix: quiet text inside the well after the number. */}
-          <Text
-            style={{
-              alignSelf: "center",
-              paddingStart: terminal ? 0 : 2,
-              paddingEnd: terminal ? 0 : 8,
-              fontSize: fieldSize.font,
-              color: colors.mutedForeground,
-            }}
-          >
-            %
-          </Text>
-        </>
-      ) : null}
-    </View>
-  );
-}
-
-/** A copy button (this library's ghost icon button): it copies `text()` and shows a check for a moment. */
-export function ColorCopy(props: { name: string; text: () => string }) {
-  const { copied, mark } = useCopied();
-  return (
-    <IconButton
-      accessibilityLabel={copied() ? "Copied" : `Copy ${props.name.toLocaleLowerCase()}`}
-      onPress={() => {
-        void Clipboard.writeText(props.text());
-        mark();
-      }}
-    >
-      {terminal ? (
-        <Text style={{ color: colors.mutedForeground }}>{copied() ? "✓" : "Copy"}</Text>
-      ) : (
-        <Icon
-          icon={copied() ? Check : Copy}
-          size={16}
-          tint={copied() ? colors.brand : colors.mutedForeground}
-        />
-      )}
-    </IconButton>
-  );
-}
-
-/** The system's eyedropper as the gallery's ghost icon button; hidden where the platform has none. */
-export function ColorDropper(props: { name: string }) {
-  return (
-    <ColorEyeDropper
-      accessibilityLabel={`Pick ${props.name.toLocaleLowerCase()} from the screen`}
-      {...iconButtonLook()}
-      class="disabled:hidden"
-    >
-      {terminal ? (
-        <Text style={{ color: colors.mutedForeground }}>Pick</Text>
-      ) : (
-        <Icon icon={Pipette} size={16} tint={colors.mutedForeground} />
-      )}
-    </ColorEyeDropper>
-  );
-}
-
-/**
- * Preset swatches in a row, spread to its width: 24-point chips with the control's radius less one and a hairline
- * edge, grown under the pointer; the picker's color shows a check in an ink that reads on it. A terminal's are two
- * Cells by a row.
- */
-export function ColorSwatches(props: { colors: readonly string[] }) {
-  const checker = colorChecker();
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: terminal ? "flex-start" : "space-between",
-        columnGap: terminal ? TERMINAL_COLUMN : 4,
-        rowGap: 6,
-      }}
-    >
-      {props.colors.map((color) => (
-        <ColorSwatch
-          color={color}
-          class={
-            terminal
-              ? undefined
-              : `group items-center justify-center ${EDGE} bg-background transition-transform duration-150 hover:scale-110 motion-reduce:transition-none`
-          }
-          style={
-            terminal
-              ? { width: 2 * TERMINAL_COLUMN, height: TERMINAL_ROW }
-              : { width: 24, height: 24, ...rounded(shape.control, 1) }
-          }
-          checkerboardColor={checker.checkerboardColor}
-          checkerboardSize={checker.checkerboardSize}
-        >
-          {terminal ? null : (
-            <View class="group-selected:flex hidden">
-              <Icon icon={Check} size={14} tint={inkOn(color)} />
-            </View>
-          )}
-        </ColorSwatch>
-      ))}
-    </View>
-  );
-}
-
-/** Props of `ColorPanel`. */
-export interface ColorPanelProps extends ColorFieldsProps {
-  /** Preset swatches under the fields. */
-  swatches?: readonly string[];
-}
-
-/**
- * The whole picker in place (inside a `ColorPicker`, or a popover in one): the area; the eyedropper, the hue slider
- * (and the opacity's, `alpha`) and the copy button on one row; the joined fields; the swatches. Its parts are named
- * after `name` for screen readers. It has to sit inside `nsh/base`'s `ColorPicker`: outside one, its parts log that
- * they are outside a `ColorPicker` and take no input (`nsh-base`'s `color_picker/mod.rs`), so this shell has no root
- * of its own to fall back on.
- */
-export function ColorPanel(props: ColorPanelProps) {
-  return (
-    <View style={{ gap: terminal ? TERMINAL_ROW : 10 }}>
-      <View>
-        <ColorArea
-          accessibilityLabel={`${props.name} saturation and brightness`}
-          {...colorAreaLook()}
-        />
-        <AreaEdge />
-      </View>
-      <View
-        style={{ flexDirection: "row", alignItems: "center", gap: terminal ? TERMINAL_COLUMN : 8 }}
-      >
-        <ColorDropper name={props.name} />
-        <View style={{ flex: 1, minWidth: 0, gap: terminal ? 0 : 8 }}>
-          <ColorSlider
-            colorSpace="hsb"
-            channel="hue"
-            accessibilityLabel={`${props.name} hue`}
-            {...colorSliderLook()}
-          />
-          {props.alpha ? (
-            <ColorSlider
-              channel="alpha"
-              accessibilityLabel={`${props.name} opacity`}
-              {...colorSliderLook({ alpha: true })}
-            />
-          ) : null}
-        </View>
-        <ColorCopy name={props.name} text={() => formatColor(props.value, props.format)} />
-      </View>
-      <ColorFields
-        value={props.value}
-        name={props.name}
-        format={props.format}
-        onFormatChange={props.onFormatChange}
-        alpha={props.alpha}
-      />
-      {props.swatches ? <ColorSwatches colors={props.swatches} /> : null}
-    </View>
-  );
-}
-
-/**
- * A picker's trigger in a popover: a field, as a select's and a date picker's (`Picker`), led by the picker's
- * color as a chip (a `ColorSwatch` with no color, over the checkerboard), the value as text and the chevron.
- */
-export function ColorTrigger(props: {
-  open: boolean;
-  value: string;
-  style?: StyleProp<ViewStyle>;
-}): JSX.Element {
-  const checker = colorChecker();
-  return (
-    <Picker
-      title={props.value}
-      open={props.open}
-      style={props.style}
-      lead={
-        <ColorSwatch
-          class={terminal ? undefined : `${EDGE} bg-background`}
-          style={
-            terminal
-              ? { width: 2 * TERMINAL_COLUMN, height: TERMINAL_ROW }
-              : { width: 16, height: 16, borderRadius: 4 }
-          }
-          checkerboardColor={checker.checkerboardColor}
-          checkerboardSize={checker.checkerboardSize}
-        />
-      }
-    />
-  );
-}
-
-/** Props of `ColorPopover`. */
-export interface ColorPopoverProps {
-  /** What screen readers call the trigger and the panel's parts; the trigger reads `<name>, <value>`. */
-  name: string;
-  /** The color, `#rrggbbaa`, as the picker reports it. */
-  value: string;
-  /** The format the fields, the trigger and `onChangeEnd`'s text use. */
-  format: ColorFormat;
-  /** The opacity too: its slider and field, and a wider popover for the field. */
-  alpha?: boolean;
-  /** The trigger's own style (its width), over the look's. */
-  style?: StyleProp<ViewStyle>;
-  onChange: (value: string) => void;
-  onFormatChange: (format: ColorFormat) => void;
-  onChangeEnd?: (formatted: string) => void;
-}
-
-/**
- * A picker opened from a field's trigger: `ColorTrigger` shows the color and its value in the fields' format, the
- * popover (the gallery's popover surface, popping in under the trigger) the whole `ColorPanel`.
- */
-export function ColorPopover(props: ColorPopoverProps): JSX.Element {
-  const open = signal(false);
-  return (
-    <ColorPicker
-      value={props.value}
-      format={props.format}
-      onChange={({ value }) => props.onChange(value)}
-      onChangeEnd={({ formatted }) => props.onChangeEnd?.(formatted)}
-    >
-      <Popover
-        placement="bottom"
-        align="start"
-        offset={4}
-        margin={8}
-        onOpenChange={({ open: next }) => open.set(next)}
-        trigger={
-          <View accessibilityLabel={`${props.name}, ${formatColor(props.value, props.format)}`}>
-            <ColorTrigger
-              open={open()}
-              value={formatColor(props.value, props.format)}
-              style={props.style}
-            />
-          </View>
-        }
-      >
-        <PopIn side="bottom" style={popoverLook({ width: props.alpha ? 320 : 288 })}>
-          <ColorPanel
-            name={props.name}
-            value={props.value}
-            format={props.format}
-            onFormatChange={props.onFormatChange}
-            alpha={props.alpha}
-          />
-        </PopIn>
-      </Popover>
-    </ColorPicker>
-  );
-}
-
-/** What a channel of the panel edits (red, hue, chroma…), from `nsh/base`. */
-export type { ColorChannel };
-
-/** How a color is written out (`hex`, `rgb`, `hsl`, `oklch`…), from `nsh/base`. */
-export type { ColorFormat };
-
-/** The space the sliders and the plane work in, from `nsh/base`. */
-export type { ColorSpace };

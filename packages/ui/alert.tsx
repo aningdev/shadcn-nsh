@@ -1,27 +1,93 @@
 // An alert: a notice in a bordered surface, its icon beside its title and its note.
 
-import { alpha, colors, rounded, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
+import { alpha, colors, font, rounded, shape, stroke } from "../theme";
 import { density } from "./lib/surface";
 import { AsText } from "./lib/utils";
 
 /** An alert's variants: `default`, the card's surface in the text color; `destructive`, the danger tone's ink. */
 export type AlertVariant = "default" | "destructive";
 
-/** An alert's parts as the styles they wear: spread each one. */
-export interface AlertLook {
-  /** The surface: a grid of the icon's column and the text's, a hairline edge. */
-  root(): ViewStyle;
-  /** The title's line: the text column of the first row, and its type. */
-  title(variant: AlertVariant): TextStyle;
-  /** The note's place: the text column, the row after the title's (beside the icon when there is
-   * no title), its lines a gap apart. */
-  descriptionFrame(): ViewStyle;
-  /** The note's type, for the text of a string note. */
-  descriptionText(variant: AlertVariant): TextStyle;
+/**
+ * An alert's props: a notice for the whole of a page or a form, read out when it appears
+ * (`role="alert"`). Besides `variant`, every `nsh` view prop passes through; `class`, `classList`
+ * and `style` go over the look's.
+ */
+export type AlertProps = ViewProps & {
+  /** Default `default`: the card's surface. `destructive` puts the notice in the danger tone. */
+  variant?: AlertVariant;
+};
+
+/** An alert's title: one line, in the notice's ink. */
+export type AlertTitleProps = TextProps;
+
+/** An alert's note: a sentence, or the app's own blocks in a column. */
+export type AlertDescriptionProps = ViewProps;
+
+/** How big an icon in an alert is drawn: the step a note's glyph takes. */
+export const ALERT_ICON = 16;
+
+/**
+ * A notice of the whole page or form, after shadcn/ui's `Alert`: the card's surface, a hairline
+ * edge, the inset corners, an icon at the leading edge and the title with its note beside it.
+ * `variant="destructive"` says the notice is about a failure, and the parts under it wear the
+ * danger tone. Write the icon first (an `Icon` of `ALERT_ICON` points in the notice's ink; the
+ * terminal draws no icons), then `AlertTitle` and `AlertDescription`.
+ */
+export function Alert(props: AlertProps) {
+  const [, rest] = split(props, ["variant", "children", "class", "classList", "style"]);
+  return (
+    <AlertVariantContext.Provider value={props.variant ?? "default"}>
+      <View
+        {...rest}
+        role="alert"
+        class={props.class}
+        classList={props.classList}
+        style={[alertLook().root(), props.style ?? null]}
+      >
+        {props.children}
+      </View>
+    </AlertVariantContext.Provider>
+  );
 }
+
+/** An alert's title, one line above its note: `destructive` puts it in the danger tone. */
+export function AlertTitle(props: AlertTitleProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[alertLook().title(AlertVariantContext()), props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/**
+ * An alert's note, under its title or, with none, beside the icon: a string is drawn in the note's
+ * type and ink; anything else (a list of lines, a link) is laid out as given, a small gap apart, in
+ * the ink the app gives it.
+ */
+export function AlertDescription(props: AlertDescriptionProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[alertLook().descriptionFrame(), props.style ?? null]}
+    >
+      <AsText style={alertLook().descriptionText(AlertVariantContext())}>{props.children}</AsText>
+    </View>
+  );
+}
+
+// Private helpers
 
 /**
  * The variant the parts under an `Alert` wear. shadcn hands it down with CSS (the root's text
@@ -34,8 +100,18 @@ const AlertVariantContext = context<AlertVariant>("default");
 const pad = 16;
 const iconGap = 12;
 
-/** How big an icon in an alert is drawn: the step a note's glyph takes. */
-export const ALERT_ICON = 16;
+/** An alert's parts as the styles they wear. */
+interface AlertLook {
+  /** The surface: a grid of the icon's column and the text's, a hairline edge. */
+  root(): ViewStyle;
+  /** The title's line: the text column of the first row, and its type. */
+  title(variant: AlertVariant): TextStyle;
+  /** The note's place: the text column, the row after the title's (beside the icon when there is
+   * no title), its lines a gap apart. */
+  descriptionFrame(): ViewStyle;
+  /** The note's type, for the text of a string note. */
+  descriptionText(variant: AlertVariant): TextStyle;
+}
 
 /**
  * An alert's look, after shadcn/ui's `Alert`: the card's surface with one hairline edge and the
@@ -48,7 +124,7 @@ export const ALERT_ICON = 16;
  * view has no such selector, so the text keeps the gutter either way, and an alert without an icon
  * starts 12 points in from its padding.
  */
-export function alertLook(): AlertLook {
+function alertLook(): AlertLook {
   return {
     root: (): ViewStyle => ({
       display: "grid",
@@ -84,62 +160,4 @@ export function alertLook(): AlertLook {
       color: variant === "destructive" ? alpha(colors.destructive, 0.9) : colors.mutedForeground,
     }),
   };
-}
-
-/**
- * An alert's props: a notice for the whole of a page or a form, read out when it appears
- * (`role="alert"`). Besides `variant`, every `nsh` view prop passes through; `style` goes over the
- * look's.
- */
-export type AlertProps = ViewProps & {
-  /** Default `default`: the card's surface. `destructive` puts the notice in the danger tone. */
-  variant?: AlertVariant;
-};
-
-/** An alert's title: one line, in the notice's ink. */
-export type AlertTitleProps = TextProps;
-
-/** An alert's note: a sentence, or the app's own blocks in a column. */
-export type AlertDescriptionProps = ViewProps;
-
-/**
- * A notice of the whole page or form, after shadcn/ui's `Alert`: the card's surface, a hairline
- * edge, the inset corners, an icon at the leading edge and the title with its note beside it.
- * `variant="destructive"` says the notice is about a failure, and the parts under it wear the
- * danger tone. Write the icon first (an `Icon` of `ALERT_ICON` points in the notice's ink; the
- * terminal draws no icons), then `AlertTitle` and `AlertDescription`.
- */
-export function Alert(props: AlertProps) {
-  const [, rest] = split(props, ["variant", "style"]);
-  return (
-    <AlertVariantContext.Provider value={props.variant ?? "default"}>
-      <View {...rest} role="alert" style={[alertLook().root(), props.style ?? null]}>
-        {props.children}
-      </View>
-    </AlertVariantContext.Provider>
-  );
-}
-
-/** An alert's title, one line above its note: `destructive` puts it in the danger tone. */
-export function AlertTitle(props: AlertTitleProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <Text {...rest} style={[alertLook().title(AlertVariantContext()), props.style ?? null]}>
-      {props.children}
-    </Text>
-  );
-}
-
-/**
- * An alert's note, under its title or, with none, beside the icon: a string is drawn in the note's
- * type and ink; anything else (a list of lines, a link) is laid out as given, a small gap apart, in
- * the ink the app gives it.
- */
-export function AlertDescription(props: AlertDescriptionProps) {
-  const [, rest] = split(props, ["style", "children"]);
-  return (
-    <View {...rest} style={[alertLook().descriptionFrame(), props.style ?? null]}>
-      <AsText style={alertLook().descriptionText(AlertVariantContext())}>{props.children}</AsText>
-    </View>
-  );
 }

@@ -15,19 +15,22 @@ eleven surfaces, feedback, motion and controls — and the `theme.json` that sam
 what it changes. An app is _built_ with one theme and can _carry_ more, switching between them while
 it runs with `selectTheme`.
 
+Each built-in theme distills the visual style of its design system — colors, radii, surfaces, and
+motion — rather than replicating every platform widget 1:1. Apple, Material, and WinUI record that
+mapping under Design notes and trade-offs. A theme of your own is [Customizing](./customizing).
+
 Every demo on this site can be drawn in any of these palettes: pick one with the **Demo theme**
 switch in the nav, and the previews load again in it. The panel above is the showcase — buttons, a
 card with a field, badges, switches, a slider and a progress bar, with the card, inset and press surfaces
 the palette brings. The list is `apps/website/demos/palettes.ts`. Each palette has its own page,
 with the same sections: how to install it, every token it sets, and every surface it draws. Those
-pages read each theme's own spec, following the
-[theme roles spec](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/theme-roles.md) and
-[the Theme v5 decision](https://github.com/aningdev/shadcn-nsh/blob/main/docs/decisions/0020-theme-v5.md).
+pages read each theme's own spec. The contract is
+[`docs/theme.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/theme.md).
 
 ## Radii by role
 
-`theme.json` states one corner radius per layer in `cssVars.theme` — `radius-control` (in-page
-elements), `radius-container` (cards, menus, popovers, toasts) and `radius-modal` (dialogs, sheets) —
+`theme.json` states one corner radius per layer in `cssVars.theme` — `radius-md` (in-page
+elements), `radius-lg` (cards, menus, popovers, toasts) and `radius-xl` (dialogs, sheets) —
 and `control("button").corner.*` makes buttons capsules (`material`, touch `apple`) or points / `control` (the rest). A surface nested in
 another takes the concentric corner, `rounded(outer, inset)`. Every corner that reads a theme radius
 uses `shape.curve` (`"continuous"` or `"circular"`), which `rounded()` applies in one place.

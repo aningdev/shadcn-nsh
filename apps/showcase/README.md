@@ -1,18 +1,12 @@
-# shadcn-nsh showcase
+# Showcase
 
-NSH's official Gallery (`references/nsh/examples/gallery`), rebuilt with this library's components:
-the shell — a desktop sidebar of demos grouped by purpose, a phone index that pushes demos on a nav
-stack, a search field, in-app palette and appearance switching — and the Gallery's Elements demos,
-one batch at a time; what the library lacked is in [`GAPS.md`](GAPS.md). See [#78](https://github.com/aningdev/shadcn-nsh/issues/78).
+用本库组件重建 NSH Gallery（`references/nsh/examples/gallery`）的壳与场景。网站首页 “See it running” 嵌入其打包产物。见 [#78](https://github.com/aningdev/shadcn-nsh/issues/78)。
 
-- `App.tsx` — the shell. `theme.ts` — the palette and appearance, chosen live and kept in the
-  app's storage. `kit.tsx` — the layout every demo draws through.
-- `groups/<group>.ts` — the index, one file per purpose group (Actions, Inputs, Navigation,
-  Overlays, Data, Documents and workspaces), so a later batch touches its group file alone.
-- `demos/` — one file per demo, plus `demos/README.md` for the conventions a demo follows; a
-  group's demos share `demos/<group>-shared.tsx` (`actions-shared`, `platform-shared`).
-- `assets/` — the images, fonts and media the demos use, copied from the Gallery under their own names.
-- `tests/` — the shell's behavior tests (`nsh test apps/showcase`).
+- `App.tsx` 是壳。`theme.ts` 管调色板与外观。`kit.tsx` 是每个场景的排版。
+- `groups/<group>.ts` 按用途做索引。`demos/` 一文件一场景，经 `kit` 排版；颜色只来自主题；不进 `Stage`，也不播声音。
+- `assets/` 是场景用的图、字体与媒体。`tests/` 是壳的行为测试。
 
-Run it with `bun run dev:showcase` (or `nsh run apps/showcase`); the website's home page runs the
-packaged app in a frame. Types: `nsh check apps/showcase` (part of `bun run prepare:types`).
+```sh
+bun run dev:showcase
+nsh check apps/showcase
+```

@@ -1,6 +1,6 @@
 /**
  * Theme v5 runtime: unified colors, shapes, metrics, surfaces, feedback, motion, and control recipes
- * (`docs/decisions/0020-theme-v5.md`).
+ * (`docs/theme.md`).
  *
  * Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
  */
@@ -8,6 +8,7 @@ import type {
   AnimatedValue,
   BackdropMaterial,
   Easing as EasingCurve,
+  MacOsBackdrop,
   MotionSpec as NshMotionSpec,
   TextStyle,
   Theme,
@@ -49,6 +50,7 @@ import {
   type ModeOrFlat,
   type MotionSpringSpec,
   type ShadowExpr,
+  type SpringRole,
   type ShadowPart,
   type SlotCorner,
   type SlotSize,
@@ -66,6 +68,7 @@ import {
   type ToneColorKey,
   type TypeRole,
 } from "./schema";
+import { controlHeights, controlSpacing } from "./terminal-metrics";
 
 export type {
   AnyColorKey,
@@ -79,6 +82,7 @@ export type {
   ModeOrFlat,
   MotionSpringSpec,
   ResolvedSurfaceEffect,
+  SpringRole,
   SlotCorner,
   SlotSize,
   SurfaceEffectKind,
@@ -192,8 +196,14 @@ export interface Palette {
   onMedia: string;
 }
 
-/** Palette colors read reactively from active `theme.json` tokens. */
-export const colors: Palette = tokenGetters<keyof Palette>({
+/** Palette role. NSH's default `Tokens` omits several of these until a `theme.json` adds them. */
+type ColorRole = keyof Palette;
+
+/**
+ * Palette role → token name. The cast keeps `nsh check` clean in an app that has no `theme.json`
+ * and only switches themes with `selectTheme`.
+ */
+const COLOR_TOKENS = {
   background: "background",
   card: "card",
   popover: "popover",
@@ -218,7 +228,18 @@ export const colors: Palette = tokenGetters<keyof Palette>({
   scrim: "scrim",
   media: "media",
   onMedia: "on-media",
-});
+} as unknown as Record<ColorRole, keyof Tokens>;
+
+/** Palette colors read reactively from active `theme.json` tokens. */
+export const colors: Palette = tokenGetters(COLOR_TOKENS);
+
+/**
+ * Read one token by name. Same reason as `COLOR_TOKENS`: a consumer without `theme.json` does not
+ * list `radius-*` or `font-*` on `Tokens`.
+ */
+function readToken(name: string) {
+  return token(name as keyof Tokens);
+}
 
 /** Mix `color` with transparency (`0`–`1`) using CSS `color-mix`. */
 export function alpha(color: string, a: number): string {
@@ -381,13 +402,13 @@ export const chart = {
 /** Corner radii by layer, read reactively from `theme.json` + active `ThemeSpec`. */
 export const shape = {
   get control(): number {
-    return token("radius-control") as number;
+    return readToken("radius-md") as number;
   },
   get container(): number {
-    return token("radius-container") as number;
+    return readToken("radius-lg") as number;
   },
   get modal(): number {
-    return token("radius-modal") as number;
+    return readToken("radius-xl") as number;
   },
   get curve(): "continuous" | "circular" {
     return activeSpec().tokens.radius.curve;
@@ -426,6 +447,14 @@ export const font = {
   weight: (role: TypeRole) =>
     activeSpec().metrics.typography[role].fontWeight as NonNullable<TextStyle["fontWeight"]>,
   letterSpacing: (role: TypeRole) => activeSpec().metrics.typography[role].letterSpacing,
+  get sans(): string {
+    // NSH leaves a generic `system-ui` out of `Tokens` (the system font). Built-in
+    // themes write that default; a missing token falls back.
+    return (readToken("font-sans") as string | undefined) ?? "system-ui";
+  },
+  get mono(): string {
+    return (readToken("font-mono") as string | undefined) ?? "monospace";
+  },
 };
 
 /** Stroke widths (`hairline`, `control`). */
@@ -438,16 +467,19 @@ export const stroke = {
   },
 };
 
-/** Control heights by size (`sm`, `md`, `lg`) at active tier. */
+/**
+ * Control heights by size (`sm`, `md`, `lg`). The active tier's heights, or one character row in
+ * the terminal (`TERMINAL_ROW`).
+ */
 export const controlHeight = {
   get sm() {
-    return activeSpec().metrics.height[tier].sm;
+    return controlHeights(terminal, activeSpec().metrics.height[tier], TERMINAL_ROW).sm;
   },
   get md() {
-    return activeSpec().metrics.height[tier].md;
+    return controlHeights(terminal, activeSpec().metrics.height[tier], TERMINAL_ROW).md;
   },
   get lg() {
-    return activeSpec().metrics.height[tier].lg;
+    return controlHeights(terminal, activeSpec().metrics.height[tier], TERMINAL_ROW).lg;
   },
 };
 
@@ -467,10 +499,14 @@ export const iconSize = {
 /** Minimum touch/pointer hit target size at active tier. */
 export const hitTarget = (): number => activeSpec().metrics.hit[tier];
 
-/** Grouped metrics namespace (`metrics.height`, `metrics.icon`, `metrics.stroke`, `metrics.font`, etc.). */
+/**
+ * Grouped metrics namespace (`metrics.height`, `metrics.icon`, `metrics.stroke`, `metrics.font`, etc.).
+ * In the terminal `height` is one character row on every step and `control` is one character column
+ * of padding and gap. Other idioms return the active tier's objects unchanged.
+ */
 export const metrics = {
   get height() {
-    return activeSpec().metrics.height[tier];
+    return controlHeights(terminal, activeSpec().metrics.height[tier], TERMINAL_ROW);
   },
   get icon() {
     return activeSpec().metrics.icon[tier];
@@ -479,7 +515,7 @@ export const metrics = {
     return activeSpec().metrics.density[tier];
   },
   get control() {
-    return activeSpec().metrics.control[tier];
+    return controlSpacing(terminal, activeSpec().metrics.control[tier], TERMINAL_COLUMN);
   },
   get item() {
     return activeSpec().metrics.item[tier];
@@ -534,6 +570,7 @@ function resolveShadow(shadow: ShadowExpr | undefined): string | undefined {
 export interface PlatformMaterialProps {
   readonly ios?: { backdropMaterial: BackdropMaterial };
   readonly windows?: { backdrop: { material: WindowsBackdropMaterial } };
+  readonly macos?: { readonly backdrop: MacOsBackdrop };
   readonly android?: { elevation?: number };
 }
 
@@ -566,8 +603,10 @@ function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
   if (borderBottom !== null) style.borderBottomColor = borderBottom;
 
   const resolved = layer.material ? resolveMaterial(layer.material) : undefined;
-  if (layer.backdropFilter !== undefined) {
-    if (layer.backdropFilter !== null) style.backdropFilter = layer.backdropFilter;
+  // A string is a hand-written filter. `null` clears an inherited one and still lets a material
+  // generate `blur()` / `saturate()`. `undefined` does the same when a material is present.
+  if (typeof layer.backdropFilter === "string") {
+    style.backdropFilter = layer.backdropFilter;
   } else if (resolved) {
     style.backdropFilter = backdropFilterFor(resolved);
   }
@@ -594,6 +633,7 @@ function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
   const platformProps: PlatformMaterialProps = {
     ...(resolved?.props.ios ? { ios: resolved.props.ios } : {}),
     ...(resolved?.props.windows ? { windows: resolved.props.windows } : {}),
+    ...(resolved?.props.macos ? { macos: resolved.props.macos } : {}),
     ...(typeof layer.elevation === "number" ? { android: { elevation: layer.elevation } } : {}),
   };
   const effect = terminal || reduceMotion() ? null : resolveSurfaceEffect(layer.effect);
@@ -712,6 +752,18 @@ const motionRole = (read: () => TimingSpec): Timing => {
 export type MotionPresetName = "popoverEnter" | "dialogEnter";
 export type EnterSide = "top" | "bottom" | "left" | "right";
 
+/**
+ * The spring a preset asks for. `true` is `motion.spring`; a role is that named spring,
+ * falling back to `motion.spring` when the role is unset. Reduced motion asks for none.
+ */
+function resolveSpringSetting(
+  setting: boolean | SpringRole | undefined,
+): MotionSpringSpec | undefined {
+  if (!setting || reduceMotion()) return undefined;
+  if (setting === true) return activeSpec().motion.spring;
+  return motion.springOf(setting);
+}
+
 /** Motion timing channels, optional spring, CSS transition helper, and enter/indicator presets. */
 export const motion = {
   fast: motionRole(() => activeSpec().motion.fast),
@@ -720,6 +772,27 @@ export const motion = {
   state: motionRole(() => activeSpec().motion.state),
   get spring(): MotionSpringSpec | undefined {
     return activeSpec().motion.spring;
+  },
+  /** Named spring, or `motion.spring` when the role is omitted or that role is unset. */
+  springOf(role?: SpringRole): MotionSpringSpec | undefined {
+    const spec = activeSpec().motion;
+    if (role && spec.springs?.[role]) return spec.springs[role];
+    return spec.spring;
+  },
+  /** NSH `transitionTimingFunction: spring(...)`. Mass 1 (the default) is omitted. */
+  springCss(spring: MotionSpringSpec): `spring(${string})` {
+    if (spring.mass === undefined || spring.mass === 1) {
+      return `spring(${spring.stiffness}, ${spring.damping})`;
+    }
+    return `spring(${spring.stiffness}, ${spring.damping}, ${spring.mass})`;
+  },
+  /** Resolved reveal spring (`presets.reveal`), or `undefined` when the theme asks for none. */
+  get revealSpring(): MotionSpringSpec | undefined {
+    return resolveSpringSetting(activeSpec().motion.presets.reveal?.spring);
+  },
+  /** Resolved press spring (`presets.press`), or `undefined` when the theme asks for none. */
+  get pressSpring(): MotionSpringSpec | undefined {
+    return resolveSpringSetting(activeSpec().motion.presets.press?.spring);
   },
   preset(name: MotionPresetName) {
     const m = activeSpec().motion;
@@ -730,7 +803,7 @@ export const motion = {
       fromY: reduced ? 0 : p.fromY,
       role: p.timing,
       timing: motion[p.timing],
-      spring: !reduced && p.spring && m.spring ? m.spring : undefined,
+      spring: resolveSpringSetting(p.spring),
     };
   },
   /** Build an NSH `MotionSpec` from a named theme enter preset, honoring `reduceMotion()` and `spring`. */
@@ -766,11 +839,10 @@ export const motion = {
   },
   /** Timing & optional spring used when switch/tab/segmented indicators glide between states. */
   get indicatorGlide(): { readonly timing: Timing; readonly spring: MotionSpringSpec | undefined } {
-    const m = activeSpec().motion;
-    const g = m.presets.indicatorGlide;
+    const g = activeSpec().motion.presets.indicatorGlide;
     return {
       timing: motion[g.timing],
-      spring: !reduceMotion() && g.spring && m.spring ? m.spring : undefined,
+      spring: resolveSpringSetting(g.spring),
     };
   },
   /** Transition policy when switching runtime themes (`selectTheme`). */
@@ -787,8 +859,18 @@ export const motion = {
       shader: resolveTransitionShader(sw.kind),
     };
   },
-  transition(properties: string, role: "state" | "fast" | "default" | "slow" = "state"): ViewStyle {
+  transition(
+    properties: string,
+    role: "state" | "fast" | "default" | "slow" = "state",
+    spring?: MotionSpringSpec,
+  ): ViewStyle {
     if (reduceMotion()) return { transitionProperty: "none" };
+    if (spring) {
+      return {
+        transitionProperty: properties,
+        transitionTimingFunction: motion.springCss(spring),
+      };
+    }
     const spec = activeSpec().motion[role];
     const [x1, y1, x2, y2] = EASING_BEZIERS[spec.easing];
     return {
@@ -1045,7 +1127,7 @@ const FOCUS_BG_MAP: Record<string, string> = {
 };
 
 /**
- * Strongly typed reactive reader for every control group in `controls` (`docs/decisions/0020-theme-v5.md`).
+ * Strongly typed reactive reader for every control group in `controls` (`docs/theme.md`).
  */
 export function control<K extends keyof ThemeSpec["controls"]>(name: K): ResolvedControlMap[K] {
   const c = activeSpec().controls;
@@ -1070,7 +1152,11 @@ export function control<K extends keyof ThemeSpec["controls"]>(name: K): Resolve
         corner: buttonCorner,
         shade: shadeStyle,
         selected: {
-          style: selFace?.style ?? {},
+          style: {
+            borderColor: "transparent",
+            boxShadow: "none",
+            ...(selFace?.style ?? {}),
+          } satisfies ViewStyle,
           ink: resolveColor(b.selected.ink) ?? colors.primaryForeground,
         },
         secondary: {

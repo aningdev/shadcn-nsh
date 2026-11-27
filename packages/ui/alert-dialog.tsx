@@ -110,50 +110,6 @@ export type AlertDialogDescriptionProps = {
   children?: string;
 };
 
-type AlertAction = { id: string; label: string; role?: AlertDialogRole };
-
-type AlertDialogContextValue = OpenState & {
-  title: () => string | null;
-  description: () => string | null;
-  actions: () => AlertAction[];
-  registerTitle: (text: string | null) => void;
-  registerDescription: (text: string | null) => void;
-  registerAction: (action: AlertAction) => void;
-  forgetAction: (id: string) => void;
-  /** The system's answer: report it, and close. */
-  settle: (action: string | null, value: string | null) => void;
-};
-
-const AlertDialogContext = context<AlertDialogContextValue | null>(null);
-
-function useAlertDialog() {
-  const ctx = AlertDialogContext();
-  if (!ctx) throw new Error("AlertDialog parts must be used within <AlertDialog>");
-  return ctx;
-}
-
-/**
- * The box the platform is showing, if one is: one per process, because the platform shows one at a
- * time — two roots opened together share this key, so the second is not stacked on the first. The
- * answer it resolves with belongs to the app, not to the part that asked for it.
- */
-const onScreen = signal<string | null>(null);
-
-/** What makes a box "the same alert": everything it shows and how it closes. */
-const boxKey = (options: AlertDialogOptions) =>
-  JSON.stringify([
-    options.title,
-    options.description,
-    options.presentation,
-    options.closeOnEscape,
-    options.closeOnBackdropPress,
-    options.input,
-    (options.actions ?? []).map((action) => [action.id, action.label, action.role]),
-  ]);
-
-const sameAction = (a: AlertAction, b: AlertAction) =>
-  a.id === b.id && a.label === b.label && a.role === b.role;
-
 /** The root of an alert's parts: the open state, and what its parts registered to show. */
 export function AlertDialog(props: AlertDialogProps) {
   const state = createOpenState<AlertDialogChangeReason>(props);
@@ -296,3 +252,49 @@ export function AlertDialogDescription(props: AlertDialogDescriptionProps) {
   ctx.registerDescription(props.children ?? null);
   return null;
 }
+
+// Private helpers
+
+type AlertAction = { id: string; label: string; role?: AlertDialogRole };
+
+type AlertDialogContextValue = OpenState & {
+  title: () => string | null;
+  description: () => string | null;
+  actions: () => AlertAction[];
+  registerTitle: (text: string | null) => void;
+  registerDescription: (text: string | null) => void;
+  registerAction: (action: AlertAction) => void;
+  forgetAction: (id: string) => void;
+  /** The system's answer: report it, and close. */
+  settle: (action: string | null, value: string | null) => void;
+};
+
+const AlertDialogContext = context<AlertDialogContextValue | null>(null);
+
+function useAlertDialog() {
+  const ctx = AlertDialogContext();
+  if (!ctx) throw new Error("AlertDialog parts must be used within <AlertDialog>");
+  return ctx;
+}
+
+/**
+ * The box the platform is showing, if one is: one per process, because the platform shows one at a
+ * time — two roots opened together share this key, so the second is not stacked on the first. The
+ * answer it resolves with belongs to the app, not to the part that asked for it.
+ */
+const onScreen = signal<string | null>(null);
+
+/** What makes a box "the same alert": everything it shows and how it closes. */
+const boxKey = (options: AlertDialogOptions) =>
+  JSON.stringify([
+    options.title,
+    options.description,
+    options.presentation,
+    options.closeOnEscape,
+    options.closeOnBackdropPress,
+    options.input,
+    (options.actions ?? []).map((action) => [action.id, action.label, action.role]),
+  ]);
+
+const sameAction = (a: AlertAction, b: AlertAction) =>
+  a.id === b.id && a.label === b.label && a.role === b.role;

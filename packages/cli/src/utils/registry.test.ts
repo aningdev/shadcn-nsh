@@ -42,6 +42,8 @@ fs.writeFileSync(
   'import { defineTheme } from "../../schema";\nimport { base } from "../nsh-gallery";\nexport default defineTheme({ base });\n',
 );
 fs.writeFileSync(path.join(dir, "themed.tsx"), 'import { colors } from "@shadcn-nsh/theme";\n');
+fs.writeFileSync(path.join(dir, "relative.tsx"), 'import { colors } from "../theme";\n');
+fs.writeFileSync(path.join(dir, "lib/deeper.tsx"), 'import { colors } from "../../theme";\n');
 
 const picker = {
   name: "picker",
@@ -199,5 +201,52 @@ describe("checkRegistryDependencies", () => {
       items: [libraryTheme, neutralTheme, { ...themed, registryDependencies: ["theme"] }],
     };
     expect(await checkRegistryDependencies(declared, dir)).toEqual([]);
+  });
+
+  test("a relative theme import is the build-time theme's", async () => {
+    const relative = {
+      name: "relative",
+      type: "registry:ui" as const,
+      files: [{ path: "relative.tsx", type: "registry:ui" as const }],
+    };
+    const deeper = {
+      name: "deeper",
+      type: "registry:lib" as const,
+      files: [{ path: "lib/deeper.tsx", type: "registry:lib" as const }],
+    };
+    const undeclared: Registry = {
+      name: "t",
+      homepage: "",
+      items: [libraryTheme, relative, deeper],
+    };
+    expect(await checkRegistryDependencies(undeclared, dir)).toEqual([
+      'relative: imports "theme" but does not declare it',
+      'deeper: imports "theme" but does not declare it',
+    ]);
+
+    const declared: Registry = {
+      ...undeclared,
+      items: [
+        libraryTheme,
+        { ...relative, registryDependencies: ["theme"] },
+        { ...deeper, registryDependencies: ["theme"] },
+      ],
+    };
+    expect(await checkRegistryDependencies(declared, dir)).toEqual([]);
+  });
+
+  test("a relative theme import is ignored when the registry ships no theme", async () => {
+    const registry: Registry = {
+      name: "t",
+      homepage: "",
+      items: [
+        {
+          name: "relative",
+          type: "registry:ui",
+          files: [{ path: "relative.tsx", type: "registry:ui" }],
+        },
+      ],
+    };
+    expect(await checkRegistryDependencies(registry, dir)).toEqual([]);
   });
 });

@@ -4,7 +4,7 @@ import { mount, Text, View } from "nsh";
 import materialTheme from "../../../packages/theme/themes/material/index";
 import { nshGallery } from "../../../packages/theme/themes/nsh-gallery/index";
 import winuiTheme from "../../../packages/theme/themes/winui/index";
-import { Button, inputLook } from "../../../packages/ui";
+import { Button, fieldLook } from "../../../packages/ui";
 
 /** The value as the string NSH writes: a style's colour keeps `{ animated }` in its type. */
 const css = (value: unknown) => value as string;
@@ -27,7 +27,7 @@ const fieldCorners = () => ({
 });
 
 function frameLine() {
-  const look = inputLook();
+  const look = fieldLook();
   const s = look.style;
   const f = look.focusWithinStyle;
   return [
@@ -48,8 +48,8 @@ function App() {
       <Text testID="modal">{`modal:${css(surface("modal").style.borderColor)}`}</Text>
       <Text testID="tooltip">{`tooltip:${css(surface("inverse").style.backgroundColor)}`}</Text>
       <Text testID="inverse-fill">{`inverse-fill:${css(surface("inverse").style.backgroundColor)}`}</Text>
-      <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>
-      <Text testID="stroke">{`stroke:${"borderBottomColor" in { ...surface("inset").style }}|${inputLook().style.borderBottomColor === surface("inset").style.borderBottomColor}|${surface("inset").style.borderBottomColor !== surface("inset").style.borderColor}`}</Text>
+      <Text testID="field">{`field:${fieldLook().style.borderBottomWidth ?? fieldLook().style.borderWidth}|${fieldLook().style.borderTopWidth ?? fieldLook().style.borderWidth}`}</Text>
+      <Text testID="stroke">{`stroke:${"borderBottomColor" in { ...surface("inset").style }}|${fieldLook().style.borderBottomColor === surface("inset").style.borderBottomColor}|${surface("inset").style.borderBottomColor !== surface("inset").style.borderColor}`}</Text>
       <Text testID="frame">{`frame:${frameLine()}`}</Text>
       <Text testID="corners">{`corners:${fieldCorners().borderBottomLeftRadius}|${fieldCorners().borderTopLeftRadius}`}</Text>
       <Button onPress={() => selectTheme(materialTheme)}>Material</Button>

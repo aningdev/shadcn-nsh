@@ -44,10 +44,10 @@ A verdict tints every cell of the whole code.
 <OtpInput length={6} value="000000" tone="destructive" />
 ```
 
-### The look alone
+### A verdict that changes
 
 ```tsx
-<OtpInput length={6} {...otpCellLook({ tone: () => verdict() })} />
+<OtpInput length={6} tone={() => verdict()} />
 ```
 
 ## API

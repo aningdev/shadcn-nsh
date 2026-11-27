@@ -1,11 +1,11 @@
-import { currentTheme, selectTheme, shape } from "@shadcn-nsh/theme";
+import { currentTheme, rounded, selectTheme, shape } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
-import { Button, dialogCard } from "../../../packages/ui";
+import { Button } from "../../../packages/ui";
 
 /**
- * Simulates a host override of `radius-modal` through `selectTheme` (which calls `setTheme`):
+ * Simulates a host override of `radius-xl` through `selectTheme` (which calls `setTheme`):
  * the spec's `shape.modal` reads the compiled `theme.json`, so the corner reaches components on
  * the next frame without editing the theme's own tokens.
  */
@@ -19,7 +19,7 @@ const hostOverridden = {
       ...nshGallery.theme.cssVars,
       theme: {
         ...nshGallery.theme.cssVars?.theme,
-        "radius-modal": "32px",
+        "radius-xl": "32px",
       },
     },
   },
@@ -28,7 +28,7 @@ const hostOverridden = {
 function App() {
   return (
     <View>
-      <Text testID="dialog-radius">{`dialog-radius:${dialogCard().borderRadius}`}</Text>
+      <Text testID="dialog-radius">{`dialog-radius:${rounded(shape.modal).borderRadius}`}</Text>
       <Text testID="shape-modal">{`shape-modal:${shape.modal}`}</Text>
       <Text testID="sample">Sample</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>

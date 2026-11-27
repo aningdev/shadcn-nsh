@@ -1,15 +1,16 @@
-# @shadcn-nsh/website
+# Website
 
-[中文](./README.zh.md)
+TanStack Start + Fumadocs 的静态文档站。页面写安装、用法、示例，以及样式层增加的 props。行为与完整的 `nsh/base` API 链到 [nsh.dev](https://nsh.dev/elements)。
 
-TanStack Start + Fumadocs docs site for the copy-into-app components, built to a static site. Each page covers installation, usage, examples and the props the styled layer adds; behavior and the full `nsh/base` API deep-link to [nsh.dev](https://nsh.dev/elements).
+页面在 `content/docs/`，由 `src/routes/docs/$.tsx` 渲染。组件页的章节次序见 [`docs/component-authoring.md`](../../docs/component-authoring.md#文档页)。`src/lib/official.ts` 与 `demos/palettes.ts` 生成的行不手写。
 
 ```sh
-bun run dev:docs      # vite dev on :4321
-bun run check:docs    # tsc --noEmit
-bun run check:pages   # registry ↔ pages ↔ demos, sections, import names
-bun run docs:demos    # package the demos into public/demos for the previews
-bun run build:docs    # nsh:bootstrap + docs:demos + build → .output/public
+bun run dev:docs         # vite dev，:4321
+bun run check:pages      # registry ↔ 页面 ↔ 演示
+bun run check:docs
+bun run docs:components
+bun run docs:demos
+bun run build:docs
 ```
 
-Pages live in `content/docs/` and are served by `src/routes/docs/$.tsx`; the site is served at the root of its domain, so internal links are plain absolute paths. Authoring rules and the page contract: [`AGENTS.md`](./AGENTS.md). The component list is generated from `registry.json` and the pages — `bun run docs:components`; see `src/lib/components.generated.ts`.
+`DOCS_BASE` 决定站点根：发布为 `/`，`main` 为 `/dev/`。代码里的站点路径过 `sitePath()`。

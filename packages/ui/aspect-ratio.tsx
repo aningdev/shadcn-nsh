@@ -11,18 +11,9 @@ import { split, View } from "nsh";
 export type AspectRatioValue = NonNullable<ViewStyle["aspectRatio"]>;
 
 /**
- * An aspect ratio's look, after shadcn/ui's (Radix's `AspectRatio`): as wide as its column, its
- * height that width over the ratio, and its content clipped to the box. Spread it on a `View` of
- * your own.
- */
-export function aspectRatioLook(ratio: AspectRatioValue = 1): ViewStyle {
-  return { aspectRatio: ratio, width: "100%", overflow: "hidden" };
-}
-
-/**
- * An aspect ratio's props. Besides `ratio`, every `nsh` view prop passes through (`style`,
- * `accessibilityLabel`, `onPress`, …); `style` goes over the look's — a caller's own width, corners
- * or fill replace the look's, so the box keeps its ratio inside them.
+ * An aspect ratio's props. Besides `ratio`, every `nsh` view prop passes through (`class`,
+ * `classList`, `style`, `accessibilityLabel`, `onPress`, …); `style` goes over the look's — a
+ * caller's own width, corners or fill replace the look's, so the box keeps its ratio inside them.
  */
 export type AspectRatioProps = ViewProps & {
   /** Width over height. Default `1`, a square. */
@@ -36,10 +27,25 @@ export type AspectRatioProps = ViewProps & {
  * color block — so a box of pictures holds the same shape on every screen.
  */
 export function AspectRatio(props: AspectRatioProps) {
-  const [, rest] = split(props, ["ratio", "style"]);
+  const [, rest] = split(props, ["ratio", "children", "class", "classList", "style"]);
   return (
-    <View {...rest} style={[aspectRatioLook(props.ratio), props.style ?? null]}>
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[aspectRatioLook(props.ratio), props.style ?? null]}
+    >
       {props.children}
     </View>
   );
+}
+
+// Private helpers
+
+/**
+ * An aspect ratio's look, after shadcn/ui's (Radix's `AspectRatio`): as wide as its column, its
+ * height that width over the ratio, and its content clipped to the box.
+ */
+function aspectRatioLook(ratio: AspectRatioValue = 1): ViewStyle {
+  return { aspectRatio: ratio, width: "100%", overflow: "hidden" };
 }

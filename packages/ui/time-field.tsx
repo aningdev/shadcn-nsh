@@ -5,9 +5,8 @@ import { split } from "nsh";
 import { TimeField as BaseTimeField, type TimeFieldProps as BaseTimeFieldProps } from "nsh/base";
 
 import { calendarLook, TimeSegment } from "./calendar";
-import { timeFieldLook } from "./input";
-
-export { timeFieldClass, timeFieldLook } from "./input";
+import { timeFieldLook } from "./lib/field-look";
+import { joinClass } from "./lib/utils";
 
 /**
  * `nsh/base`'s TimeField in the look of `timeFieldLook`, its segments and its `:` the ones of the
@@ -34,12 +33,10 @@ export function TimeField(props: TimeFieldProps) {
     "renderSegment",
   ]);
   const look = timeFieldLook({ disabled: () => !!props.disabled });
-  const cls = () =>
-    look.class ? (props.class ? `${look.class} ${props.class}` : look.class) : props.class;
   return (
     <BaseTimeField
       {...rest}
-      class={cls()}
+      class={joinClass(look.class, props.class)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       focusWithinStyle={[look.focusWithinStyle, props.focusWithinStyle ?? null]}

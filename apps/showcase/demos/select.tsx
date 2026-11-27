@@ -411,7 +411,7 @@ export function SelectDemo() {
             style={{
               flexDirection: "row",
               alignItems: "center",
-              gap: 4,
+              gap: 8,
               justifyContent: "flex-end",
             }}
           >

@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,effects,paradigm,base,preset,theme}.ts).",
+      "description": "Theme v5 tokens (theme.json), agent design specification (DESIGN.md), and TypeScript runtime modules (lib/ui/{schema,materials,effects,paradigm,base,preset,terminal-metrics,theme}.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -47,6 +47,11 @@
           "path": "packages/theme/preset.ts",
           "type": "registry:lib",
           "target": "lib/ui/preset.ts"
+        },
+        {
+          "path": "packages/theme/terminal-metrics.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/terminal-metrics.ts"
         },
         {
           "path": "packages/theme/theme.ts",
@@ -266,12 +271,27 @@
       ]
     },
     {
+      "name": "choice",
+      "type": "registry:lib",
+      "title": "Choice",
+      "description": "The well, edge, press, fill and tile a checkbox and a radio share.",
+      "dependencies": [],
+      "registryDependencies": ["motion", "theme", "utils"],
+      "files": [
+        {
+          "path": "packages/ui/lib/choice.tsx",
+          "type": "registry:lib",
+          "target": "lib/ui/choice.tsx"
+        }
+      ]
+    },
+    {
       "name": "field-look",
       "type": "registry:lib",
       "title": "Field frame",
-      "description": "The shared frame of every text-input control: corners, edges, resting line and focus ring.",
+      "description": "The shared frame, well, text, size and time-field classes every text-input control reads.",
       "dependencies": [],
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/lib/field-look.ts",
@@ -284,8 +304,7 @@
       "name": "icons",
       "type": "registry:lib",
       "title": "Icons",
-      "description": "Lucide icon rendering (`Icon`, `IconLabel`, `CheckMark`) and SVG data URL helper (`iconImage`).",
-      "dependencies": ["lucide@^1.66.0"],
+      "description": "Built-in UI icon nodes (lucide-compatible `IconNode`) plus `Icon`, `IconLabel`, `CheckMark` and `iconImage`.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -330,7 +349,6 @@
       "type": "registry:lib",
       "title": "Listbox",
       "description": "Shared popup listbox look, option rows, chevron, clear button and search filter.",
-      "dependencies": ["lucide@^1.66.0"],
       "registryDependencies": ["field-look", "icons", "popup", "surface", "theme"],
       "files": [
         {
@@ -372,7 +390,7 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A button, an icon button, a round button, and a split button.",
+      "description": "A button, an icon button, and a round button.",
       "registryDependencies": ["icons", "motion", "spinner", "theme", "utils"],
       "files": [
         {
@@ -380,8 +398,7 @@
           "type": "registry:ui",
           "target": "components/ui/button.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "switch",
@@ -430,22 +447,21 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "A sunk box that fills in citrus, with a check or a dash springing in.",
-      "registryDependencies": ["icons", "motion", "theme", "utils"],
+      "registryDependencies": ["choice", "icons", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/checkbox.tsx",
           "type": "registry:ui",
           "target": "components/ui/checkbox.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "radio-group",
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "A sunk ring that fills in citrus, with a dot growing in \u2014 alone or as a choice tile.",
-      "registryDependencies": ["checkbox", "theme", "utils"],
+      "registryDependencies": ["choice", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",
@@ -466,15 +482,14 @@
           "type": "registry:ui",
           "target": "components/ui/toolbar.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "input",
       "type": "registry:ui",
       "title": "Input",
       "description": "A text field \u2014 sunk, ghost, multiline, masked, or invalid.",
-      "registryDependencies": ["field-look", "motion", "theme", "utils"],
+      "registryDependencies": ["field-look", "motion", "utils"],
       "files": [
         {
           "path": "packages/ui/input.tsx",
@@ -488,22 +503,21 @@
       "type": "registry:ui",
       "title": "Number Input",
       "description": "A sunk number field with \u2212 / + or stacked chevron steppers.",
-      "registryDependencies": ["field-look", "icons", "input", "theme", "utils"],
+      "registryDependencies": ["field-look", "icons", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/number-input.tsx",
           "type": "registry:ui",
           "target": "components/ui/number-input.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "otp-input",
       "type": "registry:ui",
       "title": "OTP Input",
       "description": "One-time code cells that lift out of sunk wells as digits fill in.",
-      "registryDependencies": ["field-look", "input", "motion", "theme", "utils"],
+      "registryDependencies": ["field-look", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/otp-input.tsx",
@@ -517,7 +531,7 @@
       "type": "registry:ui",
       "title": "Time Field",
       "description": "A sunk well for a time of day, one segment at a time.",
-      "registryDependencies": ["calendar", "input"],
+      "registryDependencies": ["calendar", "field-look", "utils"],
       "files": [
         {
           "path": "packages/ui/time-field.tsx",
@@ -587,8 +601,7 @@
       "type": "registry:ui",
       "title": "Toast",
       "description": "A raised banner, and a toaster: toast(), update and dismiss on nsh/base's queue.",
-      "registryDependencies": ["button", "icons", "motion", "spinner", "theme"],
-      "dependencies": ["lucide@^1.66.0"],
+      "registryDependencies": ["button", "icons", "motion", "spinner", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/toast.tsx",
@@ -623,15 +636,14 @@
           "type": "registry:ui",
           "target": "components/ui/menu.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "context-menu",
       "type": "registry:ui",
       "title": "Context Menu",
       "description": "A menu at the pointer, on the shared menu look.",
-      "registryDependencies": ["menu", "state"],
+      "registryDependencies": ["menu", "state", "utils"],
       "files": [
         {
           "path": "packages/ui/context-menu.tsx",
@@ -648,7 +660,6 @@
       "registryDependencies": [
         "field-look",
         "icons",
-        "input",
         "listbox",
         "state",
         "surface",
@@ -661,8 +672,7 @@
           "type": "registry:ui",
           "target": "components/ui/select.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "combobox",
@@ -673,7 +683,6 @@
         "button",
         "field-look",
         "icons",
-        "input",
         "listbox",
         "state",
         "surface",
@@ -686,23 +695,21 @@
           "type": "registry:ui",
           "target": "components/ui/combobox.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "calendar",
       "type": "registry:ui",
       "title": "Calendar",
       "description": "A month of days to pick a date or a range, on the shared calendar look.",
-      "registryDependencies": ["icons", "input", "surface", "theme"],
+      "registryDependencies": ["field-look", "icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/calendar.tsx",
           "type": "registry:ui",
           "target": "components/ui/calendar.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "date-picker",
@@ -711,7 +718,8 @@
       "description": "A calendar in a popup from a field trigger, on the shared listbox look.",
       "registryDependencies": [
         "calendar",
-        "input",
+        "field-look",
+        "icons",
         "listbox",
         "popup",
         "select",
@@ -725,8 +733,7 @@
           "type": "registry:ui",
           "target": "components/ui/date-picker.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "tabs",
@@ -740,8 +747,7 @@
           "type": "registry:ui",
           "target": "components/ui/tabs.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "segmented",
@@ -770,15 +776,14 @@
           "type": "registry:ui",
           "target": "components/ui/accordion.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "collapsible",
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "A disclosure row that reveals a panel beneath it.",
-      "registryDependencies": ["accordion", "state", "surface"],
+      "registryDependencies": ["accordion", "state", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",
@@ -799,23 +804,21 @@
           "type": "registry:ui",
           "target": "components/ui/carousel.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "link",
       "type": "registry:ui",
       "title": "Link",
       "description": "A text link with underline motion, on the shared nav look.",
-      "registryDependencies": ["icons", "theme"],
+      "registryDependencies": ["icons", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/link.tsx",
           "type": "registry:ui",
           "target": "components/ui/link.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "pagination",
@@ -829,8 +832,7 @@
           "type": "registry:ui",
           "target": "components/ui/pagination.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "progress",
@@ -942,8 +944,7 @@
           "type": "registry:ui",
           "target": "components/ui/tree.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "command",
@@ -957,8 +958,7 @@
           "type": "registry:ui",
           "target": "components/ui/command.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "scrollbar",
@@ -1028,8 +1028,7 @@
           "type": "registry:ui",
           "target": "components/ui/diff-view.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "text-view",
@@ -1050,15 +1049,14 @@
       "type": "registry:ui",
       "title": "Emoji picker",
       "description": "Gallery look for nsh/base EmojiPicker: tabs, search, tones and preview.",
-      "registryDependencies": ["icons", "theme"],
+      "registryDependencies": ["icons", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/emoji-picker.tsx",
           "type": "registry:ui",
           "target": "components/ui/emoji-picker.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "rich-editor",
@@ -1089,7 +1087,6 @@
         "toggle",
         "utils"
       ],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/editor.tsx",
@@ -1105,14 +1102,15 @@
       "description": "Area, sliders, joined fields, swatches, and popover trigger.",
       "registryDependencies": [
         "button",
+        "field-look",
         "icons",
-        "input",
         "menu",
         "popover",
         "popup",
         "select",
         "state",
-        "theme"
+        "theme",
+        "utils"
       ],
       "files": [
         {
@@ -1120,8 +1118,7 @@
           "type": "registry:ui",
           "target": "components/ui/color-picker.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "card",
@@ -1282,7 +1279,7 @@
       "type": "registry:ui",
       "title": "InputGroup",
       "description": "A field's frame around an input and what sits beside it \u2014 an icon, a unit, a button.",
-      "registryDependencies": ["button", "input", "theme", "utils"],
+      "registryDependencies": ["button", "field-look", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/input-group.tsx",
@@ -1297,7 +1294,6 @@
       "title": "Breadcrumb",
       "description": "The trail from the app's root to the page it shows: links a chevron parts, the page itself last.",
       "registryDependencies": ["icons", "theme", "utils"],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/breadcrumb.tsx",
@@ -1360,8 +1356,7 @@
           "type": "registry:ui",
           "target": "components/ui/marker.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "bubble",
@@ -1417,8 +1412,7 @@
           "type": "registry:ui",
           "target": "components/ui/message-scroller.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "navigation-menu",
@@ -1426,7 +1420,6 @@
       "title": "NavigationMenu",
       "description": "A row of triggers, each opening a panel of anything under the bar \u2014 one at a time.",
       "registryDependencies": ["icons", "motion", "popup", "state", "theme", "utils"],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/navigation-menu.tsx",
@@ -1453,7 +1446,6 @@
         "tooltip",
         "utils"
       ],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/sidebar.tsx",
@@ -1488,8 +1480,7 @@
           "type": "registry:ui",
           "target": "components/ui/nav-stack.tsx"
         }
-      ],
-      "dependencies": ["lucide@^1.66.0"]
+      ]
     },
     {
       "name": "split-view",
@@ -1497,7 +1488,6 @@
       "title": "SplitView",
       "description": "Columns of navigation stacks, with the column header and the sidebar button in the theme's look.",
       "registryDependencies": ["icons", "theme"],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/split-view.tsx",
@@ -1512,7 +1502,6 @@
       "title": "CodeBlock",
       "description": "Code, a command's output or a log in a block, with a title, a copy button, line numbers and a footer.",
       "registryDependencies": ["button", "icons", "state", "surface", "theme", "utils"],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/code-block.tsx",
@@ -1527,7 +1516,6 @@
       "title": "ImageViewer",
       "description": "One image full screen over a dimmed ground, fitted, with pinch to zoom, drag to pan and swipe down to close.",
       "registryDependencies": ["button", "dialog", "icons", "popup", "theme"],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/image-viewer.tsx",
@@ -1542,7 +1530,6 @@
       "title": "Trace",
       "description": "An agent's steps, one line each: reasoning, a tool call, a source, a failed step. A line can open onto what it did.",
       "registryDependencies": ["collapsible", "icons", "spinner", "state", "theme", "utils"],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/trace.tsx",
@@ -1557,7 +1544,6 @@
       "title": "RefreshIndicator",
       "description": "The round chip a pull to refresh draws over a scroll view, traveling in with the pull and spinning while it refreshes.",
       "registryDependencies": ["icons", "spinner", "theme"],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/refresh-indicator.tsx",
@@ -1572,7 +1558,6 @@
       "title": "TitleBar",
       "description": "The bar that drags a desktop window, the window buttons a frameless one draws for itself, and the edges that resize it.",
       "registryDependencies": ["icons", "theme", "utils"],
-      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/title-bar.tsx",

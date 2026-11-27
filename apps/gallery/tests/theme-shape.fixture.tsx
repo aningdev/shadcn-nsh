@@ -11,11 +11,13 @@ import {
   selectTheme,
   shape,
   stroke,
+  surface,
+  surfaceBorderWidth,
 } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
-import { Button, buttonLabel, buttonLook, dialogCard, inputLook } from "../../../packages/ui";
+import { Button, buttonLabel, buttonLook, fieldFrame } from "../../../packages/ui";
 
 /** A temporary theme with other corner roles, control heights, line widths and fades. */
 const reshaped = defineTheme({
@@ -54,8 +56,8 @@ function App() {
   return (
     <View>
       <Text>{`roles=${shape.control}|${shape.container}|${shape.modal}|${buttonCorner("default")}`}</Text>
-      <Text>{`dialog=${dialogCard().borderRadius}|${dialogCard().borderWidth}`}</Text>
-      <Text>{`field=${inputLook().style.borderRadius}|${inputLook().style.borderWidth}`}</Text>
+      <Text>{`dialog=${rounded(shape.modal).borderRadius}|${surfaceBorderWidth(surface("modal").style.borderColor as string | undefined)}`}</Text>
+      <Text>{`field=${fieldFrame(undefined).borderRadius}|${fieldFrame(undefined).borderWidth}`}</Text>
       <Text>{`concentric=${rounded(shape.control, 3).borderRadius}|${rounded(shape.control, 99).borderRadius}`}</Text>
       <Text>{`button=${button.style.height}|${button.style.borderRadius}|${button.style.borderWidth}`}</Text>
       <Text>{`fade=${feedback.disabled.contentOpacity}|${feedback.passive.pressedOpacity}|${String(activeSpec().feedback.disabled.replaceFace)}`}</Text>

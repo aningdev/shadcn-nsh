@@ -1,9 +1,8 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, feedback, follow, press, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
-import { split, View } from "nsh";
+import { reduceMotion, split, View } from "nsh";
 import {
   Radio as BaseRadio,
   RadioGroup as BaseRadioGroup,
@@ -11,6 +10,7 @@ import {
   type RadioProps as BaseRadioProps,
 } from "nsh/base";
 
+import { colors, feedback, follow, motion, press, terminal, TERMINAL_ROW } from "../theme";
 import {
   ChoiceLight,
   choiceEdge,
@@ -20,76 +20,14 @@ import {
   choiceTileLook,
   choiceWell,
   type ChoiceSize,
-} from "./checkbox";
+} from "./lib/choice";
+import { cssMotion } from "./lib/motion";
 import { AsText, joinClass } from "./lib/utils";
-
-/**
- * A radio's ring, among the `Radio`'s children (give the radio `class="group"`, so the ring
- * responds to row hover/press): outer diameter, dot diameter, stroke, interior well, whether the
- * face turns over or the ring stays a ring, and its mark all come from the theme's choice recipe
- * (`control("choice")`), read here so the ring follows `selectTheme`.
- */
-export function RadioRing(props: { on: boolean; scale?: number; disabled?: boolean }) {
-  const scale = props.scale ?? 1;
-  const look = () => choiceLook();
-  const size = () => Math.round(look().box * scale);
-  const height = () => (terminal ? TERMINAL_ROW : size());
-  /** The dot: the mark the theme draws inside the ring, at this tier. */
-  const dot = () => Math.round(look().mark * scale);
-  const border = () => choiceEdge(look());
-  /** A theme that leaves the box empty draws its mark as the ring itself, and keeps the edge while on. */
-  const ringOnly = () => look().radioCheckedStyle === null;
-  const wellStyle = () => choiceWell({ look: look(), disabled: props.disabled });
-  const ringBorderColor = () => {
-    if (props.on && !ringOnly() && !props.disabled) return "transparent";
-    if (ringOnly() && props.on) return colors.primary;
-    return wellStyle().borderColor ?? colors.border;
-  };
-  const on = follow(() => (props.on ? 1 : 0));
-  const dotStyle = (): ViewStyle => ({
-    width: dot(),
-    height: dot(),
-    borderRadius: dot() / 2,
-    backgroundColor: ringOnly() ? colors.primary : colors.primaryForeground,
-    opacity: on,
-    transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
-  });
-  return (
-    <View
-      class={press.scale < 1 ? choiceSink : undefined}
-      style={{
-        width: size(),
-        height: height(),
-        borderRadius: size() / 2,
-        alignItems: "center",
-        justifyContent: "center",
-        borderWidth: border(),
-        ...wellStyle(),
-        borderColor: ringBorderColor(),
-      }}
-    >
-      {look().radioCheckedStyle === null ? null : (
-        <ChoiceLight
-          on={on}
-          radius={size() / 2}
-          border={border()}
-          fill={look().radioCheckedStyle}
-        />
-      )}
-      <View style={dotStyle()} />
-    </View>
-  );
-}
 
 /**
  * `nsh/base`'s RadioGroup. Every base prop passes through.
  */
 export type RadioGroupProps = BaseRadioGroupProps;
-
-/** A radio group's root. The app owns which option is checked. */
-export function RadioGroup(props: RadioGroupProps) {
-  return <BaseRadioGroup {...props} />;
-}
 
 /** A radio's variants: `default` a sunk ring, `tile` the whole surface the control. */
 export type RadioVariant = "default" | "tile";
@@ -114,6 +52,11 @@ export type RadioProps = Omit<BaseRadioProps, "children"> & {
    * radio's name for screen readers, unless `accessibilityLabel` says otherwise. */
   children?: string | JSX.Element;
 };
+
+/** A radio group's root. The app owns which option is checked. */
+export function RadioGroup(props: RadioGroupProps) {
+  return <BaseRadioGroup {...props} />;
+}
 
 /** One option in a `RadioGroup` (shadcn `RadioGroupItem`). The ring sits ahead of the label. */
 export function Radio(props: RadioProps) {
@@ -162,3 +105,77 @@ export function Radio(props: RadioProps) {
 
 /** shadcn name for {@link Radio}. */
 export const RadioGroupItem = Radio;
+
+/**
+ * A radio's ring, among the `Radio`'s children (give the radio `class="group"`, so the ring
+ * responds to row hover/press): outer diameter, dot diameter, stroke, interior well, whether the
+ * face turns over or the ring stays a ring, and its mark all come from the theme's choice recipe
+ * (`control("choice")`), read here so the ring follows `selectTheme`.
+ */
+export function RadioRing(props: { on: boolean; scale?: number; disabled?: boolean }) {
+  const scale = props.scale ?? 1;
+  const look = () => choiceLook();
+  const size = () => Math.round(look().box * scale);
+  const height = () => terminalRingHeight(size());
+  /** The dot: the mark the theme draws inside the ring, at this tier. */
+  const dot = () => Math.round(look().mark * scale);
+  const border = () => choiceEdge(look());
+  /** A theme that leaves the box empty draws its mark as the ring itself, and keeps the edge while on. */
+  const ringOnly = () => look().radioCheckedStyle === null;
+  const wellStyle = () => choiceWell({ look: look(), disabled: props.disabled });
+  const ringBorderColor = () => {
+    if (props.on && !ringOnly() && !props.disabled) return "transparent";
+    if (ringOnly() && props.on) return colors.primary;
+    return wellStyle().borderColor ?? colors.border;
+  };
+  const on = follow(() => (props.on ? 1 : 0));
+  const glide = motion.indicatorGlide;
+  const ringMotion: ViewStyle =
+    glide.spring && !reduceMotion()
+      ? {
+          transitionProperty: "background-color, border-color, box-shadow",
+          ...cssMotion(glide.timing, glide.spring),
+        }
+      : {};
+  const dotStyle = (): ViewStyle => ({
+    width: dot(),
+    height: dot(),
+    borderRadius: dot() / 2,
+    backgroundColor: ringOnly() ? colors.primary : colors.primaryForeground,
+    opacity: on,
+    transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
+  });
+  return (
+    <View
+      class={press.scale < 1 ? choiceSink : undefined}
+      style={{
+        width: size(),
+        height: height(),
+        borderRadius: size() / 2,
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: border(),
+        ...wellStyle(),
+        borderColor: ringBorderColor(),
+        ...ringMotion,
+      }}
+    >
+      {look().radioCheckedStyle === null ? null : (
+        <ChoiceLight
+          on={on}
+          radius={size() / 2}
+          border={border()}
+          fill={look().radioCheckedStyle}
+        />
+      )}
+      <View style={dotStyle()} />
+    </View>
+  );
+}
+
+// Terminal
+
+/** A ring is one character row tall in the terminal. Elsewhere it is the choice box. */
+function terminalRingHeight(box: number): number {
+  return terminal ? TERMINAL_ROW : box;
+}

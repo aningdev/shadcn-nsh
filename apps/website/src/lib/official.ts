@@ -1,16 +1,15 @@
 /**
- * Where a component can come from, and where each official one went here: shadcn/ui's
- * `registry/bases/base/ui/<id>.tsx` and NSH's `website/elements/<id>.md`.
+ * Where a component can come from, and where each official one went here: a shadcn/ui
+ * component (https://ui.shadcn.com/docs/components) and an NSH element (https://nsh.dev/elements).
  *
  * One row per official component, named by the page's file name. `ours` lists the pages here that
  * serve it (first closest, a renamed one shows the rename), and a row with nothing serving it
  * says why in `status` and `note`. One page may serve several rows: `input` is shadcn's `input`,
- * and its `textarea` — one field, multiline. The components index, each page's header links and
- * `/docs/components/coverage` read these tables; nothing there is written by hand.
+ * and its `textarea` — one field, multiline. The components index and each page's header links
+ * read these tables; nothing there is written by hand.
  *
- * `bun run check:pages` fails when `references/` has an official component with no row, when a row
- * names a page that does not exist, and when a row serves nothing without saying why. A `planned`
- * row starts linking the day its page lands.
+ * `bun run check:pages` fails when a row names a page that does not exist, and when a row serves
+ * nothing without saying why. A `planned` row starts linking the day its page lands.
  */
 export type OfficialStatus = "planned" | "missing" | "not-doing" | "primitive";
 
@@ -21,7 +20,7 @@ export type OfficialEntry = {
   ours: readonly string[];
   /** Why nothing serves it; absent when `ours` is not empty. */
   status?: OfficialStatus;
-  /** One line on the coverage page; required when `ours` is empty. */
+  /** Why nothing serves it, in one line; required when `ours` is empty. */
   note?: string;
 };
 
@@ -33,8 +32,7 @@ export const shadcnUrl = (id: string): string => `https://ui.shadcn.com/docs/com
 export const nshElementUrl = (id: string): string => `https://nsh.dev/elements/${id}`;
 
 /**
- * shadcn/ui's components. Every file of `references/shadcn-ui/apps/v4/registry/bases/base/ui` is
- * one row, in file order.
+ * shadcn/ui's components, one row each, in the order of that set.
  */
 export const SHADCN_UI: readonly OfficialEntry[] = [
   { id: "accordion", ours: ["accordion"] },
@@ -128,7 +126,7 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
   { id: "accordion", group: "base", ours: ["accordion"] },
   { id: "alert-dialog", group: "base", ours: ["alert-dialog"] },
   { id: "avatar", group: "base", ours: ["avatar"] },
-  { id: "button", group: "base", ours: ["button", "pressable"] },
+  { id: "button", group: "base", ours: ["button"] },
   { id: "calendar", group: "base", ours: ["calendar"] },
   { id: "carousel", group: "base", ours: ["carousel"] },
   { id: "checkbox", group: "base", ours: ["checkbox"] },
@@ -274,14 +272,6 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
     note: "No wrapper: `nsh` WebView.",
   },
 ];
-
-/** What a row is on the coverage page: its status, or covered once a page serves it. */
-export type OfficialState = "covered" | OfficialStatus;
-
-export function stateOf(entry: OfficialEntry, pages: ReadonlySet<string>): OfficialState {
-  if (entry.ours.some((slug) => pages.has(slug))) return "covered";
-  return entry.status ?? "missing";
-}
 
 /**
  * The shadcn/ui component a page stands in for, when one does. Several rows may name one page

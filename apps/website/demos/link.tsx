@@ -2,10 +2,11 @@
 // breadcrumbs whose current page is the route last opened, a paragraph with two links in it, a
 // site outside the app with its arrow, and an archived page that takes no press; the route and
 // what the app heard beside them.
+import { font } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { Link, linkSize } from "@/packages/ui/link";
+import { Link } from "@/packages/ui/link";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, ui } from "./stage";
@@ -51,7 +52,7 @@ function App() {
   const crumb = (href: string, label: string) => (
     <DocLink href={href} label={label} current={route() === href} />
   );
-  const slash = () => <Text style={{ color: ui().faint, fontSize: linkSize }}>/</Text>;
+  const slash = () => <Text style={{ color: ui().faint, fontSize: font.size("body") }}>/</Text>;
   return (
     <DemoPage title="Link">
       <Text style={{ color: ui().muted }}>

@@ -7,7 +7,6 @@
     ".": "./index.ts"
   },
   "dependencies": {
-    "@shadcn-nsh/theme": "workspace:*",
-    "lucide": "1.75.0"
+    "@shadcn-nsh/theme": "workspace:*"
   }
 }

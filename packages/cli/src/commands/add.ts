@@ -24,9 +24,8 @@ export type AddOptions = {
 /**
  * Copy `components` (and `--all`, every `registry:ui` item) into the app, dependencies first.
  *
- * Files the app has changed are kept unless `--overwrite`; a `theme.json` or `semantics.json` that
- * only lacks keys is merged. Naming a theme item (`add theme-shadcn`) installs one more theme: its
- * files land in
+ * Files the app has changed are kept unless `--overwrite`; a `theme.json` that only lacks keys is
+ * merged. Naming a theme item (`add theme-shadcn`) installs one more theme: its files land in
  * `themes/<name>/` for `selectTheme` to switch to while the app runs, and the app's build-time
  * theme (`nsh-ui.json`'s `theme`, what `nsh.json` points at) stays what it is — that is
  * `init --theme <name> --overwrite`. A component's `theme` dependency still resolves to the

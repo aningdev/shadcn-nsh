@@ -75,12 +75,12 @@ AlertDialog
 
 `AlertDialog` asks one question and waits for the answer; `Dialog` is the app's own card.
 
-|                            | `AlertDialog`               | `Dialog`                                  |
-| -------------------------- | --------------------------- | ----------------------------------------- |
-| Who draws it               | the platform                | the app, with `dialogCard` and `backdrop` |
-| What it holds              | a title, a message, buttons | any content (fields, lists, pictures)     |
-| Does it follow the theme   | no                          | yes                                       |
-| Escape, backdrop and swipe | off (`closeOn*` props)      | on                                        |
+|                            | `AlertDialog`               | `Dialog`                              |
+| -------------------------- | --------------------------- | ------------------------------------- |
+| Who draws it               | the platform                | the app, with its card and `backdrop` |
+| What it holds              | a title, a message, buttons | any content (fields, lists, pictures) |
+| Does it follow the theme   | no                          | yes                                   |
+| Escape, backdrop and swipe | off (`closeOn*` props)      | on                                    |
 
 Use `Dialog` when the box needs content of the app's own or the app's look; use `AlertDialog` when
 it is a yes/no question the system should ask.

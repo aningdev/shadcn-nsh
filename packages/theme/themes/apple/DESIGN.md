@@ -1,13 +1,13 @@
 ---
 version: alpha
 name: Apple
-description: "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and Liquid Glass on floating and raised surfaces."
+description: "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader."
 colors:
   scrim: "#00000066"
   media: "#10131a"
   on-media: "#ffffff"
   light:
-    background: "#f2f2f7"
+    background: "#ffffff"
     card: "#ffffff"
     popover: "#ffffff"
     muted: "#e9e9eb"
@@ -161,19 +161,19 @@ components:
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   menu-popover:
-    backgroundColor: "#ffffffb8"
+    backgroundColor: "#ffffffad"
     textColor: "{colors.light.foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.card}"
+    backgroundColor: "#ffffffc7"
     textColor: "{colors.light.foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
-    backgroundColor: "#ffffffb8"
+    backgroundColor: "#ffffffb3"
     textColor: "{colors.light.foreground}"
     typography: "{typography.detail}"
     rounded: "{rounded.container}"
@@ -183,11 +183,11 @@ components:
 
 ## Overview
 
-Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and Liquid Glass on floating and raised surfaces.
+Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader.
 
 ## Colors
 
-- **`background`**: light `#f2f2f7`, dark `#000000`
+- **`background`**: light `#ffffff`, dark `#000000`
 - **`card`**: light `#ffffff`, dark `#1c1c1e`
 - **`popover`**: light `#ffffff`, dark `#2c2c2e`
 - **`muted`**: light `#e9e9eb`, dark `#323236`
@@ -211,7 +211,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 
 ## Typography
 
-- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).
+- `theme.json` writes `font-sans: system-ui` and `font-mono: monospace`.
 - **`caption`**: 11px / 16px, weight 400, letter-spacing 0px
 - **`detail`**: 12px / 16px, weight 400, letter-spacing 0px
 - **`body`**: 13px / 20px, weight 400, letter-spacing 0px
@@ -226,15 +226,15 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 
 ## Elevation & Depth
 
-Apple Liquid Glass and Retina hairline depth: `glass`, `overlay`, `inverse`, and `raised` finishes request `material: "glass"`.
+Apple Liquid Glass depth: `raised` (regular / thin, blur 24), `overlay` (regular / regular, blur 30, liquid-glass 0.42), `modal` (regular / thick, blur 36, liquid-glass 0.30), `inverse` (regular / regular, blur 28, liquid-glass 0.36), and `glass` (clear / ultraThin, blur 26, liquid-glass 0.50). Each fill stays at or above its material minOpacity; `macos.backdrop` is omitted so NSGlassEffectView renders natively on macOS 26+. Motion uses snappy, smooth, and bouncy springs.
 
 ## Shapes
 
-- Radii: control 8px, container 12px, modal 16px (`curve: "continuous"`).
+- Radii: `radius-md` (control) 8px, `radius-lg` (container) 12px, `radius-xl` (modal) 16px; A-layer `radius` equals `radius-md` (`curve: "continuous"`).
 
 ## Motion & Micro-interaction
 
-- Press scale: `1`, state transition: 120ms `out-cubic`, spring `340/30/1`, theme switch: `dissolve` (240ms).
+- Press scale: `0.97`, state transition: 120ms `out-cubic`, spring `360/30/1`, theme switch: `dissolve` (240ms).
 
 ## Voice & Content Strategy
 

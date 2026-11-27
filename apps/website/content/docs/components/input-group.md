@@ -232,6 +232,8 @@ and Shift-Return breaks the line under a keyboard (`submitBehavior="submit"` on 
 touch screen Return breaks the line, and the button sends.
 
 ```tsx
+import { grownFieldHeight } from "@/components/ui/lib/field-look";
+
 const message = signal("");
 const grown = signal(0);
 const replying = signal(false);
@@ -317,7 +319,7 @@ let search: InputRef | undefined;
 
 ### The look alone
 
-`inputGroupLook` is the frame's props and `inputGroupControlLook` the control's, for a `nsh/base` control of your own; `inputGroupAddonLook` and `inputGroupTextLook` are the addon's and its text's. This is what the reference page draws, and what `InputGroup` wraps.
+`inputGroupLook` is the frame's props and `inputGroupControlLook` the control's, for a `nsh/base` control of your own. This is what `InputGroup` wraps.
 
 ```tsx
 <View {...inputGroupLook({ invalid: true, style: { borderRadius: 22, padding: 6 } })}>

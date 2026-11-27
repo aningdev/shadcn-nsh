@@ -7,7 +7,7 @@ import { Button, buttonLook, numberInputClasses } from "../../../packages/ui";
 function App() {
   return (
     <View>
-      <Text testID="token">{`token:${token("radius-control")}`}</Text>
+      <Text testID="token">{`token:${token("radius-md")}`}</Text>
       <Text testID="class">{`class:${numberInputClasses.frame}`}</Text>
       <Text testID="style">{`style:${buttonLook("secondary").style.borderRadius}`}</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>

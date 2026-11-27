@@ -114,6 +114,13 @@ describe("validateThemeInvariants", () => {
       expect.stringContaining("damping ratio zeta="),
     );
 
+    const wildBouncy = patch({
+      motion: { springs: { bouncy: { stiffness: 600, damping: 10, mass: 1 } } },
+    });
+    expect(validateThemeInvariants(wildBouncy)).toContainEqual(
+      expect.stringContaining("motion.springs.bouncy damping ratio zeta="),
+    );
+
     const invertedDurations = patch({
       motion: {
         fast: { duration: 250, easing: "out-cubic" },

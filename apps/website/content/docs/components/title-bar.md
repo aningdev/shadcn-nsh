@@ -25,8 +25,9 @@ import {
 ```
 
 A desktop window with `titleBar: { style: "hidden" }` keeps the system's window buttons and leaves
-the rest of the bar to the app: `TitleBar` draws it, drags the window, and pads its children clear
-of the buttons (`titleBar()`'s `left` and `right`).
+the rest of the bar to the app: `TitleBar` builds on `nsh/base`'s `TitleBar` to draw the bar, drag
+the window, double click to zoom or maximize, and keep its children clear of the system buttons
+automatically across split panes and full-screen transitions.
 
 ```tsx
 <TitleBar>
@@ -73,10 +74,11 @@ lights turn grey while the window is in the background.
 ### Caption buttons
 
 Windows' and Linux's buttons are cells at the trailing end of the bar, filling its height.
-They sit flush against the window's corner, so the bar's trailing padding goes to zero:
+They sit flush against the window's corner, so the inner content row's trailing padding goes to
+zero while keeping `TitleBar`'s own automatic window-control inset intact:
 
 ```tsx
-<TitleBar style={{ paddingEnd: 0 }}>
+<TitleBar contentStyle={{ paddingEnd: 0 }}>
   <Text style={{ flex: 1 }}>Notes.nsh</Text>
   <WindowControls variant="caption" />
 </TitleBar>
@@ -86,9 +88,9 @@ They sit flush against the window's corner, so the bar's trailing padding goes t
 
 The three parts are the shapes the platforms draw; an app that wants its own draws the same
 `desktop` views itself, and the platform still carries out the press. A round close button
-(`Icon` from `lib/ui/icons`, `lightInk` from `lib/ui/title-bar`, `X` from `lucide`; the
-traffic lights keep macOS's own hues whatever the theme, so the disc's colour is written out
-rather than read from a role):
+(`Icon` from `lib/ui/icons`, `X` from `lucide`; the traffic lights keep macOS's own hues
+whatever the theme, so the disc's colour is written out rather than read from a role, and the
+glyph on a light is black at half):
 
 ```tsx
 <View
@@ -104,7 +106,7 @@ rather than read from a role):
   }}
   hoverStyle={{ backgroundColor: "#FF5F57" }}
 >
-  <Icon icon={X} size={12} tint={lightInk} />
+  <Icon icon={X} size={12} />
 </View>
 ```
 
@@ -113,22 +115,22 @@ A bar of the app's own takes `desktop={{ windowDrag: true }}` to drag the window
 
 ## API
 
-| Part                | Props                                                               | Description                                 |
-| ------------------- | ------------------------------------------------------------------- | ------------------------------------------- |
-| `TitleBar`          | every `nsh` View prop; look `titleBarLook().root()`                 | The bar that drags the window               |
-| `WindowControls`    | `variant`; every `nsh` View prop; look `titleBarLook().controls(…)` | The window's own buttons                    |
-| `WindowResizeEdges` | look `titleBarLook().resize(edge)`                                  | The edges and corners of a frameless window |
+| Part                | Props                                                                                                                               | Description                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `TitleBar`          | every [`nsh/base` TitleBar](https://nsh.dev/elements/title-bar) prop; `style` over the outer bar; `contentStyle` over the inner row | The bar that drags the window               |
+| `WindowControls`    | `variant`; every `nsh` View prop; `style` over the controls                                                                         | The window's own buttons                    |
+| `WindowResizeEdges` |                                                                                                                                     | The edges and corners of a frameless window |
 
-Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all three, and `style`
-goes over the look's on `TitleBar` and `WindowControls`.
+`TitleBar` wraps [`nsh/base` TitleBar](https://nsh.dev/elements/title-bar); pass inner padding on `contentStyle` rather than `style` so the automatic window-control padding is preserved. Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `WindowControls` and `WindowResizeEdges`, and `style` goes over the look's on `WindowControls`.
 
-| Prop      | Type                            | Default          |
-| --------- | ------------------------------- | ---------------- |
-| `variant` | `"traffic-lights" \| "caption"` | `traffic-lights` |
+| Prop           | Type                            | Default          |
+| -------------- | ------------------------------- | ---------------- |
+| `contentStyle` | `StyleProp<ViewStyle>`          | `undefined`      |
+| `variant`      | `"traffic-lights" \| "caption"` | `traffic-lights` |
 
-`TitleBar` is `TITLE_BAR_HEIGHT` (40 points) tall, or the height the system's title bar has, on
+`TitleBar` is at least `TITLE_BAR_HEIGHT` (40 points) tall, or the height the system's title bar has, on
 the inset fill with a hairline under it; its children start `12` points after the system's buttons.
-A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in macOS's own close, minimize and zoom hues wherever the theme goes (`lightTone`, with glyphs in `lightInk` and the disc's `lightEdge`), and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
+A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in macOS's own close, minimize and zoom hues wherever the theme goes, with glyphs in black at half and a hairline of black at an eighth around the disc, and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
 washes the destructive tint while the pointer is on it. `WindowResizeEdges` draws eight strips —
 `5` points along the edges, `12` at the corners — as the last child of the window's root.
-`titleBarLook()` is exported for a bar the app lays out itself.
+A bar the app lays out itself takes `desktop={{ windowDrag: true }}` and pads by `titleBar().left` and `titleBar().right`.

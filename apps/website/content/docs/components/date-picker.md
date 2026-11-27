@@ -93,4 +93,4 @@ Without a value the trigger shows `placeholder` (default "Pick a date") muted.
 `testID` finds the trigger in UI tests, and `accessibilityLabel` names it when the
 content does not name the field. The root owns the open flag and the value;
 `DatePickerContent` mounts [`nsh/base` DatePicker](https://nsh.dev/elements/date-picker)
-and every base prop passes through except those. `datePickerLook` fills the popup, the scrim, the calendar and the time's row by default.
+and every base prop passes through except those. The date picker's look fills the popup, the scrim, the calendar and the time's row by default.

@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Material
-description: "Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, and M3 easing curves."
+description: "Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, M3 easing curves, and spatial vs. effects springs (`snappy`, `smooth`, `bouncy`)."
 colors:
   scrim: "#00000052"
   media: "#10131a"
@@ -24,9 +24,9 @@ colors:
     line: "#cac4d0"
     input: "#79747e"
     ring: "#625b71"
-    info: "#1e63d2"
-    success: "#138a5a"
-    warning: "#b26a00"
+    info: "#0b57d0"
+    success: "#146c2e"
+    warning: "#8f4e00"
     destructive: "#b3261e"
   dark:
     background: "#141218"
@@ -46,9 +46,9 @@ colors:
     line: "#49454f"
     input: "#938f99"
     ring: "#ccc2dc"
-    info: "#81b3fc"
-    success: "#45d49a"
-    warning: "#ffb547"
+    info: "#a8c7fa"
+    success: "#6dd58c"
+    warning: "#ffb951"
     destructive: "#f2b8b5"
 typography:
   caption:
@@ -183,7 +183,7 @@ components:
 
 ## Overview
 
-Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, and M3 easing curves.
+Material 3 Expressive (`material-web` / Compose M3) with tonal surface containers, state-layer overlays, M3 easing curves, and spatial vs. effects springs (`snappy`, `smooth`, `bouncy`).
 
 ## Colors
 
@@ -204,14 +204,14 @@ Material 3 Expressive (`material-web` / Compose M3) with tonal surface container
 - **`line`**: light `#cac4d0`, dark `#49454f`
 - **`input`**: light `#79747e`, dark `#938f99`
 - **`ring`**: light `#625b71`, dark `#ccc2dc`
-- **`info`**: light `#1e63d2`, dark `#81b3fc`
-- **`success`**: light `#138a5a`, dark `#45d49a`
-- **`warning`**: light `#b26a00`, dark `#ffb547`
+- **`info`**: light `#0b57d0`, dark `#a8c7fa`
+- **`success`**: light `#146c2e`, dark `#6dd58c`
+- **`warning`**: light `#8f4e00`, dark `#ffb951`
 - **`destructive`**: light `#b3261e`, dark `#f2b8b5`
 
 ## Typography
 
-- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).
+- `theme.json` writes `font-sans: system-ui` and `font-mono: monospace`.
 - **`caption`**: 11px / 16px, weight 500, letter-spacing 0.5px
 - **`detail`**: 12px / 16px, weight 400, letter-spacing 0.4px
 - **`body`**: 13px / 20px, weight 400, letter-spacing 0.25px
@@ -230,7 +230,7 @@ Tonal surface stepping plus Material Web Level 1–3 shadows and Android native 
 
 ## Shapes
 
-- Radii: control 4px, container 12px, modal 28px (`curve: "circular"`).
+- Radii: `radius-md` (control) 4px, `radius-lg` (container) 12px, `radius-xl` (modal) 28px; A-layer `radius` equals `radius-md` (`curve: "circular"`).
 
 ## Motion & Micro-interaction
 

@@ -2,92 +2,97 @@
 
 [中文](./README.zh.md)
 
-Styled UI for [Native Shell (NSH)](https://github.com/longbridge/nsh), built on `nsh/base` and handed to your app as files you own: components, a theme, and a registry to copy them from — the shape [shadcn/ui](https://github.com/shadcn-ui/ui) gives React.
+Styled UI for [Native Shell (NSH)](https://github.com/longbridge/nsh), built on `nsh/base` and delivered with zero third-party runtime dependencies. Use it either as a **TSX `nshm`** (`nsh add`) or as **copy-into-app** files via the CLI — the model [shadcn/ui](https://github.com/shadcn-ui/ui) brings to React, adapted for native phone, desktop, web, and terminal surfaces.
 
-Docs, every component with its props and a live demo: **https://shadcn-nsh.aning.dev/**
+Docs, live previews, and API reference: **https://shadcn-nsh.aning.dev/**
 
-- **Copy-into-app.** `add` writes the component, its theme and the shared looks it imports into your app, then forgets them: no runtime package of ours, nothing to keep in sync.
-- **The appearance is data.** Components read colours, radii and surfaces from `theme.json` and `semantics.json` — never from literals — so a theme swaps the whole look.
-- **Native where it matters.** Behaviour, accessibility and platform idioms come from `nsh/base`; the shells only decide how they look, and adapt to phone, desktop and the terminal.
+- **Data-driven appearance.** Components read colors, radii, surfaces, control slots, and motion from the theme layer — never hardcoded literals — so switching a theme transforms the entire UI.
+- **Native behavior where it matters.** Interaction, keyboard navigation, and accessibility live in `nsh/base`; each component adds styled shells that adapt automatically across pointer, touch, and terminal tiers.
+- **Design architecture.** See the [Architecture guide](https://shadcn-nsh.aning.dev/docs/architecture) (and [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)) for how `nsh/base`, the 3-layer theme system, and component shells fit together.
 
-## Quick start
+## Built-in themes
+
+Six themes ship out of the box, plus a `native` preset (`nativeTheme()`) that selects `apple`, `material`, or `winui` from `platform.os` at runtime:
+
+| Theme         | Character                                                                                      | Reference                                                                                          | Details                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `nsh-gallery` | Default palette: graphite surfaces, citrus accent, 8pt controls                                | [NSH Gallery](https://github.com/longbridge/nsh)                                                   | [`packages/theme/themes/nsh-gallery`](packages/theme/themes/nsh-gallery)     |
+| `shadcn`      | Neutral black-and-white palette and flat surfaces                                              | [shadcn/ui](https://ui.shadcn.com/)                                                                | [`packages/theme/themes/shadcn`](packages/theme/themes/shadcn)               |
+| `solid-glass` | Smoky glass panes, specular top rims, soft springs                                             | [Solid Glass](https://github.com/deeplethe/solid-glass)                                            | [`packages/theme/themes/solid-glass`](packages/theme/themes/solid-glass)     |
+| `apple`       | Liquid Glass surfaces, system colors, continuous corners (`ios` / `macos`)                     | [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) | [`packages/theme/themes/apple`](packages/theme/themes/apple/README.md)       |
+| `material`    | Tonal surfaces, capsule controls, circular corners, 8/10/10% state layers (`android`)          | [Material Design 3](https://m3.material.io/)                                                       | [`packages/theme/themes/material`](packages/theme/themes/material/README.md) |
+| `winui`       | Fluent 2 acrylic layers, 4/8pt circular corners, double focus rings, damped motion (`windows`) | [Windows App Design](https://learn.microsoft.com/windows/apps/design/)                             | [`packages/theme/themes/winui`](packages/theme/themes/winui/README.md)       |
+
+> **Style-inspired, not 1:1 native clones.** Each built-in theme distills the colors, corners, surface materials, and motion cadence of its design language onto shared `nsh/base` controls rather than replicating every platform widget pixel-for-pixel. Exact mappings and deliberate trade-offs are documented in each theme's README.
+
+### Custom themes
+
+Derive your own theme cleanly with `defineTheme({ extends: base, ... })` (colors, layer radii, surfaces, or control slots) and apply it at runtime with `selectTheme()`, or override tokens in `theme.json` and export W3C DTCG 2025.10 files and `DESIGN.md`. See the [Customizing guide](https://shadcn-nsh.aning.dev/docs/customizing) and [`docs/theme.md`](docs/theme.md).
+
+## Usage
+
+Choose whichever distribution workflow fits your project — both run from the same component source.
+
+### Option 1: TSX `nshm` (zero npm dependencies)
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Button } from "shadcn-nsh";
+import { selectTheme } from "shadcn-nsh/theme";
+import apple from "shadcn-nsh/themes/apple";
+
+selectTheme(apple);
+```
+
+NSH resolves imports straight from the module with no `node_modules` required. Components bundle their built-in UI icons (`IconNode`-compatible with external `lucide` icons). Use `selectTheme()` to switch built-in themes at run time; if you also want build-time Tailwind tokens such as `bg-surface` or `rounded-(--radius-md)` in your app's own views, install a `theme.json` with the CLI below.
+
+### Option 2: Copy-into-app CLI
 
 Your app needs `nsh.json` (from `nsh init`):
 
 ```sh
-npx shadcn-nsh init                 # nsh-ui.json, the theme, nsh.json pointed at it, the @/ alias
-npx shadcn-nsh add button           # one item, with the files it depends on
-npx shadcn-nsh add --all            # every component
+npx shadcn-nsh@latest init                 # writes nsh-ui.json, installs theme.json + reader, sets up @/
+npx shadcn-nsh@latest init --theme apple   # or start with any built-in theme
+npx shadcn-nsh@latest add button           # copies component source + shared lib dependencies
+npx shadcn-nsh@latest add theme-material   # adds another theme to switch with selectTheme()
 ```
 
-`init` records the choice in `nsh-ui.json`, installs the theme at `theme.json` + `lib/ui/semantics.json` + `lib/ui/theme.ts` alongside standalone `light.tokens.json`, `dark.tokens.json` (W3C DTCG 2025.10 files describing the shipped theme for Figma Variables Light/Dark modes, Tokens Studio, and Style Dictionary v4) and `DESIGN.md` (an agent-readable specification of the theme's tokens and design rationale; static snapshots that do not follow later edits to `theme.json`), points each `nsh.json` at `theme.json`, and sets up the `@/` import alias in an app (`"@/*": ["./*"]` in `tsconfig.json`'s paths, `"resolve": { "alias": { "@": "./" } }` in `nsh.json`) so the docs' snippets — `@/components/ui/<name>`, `@/lib/ui/theme` — resolve; `add` copies files and installs the packages an item declares (`lucide` among them) with your package manager. From then on the files are yours to change.
-
-`list`, `view` and `diff` inspect the registry without writing: `npx shadcn-nsh list`, `view button`, `diff` (exits 1 when the app's copies differ). Every command takes `-c <dir>`, `add` also `--dry-run` and `--overwrite`. The [CLI reference](https://shadcn-nsh.aning.dev/docs/cli) has the flags and defaults.
-
-## Themes
-
-The library's own theme comes with `init`. Two more ship as themes:
-
-```sh
-npx shadcn-nsh init --theme shadcn                      # built with shadcn's neutral palette
-npx shadcn-nsh add theme-apple                    # one more theme to switch to at run time
-```
-
-`init --theme <nsh-gallery|shadcn|solid-glass|apple|material|winui|native>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, semantics and the switching example: [themes](https://shadcn-nsh.aning.dev/docs/themes) and [`docs/specs/design-semantics.md`](docs/specs/design-semantics.md).
-
-## Registry
-
-`init`, `add`, `list`, `view` and `diff` read the registry published with the release your CLI came from:
-
-`https://raw.githubusercontent.com/aningdev/shadcn-nsh/v<version>/public/r/{name}.json`
-
-So `shadcn-nsh@0.7.0` reads `v0.7.0`'s registry: the files match the CLI you are running, and a new release never changes an installed app's source. `--registry <template>` (with `{name}` in it) points them anywhere else — a branch, a local `serve`, a fork.
+Copied files belong entirely to your app. Built-in UI icons are included automatically without forcing a `lucide` install, while any app-level custom icons imported from `lucide` pass directly to `<Button icon={...} />`. Inspect or compare local copies anytime with `list`, `view <name>`, and `diff`. Each CLI version reads from its matching release tag (`v<version>/public/r/{name}.json`). See the [CLI reference](https://shadcn-nsh.aning.dev/docs/cli).
 
 ## Compatibility
 
-Each release of this library tracks one NSH CLI version; installing a newer CLI does not make an older library wrong, it only means its components were written against what that CLI's `nsh/base` had.
+Each release tracks one NSH CLI version against which its components and `nsh/base` props were checked:
 
 | shadcn-nsh | NSH CLI |
 | ---------- | ------- |
-| 0.11.x     | v0.7.1  |
+| 0.11.x     | v0.7.2  |
 | 0.10.x     | v0.6.1  |
 | 0.9.x      | v0.6.1  |
 | 0.8.x      | v0.6.0  |
 | 0.7.x      | v0.5.1  |
 | 0.6.x      | v0.5.1  |
 
-## Community
+## Developing in this repo
 
-- Contributing — development setup, checks before a pull request, commit format: [`CONTRIBUTING.md`](CONTRIBUTING.md).
-- How the project is put together, and the rules the code keeps: [`AGENTS.md`](AGENTS.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), vocabulary in [`docs/GLOSSARY.md`](docs/GLOSSARY.md).
-- Security reports: [`SECURITY.md`](SECURITY.md).
-- Licence: MIT, with the parts adapted from NSH under Apache-2.0 and the Solid Glass theme's MIT text — [`NOTICE`](NOTICE), [`LICENSE`](LICENSE).
-
-## Develop in this repo
-
-Bun and the NSH CLI (installed, never built), then:
+Requires Bun and the [NSH CLI](https://nsh.dev/) (see `engines.nsh` in [`package.json`](package.json)):
 
 ```sh
-git submodule update --init --recursive
 bun install
-bun run nsh:bootstrap   # checks the CLI and references/nsh against the baseline, writes each .nsh
-bun run dev:docs        # the docs site
-bun run check           # what CI runs, in one command
+bun run prepare:types
+bun run dev:docs
+bun run check
 ```
 
-[`CONTRIBUTING.md`](CONTRIBUTING.md) has the full setup, the checks a change must pass and how to port a component.
+Contribution workflow and architecture rules: [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-## Layout
+## Acknowledgments and license
 
-| Path                         | Package / role        | Notes                                                                                                                                                                                                              |
-| ---------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/theme`             | `@shadcn-nsh/theme`   | `theme.json`, `semantics.json`, `{light,dark}.tokens.json`, `DESIGN.md`, `theme.ts` — base tokens + semantic layer (ours; `oklch()`); `themes/<name>/` is another theme's data, shipped as its `theme-<name>` item |
-| `packages/ui`                | `@shadcn-nsh/ui`      | one file per component: a look + shell (files that started upstream carry a credit line)                                                                                                                           |
-| `apps/website/demos`         | —                     | acceptance demos, reference pages, `port:render`                                                                                                                                                                   |
-| `apps/website/content/docs`  | —                     | docs pages (`/docs/…`), rendered by `src/routes/docs/$.tsx`                                                                                                                                                        |
-| `apps/gallery`               | `@shadcn-nsh/gallery` | native behavior tests and smoke pages                                                                                                                                                                              |
-| `packages/cli`               | `shadcn-nsh` (npm)    | `init` / `add` / `list` / `view` / `diff` / `build` / `serve`                                                                                                                                                      |
-| `registry.json` → `public/r` | —                     | registry source → committed HTTP artifacts                                                                                                                                                                         |
-| `scripts/port`               | —                     | `port:new` / `port:vendor` / `port:check` / `port:review` / `port:render` / `port:bump`                                                                                                                            |
-| `port-map.json`              | —                     | where every upstream file and declaration goes                                                                                                                                                                     |
-| `references/`                | —                     | read-only submodules: the upstream baseline, the shadcn reference                                                                                                                                                  |
+- Built on [Native Shell (NSH)](https://github.com/longbridge/nsh) and `nsh/base`; adapted look origins from `nsh-gallery-ui` retain Apache License 2.0 (see [`NOTICE`](NOTICE)).
+- Distribution model, registry schema, and composition conventions inspired by [shadcn/ui](https://github.com/shadcn-ui/ui).
+- `solid-glass` palette and surface finishes derived from [Solid Glass](https://github.com/deeplethe/solid-glass) (MIT License).
+- Built-in UI icon paths derived from [Lucide](https://lucide.dev/) (ISC License; parts from Feather, MIT License).
+
+This repository is licensed under the **MIT License** — see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).

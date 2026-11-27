@@ -2,10 +2,12 @@
   "name": "Solid Glass",
   "cssVars": {
     "theme": {
+      "font-sans": "system-ui",
+      "font-mono": "monospace",
       "radius": "11px",
-      "radius-control": "11px",
-      "radius-container": "14px",
-      "radius-modal": "20px",
+      "radius-md": "11px",
+      "radius-lg": "14px",
+      "radius-xl": "20px",
       "scrim": "oklch(0 0 0 / 0.5)",
       "media": "oklch(0.1869 0.0151 266.766)",
       "on-media": "oklch(1 0 0)"

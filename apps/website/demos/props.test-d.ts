@@ -1,5 +1,5 @@
 /**
- * P5: every shell keeps the base props it claims to pass through. A missing base prop is a
+ * Every shell keeps the base props it claims to pass through. A missing base prop is a
  * type error here, caught by `nsh check apps/website/demos`.
  *
  * Each assertion names, on purpose, the base props the shell does not carry: they are on the
@@ -176,7 +176,6 @@ import type {
   SliderProps,
   SplitViewProps,
   SplitViewColumnProps,
-  SplitButtonSegmentProps,
   SwitchProps,
   TableBodyProps,
   TableCaptionProps,
@@ -256,8 +255,6 @@ type _roundButton = Assert<
     never
   >
 >;
-/** `SplitButtonSegmentProps`. */
-type _splitButtonSegment = Assert<KeepsBase<BaseButtonProps, SplitButtonSegmentProps, never>>;
 /** `CalendarProps`. */
 type _calendar = Assert<KeepsBase<BaseCalendarProps, CalendarProps, never>>;
 /** `CarouselProps`. */
@@ -578,10 +575,9 @@ const _itemLg: ItemSize = "lg";
 const _mediaAvatar: ItemMediaVariant = "avatar";
 
 /**
- * The values and props 0.3 dropped are not accepted: there are no aliases
- * (`docs/specs/api-unify.md` §6.2), so the compiler points at the call site and the call site
- * names the new word. Every line below fails without its `@ts-expect-error`, which is the
- * assertion.
+ * The values and props 0.3 dropped are not accepted: there are no aliases, so the compiler points
+ * at the call site and the call site names the new word. Every line below fails without its
+ * `@ts-expect-error`, which is the assertion.
  */
 // @ts-expect-error — `primary` and `accent` are `default`.
 const _droppedVariant: ButtonVariant = "primary";
@@ -676,7 +672,6 @@ export type {
   _button,
   _iconButton,
   _roundButton,
-  _splitButtonSegment,
   _calendar,
   _carousel,
   _carouselContent,

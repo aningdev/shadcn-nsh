@@ -5,7 +5,7 @@ description: 'Author a shadcn-nsh Theme v5 theme from the L1 ThemeParadigm axes,
 
 # Theme designer
 
-Author a theme in three layers. Read `docs/theme-design.md` before changing one. The numbers `expandParadigm` writes live in `packages/theme/paradigm.ts`. `scripts/theme/invariants.ts` is what rejects a theme.
+Author a theme in three layers. Read `docs/theme.md` before changing one. The numbers `expandParadigm` writes live in `packages/theme/paradigm.ts`. `scripts/theme/invariants.ts` is what rejects a theme.
 
 Do not branch on `theme.id`. Do not put color literals in `packages/ui` or demos. Read `colors.*`, `tints.*`, `chart.*`, or `surface()` inside a reactive JSX thunk or style callback. A component body runs once.
 
@@ -53,26 +53,29 @@ Merge order: extended theme, then `expandParadigm(paradigm)`, then the call's ow
 
 21 `CorePalette` keys, per appearance: `background`, `card`, `popover`, `muted`, `surface`, `foreground`, `muted-foreground`, `faint`, `primary`, `primary-foreground`, `secondary`, `accent`, `brand`, `border`, `line`, `input`, `ring`, `info`, `success`, `warning`, `destructive`.
 
-7 shared `theme.json` keys: `radius`, `radius-control`, `radius-container`, `radius-modal`, `scrim`, `media`, `on-media`. Optional `font-sans` / `font-mono`.
+9 shared `theme.json` keys: `font-sans` (default `system-ui`), `font-mono` (default `monospace`), `radius` (equals `radius-md`), `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`. `font.sans` and `font.mono` read the font keys. Set `tokens.font` only to override the defaults.
 
 `brand` defaults to `var(--primary)` when omitted. Replacing `tokens.light` or `tokens.dark` clears inherited `tints` and `chart`; set them in that same patch. `tints.*` and `chart.*` are runtime roles. Never name a color after a component (`button`, `sidebar`, `field`).
 
 ## Materials and shaders
 
-Surface materials: `"glass"`, `"acrylic"`, or a `MaterialSpec` (`kind: "glass" | "acrylic" | "blur"`, optional `blur`, `saturate`, `minOpacity`, `specular`).
+Surface materials: `"glass"`, `"acrylic"`, or a `MaterialSpec` (`kind: "glass" | "acrylic" | "blur"`, optional `glass: "regular" | "clear"`, `ios: IosBackdropMaterial`, `macos: MacOsBackdropSpec`, `blur`, `saturate`, `minOpacity`, `specular`). Note: on macOS 26+, setting an explicit `macos.backdrop` draws `NSVisualEffectView` over `NSGlassEffectView` (`glassEffect`), so themes prioritizing native Liquid Glass omit `macos` and let `backdropFilter` fall back on older macOS.
 
-Surface effects (`SURFACE_SHADERS`): `"liquid-glass"`, `"acrylic-noise"`, `"specular-rim"`, `"paper-grain"`.
+Surface effects (`SURFACE_SHADERS`, transparent optical overlays drawn over host backdrop blur & fill): `"liquid-glass"` (rounded-rect SDF edge lens refraction + chromatic dispersion + top Fresnel sheen + glass rim, center transparent for `NSGlassEffectView`/`backdropFilter`; `maxSampleOffset: 6`), `"acrylic-noise"` (Fluent 2 fine noise grain + 1px top highlight over host acrylic blur/tint; `maxSampleOffset: 0`), `"specular-rim"` (`maxSampleOffset: 0`), `"paper-grain"` (`maxSampleOffset: 0`).
 
 Theme-switch shaders (`TRANSITION_SHADERS`): `"dissolve"`, `"radial-wipe"`.
+
+Motion springs: `motion.spring` plus optional named tiers `motion.springs.{snappy, smooth, bouncy}`. Presets (`popoverEnter`, `dialogEnter`, `indicatorGlide`, `reveal`, `press`) take `spring?: boolean | "snappy" | "smooth" | "bouncy"`. `motion.springCss()` emits native `spring(stiffness, damping)` for CSS transitions.
 
 ```tsx
 <ThemedSurface role="glass">
   <Text>Panel</Text>
 </ThemedSurface>
+<ProgressiveBlur edge="top" />
 <ThemeTransition value={shown()} />
 ```
 
-`<ThemeTransition>` takes `value` (`string | number | boolean`) and an optional `duration`. It has no children. Put it next to the screen it switches. Change `value` in the same press that calls `selectTheme(theme)`.
+`<ProgressiveBlur />` fades a `backdropFilter` off the top or bottom edge via native `maskImage` (terminal renders `null`). `<ThemeTransition>` takes `value` (`string | number | boolean`) and an optional `duration`. It has no children. Put it next to the screen it switches. Change `value` in the same press that calls `selectTheme(theme)`.
 
 ## Invariants
 
@@ -89,9 +92,8 @@ Theme-switch shaders (`TRANSITION_SHADERS`): `"dissolve"`, `"radial-wipe"`.
 - Body text and icons meet WCAG 2.2 AA (`4.5:1`). A selected or hovered fill separates from `background` / `card` / `popover` by OKLCH lightness `>= 0.015`. A platform exception is a `meta.contrastWaivers` entry.
 
 ```sh
-bun run tokens:build
+bun run theme:build
 bun run check:theme
-bun run theme:contrast
 bun run test:unit
 ```
 

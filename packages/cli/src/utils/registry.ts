@@ -18,11 +18,7 @@ export function itemUrl(config: NshUiConfig, name: string, registryOverride?: st
  * (`…/r/{name}.json` → `…/r/index.json`).
  */
 export function indexUrl(config: NshUiConfig, registryOverride?: string) {
-  const template = registryOverride ?? config.registry;
-  if (!template.includes("{name}")) {
-    throw new Error(`Registry URL must contain {name}: ${template}`);
-  }
-  return template.replaceAll("{name}", "index");
+  return itemUrl(config, "index", registryOverride);
 }
 
 export async function fetchItem(
@@ -129,21 +125,35 @@ export async function resolveTree(
   const seen = new Set<string>();
   const out: RegistryItem[] = [];
   const rawCache = new Map<string, RegistryItem>();
+  const inFlight = new Map<string, Promise<RegistryItem>>();
 
-  async function load(name: string): Promise<RegistryItem> {
+  function load(name: string): Promise<RegistryItem> {
     const cached = rawCache.get(name);
-    if (cached) return cached;
-    const fetched = await fetchItem(config, name, registryOverride);
-    rawCache.set(name, fetched);
-    return fetched;
+    if (cached) return Promise.resolve(cached);
+    const pending = inFlight.get(name);
+    if (pending) return pending;
+    const req = fetchItem(config, name, registryOverride)
+      .then((fetched) => {
+        rawCache.set(name, fetched);
+        inFlight.delete(name);
+        return fetched;
+      })
+      .catch((error) => {
+        inFlight.delete(name);
+        throw error;
+      });
+    inFlight.set(name, req);
+    return req;
   }
 
   async function walk(name: string) {
     if (seen.has(name)) return;
     seen.add(name);
     const item = await load(name);
+    const deps = item.registryDependencies ?? [];
     if (name === DEFAULT_THEME && config.theme === NATIVE_THEME) {
-      for (const dep of item.registryDependencies ?? []) await walk(dep);
+      await Promise.all(deps.map(load));
+      for (const dep of deps) await walk(dep);
       out.push(item);
       await walk(config.theme);
       return;
@@ -156,12 +166,14 @@ export async function resolveTree(
       out.push(atBuildTime(chosen, config));
       return;
     }
-    for (const dep of item.registryDependencies ?? []) {
+    await Promise.all(deps.map(load));
+    for (const dep of deps) {
       await walk(dep);
     }
     out.push(isCodeThemeItem(name) ? codeOnly(item) : item);
   }
 
+  await Promise.all(names.map(load));
   for (const name of names) {
     await walk(name);
   }
@@ -169,13 +181,14 @@ export async function resolveTree(
 }
 
 const IMPORT_RE = /(?:import|export)\s[^;]*?from\s+["']([^"']+)["']|import\s+["']([^"']+)["']/g;
-const THEME_PACKAGE = "@shadcn-nsh/theme";
+/** The theme entry, by package name or by the relative path `packages/ui` uses. */
+const THEME_SPECS = new Set(["@shadcn-nsh/theme", "../theme", "../../theme"]);
 const RESOLVE_SUFFIXES = ["", ".ts", ".tsx", ".json", "/index.ts", "/index.tsx"];
 
 /**
  * What the baseline's runtime supplies (`nsh`, `nsh/base`, …): an app is not to install it, so an
  * import of it needs no `dependencies` entry. Every other bare import is a package the app must
- * have, and the item installs it (`lucide` today).
+ * have, and the item installs it.
  */
 const fromRuntime = (spec: string) => spec === "nsh" || spec.startsWith("nsh/");
 
@@ -231,8 +244,13 @@ export async function checkRegistryDependencies(
       const source = await fs.readFile(abs, "utf8");
       for (const match of source.matchAll(IMPORT_RE)) {
         const spec = match[1] ?? match[2];
-        if (spec === THEME_PACKAGE && (hasTheme || themeItems.has(item.name))) {
-          usedSets.push(new Set([themeItems.has(item.name) ? item.name : DEFAULT_THEME]));
+        if (spec == null) continue;
+        // Exact theme entry only. `../theme/theme.json` stays a relative file import.
+        // With no theme item, a relative theme import is ignored, same as the package name.
+        if (THEME_SPECS.has(spec)) {
+          if (hasTheme || themeItems.has(item.name)) {
+            usedSets.push(new Set([themeItems.has(item.name) ? item.name : DEFAULT_THEME]));
+          }
         } else if (spec.startsWith(".")) {
           const beside = file.target
             ? RESOLVE_SUFFIXES.map(
@@ -249,7 +267,7 @@ export async function checkRegistryDependencies(
           else problems.push(`${item.name}: imports "${spec}", which no registry item ships`);
         }
         // A package the app installs: the item says which, and `add` runs the install.
-        else if (spec !== THEME_PACKAGE && !fromRuntime(spec)) packages.add(packageOf(spec));
+        else if (!fromRuntime(spec)) packages.add(packageOf(spec));
       }
     }
     const declared = new Set(item.registryDependencies ?? []);

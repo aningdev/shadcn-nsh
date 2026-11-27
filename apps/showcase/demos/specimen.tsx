@@ -3,6 +3,7 @@
 import {
   activeSpec,
   activeTheme,
+  chart,
   colors,
   defineTheme,
   isDark,
@@ -16,9 +17,10 @@ import { signal, Text, View } from "nsh";
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Checkbox } from "@/packages/ui/checkbox";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/packages/ui/dialog";
 import { Input } from "@/packages/ui/input";
-import { ThemeTransition } from "@/packages/ui/lib/motion";
-import { ThemedSurface } from "@/packages/ui/lib/surface";
+import { ProgressiveBlur, ThemedSurface } from "@/packages/ui/lib/surface";
+import { Popover, PopoverContent, PopoverTrigger } from "@/packages/ui/popover";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Slider } from "@/packages/ui/slider";
 import { Switch } from "@/packages/ui/switch";
@@ -87,17 +89,17 @@ function motionLine(): string {
 
 /** Live theme contract: built-in themes and the Editorial Paper paradigm, read as they switch. */
 export function SpecimenDemo() {
-  const shown = signal(activeTheme().id);
   const title = signal("Morning edition");
   const alerts = signal(true);
   const publish = signal(false);
   const volume = signal(40);
   const column = signal("type");
+  const springOn = signal(true);
+  const glassDialog = signal(false);
 
   return (
     <DemoPage title="Theme Specimen">
       <View style={{ gap: 16 }}>
-        <ThemeTransition value={shown()} />
         <DemoCard title="Themes" subtitle="Six built-in themes and one L1 paradigm">
           <DemoRow>
             <Each of={CHOICES} key="index">
@@ -105,10 +107,7 @@ export function SpecimenDemo() {
                 <Button
                   variant="outline"
                   accessibilityLabel={`Theme ${choice().theme.label}`}
-                  onPress={() => {
-                    shown.set(choice().theme.id);
-                    selectTheme(choice().theme);
-                  }}
+                  onPress={() => selectTheme(choice().theme)}
                 >
                   {choice().name}
                 </Button>
@@ -133,6 +132,134 @@ export function SpecimenDemo() {
               )}
             </Each>
           </DemoRow>
+        </DemoCard>
+        <DemoCard
+          title="Liquid Glass & Physics"
+          subtitle="Clear and regular glass over a saturated plate, with spring controls"
+        >
+          <View
+            style={{
+              position: "relative",
+              borderRadius: shape.container,
+              overflow: "hidden",
+            }}
+          >
+            <View
+              style={{
+                position: "relative",
+                minHeight: 220,
+                padding: 16,
+                justifyContent: "center",
+                backgroundImage: `linear-gradient(120deg, ${chart.chart1} 0%, ${chart.chart3} 34%, ${chart.chart2} 67%, ${chart.chart5} 100%)`,
+              }}
+            >
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  padding: 16,
+                  justifyContent: "space-between",
+                  pointerEvents: "none",
+                }}
+              >
+                <View style={{ flexDirection: "row", gap: 8, height: 34 }}>
+                  <View
+                    style={{ flex: 1, borderRadius: shape.control, backgroundColor: chart.chart4 }}
+                  />
+                  <View
+                    style={{ flex: 1, borderRadius: shape.control, backgroundColor: chart.chart2 }}
+                  />
+                  <View
+                    style={{ flex: 1, borderRadius: shape.control, backgroundColor: chart.chart5 }}
+                  />
+                  <View
+                    style={{ flex: 1, borderRadius: shape.control, backgroundColor: chart.chart1 }}
+                  />
+                </View>
+                <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
+                  <View
+                    style={{
+                      width: 68,
+                      height: 68,
+                      borderRadius: 34,
+                      backgroundColor: chart.chart5,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: 22,
+                      fontWeight: "700",
+                      color: colors.primaryForeground,
+                    }}
+                  >
+                    Refraction · Backdrop · Specular · Vibrancy
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", gap: 8, height: 28 }}>
+                  <View
+                    style={{ flex: 2, borderRadius: shape.control, backgroundColor: chart.chart1 }}
+                  />
+                  <View
+                    style={{ flex: 1, borderRadius: shape.control, backgroundColor: chart.chart4 }}
+                  />
+                  <View
+                    style={{ flex: 2, borderRadius: shape.control, backgroundColor: chart.chart3 }}
+                  />
+                </View>
+              </View>
+              <View style={{ flexDirection: "row", gap: 12 }}>
+                <ThemedSurface
+                  role="glass"
+                  style={{ flex: 1, minHeight: 112, padding: 14, borderRadius: shape.control }}
+                >
+                  <Text style={{ color: colors.foreground, fontWeight: "600" }}>glass clear</Text>
+                </ThemedSurface>
+                <ThemedSurface
+                  role="overlay"
+                  style={{ flex: 1, minHeight: 112, padding: 14, borderRadius: shape.control }}
+                >
+                  <Text style={{ color: colors.foreground, fontWeight: "600" }}>
+                    overlay regular
+                  </Text>
+                </ThemedSurface>
+                <ThemedSurface
+                  role="raised"
+                  style={{ flex: 1, minHeight: 112, padding: 14, borderRadius: shape.control }}
+                >
+                  <Text style={{ color: colors.foreground, fontWeight: "600" }}>raised</Text>
+                </ThemedSurface>
+              </View>
+            </View>
+            <ProgressiveBlur edge="top" />
+          </View>
+          <DemoRow>
+            <Switch
+              checked={springOn()}
+              onChange={({ checked }) => springOn.set(checked)}
+              accessibilityLabel="Spring switch"
+            >
+              Spring
+            </Switch>
+            <Popover>
+              <PopoverTrigger>Popover</PopoverTrigger>
+              <PopoverContent>
+                <Text style={{ color: colors.foreground }}>Spring popover</Text>
+              </PopoverContent>
+            </Popover>
+            <Button accessibilityLabel="Open glass dialog" onPress={() => glassDialog.set(true)}>
+              Dialog
+            </Button>
+          </DemoRow>
+          <Dialog open={glassDialog()} onOpenChange={({ open }) => glassDialog.set(open)}>
+            <DialogContent>
+              <DialogTitle>Liquid Glass</DialogTitle>
+              <DialogDescription>Modal glass with the theme's dialog spring.</DialogDescription>
+            </DialogContent>
+          </Dialog>
         </DemoCard>
         <DemoCard title="Controls" subtitle="The same controls, in the theme just chosen">
           <DemoRow>

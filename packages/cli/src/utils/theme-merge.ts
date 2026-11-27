@@ -9,9 +9,8 @@ const isObject = (value: unknown): value is Json =>
  * (`cssVars.light.brand`, `shape.curve`, `finishes.shared.modal`), which is what `add` reports
  * and `diff` compares.
  *
- * An app that brought its own `theme.json` or customized `semantics.json` keeps its values and
- * gains any tokens, style keys, finish roles, or finish fields the copied theme / `theme.ts`
- * reads that it did not already define.
+ * An app that brought its own `theme.json` keeps its values and gains any tokens that the copied
+ * theme / `theme.ts` reads that it did not already define.
  */
 export function mergeTheme(
   existing: Json,

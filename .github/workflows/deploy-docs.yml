@@ -1,6 +1,6 @@
 name: Deploy docs
 
-# Two docs sites, one Pages site, built from the `site` branch (docs/release.md):
+# Two docs sites, one Pages site, built from the `site` branch (CONTRIBUTING.md, Releasing):
 # the root is the latest `v*` tag — the docs of what `npm i shadcn-nsh` installs — and `/dev/`
 # is `main`. A `main` push rewrites only `dev/`; a `v*` tag rewrites the root and keeps `dev/`.
 #
@@ -12,6 +12,14 @@ on:
   push:
     branches: [main]
     tags: ["v*"]
+    # Repository-only files do not reach the site (its pages are `apps/website/content/docs`), so a
+    # commit touching only them does not rebuild `/dev/`. Path filters are not evaluated for tag
+    # pushes, so a release still publishes whatever it touches.
+    paths-ignore:
+      - "AGENTS.md"
+      - "CONTRIBUTING.md"
+      - ".agents/**"
+      - "apps/gallery/**"
   workflow_dispatch:
     inputs:
       ref:
@@ -31,6 +39,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # `cancel-in-progress: false`: a run that hangs here holds the `pages-docs` group and every
+    # later deploy waits behind it.
+    timeout-minutes: 30
     permissions:
       contents: write # push the build to the `site` branch
       pages: write
@@ -75,29 +86,20 @@ jobs:
             echo "ref=$ref"
           } >> "$GITHUB_OUTPUT"
 
-      # A release is built from its tag's tree: that tree's toolchain (port-map.json's CLI, its
-      # lockfile, its demos) is what the release documents.
+      # A release is built from its tag's tree: that tree's CLI (`engines.nsh`), lockfile
+      # and demos are what the release documents.
       - uses: actions/checkout@v7
         with:
           # Empty for the dev docs: the push's own commit.
           ref: ${{ steps.site.outputs.ref }}
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
-
-      - name: Cache Bun packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-
-      - run: bun install --frozen-lockfile
-
-      - uses: ./.github/actions/setup-nsh
+      - name: Setup
         id: nsh
+        uses: ./.github/actions/setup
         with:
-          channel: ${{ vars.NSH_CHANNEL }}
+          nsh-channel: ${{ vars.NSH_CHANNEL }}
+          # `build:docs` packages the demos with `nsh package --target web`.
+          web: true
 
       # The packaged demos cost minutes; nothing in them depends on the docs base.
       - name: Cache packaged demos
@@ -107,7 +109,7 @@ jobs:
           path: |
             apps/website/public/demos
             apps/website/public/showcase
-          key: demos-showcase-${{ runner.os }}-${{ steps.nsh.outputs.version }}-${{ hashFiles('apps/website/demos/**', '!apps/website/demos/baseline/**', '!apps/website/demos/shots*/**', 'packages/**', '!packages/**/node_modules/**', 'apps/showcase/**', '!apps/showcase/node_modules/**', 'apps/website/scripts/build-demos.ts', 'apps/website/scripts/package-web.ts', 'apps/website/scripts/player-options.ts', 'scripts/catalog.ts', 'bun.lock') }}
+          key: demos-showcase-${{ runner.os }}-${{ steps.nsh.outputs.nsh-version }}-${{ hashFiles('apps/website/demos/**', '!apps/website/demos/shots*/**', 'packages/**', '!packages/**/node_modules/**', 'apps/showcase/**', '!apps/showcase/node_modules/**', 'apps/website/scripts/build-demos.ts', 'apps/website/scripts/package-web.ts', 'apps/website/scripts/player-options.ts', 'scripts/registry/catalog.ts', 'bun.lock') }}
 
       - name: Build docs
         if: steps.demos.outputs.cache-hit != 'true'
@@ -174,6 +176,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       pages: write
       id-token: write

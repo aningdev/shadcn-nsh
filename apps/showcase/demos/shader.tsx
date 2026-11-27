@@ -1,4 +1,4 @@
-import { alpha, colors, focusRing, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, shape, font } from "@shadcn-nsh/theme";
 import {
   Animated,
   cleanup,
@@ -333,7 +333,7 @@ function Ripple() {
                   <Text
                     style={{
                       color: speed() === value() ? colors.onMedia : colors.success,
-                      fontFamily: "monospace",
+                      fontFamily: font.mono,
                       fontSize: 12,
                       fontWeight: speed() === value() ? "700" : "400",
                       opacity: speed() === value() ? 1 : 0.7,

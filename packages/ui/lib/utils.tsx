@@ -88,6 +88,8 @@ export const read = <T,>(v: Live<T> | undefined): T | undefined =>
 /** What `AsText` takes: the `Text` a string child draws in, its class and its style. */
 export type AsTextProps = {
   class?: string;
+  /** Tailwind classes toggled on the text a string or number child draws. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<TextStyle>;
   children?: string | number | JSX.Element;
 };
@@ -98,20 +100,25 @@ export type AsTextProps = {
  * that changes, `{label()}` among other children) is followed the same way where it is drawn;
  * anything else (an element) is drawn as given.
  */
-function draw(kids: JSX.Element, textClass?: string, style?: StyleProp<TextStyle>): JSX.Element {
+function draw(
+  kids: JSX.Element,
+  textClass?: string,
+  style?: StyleProp<TextStyle>,
+  classList?: Record<string, boolean | null | undefined>,
+): JSX.Element {
   if (typeof kids === "string" || typeof kids === "number") {
     return (
-      <Text class={textClass} style={style}>
+      <Text class={textClass} classList={classList} style={style}>
         {kids}
       </Text>
     );
   }
   if (Array.isArray(kids)) {
-    return kids.map((kid) => draw(kid, textClass, style));
+    return kids.map((kid) => draw(kid, textClass, style, classList));
   }
   if (typeof kids === "function") {
     const getter = kids as () => JSX.Element;
-    return () => draw(getter(), textClass, style);
+    return () => draw(getter(), textClass, style, classList);
   }
   return kids;
 }
@@ -134,7 +141,7 @@ export function AsText(props: AsTextProps) {
       {(() => {
         // Read once, here where the children are drawn: each string or number becomes text,
         // anything else stays as it is.
-        return draw(props.children, props.class, props.style);
+        return draw(props.children, props.class, props.style, props.classList);
       })()}
     </>
   );

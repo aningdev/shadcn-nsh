@@ -1,0 +1,38 @@
+// A {{id}}: the look (`{{lookFn}}`, `{{textFn}}`) and the `{{Id}}` that wears it, on `nsh`'s own
+// View and Text.
+import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
+import { split, Text, View } from "nsh";
+
+import { colors } from "../theme";
+
+/**
+ * A {{id}}'s props. Apart from its own axes, every `nsh` view prop passes through.
+ */
+export type {{Id}}Props = Omit<ViewProps, "children"> & {
+  /** A string is drawn in the look's type; anything else is drawn as given. */
+  children?: string | JSX.Element;
+};
+
+/** The look of a {{id}}: what it draws, in the theme's roles. */
+export function {{lookFn}}(): ViewStyle {
+  return { backgroundColor: colors.background };
+}
+
+/** The type of a {{id}}'s text, for its children drawn by the calling code. */
+export function {{textFn}}(): TextStyle {
+  return { color: colors.foreground };
+}
+
+/** A {{id}}. `style` goes over the look's. */
+export function {{Id}}(props: {{Id}}Props) {
+  const [, rest] = split(props, ["children", "style"]);
+  return (
+    <View {...rest} style={[{{lookFn}}(), props.style ?? null]}>
+      {typeof props.children === "string" ? (
+        <Text style={{{textFn}}()}>{props.children}</Text>
+      ) : (
+        props.children
+      )}
+    </View>
+  );
+}

@@ -1,9 +1,9 @@
 // A field: the look (`fieldFamilyLook`) and the ten parts that wear it.
 
-import { colors, TERMINAL_ROW, terminal, font, stroke } from "@shadcn-nsh/theme";
-import type { JSX, TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
+import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
+import { colors, controlHeight, font, stroke, terminal } from "../theme";
 import { controlSize, density, narrowWindow } from "./lib/surface";
 
 /**
@@ -16,144 +16,6 @@ export type FieldOrientation = "vertical" | "horizontal" | "responsive";
 
 /** A legend's type: `legend` over a set of fields, one step smaller as `label` over a group of choices. */
 export type FieldLegendVariant = "legend" | "label";
-
-/** What `Field` tells its parts: whether the row is horizontal right now (reactive). */
-type FieldContextValue = { horizontal: () => boolean };
-
-/** The `Field` a part is in, or none (a `FieldLabel` outside one takes the vertical look). */
-const FieldContext = context<FieldContextValue | null>(null);
-
-/** A `Field`'s parts as the styles they wear: spread each one. */
-export interface FieldFamilyLook {
-  /** The set of fields: a column, 16 points apart (one row in the terminal). */
-  readonly set: ViewStyle;
-  /** A group of fields in a set: a column, 16 points apart too, its fields stretched across. */
-  readonly group: ViewStyle;
-  /** A field: `horizontal` puts the label and the control on one row. */
-  field(horizontal: boolean): ViewStyle;
-  /** The label and its description beside a control: a column that takes the room left. */
-  readonly content: ViewStyle;
-  /** A set's legend, one step larger than a field's label. */
-  legend(variant: FieldLegendVariant): TextStyle;
-  /** A control's label, in the vertical look (as wide as its text). */
-  readonly title: TextStyle;
-  /** A field's label in a row: as wide as its text, never squeezed thinner than it (the control
-   * beside it takes the room left, `content`'s `minWidth: 0`), which on a narrow phone would cut
-   * it mid-word. */
-  readonly labelInRow: TextStyle;
-  readonly description: TextStyle;
-  readonly separator: ViewStyle;
-  readonly separatorLine: ViewStyle;
-  readonly separatorText: TextStyle;
-  readonly error: ViewStyle;
-  readonly errorRow: ViewStyle;
-  readonly errorText: TextStyle;
-  /** An error's message beside its bullet: it wraps rather than running past the field, which a
-   * long sentence would in a narrow window (`flexShrink: 1`, `minWidth: 0`). */
-  readonly errorMessage: TextStyle;
-}
-
-/** The gap between a set's fields: 16 points, or one row in the terminal. */
-const setGap = terminal ? TERMINAL_ROW : 16;
-
-/** The gap between a label and the control under it: 8 points (none in the terminal, whose rows are one row each). */
-const labelGap = terminal ? 0 : 8;
-
-/** The gap between a label and the control beside it. */
-const rowGap = 12;
-
-/**
- * A field family's look, after shadcn/ui's secondary `Field`, written from the
- * theme's roles: a set of fields 16 points apart under its legend (a step
- * larger than a label, in the text colour, medium weight), each field a label
- * and its control 8 points apart (`vertical`) or 12 points apart and on one
- * row (`horizontal`), and a description and an error in the quieter size
- * (`density.note`) — the description muted, the error in the danger tone. A
- * separator is a hairline, or a hairline broken by its label. `responsive`
- * reads the window through `narrowWindow`, so it is vertical below 600 points
- * and horizontal above.
- */
-export function fieldFamilyLook(): FieldFamilyLook {
-  // Read where it is drawn, as every part below: a look kept in a `const` follows the scheme.
-  const label = (): TextStyle => ({
-    fontSize: controlSize.label,
-    fontWeight: font.weight("label"),
-    color: colors.foreground,
-  });
-  return {
-    get set(): ViewStyle {
-      return {
-        flexDirection: "column",
-        gap: setGap,
-        width: "100%",
-      };
-    },
-    get group(): ViewStyle {
-      return {
-        flexDirection: "column",
-        alignItems: "stretch",
-        gap: setGap,
-        width: "100%",
-      };
-    },
-    field: (horizontal: boolean): ViewStyle =>
-      horizontal
-        ? {
-            flexDirection: "row",
-            alignItems: "center",
-            gap: rowGap,
-            width: "100%",
-          }
-        : {
-            flexDirection: "column",
-            alignItems: "stretch",
-            gap: labelGap,
-            width: "100%",
-          },
-    get content(): ViewStyle {
-      return { flexGrow: 1, flexShrink: 1, minWidth: 0, flexDirection: "column", gap: 4 };
-    },
-    legend: (variant: FieldLegendVariant): TextStyle => ({
-      ...label(),
-      fontSize: variant === "legend" ? controlSize.label + 1 : controlSize.label,
-    }),
-    get title(): TextStyle {
-      return { ...label(), alignSelf: "flex-start" };
-    },
-    get labelInRow(): TextStyle {
-      return { ...label(), flexShrink: 0 };
-    },
-    get description(): TextStyle {
-      return { fontSize: density.note, color: colors.mutedForeground };
-    },
-    get separator(): ViewStyle {
-      return {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        minHeight: terminal ? TERMINAL_ROW : 20,
-      };
-    },
-    get separatorLine(): ViewStyle {
-      return { flexGrow: 1, height: stroke.hairline, backgroundColor: colors.line };
-    },
-    get separatorText(): TextStyle {
-      return { fontSize: density.note, color: colors.mutedForeground };
-    },
-    get error(): ViewStyle {
-      return { flexDirection: "column", gap: 2 };
-    },
-    get errorRow(): ViewStyle {
-      return { flexDirection: "row", alignItems: "flex-start", gap: 6 };
-    },
-    get errorText(): TextStyle {
-      return { fontSize: density.note, color: colors.destructive };
-    },
-    get errorMessage(): TextStyle {
-      return { fontSize: density.note, color: colors.destructive, flexShrink: 1, minWidth: 0 };
-    },
-  };
-}
 
 /** A set of related fields, under its `FieldLegend`. Every view prop passes through. */
 export type FieldSetProps = ViewProps;
@@ -203,9 +65,15 @@ export type FieldErrorProps = ViewProps & {
 
 /** A set of related fields. */
 export function FieldSet(props: FieldSetProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   return (
-    <View {...rest} role="group" style={[fieldFamilyLook().set, props.style ?? null]}>
+    <View
+      {...rest}
+      role="group"
+      class={props.class}
+      classList={props.classList}
+      style={[fieldFamilyLook().set, props.style ?? null]}
+    >
       {props.children}
     </View>
   );
@@ -213,10 +81,12 @@ export function FieldSet(props: FieldSetProps) {
 
 /** A set's legend: `variant="legend"` (default) or `variant="label"`. */
 export function FieldLegend(props: FieldLegendProps) {
-  const [, rest] = split(props, ["variant", "style", "children"]);
+  const [, rest] = split(props, ["variant", "class", "classList", "style", "children"]);
   return (
     <Text
       {...rest}
+      class={props.class}
+      classList={props.classList}
       style={[fieldFamilyLook().legend(props.variant ?? "legend"), props.style ?? null]}
     >
       {props.children}
@@ -226,9 +96,14 @@ export function FieldLegend(props: FieldLegendProps) {
 
 /** A group of fields in a set. */
 export function FieldGroup(props: FieldGroupProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   return (
-    <View {...rest} style={[fieldFamilyLook().group, props.style ?? null]}>
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[fieldFamilyLook().group, props.style ?? null]}
+    >
       {props.children}
     </View>
   );
@@ -236,7 +111,7 @@ export function FieldGroup(props: FieldGroupProps) {
 
 /** A field: a label and its control, `vertical` unless `orientation` says otherwise. */
 export function Field(props: FieldProps) {
-  const [, rest] = split(props, ["orientation", "style", "children"]);
+  const [, rest] = split(props, ["orientation", "class", "classList", "style", "children"]);
   // Read where it is drawn, so a field that turns horizontal follows `orientation`.
   const horizontal = () => {
     const orientation = props.orientation ?? "vertical";
@@ -247,6 +122,8 @@ export function Field(props: FieldProps) {
       <View
         {...rest}
         role="group"
+        class={props.class}
+        classList={props.classList}
         style={[fieldFamilyLook().field(horizontal()), props.style ?? null]}
       >
         {props.children}
@@ -257,12 +134,17 @@ export function Field(props: FieldProps) {
 
 /** A label and its description, beside the control in a horizontal field. */
 export function FieldContent(props: FieldContentProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   return (
     // A label inside the content is already in a column: it takes the width it
     // is given, not the room a control leaves.
     <FieldContext.Provider value={{ horizontal: () => false }}>
-      <View {...rest} style={[fieldFamilyLook().content, props.style ?? null]}>
+      <View
+        {...rest}
+        class={props.class}
+        classList={props.classList}
+        style={[fieldFamilyLook().content, props.style ?? null]}
+      >
         {props.children}
       </View>
     </FieldContext.Provider>
@@ -271,12 +153,14 @@ export function FieldContent(props: FieldContentProps) {
 
 /** A field's label: it takes the room the control leaves in a horizontal field. */
 export function FieldLabel(props: FieldLabelProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   // Read here, where the label is drawn: a window that crosses 600 points moves it.
   const horizontal = () => FieldContext()?.horizontal() ?? false;
   return (
     <Text
       {...rest}
+      class={props.class}
+      classList={props.classList}
       style={[
         horizontal() ? fieldFamilyLook().labelInRow : fieldFamilyLook().title,
         props.style ?? null,
@@ -289,9 +173,14 @@ export function FieldLabel(props: FieldLabelProps) {
 
 /** A title over a group of choices. */
 export function FieldTitle(props: FieldTitleProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   return (
-    <Text {...rest} style={[fieldFamilyLook().title, props.style ?? null]}>
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[fieldFamilyLook().title, props.style ?? null]}
+    >
       {props.children}
     </Text>
   );
@@ -299,9 +188,14 @@ export function FieldTitle(props: FieldTitleProps) {
 
 /** A quieter line under a label. */
 export function FieldDescription(props: FieldDescriptionProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   return (
-    <Text {...rest} style={[fieldFamilyLook().description, props.style ?? null]}>
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[fieldFamilyLook().description, props.style ?? null]}
+    >
       {props.children}
     </Text>
   );
@@ -309,12 +203,17 @@ export function FieldDescription(props: FieldDescriptionProps) {
 
 /** A hairline between fields; with children, a hairline broken by its word. */
 export function FieldSeparator(props: FieldSeparatorProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   // Read once, where the word is drawn: with children the hairline breaks around them, without
   // it, it runs through.
   const kids = props.children;
   return (
-    <View {...rest} style={[fieldFamilyLook().separator, props.style ?? null]}>
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[fieldFamilyLook().separator, props.style ?? null]}
+    >
       <If when={kids != null} else={<View style={fieldFamilyLook().separatorLine} />}>
         <View style={fieldFamilyLook().separatorLine} />
         <Text style={fieldFamilyLook().separatorText}>{kids}</Text>
@@ -326,7 +225,7 @@ export function FieldSeparator(props: FieldSeparatorProps) {
 
 /** A field's error: `errors`' messages, or `children`; read out by the platform where it can. */
 export function FieldError(props: FieldErrorProps) {
-  const [, rest] = split(props, ["style", "children", "errors"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children", "errors"]);
   /** The distinct messages, in the order they came. */
   const messages = () => {
     const seen = new Set<string>();
@@ -355,6 +254,8 @@ export function FieldError(props: FieldErrorProps) {
     <View
       {...rest}
       role="alert"
+      class={props.class}
+      classList={props.classList}
       // macOS and the web read a `role="alert"` by themselves; TalkBack reads
       // this change through the live region (`docs` of the field page).
       android={{ accessibilityLiveRegion: "assertive" }}
@@ -363,4 +264,158 @@ export function FieldError(props: FieldErrorProps) {
       {content()}
     </View>
   );
+}
+
+// Shared field primitives
+// Gallery wears `fieldFamilyLook`.
+
+/** A `Field`'s parts as the styles they wear: spread each one. */
+export interface FieldFamilyLook {
+  /** The set of fields: a column, 16 points apart (one row in the terminal). */
+  readonly set: ViewStyle;
+  /** A group of fields in a set: a column, 16 points apart too, its fields stretched across. */
+  readonly group: ViewStyle;
+  /** A field: `horizontal` puts the label and the control on one row. */
+  field(horizontal: boolean): ViewStyle;
+  /** The label and its description beside a control: a column that takes the room left. */
+  readonly content: ViewStyle;
+  /** A set's legend, one step larger than a field's label. */
+  legend(variant: FieldLegendVariant): TextStyle;
+  /** A control's label, in the vertical look (as wide as its text). */
+  readonly title: TextStyle;
+  /** A field's label in a row: as wide as its text, never squeezed thinner than it (the control
+   * beside it takes the room left, `content`'s `minWidth: 0`), which on a narrow phone would cut
+   * it mid-word. */
+  readonly labelInRow: TextStyle;
+  readonly description: TextStyle;
+  readonly separator: ViewStyle;
+  readonly separatorLine: ViewStyle;
+  readonly separatorText: TextStyle;
+  readonly error: ViewStyle;
+  readonly errorRow: ViewStyle;
+  readonly errorText: TextStyle;
+  /** An error's message beside its bullet: it wraps rather than running past the field, which a
+   * long sentence would in a narrow window (`flexShrink: 1`, `minWidth: 0`). */
+  readonly errorMessage: TextStyle;
+}
+
+/**
+ * A field family's look, after shadcn/ui's secondary `Field`, written from the
+ * theme's roles: a set of fields 16 points apart under its legend (a step
+ * larger than a label, in the text colour, medium weight), each field a label
+ * and its control 8 points apart (`vertical`) or 12 points apart and on one
+ * row (`horizontal`), and a description and an error in the quieter size
+ * (`density.note`) — the description muted, the error in the danger tone. A
+ * separator is a hairline, or a hairline broken by its label. `responsive`
+ * reads the window through `narrowWindow`, so it is vertical below 600 points
+ * and horizontal above.
+ */
+export function fieldFamilyLook(): FieldFamilyLook {
+  // Read where it is drawn, as every part below: a look kept in a `const` follows the scheme.
+  const label = (): TextStyle => ({
+    fontSize: controlSize.label,
+    fontWeight: font.weight("label"),
+    color: colors.foreground,
+  });
+  return {
+    get set(): ViewStyle {
+      return {
+        flexDirection: "column",
+        gap: setGap(),
+        width: "100%",
+      };
+    },
+    get group(): ViewStyle {
+      return {
+        flexDirection: "column",
+        alignItems: "stretch",
+        gap: setGap(),
+        width: "100%",
+      };
+    },
+    field: (horizontal: boolean): ViewStyle =>
+      horizontal
+        ? {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: rowGap,
+            width: "100%",
+          }
+        : {
+            flexDirection: "column",
+            alignItems: "stretch",
+            gap: labelGap(),
+            width: "100%",
+          },
+    get content(): ViewStyle {
+      return { flexGrow: 1, flexShrink: 1, minWidth: 0, flexDirection: "column", gap: 4 };
+    },
+    legend: (variant: FieldLegendVariant): TextStyle => ({
+      ...label(),
+      fontSize: variant === "legend" ? controlSize.label + 1 : controlSize.label,
+    }),
+    get title(): TextStyle {
+      return { ...label(), alignSelf: "flex-start" };
+    },
+    get labelInRow(): TextStyle {
+      return { ...label(), flexShrink: 0 };
+    },
+    get description(): TextStyle {
+      return { fontSize: density.note, color: colors.mutedForeground };
+    },
+    get separator(): ViewStyle {
+      return {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        minHeight: separatorMinHeight(),
+      };
+    },
+    get separatorLine(): ViewStyle {
+      return { flexGrow: 1, height: stroke.hairline, backgroundColor: colors.line };
+    },
+    get separatorText(): TextStyle {
+      return { fontSize: density.note, color: colors.mutedForeground };
+    },
+    get error(): ViewStyle {
+      return { flexDirection: "column", gap: 2 };
+    },
+    get errorRow(): ViewStyle {
+      return { flexDirection: "row", alignItems: "flex-start", gap: 6 };
+    },
+    get errorText(): TextStyle {
+      return { fontSize: density.note, color: colors.destructive };
+    },
+    get errorMessage(): TextStyle {
+      return { fontSize: density.note, color: colors.destructive, flexShrink: 1, minWidth: 0 };
+    },
+  };
+}
+
+// Private helpers & looks
+
+/** What `Field` tells its parts: whether the row is horizontal right now (reactive). */
+type FieldContextValue = { horizontal: () => boolean };
+
+/** The `Field` a part is in, or none (a `FieldLabel` outside one takes the vertical look). */
+const FieldContext = context<FieldContextValue | null>(null);
+
+/** The gap between a label and the control beside it. */
+const rowGap = 12;
+
+// Terminal
+
+/** The gap between a set's fields: 16 points, or one row in the terminal (`controlHeight`, every step). */
+function setGap(): number {
+  return terminal ? controlHeight.md : 16;
+}
+
+/** The gap between a label and the control under it: 8 points (none in the terminal, whose rows are one row each). */
+function labelGap(): number {
+  return terminal ? 0 : 8;
+}
+
+/** A separator's least height: 20 points, or one row in the terminal. */
+function separatorMinHeight(): number {
+  return terminal ? controlHeight.md : 20;
 }

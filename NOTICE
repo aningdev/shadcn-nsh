@@ -5,7 +5,6 @@ This project adapts the shared UI layer of NSH (Native Shell):
 
   Source:   https://github.com/longbridge/nsh
   Path:     examples/nsh-gallery-ui/
-  Baseline: the commit `port-map.json` records in `upstream.commit`
   Copyright 2026 Longbridge <https://longbridge.com>
   License:  Apache License, Version 2.0
             https://www.apache.org/licenses/LICENSE-2.0
@@ -23,8 +22,7 @@ shadcn/ui names and composes its own: a family keeps shadcn's part roles
 
 Each adapted file says where it came from in its header (`Derived from NSH
 examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.`). The
-adapted parts keep this notice's license: Apache-2.0. Which file came from which
-is `port-map.json`'s to say.
+adapted parts keep this notice's license: Apache-2.0.
 
 The Solid Glass theme (`packages/theme/themes/solid-glass/`) is derived from the
 colour and finish values of Solid Glass's stylesheet:
@@ -63,3 +61,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+The built-in UI icons in `packages/ui/lib/icons.tsx` are path data from lucide:
+
+  Source:   https://github.com/lucide-icons/lucide
+  Package:  lucide 1.75.0
+  Copyright (c) 2026 Lucide Icons and Contributors
+  License:  ISC License
+            https://github.com/lucide-icons/lucide/blob/main/LICENSE
+
+Some of those icons derive from Feather (MIT License, Cole Bemis, 2013-present):
+https://github.com/feathericons/feather
+
+ISC License
+
+Copyright (c) 2026 Lucide Icons and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+RESPECT TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.

@@ -76,7 +76,7 @@ ResizablePanelGroup
 
 `ResizablePanelGroup` spreads `resizableHandleLook` for the axis. Every prop of [`nsh/base` ResizablePanelGroup](https://nsh.dev/elements/resizable) passes through.
 
-Also export `resizableHandleLook`, `resizableHandle`, and `handleThumb` for custom layouts.
+Also export `resizableHandleLook` and `handleThumb` for a handle the app lays out itself.
 
 | Part                  | Props | Description                                              |
 | --------------------- | ----- | -------------------------------------------------------- |

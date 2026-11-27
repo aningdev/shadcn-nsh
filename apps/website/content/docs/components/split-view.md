@@ -158,4 +158,4 @@ const visibility = signal<ColumnVisibility>("all");
 | `SplitViewHeader`  | `column`, `title`, `leading`, `trailing`                             | The bar a desktop draws. `header` on a column page replaces it  |
 | `SplitViewTrigger` | `columnVisibility`, `onColumnVisibilityChange`, `accessibilityLabel` | The sidebar button. A press reports `"doubleColumn"` or `"all"` |
 
-The looks — spread them on the views they name: `splitViewLook()` (`root`), `splitViewColumnLook(column)` (`page`), `splitViewHeaderLook(column)` (`bar`, `title`) and `splitViewTriggerLook()` (`style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle`, `glyph`).
+`style` on the view, a column page, the header and the sidebar button goes over the look each one wears.

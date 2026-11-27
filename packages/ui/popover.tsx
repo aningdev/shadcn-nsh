@@ -1,4 +1,4 @@
-// A popover: the look (`popoverLook`) at the top, and the parts that wear it below.
+// A popover: the parts first. `popoverLook` is shared (a hover card and a color picker wear it).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
@@ -12,9 +12,7 @@ import {
 import { Button, type ButtonVariant } from "./button";
 import { PopIn, popupSurface } from "./lib/popup";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
-import { AsText } from "./lib/utils";
-
-const pointer = platform.desktop;
+import { AsText, joinClass } from "./lib/utils";
 
 /** Options of `popoverLook`. */
 export interface PopoverLookOptions {
@@ -22,19 +20,6 @@ export interface PopoverLookOptions {
   width?: number;
   /** A small note (a line or two): 12 points of padding, its rows 4 apart. */
   compact?: boolean;
-}
-
-/**
- * A popover's or a hover card's surface (the `style` of the `PopIn` it
- * comes in with): the popup surface every menu shares (`popupSurface`:
- * `surface("overlay")`'s fill, edge and soft shadow, 10-point corners), 14 points
- * of padding with a pointer and 16 on a touch screen, its rows 12 apart.
- */
-export function popoverLook(o?: PopoverLookOptions): ViewStyle {
-  const room: ViewStyle = o?.compact
-    ? { padding: 12, gap: 4 }
-    : { padding: pointer ? 14 : 16, gap: 12 };
-  return { ...popupSurface(), ...room, width: o?.width };
 }
 
 /** Why a popover closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
@@ -74,6 +59,8 @@ export type PopoverContentProps = Omit<
   width?: number;
   /** Classes of the panel's surface, over `popoverLook`. */
   class?: string;
+  /** Tailwind classes toggled on the panel's surface. */
+  classList?: Record<string, boolean | null | undefined>;
   /** The panel's surface, over `popoverLook` (`{ padding: 0 }` for content that brings its own). */
   style?: StyleProp<ViewStyle>;
   children?: JSX.Element;
@@ -96,34 +83,25 @@ export type PopoverTriggerProps = {
 /** The header block of a panel (not an `nsh/base` part): the app's layout and type. */
 export type PopoverHeaderProps = {
   children?: JSX.Element;
+  /** Tailwind classes on the block. */
   class?: string | null;
+  /** Tailwind classes toggled on the block. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
 /** A panel's title: a string is text, anything else is drawn as given. */
 export type PopoverTitleProps = {
   children?: string | JSX.Element;
+  /** Tailwind classes on the text a string child draws. */
   class?: string | null;
+  /** Tailwind classes toggled on that text. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<TextStyle>;
 };
 
 /** A panel's quieter text under the title: as `PopoverTitle`. */
 export type PopoverDescriptionProps = PopoverTitleProps;
-
-type PopoverContextValue = OpenState & {
-  trigger: Slot<JSX.Element>;
-  onOpen?: () => void;
-  onClose?: () => void;
-  onCancel?: () => void;
-};
-
-const PopoverContext = context<PopoverContextValue | null>(null);
-
-function usePopover() {
-  const ctx = PopoverContext();
-  if (!ctx) throw new Error("Popover parts must be used within <Popover>");
-  return ctx;
-}
 
 /** The root of a popover's parts. */
 export function Popover(props: PopoverProps) {
@@ -178,6 +156,7 @@ export function PopoverContent(props: PopoverContentProps) {
     "compact",
     "width",
     "class",
+    "classList",
     "style",
     "placement",
     "align",
@@ -202,7 +181,8 @@ export function PopoverContent(props: PopoverContentProps) {
       {() => (
         <PopIn
           side={placement()}
-          class={props.class}
+          class={joinClass(undefined, props.class)}
+          classList={props.classList}
           style={[popoverLook({ compact: props.compact, width: props.width }), props.style ?? null]}
         >
           {/* children-lint: the panel's contents, built when it opens, not before. */}
@@ -216,7 +196,7 @@ export function PopoverContent(props: PopoverContentProps) {
 /** The block around a panel's title and its description. */
 export function PopoverHeader(props: PopoverHeaderProps) {
   return (
-    <View class={props.class ?? undefined} style={props.style}>
+    <View class={joinClass(undefined, props.class)} classList={props.classList} style={props.style}>
       {props.children}
     </View>
   );
@@ -225,7 +205,11 @@ export function PopoverHeader(props: PopoverHeaderProps) {
 /** A panel's title; a string child is `Text` (give it the app's type with `style`). */
 export function PopoverTitle(props: PopoverTitleProps) {
   return (
-    <AsText class={props.class ?? undefined} style={props.style}>
+    <AsText
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={props.style}
+    >
       {props.children}
     </AsText>
   );
@@ -234,8 +218,46 @@ export function PopoverTitle(props: PopoverTitleProps) {
 /** A panel's text under the title; as `PopoverTitle`. */
 export function PopoverDescription(props: PopoverDescriptionProps) {
   return (
-    <AsText class={props.class ?? undefined} style={props.style}>
+    <AsText
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={props.style}
+    >
       {props.children}
     </AsText>
   );
+}
+
+// Shared popover primitives
+
+/**
+ * A popover's or a hover card's surface (the `style` of the `PopIn` it
+ * comes in with): the popup surface every menu shares (`popupSurface`:
+ * `surface("overlay")`'s fill, edge and soft shadow, 10-point corners), 14 points
+ * of padding with a pointer and 16 on a touch screen, its rows 12 apart.
+ */
+export function popoverLook(o?: PopoverLookOptions): ViewStyle {
+  const room: ViewStyle = o?.compact
+    ? { padding: 12, gap: 4 }
+    : { padding: pointer ? 14 : 16, gap: 12 };
+  return { ...popupSurface(), ...room, width: o?.width };
+}
+
+// Private helpers
+
+const pointer = platform.desktop;
+
+type PopoverContextValue = OpenState & {
+  trigger: Slot<JSX.Element>;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
+};
+
+const PopoverContext = context<PopoverContextValue | null>(null);
+
+function usePopover() {
+  const ctx = PopoverContext();
+  if (!ctx) throw new Error("Popover parts must be used within <Popover>");
+  return ctx;
 }

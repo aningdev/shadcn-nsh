@@ -1,7 +1,6 @@
-// A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) at the top, and the parts below.
+// A tooltip: the parts first. The bubble's look is private; `tooltipTextStyle` and `tooltipNote` stay shared.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { surface, surfaceBorderWidth } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -10,66 +9,10 @@ import {
   type TooltipProps as BaseTooltipProps,
 } from "nsh/base";
 
+import { surface, surfaceBorderWidth } from "../theme";
 import { Button, type ButtonVariant } from "./button";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
-import { AsText } from "./lib/utils";
-
-/** Options of `tooltipLook`. */
-export interface TooltipLookOptions {
-  /** More than a line (a title, a list): 10 points of padding, its rows 8 apart, larger corners. */
-  rich?: boolean;
-}
-
-/**
- * A tooltip's bubble (`class` and `style`, on the view inside `nsh/base`'s `Tooltip`):
- * the theme's inverse surface (`surface("inverse")`), its face, shadow, edge and backdrop blur.
- * One line: a row 8 points apart, 8 by 4 points of padding,
- * the theme's control corners (`radius-control`); `rich`: a column, 10 points of padding, the
- * theme's container corners (`radius-container`).
- * Its text takes `tooltipTextStyle()`, a shortcut or a note `tooltipNote()`.
- */
-export function tooltipLook(o?: TooltipLookOptions) {
-  return {
-    class: o?.rich
-      ? "gap-2 rounded-(--radius-container) p-2.5"
-      : "flex-row items-center gap-2 rounded-(--radius-control) px-2 py-1",
-    style: {
-      get backgroundColor() {
-        return surface("inverse").style.backgroundColor;
-      },
-      get boxShadow() {
-        return surface("inverse").style.boxShadow ?? "none";
-      },
-      get borderColor() {
-        return surface("inverse").style.borderColor;
-      },
-      get borderWidth() {
-        const edge = surface("inverse").style.borderColor;
-        return surfaceBorderWidth(typeof edge === "string" ? edge : undefined);
-      },
-      get backdropFilter() {
-        return (surface("inverse").style as { backdropFilter?: string }).backdropFilter;
-      },
-    } satisfies ViewStyle,
-  };
-}
-
-/** Class name for tooltip sizing where only a class prop is used; prefer `tooltipTextStyle()` for color. */
-export const tooltipText = "text-xs";
-
-/** A tooltip's text style: 12 points over 16 in the theme's `tooltip.ink`. */
-export const tooltipTextStyle = (): TextStyle => ({
-  fontSize: 12,
-  lineHeight: 16,
-  color: surface("inverse").ink,
-});
-
-/** A tooltip's quieter text (`style`): a shortcut's keys, a time, 12 points over 16 in the tooltip's ink. */
-export const tooltipNote = (): TextStyle => ({
-  fontSize: 12,
-  lineHeight: 16,
-  color: surface("inverse").ink,
-});
+import { AsText, joinClass } from "./lib/utils";
 
 /** Why a tooltip closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type TooltipOpenChangeReason = OpenChangeReason;
@@ -103,6 +46,10 @@ export type TooltipProps = {
    * (`{ flex: 1 }` for a button that spans a phone's page).
    */
   style?: StyleProp<ViewStyle>;
+  /** Tailwind classes on the host view around the trigger. */
+  class?: string;
+  /** Tailwind classes toggled on that host. */
+  classList?: Record<string, boolean | null | undefined>;
   children?: JSX.Element;
   onOpenChange?: (event: { open: boolean; reason: TooltipOpenChangeReason }) => void;
   onOpen?: () => void;
@@ -127,47 +74,9 @@ export type TooltipTriggerProps = {
 export type TooltipContentProps = Omit<BaseTooltipProps, "children"> & {
   /** More than a line: a column with more padding. */
   rich?: boolean;
-  /** A string is the label in `tooltipText`; anything else is drawn as given. */
+  /** A string is the label in `tooltipTextStyle()`; anything else is drawn as given. */
   children?: string | JSX.Element;
 };
-
-type TooltipContextValue = OpenState & {
-  trigger: Slot<JSX.Element>;
-  content: Slot<TooltipContentProps>;
-  placement?: BaseTooltipProps["placement"];
-  align?: BaseTooltipProps["align"];
-  offset?: number;
-  margin?: number;
-  delay?: number;
-  disabled?: boolean;
-  style?: StyleProp<ViewStyle>;
-  onOpen?: () => void;
-  onClose?: () => void;
-};
-
-const TooltipContext = context<TooltipContextValue | null>(null);
-
-function useTooltip() {
-  const ctx = TooltipContext();
-  if (!ctx) throw new Error("Tooltip parts must be used within <Tooltip>");
-  return ctx;
-}
-
-/** The bubble itself: `tooltipLook`'s classes, a string child in `tooltipTextStyle()`. */
-function Bubble(props: TooltipContentProps) {
-  const [, rest] = split(props, ["children", "rich", "class"]);
-  const look = tooltipLook({ rich: props.rich });
-  return (
-    <BaseTooltip
-      {...surface("inverse").platformProps}
-      {...rest}
-      class={props.class ? `${look.class} ${props.class}` : look.class}
-      style={[look.style, props.style ?? null]}
-    >
-      <AsText style={tooltipTextStyle()}>{props.children}</AsText>
-    </BaseTooltip>
-  );
-}
 
 /** The root of a tooltip's parts. */
 export function Tooltip(props: TooltipProps) {
@@ -210,7 +119,11 @@ export function Tooltip(props: TooltipProps) {
       }}
     >
       {/* No gap of its own: this view only hosts the hint, the children lay out as they would. */}
-      <View style={[{ gap: 0 }, props.style ?? null]}>
+      <View
+        class={joinClass(undefined, props.class)}
+        classList={props.classList}
+        style={[{ gap: 0 }, props.style ?? null]}
+      >
         {props.children}
         {() => <TooltipAnchor />}
       </View>
@@ -243,6 +156,113 @@ export function TooltipContent(props: TooltipContentProps) {
   if (!ctx) return <Bubble {...props} />;
   ctx.content.set(props);
   return null;
+}
+
+// Shared tooltip primitives
+
+/** A tooltip's text style: 12 points over 16 in the theme's `tooltip.ink`. */
+export const tooltipTextStyle = (): TextStyle => ({
+  fontSize: 12,
+  lineHeight: 16,
+  color: surface("inverse").ink,
+});
+
+/** A tooltip's quieter text (`style`): a shortcut's keys, a time, 12 points over 16 in the tooltip's ink. */
+export const tooltipNote = (): TextStyle => ({
+  fontSize: 12,
+  lineHeight: 16,
+  color: surface("inverse").ink,
+});
+
+// Private helpers
+
+/** Options of `tooltipLook`. */
+interface TooltipLookOptions {
+  /** More than a line (a title, a list): 10 points of padding, its rows 8 apart, larger corners. */
+  rich?: boolean;
+}
+
+/**
+ * A tooltip's bubble (`class` and `style`, on the view inside `nsh/base`'s `Tooltip`):
+ * the theme's inverse surface (`surface("inverse")`), its face, shadow, edge and backdrop blur.
+ * One line: a row 8 points apart, 8 by 4 points of padding,
+ * the theme's control corners (`radius-md`); `rich`: a column, 10 points of padding, the
+ * theme's container corners (`radius-lg`).
+ * Its text takes `tooltipTextStyle()`, a shortcut or a note `tooltipNote()`.
+ */
+function tooltipLook(o?: TooltipLookOptions) {
+  return {
+    class: o?.rich
+      ? "gap-2 rounded-(--radius-lg) p-2.5"
+      : "flex-row items-center gap-2 rounded-(--radius-md) px-2 py-1",
+    style: {
+      get backgroundColor() {
+        return surface("inverse").style.backgroundColor;
+      },
+      get boxShadow() {
+        return surface("inverse").style.boxShadow ?? "none";
+      },
+      get borderColor() {
+        return surface("inverse").style.borderColor;
+      },
+      get borderWidth() {
+        const edge = surface("inverse").style.borderColor;
+        return surfaceBorderWidth(typeof edge === "string" ? edge : undefined);
+      },
+      get backdropFilter() {
+        return (surface("inverse").style as { backdropFilter?: string }).backdropFilter;
+      },
+      get glassEffect() {
+        return surface("inverse").style.glassEffect;
+      },
+      get glassTintColor() {
+        return surface("inverse").style.glassTintColor;
+      },
+    } satisfies ViewStyle,
+  };
+}
+
+/** Class name for tooltip sizing where only a class prop is used; prefer `tooltipTextStyle()` for color. */
+const tooltipText = "text-xs";
+// The class form is not painted: a string child takes `tooltipTextStyle()`. The name stays for the port map.
+void tooltipText;
+
+type TooltipContextValue = OpenState & {
+  trigger: Slot<JSX.Element>;
+  content: Slot<TooltipContentProps>;
+  placement?: BaseTooltipProps["placement"];
+  align?: BaseTooltipProps["align"];
+  offset?: number;
+  margin?: number;
+  delay?: number;
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+  onOpen?: () => void;
+  onClose?: () => void;
+};
+
+const TooltipContext = context<TooltipContextValue | null>(null);
+
+function useTooltip() {
+  const ctx = TooltipContext();
+  if (!ctx) throw new Error("Tooltip parts must be used within <Tooltip>");
+  return ctx;
+}
+
+/** The bubble itself: `tooltipLook`'s classes, a string child in `tooltipTextStyle()`. */
+function Bubble(props: TooltipContentProps) {
+  const [, rest] = split(props, ["children", "rich", "class"]);
+  const look = tooltipLook({ rich: props.rich });
+  return (
+    <BaseTooltip
+      {...surface("inverse").platformProps}
+      {...rest}
+      class={joinClass(look.class, props.class)}
+      style={[look.style, props.style ?? null]}
+    >
+      <AsText style={tooltipTextStyle()}>{props.children}</AsText>
+    </BaseTooltip>
+  );
 }
 
 /**

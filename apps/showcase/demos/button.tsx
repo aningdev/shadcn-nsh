@@ -16,6 +16,7 @@ import {
   shape,
   terminal,
   tints,
+  font,
 } from "@shadcn-nsh/theme";
 import {
   ArrowUp,
@@ -61,11 +62,9 @@ import {
   buttonLook,
   IconButton,
   iconButtonGlyph,
-  SplitButton,
-  SplitButtonDivider,
-  SplitButtonSegment,
   type ButtonSize,
 } from "@/packages/ui/button";
+import { ButtonGroup, ButtonGroupSeparator, buttonGroupItem } from "@/packages/ui/button-group";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Link } from "@/packages/ui/link";
 import {
@@ -326,6 +325,8 @@ function Split(props: Ctx) {
   const done = () => state() === "done";
   // Done, the pair turns the `up` tone: its tint under the word and the hairline.
   const ink = () => (done() ? colors.success : colors.primaryForeground);
+  // Done, the pair takes the success tint. Busy stays the accent face: a disabled filled
+  // button would otherwise fall back to the secondary surface.
   const doneFrame = () =>
     done()
       ? {
@@ -334,7 +335,9 @@ function Split(props: Ctx) {
           borderColor: alpha(colors.success, 0.4),
           boxShadow: "none" as const,
         }
-      : undefined;
+      : state() === "busy"
+        ? surface("accent").style
+        : undefined;
   return (
     <Card
       title="Split button"
@@ -342,11 +345,13 @@ function Split(props: Ctx) {
       right={<Badge tone={done() ? "success" : "neutral"}>{done() ? "Merged" : "Open"}</Badge>}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <SplitButton style={doneFrame()}>
-          <SplitButtonSegment
+        <ButtonGroup>
+          <Button
+            variant="default"
             onPress={merge}
             disabled={state() !== "idle"}
             accessibilityLabel={label()}
+            style={[buttonGroupItem("first"), doneFrame() ?? null]}
           >
             <View style={{ transform: [{ scale: pop }] }}>
               <If
@@ -359,17 +364,22 @@ function Split(props: Ctx) {
               </If>
             </View>
             <Text style={[buttonLabel("default"), { color: ink() }]}>{label()}</Text>
-          </SplitButtonSegment>
-          <SplitButtonDivider
+          </Button>
+          <ButtonGroupSeparator
             style={done() ? { backgroundColor: alpha(colors.success, 0.3) } : undefined}
           />
           <Menu open={open()} onOpenChange={({ open: o }) => open.set(o)}>
             <MenuTrigger>
-              <SplitButtonSegment
+              <Button
+                variant="default"
                 accessibilityLabel="Merge options"
                 selected={open()}
                 disabled={state() !== "idle"}
-                style={terminal ? undefined : { width: pointer ? 26 : 40, paddingHorizontal: 0 }}
+                style={[
+                  buttonGroupItem("last"),
+                  terminal ? null : { width: pointer ? 26 : 40, paddingHorizontal: 0 },
+                  doneFrame() ?? null,
+                ]}
               >
                 <View
                   style={{
@@ -390,7 +400,7 @@ function Split(props: Ctx) {
                     weight={2}
                   />
                 </View>
-              </SplitButtonSegment>
+              </Button>
             </MenuTrigger>
             <MenuContent align="end" offset={6} margin={8} {...menuPopup({ minWidth: 260 })}>
               <Each of={strategies}>
@@ -417,7 +427,7 @@ function Split(props: Ctx) {
               </Each>
             </MenuContent>
           </Menu>
-        </SplitButton>
+        </ButtonGroup>
         <If when={state() === "done"}>
           <Button
             variant="ghost"
@@ -723,7 +733,7 @@ function CopyCard(props: Ctx) {
           numberOfLines: 1,
           fontSize: pointer ? 12 : 14,
           color: colors.foreground,
-          fontFamily: "monospace",
+          fontFamily: font.mono,
         }}
       >
         {props.text}

@@ -1,11 +1,11 @@
 // A pressable: a region that owns its look and gets only the feedback of a press — the sink, the
 // pointer's hover and the keyboard's ring.
 
-import { colors, feedback, rounded, shape } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { split } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
+import { colors, feedback, rounded, shape } from "../theme";
 import { pressSink, pressTransition } from "./lib/motion";
 import { AsText, type Live, read } from "./lib/utils";
 
@@ -18,6 +18,53 @@ export interface PressableLookOptions {
   /** More style (a padding, a background, a radius), over the look's. */
   style?: Live<ViewStyle | undefined>;
 }
+
+/**
+ * A pressable region in the feedback of `pressableLook`: a whole row, a picture, a paragraph —
+ * `nsh/base`'s Button, which owns presses, the disabled state and the role, with nothing drawn
+ * on it. Every base prop passes through (`role`, `selected`, `hitSlop`, `onPress`…); `class` and
+ * `classList` pass through, and the style props go over the look's. A string child is text in the
+ * theme's text color and, unless `accessibilityLabel` says otherwise, the region's name for screen
+ * readers; children drawn as given derive no name, so an icon alone needs one.
+ */
+export type PressableProps = Omit<BaseButtonProps, "children"> & {
+  /** A string is the label; anything else is drawn as given. */
+  children?: string | JSX.Element;
+  /** How far a press sinks it: 98% by default, and none at 1. */
+  scale?: number;
+};
+
+/** A region that takes presses and shows only that it did. */
+export function Pressable(props: PressableProps) {
+  const [, rest] = split(props, [
+    "children",
+    "scale",
+    "class",
+    "classList",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+  ]);
+  const look = pressableLook({ disabled: () => props.disabled, scale: () => props.scale });
+  return (
+    <BaseButton
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+    >
+      {/* The page's ink, read where it is drawn: a bare Text is nsh's black. */}
+      <AsText style={{ color: colors.foreground }}>{props.children}</AsText>
+    </BaseButton>
+  );
+}
+
+// Shared pressable primitives.
+// `pressableLook` stays public: gallery tests and docs use it.
 
 /** How far a press sinks a pressable: less than a button's, since the region is bigger. */
 const SINK = 0.98;
@@ -53,44 +100,4 @@ export function pressableLook(o?: PressableLookOptions) {
       return feedback.focusRing();
     },
   };
-}
-
-/**
- * A pressable region in the feedback of `pressableLook`: a whole row, a picture, a paragraph —
- * `nsh/base`'s Button, which owns presses, the disabled state and the role, with nothing drawn
- * on it. Every base prop passes through (`role`, `selected`, `hitSlop`, `onPress`…); the style
- * props go over the look's. A string child is text in the theme's text color and, unless `accessibilityLabel` says
- * otherwise, the region's name for screen readers; children drawn as given derive no name, so an
- * icon alone needs one.
- */
-export type PressableProps = Omit<BaseButtonProps, "children"> & {
-  /** A string is the label; anything else is drawn as given. */
-  children?: string | JSX.Element;
-  /** How far a press sinks it: 98% by default, and none at 1. */
-  scale?: number;
-};
-
-/** A region that takes presses and shows only that it did. */
-export function Pressable(props: PressableProps) {
-  const [, rest] = split(props, [
-    "children",
-    "scale",
-    "style",
-    "hoverStyle",
-    "activeStyle",
-    "focusVisibleStyle",
-  ]);
-  const look = pressableLook({ disabled: () => props.disabled, scale: () => props.scale });
-  return (
-    <BaseButton
-      {...rest}
-      style={[look.style, props.style ?? null]}
-      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
-      activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
-      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
-    >
-      {/* The page's ink, read where it is drawn: a bare Text is nsh's black. */}
-      <AsText style={{ color: colors.foreground }}>{props.children}</AsText>
-    </BaseButton>
-  );
 }

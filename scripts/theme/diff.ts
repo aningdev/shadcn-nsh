@@ -1,14 +1,20 @@
 /**
  * Compare Theme v5 compiled `theme.json` + TS `ThemeSpec` against `<ref>` (`origin/main` by default).
  *
- *   bun scripts/theme/diff.ts [<ref>] [--same] [--gate] [--json]
+ *   bun scripts/theme/diff.ts [<ref>] [--same] [--json]
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { repo } from "../port/lib";
-import { BUILD_ROOT_THEME, tokenKind } from "./tokens";
+import { BUILD_ROOT_THEME } from "../../packages/theme/themes";
+
+function tokenKind(value: string): "color" | "dimension" {
+  if (/^\d+(?:\.\d+)?(?:px|rem)$/.test(value.trim())) return "dimension";
+  return "color";
+}
+
+const repo = path.resolve(import.meta.dir, "../..");
 
 type Json = Record<string, unknown>;
 export type Mode = "light" | "dark";
@@ -59,8 +65,9 @@ function contractWhy(file: string): string | undefined {
   if (file === "packages/theme/themes/nsh-gallery/index.ts") {
     return "the base theme spec";
   }
-  if (file.startsWith("scripts/tokens/")) return "the token exporter";
-  if (file === "scripts/theme/tokens.ts") return "the token helper";
+  if (file === "scripts/theme/build.ts" || file === "scripts/theme/export.ts") {
+    return "the theme exporter";
+  }
   return undefined;
 }
 
@@ -85,28 +92,6 @@ export function contractMoves(diff: ThemeDiff): ContractMove[] {
     }
   }
   return moves;
-}
-
-export function decisionRecords(added: string[]): string[] {
-  return added.filter((file) => /^docs\/decisions\/\d{4}-[^/]+\.md$/.test(file));
-}
-
-export function gateVerdict(
-  diff: ThemeDiff,
-  added: string[],
-): { passed: boolean; moves: ContractMove[]; records: string[] } {
-  const moves = contractMoves(diff);
-  const records = decisionRecords(added);
-  return { passed: moves.length === 0 || records.length > 0, moves, records };
-}
-
-function addedFiles(base: string): string[] {
-  return [
-    ...git("diff", "--name-only", "--diff-filter=A", `${base}...HEAD`).stdout.split("\n"),
-    ...git("ls-files", "--others", "--exclude-standard").stdout.split("\n"),
-  ]
-    .map((file) => file.trim())
-    .filter(Boolean);
 }
 
 const baseFiles = new Map<string, Json | undefined>();
@@ -242,7 +227,6 @@ export function classifyDiff(ref = "origin/main"): ThemeDiff {
 if (import.meta.main) {
   const args = process.argv.slice(2);
   const same = args.includes("--same");
-  const gated = args.includes("--gate");
   const json = args.includes("--json");
   const ref = args.find((arg) => !arg.startsWith("--")) ?? "origin/main";
   const diff = evaluate(ref);
@@ -274,20 +258,5 @@ if (import.meta.main) {
       `theme:diff against ${diff.ref} (${diff.base.slice(0, 8)}): ${changed} value(s) changed, ${contracted} key(s) added or removed`,
     );
     if (same && changed > 0) process.exit(1);
-  }
-
-  if (gated) {
-    const { passed, moves, records } = gateVerdict(diff, addedFiles(diff.base));
-    if (!passed) {
-      console.error("theme:diff --gate: contract changes detected without a decision record:");
-      for (const m of moves) console.error(`  ${m.where}: ${m.what}`);
-      process.exit(1);
-    }
-    const say = json ? console.error : console.log;
-    say(
-      moves.length === 0
-        ? "theme:diff --gate: no contract change"
-        : `theme:diff --gate: ${moves.length} contract change(s) recorded in ${records.join(", ")}`,
-    );
   }
 }

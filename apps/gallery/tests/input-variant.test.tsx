@@ -10,4 +10,6 @@ test("a ghost field has no fill and no edge at rest, and keeps the focus ring", 
   expect(plain).toBe(
     "default fill=yes edge=yes hover-edge=yes focus-edge=yes focus-ring=yes stride=1",
   );
+  expect(app.viewStyle("label:Ghost field")?.backgroundColor).toBeUndefined();
+  expect(app.viewStyle("label:Plain field")?.backgroundColor).toBeDefined();
 });

@@ -61,4 +61,24 @@ describe("list", () => {
     expect(catalog.items.find((item) => item.name === "button")?.installed).toBe(true);
     expect(catalog.items.find((item) => item.name === "spinner")?.installed).toBe(false);
   });
+
+  test("marks an extra runtime theme without mismarking uninstalled themes", async () => {
+    current = makeFixture({
+      items: ["theme", "theme-shadcn", "theme-apple"],
+      files: {
+        "theme.json": "{}\n",
+        "themes/shadcn.ts": "// installed runtime theme\n",
+      },
+    });
+    const out = await captured(() =>
+      runList({ cwd: current!.app, registry: current!.url, json: true }),
+    );
+    const catalog = JSON.parse(out.text) as {
+      items: { name: string; installed: boolean }[];
+    };
+
+    expect(catalog.items.find((item) => item.name === "theme")?.installed).toBe(true);
+    expect(catalog.items.find((item) => item.name === "theme-shadcn")?.installed).toBe(true);
+    expect(catalog.items.find((item) => item.name === "theme-apple")?.installed).toBe(false);
+  });
 });

@@ -11,8 +11,7 @@ import type {
   SurfaceRole,
 } from "../../packages/theme/schema";
 import { ALL_THEMES } from "../../packages/theme/themes";
-import { resolveColour, varsOf } from "./css-colour";
-import { css, over, parseColor, rgbToOklch, type Rgb } from "./oklch";
+import { css, over, parseColor, resolveColour, rgbToOklch, varsOf, type Rgb } from "./color";
 
 export type { Mode };
 const modes: Mode[] = ["light", "dark"];
@@ -262,13 +261,13 @@ export function readFills(themes?: readonly string[]): FillResult[] {
   return pool.flatMap((entry) => modes.flatMap((mode) => themeFills(entry, mode)));
 }
 
-if (import.meta.main) {
-  const at = process.argv.indexOf("--themes");
-  const value = at >= 0 ? process.argv[at + 1] : undefined;
-  const themes = value
-    ?.split(",")
-    .map((id) => id.trim())
-    .filter(Boolean);
+/** Run WCAG 2.2 contrast, fill separation, and contrast-waiver checks for all (or named) themes. */
+export function checkContrast(themes?: readonly string[]): {
+  log: string[];
+  failures: string[];
+} {
+  const log: string[] = [];
+  const failures: string[] = [];
   const results = readResults(themes);
   let failed = 0;
   let excused = 0;
@@ -278,7 +277,7 @@ if (import.meta.main) {
       continue;
     }
     failed += 1;
-    console.error(
+    failures.push(
       `theme:contrast: ${result.theme} ${result.mode}: ${result.fg} on ${result.bg} is ${result.ratio.toFixed(2)}, needs ${result.required} (${result.why})`,
     );
   }
@@ -286,7 +285,7 @@ if (import.meta.main) {
   let fillFailed = 0;
   for (const fill of fills.filter(({ pass }) => !pass)) {
     fillFailed += 1;
-    console.error(
+    failures.push(
       `theme:contrast: ${fill.theme} ${fill.mode}: ${fill.fill} on ${fill.ground} is ΔL ${fill.deltaL.toFixed(3)}, needs ${fill.floor} (${fill.why})`,
     );
   }
@@ -307,7 +306,7 @@ if (import.meta.main) {
     byTheme.set(fill.theme, e);
   }
   for (const [id, { pass, total, fills: fp, fillTotal }] of byTheme) {
-    console.log(
+    log.push(
       `theme:contrast: ${id}: ${pass} of ${total} pairs pass, ${fp} of ${fillTotal} fills separate`,
     );
   }
@@ -321,18 +320,34 @@ if (import.meta.main) {
       ),
   );
   for (const entry of stale) {
-    console.error(
+    failures.push(
       `theme:contrast: ${entry.theme}: ${entry.fg} on ${entry.bg} passes now; drop its exception (${entry.source})`,
     );
   }
   if (failed > 0 || stale.length > 0 || fillFailed > 0) {
-    console.error(
+    failures.push(
       `theme:contrast: ${failed} of ${results.length} pairs below AA, ${fillFailed} of ${fills.length} fills too close, ${stale.length} stale exceptions`,
     );
+  } else {
+    log.push(
+      `theme:contrast: every pair passes (${results.length}; ${excused} kept below AA by their platform)`,
+    );
+    log.push(`theme:contrast: every fill separates (${fills.length})`);
+  }
+  return { log, failures };
+}
+
+if (import.meta.main) {
+  const at = process.argv.indexOf("--themes");
+  const value = at >= 0 ? process.argv[at + 1] : undefined;
+  const themes = value
+    ?.split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+  const { log, failures } = checkContrast(themes);
+  for (const line of log) console.log(line);
+  if (failures.length > 0) {
+    for (const line of failures) console.error(line);
     process.exit(1);
   }
-  console.log(
-    `theme:contrast: every pair passes (${results.length}; ${excused} kept below AA by their platform)`,
-  );
-  console.log(`theme:contrast: every fill separates (${fills.length})`);
 }

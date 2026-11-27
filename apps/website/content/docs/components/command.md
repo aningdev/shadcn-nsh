@@ -51,10 +51,9 @@ const items: CommandItem[] = [
 ### Search
 
 The field filters the rows as you type. The shell sets the search bar's row and the field's text
-and placeholder color inline (`commandSearchBarStyle`, `commandSearchStyle`), over
-`commandClasses`, so an icon in `searchPrefix` stays beside the field and the placeholder stays
-the muted foreground — including when `searchable` turns the bar on after the palette has mounted.
-A caller's `searchBarStyle` and `searchStyle` win over those.
+and placeholder color inline, over `commandClasses`, so an icon in `searchPrefix` stays beside the
+field and the placeholder stays the muted foreground — including when `searchable` turns the bar on
+after the palette has mounted. A caller's `searchBarStyle` and `searchStyle` win over those.
 
 ```tsx
 <Command

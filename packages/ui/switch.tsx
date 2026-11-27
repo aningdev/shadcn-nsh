@@ -1,6 +1,10 @@
 // A switch: the look (`switchLook`) and the `Switch` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, ViewStyle } from "nsh";
+import { reduceMotion, split } from "nsh";
+import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
+
 import {
   alpha,
   colors,
@@ -13,16 +17,74 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   stroke,
-} from "@shadcn-nsh/theme";
-import type { JSX, ViewStyle } from "nsh";
-import { reduceMotion, split } from "nsh";
-import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
-
+} from "../theme";
 import { cssMotion } from "./lib/motion";
 import { AsText, joinClass, type Live, read } from "./lib/utils";
 
+/**
+ * A switch's size: `default` draws the theme's standard knob and track, `sm` draws the compact
+ * ones in `switch.small.*` (desktop vs touch scales come from the active input `tier`).
+ */
+export type SwitchSize = "sm" | "default";
+
+/**
+ * `nsh/base`'s Switch in the look of `switchLook`. Every base prop passes through; `trackClass`,
+ * `trackStyle` and `thumbStyle` go over the look's. A string child is the label.
+ */
+export type SwitchProps = Omit<BaseSwitchProps, "children"> & {
+  /** Compact (`sm`) or standard (`default`) geometry across both pointer and touch tiers. */
+  size?: SwitchSize;
+  /** A string is the label; anything else is drawn as given. */
+  children?: string | JSX.Element;
+};
+
+/**
+ * A switch. Alone (no children) it takes `switchHitSlop`, so a finger gets 44 points; with
+ * children it is a row with its label, and the row is the target.
+ */
+export function Switch(props: SwitchProps) {
+  const [, rest] = split(props, [
+    "size",
+    "children",
+    "trackClass",
+    "trackStyle",
+    "thumbClass",
+    "thumbStyle",
+    "hitSlop",
+    "focusVisibleStyle",
+    "disabledStyle",
+  ]);
+  const children = props.children;
+  const alone = children == null;
+  const size = () => props.size ?? "default";
+  const look = switchLook(() => props.checked ?? false, {
+    size: () => props.size,
+    disabled: () => !!props.disabled,
+    disabledSurface: props.disabledStyle == null,
+  });
+  return (
+    <BaseSwitch
+      {...rest}
+      hitSlop={props.hitSlop ?? (alone ? switchHitSlop(size()) : undefined)}
+      focusVisibleStyle={[
+        alone ? switchFocusStyle(size()) : feedback.focusRing(),
+        props.focusVisibleStyle ?? null,
+      ]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+      trackClass={joinClass(look.trackClass, props.trackClass)}
+      trackStyle={[look.trackStyle, props.trackStyle ?? null]}
+      thumbClass={joinClass(look.thumbClass, props.thumbClass)}
+      thumbStyle={[look.thumbStyle, props.thumbStyle ?? null]}
+    >
+      {alone ? null : <AsText style={{ color: colors.foreground }}>{children}</AsText>}
+    </BaseSwitch>
+  );
+}
+
+// Private helpers
+
 /** A switch's track and knob, in points. */
-export interface SwitchGeometry {
+interface SwitchGeometry {
   /** The track's outer width. */
   width: number;
   /** The track's outer height. */
@@ -38,7 +100,7 @@ export interface SwitchGeometry {
 }
 
 /** Distance from the track's inner border edge to the knob's leading and top edges. */
-export const knobOffset = (g: SwitchGeometry, border: number = g.border): number =>
+const knobOffset = (g: SwitchGeometry, border: number = g.border): number =>
   (g.height - (g.knobHeight ?? g.knob)) / 2 - border;
 
 /**
@@ -47,15 +109,14 @@ export const knobOffset = (g: SwitchGeometry, border: number = g.border): number
  * end the same `border + inset` from the trailing edge. So it travels the
  * width less the knob and that gap at both ends.
  */
-export const knobTravel = (g: SwitchGeometry): number =>
-  g.width - 2 * (g.border + g.inset) - g.knob;
+const knobTravel = (g: SwitchGeometry): number => g.width - 2 * (g.border + g.inset) - g.knob;
 
 /**
  * How far presses count past a switch whose track makes up its height, so a
  * finger gets `size.hit` points on each axis without the track looking
  * bigger.
  */
-export function switchSlop(
+function switchSlop(
   g: SwitchGeometry,
   hit: number,
 ): {
@@ -69,14 +130,8 @@ export function switchSlop(
   return { top: v, bottom: v, left: h, right: h };
 }
 
-/**
- * A switch's size: `default` draws the theme's standard knob and track, `sm` draws the compact
- * ones in `switch.small.*` (desktop vs touch scales come from the active input `tier`).
- */
-export type SwitchSize = "sm" | "default";
-
 /** Options accepted by {@link switchLook}. */
-export interface SwitchLookOptions {
+interface SwitchLookOptions {
   /** Switch size (`default` or `sm`, reactive or static). */
   size?: Live<SwitchSize | undefined>;
   /** Whether the switch is disabled (either a boolean or reactive getter). */
@@ -90,7 +145,7 @@ export interface SwitchLookOptions {
 }
 
 /** The props `switchLook` gives a `Switch`. */
-export interface SwitchLook {
+interface SwitchLook {
   /** Mirrors the track right to left, so the knob rests at the start there. */
   readonly trackClass: string;
   readonly trackStyle: ViewStyle;
@@ -122,21 +177,7 @@ interface ResolvedSwitchGeometry extends SwitchGeometry {
  * by the knob's own shrink, so a theme whose small knob is its knob keeps its feedback.
  */
 function geometry(size: SwitchSize): ResolvedSwitchGeometry {
-  if (terminal)
-    return {
-      width: 5 * TERMINAL_COLUMN,
-      height: TERMINAL_ROW,
-      border: 1,
-      inset: 0,
-      knob: TERMINAL_ROW,
-      knobHeight: TERMINAL_ROW,
-      onBorder: 1,
-      onKnobWidth: TERMINAL_ROW,
-      onKnobHeight: TERMINAL_ROW,
-      knobPressedWidth: TERMINAL_ROW,
-      knobPressedHeight: TERMINAL_ROW,
-      knobFeedback: "none",
-    };
+  if (terminal) return terminalGeometry();
   const look = control("switch");
   const small = size === "sm";
   const knob = small ? look.knobSmallWidth : look.knobWidth;
@@ -218,7 +259,7 @@ function knobFeedbackClasses(
  * timing role in the theme paces them and no layout property moves. NSH animates a
  * view's translate and scale as one transform, so one transition carries both: `motion.fast`.
  */
-export function switchLook(
+function switchLook(
   on: () => boolean,
   sizeOrOptions: SwitchSize | SwitchLookOptions = "default",
 ): SwitchLook {
@@ -307,7 +348,7 @@ export function switchLook(
         ...knob,
         borderWidth: hasEdge ? stroke.control : 0,
         transitionProperty: reduceMotion() ? "none" : "transform",
-        ...cssMotion(motion.indicatorGlide.timing),
+        ...cssMotion(motion.indicatorGlide.timing, motion.indicatorGlide.spring),
       };
     },
     get disabledStyle(): ViewStyle {
@@ -318,7 +359,7 @@ export function switchLook(
 }
 
 /** Capsule focus ring matching the switch track (for a standalone switch). */
-export function switchFocusStyle(size: SwitchSize = "default"): ViewStyle {
+function switchFocusStyle(size: SwitchSize = "default"): ViewStyle {
   return { borderRadius: geometry(size).height / 2, ...feedback.focusRing() };
 }
 
@@ -329,63 +370,29 @@ export function switchFocusStyle(size: SwitchSize = "default"): ViewStyle {
  * label: the row is the target, and a slop would reach into the rows next
  * to it, which take presses before it where they overlap.
  */
-export function switchHitSlop(
+function switchHitSlop(
   size: SwitchSize = "default",
 ): { top: number; bottom: number; left: number; right: number } | undefined {
   const hit = hitTarget();
   return terminal || hit <= 0 ? undefined : switchSlop(geometry(size), hit);
 }
 
-/**
- * `nsh/base`'s Switch in the look of `switchLook`. Every base prop passes through; `trackClass`,
- * `trackStyle` and `thumbStyle` go over the look's. A string child is the label.
- */
-export type SwitchProps = Omit<BaseSwitchProps, "children"> & {
-  /** Compact (`sm`) or standard (`default`) geometry across both pointer and touch tiers. */
-  size?: SwitchSize;
-  /** A string is the label; anything else is drawn as given. */
-  children?: string | JSX.Element;
-};
+// Terminal
 
-/**
- * A switch. Alone (no children) it takes `switchHitSlop`, so a finger gets 44 points; with
- * children it is a row with its label, and the row is the target.
- */
-export function Switch(props: SwitchProps) {
-  const [, rest] = split(props, [
-    "size",
-    "children",
-    "trackClass",
-    "trackStyle",
-    "thumbClass",
-    "thumbStyle",
-    "hitSlop",
-    "focusVisibleStyle",
-    "disabledStyle",
-  ]);
-  const children = props.children;
-  const alone = children == null;
-  const size = () => props.size ?? "default";
-  const look = switchLook(() => props.checked ?? false, {
-    size: () => props.size,
-    disabled: () => !!props.disabled,
-    disabledSurface: props.disabledStyle == null,
-  });
-  return (
-    <BaseSwitch
-      {...rest}
-      hitSlop={props.hitSlop ?? (alone ? switchHitSlop(size()) : undefined)}
-      focusVisibleStyle={[
-        alone ? switchFocusStyle(size()) : feedback.focusRing(),
-        props.focusVisibleStyle ?? null,
-      ]}
-      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
-      trackClass={joinClass(look.trackClass, props.trackClass)}
-      trackStyle={[look.trackStyle, props.trackStyle ?? null]}
-      thumbClass={joinClass(look.thumbClass, props.thumbClass)}
-      thumbStyle={[look.thumbStyle, props.thumbStyle ?? null]}
-    >
-      {alone ? null : <AsText style={{ color: colors.foreground }}>{children}</AsText>}
-    </BaseSwitch>
-  );
+/** A shell's switch is the character grid's: five columns by one row, whatever the theme says. */
+function terminalGeometry(): ResolvedSwitchGeometry {
+  return {
+    width: 5 * TERMINAL_COLUMN,
+    height: TERMINAL_ROW,
+    border: 1,
+    inset: 0,
+    knob: TERMINAL_ROW,
+    knobHeight: TERMINAL_ROW,
+    onBorder: 1,
+    onKnobWidth: TERMINAL_ROW,
+    onKnobHeight: TERMINAL_ROW,
+    knobPressedWidth: TERMINAL_ROW,
+    knobPressedHeight: TERMINAL_ROW,
+    knobFeedback: "none",
+  };
 }

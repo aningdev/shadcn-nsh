@@ -1,4 +1,4 @@
-import { surface, alpha, colors, focusRing, rounded, toneColor } from "@shadcn-nsh/theme";
+import { surface, alpha, colors, focusRing, rounded, toneColor, font } from "@shadcn-nsh/theme";
 // Hover card: the official gallery's scene (`references/nsh/examples/gallery/demos/HoverCardDemo.tsx`).
 // Mentions, link previews, live quotes, delays, and a card the app pins open. The card's surface is
 // `popoverLook` on a `PopIn`. The trigger is one of the scene's own views, handed to
@@ -313,19 +313,13 @@ function Mention(props: {
           <Button
             style={{ flex: 1 }}
             variant={following() ? "secondary" : "default"}
+            icon={following() ? Check : Plus}
             onPress={() => {
               following.set(!following());
               log(`${following() ? "followed" : "unfollowed"} ${person.name}`);
             }}
           >
-            <>
-              <Icon
-                icon={following() ? Check : Plus}
-                size={14}
-                tint={following() ? colors.foreground : colors.primaryForeground}
-              />
-              <Text>{following() ? "Following" : "Follow"}</Text>
-            </>
+            {following() ? "Following" : "Follow"}
           </Button>
           <Button
             style={{ flex: 1 }}
@@ -566,7 +560,7 @@ function Ticker(props: {
             style={{
               fontSize: small,
               fontWeight: "600",
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               color: colors.foreground,
             }}
           >

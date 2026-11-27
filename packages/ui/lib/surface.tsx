@@ -1,6 +1,18 @@
 // What sections, wells and rows look like: density, surfaces, and rows whose hover fill bleeds.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, StyleProp, ViewStyle } from "nsh";
+import {
+  computed,
+  platform,
+  Shader,
+  ShaderEffect,
+  shadersAvailable,
+  Text,
+  View,
+  windowSize,
+} from "nsh";
+
 import {
   colors,
   control,
@@ -17,10 +29,7 @@ import {
   TERMINAL_GAP,
   TERMINAL_ROW,
   type SurfaceRole,
-} from "@shadcn-nsh/theme";
-import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { computed, platform, ShaderEffect, shadersAvailable, Text, View, windowSize } from "nsh";
-
+} from "../../theme";
 import { type Live, read } from "./utils";
 
 const pointer = platform.desktop;
@@ -200,7 +209,7 @@ export interface ThemedSurfaceProps {
  * plain view, including in the terminal and wherever shaders are unavailable.
  */
 export function ThemedSurface(props: ThemedSurfaceProps) {
-  // Read once in the body (`check:children`); reactive render reads `surface(role)` on theme switches.
+  // Read once in the body (`check:ui`); reactive render reads `surface(role)` on theme switches.
   const kids = props.children;
   return (
     <>
@@ -208,17 +217,50 @@ export function ThemedSurface(props: ThemedSurfaceProps) {
         const s = surface(props.role);
         const style = [s.style, props.style ?? null];
         if (s.effect && shadersAvailable() && !terminal) {
+          if (s.effect.source.includes("sample_content")) {
+            return (
+              <ShaderEffect
+                source={s.effect.source}
+                uniforms={s.effect.uniforms}
+                maxSampleOffset={s.effect.maxSampleOffset}
+                {...s.platformProps}
+                class={props.class}
+                style={style}
+              >
+                {kids}
+              </ShaderEffect>
+            );
+          }
+          if (s.effect.source.includes("sample_backdrop")) {
+            return (
+              <View {...s.platformProps} class={props.class} style={style}>
+                <ShaderEffect
+                  source={s.effect.source}
+                  uniforms={s.effect.uniforms}
+                  maxSampleOffset={s.effect.maxSampleOffset}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    pointerEvents: "none",
+                  }}
+                />
+                {kids}
+              </View>
+            );
+          }
           return (
-            <ShaderEffect
+            <Shader
               source={s.effect.source}
               uniforms={s.effect.uniforms}
-              maxSampleOffset={s.effect.maxSampleOffset}
               {...s.platformProps}
               class={props.class}
               style={style}
             >
               {kids}
-            </ShaderEffect>
+            </Shader>
           );
         }
         return (
@@ -458,6 +500,68 @@ export function RowLabel(props: {
 export interface ToolbarTrackOptions {
   /** A column of tools (a `Toolbar`'s `axis="vertical"`). */
   vertical?: boolean;
+}
+
+/** Options of `progressiveBlurStyle` and `ProgressiveBlur`. */
+export interface ProgressiveBlurOptions {
+  /** Which edge stays sharp. Default `top`. */
+  readonly edge?: "top" | "bottom";
+  /** Backdrop blur radius in points. Default 20. */
+  readonly blur?: number;
+  /** Where the mask reaches transparent, as a fraction of the bar. Default 0.68. */
+  readonly fadeStop?: number;
+}
+
+/**
+ * A backdrop blur that fades off one edge: NSH `backdropFilter: blur()` masked by a linear
+ * gradient. The mask is opaque at the edge and clear by `fadeStop`, so content under the far
+ * side stays sharp. Colors in the gradient are mask coverage, not paint.
+ */
+export function progressiveBlurStyle(options?: ProgressiveBlurOptions): ViewStyle {
+  const edge = options?.edge ?? "top";
+  const blur = options?.blur ?? 20;
+  const fadeStop = Math.round((options?.fadeStop ?? 0.68) * 100);
+  const mask =
+    edge === "bottom"
+      ? `linear-gradient(to top, black 0%, transparent ${fadeStop}%)`
+      : `linear-gradient(to bottom, black 0%, transparent ${fadeStop}%)`;
+  return {
+    backdropFilter: `blur(${blur}px)`,
+    maskImage: mask,
+  };
+}
+
+/** Props of `ProgressiveBlur`. */
+export interface ProgressiveBlurProps extends ProgressiveBlurOptions {
+  readonly class?: string;
+  readonly style?: StyleProp<ViewStyle>;
+}
+
+/**
+ * A non-interactive band of `progressiveBlurStyle` along the top (or bottom) of the nearest
+ * positioned ancestor. The terminal draws nothing: a blur there has no backdrop to sample.
+ * `style` covers the default band (64 points, pinned to `start` and `end`).
+ */
+export function ProgressiveBlur(props: ProgressiveBlurProps) {
+  if (terminal) return null;
+  const edge = props.edge ?? "top";
+  return (
+    <View
+      class={props.class}
+      style={[
+        {
+          pointerEvents: "none",
+          position: "absolute",
+          start: 0,
+          end: 0,
+          height: 64,
+          ...(edge === "bottom" ? { bottom: 0 } : { top: 0 }),
+          ...progressiveBlurStyle({ edge, blur: props.blur, fadeStop: props.fadeStop }),
+        },
+        props.style ?? null,
+      ]}
+    />
+  );
 }
 
 /**

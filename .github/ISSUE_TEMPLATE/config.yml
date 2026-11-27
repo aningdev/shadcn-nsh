@@ -5,4 +5,4 @@ contact_links:
     about: Every component's props and live demos, the themes and the CLI.
   - name: Security issue
     url: https://github.com/aningdev/shadcn-nsh/security/advisories/new
-    about: Report privately, not in a public issue. See SECURITY.md.
+    about: Report privately via GitHub Security Advisories, not in a public issue.

@@ -48,9 +48,9 @@ function Row(props: { label: string; detail: string; first?: boolean; children: 
 }
 
 /** A number field's width: its steppers need room beside a row's label. */
-const fieldWidth = () => (narrowWindow() ? 116 : 104);
+const fieldWidth = () => (narrowWindow() ? 148 : 120);
 /** The transfer's field: a currency sign before the field and a unit after it leave the number its own room. */
-const transferWidth = () => (narrowWindow() ? 150 : 148);
+const transferWidth = () => (narrowWindow() ? 168 : 156);
 
 /** A bill's line: what it is on the left, what it costs on the right. The amount rolls (`Roll`). */
 function BillLine(props: { label: string; amount: number; total?: boolean }) {
@@ -120,7 +120,7 @@ export function NumberInputDemo() {
                 max={8}
                 disabled={locked()}
                 accessibilityLabel="Seats"
-                inputStyle={{ textAlign: "center" }}
+                inputStyle={{ textAlign: "center", paddingHorizontal: 4 }}
                 onChange={({ value }) => {
                   seats.set(value);
                   last.set(`Seats: ${show(value)}`);
@@ -208,14 +208,14 @@ export function NumberInputDemo() {
                         : `${item().detail} · ${money(item().price)}`}
                     </Text>
                   </View>
-                  <View style={{ width: platform.desktop ? 92 : 108 }}>
+                  <View style={{ width: platform.desktop ? 104 : 136 }}>
                     <NumberInput
                       steps="split"
                       value={n()}
                       min={1}
                       max={item().stock}
                       accessibilityLabel={`Quantity of ${item().name}`}
-                      inputStyle={{ textAlign: "center" }}
+                      inputStyle={{ textAlign: "center", paddingHorizontal: 4 }}
                       onChange={({ value }) => {
                         const next = qty().slice();
                         next[i()] = value;
@@ -224,8 +224,15 @@ export function NumberInputDemo() {
                       }}
                     />
                   </View>
-                  <View style={{ width: platform.desktop ? 64 : 70, alignItems: "flex-end" }}>
-                    <Roll value={item().price * (n() ?? 0)}>
+                  <View style={{ width: platform.desktop ? 64 : 56, alignItems: "flex-end" }}>
+                    <Roll
+                      value={item().price * (n() ?? 0)}
+                      style={{
+                        fontSize: controlSize.label,
+                        color: colors.foreground,
+                        fontVariant: ["tabular-nums"],
+                      }}
+                    >
                       {money(item().price * (n() ?? 0))}
                     </Roll>
                   </View>
@@ -356,7 +363,7 @@ export function NumberInputDemo() {
                 style={{
                   fontSize: controlSize.detail,
                   color: toneColor(feel().tone),
-                  width: 84,
+                  width: narrowWindow() ? undefined : 84,
                 }}
               >
                 {feel().label}

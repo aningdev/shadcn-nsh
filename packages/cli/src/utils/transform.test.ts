@@ -22,6 +22,35 @@ describe("transformContent", () => {
     expect(out).toBe('import { colors } from "../../lib/ui/theme";');
   });
 
+  test("rewrites ../theme and ../../theme, and leaves a theme file alone", () => {
+    expect(
+      transformContent(
+        'import { colors } from "../theme";',
+        path.join(cwd, "components/ui/button.tsx"),
+        config,
+        cwd,
+      ),
+    ).toBe('import { colors } from "../../lib/ui/theme";');
+
+    expect(
+      transformContent(
+        "import { colors } from '../../theme';",
+        path.join(cwd, "lib/ui/icons.tsx"),
+        config,
+        cwd,
+      ),
+    ).toBe("import { colors } from './theme';");
+
+    expect(
+      transformContent(
+        'import data from "../theme/theme.json";',
+        path.join(cwd, "components/ui/button.tsx"),
+        config,
+        cwd,
+      ),
+    ).toBe('import data from "../theme/theme.json";');
+  });
+
   test("rewrites ./lib/* relative to the component", () => {
     const out = transformContent(
       'import { createOpenState } from "./lib/state";',

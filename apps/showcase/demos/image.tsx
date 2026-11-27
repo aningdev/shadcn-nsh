@@ -1,4 +1,4 @@
-import { alpha, colors, rounded, toneColor, type Tone, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, rounded, toneColor, type Tone, shape, font } from "@shadcn-nsh/theme";
 // Image: the official gallery's Images scene (`references/nsh/examples/gallery/demos/Images.tsx`):
 // resize modes, corners, assets and tint, SVG, animated GIF/WebP, placeholders and fade, blur,
 // size and prefetch, and load events. `Image` is `nsh`'s primitive, kept as one; the cards,
@@ -39,7 +39,7 @@ function Note(props: { children: string; code?: boolean }) {
         numberOfLines: 1,
         fontSize: 13,
         color: colors.mutedForeground,
-        fontFamily: props.code ? "monospace" : undefined,
+        fontFamily: props.code ? font.mono : undefined,
         fontVariant: ["tabular-nums"],
         textAlign: "center",
       }}

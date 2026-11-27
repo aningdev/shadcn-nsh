@@ -13,11 +13,6 @@
  * `nsh:<nsh.json's id>:palette`). */
 export const PALETTE_KEY = "palette";
 
-/** The key a demo writes its palette's id under once that palette is drawn (`apply-palette.ts`):
- * the theme render check waits on it before it puts a page in a state (`render-theme-pages.tsx`).
- * Nothing on the site reads it. */
-export const PALETTE_DRAWN_KEY = "palette-drawn";
-
 /** The palettes, in the switch's order. `nsh-gallery` is the theme the demos are built with
  * (`packages/theme/theme.json`), which an app needs no theme file for. */
 export const PALETTES = [

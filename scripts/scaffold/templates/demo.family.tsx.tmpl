@@ -1,0 +1,25 @@
+import { mount, signal, View } from "nsh";
+
+import { {{Id}}, {{Id}}Close, {{Id}}Content, {{Id}}Trigger } from "../ui/{{id}}";
+import { DemoPage } from "./kit";
+
+function App() {
+  const last = signal("–");
+
+  return (
+    <DemoPage title="{{Id}}" note={() => last()}>
+      <View style={{ flexDirection: "row" }}>
+        <{{Id}}
+          onOpenChange={({ open, reason }) => last.set(`${open ? "open" : "closed"}: ${reason}`)}
+        >
+          <{{Id}}Trigger variant="default">Open…</{{Id}}Trigger>
+          <{{Id}}Content>
+            <{{Id}}Close>Close</{{Id}}Close>
+          </{{Id}}Content>
+        </{{Id}}>
+      </View>
+    </DemoPage>
+  );
+}
+
+mount(App);

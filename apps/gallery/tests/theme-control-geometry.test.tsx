@@ -26,6 +26,8 @@ test("control dimensions and component looks follow the active theme", async () 
     expect(find(app.texts(), "slider=")).toContain("|true|rounded-full");
     expect(find(app.texts(), "slider=")?.endsWith("|true|false|false|false")).toBe(true);
     expect(find(app.texts(), "checkbox=")).toBe("1|false|true|true|accent");
+    expect(app.layout("label:Track")).toMatchObject({ width: 36, height: 20 });
+    expect(app.layout("label:Small track")).toMatchObject({ width: 28, height: 16 });
     expect(find(app.texts(), "progress=")).toBe("6/solid/true");
     expect(find(app.texts(), "tabs=")).toBe("0/1");
     expect(find(app.texts(), "tabs-indicator=")).toBe("2");
@@ -46,6 +48,7 @@ test("control dimensions and component looks follow the active theme", async () 
   expect(find(app.texts(), "switch=")).toBe(
     "40x24|2|16|checked:translate-x-[16px] checked:scale-[1.25] active:scale-[1.375]",
   );
+  expect(app.layout("label:Track")).toMatchObject({ width: 40, height: 24 });
   // Material's slider uses a 4-point rail and 20-point band with its 16-point round knob (8px pad),
   // the band `SecondaryContainer` (`slider.face` / `progress.face`, #408) and the knob `primary`
   // (`slider.knob.face`), so the band is the theme's own face, neither the muted track nor a tint.
@@ -69,6 +72,7 @@ test("control dimensions and component looks follow the active theme", async () 
   expect(find(app.texts(), "switch=")).toBe(
     "40x20|1|12|checked:translate-x-[20px] active:scale-x-[1.4167] active:scale-y-[1.1667] active:translate-x-[2.5px] checked:active:translate-x-[17.5px]",
   );
+  expect(app.layout("label:Track")).toMatchObject({ width: 40, height: 20 });
   expect(find(app.texts(), "slider=")).toContain(
     "h-[4px] rounded-full|h-[32px] justify-center px-[9px]",
   );

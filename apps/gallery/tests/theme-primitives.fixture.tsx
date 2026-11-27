@@ -2,6 +2,7 @@ import {
   animate,
   colors,
   defineTheme,
+  feedback,
   focusRing,
   follow,
   hovered,
@@ -18,10 +19,10 @@ import winui from "../../../packages/theme/themes/winui/index";
 import {
   Button,
   buttonLook,
+  ButtonGroup,
+  buttonGroupItem,
   carouselArrowLook,
-  roundButtonLook,
-  splitButtonLook,
-  toastCloseLook,
+  RoundButton,
   Toggle,
   toggleLook,
 } from "../../../packages/ui";
@@ -78,10 +79,13 @@ function App() {
   const direct = createAnimatedValue(0);
 
   const defaultBtn = buttonLook("default");
-  const roundBtn = roundButtonLook("default");
-  const splitSeg = splitButtonLook("default").segment();
   const onToggle = toggleLook({ on: true });
-  const toastClose = toastCloseLook();
+  // Read at stringify time, the same way the private close look's getter does.
+  const toastClose = {
+    get hoverStyle() {
+      return feedback.hoverStyle("foreground");
+    },
+  };
   const arrow = carouselArrowLook({ glass: true });
 
   return (
@@ -113,6 +117,14 @@ function App() {
         <Button variant="ghost" onPress={() => selectTheme(winui)}>
           WinUI
         </Button>
+        <RoundButton accessibilityLabel="Round">
+          <Text>R</Text>
+        </RoundButton>
+        <ButtonGroup>
+          <Button accessibilityLabel="Split" style={buttonGroupItem("first")}>
+            Save
+          </Button>
+        </ButtonGroup>
       </View>
       <Text>{`focus=${JSON.stringify(focusRing())}`}</Text>
       <Text>{`ringTokens=${String(token("ring"))}|${String(token("card"))}`}</Text>
@@ -121,8 +133,6 @@ function App() {
       <Text>{`motionSlow=${showMotion(motion.slow)}`}</Text>
       <Text>{`motionPresets=${showPresets()}`}</Text>
       <Text>{`btnHover=${JSON.stringify(defaultBtn.hoverStyle ?? null)}`}</Text>
-      <Text>{`roundHover=${JSON.stringify(roundBtn.hoverStyle ?? null)}`}</Text>
-      <Text>{`splitHover=${JSON.stringify(splitSeg.hoverStyle ?? null)}`}</Text>
       <Text>{`toggleOnHover=${JSON.stringify(onToggle.hoverStyle ?? null)}`}</Text>
       <Text>{`toastHover=${JSON.stringify(toastClose.hoverStyle)}`}</Text>
       <Text>{`arrowHover=${JSON.stringify(arrow.hoverStyle)}`}</Text>

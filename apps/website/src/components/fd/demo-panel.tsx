@@ -255,7 +255,7 @@ export function DemoPanel({ name, loadSource }: DemoPanelProps) {
         role="tabpanel"
         id={`${id}-preview`}
         hidden={view !== "preview"}
-        className="overflow-auto p-3"
+        className="bg-fd-muted/45 overflow-auto bg-[radial-gradient(color-mix(in_oklab,var(--color-fd-foreground)_10%,transparent)_1px,transparent_1px)] [background-size:16px_16px] p-4 sm:p-6"
       >
         <iframe
           key={`${src}-${reloads}`}
@@ -270,7 +270,7 @@ export function DemoPanel({ name, loadSource }: DemoPanelProps) {
             loaded.current = true;
             if (frame.current) frame.current.dataset.theme = siteTheme();
           }}
-          className="mx-auto block max-w-full border-0 bg-transparent"
+          className="border-fd-border/80 mx-auto block max-w-full rounded-xl border bg-transparent shadow-sm"
         />
       </div>
       <div role="tabpanel" id={`${id}-source`} hidden={view !== "source"} className="p-3">

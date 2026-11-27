@@ -195,33 +195,33 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.52436,
-          0.18453,
-          259.973
+          0.49488,
+          0.19916,
+          260.601
         ],
-        "hex": "#1e63d2"
+        "hex": "#0b57d0"
       }
     },
     "success": {
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.56078,
-          0.1232,
-          159.355
+          0.46701,
+          0.12465,
+          148.199
         ],
-        "hex": "#138a5a"
+        "hex": "#146c2e"
       }
     },
     "warning": {
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.5909,
-          0.13245,
-          65.117
+          0.4917,
+          0.11532,
+          59.988
         ],
-        "hex": "#b26a00"
+        "hex": "#8f4e00"
       }
     },
     "destructive": {

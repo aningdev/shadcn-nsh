@@ -1,7 +1,6 @@
 import { expect, open, test } from "nsh/test";
 
-// `pickerLook` dims an off trigger through `disabledStyle`, the state the trigger carries
-// (`disabled`), so the look itself has no `opacity` to keep in step.
+// An off `Picker` dims through `disabledStyle`, the state the trigger carries (`disabled`).
 test("an off picker trigger dims through its disabled state", async () => {
   const app = await open("./picker-look.fixture.tsx");
   const lit = app.viewStyle("label:Trigger")?.opacity;

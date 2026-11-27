@@ -1,8 +1,14 @@
 // The platform materials a finish can ask for, and what each guarantees where the platform has
 // none of them. From the NSH design guides; yours to change.
-import type { BackdropMaterial, WindowsBackdropMaterial } from "nsh";
+import type { BackdropMaterial, MacOsBackdrop, WindowsBackdropMaterial } from "nsh";
 
-import type { ColorExpr, FinishMaterial, MaterialSpec, SurfaceMaterial } from "./schema";
+import type {
+  ColorExpr,
+  FinishMaterial,
+  MacOsBackdropSpec,
+  MaterialSpec,
+  SurfaceMaterial,
+} from "./schema";
 
 export type { FinishMaterial };
 
@@ -26,6 +32,8 @@ export interface MaterialRecipe {
     ios?: { backdropMaterial: BackdropMaterial };
     /** The system blur of what is behind the window (`windows={{ backdrop }}`), Windows 11 (22000) and later. */
     windows?: { backdrop: { material: WindowsBackdropMaterial } };
+    /** AppKit visual-effect backdrop (`macos={{ backdrop }}`). */
+    macos?: { readonly backdrop: MacOsBackdrop };
   };
   /** What every platform that draws no material of its own draws instead. */
   fallback: {
@@ -68,7 +76,7 @@ export const materials: Record<FinishMaterial, MaterialRecipe> = {
 export interface ResolvedMaterial {
   /** Liquid Glass style, only when the recipe is the system's glass. */
   readonly glassEffect?: "regular" | "clear";
-  /** Platform props `surface()` spreads onto the view (`ios` / `windows`). */
+  /** Platform props `surface()` spreads onto the view (`ios` / `windows` / `macos`). */
   readonly props: MaterialRecipe["props"];
   /** Backdrop blur in points. */
   readonly blur: number;
@@ -81,6 +89,26 @@ export interface ResolvedMaterial {
 }
 
 const BLUR_FALLBACK = { blur: 16, minOpacity: 0.68 } as const;
+
+/** Fill AppKit's backdrop defaults. An explicit blending or state wins. */
+function macosBackdrop(spec: MacOsBackdropSpec): { readonly backdrop: MacOsBackdrop } {
+  if (typeof spec === "string") {
+    return {
+      backdrop: {
+        material: spec,
+        blending: "withinWindow",
+        state: "followsWindowActiveState",
+      },
+    };
+  }
+  return {
+    backdrop: {
+      ...(spec.material !== undefined ? { material: spec.material } : {}),
+      blending: spec.blending ?? "withinWindow",
+      state: spec.state ?? "followsWindowActiveState",
+    },
+  };
+}
 
 function withOptics(spec: MaterialSpec, resolved: ResolvedMaterial): ResolvedMaterial {
   return {
@@ -103,15 +131,27 @@ export function resolveMaterial(material: SurfaceMaterial): ResolvedMaterial {
   }
   if (material.kind === "blur") {
     return withOptics(material, {
-      props: {},
+      props: {
+        ...(material.ios ? { ios: { backdropMaterial: material.ios } } : {}),
+        ...(material.macos ? { macos: macosBackdrop(material.macos) } : {}),
+      },
       blur: material.blur ?? BLUR_FALLBACK.blur,
       minOpacity: material.minOpacity ?? BLUR_FALLBACK.minOpacity,
     });
   }
   const recipe = materials[material.kind];
+  const glassEffect = material.glass ?? recipe.glassEffect;
   return withOptics(material, {
-    ...(recipe.glassEffect !== undefined ? { glassEffect: recipe.glassEffect } : {}),
-    props: recipe.props,
+    ...(glassEffect !== undefined ? { glassEffect } : {}),
+    props: {
+      ...(material.ios
+        ? { ios: { backdropMaterial: material.ios } }
+        : recipe.props.ios
+          ? { ios: recipe.props.ios }
+          : {}),
+      ...(recipe.props.windows ? { windows: recipe.props.windows } : {}),
+      ...(material.macos ? { macos: macosBackdrop(material.macos) } : {}),
+    },
     blur: material.blur ?? recipe.fallback.blur,
     minOpacity: material.minOpacity ?? recipe.fallback.minOpacity,
   });

@@ -1,8 +1,6 @@
 // An image viewer: one image full screen over the media ground, fitted, pinched, panned and
 // swiped away.
 
-import { alpha, animate, colors, font, motion } from "@shadcn-nsh/theme";
-import { X } from "lucide";
 import type { TextStyle, ViewStyle } from "nsh";
 import {
   createAnimatedValue,
@@ -16,9 +14,10 @@ import {
   View,
 } from "nsh";
 
+import { alpha, animate, colors, font, motion } from "../theme";
 import { IconButton } from "./button";
 import { Dialog, DialogContent, dialogPage, type DialogContentProps } from "./dialog";
-import { Icon } from "./lib/icons";
+import { Icon, X } from "./lib/icons";
 import { backdrop } from "./lib/popup";
 
 /** The image a viewer shows: what `TextView`'s `onImagePress` reports. */
@@ -28,75 +27,6 @@ export type ImageViewerImage = {
   /** What the image shows: it names the image for screen readers and is the caption. */
   alt?: string;
 };
-
-/** An image viewer's parts as the styles they wear: spread each one. */
-export interface ImageViewerLook {
-  /** The dialog itself: a page with no ground of its own (the ground is `ground()`). */
-  page(): ViewStyle;
-  /** The ground the image sits on: the theme's `media` ground, filling the window. */
-  ground(): ViewStyle;
-  /** The caption's strip along the bottom, under the safe area, over a scrim of its own. */
-  caption(): ViewStyle;
-  /** The caption's type: `on-media` ink, centered, in the theme's `body` role. */
-  captionText(): TextStyle;
-  /** The close button's place: the top end, under the safe area. */
-  closeCorner(): ViewStyle;
-  /** The close button's chip: a faint `on-media` wash. */
-  close(): ViewStyle;
-  /** The close button's chip under the pointer. */
-  closeHover(): ViewStyle;
-}
-
-/**
- * An image viewer's look: the dialog as a page on the theme's `media` ground, which is dark in
- * either appearance, with the ink `on-media` on it; the caption and the close chip carry a wash of
- * that ink so they read over any photograph.
- */
-export function imageViewerLook(): ImageViewerLook {
-  return {
-    page: () => ({ ...dialogPage(), backgroundColor: "transparent" }),
-    ground: () => ({
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: colors.media,
-    }),
-    caption: () => ({
-      pointerEvents: "none",
-      position: "absolute",
-      left: 0,
-      right: 0,
-      bottom: 0,
-      paddingHorizontal: 24,
-      paddingTop: 32,
-      paddingBottom: safeArea().bottom + 20,
-      ...backdrop(),
-    }),
-    captionText: () => ({
-      fontSize: font.size("body"),
-      lineHeight: font.lineHeight("body"),
-      textAlign: "center",
-      color: colors.onMedia,
-    }),
-    closeCorner: () => ({
-      position: "absolute",
-      top: safeArea().top + 12,
-      end: safeArea().right + 12,
-    }),
-    close: () => ({ borderRadius: 999, backgroundColor: alpha(colors.onMedia, 0.16) }),
-    closeHover: () => ({ backgroundColor: alpha(colors.onMedia, 0.28) }),
-  };
-}
-
-/** The deepest zoom, and where a double tap zooms in to. */
-const MAX_ZOOM = 4;
-const DOUBLE_TAP_ZOOM = 2.5;
-/** Two taps this close in time (ms) are a double tap. */
-const DOUBLE_TAP_MS = 300;
-/** A drag this far down (points) at 1× closes the viewer. */
-const SWIPE_CLOSE = 120;
-
-const clamp = (value: number, bound: number) => Math.max(-bound, Math.min(bound, value));
 
 /**
  * An image viewer's props: `image` and `onClose`; apart from those, every prop of
@@ -275,3 +205,74 @@ export function ImageViewer(props: ImageViewerProps) {
     </Dialog>
   );
 }
+
+// Private helpers & looks
+
+/** An image viewer's parts as the styles they wear: spread each one. */
+interface ImageViewerLook {
+  /** The dialog itself: a page with no ground of its own (the ground is `ground()`). */
+  page(): ViewStyle;
+  /** The ground the image sits on: the theme's `media` ground, filling the window. */
+  ground(): ViewStyle;
+  /** The caption's strip along the bottom, under the safe area, over a scrim of its own. */
+  caption(): ViewStyle;
+  /** The caption's type: `on-media` ink, centered, in the theme's `body` role. */
+  captionText(): TextStyle;
+  /** The close button's place: the top end, under the safe area. */
+  closeCorner(): ViewStyle;
+  /** The close button's chip: a faint `on-media` wash. */
+  close(): ViewStyle;
+  /** The close button's chip under the pointer. */
+  closeHover(): ViewStyle;
+}
+
+/**
+ * An image viewer's look: the dialog as a page on the theme's `media` ground, which is dark in
+ * either appearance, with the ink `on-media` on it; the caption and the close chip carry a wash of
+ * that ink so they read over any photograph.
+ */
+function imageViewerLook(): ImageViewerLook {
+  return {
+    page: () => ({ ...dialogPage(), backgroundColor: "transparent" }),
+    ground: () => ({
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.media,
+    }),
+    caption: () => ({
+      pointerEvents: "none",
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      paddingHorizontal: 24,
+      paddingTop: 32,
+      paddingBottom: "calc(env(safe-area-inset-bottom) + 20px)",
+      ...backdrop(),
+    }),
+    captionText: () => ({
+      fontSize: font.size("body"),
+      lineHeight: font.lineHeight("body"),
+      textAlign: "center",
+      color: colors.onMedia,
+    }),
+    closeCorner: () => ({
+      position: "absolute",
+      top: safeArea().top + 12,
+      end: safeArea().right + 12,
+    }),
+    close: () => ({ borderRadius: 999, backgroundColor: alpha(colors.onMedia, 0.16) }),
+    closeHover: () => ({ backgroundColor: alpha(colors.onMedia, 0.28) }),
+  };
+}
+
+/** The deepest zoom, and where a double tap zooms in to. */
+const MAX_ZOOM = 4;
+const DOUBLE_TAP_ZOOM = 2.5;
+/** Two taps this close in time (ms) are a double tap. */
+const DOUBLE_TAP_MS = 300;
+/** A drag this far down (points) at 1× closes the viewer. */
+const SWIPE_CLOSE = 120;
+
+const clamp = (value: number, bound: number) => Math.max(-bound, Math.min(bound, value));

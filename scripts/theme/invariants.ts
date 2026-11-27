@@ -1,19 +1,45 @@
 /**
- * Theme v5 structural, pointer/touch ergonomic, and physics motion invariants (`scripts/theme-lint.ts`).
+ * Theme v5 structural, pointer/touch ergonomic, and physics motion invariants (`scripts/theme/check.ts`).
  */
 import { resolveMaterial } from "../../packages/theme/materials";
 import {
   SHARED_TYPE_SCALE,
   type AppTheme,
+  type MotionSpringSpec,
   type SurfaceLayer,
   type SurfaceMaterial,
   type SurfaceRole,
   type TieredOrFlat,
   type TypeRole,
 } from "../../packages/theme/schema";
-import { resolveColour, varsOf } from "./css-colour";
+import { resolveColour, varsOf } from "./color";
 
 export const ALLOWED_SPACING = new Set([4, 8, 12, 16, 24, 32]);
+
+/** Stiffness, damping, mass, and damping ratio shared by `motion.spring` and each named spring. */
+function checkSpring(
+  path: string,
+  spring: MotionSpringSpec | undefined,
+  fail: (message: string) => void,
+) {
+  if (!spring) return;
+  const mass = spring.mass ?? 1;
+  if (spring.stiffness < 80 || spring.stiffness > 1200) {
+    fail(`${path}.stiffness=${spring.stiffness} outside [80, 1200]`);
+  }
+  if (spring.damping <= 0) {
+    fail(`${path}.damping=${spring.damping} must be > 0`);
+  }
+  if (mass < 0.2 || mass > 5) {
+    fail(`${path}.mass=${mass} outside [0.2, 5]`);
+  }
+  const zeta = spring.damping / (2 * Math.sqrt(spring.stiffness * mass));
+  if (zeta < 0.55 || zeta > 1.5) {
+    fail(
+      `${path} damping ratio zeta=${zeta.toFixed(3)} outside [0.55, 1.5] (would bounce wildly or creep)`,
+    );
+  }
+}
 
 export const TYPE_ORDER: readonly TypeRole[] = [
   "caption",
@@ -292,22 +318,11 @@ export function validateThemeInvariants(entry: AppTheme): string[] {
       `motion durations must satisfy state (${state.duration}) <= fast (${fast.duration}) <= default (${def.duration}) <= slow (${slow.duration})`,
     );
   }
-  if (spring) {
-    const mass = spring.mass ?? 1;
-    if (spring.stiffness < 80 || spring.stiffness > 1200) {
-      fail(`motion.spring.stiffness=${spring.stiffness} outside [80, 1200]`);
-    }
-    if (spring.damping <= 0) {
-      fail(`motion.spring.damping=${spring.damping} must be > 0`);
-    }
-    if (mass < 0.2 || mass > 5) {
-      fail(`motion.spring.mass=${mass} outside [0.2, 5]`);
-    }
-    const zeta = spring.damping / (2 * Math.sqrt(spring.stiffness * mass));
-    if (zeta < 0.55 || zeta > 1.5) {
-      fail(
-        `motion.spring damping ratio zeta=${zeta.toFixed(3)} outside [0.55, 1.5] (would bounce wildly or creep)`,
-      );
+  checkSpring("motion.spring", spring, fail);
+  const named = spec.motion.springs;
+  if (named) {
+    for (const role of ["snappy", "smooth", "bouncy"] as const) {
+      checkSpring(`motion.springs.${role}`, named[role], fail);
     }
   }
   for (const key of ["popoverEnter", "dialogEnter"] as const) {

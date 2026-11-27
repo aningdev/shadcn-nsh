@@ -27,6 +27,10 @@ export function transformContent(
   const rewritten = content
     .replaceAll(`from "@shadcn-nsh/theme"`, `from "${themeImport}"`)
     .replaceAll(`from '@shadcn-nsh/theme'`, `from '${themeImport}'`)
+    .replaceAll(`from "../../theme"`, `from "${themeImport}"`)
+    .replaceAll(`from '../../theme'`, `from '${themeImport}'`)
+    .replaceAll(`from "../theme"`, `from "${themeImport}"`)
+    .replaceAll(`from '../theme'`, `from '${themeImport}'`)
     .replaceAll(`from "../../schema"`, `from "${schemaImport}"`)
     .replaceAll(`from '../../schema'`, `from '${schemaImport}'`)
     .replaceAll(`from "../nsh-gallery"`, `from "${baseImport}"`)

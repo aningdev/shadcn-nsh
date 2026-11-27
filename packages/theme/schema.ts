@@ -1,8 +1,8 @@
 /**
- * Theme v5 schema and sparse inheritance builder (`docs/decisions/0020-theme-v5.md`).
+ * Theme v5 schema and sparse inheritance builder (`docs/theme.md`).
  *
  * A theme is four orthogonal TypeScript layers derived from one `base` theme via `defineTheme()`:
- * 1. `tokens`   — the 25 core CSS variables compiled into `theme.json` + optional `font.{sans,mono}`
+ * 1. `tokens`   — the core CSS variables compiled into `theme.json`, including `font-sans` / `font-mono`
  * 2. `metrics`  — pointer/touch dimensions, icon sizes, strokes, and per-role font weight/tracking
  * 3. `surfaces` — 11 semantic surface layers + per-appearance elevation scales (no finish-fields allowlist)
  * 4. `feedback` & `motion` — unified hover/press/focus/disabled feedback primitives and motion timings/presets
@@ -118,6 +118,44 @@ export interface ElevationScale {
 export type ShadowPart = keyof ElevationScale;
 export type ShadowExpr = ShadowPart | readonly ShadowPart[] | (string & {}) | null;
 
+/** `UIBlurEffectStyle` materials. Names match NSH `BackdropMaterial`. */
+export type IosBackdropMaterial = "ultraThin" | "thin" | "regular" | "thick" | "chrome";
+
+/** `NSVisualEffectMaterial`. Names match NSH `MacOsBackdropMaterial`. */
+export type MacOsBackdropMaterial =
+  | "titlebar"
+  | "selection"
+  | "menu"
+  | "popover"
+  | "sidebar"
+  | "headerView"
+  | "sheet"
+  | "windowBackground"
+  | "hudWindow"
+  | "fullScreenUI"
+  | "toolTip"
+  | "contentBackground"
+  | "underWindowBackground"
+  | "underPageBackground";
+
+/** `NSVisualEffectBlendingMode`. Names match NSH `MacOsBackdropBlending`. */
+export type MacOsBackdropBlending = "withinWindow" | "behindWindow";
+
+/** `NSVisualEffectState`. Names match NSH `MacOsBackdropState`. */
+export type MacOsBackdropState = "followsWindowActiveState" | "active" | "inactive";
+
+/**
+ * A macOS backdrop: a material name, or a material with blending and window state.
+ * Names match NSH `MacOsBackdrop`.
+ */
+export type MacOsBackdropSpec =
+  | MacOsBackdropMaterial
+  | {
+      readonly material?: MacOsBackdropMaterial;
+      readonly blending?: MacOsBackdropBlending;
+      readonly state?: MacOsBackdropState;
+    };
+
 /** Parameterized optical backdrop/specular material configuration for a surface layer. */
 export interface MaterialSpec {
   readonly kind: "glass" | "acrylic" | "blur";
@@ -125,6 +163,12 @@ export interface MaterialSpec {
   readonly saturate?: number;
   readonly minOpacity?: number;
   readonly specular?: ColorExpr | null;
+  /** Liquid Glass style. Falls back to the kind's recipe when omitted. */
+  readonly glass?: "regular" | "clear";
+  /** iOS system material of the layer's blur (`ios={{ backdropMaterial }}`). */
+  readonly ios?: IosBackdropMaterial;
+  /** macOS visual-effect backdrop (`macos={{ backdrop }}`). */
+  readonly macos?: MacOsBackdropSpec;
 }
 
 /** Material request on a surface layer: built-in platform preset name or parameterized spec. */
@@ -205,7 +249,10 @@ export interface TimingSpec {
 }
 
 export interface TokensSpec {
-  /** Optional app/theme font families emitted into `theme.json` `cssVars.theme`. */
+  /**
+   * Font families emitted into `theme.json` `cssVars.theme`.
+   * Omitted families compile to `font-sans: system-ui` and `font-mono: monospace`.
+   */
   readonly font?: {
     readonly sans?: string;
     readonly mono?: string;
@@ -293,6 +340,19 @@ export interface MotionSpringSpec {
   readonly mass?: number;
 }
 
+/** Named physics springs a preset can point at (`motion.springs`). */
+export type SpringRole = "snappy" | "smooth" | "bouncy";
+
+/**
+ * One spring per role. A missing role falls back to `motion.spring`.
+ * The object itself is not atomic, so a patch can replace a single role.
+ */
+export interface MotionSpringsSpec {
+  readonly snappy?: MotionSpringSpec;
+  readonly smooth?: MotionSpringSpec;
+  readonly bouncy?: MotionSpringSpec;
+}
+
 /** Built-in transition style used when switching themes at runtime (`selectTheme`). */
 export type ThemeSwitchKind = "none" | "fade" | "dissolve" | "radial-wipe";
 
@@ -302,22 +362,35 @@ export interface MotionSpec {
   readonly default: TimingSpec;
   readonly slow: TimingSpec;
   readonly spring?: MotionSpringSpec;
+  /** Named springs. Each role replaces as a whole (`MotionSpringSpec` is atomic). */
+  readonly springs?: MotionSpringsSpec;
   readonly presets: {
     readonly popoverEnter: {
       readonly fromScale: number;
       readonly fromY: number;
       readonly timing: "fast" | "default";
-      readonly spring?: boolean;
+      /** `true` uses `motion.spring`; a role uses `motion.springs`. */
+      readonly spring?: boolean | SpringRole;
     };
     readonly dialogEnter: {
       readonly fromScale: number;
       readonly fromY: number;
       readonly timing: "fast" | "default" | "slow";
-      readonly spring?: boolean;
+      /** `true` uses `motion.spring`; a role uses `motion.springs`. */
+      readonly spring?: boolean | SpringRole;
     };
     readonly indicatorGlide: {
       readonly timing: "fast" | "default";
-      readonly spring?: boolean;
+      /** `true` uses `motion.spring`; a role uses `motion.springs`. */
+      readonly spring?: boolean | SpringRole;
+    };
+    /** Panel reveal (`Accordion` / `Collapsible`). Omitted themes keep the host default. */
+    readonly reveal?: {
+      readonly spring?: boolean | SpringRole;
+    };
+    /** Press feedback. Omitted themes keep the cubic-bezier state transition. */
+    readonly press?: {
+      readonly spring?: boolean | SpringRole;
     };
     readonly themeSwitch: {
       readonly kind: ThemeSwitchKind;
@@ -516,7 +589,7 @@ export interface NshThemeFile {
 export interface AppTheme {
   readonly id: string;
   readonly label: string;
-  /** Compiled minimal 25-key `theme.json` for NSH `setTheme`. */
+  /** Compiled `theme.json` for NSH `setTheme` (shared radii and fonts, plus 21 colors per appearance). */
   readonly theme: NshThemeFile;
   /** Resolved semantic spec (`tokens` + `metrics` + `surfaces` + `feedback` + `motion` + `controls`). */
   readonly spec: ThemeSpec;
@@ -603,12 +676,12 @@ function compilePalette(palette: CorePalette): Record<string, string> {
 export function compileNshTheme(spec: ThemeSpec): NshThemeFile {
   const { font, radius, fixed, light, dark } = spec.tokens;
   const themeVars: Record<string, string> = {
-    ...(font?.sans ? { "font-sans": font.sans } : {}),
-    ...(font?.mono ? { "font-mono": font.mono } : {}),
+    "font-sans": font?.sans ?? "system-ui",
+    "font-mono": font?.mono ?? "monospace",
     radius: `${radius.control}px`,
-    "radius-control": `${radius.control}px`,
-    "radius-container": `${radius.container}px`,
-    "radius-modal": `${radius.modal}px`,
+    "radius-md": `${radius.control}px`,
+    "radius-lg": `${radius.container}px`,
+    "radius-xl": `${radius.modal}px`,
     scrim: fixed.scrim,
     media: fixed.media,
     "on-media": fixed["on-media"],

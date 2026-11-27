@@ -18,3 +18,11 @@ test("a string beside an icon is drawn as the button's text", async () => {
   await app.press("role:button[★ Upload 3 photos]");
   await app.waitFor("text:pressed 1");
 });
+
+test("a busy button exposes native busy accessibility state and drops presses", async () => {
+  const app = await open("./button-label.fixture.tsx");
+  expect(app.accessibility("role:button[Saving]")?.busy).toBe(true);
+  expect(app.accessibility("role:button[Retry]")?.busy).toBe(false);
+  await app.press("role:button[Saving]");
+  expect(app.texts()).toContain("pressed 0");
+});

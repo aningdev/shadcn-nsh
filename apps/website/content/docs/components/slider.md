@@ -50,10 +50,10 @@ touch screen) on every form.
 A string of your own replaces the formatted number and keeps that place.
 
 ```tsx
-import { sliderValueClass, sliderValueStyle } from "@/components/ui/slider";
+import { sliderValueStyle } from "@/components/ui/slider";
 
 <Slider showValue value={volume()} onChange={({ value }) => volume.set(value as number)}>
-  <Text class={sliderValueClass} style={sliderValueStyle()}>
+  <Text class="w-[42px] text-right font-mono text-[11px] leading-none" style={sliderValueStyle()}>
     64%
   </Text>
 </Slider>;
@@ -87,9 +87,9 @@ const at = (db + 12) / 24;
 
 `Slider` is [`nsh/base` Slider](https://nsh.dev/elements/slider) wearing `sliderLook` and `sliderFill`: every base prop passes through, and the look's classes and styles are defaults the caller can override.
 
-| Part                                     | Props                                                                                                                                         | Description                                                                                                                                         |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Slider`                                 | `axis`, `showValue`, and every `nsh/base` Slider prop (`value`, `min`, `max`, `step`, `onChange`, `onChangeEnd`, `disabled`, `rangeStyle`, …) | The rail, the thumb and the fill. `showValue` lays the value beside a horizontal rail, or above a vertical one                                      |
-| `sliderLook()`                           | `vertical`, `value`                                                                                                                           | The parts to spread on a slider of your own: `class`, `trackClass`, `indicatorClass` / `indicatorStyle`, `rangeClass`, `thumbClass` / `thumbStyle`  |
-| `sliderFill()`                           | `from`, `to`, `vertical`                                                                                                                      | The accent between `from` and `to` when `from` is past the rail's start. A `from` of 0 or less leaves placement to nsh, so a thumb can drag the run |
-| `sliderValueClass`, `sliderValueStyle()` | —                                                                                                                                             | The horizontal value column's label: 42 points, right aligned, monospaced. A vertical readout uses a centered line instead                          |
+| Part                 | Props                                                                                                                                         | Description                                                                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Slider`             | `axis`, `showValue`, and every `nsh/base` Slider prop (`value`, `min`, `max`, `step`, `onChange`, `onChangeEnd`, `disabled`, `rangeStyle`, …) | The rail, the thumb and the fill. `showValue` lays the value beside a horizontal rail, or above a vertical one                                      |
+| `sliderLook()`       | `vertical`, `value`                                                                                                                           | The parts to spread on a slider of your own: `class`, `trackClass`, `indicatorClass` / `indicatorStyle`, `rangeClass`, `thumbClass` / `thumbStyle`  |
+| `sliderFill()`       | `from`, `to`, `vertical`                                                                                                                      | The accent between `from` and `to` when `from` is past the rail's start. A `from` of 0 or less leaves placement to nsh, so a thumb can drag the run |
+| `sliderValueStyle()` | —                                                                                                                                             | The value label's color. A horizontal column is `w-[42px] text-right font-mono text-[11px] leading-none`; a vertical readout is a centered line     |

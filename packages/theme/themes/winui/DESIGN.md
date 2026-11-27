@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "WinUI 3"
-description: "Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, Acrylic backdrop overlays, double focus rings, and fast decelerate motion."
+description: "Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with backdrop blur, specular rim and acrylic-noise grain, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring)."
 colors:
   scrim: "#0000004d"
   media: "#10131a"
@@ -24,7 +24,7 @@ colors:
     line: "#e5e5e5"
     input: "#868686"
     ring: "#1a1a1a"
-    info: "#0078d4"
+    info: "#005fb8"
     success: "#0f7b0f"
     warning: "#9d5d00"
     destructive: "#c42b1c"
@@ -117,15 +117,15 @@ spacing:
     lg: 20px
 motion:
   fast:
-    duration: 83ms
-    delay: 0ms
-    timingFunction: "cubic-bezier(0, 0, 0, 1)"
-  default:
     duration: 167ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.55, 0.55, 0, 1)"
+  default:
+    duration: 250ms
     delay: 0ms
     timingFunction: "cubic-bezier(0, 0, 0, 1)"
   slow:
-    duration: 250ms
+    duration: 333ms
     delay: 0ms
     timingFunction: "cubic-bezier(0, 0, 0, 1)"
   state:
@@ -167,13 +167,13 @@ components:
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.background}"
+    backgroundColor: "#f3f3f3f0"
     textColor: "{colors.light.foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "#f9f9f9e0"
     textColor: "{colors.light.foreground}"
     typography: "{typography.detail}"
     rounded: "{rounded.container}"
@@ -183,7 +183,7 @@ components:
 
 ## Overview
 
-Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, Acrylic backdrop overlays, double focus rings, and fast decelerate motion.
+Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with backdrop blur, specular rim and acrylic-noise grain, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring).
 
 ## Colors
 
@@ -204,14 +204,14 @@ Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, Acrylic 
 - **`line`**: light `#e5e5e5`, dark `#323232`
 - **`input`**: light `#868686`, dark `#9a9a9a`
 - **`ring`**: light `#1a1a1a`, dark `#ffffff`
-- **`info`**: light `#0078d4`, dark `#60cdff`
+- **`info`**: light `#005fb8`, dark `#60cdff`
 - **`success`**: light `#0f7b0f`, dark `#6ccb5f`
 - **`warning`**: light `#9d5d00`, dark `#fce100`
 - **`destructive`**: light `#c42b1c`, dark `#ff99a4`
 
 ## Typography
 
-- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).
+- `theme.json` writes `font-sans: system-ui` and `font-mono: monospace`.
 - **`caption`**: 11px / 16px, weight 400, letter-spacing 0px
 - **`detail`**: 12px / 16px, weight 400, letter-spacing 0px
 - **`body`**: 13px / 20px, weight 400, letter-spacing 0px
@@ -226,15 +226,15 @@ Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, Acrylic 
 
 ## Elevation & Depth
 
-WinUI 3 soft ambient elevation (`md`, `lg`, `xl`), beveled 1px border strokes on raised controls, and Acrylic backdrop on overlays.
+WinUI 3 soft ambient elevation (`md`, `lg`, `xl`) and beveled 1px strokes on raised controls. Acrylic layers: `overlay` blur 30 saturate 1.25 minOpacity 0.85 (noise 0.04), `glass` blur 32 saturate 1.3 minOpacity 0.78 (noise 0.045), `inverse` blur 24 saturate 1.2 minOpacity 0.85 (noise 0.03), `modal` blur 24 saturate 1.15 minOpacity 0.9 (noise 0.025). Each fill stays at or above its minOpacity. Motion uses critically damped snappy, smooth, and bouncy springs; press stays a color change.
 
 ## Shapes
 
-- Radii: control 4px, container 8px, modal 8px (`curve: "circular"`).
+- Radii: `radius-md` (control) 4px, `radius-lg` (container) 8px, `radius-xl` (modal) 8px; A-layer `radius` equals `radius-md` (`curve: "circular"`).
 
 ## Motion & Micro-interaction
 
-- Press scale: `1`, state transition: 83ms `decelerate`, theme switch: `fade` (167ms).
+- Press scale: `1`, state transition: 83ms `decelerate`, spring `500/46/1`, theme switch: `fade` (167ms).
 
 ## Voice & Content Strategy
 

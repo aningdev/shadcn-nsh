@@ -101,4 +101,4 @@ never the form.
 | `ProgressSteps` | every `nsh` View prop                                                                                                                                                                | The row of marks over the bar, centred on it; a child of `Progress` |
 | `ProgressStep`  | `state` (`"done" \| "current" \| "upcoming"`, default `upcoming`), `children` (a string is the label)                                                                                | One mark, its label under it                                        |
 
-`progressStepsLook()`, `ProgressStepMark` and `progressStepSize()` are the look's parts, for a row of your own.
+`ProgressStepMark` and `progressStepSize()` are the look's parts, for a row of your own.

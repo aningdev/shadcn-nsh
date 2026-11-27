@@ -12,6 +12,7 @@ import {
   toneColor,
   toneTint,
   shape,
+  font,
 } from "@shadcn-nsh/theme";
 import { Globe, Sparkles, Sun, Terminal, X, type IconNode } from "lucide";
 import { type JSX, Image, signal, Text, View, type ViewStyle } from "nsh";
@@ -325,7 +326,7 @@ function ToolBody(props: { tool: Tool }) {
             style={{
               userSelect: "text",
               flex: 1,
-              fontFamily: "monospace",
+              fontFamily: font.mono,
               fontSize: 14,
               color: colors.success,
             }}

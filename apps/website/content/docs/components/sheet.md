@@ -68,8 +68,8 @@ Sheet
 ### Grabber
 
 A bottom sheet has a grabber at its top: `nsh/base`'s own handle, which screen readers adjust to
-change the detent and which moves to the next larger one when pressed, drawn in the theme's look
-(`sheetGrabber`). It is the handle itself, not a picture of one, so a sheet never shows two. `grabber`
+change the detent and which moves to the next larger one when pressed. It is the handle itself,
+not a picture of one, so a sheet never shows two. `grabber`
 off shows it; `grabberAccessibilityLabel` names it ("Sheet" by default).
 
 ```tsx
@@ -78,7 +78,7 @@ off shows it; `grabberAccessibilityLabel` names it ("Sheet" by default).
 </SheetContent>
 ```
 
-The look alone is `sheetPanel(side)` and `sheetGrabber()`.
+The panel's look is `sheetPanel(side)`.
 
 ### Detents
 

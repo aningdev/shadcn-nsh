@@ -3,8 +3,6 @@
 // The track (`toolbarTrack`) is shared with `ToggleGroup` and lives in `lib/surface.tsx`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, stroke, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
-import { Ellipsis } from "lucide";
 import type { JSX, StyleProp, ViewRef, ViewStyle } from "nsh";
 import { cleanup, computed, context, effect, signal, split, Text, View } from "nsh";
 import {
@@ -16,7 +14,8 @@ import {
   type ToolbarSeparatorProps as BaseToolbarSeparatorProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { colors, stroke, terminal, TERMINAL_GAP } from "../theme";
+import { Ellipsis, Icon } from "./lib/icons";
 import { createOpenState } from "./lib/state";
 import { toolbarTrack } from "./lib/surface";
 import {
@@ -28,19 +27,6 @@ import {
   type MenuOpenChangeReason,
 } from "./menu";
 import { Toggle, toggleGlyph, toggleLabel, toggleSizes } from "./toggle";
-
-/** A hairline between runs of a toolbar's tools (a `ToolbarSeparator`'s or a view's `style`): 18 points tall in a row, across a column. */
-export function toolbarRule(vertical = false): ViewStyle {
-  return vertical
-    ? {
-        height: stroke.hairline,
-        alignSelf: "stretch",
-        marginVertical: 4,
-        marginHorizontal: 6,
-        backgroundColor: colors.line,
-      }
-    : { width: stroke.hairline, height: 18, marginHorizontal: 4, backgroundColor: colors.line };
-}
 
 /** How a `ToolbarGroup` folds when space runs out: `"unit"` folds the whole group at once; `"none"` lets its `ToolbarButton`s fold individually. */
 export type ToolbarGroupFold = "unit" | "none";
@@ -72,6 +58,8 @@ export type ToolbarButtonProps = {
   foldable?: boolean;
   /** Classes for the box the tool stands in (see `style`). */
   class?: string;
+  /** Tailwind classes toggled on that box. */
+  classList?: Record<string, boolean | null | undefined>;
   /** The box the tool stands in, after the bar's own (`style` wins). */
   style?: StyleProp<ViewStyle>;
   /** The tool itself (`Button`, `Toggle`, `Link`, or a `Menu` / `Popover` trigger). */
@@ -107,6 +95,307 @@ export type ToolbarOverflowProps = {
   /** Permanent menu items appended after any folded tools. */
   children?: JSX.Element;
 };
+
+/**
+ * The bar: one toolbar for screen readers, arrow keys along `axis`.
+ *
+ * When a `ToolbarOverflow` is present inside a horizontal non-terminal bar, items wrapped in
+ * `ToolbarButton` measure themselves with `onLayout`, lower-priority tools (or whole `fold="unit"`
+ * `ToolbarGroup`s) fold into the overflow menu as space narrows, and the bar draws the rules
+ * between visible units while hiding until its initial measurements arrive.
+ *
+ * Caveat: `nsh/base`'s `Button`, `Toggle` and `Link` do not expose `onFocus` / `onBlur`,
+ * `Toolbar` does not expose `onFocusIn` / `onFocusOut`, and `nsh/base`'s roving-focus manager
+ * clears focus when a focused item unmounts and marks non-stop items (`"⋯"` while an earlier
+ * tool remains visible) `focusable={false}` (`roving.rs:250-258`, `:358`). Therefore, when a
+ * focused tool folds while an earlier tool stays on the bar, `"⋯"` can only take focus once
+ * `nsh/base` hands focus over.
+ */
+export function Toolbar(props: ToolbarProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "axis", "onLayout", "disabled"]);
+  const vertical = props.axis === "vertical";
+  const ctx = createToolbarState(vertical, () => Boolean(props.disabled));
+  cleanup(ctx.dispose);
+
+  return (
+    <ToolbarContext.Provider value={ctx}>
+      <BaseToolbar
+        {...rest}
+        class={props.class}
+        classList={props.classList}
+        disabled={props.disabled}
+        axis={props.axis}
+        onLayout={(e) => {
+          ctx.onBarLayout(e.bounds.size.width);
+          props.onLayout?.(e);
+        }}
+        // Read in the style itself, so a theme's colors and radius are the ones in use.
+        style={[
+          toolbarTrack({ vertical }),
+          ctx.hasOverflow() && !vertical && !terminal ? { maxWidth: "100%", minWidth: 0 } : null,
+          props.style ?? null,
+          !ctx.ready() ? { opacity: 0 } : null,
+        ]}
+      />
+    </ToolbarContext.Provider>
+  );
+}
+
+/** A named run of items. Its direction follows the toolbar. */
+export function ToolbarGroup(props: ToolbarGroupProps) {
+  const bar = useToolbar();
+  const [, rest] = split(props, ["class", "classList", "style", "priority", "fold"]);
+  const registeredIds = signal<number[]>([]);
+  const unitId = bar.registerUnit({
+    order: 0,
+    isGroup: true,
+    priority: () => props.priority ?? 0,
+    fold: () => props.fold ?? "unit",
+    label: () => props.accessibilityLabel ?? undefined,
+  });
+  cleanup(() => bar.unregisterUnit(unitId));
+
+  const groupValue: GroupContextValue = {
+    unitId,
+    priority: () => props.priority ?? 0,
+  };
+
+  // When a bar uses `ToolbarOverflow` and every `ToolbarButton` in this group folded, hide the
+  // group container with `display: "none"` (rather than unmounting) so items stay registered.
+  const groupHidden = () =>
+    bar.hasOverflow() &&
+    !bar.vertical &&
+    !terminal &&
+    registeredIds().length > 0 &&
+    !bar.unitVisible(unitId);
+
+  const origRegister = bar.registerItem;
+  const trackedBar: ToolbarContextValue = {
+    ...bar,
+    registerItem: (item) => {
+      const id = origRegister(item);
+      registeredIds.update((list) => [...list, id]);
+      return id;
+    },
+    unregisterItem: (id) => {
+      registeredIds.update((list) => list.filter((x) => x !== id));
+      bar.unregisterItem(id);
+    },
+  };
+
+  return (
+    <ToolbarContext.Provider value={trackedBar}>
+      <GroupContext.Provider value={groupValue}>
+        <If when={bar.unitHasLeadingRule(unitId)}>
+          <BaseToolbarSeparator style={toolbarRule(bar.vertical)} />
+        </If>
+        <BaseToolbarGroup
+          {...rest}
+          class={props.class}
+          classList={props.classList}
+          style={[
+            groupChrome(bar.vertical),
+            props.style ?? null,
+            groupHidden() ? { display: "none" } : null,
+          ]}
+        />
+      </GroupContext.Provider>
+    </ToolbarContext.Provider>
+  );
+}
+
+/** A hairline between runs. Not a stop of the keyboard focus. */
+export function ToolbarSeparator(props: ToolbarSeparatorProps) {
+  const bar = useToolbar();
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  // When `ToolbarOverflow` is present, the bar owns the rules between visible units.
+  return (
+    <If when={!(bar.hasOverflow() && !bar.vertical && !terminal)}>
+      <BaseToolbarSeparator
+        {...rest}
+        class={props.class}
+        classList={props.classList}
+        style={[toolbarRule(bar.vertical), props.style ?? null]}
+      />
+    </If>
+  );
+}
+
+/** One tool wrapped so a bar with `ToolbarOverflow` can measure and fold it. */
+export function ToolbarButton(props: ToolbarButtonProps) {
+  const [, rest] = split(props, [
+    "menu",
+    "priority",
+    "foldable",
+    "class",
+    "classList",
+    "style",
+    "children",
+  ]);
+  const bar = useToolbar();
+  const group = GroupContext();
+  const ownUnitId = group
+    ? group.unitId
+    : bar.registerUnit({
+        order: 0,
+        isGroup: false,
+        priority: () => props.priority ?? 0,
+        fold: () => "none",
+        label: () => undefined,
+      });
+  if (!group) cleanup(() => bar.unregisterUnit(ownUnitId));
+
+  const itemId = bar.registerItem({
+    unitId: ownUnitId,
+    order: 0,
+    priority: () => props.priority ?? group?.priority() ?? 0,
+    foldable: () => props.foldable ?? true,
+    renderMenu: () => props.menu,
+  });
+  cleanup(() => bar.unregisterItem(itemId));
+
+  const isFolded = () => bar.folded().has(itemId);
+
+  return (
+    <>
+      <If when={!group && bar.unitHasLeadingRule(ownUnitId)}>
+        <BaseToolbarSeparator style={toolbarRule(bar.vertical)} />
+      </If>
+      <If when={!isFolded()}>
+        <View
+          {...rest}
+          class={props.class}
+          classList={props.classList}
+          style={[
+            { flexDirection: bar.vertical ? "column" : "row", alignItems: "center" },
+            props.style ?? null,
+          ]}
+          onLayout={({ bounds }) => bar.measureItem(itemId, bounds.size.width)}
+          onKeyDown={(e) => {
+            if (e.key === "tab") bar.clearBarFocus();
+            else bar.markItemFocused(itemId);
+          }}
+        >
+          {props.children}
+        </View>
+      </If>
+    </>
+  );
+}
+
+/** The "⋯" trigger and menu holding tools folded out of the bar, in bar order and grouped by their `ToolbarGroup` label. */
+export function ToolbarOverflow(props: ToolbarOverflowProps) {
+  const [, rest] = split(props, [
+    "open",
+    "defaultOpen",
+    "onOpenChange",
+    "accessibilityLabel",
+    "label",
+    "tooltip",
+    "testID",
+    "disabled",
+    "align",
+    "offset",
+    "margin",
+    "style",
+    "children",
+  ]);
+  const bar = useToolbar();
+  const state = createOpenState<MenuOpenChangeReason>(props);
+  const hasExtra = "children" in props;
+  bar.enableOverflow(hasExtra);
+
+  const foldedSections = () => bar.foldedSections();
+  const showTrigger = () => hasExtra || foldedSections().length > 0;
+  const isDisabled = () => Boolean(props.disabled || bar.disabled());
+
+  return (
+    <If when={showTrigger()}>
+      <Menu
+        {...rest}
+        open={state.open()}
+        onOpenChange={({ open, reason }) => state.setOpen(open, reason)}
+      >
+        <MenuTrigger>
+          {/* `default` is the width the folding budget reserves (`toggleSizes.default.side`): the
+           * trigger is a toggle now, and the bar must still fold where it did. */}
+          <Toggle
+            ref={(node) => bar.setOverflowTrigger(node)}
+            size="default"
+            pressed={state.open()}
+            testID={props.testID}
+            accessibilityLabel={props.accessibilityLabel ?? "More"}
+            disabled={isDisabled()}
+            tooltip={props.tooltip}
+            onLayout={({ bounds }) => bar.setOverflowWidth(bounds.size.width)}
+            style={props.style ?? null}
+          >
+            {terminal ? (
+              <Text style={toggleLabel(state.open, { disabled: isDisabled })}>⋯</Text>
+            ) : (
+              <Icon
+                icon={Ellipsis}
+                size={toggleGlyph(state.open, { disabled: isDisabled }).size}
+                tint={toggleGlyph(state.open, { disabled: isDisabled }).tint}
+              />
+            )}
+          </Toggle>
+        </MenuTrigger>
+        <MenuContent
+          align={props.align ?? "end"}
+          offset={props.offset ?? 6}
+          margin={props.margin ?? 8}
+        >
+          {() => {
+            const sections = foldedSections();
+            return (
+              <>
+                <If when={props.label}>
+                  <MenuLabel>{props.label}</MenuLabel>
+                  <If when={sections.length > 0 || hasExtra}>
+                    <MenuSeparator />
+                  </If>
+                </If>
+                {sections.map((section, idx) => (
+                  <>
+                    {idx > 0 ? <MenuSeparator /> : null}
+                    {section.label ? <MenuLabel>{section.label}</MenuLabel> : null}
+                    {section.items.map((item) => {
+                      const row = item.renderMenu();
+                      return typeof row === "function" ? (row as () => JSX.Element)() : row;
+                    })}
+                  </>
+                ))}
+                <If when={sections.length > 0 && hasExtra}>
+                  <MenuSeparator />
+                </If>
+              </>
+            );
+          }}
+          {props.children}
+        </MenuContent>
+      </Menu>
+    </If>
+  );
+}
+
+// Shared toolbar primitives
+// Demos and the showcase read `toolbarRule`.
+
+/** A hairline between runs of a toolbar's tools (a `ToolbarSeparator`'s or a view's `style`): 18 points tall in a row, across a column. */
+export function toolbarRule(vertical = false): ViewStyle {
+  return vertical
+    ? {
+        height: stroke.hairline,
+        alignSelf: "stretch",
+        marginVertical: 4,
+        marginHorizontal: 6,
+        backgroundColor: colors.line,
+      }
+    : { width: stroke.hairline, height: 18, marginHorizontal: 4, backgroundColor: colors.line };
+}
+
+// Private helpers & looks
 
 type UnitRecord = {
   id: number;
@@ -442,248 +731,4 @@ function createToolbarState(
     },
     dispose,
   };
-}
-
-/**
- * The bar: one toolbar for screen readers, arrow keys along `axis`.
- *
- * When a `ToolbarOverflow` is present inside a horizontal non-terminal bar, items wrapped in
- * `ToolbarButton` measure themselves with `onLayout`, lower-priority tools (or whole `fold="unit"`
- * `ToolbarGroup`s) fold into the overflow menu as space narrows, and the bar draws the rules
- * between visible units while hiding until its initial measurements arrive.
- *
- * Caveat: `nsh/base`'s `Button`, `Toggle` and `Link` do not expose `onFocus` / `onBlur`,
- * `Toolbar` does not expose `onFocusIn` / `onFocusOut`, and `nsh/base`'s roving-focus manager
- * clears focus when a focused item unmounts and marks non-stop items (`"⋯"` while an earlier
- * tool remains visible) `focusable={false}` (`roving.rs:250-258`, `:358`). Therefore, when a
- * focused tool folds while an earlier tool stays on the bar, `"⋯"` can only take focus once
- * `nsh/base` hands focus over.
- */
-export function Toolbar(props: ToolbarProps) {
-  const [, rest] = split(props, ["style", "axis", "onLayout", "disabled"]);
-  const vertical = props.axis === "vertical";
-  const ctx = createToolbarState(vertical, () => Boolean(props.disabled));
-  cleanup(ctx.dispose);
-
-  return (
-    <ToolbarContext.Provider value={ctx}>
-      <BaseToolbar
-        {...rest}
-        disabled={props.disabled}
-        axis={props.axis}
-        onLayout={(e) => {
-          ctx.onBarLayout(e.bounds.size.width);
-          props.onLayout?.(e);
-        }}
-        // Read in the style itself, so a theme's colors and radius are the ones in use.
-        style={[
-          toolbarTrack({ vertical }),
-          ctx.hasOverflow() && !vertical && !terminal ? { maxWidth: "100%", minWidth: 0 } : null,
-          props.style ?? null,
-          !ctx.ready() ? { opacity: 0 } : null,
-        ]}
-      />
-    </ToolbarContext.Provider>
-  );
-}
-
-/** A named run of items. Its direction follows the toolbar. */
-export function ToolbarGroup(props: ToolbarGroupProps) {
-  const bar = useToolbar();
-  const [, rest] = split(props, ["style", "priority", "fold"]);
-  const registeredIds = signal<number[]>([]);
-  const unitId = bar.registerUnit({
-    order: 0,
-    isGroup: true,
-    priority: () => props.priority ?? 0,
-    fold: () => props.fold ?? "unit",
-    label: () => props.accessibilityLabel ?? undefined,
-  });
-  cleanup(() => bar.unregisterUnit(unitId));
-
-  const groupValue: GroupContextValue = {
-    unitId,
-    priority: () => props.priority ?? 0,
-  };
-
-  // When a bar uses `ToolbarOverflow` and every `ToolbarButton` in this group folded, hide the
-  // group container with `display: "none"` (rather than unmounting) so items stay registered.
-  const groupHidden = () =>
-    bar.hasOverflow() &&
-    !bar.vertical &&
-    !terminal &&
-    registeredIds().length > 0 &&
-    !bar.unitVisible(unitId);
-
-  const origRegister = bar.registerItem;
-  const trackedBar: ToolbarContextValue = {
-    ...bar,
-    registerItem: (item) => {
-      const id = origRegister(item);
-      registeredIds.update((list) => [...list, id]);
-      return id;
-    },
-    unregisterItem: (id) => {
-      registeredIds.update((list) => list.filter((x) => x !== id));
-      bar.unregisterItem(id);
-    },
-  };
-
-  return (
-    <ToolbarContext.Provider value={trackedBar}>
-      <GroupContext.Provider value={groupValue}>
-        <If when={bar.unitHasLeadingRule(unitId)}>
-          <BaseToolbarSeparator style={toolbarRule(bar.vertical)} />
-        </If>
-        <BaseToolbarGroup
-          {...rest}
-          style={[
-            groupChrome(bar.vertical),
-            props.style ?? null,
-            groupHidden() ? { display: "none" } : null,
-          ]}
-        />
-      </GroupContext.Provider>
-    </ToolbarContext.Provider>
-  );
-}
-
-/** A hairline between runs. Not a stop of the keyboard focus. */
-export function ToolbarSeparator(props: ToolbarSeparatorProps) {
-  const bar = useToolbar();
-  const [, rest] = split(props, ["style"]);
-  // When `ToolbarOverflow` is present, the bar owns the rules between visible units.
-  return (
-    <If when={!(bar.hasOverflow() && !bar.vertical && !terminal)}>
-      <BaseToolbarSeparator {...rest} style={[toolbarRule(bar.vertical), props.style ?? null]} />
-    </If>
-  );
-}
-
-/** One tool wrapped so a bar with `ToolbarOverflow` can measure and fold it. */
-export function ToolbarButton(props: ToolbarButtonProps) {
-  const bar = useToolbar();
-  const group = GroupContext();
-  const ownUnitId = group
-    ? group.unitId
-    : bar.registerUnit({
-        order: 0,
-        isGroup: false,
-        priority: () => props.priority ?? 0,
-        fold: () => "none",
-        label: () => undefined,
-      });
-  if (!group) cleanup(() => bar.unregisterUnit(ownUnitId));
-
-  const itemId = bar.registerItem({
-    unitId: ownUnitId,
-    order: 0,
-    priority: () => props.priority ?? group?.priority() ?? 0,
-    foldable: () => props.foldable ?? true,
-    renderMenu: () => props.menu,
-  });
-  cleanup(() => bar.unregisterItem(itemId));
-
-  const isFolded = () => bar.folded().has(itemId);
-
-  return (
-    <>
-      <If when={!group && bar.unitHasLeadingRule(ownUnitId)}>
-        <BaseToolbarSeparator style={toolbarRule(bar.vertical)} />
-      </If>
-      <If when={!isFolded()}>
-        <View
-          class={props.class}
-          style={[
-            { flexDirection: bar.vertical ? "column" : "row", alignItems: "center" },
-            props.style ?? null,
-          ]}
-          onLayout={({ bounds }) => bar.measureItem(itemId, bounds.size.width)}
-          onKeyDown={(e) => {
-            if (e.key === "tab") bar.clearBarFocus();
-            else bar.markItemFocused(itemId);
-          }}
-        >
-          {props.children}
-        </View>
-      </If>
-    </>
-  );
-}
-
-/** The "⋯" trigger and menu holding tools folded out of the bar, in bar order and grouped by their `ToolbarGroup` label. */
-export function ToolbarOverflow(props: ToolbarOverflowProps) {
-  const bar = useToolbar();
-  const state = createOpenState<MenuOpenChangeReason>(props);
-  const hasExtra = "children" in props;
-  bar.enableOverflow(hasExtra);
-
-  const foldedSections = () => bar.foldedSections();
-  const showTrigger = () => hasExtra || foldedSections().length > 0;
-  const isDisabled = () => Boolean(props.disabled || bar.disabled());
-
-  return (
-    <If when={showTrigger()}>
-      <Menu open={state.open()} onOpenChange={({ open, reason }) => state.setOpen(open, reason)}>
-        <MenuTrigger>
-          {/* `default` is the width the folding budget reserves (`toggleSizes.default.side`): the
-           * trigger is a toggle now, and the bar must still fold where it did. */}
-          <Toggle
-            ref={(node) => bar.setOverflowTrigger(node)}
-            size="default"
-            pressed={state.open()}
-            testID={props.testID}
-            accessibilityLabel={props.accessibilityLabel ?? "More"}
-            disabled={isDisabled()}
-            tooltip={props.tooltip}
-            onLayout={({ bounds }) => bar.setOverflowWidth(bounds.size.width)}
-            style={props.style ?? null}
-          >
-            {terminal ? (
-              <Text style={toggleLabel(state.open, { disabled: isDisabled })}>⋯</Text>
-            ) : (
-              <Icon
-                icon={Ellipsis}
-                size={toggleGlyph(state.open, { disabled: isDisabled }).size}
-                tint={toggleGlyph(state.open, { disabled: isDisabled }).tint}
-              />
-            )}
-          </Toggle>
-        </MenuTrigger>
-        <MenuContent
-          align={props.align ?? "end"}
-          offset={props.offset ?? 6}
-          margin={props.margin ?? 8}
-        >
-          {() => {
-            const sections = foldedSections();
-            return (
-              <>
-                <If when={props.label}>
-                  <MenuLabel>{props.label}</MenuLabel>
-                  <If when={sections.length > 0 || hasExtra}>
-                    <MenuSeparator />
-                  </If>
-                </If>
-                {sections.map((section, idx) => (
-                  <>
-                    {idx > 0 ? <MenuSeparator /> : null}
-                    {section.label ? <MenuLabel>{section.label}</MenuLabel> : null}
-                    {section.items.map((item) => {
-                      const row = item.renderMenu();
-                      return typeof row === "function" ? (row as () => JSX.Element)() : row;
-                    })}
-                  </>
-                ))}
-                <If when={sections.length > 0 && hasExtra}>
-                  <MenuSeparator />
-                </If>
-              </>
-            );
-          }}
-          {props.children}
-        </MenuContent>
-      </Menu>
-    </If>
-  );
 }

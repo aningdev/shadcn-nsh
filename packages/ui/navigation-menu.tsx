@@ -1,281 +1,32 @@
 // A navigation menu: a row of triggers, each opening a panel of anything (a grid of links, a card
 // with a description) under itself, one panel open at a time.
 
-import {
-  alpha,
-  colors,
-  controlHeight,
-  feedback,
-  iconSize,
-  rounded,
-  font,
-  shape,
-  tier,
-} from "@shadcn-nsh/theme";
-import { ChevronDown } from "lucide";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, reduceMotion, signal, split, token, View } from "nsh";
 import {
   Link as BaseLink,
   type LinkProps as BaseLinkProps,
+  type OpenChangeReason,
   Popover as BasePopover,
   type PopoverProps as BasePopoverProps,
-  type OpenChangeReason,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import {
+  alpha,
+  colors,
+  controlHeight,
+  feedback,
+  font,
+  iconSize,
+  rounded,
+  shape,
+  tier,
+} from "../theme";
+import { ChevronDown, Icon } from "./lib/icons";
 import { pressSink, pressTransition } from "./lib/motion";
 import { itemSpacing, PopIn, popupSurface, type PopupSide } from "./lib/popup";
 import { createSlot, type Slot } from "./lib/state";
 import { AsText, type Live, read } from "./lib/utils";
-
-/** A pointer's compact bar; a touch screen's roomier one, a finger's target in every trigger. */
-const pointer = tier === "pointer";
-
-/**
- * A bar's measurements: a trigger's height (the theme's tallest height step, shadcn's `h-9`), its
- * inset from its sides (shadcn's `px-4`, the trigger's own: the theme's control padding is the
- * field's, and a bar's trigger is not a field), the gap between triggers, the room inside a panel,
- * and the side of a trigger's chevron (the theme's smallest icon, an indicator's).
- */
-export const navigationMenuSize = {
-  get trigger() {
-    return controlHeight.lg;
-  },
-  padding: 16,
-  get gap() {
-    return pointer ? 4 : 6;
-  },
-  get panel() {
-    return pointer ? 10 : 12;
-  },
-  get chevron() {
-    return iconSize.sm;
-  },
-};
-
-/** The gap inside a trigger, between its name and its chevron (shadcn's `ml-1`). */
-const chevronGap = 4;
-
-/** How long a trigger's chevron takes to turn (200 ms): at once with reduced motion. */
-const chevronTurn = 200;
-
-/** How far a press sinks a trigger or a link: a big region, as a pressable's (98%). */
-const sink = 0.98;
-
-/**
- * The fill of what the pointer or the keyboard is on (a trigger, a link): the theme's neutral
- * `accent`, the fill every popup row wears in this library (`menuHighlight`) — written out here so
- * a navigation menu does not bring the menu's component with it.
- */
-const highlight = (): ViewStyle => ({ backgroundColor: token("accent") });
-
-/**
- * The fill of what is chosen (the open trigger, the link of the page shown): the same `accent` at
- * half (shadcn's `bg-accent/50`), so a pointer over it still shows the full fill.
- */
-const chosen = (): ViewStyle => ({ backgroundColor: alpha(token("accent"), 0.5) });
-
-/** A navigation menu's parts as the styles they wear: spread each one on the part it names. */
-export interface NavigationMenuLook {
-  /** The bar (`NavigationMenu`): a row in the width the app gives it. */
-  readonly root: ViewStyle;
-  /** Its list (`NavigationMenuList`): the triggers a gap apart, wrapping when the window is
-   * narrow. */
-  readonly list: ViewStyle;
-  /** One item (`NavigationMenuItem`): its trigger or its link, and nothing else. */
-  readonly item: ViewStyle;
-  /** A panel (`NavigationMenuContent`): the surface every popup shares (`popupSurface`: the
-   * theme's `radius` corners, one edge, the menu tier's soft shadow) with `navigationMenuSize`'s
-   * room inside. */
-  readonly panel: ViewStyle;
-  /** A link (`NavigationMenuLink`): a column, so a description can sit under its name. */
-  readonly link: ViewStyle;
-  /** A link's name: the `body` type, in the text color, on one line. */
-  readonly linkText: TextStyle;
-  /** A link's description (`NavigationMenuLink`'s nested text): the muted ink, the `body` type under
-   * the name's. */
-  readonly linkHint: TextStyle;
-}
-
-/**
- * A navigation menu's look, after shadcn/ui's: the bar a row of triggers 4 points apart (6 on a
- * touch screen) wrapping in a narrow window; a panel on the popup surface with 10 points of room
- * inside (12 on a touch screen); a link a 4-point column 8 points in, its corners of the theme's
- * control radius. Colors are read here, so the look follows the appearance and the theme.
- */
-export function navigationMenuLook(): NavigationMenuLook {
-  return {
-    get root(): ViewStyle {
-      return { flexDirection: "row", alignItems: "center", maxWidth: "100%" };
-    },
-    get list(): ViewStyle {
-      return {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        alignItems: "center",
-        flexShrink: 1,
-        gap: navigationMenuSize.gap,
-      };
-    },
-    get item(): ViewStyle {
-      return { flexDirection: "row", alignItems: "center" };
-    },
-    get panel(): ViewStyle {
-      return { ...popupSurface(), padding: navigationMenuSize.panel };
-    },
-    get link(): ViewStyle {
-      return {
-        flexDirection: "column",
-        gap: 4,
-        // A link's fill to its text: the list rows' `pad`.
-        padding: itemSpacing.pad,
-        ...rounded(shape.control),
-      };
-    },
-    get linkText(): TextStyle {
-      return {
-        fontSize: font.size("body"),
-        fontWeight: font.weight("label"),
-        color: colors.foreground,
-        numberOfLines: 1,
-      };
-    },
-    get linkHint(): TextStyle {
-      return {
-        fontSize: font.size("body"),
-        fontWeight: font.weight("body"),
-        color: colors.mutedForeground,
-        numberOfLines: 2,
-      };
-    },
-  };
-}
-
-/** Options of `navigationMenuTriggerLook`. */
-export interface NavigationMenuTriggerLookOptions {
-  /** Its panel is open: the chosen fill under it, and its chevron turned. */
-  open?: Live<boolean>;
-}
-
-/**
- * A trigger's look: the theme's tallest height step, `navigationMenuSize`'s
- * inset either side, its name the `body` type medium and a chevron after it which turns 180° while its
- * panel is open (at once with reduced motion, in 200 ms otherwise). At rest it is bare; the chosen
- * `accent` fill sits under it while its panel is open, and the full `accent` under the pointer, the
- * theme's focus ring with the keyboard on it, a press's dimming, 50% while disabled.
- *
- * The open fill is in `style`, not `expandedStyle`: nsh ranks `expanded` above `hover`, and the
- * pointer over an open trigger shows the full fill (shadcn's `data-open:hover:bg-accent`).
- */
-export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) {
-  const open = () => !!read(o?.open);
-  return {
-    get style(): ViewStyle {
-      return {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: chevronGap,
-        height: navigationMenuSize.trigger,
-        paddingHorizontal: navigationMenuSize.padding,
-        ...rounded(shape.control),
-        ...(open() ? chosen() : { backgroundColor: "transparent" }),
-        ...pressTransition("background-color"),
-      };
-    },
-    get hoverStyle(): ViewStyle {
-      return highlight();
-    },
-    get activeStyle(): ViewStyle {
-      if (feedback.pressOverlay > 0) {
-        return { ...feedback.press("surface").activeStyle, ...pressSink(sink).activeStyle };
-      }
-      return pressSink(sink).activeStyle;
-    },
-    get focusVisibleStyle(): ViewStyle {
-      return feedback.focusRing();
-    },
-    get disabledStyle(): ViewStyle {
-      return { opacity: feedback.disabled.contentOpacity };
-    },
-    /** Its name's type: the `body` type, medium, one line. */
-    get text(): TextStyle {
-      return {
-        fontSize: font.size("body"),
-        fontWeight: font.weight("label"),
-        color: colors.foreground,
-        numberOfLines: 1,
-      };
-    },
-    /** The chevron's box, turned while the panel is open; the motion is the appearance's. */
-    get chevron(): ViewStyle {
-      const still = reduceMotion();
-      return {
-        alignItems: "center",
-        justifyContent: "center",
-        rotate: open() ? "180deg" : "0deg",
-        ...(still ? {} : { transitionProperty: "rotate", transitionDuration: chevronTurn }),
-      };
-    },
-    /** The chevron itself: `navigationMenuSize.chevron` across, in the muted ink. */
-    get chevronIcon(): { size: number; tint: string } {
-      return { size: navigationMenuSize.chevron, tint: colors.mutedForeground };
-    },
-  };
-}
-
-/** Options of `navigationMenuLinkLook`. */
-export interface NavigationMenuLinkLookOptions {
-  /** The page the app is on: the chosen fill under it. */
-  active?: Live<boolean>;
-  /** No presses, no hover, 50%. */
-  disabled?: Live<boolean>;
-}
-
-/**
- * A link's look, after shadcn/ui's: a 4-point column 8 points in, at the theme's control corners,
- * its name the `body` type medium and its description under it in the muted ink; the full `accent`
- * under the pointer, the chosen `accent` under the page the app is on, the theme's focus ring with
- * the keyboard on it, a press's dimming, 50% while disabled.
- */
-export function navigationMenuLinkLook(o?: NavigationMenuLinkLookOptions) {
-  const active = () => !!read(o?.active);
-  const disabled = () => !!read(o?.disabled);
-  return {
-    get style(): ViewStyle {
-      return {
-        ...navigationMenuLook().link,
-        ...(active() ? chosen() : {}),
-        ...pressTransition("background-color"),
-      };
-    },
-    get hoverStyle(): ViewStyle | undefined {
-      return disabled() ? undefined : highlight();
-    },
-    get activeStyle(): ViewStyle | undefined {
-      if (disabled()) return undefined;
-      if (feedback.pressOverlay > 0) {
-        return { ...feedback.press("surface").activeStyle, ...pressSink(sink).activeStyle };
-      }
-      return pressSink(sink).activeStyle;
-    },
-    get focusVisibleStyle(): ViewStyle {
-      return feedback.focusRing();
-    },
-    get disabledStyle(): ViewStyle {
-      return { opacity: feedback.disabled.contentOpacity };
-    },
-    /** Its name's type: `navigationMenuLook().linkText`. */
-    get text(): TextStyle {
-      return navigationMenuLook().linkText;
-    },
-    /** Its description's type: `navigationMenuLook().linkHint`. */
-    get hint(): TextStyle {
-      return navigationMenuLook().linkHint;
-    },
-  };
-}
 
 /** Why the bar's open item changed (`onValueChange`'s `reason`): `nsh/base`'s `OpenChangeReason`,
  * under this part's name. */
@@ -366,51 +117,6 @@ export type NavigationMenuLinkProps = Omit<BaseLinkProps, "children" | "current"
   active?: boolean;
 };
 
-type NavigationMenuContextValue = {
-  /** The open item's value, `null` while none is. */
-  value: () => string | null;
-  /** Ask the root to open `next` (or nothing) for `reason`. */
-  setValue: (next: string | null, reason: NavigationMenuOpenChangeReason) => void;
-  /** Milliseconds the pointer rests on a trigger before its panel opens. */
-  delayDuration: () => number;
-  /** Milliseconds the pointer is away from both before the panel closes. */
-  closeDelay: () => number;
-};
-
-type NavigationMenuItemContextValue = {
-  /** This item's value, what the root opens. */
-  value: string;
-  /** The root has this item's panel open. */
-  open: () => boolean;
-  /** Ask the root to open this item, for `reason`. */
-  openFor: (reason: NavigationMenuOpenChangeReason) => void;
-  /** Close this item's panel, for `reason` (unless another item opened meanwhile). */
-  close: (reason: NavigationMenuOpenChangeReason) => void;
-  /** The pointer came onto (`over` true) or left (`false`) the trigger or the panel. */
-  pointerOver: (part: "trigger" | "panel", over: boolean) => void;
-  /** The trigger the content draws, filled by `NavigationMenuTrigger`. */
-  trigger: Slot<JSX.Element>;
-};
-
-const NavigationMenuContext = context<NavigationMenuContextValue | null>(null);
-const NavigationMenuItemContext = context<NavigationMenuItemContextValue | null>(null);
-
-function useNavigationMenu() {
-  const ctx = NavigationMenuContext();
-  if (!ctx) throw new Error("NavigationMenu parts must be used within <NavigationMenu>");
-  return ctx;
-}
-
-function useNavigationMenuItem() {
-  const ctx = NavigationMenuItemContext();
-  if (!ctx)
-    throw new Error("NavigationMenuTrigger and NavigationMenuContent need a NavigationMenuItem");
-  return ctx;
-}
-
-/** The items made up a value so far: a name no one else in the app has. */
-let madeUpCount = 0;
-
 /**
  * A navigation menu, after shadcn/ui's: a landmark (`role="navigation"`, named `"Navigation"` by
  * default) holding a list of items, each a trigger over a panel of any content or a link. One
@@ -435,7 +141,10 @@ export function NavigationMenu(props: NavigationMenuProps) {
     "closeDelay",
     "accessibilityLabel",
     "role",
+    "class",
+    "classList",
     "style",
+    "children",
   ]);
   const own = signal<string | null>(props.defaultValue ?? null);
   const value = () => (props.value !== undefined ? props.value : own());
@@ -455,6 +164,8 @@ export function NavigationMenu(props: NavigationMenuProps) {
         {...rest}
         role={props.role ?? "navigation"}
         accessibilityLabel={props.accessibilityLabel ?? "Navigation"}
+        class={props.class}
+        classList={props.classList}
         style={[navigationMenuLook().root, props.style ?? null]}
       >
         {props.children}
@@ -465,9 +176,15 @@ export function NavigationMenu(props: NavigationMenuProps) {
 
 /** The bar's items side by side, a gap apart, wrapping onto a second line when narrow. */
 export function NavigationMenuList(props: NavigationMenuListProps) {
-  const [, rest] = split(props, ["style"]);
+  const [, rest] = split(props, ["class", "classList", "style", "children"]);
   return (
-    <View role="list" {...rest} style={[navigationMenuLook().list, props.style ?? null]}>
+    <View
+      role="list"
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[navigationMenuLook().list, props.style ?? null]}
+    >
       {props.children}
     </View>
   );
@@ -479,7 +196,7 @@ export function NavigationMenuList(props: NavigationMenuListProps) {
  */
 export function NavigationMenuItem(props: NavigationMenuItemProps) {
   const root = useNavigationMenu();
-  const [, rest] = split(props, ["value", "children", "style"]);
+  const [, rest] = split(props, ["value", "children", "class", "classList", "style"]);
   const value = props.value ?? `navigation-menu-item-${madeUpCount++}`;
   const trigger = createSlot<JSX.Element>();
   // Where the pointer is (off both parts, the panel closes after `closeDelay`) and the one timer
@@ -544,7 +261,12 @@ export function NavigationMenuItem(props: NavigationMenuItemProps) {
         trigger,
       }}
     >
-      <View {...rest} style={[navigationMenuLook().item, props.style ?? null]}>
+      <View
+        {...rest}
+        class={props.class}
+        classList={props.classList}
+        style={[navigationMenuLook().item, props.style ?? null]}
+      >
         {props.children}
       </View>
     </NavigationMenuItemContext.Provider>
@@ -557,7 +279,17 @@ export function NavigationMenuItem(props: NavigationMenuItemProps) {
  */
 export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
   const item = useNavigationMenuItem();
-  const [, rest] = split(props, ["children", "disabled", "style"]);
+  const [, rest] = split(props, [
+    "children",
+    "disabled",
+    "class",
+    "classList",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+  ]);
   // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
   // upstream's demos use): built once, here, and placed by the panel without building it again
   // on every layout. Its children are read where they are drawn, below, so a child that reads a
@@ -574,6 +306,8 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
         pointer && !props.disabled ? () => item.pointerOver("trigger", true) : undefined
       }
       onMouseLeave={pointer ? () => item.pointerOver("trigger", false) : undefined}
+      class={props.class}
+      classList={props.classList}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle, props.activeStyle ?? null]}
@@ -601,11 +335,21 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
  */
 export function NavigationMenuContent(props: NavigationMenuContentProps) {
   const item = useNavigationMenuItem();
-  const [, rest] = split(props, ["children", "width", "placement", "align", "offset"]);
+  const [, rest] = split(props, [
+    "children",
+    "width",
+    "placement",
+    "align",
+    "offset",
+    "class",
+    "classList",
+  ]);
   const placement = () => (props.placement ?? "bottom") as PopupSide;
   return (
     <BasePopover
       {...rest}
+      class={props.class}
+      classList={props.classList}
       open={item.open()}
       trigger={item.trigger.get() ?? <View />}
       placement={placement()}
@@ -639,10 +383,6 @@ export function NavigationMenuContent(props: NavigationMenuContentProps) {
 }
 
 /**
- * The look's state style with the app's over it (the app wins), or the app's alone when the look
- * has none: what a part's `hoverStyle` and `activeStyle` say.
- */
-/**
  * A link: it goes somewhere (`href`, `openWith`, `onOpen`) or reports a press (`onPress`), and it
  * wears the navigation menu's link look — a name and, under it, a description the app nests as its
  * own `Text` with `navigationMenuLook().linkHint`.
@@ -652,6 +392,8 @@ export function NavigationMenuLink(props: NavigationMenuLinkProps) {
     "children",
     "active",
     "disabled",
+    "class",
+    "classList",
     "style",
     "hoverStyle",
     "activeStyle",
@@ -668,6 +410,8 @@ export function NavigationMenuLink(props: NavigationMenuLinkProps) {
       {...rest}
       disabled={props.disabled}
       current={props.active}
+      class={props.class}
+      classList={props.classList}
       style={[look().style, props.style ?? null]}
       hoverStyle={[look().hoverStyle, props.hoverStyle ?? null]}
       activeStyle={[look().activeStyle, props.activeStyle ?? null]}
@@ -678,3 +422,301 @@ export function NavigationMenuLink(props: NavigationMenuLinkProps) {
     </BaseLink>
   );
 }
+
+// Shared navigation-menu primitives
+// Demos and gallery read `navigationMenuLook` and `navigationMenuTriggerLook`.
+
+/** A navigation menu's parts as the styles they wear: spread each one on the part it names. */
+export interface NavigationMenuLook {
+  /** The bar (`NavigationMenu`): a row in the width the app gives it. */
+  readonly root: ViewStyle;
+  /** Its list (`NavigationMenuList`): the triggers a gap apart, wrapping when the window is
+   * narrow. */
+  readonly list: ViewStyle;
+  /** One item (`NavigationMenuItem`): its trigger or its link, and nothing else. */
+  readonly item: ViewStyle;
+  /** A panel (`NavigationMenuContent`): the surface every popup shares (`popupSurface`: the
+   * theme's `radius` corners, one edge, the menu tier's soft shadow) with the panel's room
+   * inside. */
+  readonly panel: ViewStyle;
+  /** A link (`NavigationMenuLink`): a column, so a description can sit under its name. */
+  readonly link: ViewStyle;
+  /** A link's name: the `body` type, in the text color, on one line. */
+  readonly linkText: TextStyle;
+  /** A link's description (`NavigationMenuLink`'s nested text): the muted ink, the `body` type under
+   * the name's. */
+  readonly linkHint: TextStyle;
+}
+
+/**
+ * A navigation menu's look, after shadcn/ui's: the bar a row of triggers 4 points apart (6 on a
+ * touch screen) wrapping in a narrow window; a panel on the popup surface with 10 points of room
+ * inside (12 on a touch screen); a link a 4-point column 8 points in, its corners of the theme's
+ * control radius. Colors are read here, so the look follows the appearance and the theme.
+ */
+export function navigationMenuLook(): NavigationMenuLook {
+  return {
+    get root(): ViewStyle {
+      return { flexDirection: "row", alignItems: "center", maxWidth: "100%" };
+    },
+    get list(): ViewStyle {
+      return {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "center",
+        flexShrink: 1,
+        gap: navigationMenuSize.gap,
+      };
+    },
+    get item(): ViewStyle {
+      return { flexDirection: "row", alignItems: "center" };
+    },
+    get panel(): ViewStyle {
+      return { ...popupSurface(), padding: navigationMenuSize.panel };
+    },
+    get link(): ViewStyle {
+      return {
+        flexDirection: "column",
+        gap: 4,
+        // A link's fill to its text: the list rows' `pad`.
+        padding: itemSpacing.pad,
+        ...rounded(shape.control),
+      };
+    },
+    get linkText(): TextStyle {
+      return {
+        fontSize: font.size("body"),
+        fontWeight: font.weight("label"),
+        color: colors.foreground,
+        numberOfLines: 1,
+      };
+    },
+    get linkHint(): TextStyle {
+      return {
+        fontSize: font.size("body"),
+        fontWeight: font.weight("body"),
+        color: colors.mutedForeground,
+        numberOfLines: 2,
+      };
+    },
+  };
+}
+
+/** Options of `navigationMenuTriggerLook`. */
+export interface NavigationMenuTriggerLookOptions {
+  /** Its panel is open: the chosen fill under it, and its chevron turned. */
+  open?: Live<boolean>;
+}
+
+/**
+ * A trigger's look: the theme's tallest height step, 16 points inset either side, its name the
+ * `body` type medium and a chevron after it which turns 180° while its panel is open (at once with
+ * reduced motion, in 200 ms otherwise). At rest it is bare; the chosen `accent` fill sits under it
+ * while its panel is open, and the full `accent` under the pointer, the theme's focus ring with
+ * the keyboard on it, a press's dimming, 50% while disabled.
+ *
+ * The open fill is in `style`, not `expandedStyle`: nsh ranks `expanded` above `hover`, and the
+ * pointer over an open trigger shows the full fill (shadcn's `data-open:hover:bg-accent`).
+ */
+export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) {
+  const open = () => !!read(o?.open);
+  return {
+    get style(): ViewStyle {
+      return {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: chevronGap,
+        height: navigationMenuSize.trigger,
+        paddingHorizontal: navigationMenuSize.padding,
+        ...rounded(shape.control),
+        ...(open() ? chosen() : { backgroundColor: "transparent" }),
+        ...pressTransition("background-color"),
+      };
+    },
+    get hoverStyle(): ViewStyle {
+      return highlight();
+    },
+    get activeStyle(): ViewStyle {
+      if (feedback.pressOverlay > 0) {
+        return { ...feedback.press("surface").activeStyle, ...pressSink(sink).activeStyle };
+      }
+      return pressSink(sink).activeStyle;
+    },
+    get focusVisibleStyle(): ViewStyle {
+      return feedback.focusRing();
+    },
+    get disabledStyle(): ViewStyle {
+      return { opacity: feedback.disabled.contentOpacity };
+    },
+    /** Its name's type: the `body` type, medium, one line. */
+    get text(): TextStyle {
+      return {
+        fontSize: font.size("body"),
+        fontWeight: font.weight("label"),
+        color: colors.foreground,
+        numberOfLines: 1,
+      };
+    },
+    /** The chevron's box, turned while the panel is open; the motion is the appearance's. */
+    get chevron(): ViewStyle {
+      const still = reduceMotion();
+      return {
+        alignItems: "center",
+        justifyContent: "center",
+        rotate: open() ? "180deg" : "0deg",
+        ...(still ? {} : { transitionProperty: "rotate", transitionDuration: chevronTurn }),
+      };
+    },
+    /** The chevron itself: the theme's smallest icon, in the muted ink. */
+    get chevronIcon(): { size: number; tint: string } {
+      return { size: navigationMenuSize.chevron, tint: colors.mutedForeground };
+    },
+  };
+}
+
+// Private helpers & looks
+
+/** A pointer's compact bar; a touch screen's roomier one, a finger's target in every trigger. */
+const pointer = tier === "pointer";
+
+/**
+ * A bar's measurements: a trigger's height (the theme's tallest height step, shadcn's `h-9`), its
+ * inset from its sides (shadcn's `px-4`, the trigger's own: the theme's control padding is the
+ * field's, and a bar's trigger is not a field), the gap between triggers, the room inside a panel,
+ * and the side of a trigger's chevron (the theme's smallest icon, an indicator's).
+ */
+const navigationMenuSize = {
+  get trigger() {
+    return controlHeight.lg;
+  },
+  padding: 16,
+  get gap() {
+    return pointer ? 4 : 6;
+  },
+  get panel() {
+    return pointer ? 10 : 12;
+  },
+  get chevron() {
+    return iconSize.sm;
+  },
+};
+
+/** The gap inside a trigger, between its name and its chevron (shadcn's `ml-1`). */
+const chevronGap = 4;
+
+/** How long a trigger's chevron takes to turn (200 ms): at once with reduced motion. */
+const chevronTurn = 200;
+
+/** How far a press sinks a trigger or a link: a big region, as a pressable's (98%). */
+const sink = 0.98;
+
+/**
+ * The fill of what the pointer or the keyboard is on (a trigger, a link): the theme's neutral
+ * `accent`, the fill every popup row wears in this library (`menuHighlight`) — written out here so
+ * a navigation menu does not bring the menu's component with it.
+ */
+const highlight = (): ViewStyle => ({ backgroundColor: token("accent") });
+
+/**
+ * The fill of what is chosen (the open trigger, the link of the page shown): the same `accent` at
+ * half (shadcn's `bg-accent/50`), so a pointer over it still shows the full fill.
+ */
+const chosen = (): ViewStyle => ({ backgroundColor: alpha(token("accent"), 0.5) });
+
+/** Options of `navigationMenuLinkLook`. */
+interface NavigationMenuLinkLookOptions {
+  /** The page the app is on: the chosen fill under it. */
+  active?: Live<boolean>;
+  /** No presses, no hover, 50%. */
+  disabled?: Live<boolean>;
+}
+
+/**
+ * A link's look, after shadcn/ui's: a 4-point column 8 points in, at the theme's control corners,
+ * its name the `body` type medium and its description under it in the muted ink; the full `accent`
+ * under the pointer, the chosen `accent` under the page the app is on, the theme's focus ring with
+ * the keyboard on it, a press's dimming, 50% while disabled.
+ */
+function navigationMenuLinkLook(o?: NavigationMenuLinkLookOptions) {
+  const active = () => !!read(o?.active);
+  const disabled = () => !!read(o?.disabled);
+  return {
+    get style(): ViewStyle {
+      return {
+        ...navigationMenuLook().link,
+        ...(active() ? chosen() : {}),
+        ...pressTransition("background-color"),
+      };
+    },
+    get hoverStyle(): ViewStyle | undefined {
+      return disabled() ? undefined : highlight();
+    },
+    get activeStyle(): ViewStyle | undefined {
+      if (disabled()) return undefined;
+      if (feedback.pressOverlay > 0) {
+        return { ...feedback.press("surface").activeStyle, ...pressSink(sink).activeStyle };
+      }
+      return pressSink(sink).activeStyle;
+    },
+    get focusVisibleStyle(): ViewStyle {
+      return feedback.focusRing();
+    },
+    get disabledStyle(): ViewStyle {
+      return { opacity: feedback.disabled.contentOpacity };
+    },
+    /** Its name's type: `navigationMenuLook().linkText`. */
+    get text(): TextStyle {
+      return navigationMenuLook().linkText;
+    },
+    /** Its description's type: `navigationMenuLook().linkHint`. */
+    get hint(): TextStyle {
+      return navigationMenuLook().linkHint;
+    },
+  };
+}
+
+type NavigationMenuContextValue = {
+  /** The open item's value, `null` while none is. */
+  value: () => string | null;
+  /** Ask the root to open `next` (or nothing) for `reason`. */
+  setValue: (next: string | null, reason: NavigationMenuOpenChangeReason) => void;
+  /** Milliseconds the pointer rests on a trigger before its panel opens. */
+  delayDuration: () => number;
+  /** Milliseconds the pointer is away from both before the panel closes. */
+  closeDelay: () => number;
+};
+
+type NavigationMenuItemContextValue = {
+  /** This item's value, what the root opens. */
+  value: string;
+  /** The root has this item's panel open. */
+  open: () => boolean;
+  /** Ask the root to open this item, for `reason`. */
+  openFor: (reason: NavigationMenuOpenChangeReason) => void;
+  /** Close this item's panel, for `reason` (unless another item opened meanwhile). */
+  close: (reason: NavigationMenuOpenChangeReason) => void;
+  /** The pointer came onto (`over` true) or left (`false`) the trigger or the panel. */
+  pointerOver: (part: "trigger" | "panel", over: boolean) => void;
+  /** The trigger the content draws, filled by `NavigationMenuTrigger`. */
+  trigger: Slot<JSX.Element>;
+};
+
+const NavigationMenuContext = context<NavigationMenuContextValue | null>(null);
+const NavigationMenuItemContext = context<NavigationMenuItemContextValue | null>(null);
+
+function useNavigationMenu() {
+  const ctx = NavigationMenuContext();
+  if (!ctx) throw new Error("NavigationMenu parts must be used within <NavigationMenu>");
+  return ctx;
+}
+
+function useNavigationMenuItem() {
+  const ctx = NavigationMenuItemContext();
+  if (!ctx)
+    throw new Error("NavigationMenuTrigger and NavigationMenuContent need a NavigationMenuItem");
+  return ctx;
+}
+
+/** The items made up a value so far: a name no one else in the app has. */
+let madeUpCount = 0;

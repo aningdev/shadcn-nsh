@@ -1,6 +1,5 @@
-// Shared chrome for the port demos (not shipped in the registry): the page shell, a
-// section card (`sectionSurface`), and a titled row of controls. Keep `<id>.tsx` and
-// `<id>.ref.tsx` on the same kit so `port:render` compares equal pixels.
+// Shared chrome for the demos (not shipped in the registry): the page shell, a
+// section card (`sectionSurface`), and a titled row of controls.
 // The palette goes on as the page starts, before its frame is shown (every page reaches the kit):
 // the first frame the visitor can see is already the theme the docs site chose.
 import "./apply-palette";

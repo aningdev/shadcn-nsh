@@ -8,11 +8,11 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.96257,
-          0.00665,
-          286.274
+          1,
+          0,
+          0
         ],
-        "hex": "#f2f2f7"
+        "hex": "#ffffff"
       }
     },
     "card": {

@@ -4,12 +4,12 @@
 // with the arrow that nudges out under the pointer), a footer of quiet links with one closed page,
 // the addresses a hint shows, and the events a link reports. `nsh/base`'s Link owns the press,
 // Return and Space, the focus and the disabled state; `linkLook` / `LinkText` are the look.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, font } from "@shadcn-nsh/theme";
 import { platform, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
 import { Link } from "@/packages/ui/link";
-import { TextView, textViewLinkClasses } from "@/packages/ui/text-view";
+import { TextView, textViewClasses } from "@/packages/ui/text-view";
 
 import { DemoPage } from "../kit";
 import { Card } from "./actions-shared";
@@ -134,9 +134,7 @@ function Navigation() {
         </Each>
       </View>
       <View style={{ gap: 4, paddingTop: 10, borderTopWidth: 1, borderTopColor: colors.line }}>
-        <Text style={{ fontSize: 12, color: colors.faint, fontFamily: "monospace" }}>
-          {route()}
-        </Text>
+        <Text style={{ fontSize: 12, color: colors.faint, fontFamily: font.mono }}>{route()}</Text>
         <Text style={{ fontSize: 15, color: colors.foreground }}>{page().body}</Text>
       </View>
     </Card>
@@ -282,7 +280,7 @@ function Destinations() {
       <View style={{ paddingTop: 10, borderTopWidth: 1, borderTopColor: colors.line }}>
         <TextView
           markdown={TITLED}
-          classes={{ ...textViewLinkClasses, root: "text-[13px] leading-[19px]" }}
+          classes={{ ...textViewClasses, root: "text-[13px] leading-[19px]" }}
           onLinkPress={({ url }) => note(`onLinkPress ${url}`)}
         />
       </View>
@@ -316,7 +314,7 @@ function Events() {
                 style={{
                   fontSize: 12,
                   color: i() === 0 ? colors.foreground : colors.mutedForeground,
-                  fontFamily: "monospace",
+                  fontFamily: font.mono,
                 }}
               >
                 {line()}

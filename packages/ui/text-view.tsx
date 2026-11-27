@@ -1,4 +1,4 @@
-// Text view: the link and caret classes, and the `TextView` that wears them.
+// Text view: `textViewClasses`, `textViewCaretClass`, and the `TextView` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { split } from "nsh";
@@ -13,38 +13,8 @@ import {
 
 import { mergeClasses } from "./lib/utils";
 
-/** A `TextView`'s links (its `classes`): the brand color over a faint
- * underline of it. */
-export const textViewLinkClasses = { link: "text-brand decoration-brand/40" };
-
-/** A streaming `TextView`'s caret (a view of this class, its
- * `streamingCaret`): a brand-colored block a line high that pulses. Its corner is its own small
- * fixed geometry (an 8-point-wide block), not a theme tier. */
-export const textViewCaretClass = "ml-0.5 h-4 w-2 animate-pulse rounded-[4px] bg-brand";
-
 /** Every prop of `nsh/base` TextView; parsing stays in base. */
 export type TextViewProps = BaseTextViewProps;
-
-/** The view the static parsers are attached to, so the export below carries them. */
-function TextViewRoot(props: TextViewProps) {
-  const [, rest] = split(props, ["classes", "class", "style"]);
-  return (
-    <BaseTextView
-      {...rest}
-      class={props.class}
-      style={props.style}
-      classes={mergeClasses<TextViewClasses>(textViewLinkClasses, props.classes)}
-    />
-  );
-}
-
-/** A Markdown, HTML or block document. */
-export const TextView = Object.assign(TextViewRoot, {
-  // Bound: these are methods of the base export, and detaching one loses its receiver.
-  parse: BaseTextView.parse.bind(BaseTextView),
-  parseHtml: BaseTextView.parseHtml.bind(BaseTextView),
-  plainText: BaseTextView.plainText.bind(BaseTextView),
-});
 
 /** A document as `TextView.parse` returns it, from `nsh/base`. */
 export type { TextViewDocument };
@@ -57,3 +27,39 @@ export type { TextViewImage };
 
 /** A text view's ref, from `nsh/base`. */
 export type { TextViewRef };
+
+/** The view the static parsers are attached to, so the export below carries them. */
+function TextViewRoot(props: TextViewProps) {
+  const [, rest] = split(props, ["classes", "class", "classList", "style"]);
+  return (
+    <BaseTextView
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={props.style}
+      classes={mergeClasses<TextViewClasses>(textViewClasses, props.classes)}
+    />
+  );
+}
+
+/** A Markdown, HTML or block document. */
+export const TextView = Object.assign(TextViewRoot, {
+  // Bound: these are methods of the base export, and detaching one loses its receiver.
+  parse: BaseTextView.parse.bind(BaseTextView),
+  parseHtml: BaseTextView.parseHtml.bind(BaseTextView),
+  plainText: BaseTextView.plainText.bind(BaseTextView),
+});
+
+// Shared text view primitives
+// Showcase and the demos read `textViewClasses` and `textViewCaretClass`.
+
+/** A `TextView`'s default classes: brand-colored links over a faint underline, and a `tableGrid` bordered with `border`. */
+export const textViewClasses: TextViewClasses = {
+  link: "text-brand decoration-brand/40",
+  tableGrid: "border-t border-l border-border",
+};
+
+/** A streaming `TextView`'s caret (a view of this class, its
+ * `streamingCaret`): a brand-colored block a line high that pulses. Its corner is its own small
+ * fixed geometry (an 8-point-wide block), not a theme tier. */
+export const textViewCaretClass = "ml-0.5 h-4 w-2 animate-pulse rounded-[4px] bg-brand";

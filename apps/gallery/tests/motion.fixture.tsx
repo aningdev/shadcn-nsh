@@ -6,7 +6,6 @@ import {
   buttonLook,
   commandClasses,
   edgeClass,
-  linkLook,
   numberInputClasses,
   optionClass,
   paginationItemClass,
@@ -14,8 +13,8 @@ import {
   pressSink,
   progressGlide,
   sliderLook,
+  pressTransition,
   tableRowClass,
-  toastCloseLook,
   toggleLook,
 } from "../../../packages/ui";
 
@@ -34,11 +33,11 @@ const describeMotion = (m: typeof motion.fast) => `${m.duration}|${typeof m.timi
 function App() {
   const button = buttonLook("secondary");
   const toggle = toggleLook();
-  linkLook();
   const press = pressSink(0.97, "background-color");
   sliderLook();
   const popup = popInStyles("bottom");
-  const close = toastCloseLook();
+  // The close control's transition is `pressTransition("background-color")` spread onto its style.
+  const close = { style: pressTransition("background-color") };
   const classes = [
     optionClass,
     "transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none",

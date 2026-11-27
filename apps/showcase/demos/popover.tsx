@@ -269,13 +269,13 @@ function Share(props: {
                 onChange={({ checked }) => anyone.set(checked)}
               />
             </View>
-            <Button variant="secondary" selected={copied()} onPress={copy}>
-              <>
-                <If when={copied()}>
-                  <Icon icon={Check} size={pointer ? 14 : 16} tint={colors.foreground} />
-                </If>
-                <Text>{copied() ? "Copied" : "Copy link"}</Text>
-              </>
+            <Button
+              variant="secondary"
+              icon={copied() ? Check : undefined}
+              selected={copied()}
+              onPress={copy}
+            >
+              {copied() ? "Copied" : "Copy link"}
             </Button>
           </PopoverContent>
         </Popover>
@@ -367,19 +367,13 @@ function Profile(props: {
               <Button
                 style={{ flex: 1 }}
                 variant={following() ? "secondary" : "default"}
+                icon={following() ? Check : Plus}
                 onPress={() => {
                   following.set(!following());
                   log(following() ? "followed Mira Chen" : "unfollowed Mira Chen");
                 }}
               >
-                <>
-                  <Icon
-                    icon={following() ? Check : Plus}
-                    size={pointer ? 14 : 16}
-                    tint={following() ? colors.foreground : colors.primaryForeground}
-                  />
-                  <Text>{following() ? "Following" : "Follow"}</Text>
-                </>
+                {following() ? "Following" : "Follow"}
               </Button>
               <Button
                 style={{ flex: 1 }}

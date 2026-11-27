@@ -195,11 +195,11 @@
       "$value": {
         "colorSpace": "oklch",
         "components": [
-          0.56769,
-          0.16654,
-          251.313
+          0.49147,
+          0.15959,
+          254.594
         ],
-        "hex": "#0078d4"
+        "hex": "#005fb8"
       }
     },
     "success": {
@@ -525,7 +525,7 @@
     "fast": {
       "$value": {
         "duration": {
-          "value": 83,
+          "value": 167,
           "unit": "ms"
         },
         "delay": {
@@ -533,8 +533,8 @@
           "unit": "ms"
         },
         "timingFunction": [
-          0,
-          0,
+          0.55,
+          0.55,
           0,
           1
         ]
@@ -543,7 +543,7 @@
     "default": {
       "$value": {
         "duration": {
-          "value": 167,
+          "value": 250,
           "unit": "ms"
         },
         "delay": {
@@ -561,7 +561,7 @@
     "slow": {
       "$value": {
         "duration": {
-          "value": 250,
+          "value": 333,
           "unit": "ms"
         },
         "delay": {
