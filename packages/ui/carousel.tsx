@@ -27,10 +27,234 @@ import { Icon } from "./lib/icons";
 import { pressTransition } from "./lib/motion";
 import { joinClass } from "./lib/utils";
 
+/** `nsh/base`'s Carousel: index, looping and swipes are base's; this adds the look around it. */
+export type CarouselProps = BaseCarouselProps;
+
+/** The snap viewport the slides scroll in. */
+export type CarouselContentProps = BaseContentProps;
+
+/** One slide: one slide per view unless the app gives it a width. */
+export type CarouselItemProps = BaseItemProps;
+
+/** An arrow's options: `glass` over a photo, and its `side`. */
+export type CarouselArrowProps = CarouselArrowOptions;
+
+/** The dot row, with the pill that travels to the slide shown. */
+export type CarouselPaginationProps = BasePaginationProps;
+
+/** One dot: `index` says which slide it stands for, and names it for screen readers. */
+export type CarouselPaginationItemProps = BasePaginationItemProps;
+
+/** The previous arrow, with the look's options. */
+export type CarouselPreviousProps = BasePreviousProps & CarouselArrowOptions;
+
+/** The next arrow, with the look's options. */
+export type CarouselNextProps = BaseNextProps & CarouselArrowOptions;
+
+/** Slides and controls the app lays out around it. */
+export function Carousel(props: CarouselProps) {
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  return (
+    <BaseCarousel
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[{ gap: 8, alignSelf: "stretch" }, props.style ?? null]}
+    />
+  );
+}
+
+/** The viewport the slides snap in. */
+export function CarouselContent(props: CarouselContentProps) {
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  return (
+    <BaseContent
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[{ minHeight: 48, alignSelf: "stretch" }, props.style ?? null]}
+    />
+  );
+}
+
+/** One slide. */
+export function CarouselItem(props: CarouselItemProps) {
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  return (
+    <BaseItem
+      {...rest}
+      class={joinClass("w-full", props.class)}
+      classList={props.classList}
+      style={[
+        { flexShrink: 0, alignItems: "center", justifyContent: "center" },
+        props.style ?? null,
+      ]}
+    />
+  );
+}
+
+/** The control that goes back a slide: `glass` and `side` shape its look, an arrow unless given a
+ * child. */
+export function CarouselPrevious(props: CarouselPreviousProps) {
+  const [, rest] = split(props, [
+    "glass",
+    "side",
+    "class",
+    "classList",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "children",
+    "accessibilityLabel",
+  ]);
+  const look = carouselArrowLook({ glass: props.glass, side: props.side });
+  return (
+    <BasePrevious
+      {...(props.glass ? surface("glass").platformProps : {})}
+      {...rest}
+      accessibilityLabel={props.accessibilityLabel ?? "Previous slide"}
+      class={props.class}
+      classList={props.classList}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
+      {mergeArrowChild("previous", props.children)}
+    </BasePrevious>
+  );
+}
+
+/** The control that goes on to the next slide: `glass` and `side` shape its look, an arrow unless
+ * given a child. */
+export function CarouselNext(props: CarouselNextProps) {
+  const [, rest] = split(props, [
+    "glass",
+    "side",
+    "class",
+    "classList",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "children",
+    "accessibilityLabel",
+  ]);
+  const look = carouselArrowLook({ glass: props.glass, side: props.side });
+  return (
+    <BaseNext
+      {...(props.glass ? surface("glass").platformProps : {})}
+      {...rest}
+      accessibilityLabel={props.accessibilityLabel ?? "Next slide"}
+      class={props.class}
+      classList={props.classList}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
+      {mergeArrowChild("next", props.children)}
+    </BaseNext>
+  );
+}
+
+/** The row of dots, and the pill that travels along it to the slide shown. */
+export function CarouselPagination(props: CarouselPaginationProps) {
+  const [, rest] = split(props, [
+    "class",
+    "classList",
+    "style",
+    "indicatorClass",
+    "indicatorStyle",
+    "accessibilityLabel",
+  ]);
+  const look = carouselPaginationLook();
+  return (
+    <BasePagination
+      {...rest}
+      accessibilityLabel={props.accessibilityLabel ?? "Choose a slide"}
+      class={props.class}
+      classList={props.classList}
+      style={[look.style, props.style ?? null]}
+      indicatorClass={props.indicatorClass}
+      indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
+    />
+  );
+}
+
+/**
+ * One dot of the row: its `index`, and whatever you draw in it — give it a `CarouselDot`,
+ * `selected` from the slide shown. `nsh/base` keeps the current slide to itself (it only reports
+ * it through the carousel's `onChange`), so the item cannot draw a dot that stays right: given no
+ * child it draws nothing, rather than a dot that never lights.
+ */
+export function CarouselPaginationItem(props: CarouselPaginationItemProps) {
+  const [, rest] = split(props, [
+    "class",
+    "classList",
+    "style",
+    "focusVisibleStyle",
+    "children",
+    "accessibilityLabel",
+  ]);
+  const look = carouselDotItemLook();
+  return (
+    <BasePaginationItem
+      {...rest}
+      accessibilityLabel={props.accessibilityLabel ?? `Slide ${props.index + 1}`}
+      class={joinClass(look.class, props.class)}
+      classList={props.classList}
+      style={[look.style, props.style ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+    >
+      {props.children}
+    </BasePaginationItem>
+  );
+}
+
+/** The dot of a pagination item: a quiet circle that brightens under the
+ * pointer and hides under the pill on the slide shown; a glyph, filled on
+ * the slide shown, in a terminal. */
+export function CarouselDot(props: {
+  /** The slide this dot stands for is the one shown. */
+  selected: boolean;
+  /** Tailwind classes on the dot, after its own. */
+  class?: string | null;
+  /** Tailwind classes toggled on the dot. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Over the dot's look. */
+  style?: StyleProp<ViewStyle>;
+}) {
+  if (terminal) return terminalDot(props);
+  return (
+    <View
+      class={joinClass("group-selected:opacity-0 opacity-70 group-hover:opacity-100", props.class)}
+      classList={props.classList}
+      style={[
+        {
+          width: carouselSizes.dot,
+          height: carouselSizes.dot,
+          borderRadius: carouselSizes.dot / 2,
+          backgroundColor: alpha(colors.foreground, 0.24),
+          ...fade,
+        },
+        props.style ?? null,
+      ]}
+    />
+  );
+}
+
+// Shared carousel primitives
+// Gallery and showcase read `carouselSizes`, `carouselArrowLook`, `carouselPaginationLook` and
+// `carouselDotItemLook`.
+
 /** A pointer, where a carousel's controls are compact; a touch screen gets roomier ones. */
 const pointer = platform.desktop;
-
-// Carousel ---------------------------------------------------------------
 
 /** A carousel's controls: an arrow's side and its icon, a pagination dot
  * and the touch-sized item around it. Compact with a pointer, roomier on a
@@ -38,14 +262,6 @@ const pointer = platform.desktop;
 export const carouselSizes = pointer
   ? { arrow: 30, arrowIcon: 16, dot: 7, hit: 15 }
   : { arrow: 38, arrowIcon: 18, dot: 8, hit: 22 };
-
-/** The properties a carousel control's states change, eased as a press. */
-const fade: ViewStyle = pressTransition("background-color, border-color, opacity");
-
-/** The glyph an arrow draws when the app gives it none: a chevron in the text color, `carouselSizes.arrowIcon` wide. */
-function arrowIcon(): { size: number; tint: string } {
-  return { size: carouselSizes.arrowIcon, tint: colors.foreground };
-}
 
 /** Options of `carouselArrowLook`. */
 export interface CarouselArrowOptions {
@@ -148,63 +364,22 @@ export function carouselDotItemLook() {
   };
 }
 
-/** The dot of a pagination item: a quiet circle that brightens under the
- * pointer and hides under the pill on the slide shown; a glyph, filled on
- * the slide shown, in a terminal. */
-export function CarouselDot(props: { selected: boolean }) {
-  return terminal ? (
-    <Text style={{ color: props.selected ? colors.brand : colors.mutedForeground }}>
-      {props.selected ? "●" : "○"}
-    </Text>
-  ) : (
-    <View
-      class="group-selected:opacity-0 opacity-70 group-hover:opacity-100"
-      style={{
-        width: carouselSizes.dot,
-        height: carouselSizes.dot,
-        borderRadius: carouselSizes.dot / 2,
-        backgroundColor: alpha(colors.foreground, 0.24),
-        ...fade,
-      }}
-    />
-  );
+// Private helpers & looks
+
+/** The properties a carousel control's states change, eased as a press. */
+const fade: ViewStyle = pressTransition("background-color, border-color, opacity");
+
+/** The glyph an arrow draws when the app gives it none: a chevron in the text color, `carouselSizes.arrowIcon` wide. */
+function arrowIcon(): { size: number; tint: string } {
+  return { size: carouselSizes.arrowIcon, tint: colors.foreground };
 }
 
-/** `top` over `under` as two styles, or `under` alone when there is nothing over it. */
-function over(under: StyleProp<ViewStyle>, top: StyleProp<ViewStyle>): StyleProp<ViewStyle> {
-  return top == null ? under : [under, top];
-}
-
-/** `nsh/base`'s Carousel: index, looping and swipes are base's; this adds the look around it. */
-export type CarouselProps = BaseCarouselProps;
-
-/** The snap viewport the slides scroll in. */
-export type CarouselContentProps = BaseContentProps;
-
-/** One slide: one slide per view unless the app gives it a width. */
-export type CarouselItemProps = BaseItemProps;
-
-/** An arrow's options: `glass` over a photo, and its `side`. */
-export type CarouselArrowProps = CarouselArrowOptions;
-
-/** The dot row, with the pill that travels to the slide shown. */
-export type CarouselPaginationProps = BasePaginationProps;
-
-/** One dot: `index` says which slide it stands for, and names it for screen readers. */
-export type CarouselPaginationItemProps = BasePaginationItemProps;
-
-/** The previous arrow, with the look's options. */
-export type CarouselPreviousProps = BasePreviousProps & CarouselArrowOptions;
-
-/** The next arrow, with the look's options. */
-export type CarouselNextProps = BaseNextProps & CarouselArrowOptions;
+// Terminal
 
 /** What an arrow draws when the app gives it no child: a chevron, pointed back for `next`. */
 function mergeArrowChild(mark: "previous" | "next", children: JSX.Element | undefined) {
   if (children !== undefined) return children;
-  if (terminal) {
-    return <Text>{mark === "previous" ? "‹" : "›"}</Text>;
-  }
+  if (terminal) return <Text>{mark === "previous" ? "‹" : "›"}</Text>;
   const icon = arrowIcon();
   // The tint is read in the JSX, so it follows the appearance (light / dark).
   if (mark === "previous") {
@@ -217,154 +392,23 @@ function mergeArrowChild(mark: "previous" | "next", children: JSX.Element | unde
   );
 }
 
-/** Slides and controls the app lays out around it. */
-export function Carousel(props: CarouselProps) {
-  const [, rest] = split(props, ["class", "style"]);
+/** A pagination dot where a terminal draws no circles: `●` on the slide shown, `○` on the rest. */
+function terminalDot(props: {
+  selected: boolean;
+  class?: string | null;
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<ViewStyle>;
+}) {
   return (
-    <BaseCarousel
-      {...rest}
-      class={props.class}
-      style={over({ gap: 8, alignSelf: "stretch" }, props.style)}
-    />
-  );
-}
-
-/** The viewport the slides snap in. */
-export function CarouselContent(props: CarouselContentProps) {
-  const [, rest] = split(props, ["class", "style"]);
-  return (
-    <BaseContent
-      {...rest}
-      class={props.class}
-      style={over({ minHeight: 48, alignSelf: "stretch" }, props.style)}
-    />
-  );
-}
-
-/** One slide. */
-export function CarouselItem(props: CarouselItemProps) {
-  const [, rest] = split(props, ["class", "style"]);
-  return (
-    <BaseItem
-      {...rest}
-      class={joinClass("w-full", props.class)}
-      style={over({ flexShrink: 0, alignItems: "center", justifyContent: "center" }, props.style)}
-    />
-  );
-}
-
-/** The control that goes back a slide: `glass` and `side` shape its look, an arrow unless given a
- * child. */
-export function CarouselPrevious(props: CarouselPreviousProps) {
-  const [, rest] = split(props, [
-    "glass",
-    "side",
-    "class",
-    "style",
-    "hoverStyle",
-    "activeStyle",
-    "focusVisibleStyle",
-    "disabledStyle",
-    "children",
-    "accessibilityLabel",
-  ]);
-  const look = carouselArrowLook({ glass: props.glass, side: props.side });
-  return (
-    <BasePrevious
-      {...(props.glass ? surface("glass").platformProps : {})}
-      {...rest}
-      accessibilityLabel={props.accessibilityLabel ?? "Previous slide"}
-      class={props.class}
-      style={over(look.style, props.style)}
-      hoverStyle={over(look.hoverStyle, props.hoverStyle)}
-      activeStyle={over(look.activeStyle, props.activeStyle)}
-      focusVisibleStyle={over(look.focusVisibleStyle, props.focusVisibleStyle)}
-      disabledStyle={over(look.disabledStyle, props.disabledStyle)}
+    <Text
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[
+        { color: props.selected ? colors.brand : colors.mutedForeground },
+        props.style ?? null,
+      ]}
     >
-      {mergeArrowChild("previous", props.children)}
-    </BasePrevious>
-  );
-}
-
-/** The control that goes on to the next slide: `glass` and `side` shape its look, an arrow unless
- * given a child. */
-export function CarouselNext(props: CarouselNextProps) {
-  const [, rest] = split(props, [
-    "glass",
-    "side",
-    "class",
-    "style",
-    "hoverStyle",
-    "activeStyle",
-    "focusVisibleStyle",
-    "disabledStyle",
-    "children",
-    "accessibilityLabel",
-  ]);
-  const look = carouselArrowLook({ glass: props.glass, side: props.side });
-  return (
-    <BaseNext
-      {...(props.glass ? surface("glass").platformProps : {})}
-      {...rest}
-      accessibilityLabel={props.accessibilityLabel ?? "Next slide"}
-      class={props.class}
-      style={over(look.style, props.style)}
-      hoverStyle={over(look.hoverStyle, props.hoverStyle)}
-      activeStyle={over(look.activeStyle, props.activeStyle)}
-      focusVisibleStyle={over(look.focusVisibleStyle, props.focusVisibleStyle)}
-      disabledStyle={over(look.disabledStyle, props.disabledStyle)}
-    >
-      {mergeArrowChild("next", props.children)}
-    </BaseNext>
-  );
-}
-
-/** The row of dots, and the pill that travels along it to the slide shown. */
-export function CarouselPagination(props: CarouselPaginationProps) {
-  const [, rest] = split(props, [
-    "class",
-    "style",
-    "indicatorClass",
-    "indicatorStyle",
-    "accessibilityLabel",
-  ]);
-  const look = carouselPaginationLook();
-  return (
-    <BasePagination
-      {...rest}
-      accessibilityLabel={props.accessibilityLabel ?? "Choose a slide"}
-      class={props.class}
-      style={over(look.style, props.style)}
-      indicatorClass={props.indicatorClass}
-      indicatorStyle={over(look.indicatorStyle, props.indicatorStyle)}
-    />
-  );
-}
-
-/**
- * One dot of the row: its `index`, and whatever you draw in it — give it a `CarouselDot`,
- * `selected` from the slide shown. `nsh/base` keeps the current slide to itself (it only reports
- * it through the carousel's `onChange`), so the item cannot draw a dot that stays right: given no
- * child it draws nothing, rather than a dot that never lights.
- */
-export function CarouselPaginationItem(props: CarouselPaginationItemProps) {
-  const [, rest] = split(props, [
-    "class",
-    "style",
-    "focusVisibleStyle",
-    "children",
-    "accessibilityLabel",
-  ]);
-  const look = carouselDotItemLook();
-  return (
-    <BasePaginationItem
-      {...rest}
-      accessibilityLabel={props.accessibilityLabel ?? `Slide ${props.index + 1}`}
-      class={joinClass(look.class, props.class)}
-      style={over(look.style, props.style)}
-      focusVisibleStyle={over(look.focusVisibleStyle, props.focusVisibleStyle)}
-    >
-      {props.children}
-    </BasePaginationItem>
+      {props.selected ? "●" : "○"}
+    </Text>
   );
 }
