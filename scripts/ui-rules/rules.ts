@@ -47,16 +47,19 @@ export interface Allowance {
 export const allowlist: Allowance[] = [];
 
 /**
- * The specifiers a component may import from outside its own package: NSH (and its base, by any of
- * its entry points) and the icon set. Theme values come through `@shadcn-nsh/theme`'s entry, which
- * reads `theme.ts`; never one of its JSON files or a `themes/<name>/` directory directly.
+ * The specifiers a component may import from outside its own package: NSH and its base, by any of
+ * its entry points. Theme values come through the theme entry (`../theme` from a component file,
+ * `../../theme` from `lib/`), which reads `theme.ts`; never one of its JSON files or a
+ * `themes/<name>/` directory directly. Icons are the built-in nodes in `lib/icons`.
  */
 const allowedPackages = (specifier: string): boolean =>
-  specifier === "nsh" ||
-  specifier.startsWith("nsh/") ||
-  specifier === "lucide" ||
-  specifier.startsWith("lucide/") ||
-  specifier === "@shadcn-nsh/theme";
+  specifier === "nsh" || specifier.startsWith("nsh/");
+
+/** The theme package entry, and only that file: `../theme/theme.json` is not it. */
+const themeEntry = (file: string, specifier: string): boolean => {
+  if (file.startsWith("packages/ui/lib/")) return specifier === "../../theme";
+  return /^packages\/ui\/[^/]+\.(ts|tsx)$/.test(file) && specifier === "../theme";
+};
 
 /** The theme names a component must not compare against: a component reads the dimensions, not the theme. */
 const themeNames = ["apple", "material", "shadcn", "solid-glass", "winui"] as const;
@@ -145,7 +148,7 @@ const isComponent = (path: string): boolean =>
  * The import direction: a `packages/ui/lib` module never imports a component (`../button`: an
  * import list would have to be cut to `lib/`, since a component cannot be seen from there), and no
  * `packages/ui` file imports `apps/*`, `scripts/*`, another package, or one of the theme's JSON
- * files. Relative paths inside `packages/ui` and the three specifiers in `allowedPackages` are it.
+ * files. Relative paths inside `packages/ui`, the theme entry, and `nsh` / `nsh/base` are it.
  */
 const imports = (source: string, file: string): Violation[] => {
   const { program } = parseSync(file, source);
@@ -168,6 +171,7 @@ const imports = (source: string, file: string): Violation[] => {
         match: specifier.value,
       });
 
+    if (themeEntry(file, specifier.value)) continue;
     if (specifier.value.startsWith(".")) {
       const target = resolve(file, specifier.value);
       if (target.escapes || !target.path.startsWith("packages/ui")) report();

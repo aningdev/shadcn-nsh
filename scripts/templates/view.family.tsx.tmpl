@@ -2,6 +2,8 @@
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
+import { colors } from "../theme";
+
 /** A {{id}}'s variant axis. */
 export type {{Id}}Variant = "default";
 
@@ -17,10 +19,10 @@ export interface {{Id}}Look {
 export function {{lookFn}}(): {{Id}}Look {
   return {
     get root(): ViewStyle {
-      return {};
+      return { backgroundColor: colors.background };
     },
     get title(): TextStyle {
-      return {};
+      return { color: colors.foreground };
     },
     get description(): TextStyle {
       return {};

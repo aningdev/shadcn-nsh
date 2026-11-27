@@ -1,9 +1,9 @@
 // A label: the visible name of a field or a choice, drawn on `nsh`'s own View and Text.
 
-import { colors, dimmed, font } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 
+import { colors, dimmed, font } from "../theme";
 import { controlSize } from "./lib/surface";
 import { AsText } from "./lib/utils";
 

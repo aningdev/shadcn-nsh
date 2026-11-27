@@ -2,21 +2,35 @@
 
 ## Unreleased
 
-### Changed
-
-- **BREAKING: a split button is shadcn/ui's `ButtonGroup`, and core base components stay streamlined (`badge`, `card`, `switch`, `checkbox`, `input`, `dialog`, `select`, `button`).** Removed the standalone `split-button` (`SplitButton`, `SplitButtonSegment`, `SplitButtonDivider`). A split button is `ButtonGroup` + `Button` + `ButtonGroupSeparator`, joined with `buttonGroupItem`; `buttonGroupLook` is private to `button-group.tsx`. The Button group docs and the showcase include the split-button scene. Primary component JSX stays at the top of each core component file following `docs/component-authoring.md`, and internal-only `*Look` / geometry helpers stay private (`badgeSizes`, `cardLook`, `knobOffset`, `knobTravel`, `switchSlop`, `switchLook`, `checkboxLook`, `inputLook`, `dialogCard`, `pickerLook`, `iconButtonSizes`, `roundButtonLook`). Also consolidated `docs/` into 6 factual specification docs and standardized `apple` / `material` / `winui` theme `README.md` guides.
-
-- **BREAKING: shared field and choice primitives move to `lib/`.** `fieldSize`, `edgeClass`, `insetShade`, `fieldLook`, `fieldText`, `grownFieldHeight`, `multilineFieldPad`, `timeFieldClass`, `timeFieldLook` and their option types now live in `lib/field-look`. `choiceLook`, `choiceEdge`, `choiceWell`, `choiceSink`, `ChoiceLight`, `choiceScales`, `choiceTileLook` and their types live in `lib/choice`. `Input`, `Checkbox` and `TimeField` no longer re-export them. In the terminal, `controlHeight` and `metrics.height` are one character row (`16`) and `metrics.control` is one character column of padding and gap (`8`). `controlSize` still uses `0` padding there.
-
-- **BREAKING: layer radii use Tailwind names, and `theme.json` always writes font families.** `cssVars.theme` renames `radius-control` / `radius-container` / `radius-modal` to `radius-md` / `radius-lg` / `radius-xl` (no aliases). The A-layer `radius` slot stays and still equals the control radius (`radius-md`). `shape.control` / `shape.container` / `shape.modal` keep their names and read the new keys. Classes use `rounded-(--radius-md|lg|xl)`. Every built-in `theme.json` writes `font-sans` (`system-ui` unless `tokens.font.sans` is set) and `font-mono` (`monospace` unless `tokens.font.mono` is set). `@shadcn-nsh/theme` exposes them as `font.sans` and `font.mono`.
-
 ### Added
 
-- **Material 3 Expressive & Solid Glass polish.** Material 3 gains spatial vs. effects physics spring tiers (`snappy`, `smooth`, `bouncy`) and `reveal` springs. Solid Glass extends smoky backdrop blur + `specular-rim` across `overlay`, `inverse`, and `modal` alongside three-tier soft springs.
+- **Apple Liquid Glass (`apple`) and a stronger Native preset.** Apple's raised, overlay, modal, inverse, and glass surfaces are layered Liquid Glass: native regular or clear glass, an iOS material, a saturate blur, a specular hairline, and a rounded-rect liquid-glass shader. `ProgressiveBlur` fades a backdrop blur off an edge. A theme can name `snappy`, `smooth`, and `bouncy` springs. `themes/native` picks the platform theme with `nativeTheme()`.
 
-- **WinUI 3 Fluent 2 acrylic and critically damped motion.** `acrylic-noise` is a flat four-layer frost: a uniform 9-tap blur (no lens bend, no RGB dispersion), a luminosity mix, the surface tint, fine grain, and a 1px top highlight. WinUI `overlay`, `glass`, `inverse`, and `modal` are layered acrylic (`blur`, `saturate`, `minOpacity`, a specular hairline, and `windows.backdrop` blur). Motion is 83/167/250/333 ms with critically damped springs (zeta at least 1). Presses stay a color change and do not use a press spring.
+- **Material 3 Expressive and Solid Glass polish.** Material 3 gains spatial vs. effects physics spring tiers (`snappy`, `smooth`, `bouncy`) and `reveal` springs. Solid Glass extends smoky backdrop blur and `specular-rim` across `overlay`, `inverse`, and `modal`, with three-tier soft springs.
 
-- **Apple Liquid Glass, progressive blur, and physics springs.** Apple's raised, overlay, modal, inverse, and glass surfaces are layered Liquid Glass: native regular or clear glass (omitting `macos.backdrop` so macOS 26+ uses `NSGlassEffectView` natively while older macOS falls back to `backdropFilter`), an iOS material, a saturate blur, a specular hairline, and a rounded-rect liquid-glass shader. `ProgressiveBlur` fades a backdrop blur off the top or bottom edge. A theme can name `snappy`, `smooth`, and `bouncy` springs; popovers, dialogs, indicators, reveals, and presses use NSH's `spring()` timing when the theme asks for one.
+- **WinUI 3 Fluent 2 acrylic and critically damped motion.** `acrylic-noise` is a flat four-layer frost. WinUI `overlay`, `glass`, `inverse`, and `modal` are layered acrylic. Motion is 83/167/250/333 ms with critically damped springs. Presses stay a color change.
+
+- **Zero-dependency TSX `nshm` install.** The repository root `nsh.json` exports `shadcn-nsh`, `shadcn-nsh/theme`, each theme, and every component. `nsh add github:aningdev/shadcn-nsh` installs them with no npm packages; `selectTheme` switches a built-in theme at run time. Copy-into-app (`npx shadcn-nsh init` / `add`) is unchanged, and still writes `theme.json` when a build-time theme is wanted.
+
+### Changed
+
+- **Layer radii are `radius-md`, `radius-lg`, and `radius-xl`.** `radius` stays and equals `radius-md`. Every built-in theme writes `font-sans` and `font-mono`. Components read `font.sans` / `font.mono` and no longer embed font-family literals.
+
+- **All 83 components share one source order.** Public JSX comes first; private looks follow. Roots pass `class`, `classList`, and `style` through. Terminal sizes come from the theme. `ButtonGroup` replaces `split-button`.
+
+- **Safe-area insets use `env(safe-area-inset-*)`.** `sheet`, `toast`, `sidebar`, and `image-viewer` take the inset as a native margin.
+
+- **Built-in icons.** The components ship the 39 UI icons they draw, as lucide-compatible `IconNode` values, so they no longer require the `lucide` package at run time. An app can still pass an icon imported from `lucide`.
+
+### Breaking
+
+- **Internal `*Look` and `*Sizes` helpers are private.** Helpers only one component uses are no longer exported (`cardLook`, `switchLook`, `checkboxLook`, `inputLook`, `roundButtonLook`, `buttonGroupLook`, `dialogCard`, `pickerLook`, and the size tables beside them). `buttonLook`, `iconButtonLook`, `fieldLook`, `choiceLook`, and `pressableLook` stay exported.
+
+- **Shared field and choice primitives live in `lib/`.** `fieldLook` and the field metrics live in `lib/field-look`. `choiceLook` and the choice metrics live in `lib/choice`. `Input`, `Checkbox`, and `TimeField` no longer re-export them.
+
+- **`split-button` is `button-group`.** `SplitButton`, `SplitButtonSegment`, and `SplitButtonDivider` are removed. A split button is `ButtonGroup` + `Button` + `ButtonGroupSeparator`.
+
+- **Old radius tokens are gone.** `radius-control`, `radius-container`, and `radius-modal` are `radius-md`, `radius-lg`, and `radius-xl`. There are no aliases.
 
 ## v0.11.0 — 2026-11-26
 

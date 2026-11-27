@@ -1,13 +1,12 @@
 // A link: the look (`linkLook` and its companions) and the `Link` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, colors, focusRing, font } from "@shadcn-nsh/theme";
-import { ExternalLink } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { alpha, colors, focusRing, font } from "../theme";
+import { ExternalLink, Icon } from "./lib/icons";
 import { joinClass } from "./lib/utils";
 
 /**

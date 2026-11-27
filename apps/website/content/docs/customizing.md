@@ -8,7 +8,7 @@ description: "The three places to change a copied component: the theme, its look
 | Change                  | Where                                                    | Reaches                                   |
 | ----------------------- | -------------------------------------------------------- | ----------------------------------------- |
 | Colors, radii, surfaces | `theme.json` (and `lib/ui/themes/<id>.ts` for the rest)  | every component                           |
-| One control's look      | its `*Look` function in `components/ui/<id>.tsx`         | that control's variants, sizes and states |
+| One control's look      | the look in the copied `components/ui/<id>.tsx`          | that control's variants, sizes and states |
 | Structure or API        | the component and parts after the look, in the same file | that component's props and parts          |
 
 In a monorepo, every path starts at `packages/ui/` instead of the app root.
@@ -46,30 +46,21 @@ What `theme.json` does not carry is the spec's own depth: the eleven `surfaces` 
 
 ## One control's look
 
-The look is the function that turns a `variant` (shadcn's word: `default`, `secondary`, `ghost`, `destructive`), a `size` (`sm`, `default`, `lg`), a `tone` (the theme's `Tone`: `neutral`, `accent`, `info`, `success`, `warning`, `destructive`) and a state into the props `nsh/base` draws with. It sits at the top of a copied component, above the component itself.
+Colors, radii and type come from the theme module. After `init`, that module is `lib/ui/theme.ts`:
 
 ```tsx
-// components/ui/button.tsx
-export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: ButtonLookOptions) {
-  return {
-    get style(): ViewStyle {
-      const dims = dimensions(o);
-      return {
-        height: terminal ? TERMINAL_ROW : dims.height,
-        borderRadius: shape.control,
-        // ...
-      };
-    },
-    // hoverStyle, activeStyle, focusVisibleStyle, disabledStyle, hitSlop
-  };
-}
+import { colors, control, shape } from "@/lib/ui/theme";
 ```
 
-Change the values in that look function — a height, a radius, a hover fill — and the component below still spreads the result. Keep the props it returns; they are what the base control reads. Shared look helpers (`buttonLook`, `iconButtonLook`, `fieldLook`, `choiceLook`) sit in the component or `lib/` file they belong to, while component-private geometry (`switch`, `checkbox`, `button-group`, `card`, `badge`) lives inside each component file itself. Controls whose shape and dimensions vary by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/field-look.ts` for fields) read the theme's control geometry through `control("switch")`, `control("slider")`, `control("choice")` and `control("field")`; the per-component geometry that hangs off them stays right inside those component or lib files.
+With the TSX `nshm` install the same values are `import { colors, control, shape } from "shadcn-nsh/theme"`.
+
+A look turns a `variant`, a `size`, a `tone` and a state into the props `nsh/base` draws with. In a copied file it sits below the component. Change a height, a radius or a hover fill there, and keep the props the base control reads. Helpers only that file uses are private. These stay exported: `buttonLook`, `iconButtonLook`, `fieldLook`, `choiceLook`, `pressableLook`.
+
+Controls whose shape varies by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and `lib/field-look.ts`) read the theme's control geometry through `control("switch")`, `control("slider")`, `control("choice")` and `control("field")`.
 
 ## Structure and API
 
-The shell is the component and its parts, below the look. It reads props, spreads the look and gives a composite its roles.
+The shell is the component and its parts, above the look. It reads props, spreads the look and gives a composite its roles.
 
 ```tsx
 // components/ui/button.tsx

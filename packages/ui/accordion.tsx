@@ -1,8 +1,6 @@
 // An accordion: the parts, and the disclosure look they share with a collapsible.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, motion } from "@shadcn-nsh/theme";
-import { ChevronDown, ChevronRight } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 import {
@@ -18,7 +16,8 @@ import {
   type AccordionTriggerProps as BaseAccordionTriggerProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { colors, motion } from "../theme";
+import { ChevronDown, ChevronRight, Icon } from "./lib/icons";
 import { controlSize, listRow, RowLabel, type ListRowOptions } from "./lib/surface";
 import { joinClass } from "./lib/utils";
 

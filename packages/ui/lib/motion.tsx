@@ -2,15 +2,6 @@
 // rolling counters, press sink transforms, and touch hit-target expansion.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  feedback,
-  motion as themeMotion,
-  press,
-  terminal,
-  type MotionSpringSpec,
-  type Timing,
-} from "@shadcn-nsh/theme";
 import type { MotionSpec as NshMotionSpec, StyleProp, TextStyle, ViewStyle } from "nsh";
 import {
   createMotion,
@@ -22,6 +13,15 @@ import {
   Text,
 } from "nsh";
 
+import {
+  colors,
+  feedback,
+  motion as themeMotion,
+  press,
+  terminal,
+  type MotionSpringSpec,
+  type Timing,
+} from "../../theme";
 import { type Live, read } from "./utils";
 
 /** Theme-driven dialog enter motion spec (`dialogEnter` timing, scale, Y offset, and optional spring). */

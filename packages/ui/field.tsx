@@ -1,9 +1,9 @@
 // A field: the look (`fieldFamilyLook`) and the ten parts that wear it.
 
-import { colors, controlHeight, font, stroke, terminal } from "@shadcn-nsh/theme";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
+import { colors, controlHeight, font, stroke, terminal } from "../theme";
 import { controlSize, density, narrowWindow } from "./lib/surface";
 
 /**

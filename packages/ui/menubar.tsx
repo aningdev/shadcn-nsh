@@ -1,6 +1,10 @@
 // A menubar: a row of menus whose triggers stand in one bar, as a desktop app's menu bar. The
 // rows, submenus and popups are `menu.tsx`'s; this file is the bar, its triggers and the shell.
 
+import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
+import { context, split, View } from "nsh";
+import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
+
 import {
   colors,
   control,
@@ -11,11 +15,7 @@ import {
   shape,
   surfaceBorderWidth,
   tier,
-} from "@shadcn-nsh/theme";
-import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, split, View } from "nsh";
-import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
-
+} from "../theme";
 import type { PopupSide } from "./lib/popup";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
 import { AsText, joinClass } from "./lib/utils";

@@ -1,9 +1,10 @@
 // A spinner: a ring turning with its top arc in one color, the shape of work going on.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, control, iconSize } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
 import { reduceMotion, split, View } from "nsh";
+
+import { alpha, control, iconSize } from "../theme";
 
 /** A spinner's size, on the theme's icon tiers: the ring's side is `iconSize`'s `sm`, `md` or
  * `lg` (12 / 16 / 20 points with a pointer, 16 / 20 / 24 on a touch screen). */

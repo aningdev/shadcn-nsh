@@ -1,10 +1,10 @@
 // A card: the look (`cardLook`) and the seven parts that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, surface, TERMINAL_GAP, terminal, font } from "@shadcn-nsh/theme";
 import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
+import { colors, surface, TERMINAL_GAP, terminal, font } from "../theme";
 import { density, sectionSurface } from "./lib/surface";
 
 /**

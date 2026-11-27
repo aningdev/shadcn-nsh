@@ -1,8 +1,6 @@
 // A desktop window's title bar and the window controls it holds: the bar that drags a window whose
 // title bar is hidden, the window buttons of a frameless window, and the edges that resize it.
 
-import { alpha, colors, stroke, surface, tints } from "@shadcn-nsh/theme";
-import { Plus, X } from "lucide";
 import type { ViewProps, ViewStyle } from "nsh";
 import { signal, split, View } from "nsh";
 import {
@@ -14,7 +12,8 @@ import {
   type WindowRef,
 } from "nsh/desktop";
 
-import { Icon } from "./lib/icons";
+import { alpha, colors, stroke, surface, tints } from "../theme";
+import { Icon, Plus, X } from "./lib/icons";
 import { type Live, read } from "./lib/utils";
 
 /** How tall a title bar is when the window reports no height of its own. */

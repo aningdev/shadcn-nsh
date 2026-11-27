@@ -3,6 +3,8 @@
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
+import { colors } from "../theme";
+
 /**
  * A {{id}}'s props. Apart from its own axes, every `nsh` view prop passes through.
  */
@@ -13,12 +15,12 @@ export type {{Id}}Props = Omit<ViewProps, "children"> & {
 
 /** The look of a {{id}}: what it draws, in the theme's roles. */
 export function {{lookFn}}(): ViewStyle {
-  return {};
+  return { backgroundColor: colors.background };
 }
 
 /** The type of a {{id}}'s text, for its children drawn by the calling code. */
 export function {{textFn}}(): TextStyle {
-  return {};
+  return { color: colors.foreground };
 }
 
 /** A {{id}}. `style` goes over the look's. */

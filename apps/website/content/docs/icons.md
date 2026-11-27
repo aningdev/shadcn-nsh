@@ -1,9 +1,11 @@
 ---
 title: Icons
-description: "lucide's icons, drawn by `Icon` in the size and color a component gives them."
+description: "Built-in UI icons, plus any lucide IconNode an app passes in."
 ---
 
-The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/ui/icons.tsx`: an icon is a lucide node, stroked on a canvas in its 24-unit box, so it reads at the same size and weight as lucide anywhere else.
+The components draw their own basic UI icons. `lib/ui/icons.tsx` ships those nodes, so a component does not need the `lucide` package at run time. `Icon` strokes a node on a canvas in its 24-unit box.
+
+An icon value from [`lucide`](https://lucide.dev/icons) has the same shape (`[tag, attrs][]`) and assigns to `IconNode`. Pass one anywhere a component takes an icon.
 
 ## Installation
 
@@ -11,14 +13,12 @@ The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/ui
 npx shadcn-nsh@latest add icons
 ```
 
-This copies `lib/ui/icons.tsx` and installs `lucide`. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings them when it is added. `button`, `alert`, `empty` and the other components that take an icon as a child do not: add `icons` once before writing the examples on their pages.
+This copies `lib/ui/icons.tsx` and does not install an npm package. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings `icons` when it is added. With the TSX `nshm` install the same module is `shadcn-nsh`'s `Icon` export; nothing else is installed.
 
 ## Usage
 
 ```tsx
-import { Plus } from "lucide";
-
-import { Icon } from "@/lib/ui/icons";
+import { Icon, Plus } from "@/lib/ui/icons";
 import { colors } from "@/lib/ui/theme";
 ```
 
@@ -26,7 +26,17 @@ import { colors } from "@/lib/ui/theme";
 <Icon icon={Plus} size={16} tint={colors.foreground} />
 ```
 
-Import each icon by name from `lucide`, as a front end does: the [icon list](https://lucide.dev/icons) gives the names (`ChevronDown`, `Trash`, `CircleX`). The color is one of the theme's roles, never a literal.
+The built-in names are the ones the components draw (`ChevronDown`, `Plus`, `Search`, `X`, and the rest of that set). An icon the set does not include still comes from `lucide`:
+
+```tsx
+import { Sparkles } from "lucide";
+
+import { Button } from "@/components/ui/button";
+
+<Button icon={Sparkles}>New</Button>;
+```
+
+The color is one of the theme's roles, never a literal.
 
 ## Size and color
 

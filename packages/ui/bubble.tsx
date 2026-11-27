@@ -1,10 +1,10 @@
 // A bubble: the framed surface of one turn of a conversation, and the row of reactions that
 // hangs off its edge.
 
-import { colors, rounded, tints, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, effect, platform, signal, split, Text, token, View } from "nsh";
 
+import { colors, rounded, tints, shape, stroke } from "../theme";
 import { density, PILL_RADIUS } from "./lib/surface";
 import { AsText } from "./lib/utils";
 

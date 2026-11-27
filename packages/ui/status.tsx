@@ -1,10 +1,10 @@
 // A quiet state mark (dot + word).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, font, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
 import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
+import { colors, font, terminal, toneColor, type Tone } from "../theme";
 import { type Live, read } from "./lib/utils";
 
 /** A state mark: its word and the dot's tone. */

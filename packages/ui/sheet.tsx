@@ -2,6 +2,14 @@
 // is this file's own.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
+import { cleanup, context, keyboardFrame, safeArea, signal, split, View, windowSize } from "nsh";
+import {
+  Sheet as BaseSheet,
+  type OpenChangeReason,
+  type SheetProps as BaseSheetProps,
+} from "nsh/base";
+
 import {
   alpha,
   colors,
@@ -11,15 +19,7 @@ import {
   surface,
   surfaceBorderWidth,
   terminal,
-} from "@shadcn-nsh/theme";
-import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { cleanup, context, keyboardFrame, safeArea, signal, split, View, windowSize } from "nsh";
-import {
-  Sheet as BaseSheet,
-  type OpenChangeReason,
-  type SheetProps as BaseSheetProps,
-} from "nsh/base";
-
+} from "../theme";
 import { Action, type ButtonVariant } from "./button";
 import { dialogText, dialogTitle } from "./dialog";
 import { backdrop } from "./lib/popup";

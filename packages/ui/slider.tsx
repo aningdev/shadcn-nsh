@@ -1,6 +1,10 @@
 // A slider: `Slider`, wearing `sliderLook`, `sliderFill` and `sliderValueStyle`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { TextStyle, ViewStyle } from "nsh";
+import { split, Text } from "nsh";
+import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
+
 import {
   alpha,
   colors,
@@ -11,11 +15,7 @@ import {
   stroke,
   surface,
   tier,
-} from "@shadcn-nsh/theme";
-import type { TextStyle, ViewStyle } from "nsh";
-import { split, Text } from "nsh";
-import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
-
+} from "../theme";
 import { joinClass } from "./lib/utils";
 
 /** Options of `sliderLook`. */

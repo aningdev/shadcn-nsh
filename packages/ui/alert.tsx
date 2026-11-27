@@ -1,9 +1,9 @@
 // An alert: a notice in a bordered surface, its icon beside its title and its note.
 
-import { alpha, colors, font, rounded, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
+import { alpha, colors, font, rounded, shape, stroke } from "../theme";
 import { density } from "./lib/surface";
 import { AsText } from "./lib/utils";
 

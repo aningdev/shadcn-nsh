@@ -1,17 +1,6 @@
 // A progress: the look (`progressLook` and its companions) and the `Progress` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  animate,
-  colors,
-  control,
-  fillStyle,
-  follow,
-  motion,
-  stroke,
-  type Tone,
-  toneColor,
-} from "@shadcn-nsh/theme";
 import type { AnimatedValue, JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import {
   cleanup,
@@ -27,6 +16,17 @@ import {
 } from "nsh";
 import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } from "nsh/base";
 
+import {
+  animate,
+  colors,
+  control,
+  fillStyle,
+  follow,
+  motion,
+  stroke,
+  type Tone,
+  toneColor,
+} from "../theme";
 import { CheckboxMark } from "./checkbox";
 import { controlSize } from "./lib/surface";
 import { joinClass, type Live, read } from "./lib/utils";

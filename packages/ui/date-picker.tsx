@@ -1,8 +1,6 @@
 // A date picker: `DatePicker` and its parts. `datePickerLook` is private.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { terminal } from "@shadcn-nsh/theme";
-import { Calendar } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, platform, signal, split, View } from "nsh";
 import {
@@ -13,8 +11,10 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
+import { terminal } from "../theme";
 import { CalendarItem, calendarLook, TimeSegment } from "./calendar";
 import { timeFieldClass } from "./lib/field-look";
+import { Calendar } from "./lib/icons";
 import { clearButtonLook, listboxPopup, listboxPopupStarting } from "./lib/listbox";
 import { backdrop } from "./lib/popup";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";

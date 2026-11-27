@@ -1,6 +1,15 @@
 // Tabs: the looks (`tabsLook`, `underlineTabsLook`, `TabTitle`) and the parts that wear them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, StyleProp, ViewStyle } from "nsh";
+import { computed, context, platform, signal, split, Text, View } from "nsh";
+import {
+  Tab as BaseTab,
+  Tabs as BaseTabs,
+  type TabProps as BaseTabProps,
+  type TabsProps as BaseTabsProps,
+} from "nsh/base";
+
 import {
   CAPSULE_RADIUS,
   colors,
@@ -14,18 +23,8 @@ import {
   stroke,
   surface,
   terminal,
-} from "@shadcn-nsh/theme";
-import type { IconNode } from "lucide";
-import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { computed, context, platform, signal, split, Text, View } from "nsh";
-import {
-  Tab as BaseTab,
-  Tabs as BaseTabs,
-  type TabProps as BaseTabProps,
-  type TabsProps as BaseTabsProps,
-} from "nsh/base";
-
-import { Icon } from "./lib/icons";
+} from "../theme";
+import { Icon, type IconNode } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 import { joinClass, type Live, read } from "./lib/utils";
 

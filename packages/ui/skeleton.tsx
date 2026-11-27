@@ -1,8 +1,9 @@
 // A skeleton: the shape of content that is still coming, drawn on `nsh`'s View.
 
-import { rounded, shape, terminal } from "@shadcn-nsh/theme";
 import type { ViewProps, ViewStyle } from "nsh";
 import { createMotion, reduceMotion, split, token, View } from "nsh";
+
+import { rounded, shape, terminal } from "../theme";
 
 /**
  * A skeleton's props. It has no axis of its own: every `nsh` view prop passes through, and the

@@ -1,11 +1,11 @@
 // A pressable: a region that owns its look and gets only the feedback of a press — the sink, the
 // pointer's hover and the keyboard's ring.
 
-import { colors, feedback, rounded, shape } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { split } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
+import { colors, feedback, rounded, shape } from "../theme";
 import { pressSink, pressTransition } from "./lib/motion";
 import { AsText, type Live, read } from "./lib/utils";
 
@@ -63,8 +63,8 @@ export function Pressable(props: PressableProps) {
   );
 }
 
-// Shared pressable primitives
-// `pressableLook` stays public: `message-scroller.ref.tsx` spreads it, until that page is closed in Wave 3.
+// Shared pressable primitives.
+// `pressableLook` stays public: gallery tests and docs use it.
 
 /** How far a press sinks a pressable: less than a button's, since the region is bigger. */
 const SINK = 0.98;

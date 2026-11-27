@@ -1,18 +1,6 @@
 // A split view: the columns, the column header and the sidebar button, in the theme's look, over
 // `nsh/base`'s SplitView.
 
-import {
-  alpha,
-  colors,
-  focusRing,
-  header,
-  hovered,
-  rounded,
-  font,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
-import { PanelLeft } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -23,7 +11,8 @@ import {
   type SplitViewProps as BaseSplitViewProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { alpha, colors, focusRing, header, hovered, rounded, font, shape, stroke } from "../theme";
+import { Icon, PanelLeft } from "./lib/icons";
 
 export type { ColumnVisibility };
 

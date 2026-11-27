@@ -8,7 +8,7 @@ const rules = (source: string, file = "packages/ui/example.tsx") =>
 describe("ui rules", () => {
   test("allows direct imports of control, surface, feedback, motion from theme", () => {
     expect(
-      rules(`import { control, surface, feedback, motion } from "@shadcn-nsh/theme";
+      rules(`import { control, surface, feedback, motion } from "../theme";
 const btn = control("button");`),
     ).toEqual([]);
   });
@@ -138,22 +138,28 @@ describe("import direction", () => {
     ]);
   });
 
-  test("theme values come through the package entry, never its JSON or a theme directory", () => {
-    expect(imports(`import { colors, token } from "@shadcn-nsh/theme";`)).toEqual([]);
-    expect(imports(`import theme from "@shadcn-nsh/theme/theme.json";`)).toEqual([
-      ["layer", "@shadcn-nsh/theme/theme.json"],
+  test("theme values come through the theme entry, never a theme file", () => {
+    expect(imports(`import { colors, token } from "../theme";`)).toEqual([]);
+    expect(imports(`import { colors } from "../../theme";`, "packages/ui/lib/icons.tsx")).toEqual(
+      [],
+    );
+    expect(imports(`import { colors } from "@shadcn-nsh/theme";`)).toEqual([
+      ["layer", "@shadcn-nsh/theme"],
     ]);
-    expect(imports(`import { apple } from "@shadcn-nsh/theme/themes/apple";`)).toEqual([
-      ["layer", "@shadcn-nsh/theme/themes/apple"],
+    expect(imports(`import theme from "../theme/theme.json";`)).toEqual([
+      ["layer", "../theme/theme.json"],
+    ]);
+    expect(imports(`import { colors } from "../../theme";`)).toEqual([["layer", "../../theme"]]);
+    expect(imports(`import { colors } from "../theme";`, "packages/ui/lib/icons.tsx")).toEqual([
+      ["layer", "../theme"],
     ]);
   });
 
-  test("nsh, its base, and the icon set are the layers below", () => {
+  test("nsh and its base are the layers below", () => {
     expect(
-      imports(
-        `import { View, split } from "nsh";\nimport { Button } from "nsh/base";\nimport type { IconNode } from "lucide";`,
-      ),
+      imports(`import { View, split } from "nsh";\nimport { Button } from "nsh/base";`),
     ).toEqual([]);
+    expect(imports(`import type { IconNode } from "lucide";`)).toEqual([["layer", "lucide"]]);
   });
 
   test("reports the import's own line, not the statement's first", () => {

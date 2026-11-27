@@ -1,8 +1,6 @@
 // Diff view: `diffViewStyles`, `DiffHunkActions`, and the `DiffView` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, colors, isDark, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
-import { Check, Undo2, type IconNode } from "lucide";
 import type { StyleProp, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 import {
@@ -11,8 +9,9 @@ import {
   type DiffViewStyles,
 } from "nsh/base";
 
+import { alpha, colors, isDark, terminal, toneColor, type Tone } from "../theme";
 import { Button, buttonGlyph, buttonLabel, type ButtonVariant } from "./button";
-import { Icon } from "./lib/icons";
+import { Check, Icon, Undo2, type IconNode } from "./lib/icons";
 import { type Live, read } from "./lib/utils";
 
 /** Theme layer on `nsh/base` DiffView. Diffing stays in base. */

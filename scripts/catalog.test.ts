@@ -9,10 +9,14 @@ import {
   catalog,
   CatalogError,
   checkCatalog,
+  checkNshManifest,
   components,
   isGeneratedCurrent,
+  isNshManifestCurrent,
   renderGenerated,
+  renderNshManifest,
   writeGenerated,
+  writeNshManifest,
   type RegistryItem,
 } from "./catalog";
 
@@ -235,5 +239,83 @@ describe("catalog.generated.ts", () => {
     expect(renderGenerated(cat)).toContain(
       'export const componentIds = ["alpha", "gamma"] as const;',
     );
+  });
+});
+
+const cliPackage = (root: string, version = "0.11.0") => {
+  fs.mkdirSync(path.join(root, "packages/cli"), { recursive: true });
+  fs.writeFileSync(
+    path.join(root, "packages/cli/package.json"),
+    `${JSON.stringify({ name: "shadcn-nsh", version })}\n`,
+  );
+};
+
+describe("nsh.json", () => {
+  test("a fixture without the CLI package skips the manifest", () => {
+    const root = fixture({ items: [ui("alpha")] });
+    expect(checkNshManifest(catalog(root))).toEqual([]);
+    expect(isNshManifestCurrent(catalog(root))).toBe(true);
+  });
+
+  test("reports a missing manifest", () => {
+    const root = fixture({ items: [ui("alpha")] });
+    cliPackage(root);
+    expect(checkNshManifest(catalog(root))).toEqual(["nsh.json: missing (run bun run catalog)"]);
+  });
+
+  test("reports a version that disagrees with the CLI package", () => {
+    const root = fixture({ items: [ui("alpha")] });
+    cliPackage(root, "0.11.0");
+    const cat = catalog(root);
+    fs.writeFileSync(path.join(root, "nsh.json"), renderNshManifest(cat, "0.10.0"));
+    expect(checkNshManifest(cat)).toContain(
+      'nsh.json: version "0.10.0" does not match packages/cli/package.json "0.11.0"',
+    );
+  });
+
+  test("reports a component export that is missing or extra", () => {
+    const root = fixture({ items: [ui("alpha"), ui("beta")] });
+    cliPackage(root);
+    const cat = catalog(root);
+    const parsed = JSON.parse(renderNshManifest(cat, "0.11.0")) as {
+      exports: Record<string, string>;
+    };
+    delete parsed.exports["shadcn-nsh/beta"];
+    parsed.exports["shadcn-nsh/gamma"] = "packages/ui/gamma.tsx";
+    fs.writeFileSync(path.join(root, "nsh.json"), `${JSON.stringify(parsed, null, 2)}\n`);
+    expect(checkNshManifest(cat)).toEqual([
+      'nsh.json: exports missing "beta"',
+      'nsh.json: exports include "gamma", which is not a registry:ui item',
+    ]);
+  });
+
+  test("is current once written, and stale when a non-component export changes", () => {
+    const root = fixture({ items: [ui("beta"), ui("alpha")] });
+    cliPackage(root);
+    const cat = catalog(root);
+    expect(isNshManifestCurrent(cat)).toBe(false);
+
+    writeNshManifest(cat);
+    expect(checkNshManifest(cat)).toEqual([]);
+    expect(isNshManifestCurrent(cat)).toBe(true);
+
+    const text = fs.readFileSync(path.join(root, "nsh.json"), "utf8");
+    const parsed = JSON.parse(text) as { exports: Record<string, string> };
+    expect(Object.keys(parsed.exports).slice(0, 3)).toEqual([
+      "shadcn-nsh",
+      "shadcn-nsh/theme",
+      "shadcn-nsh/themes",
+    ]);
+    expect(parsed.exports["shadcn-nsh/alpha"]).toBe("packages/ui/alpha.tsx");
+    expect(parsed.exports["shadcn-nsh/beta"]).toBe("packages/ui/beta.tsx");
+    const alphaAt = text.indexOf('"shadcn-nsh/alpha"');
+    const betaAt = text.indexOf('"shadcn-nsh/beta"');
+    expect(alphaAt).toBeGreaterThan(0);
+    expect(alphaAt).toBeLessThan(betaAt);
+
+    delete parsed.exports["shadcn-nsh/themes/apple"];
+    fs.writeFileSync(path.join(root, "nsh.json"), `${JSON.stringify(parsed, null, 2)}\n`);
+    expect(checkNshManifest(cat)).toEqual([]);
+    expect(isNshManifestCurrent(cat)).toBe(false);
   });
 });

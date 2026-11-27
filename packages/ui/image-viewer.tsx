@@ -1,8 +1,6 @@
 // An image viewer: one image full screen over the media ground, fitted, pinched, panned and
 // swiped away.
 
-import { alpha, animate, colors, font, motion } from "@shadcn-nsh/theme";
-import { X } from "lucide";
 import type { TextStyle, ViewStyle } from "nsh";
 import {
   createAnimatedValue,
@@ -16,9 +14,10 @@ import {
   View,
 } from "nsh";
 
+import { alpha, animate, colors, font, motion } from "../theme";
 import { IconButton } from "./button";
 import { Dialog, DialogContent, dialogPage, type DialogContentProps } from "./dialog";
-import { Icon } from "./lib/icons";
+import { Icon, X } from "./lib/icons";
 import { backdrop } from "./lib/popup";
 
 /** The image a viewer shows: what `TextView`'s `onImagePress` reports. */

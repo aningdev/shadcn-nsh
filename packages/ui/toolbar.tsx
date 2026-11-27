@@ -3,8 +3,6 @@
 // The track (`toolbarTrack`) is shared with `ToggleGroup` and lives in `lib/surface.tsx`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, stroke, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
-import { Ellipsis } from "lucide";
 import type { JSX, StyleProp, ViewRef, ViewStyle } from "nsh";
 import { cleanup, computed, context, effect, signal, split, Text, View } from "nsh";
 import {
@@ -16,7 +14,8 @@ import {
   type ToolbarSeparatorProps as BaseToolbarSeparatorProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { colors, stroke, terminal, TERMINAL_GAP } from "../theme";
+import { Ellipsis, Icon } from "./lib/icons";
 import { createOpenState } from "./lib/state";
 import { toolbarTrack } from "./lib/surface";
 import {

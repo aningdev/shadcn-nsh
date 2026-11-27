@@ -1,7 +1,5 @@
 // Editor: the `Editor` on the field's well, and the `EditorFindBar` that finds in it.
 
-import { colors, control, font, surface } from "@shadcn-nsh/theme";
-import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import type { InputRef, StyleProp, ViewStyle } from "nsh";
 import { cleanup, signal, split, Text, View } from "nsh";
 import {
@@ -13,10 +11,11 @@ import {
   type EditorSearchResult,
 } from "nsh/base";
 
+import { colors, control, font, surface } from "../theme";
 import { buttonGlyph } from "./button";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./input-group";
 import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/field-look";
-import { Icon } from "./lib/icons";
+import { ArrowDown, ArrowUp, Icon, Replace, ReplaceAll, X } from "./lib/icons";
 import { popupSurface } from "./lib/popup";
 import { mergeClasses } from "./lib/utils";
 import { Toggle } from "./toggle";

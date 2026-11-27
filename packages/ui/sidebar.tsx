@@ -1,20 +1,6 @@
 // A sidebar: an app's navigation column beside its page — folded to a strip of icons, sliding in as
 // a sheet on a phone — the parts that wear it, on `nsh`'s own View and Text.
 
-import {
-  alpha,
-  colors,
-  controlHeight,
-  feedback,
-  iconSize,
-  surface,
-  terminal,
-  rounded,
-  font,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
-import { PanelLeft } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import {
   cleanup,
@@ -32,9 +18,22 @@ import {
 } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
+import {
+  alpha,
+  colors,
+  controlHeight,
+  feedback,
+  iconSize,
+  surface,
+  terminal,
+  rounded,
+  font,
+  shape,
+  stroke,
+} from "../theme";
 import { IconButton, iconButtonGlyph, type IconButtonProps } from "./button";
 import { Input, type InputProps } from "./input";
-import { IconLabel } from "./lib/icons";
+import { IconLabel, PanelLeft } from "./lib/icons";
 import { pressSink, pressTransition } from "./lib/motion";
 import { controlSize, narrowWindow } from "./lib/surface";
 import { AsText, joinClass, type Live, read } from "./lib/utils";

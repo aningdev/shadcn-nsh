@@ -1,10 +1,10 @@
 // A stat: a small muted label over a value, for grids of figures.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
+import { colors, terminal, toneColor, type Tone } from "../theme";
 import { type Live, read } from "./lib/utils";
 
 /** A figure: its label, its value and the quieter lines around them. */

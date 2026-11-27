@@ -1,7 +1,6 @@
 // Dock area: tabs, splits and edge docks. `DockTab` draws a tab; `DockArea` spreads the chrome.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { surface, terminal } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -20,6 +19,7 @@ import {
   type DockTarget,
 } from "nsh/base";
 
+import { surface, terminal } from "../theme";
 import { joinClass } from "./lib/utils";
 import { handleThumb, RESIZE_HANDLE_LABEL } from "./resizable";
 

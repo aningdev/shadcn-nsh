@@ -1,6 +1,19 @@
 // A button: the look (`buttonLook` and its companions) and the `Button` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
+import {
+  createAnimatedValue,
+  effect,
+  platform,
+  reduceMotion,
+  signal,
+  split,
+  token,
+  View,
+} from "nsh";
+import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
+
 import {
   alpha,
   animate,
@@ -19,23 +32,9 @@ import {
   terminal,
   TERMINAL_COLUMN,
   tints,
-} from "@shadcn-nsh/theme";
-import type { AnyColorKey } from "@shadcn-nsh/theme";
-import type { IconNode } from "lucide";
-import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
-import {
-  createAnimatedValue,
-  effect,
-  platform,
-  reduceMotion,
-  signal,
-  split,
-  token,
-  View,
-} from "nsh";
-import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
-
-import { Icon, IconLabel } from "./lib/icons";
+} from "../theme";
+import type { AnyColorKey } from "../theme";
+import { Icon, IconLabel, type IconNode } from "./lib/icons";
 import { pressTransition, touchSlop } from "./lib/motion";
 import { AsText, type Live, read } from "./lib/utils";
 import { Spinner } from "./spinner";
@@ -52,7 +51,7 @@ export type ButtonProps = Omit<BaseButtonProps, "children"> & {
   /** Default `default`. */
   size?: ButtonSize;
   /**
-   * The icon before the label (a lucide node, `import { Plus } from "lucide"`), sized and
+   * The icon before the label (a lucide `IconNode`, such as `Plus`), sized and
    * tinted by the variant, the size and the state (`buttonGlyph`). The terminal draws none.
    */
   icon?: IconNode;

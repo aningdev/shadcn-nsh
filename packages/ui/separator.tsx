@@ -1,9 +1,10 @@
 // A separator: a hairline between two groups of content, the look (`separatorLook`) and the
 // `Separator` that wears it.
 
-import { colors, stroke } from "@shadcn-nsh/theme";
 import type { ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
+
+import { colors, stroke } from "../theme";
 
 /**
  * Which way a separator runs: `horizontal` (across the content, between one block and the next)

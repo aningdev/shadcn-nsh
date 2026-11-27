@@ -12,7 +12,7 @@ _Avoid_: Prettier、npm / pnpm 脚本
 
 **文档站**：TanStack Start + Fumadocs（`apps/website`），静态预渲染。演示由 `nsh package --target web` 打包后嵌进 iframe。
 
-**分发**：shadcn registry（`registry.json` → `public/r`）加本仓 CLI `shadcn-nsh`。
+**分发**：两条路。Copy-into-app 走 shadcn registry（`registry.json` → `public/r`）和 CLI `shadcn-nsh`。TSX `nshm` 走根目录 `nsh.json`（`nsh add github:aningdev/shadcn-nsh`），零 npm 依赖。
 _Avoid_: 把组件做成 npm 包、为旧 registry id 留别名
 
 **许可**：MIT。改编自 NSH 的文件保持 Apache-2.0，文件头致谢行与根目录 `NOTICE` 注明来源。
@@ -29,7 +29,8 @@ _Avoid_: 把组件做成 npm 包、为旧 registry id 留别名
 - `apps/showcase/`：展示应用。壳与场景用 `packages/ui` 重建，`nsh test apps/showcase` 测壳，首页 “See it running” 嵌入其打包产物。
 - `apps/gallery/`：原生行为测试与冒烟，不比截图。
 - `packages/cli/`：`init`、`add`、`list`、`view`、`diff`、`build`、`serve`。
-- `scripts/catalog.ts`：读写 `registry.json` 的唯一入口，并生成 `catalog.generated.ts`（不手改）。
+- 根 `nsh.json`：TSX `nshm` 清单。`version` 与 `packages/cli/package.json` 相同，`bun run catalog` 按 CLI 版本重写它。`exports` 覆盖 `shadcn-nsh`、主题和每个 `registry:ui` 组件。
+- `scripts/catalog.ts`：读写 `registry.json` 的唯一入口，并生成 `catalog.generated.ts` 与根 `nsh.json`（不手改）。
 - `scripts/new-component.ts`：新组件脚手架。`scripts/registry-build.ts` 与 `scripts/install-test.ts`：registry 构建与复制即用。
 
 ## Layers
@@ -58,8 +59,8 @@ flowchart TD
 ```
 
 - `lib` 不 import 组件；组件之间可以 import，依赖写进该条目的 `registryDependencies`（`check:ui`）。
-- `packages/theme` 不 import `packages/ui`。组件只经 `@shadcn-nsh/theme` 取外观，不直接读 `theme.json` 或 `themes/<name>/`。
-- `packages/*` 不 import `apps/*` 或 `scripts/*`。运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base`、`lucide` 与相对路径。
+- `packages/theme` 不 import `packages/ui`。组件经 `../theme` 取外观（`lib/` 经 `../../theme`），不直接读 `theme.json` 或 `themes/<name>/`。CLI `add` 把这两条相对路径重写成消费方的 theme alias。
+- `packages/*` 不 import `apps/*` 或 `scripts/*`。`packages/ui` 运行时代码只认相对路径、`nsh` 和 `nsh/base`。基础图标在 `packages/ui/lib/icons.tsx`（39 个与 lucide `IconNode` 同结构的节点）。应用仍可把 `lucide` 的图标传进来。
 - 组件集合只从 `scripts/catalog.ts` 或 `catalog.generated.ts` 取。`packages/ui/index.ts` 手写导出，`catalog --check` 保证它覆盖每个组件。
 - registry JSON 的形状只在 `packages/cli/src/utils/registry-schema.ts` 校验。`scripts/*` 可以把 `packages/cli/src/*` 当库 import。
 

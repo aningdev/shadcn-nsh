@@ -1,7 +1,6 @@
 // A collapsible: `nsh/base`'s Collapsible in the disclosure look of `accordion.tsx` — a trigger row
 // and the panel it reveals.
 
-import { motion } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -10,6 +9,7 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
+import { motion } from "../theme";
 import {
   disclosurePanel,
   disclosureTriggerLook,

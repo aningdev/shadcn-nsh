@@ -2,16 +2,6 @@
 // wear it below. `nsh/base`'s `Dialog` is the box; what this file adds is its card.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  rounded,
-  surface,
-  surfaceBorderWidth,
-  terminal,
-  font,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, safeArea, Scroll, signal, split, View, windowSize } from "nsh";
 import type { Signal } from "nsh";
@@ -21,6 +11,16 @@ import {
   type DialogProps as BaseDialogProps,
 } from "nsh/base";
 
+import {
+  colors,
+  rounded,
+  surface,
+  surfaceBorderWidth,
+  terminal,
+  font,
+  shape,
+  stroke,
+} from "../theme";
 import { Action, type ButtonVariant } from "./button";
 import { backdrop } from "./lib/popup";
 import { createOpenState, type OpenState } from "./lib/state";

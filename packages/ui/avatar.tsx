@@ -1,7 +1,6 @@
 // An avatar: the identity ring (`avatarIdentity`) and the `Avatar` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, font, isDark, stroke } from "@shadcn-nsh/theme";
 import type { TextProps, ViewProps, ViewStyle } from "nsh";
 import { computed, split, Text, token, View } from "nsh";
 import {
@@ -11,6 +10,7 @@ import {
   type AvatarProps as BaseAvatarProps,
 } from "nsh/base";
 
+import { colors, font, isDark, stroke } from "../theme";
 import { joinClass } from "./lib/utils";
 
 /**

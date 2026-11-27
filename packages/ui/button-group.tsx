@@ -1,6 +1,9 @@
 // A button group: buttons joined into one control, in a row or a column.
 // A split button is this group: a main `Button`, a `ButtonGroupSeparator`, and the menu button.
 
+import type { TextStyle, ViewProps, ViewStyle } from "nsh";
+import { context, split, View } from "nsh";
+
 import {
   buttonCorner,
   colors,
@@ -12,10 +15,7 @@ import {
   stroke,
   TERMINAL_COLUMN,
   terminal,
-} from "@shadcn-nsh/theme";
-import type { TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, split, View } from "nsh";
-
+} from "../theme";
 import { density } from "./lib/surface";
 import { AsText, joinClass } from "./lib/utils";
 import { Separator } from "./separator";

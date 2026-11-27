@@ -2,6 +2,15 @@
 // `ToggleGroup`, a row or column of them on the inset track (`toolbarTrack` in `lib/surface.tsx`).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, TextStyle, ViewStyle } from "nsh";
+import { platform, split, Text } from "nsh";
+import {
+  Toggle as BaseToggle,
+  ToggleGroup as BaseToggleGroup,
+  type ToggleGroupProps as BaseToggleGroupProps,
+  type ToggleProps as BaseToggleProps,
+} from "nsh/base";
+
 import {
   buttonCorner,
   colors,
@@ -13,16 +22,7 @@ import {
   terminal,
   font,
   stroke,
-} from "@shadcn-nsh/theme";
-import type { JSX, TextStyle, ViewStyle } from "nsh";
-import { platform, split, Text } from "nsh";
-import {
-  Toggle as BaseToggle,
-  ToggleGroup as BaseToggleGroup,
-  type ToggleGroupProps as BaseToggleGroupProps,
-  type ToggleProps as BaseToggleProps,
-} from "nsh/base";
-
+} from "../theme";
 import { pressSink, pressTransition, touchSlop } from "./lib/motion";
 import { toolbarTrack } from "./lib/surface";
 import { type Live, read } from "./lib/utils";

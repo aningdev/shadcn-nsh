@@ -1,12 +1,11 @@
 // A marker: one line in a conversation that is not a message — a status, a note, a row with a
 // rule under it, or a label between two rules.
 
-import { colors, controlHeight, metrics, stroke, terminal } from "@shadcn-nsh/theme";
-import type { IconNode } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
 
-import { Icon } from "./lib/icons";
+import { colors, controlHeight, metrics, stroke, terminal } from "../theme";
+import { Icon, type IconNode } from "./lib/icons";
 import { density } from "./lib/surface";
 import { AsText } from "./lib/utils";
 
@@ -26,7 +25,7 @@ export type MarkerProps = ViewProps & {
 /** An icon's box beside the line. `icon` is drawn in the muted ink at 16 points; anything else
  * (`children`) is drawn as given. */
 export type MarkerIconProps = Omit<ViewProps, "children"> & {
-  /** The icon, as lucide exports it (`import { Search } from "lucide"`). */
+  /** The icon, a lucide `IconNode` (for example `Search`). */
   icon?: IconNode;
   /** Drawn instead of `icon`, as given. */
   children?: JSX.Element;

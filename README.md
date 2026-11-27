@@ -12,15 +12,34 @@ Docs, every component with its props and a live demo: **https://shadcn-nsh.aning
 
 ## Quick start
 
+Two ways to use the components. Both run on NSH.
+
+### TSX `nshm` (no npm dependencies)
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Button } from "shadcn-nsh";
+import { selectTheme } from "shadcn-nsh/theme";
+import apple from "shadcn-nsh/themes/apple";
+
+selectTheme(apple);
+```
+
+NSH resolves the module. It does not install npm packages and does not need `node_modules`. `selectTheme` switches a built-in theme at run time. A build-time theme that names Tailwind tokens such as `bg-surface` and `rounded-(--radius-md)` still comes from the CLI: `init` writes `theme.json`.
+
+### Copy-into-app
+
 Your app needs `nsh.json` (from `nsh init`):
 
 ```sh
-npx shadcn-nsh init                 # nsh-ui.json, the theme, nsh.json pointed at it, the @/ alias
-npx shadcn-nsh add button           # one item, with the files it depends on
-npx shadcn-nsh add --all            # every component
+npx shadcn-nsh@latest init          # nsh-ui.json, the theme, nsh.json pointed at it, the @/ alias
+npx shadcn-nsh@latest add button    # one item, with the files it depends on
 ```
 
-`init` records the choice in `nsh-ui.json`, installs the theme at `theme.json` + `lib/ui/semantics.json` + `lib/ui/theme.ts` alongside standalone `light.tokens.json`, `dark.tokens.json` (W3C DTCG 2025.10 files describing the shipped theme for Figma Variables Light/Dark modes, Tokens Studio, and Style Dictionary v4) and `DESIGN.md` (an agent-readable specification of the theme's tokens and design rationale; static snapshots that do not follow later edits to `theme.json`), points each `nsh.json` at `theme.json`, and sets up the `@/` import alias in an app (`"@/*": ["./*"]` in `tsconfig.json`'s paths, `"resolve": { "alias": { "@": "./" } }` in `nsh.json`) so the docs' snippets — `@/components/ui/<name>`, `@/lib/ui/theme` — resolve; `add` copies files and installs the packages an item declares (`lucide` among them) with your package manager. From then on the files are yours to change.
+`init` records the choice in `nsh-ui.json`, installs the theme at `theme.json` + `lib/ui/theme.ts` alongside `DESIGN.md` (an agent-readable specification of the theme; a static snapshot that does not follow later edits to `theme.json`), points each `nsh.json` at `theme.json`, and sets up the `@/` import alias in an app (`"@/*": ["./*"]` in `tsconfig.json`'s paths, `"resolve": { "alias": { "@": "./" } }` in `nsh.json`) so the docs' snippets — `@/components/ui/<name>`, `@/lib/ui/theme` — resolve. `add` copies the source into the app and installs any npm package an item declares. The components ship their own icons, so a typical `add` installs none. From then on the files are yours to change.
 
 `list`, `view` and `diff` inspect the registry without writing: `npx shadcn-nsh list`, `view button`, `diff` (exits 1 when the app's copies differ). Every command takes `-c <dir>`, `add` also `--dry-run` and `--overwrite`. The [CLI reference](https://shadcn-nsh.aning.dev/docs/cli) has the flags and defaults.
 

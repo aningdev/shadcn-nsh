@@ -2,6 +2,9 @@
 // list, and the mark of a checkable menu item and the scrim behind what is modal.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
+import { createMotion, reduceMotion, Shader, ShaderEffect, shadersAvailable, View } from "nsh";
+
 import {
   colors,
   control,
@@ -13,10 +16,7 @@ import {
   surfaceBorderWidth,
   terminal,
   TERMINAL_COLUMN,
-} from "@shadcn-nsh/theme";
-import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
-import { createMotion, reduceMotion, Shader, ShaderEffect, shadersAvailable, View } from "nsh";
-
+} from "../../theme";
 import { CheckMark } from "./icons";
 
 /**

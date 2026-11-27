@@ -1,11 +1,11 @@
 // An OTP input: `OtpInput`. `otpCells` is shared; `otpCellLook` is private.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, control, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
 
+import { colors, control, terminal, type Tone, toneColor, toneTint } from "../theme";
 import {
   edgeClass,
   fieldCornerClass,

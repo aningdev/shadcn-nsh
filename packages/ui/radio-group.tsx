@@ -1,7 +1,6 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, feedback, follow, motion, press, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { reduceMotion, split, View } from "nsh";
 import {
@@ -11,6 +10,7 @@ import {
   type RadioProps as BaseRadioProps,
 } from "nsh/base";
 
+import { colors, feedback, follow, motion, press, terminal, TERMINAL_ROW } from "../theme";
 import {
   ChoiceLight,
   choiceEdge,

@@ -6,6 +6,7 @@ import {
   type {{Base}}Props as Base{{Id}}Props,
 } from "nsh/base";
 
+import { colors } from "../theme";
 import { Button, type ButtonVariant } from "./button";
 import { createOpenState, type OpenState } from "./lib/state";
 
@@ -155,5 +156,5 @@ export function {{Id}}Content(props: {{Id}}ContentProps) {
 /** The {{id}}'s title. */
 export function {{Id}}Title(props: {{Id}}TextProps) {
   if (typeof props.children !== "string") return props.children;
-  return <Text style={props.style}>{props.children}</Text>;
+  return <Text style={[{ color: colors.foreground }, props.style ?? null]}>{props.children}</Text>;
 }

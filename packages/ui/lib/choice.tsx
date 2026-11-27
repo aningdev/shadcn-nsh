@@ -1,6 +1,9 @@
 // What a checkbox and a radio share: the choice recipe's well, edge, press, fill and tile.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { AnimatedValue, ViewStyle } from "nsh";
+import { reduceMotion, View } from "nsh";
+
 import {
   colors,
   control,
@@ -12,11 +15,8 @@ import {
   stroke,
   surface,
   tints,
-} from "@shadcn-nsh/theme";
-import type { ResolvedControlMap } from "@shadcn-nsh/theme";
-import type { AnimatedValue, ViewStyle } from "nsh";
-import { reduceMotion, View } from "nsh";
-
+} from "../../theme";
+import type { ResolvedControlMap } from "../../theme";
 import { cssMotion, pressSink } from "./motion";
 import { type Live, read } from "./utils";
 

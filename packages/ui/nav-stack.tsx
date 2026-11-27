@@ -2,8 +2,6 @@
 // draw — a back button, the title, a trailing slot — which iOS and Android take from the system
 // instead. The parts wear `navPageLook`; the stack's own fill stays in this file.
 
-import { colors, controlHeight, font, header, iconSize, stroke, tier } from "@shadcn-nsh/theme";
-import { ChevronLeft } from "lucide";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 import {
@@ -13,8 +11,9 @@ import {
   type NavStackProps as BaseNavStackProps,
 } from "nsh/base";
 
+import { colors, controlHeight, font, header, iconSize, stroke, tier } from "../theme";
 import { IconButton } from "./button";
-import { Icon } from "./lib/icons";
+import { ChevronLeft, Icon } from "./lib/icons";
 
 // The stack and its routes are `nsh/base`'s, with nothing drawn on them: one module to import a
 // page's navigation from.

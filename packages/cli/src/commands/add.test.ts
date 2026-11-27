@@ -97,15 +97,16 @@ describe("add", () => {
     expect(current.exists("nsh-ui.json")).toBe(false);
   });
 
-  test("--dry-run names the package the item imports, and writes no package.json", async () => {
+  test("--dry-run of icons installs no package, and writes no package.json", async () => {
     current = makeFixture({ items: ["theme", "icons"] });
     const out = await captured(() =>
       runAdd(["icons"], { cwd: current!.app, registry: current!.url, dryRun: true }),
     );
 
     expect(out.result).toBe(0);
-    // The app has no lock file, so npm is the manager it would use (`utils/deps.ts`).
-    expect(out.lines).toContain("would install lucide@^1.66.0 (npm add lucide@^1.66.0)");
+    // Built-in icons declare no npm package. Naming a declared package stays in `utils/deps.test.ts`.
+    expect(out.lines.some((line) => line.includes("would install"))).toBe(false);
+    expect(out.lines).toContain("would write lib/ui/icons.tsx");
     expect(current.exists("package.json")).toBe(false);
   });
 

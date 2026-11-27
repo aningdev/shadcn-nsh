@@ -1,6 +1,18 @@
 // What sections, wells and rows look like: density, surfaces, and rows whose hover fill bleeds.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, StyleProp, ViewStyle } from "nsh";
+import {
+  computed,
+  platform,
+  Shader,
+  ShaderEffect,
+  shadersAvailable,
+  Text,
+  View,
+  windowSize,
+} from "nsh";
+
 import {
   colors,
   control,
@@ -17,19 +29,7 @@ import {
   TERMINAL_GAP,
   TERMINAL_ROW,
   type SurfaceRole,
-} from "@shadcn-nsh/theme";
-import type { JSX, StyleProp, ViewStyle } from "nsh";
-import {
-  computed,
-  platform,
-  Shader,
-  ShaderEffect,
-  shadersAvailable,
-  Text,
-  View,
-  windowSize,
-} from "nsh";
-
+} from "../../theme";
 import { type Live, read } from "./utils";
 
 const pointer = platform.desktop;

@@ -1,6 +1,14 @@
 // A calendar: the look (`CalendarItem`, `calendarLook`, `TimeSegment`) and `Calendar` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { StyleProp, TextStyle, ViewStyle } from "nsh";
+import { computed, platform, split, Text, View } from "nsh";
+import {
+  Calendar as BaseCalendar,
+  type CalendarEntry,
+  type CalendarProps as BaseCalendarProps,
+} from "nsh/base";
+
 import {
   alpha,
   buttonCorner,
@@ -12,18 +20,9 @@ import {
   font,
   shape,
   stroke,
-} from "@shadcn-nsh/theme";
-import { ChevronRight } from "lucide";
-import type { StyleProp, TextStyle, ViewStyle } from "nsh";
-import { computed, platform, split, Text, View } from "nsh";
-import {
-  Calendar as BaseCalendar,
-  type CalendarEntry,
-  type CalendarProps as BaseCalendarProps,
-} from "nsh/base";
-
+} from "../theme";
 import { timeFieldClass } from "./lib/field-look";
-import { Icon } from "./lib/icons";
+import { ChevronRight, Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 import { joinClass } from "./lib/utils";
 

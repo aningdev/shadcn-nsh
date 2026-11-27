@@ -1,10 +1,10 @@
 // A collapsing header: a page's header, a picture behind its title, that shrinks into a bar as the
 // page scrolls.
 
-import { alpha, colors, font, stroke, surface, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { AnimatedNode, AnimatedValue, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, reduceMotion, split, Text, View } from "nsh";
 
+import { alpha, colors, font, stroke, surface, terminal, TERMINAL_ROW } from "../theme";
 import { density } from "./lib/surface";
 import { AsText, joinClass } from "./lib/utils";
 

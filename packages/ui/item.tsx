@@ -1,18 +1,9 @@
 // An item: the look (`itemLook`) and the ten parts that wear it.
 
-import {
-  colors,
-  font,
-  metrics,
-  rounded,
-  shape,
-  stroke,
-  surface,
-  terminal,
-} from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
+import { colors, font, metrics, rounded, shape, stroke, surface, terminal } from "../theme";
 import { controlSize, density } from "./lib/surface";
 
 /**

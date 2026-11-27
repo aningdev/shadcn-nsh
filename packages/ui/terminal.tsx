@@ -1,5 +1,9 @@
 // A terminal: the `Terminal` on the field's well (`ghost` draws none).
 
+import type { ViewStyle } from "nsh";
+import { split } from "nsh";
+import { Terminal as BaseTerminal, type TerminalProps as BaseTerminalProps } from "nsh/base";
+
 import {
   alpha,
   colors,
@@ -10,11 +14,7 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   tier,
-} from "@shadcn-nsh/theme";
-import type { ViewStyle } from "nsh";
-import { split } from "nsh";
-import { Terminal as BaseTerminal, type TerminalProps as BaseTerminalProps } from "nsh/base";
-
+} from "../theme";
 import { fieldCorners, fieldDrawn, fieldEdgeWidths, fieldRestEdge } from "./lib/field-look";
 import { type Live, read } from "./lib/utils";
 

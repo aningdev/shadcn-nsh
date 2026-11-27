@@ -1,6 +1,8 @@
 // A small capsule label.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import { split, View, Text, type ViewProps } from "nsh";
+
 import {
   colors,
   control,
@@ -12,9 +14,7 @@ import {
   rounded,
   font,
   stroke,
-} from "@shadcn-nsh/theme";
-import { split, View, Text, type ViewProps } from "nsh";
-
+} from "../theme";
 import { type Live, read } from "./lib/utils";
 
 /** A badge's variants: `default`, the tone's fill; `outline`, an edge in the tone's color. */

@@ -1,18 +1,6 @@
 // A navigation menu: a row of triggers, each opening a panel of anything (a grid of links, a card
 // with a description) under itself, one panel open at a time.
 
-import {
-  alpha,
-  colors,
-  controlHeight,
-  feedback,
-  font,
-  iconSize,
-  rounded,
-  shape,
-  tier,
-} from "@shadcn-nsh/theme";
-import { ChevronDown } from "lucide";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, reduceMotion, signal, split, token, View } from "nsh";
 import {
@@ -23,7 +11,18 @@ import {
   type PopoverProps as BasePopoverProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import {
+  alpha,
+  colors,
+  controlHeight,
+  feedback,
+  font,
+  iconSize,
+  rounded,
+  shape,
+  tier,
+} from "../theme";
+import { ChevronDown, Icon } from "./lib/icons";
 import { pressSink, pressTransition } from "./lib/motion";
 import { itemSpacing, PopIn, popupSurface, type PopupSide } from "./lib/popup";
 import { createSlot, type Slot } from "./lib/state";

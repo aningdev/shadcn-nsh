@@ -1,10 +1,10 @@
 // A message: one row of a conversation — its avatar, who sent it, the turn itself, and what is
 // under it.
 
-import { colors, font } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, token, View } from "nsh";
 
+import { colors, font } from "../theme";
 import { Avatar, type AvatarProps } from "./avatar";
 import { density } from "./lib/surface";
 import { AsText } from "./lib/utils";

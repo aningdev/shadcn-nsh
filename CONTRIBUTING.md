@@ -103,6 +103,7 @@ PR 正文写为什么改。模板分四段：改了什么与为什么、破坏�
 
 - 把 `Unreleased` 改成这一版的标题，顶部留一个空的 `## Unreleased`。
 - `packages/cli/package.json` 的 `version` 改为 `X.Y.Z`。
+- `bun run catalog`，让根 `nsh.json` 的 `version` 与 CLI 一致（`catalog --check` 会拦下不一致或漏掉的组件导出）。
 - `README.md` 与 `README.zh.md` 的兼容矩阵加一行（本库版本 ↔ `engines.nsh` 的 NSH CLI 版本）。
 - `bun run registry:build`。
 

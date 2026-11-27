@@ -196,8 +196,14 @@ export interface Palette {
   onMedia: string;
 }
 
-/** Palette colors read reactively from active `theme.json` tokens. */
-export const colors: Palette = tokenGetters<keyof Palette>({
+/** Palette role. NSH's default `Tokens` omits several of these until a `theme.json` adds them. */
+type ColorRole = keyof Palette;
+
+/**
+ * Palette role → token name. The cast keeps `nsh check` clean in an app that has no `theme.json`
+ * and only switches themes with `selectTheme`.
+ */
+const COLOR_TOKENS = {
   background: "background",
   card: "card",
   popover: "popover",
@@ -222,7 +228,18 @@ export const colors: Palette = tokenGetters<keyof Palette>({
   scrim: "scrim",
   media: "media",
   onMedia: "on-media",
-});
+} as unknown as Record<ColorRole, keyof Tokens>;
+
+/** Palette colors read reactively from active `theme.json` tokens. */
+export const colors: Palette = tokenGetters(COLOR_TOKENS);
+
+/**
+ * Read one token by name. Same reason as `COLOR_TOKENS`: a consumer without `theme.json` does not
+ * list `radius-*` or `font-*` on `Tokens`.
+ */
+function readToken(name: string) {
+  return token(name as keyof Tokens);
+}
 
 /** Mix `color` with transparency (`0`–`1`) using CSS `color-mix`. */
 export function alpha(color: string, a: number): string {
@@ -385,13 +402,13 @@ export const chart = {
 /** Corner radii by layer, read reactively from `theme.json` + active `ThemeSpec`. */
 export const shape = {
   get control(): number {
-    return token("radius-md") as number;
+    return readToken("radius-md") as number;
   },
   get container(): number {
-    return token("radius-lg") as number;
+    return readToken("radius-lg") as number;
   },
   get modal(): number {
-    return token("radius-xl") as number;
+    return readToken("radius-xl") as number;
   },
   get curve(): "continuous" | "circular" {
     return activeSpec().tokens.radius.curve;
@@ -432,11 +449,11 @@ export const font = {
   letterSpacing: (role: TypeRole) => activeSpec().metrics.typography[role].letterSpacing,
   get sans(): string {
     // NSH leaves a generic `system-ui` out of `Tokens` (the system font). Built-in
-    // themes write that default, so the key is cast; a missing token falls back.
-    return (token("font-sans" as keyof Tokens) as string | undefined) ?? "system-ui";
+    // themes write that default; a missing token falls back.
+    return (readToken("font-sans") as string | undefined) ?? "system-ui";
   },
   get mono(): string {
-    return (token("font-mono") as string | undefined) ?? "monospace";
+    return (readToken("font-mono") as string | undefined) ?? "monospace";
   },
 };
 

@@ -2,8 +2,6 @@
 // carousel.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { alpha, colors, feedback, focusRing, stroke, surface, terminal } from "@shadcn-nsh/theme";
-import { ChevronLeft } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -23,7 +21,8 @@ import {
   type CarouselProps as BaseCarouselProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { alpha, colors, feedback, focusRing, stroke, surface, terminal } from "../theme";
+import { ChevronLeft, Icon } from "./lib/icons";
 import { pressTransition } from "./lib/motion";
 import { joinClass } from "./lib/utils";
 

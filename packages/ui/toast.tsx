@@ -1,6 +1,16 @@
 // A toast: the banner, the queue and the stack. The banner's look is private to this file.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, TextStyle, ViewStyle } from "nsh";
+import { Overlay, platform, signal, split, Text, View, windowSize } from "nsh";
+import {
+  Toast as BaseToast,
+  ToastManager,
+  ToastStack,
+  type ToastEntry,
+  type ToastProps as BaseToastProps,
+} from "nsh/base";
+
 import {
   alpha,
   colors,
@@ -12,20 +22,9 @@ import {
   terminal,
   font,
   shape,
-} from "@shadcn-nsh/theme";
-import { CircleCheck, CircleX, Info, TriangleAlert, X, type IconNode } from "lucide";
-import type { JSX, TextStyle, ViewStyle } from "nsh";
-import { Overlay, platform, signal, split, Text, View, windowSize } from "nsh";
-import {
-  Toast as BaseToast,
-  ToastManager,
-  ToastStack,
-  type ToastEntry,
-  type ToastProps as BaseToastProps,
-} from "nsh/base";
-
+} from "../theme";
 import { Button, buttonLabel, buttonLook, type ButtonLookOptions } from "./button";
-import { Icon } from "./lib/icons";
+import { CircleCheck, CircleX, Icon, Info, TriangleAlert, X, type IconNode } from "./lib/icons";
 import { pressSink, pressTransition } from "./lib/motion";
 import { joinClass } from "./lib/utils";
 import { Spinner } from "./spinner";

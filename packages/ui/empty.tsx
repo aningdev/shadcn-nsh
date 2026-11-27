@@ -1,9 +1,9 @@
 // An empty state: a centered block that says there is nothing here yet, and what to do about it.
 
-import { colors, font, rounded, shape, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, token, View } from "nsh";
 
+import { colors, font, rounded, shape, terminal, TERMINAL_ROW } from "../theme";
 import { density } from "./lib/surface";
 
 /** An empty state's media: `default`, the app's own art or icon as it is; `icon`, a tinted square behind it. */

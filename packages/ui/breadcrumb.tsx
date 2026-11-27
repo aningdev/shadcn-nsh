@@ -1,13 +1,12 @@
 // A breadcrumb: the path from where the app starts to the page it shows, as a row of links a
 // separator parts, the page itself last.
 
-import { colors, focusRing, font, rounded, shape, terminal } from "@shadcn-nsh/theme";
-import { ChevronRight, Ellipsis } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { colors, focusRing, font, rounded, shape, terminal } from "../theme";
+import { ChevronRight, Ellipsis, Icon } from "./lib/icons";
 import { AsText, joinClass } from "./lib/utils";
 
 /**

@@ -98,7 +98,8 @@ function registryDeps(source: string, id: string): string[] {
   const deps = new Set<string>();
   for (const match of source.matchAll(/from\s+"([^"]+)"/g)) {
     const from = match[1];
-    if (from === "@shadcn-nsh/theme") deps.add("theme");
+    if (from === "../theme" || from === "../../theme" || from === "@shadcn-nsh/theme")
+      deps.add("theme");
     else if (from.startsWith("./lib/"))
       deps.add(from.slice("./lib/".length).replace(/\.tsx?$/, ""));
     else if (from.startsWith("./")) {

@@ -39,11 +39,11 @@ const advice: Record<(typeof problems)[number]["rule"], string> = {
   state:
     "use `feedback.hoverStyle` / `feedback.press` / `feedback.hovered()`, or mark the line `// state: <why>`",
   "font-literal":
-    "read `font.mono` / `font.sans` from `@shadcn-nsh/theme`, or a `font-mono` / `font-sans` class, or mark the line `// font: <why>`",
+    "read `font.mono` / `font.sans` from the theme entry, or a `font-mono` / `font-sans` class, or mark the line `// font: <why>`",
   "class-merge": "append with `joinClass(own, props.class)` so the caller's class comes last",
   layer:
     "import inside the layer: a relative path in `packages/ui` (never a component from `lib/`), " +
-    "`nsh` / `nsh/base`, `@shadcn-nsh/theme` itself, or `lucide`",
+    "`nsh` / `nsh/base`, or the theme entry (`../theme` from a component, `../../theme` from `lib/`)",
   jsdoc: "say with a `/** … */` above it what the export is for",
 };
 

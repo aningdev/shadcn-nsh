@@ -1,9 +1,9 @@
 // A keyboard key, alone or in a group of them, on `nsh`'s own View and Text.
 
-import { colors, font, rounded, shape, stroke, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, token, View } from "nsh";
 
+import { colors, font, rounded, shape, stroke, terminal, TERMINAL_ROW } from "../theme";
 import { AsText } from "./lib/utils";
 
 /** A key's props: a string is its name, drawn in the look's type; anything else (an icon) is drawn as given. */

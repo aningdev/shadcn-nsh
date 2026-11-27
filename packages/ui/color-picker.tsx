@@ -2,18 +2,6 @@
 // (`formatColor`, `inkOn`, `colorAreaLook`, `colorSliderLook`).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  hovered,
-  rounded,
-  terminal,
-  TERMINAL_COLUMN,
-  TERMINAL_ROW,
-  font,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
-import { Check, ChevronDown, Copy, Pipette } from "lucide";
 import type { InputStyle, JSX, StyleProp, ViewStyle } from "nsh";
 import { Clipboard, platform, signal, split, Text, token, View } from "nsh";
 import {
@@ -31,9 +19,20 @@ import {
   Popover,
 } from "nsh/base";
 
+import {
+  colors,
+  hovered,
+  rounded,
+  terminal,
+  TERMINAL_COLUMN,
+  TERMINAL_ROW,
+  font,
+  shape,
+  stroke,
+} from "../theme";
 import { IconButton, iconButtonLook } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./lib/field-look";
-import { Icon } from "./lib/icons";
+import { Check, ChevronDown, Copy, Icon, Pipette } from "./lib/icons";
 import { MenuMark, menuIndicator, PopIn } from "./lib/popup";
 import { useCopied } from "./lib/state";
 import { joinClass } from "./lib/utils";

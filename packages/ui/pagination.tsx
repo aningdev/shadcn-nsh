@@ -1,8 +1,6 @@
 // A pagination: `paginationItemClass` and `paginationArrows`, and the `Pagination` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { buttonCorner, colors, rounded, terminal } from "@shadcn-nsh/theme";
-import { ChevronRight } from "lucide";
 import type { JSX, TextStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -11,7 +9,8 @@ import {
   type PaginationProps as BasePaginationProps,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { buttonCorner, colors, rounded, terminal } from "../theme";
+import { ChevronRight, Icon } from "./lib/icons";
 
 /** A pagination's variants: `default`, quiet items; `outline`, an edge on each. */
 export type PaginationVariant = "default" | "outline";

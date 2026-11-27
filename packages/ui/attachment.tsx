@@ -1,20 +1,10 @@
 // An attachment: a file, an image or a link that a message or a composer carries, with what it is
 // called, how it is doing, and what can be done to it.
 
-import {
-  alpha,
-  colors,
-  focusRing,
-  hovered,
-  rounded,
-  tints,
-  font,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, Scroll, split, Text, token, View } from "nsh";
 
+import { alpha, colors, focusRing, hovered, rounded, tints, font, shape, stroke } from "../theme";
 import { Button, type ButtonProps } from "./button";
 import { density } from "./lib/surface";
 

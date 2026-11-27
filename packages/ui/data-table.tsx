@@ -1,7 +1,6 @@
 // Data table: `dataTableClasses` and the `DataTable` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { terminal } from "@shadcn-nsh/theme";
 import { split } from "nsh";
 import {
   DataTable as BaseDataTable,
@@ -9,6 +8,7 @@ import {
   type DataTableProps as BaseDataTableProps,
 } from "nsh/base";
 
+import { terminal } from "../theme";
 import { mergeClasses } from "./lib/utils";
 
 /**

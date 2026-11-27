@@ -1,6 +1,10 @@
 // A switch: the look (`switchLook`) and the `Switch` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, ViewStyle } from "nsh";
+import { reduceMotion, split } from "nsh";
+import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
+
 import {
   alpha,
   colors,
@@ -13,11 +17,7 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   stroke,
-} from "@shadcn-nsh/theme";
-import type { JSX, ViewStyle } from "nsh";
-import { reduceMotion, split } from "nsh";
-import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
-
+} from "../theme";
 import { cssMotion } from "./lib/motion";
 import { AsText, joinClass, type Live, read } from "./lib/utils";
 

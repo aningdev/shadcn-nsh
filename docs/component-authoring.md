@@ -20,7 +20,7 @@ bun run new:component <id> --view [--family]
 一个组件一个文件。第一屏是对外的部件，往下才是不导出的 look。
 
 1. **用途**。顶部一两行：这文件画出什么。起源于 NSH gallery 的，下一行是 Credit Line：`Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.` 本库自己的组件没有这一行。不写搬运史。
-2. **Imports**，按组、组内排序：`@shadcn-nsh/theme`、`lucide`、`nsh` / `nsh/base`、`./lib/*`、同级组件。
+2. **Imports**，按组、组内排序：`../theme`（`lib/` 里是 `../../theme`）、`nsh` / `nsh/base`、`./lib/*`、同级组件。基础图标从 `./lib/icons` 来。
 3. **Public Types**。`Variant` / `Size` / `Props`。基于 `nsh/base` 的用 `Omit<BaseProps, …>` 接上事件与无障碍，再加自己的轴。每个导出的类型、prop、函数上方有 `/** … */`。
 4. **Public Component(s)**。`split(props, […])` 分开自有 props 与 `{...rest}`。根节点透传 `class`、`classList`、`style`。自带 `class` 写成 `joinClass(own, props.class)`，调用方的 class 在后。
 5. **Private Helpers & Looks**。不导出的 `*Look` / `*Sizes` / 几何放下半区。终端形态集中在文件底部的 `// Terminal` 区块。
@@ -31,7 +31,7 @@ bun run new:component <id> --view [--family]
 
 **文件拆分。** 基础组件目标单文件 250–350 行。独立控制族拆成自己的文件。跨至少两个组件复用的原语归入 `packages/ui/lib/`。`lib/` 不 import 任何 `packages/ui/<component>`。
 
-**TUI 尺寸下沉主题。** 行高和内边距从 `@shadcn-nsh/theme` 读：`controlHeight`、`metrics.height`、`metrics.control`。终端里高度三档都是 `TERMINAL_ROW`（16），`metrics.control` 的 `padding` 与 `gap` 都是 `TERMINAL_COLUMN`（8）。组件主干不写满屏 `terminal ? TERMINAL_ROW : …`。例外：`controlSize`（`lib/surface.tsx`）在终端里 padding 仍是 `0`、gap 仍是一列、行高仍是一行。`control(name)` 是配方（`control("field")`），不是 `metrics.control`。
+**TUI 尺寸下沉主题。** 行高和内边距从 `../theme` 读：`controlHeight`、`metrics.height`、`metrics.control`。终端里高度三档都是 `TERMINAL_ROW`（16），`metrics.control` 的 `padding` 与 `gap` 都是 `TERMINAL_COLUMN`（8）。组件主干不写满屏 `terminal ? TERMINAL_ROW : …`。例外：`controlSize`（`lib/surface.tsx`）在终端里 padding 仍是 `0`、gap 仍是一列、行高仍是一行。`control(name)` 是配方（`control("field")`），不是 `metrics.control`。
 
 ## 外壳写法
 

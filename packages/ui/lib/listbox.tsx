@@ -1,6 +1,10 @@
 // Shared list looks: popup, rows, search, chevron, clear — used by select, combobox, calendar, date-picker.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { JSX, ViewStyle } from "nsh";
+import { platform, Text, View } from "nsh";
+import type { SelectEntry, SelectGroup } from "nsh/base";
+
 import {
   colors,
   control,
@@ -12,14 +16,9 @@ import {
   shape,
   stroke,
   surface,
-} from "@shadcn-nsh/theme";
-import { Check, ChevronRight, X } from "lucide";
-import type { JSX, ViewStyle } from "nsh";
-import { platform, Text, View } from "nsh";
-import type { SelectEntry, SelectGroup } from "nsh/base";
-
+} from "../../theme";
 import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./field-look";
-import { Icon } from "./icons";
+import { Check, ChevronRight, Icon, X } from "./icons";
 import {
   backdrop,
   itemRadius,

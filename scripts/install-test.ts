@@ -21,11 +21,13 @@
  *   (`theme.json` is that theme's, `add --all` type checks);
  * - **one at a time**: a fresh app per `registry:ui` item, `add <item>` and `nsh check`: an
  *   import no item delivers (a missing `registryDependencies` entry or lib file), or a file the
- *   transform points at the wrong place, shows up only when the item is installed alone.
+ *   transform points at the wrong place, shows up only when the item is installed alone;
+ * - **tsx nshm**: `nsh add --path` this repository into an app with no `package.json`, no
+ *   `node_modules` and no `theme.json`, then `nsh check` and `nsh test`. The components ship
+ *   their own icons, so this pass installs no npm package.
  *
- * Every pass installs what the items import (`lucide` today): the apps start without a
- * `package.json`, and `add` writes one and runs the app's package manager. A missing
- * `dependencies` entry therefore fails `nsh check` here, the way it would in a user's app.
+ * Copy-into-app still installs whatever an item declares in `dependencies`. The UI items declare
+ * none. A missing `dependencies` entry for a package an item does import still fails `nsh check`.
  *
  * Before the passes, a fresh build of `registry.json` is compared with the committed `public/r`: the
  * artifact an app installs from must be the one the sources make today. The build is the one
@@ -35,7 +37,7 @@
  * lands, and the two must name the same `registry:ui` items. A sample naming no catalog component
  * fails the run instead of dropping out of the page it renders.
  *
- *   bun run test:install [--filter <name>] [--jobs <n>] [--keep]
+ *   bun run test:install [--filter <name|all|nshm>] [--jobs <n>] [--keep]
  *
  * The apps are temporary and removed at the end, failure or not (`--keep` leaves them for a
  * look). `NSH_BIN` picks the `nsh` to use, else the one on PATH.
@@ -66,7 +68,9 @@ const HELP = `The registry as an app receives it: install every item into a fres
 
   bun run test:install [options]
 
-  --filter <name>  only the registry:ui items whose name contains this (skips the all-at-once pass)
+  --filter <name>  only the registry:ui items whose name contains this (skips the other passes)
+  --filter all     only the all-at-once pass
+  --filter nshm    only the zero-dependency TSX nshm pass
   --jobs <n>       how many items to install at a time (default: 8)
   --keep           keep the temporary apps (they are removed even when the run fails)
   -h, --help       this
@@ -356,30 +360,6 @@ test("every item loads and the page mounts", async () => {
 });
 `;
 
-/**
- * The packages the app's `package.json` lists: `add` wrote the file itself (an NSH app starts
- * without one) and installed what the items import (`lucide` today) through the app's manager.
- */
-async function assertPackages(dir: string, packages: string[]) {
-  const file = path.join(dir, "package.json");
-  const manifest = await fs
-    .readFile(file, "utf8")
-    .then((text) => JSON.parse(text) as { dependencies?: Record<string, string> })
-    .catch(() => null);
-  if (manifest == null) {
-    throw new StepFailure("add", `      add left no package.json, so no ${packages.join(", ")}`);
-  }
-  const listed = Object.keys(manifest.dependencies ?? {});
-  for (const name of packages) {
-    if (!listed.includes(name)) {
-      throw new StepFailure(
-        "add",
-        `      add installed no ${name} (package.json lists ${listed.join(", ") || "nothing"})`,
-      );
-    }
-  }
-}
-
 /** An NSH app with `nsh-ui.json` and the theme in it: what `init` leaves behind. */
 async function scaffold(template: string, registry: string, nsh: string, theme?: string) {
   await fs.mkdir(template, { recursive: true });
@@ -426,8 +406,62 @@ async function installEveryItem(template: string, dir: string, items: Item[], ns
   await fs.writeFile(path.join(dir, "All.test.tsx"), ALL_TEST);
   await step("nsh check", nsh, ["check", "."], dir);
   await step("nsh test", nsh, ["test", "."], dir);
-  // The items import `lucide`, which is what the app's own package manager had to install.
-  await assertPackages(dir, ["lucide"]);
+}
+
+const NSHM_APP = `import { mount, View } from "nsh";
+import { Badge, Button, Dialog, DialogContent, DialogTitle } from "shadcn-nsh";
+import { selectTheme } from "shadcn-nsh/theme";
+import appleTheme from "shadcn-nsh/themes/apple";
+
+selectTheme(appleTheme);
+
+function App() {
+  return (
+    <View>
+      <Button>Save</Button>
+      <Badge>New</Badge>
+      <Dialog open>
+        <DialogContent>
+          <DialogTitle>Saved</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    </View>
+  );
+}
+
+mount(App);
+`;
+
+const NSHM_TEST = `import { expect, open, test } from "nsh/test";
+
+test("nshm components mount under selectTheme", async () => {
+  const app = await open("./App.tsx");
+  expect(app.texts()).toContain("Save");
+  expect(app.texts()).toContain("New");
+});
+`;
+
+/**
+ * TSX `nshm`: install this repo with `nsh add --path` into an app that has no npm packages and
+ * no `theme.json`, then type check and run a page that switches to the apple theme.
+ */
+async function installNshm(dir: string, nsh: string) {
+  await fs.mkdir(dir, { recursive: true });
+  await step("nsh init", nsh, ["init", ".", "--template", "ts"], dir);
+  await step("nsh add", nsh, ["add", "--path", repo], dir);
+  for (const name of ["package.json", "node_modules", "theme.json"]) {
+    const present = await fs.stat(path.join(dir, name)).then(
+      () => true,
+      () => false,
+    );
+    if (present) {
+      throw new StepFailure("nsh add", `      ${name} exists; the nshm install must not create it`);
+    }
+  }
+  await fs.writeFile(path.join(dir, "App.tsx"), NSHM_APP);
+  await fs.writeFile(path.join(dir, "App.test.tsx"), NSHM_TEST);
+  await step("nsh check", nsh, ["check", "."], dir);
+  await step("nsh test", nsh, ["test", "."], dir);
 }
 
 /**
@@ -733,7 +767,7 @@ async function mergeThemeOnAdd(template: string, dir: string, nsh: string) {
 
 async function installOneItem(template: string, dir: string, item: Item, nsh: string) {
   await copyApp(template, dir);
-  // `nsh check` below fails when the item imports a package `add` did not install (`lucide`).
+  // `nsh check` below fails when the item imports a package `add` did not install.
   await step("add", "bun", [cli, "add", item.name], dir);
   // `nsh check` only notices a file that did not land when something imports it: assert it is there.
   if (item.target) {
@@ -862,6 +896,26 @@ async function main(): Promise<number> {
     const files = await list(fresh);
     console.log(`install test: public/r matches a fresh build (${files.length - 1} items)`);
 
+    if (opts.filter === "nshm") {
+      console.log(`install test: temporary apps in ${tmp}\n`);
+      console.log("tsx nshm, no package.json and no theme.json");
+      const startedNshm = performance.now();
+      try {
+        await installNshm(path.join(tmp, "nshm"), nsh);
+      } catch (thrown) {
+        const failure = failureOf(thrown);
+        console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedNshm)}`);
+        console.error(failure.detail);
+        console.error("\ninstall test: the nshm install does not type check or run");
+        return 1;
+      }
+      console.log(
+        `  ✓ nsh init, nsh add --path, nsh check, nsh test ${seconds(performance.now() - startedNshm)}`,
+      );
+      console.log(`\ninstall test: nshm pass (${seconds(performance.now() - started)})`);
+      return 0;
+    }
+
     server = await startRegistryServer({ dir: fresh });
     const registry = `${server.url}/{name}.json`;
     console.log(`install test: serving it at ${server.url}`);
@@ -885,7 +939,10 @@ async function main(): Promise<number> {
     }
     const targets = new Map(indexed.map((item) => [item.name, item.target]));
     const all = ids.map((name) => ({ name, target: targets.get(name) ?? "" }));
-    const items = opts.filter ? all.filter((item) => item.name.includes(opts.filter!)) : all;
+    const allOnly = opts.filter === "all";
+    const unfiltered = opts.filter == null;
+    const items =
+      unfiltered || allOnly ? all : all.filter((item) => item.name.includes(opts.filter!));
     if (items.length === 0) {
       console.error(`install test: no registry:ui item matches "${opts.filter ?? ""}"`);
       return 1;
@@ -904,7 +961,7 @@ async function main(): Promise<number> {
     }
     console.log(`  ✓ init, one template app ${seconds(performance.now() - scaffoldStart)}\n`);
 
-    if (opts.filter == null) {
+    if (unfiltered || allOnly) {
       console.log("all items in one app");
       const startedAll = performance.now();
       try {
@@ -920,7 +977,12 @@ async function main(): Promise<number> {
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedAll)}\n`);
     }
 
-    if (opts.filter == null) {
+    if (allOnly) {
+      console.log(`\ninstall test: all-at-once pass (${seconds(performance.now() - started)})`);
+      return 0;
+    }
+
+    if (unfiltered) {
       console.log("the neutral theme, in one app");
       const startedNeutral = performance.now();
       const neutralTemplate = path.join(tmp, "template-shadcn");
@@ -940,7 +1002,7 @@ async function main(): Promise<number> {
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedNeutral)}\n`);
     }
 
-    if (opts.filter == null) {
+    if (unfiltered) {
       console.log("one more theme, at run time");
       const startedTheme = performance.now();
       try {
@@ -960,7 +1022,7 @@ async function main(): Promise<number> {
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedTheme)}\n`);
     }
 
-    if (opts.filter == null) {
+    if (unfiltered) {
       console.log("the NSH Gallery theme, on top of another build-time theme");
       const startedSecond = performance.now();
       try {
@@ -980,7 +1042,7 @@ async function main(): Promise<number> {
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedSecond)}\n`);
     }
 
-    if (opts.filter == null) {
+    if (unfiltered) {
       console.log("the platform's own theme: apple, material, winui, and native choosing them");
       const startedNative = performance.now();
       try {
@@ -1010,7 +1072,7 @@ async function main(): Promise<number> {
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedNative)}\n`);
     }
 
-    if (opts.filter == null) {
+    if (unfiltered) {
       console.log("theme merge, on add");
       const startedMerge = performance.now();
       try {
@@ -1026,6 +1088,23 @@ async function main(): Promise<number> {
       }
       const label = "add button restores missing theme.json keys, keeps app values, nsh check";
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedMerge)}\n`);
+    }
+
+    if (unfiltered) {
+      console.log("tsx nshm, no package.json and no theme.json");
+      const startedNshm = performance.now();
+      try {
+        await installNshm(path.join(tmp, "nshm"), nsh);
+      } catch (thrown) {
+        const failure = failureOf(thrown);
+        console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedNshm)}`);
+        console.error(failure.detail);
+        console.error("\ninstall test: the nshm install does not type check or run");
+        return 1;
+      }
+      console.log(
+        `  ✓ nsh init, nsh add --path, nsh check, nsh test ${seconds(performance.now() - startedNshm)}\n`,
+      );
     }
 
     const each = `each item in its own app (${items.length} item${items.length === 1 ? "" : "s"}`;
@@ -1056,7 +1135,7 @@ async function main(): Promise<number> {
       return 1;
     }
 
-    const runs = opts.filter == null ? ", one app with all of them runs" : "";
+    const runs = unfiltered ? ", one app with all of them runs, and the nshm install runs" : "";
     console.log(
       `\ninstall test: ${items.length} of ${items.length} items install and type check${runs} ` +
         `(${seconds(performance.now() - eachStart)} for the items, ` +

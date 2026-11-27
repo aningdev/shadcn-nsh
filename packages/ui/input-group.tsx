@@ -1,11 +1,11 @@
 // An input group: the field's frame around a control and the parts beside it (a leading icon, a
 // trailing button, a unit), after shadcn/ui's InputGroup.
 
-import { colors, metrics, terminal } from "@shadcn-nsh/theme";
 import type { InputRef, InputStyle, JSX, Signal, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, signal, split, View } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
 
+import { colors, metrics, terminal } from "../theme";
 import { Button, buttonSizes, type ButtonProps, type ButtonSize } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./lib/field-look";
 import { AsText, joinClass, type Live, read } from "./lib/utils";

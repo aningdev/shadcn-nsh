@@ -83,7 +83,19 @@ export * from "./title-bar";
 export * from "./collapsing-header";
 export * from "./lib/choice";
 export * from "./lib/field-look";
-export * from "./lib/icons";
+export {
+  ICON_BOX,
+  ICON_WEIGHT,
+  CheckMark,
+  Icon,
+  IconLabel,
+  drawIcon,
+  iconImage,
+  type IconCanvas,
+  type IconImageOptions,
+  type IconNode,
+  type IconProps,
+} from "./lib/icons";
 export {
   Chevron,
   ListboxEmpty,

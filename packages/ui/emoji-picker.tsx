@@ -3,21 +3,6 @@
 // no shell below.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, font, terminal } from "@shadcn-nsh/theme";
-import {
-  Car,
-  Clock,
-  Flag,
-  Heart,
-  Leaf,
-  Lightbulb,
-  Search,
-  Smile,
-  type IconNode,
-  User,
-  Utensils,
-  Volleyball,
-} from "lucide";
 import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 import { platform, signal, split, Text, View } from "nsh";
 import {
@@ -32,7 +17,22 @@ import {
   type EmojiSkinTone,
 } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { colors, font, terminal } from "../theme";
+import {
+  Car,
+  Clock,
+  Flag,
+  Heart,
+  Icon,
+  Leaf,
+  Lightbulb,
+  Search,
+  Smile,
+  User,
+  Utensils,
+  Volleyball,
+  type IconNode,
+} from "./lib/icons";
 import { joinClass } from "./lib/utils";
 
 /** An emoji as the picker hands it over (`onSelect`, `renderItem`), from `nsh/base`. */

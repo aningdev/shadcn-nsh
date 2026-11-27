@@ -1,7 +1,6 @@
 // Scrollbar: `scrollbarTheme` and the `Scrollbar` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { feedback, motion } from "@shadcn-nsh/theme";
 import { platform, reduceMotion, split } from "nsh";
 import {
   Scrollbar as BaseScrollbar,
@@ -9,6 +8,7 @@ import {
   type ScrollbarTheme,
 } from "nsh/base";
 
+import { feedback, motion } from "../theme";
 import { cssMotion } from "./lib/motion";
 import { joinClass } from "./lib/utils";
 

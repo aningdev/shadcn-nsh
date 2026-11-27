@@ -3,6 +3,8 @@ import type { JSX, ViewStyle } from "nsh";
 import { split } from "nsh";
 import { {{Base}} as Base{{Id}}, type {{Base}}Props as Base{{Id}}Props } from "nsh/base";
 
+import { colors } from "../theme";
+
 /**
  * `nsh/base`'s {{Base}} with {{id}} feedback and nothing else. Every base prop passes through; the
  * style props go over the look's.
@@ -21,7 +23,7 @@ function {{lookFn}}(): {
   disabledStyle: ViewStyle;
 } {
   return {
-    style: {},
+    style: { backgroundColor: colors.background },
     hoverStyle: {},
     activeStyle: {},
     focusVisibleStyle: {},

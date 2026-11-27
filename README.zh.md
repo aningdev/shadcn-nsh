@@ -12,15 +12,34 @@
 
 ## 快速开始
 
+两种用法，都跑在 NSH 上。
+
+### TSX `nshm`（零 npm 依赖）
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Button } from "shadcn-nsh";
+import { selectTheme } from "shadcn-nsh/theme";
+import apple from "shadcn-nsh/themes/apple";
+
+selectTheme(apple);
+```
+
+NSH 自己解析这个模块，不装 npm 包，也不需要 `node_modules`。`selectTheme` 在运行时切换内置主题。若要构建期的 Tailwind token 名（如 `bg-surface`、`rounded-(--radius-md)`），仍用 CLI 的 `init` 写入 `theme.json`。
+
+### Copy-into-app
+
 应用里先有 `nsh.json`（`nsh init` 生成）：
 
 ```sh
-npx shadcn-nsh init                 # 写 nsh-ui.json、装主题、nsh.json 指向它、配好 @/ 别名
-npx shadcn-nsh add button           # 一个条目，连同它依赖的文件
-npx shadcn-nsh add --all            # 全部组件
+npx shadcn-nsh@latest init          # 写 nsh-ui.json、装主题、nsh.json 指向它、配好 @/ 别名
+npx shadcn-nsh@latest add button    # 一个条目，连同它依赖的文件
 ```
 
-`init` 的选择记在 `nsh-ui.json`，主题写在 `theme.json` + `lib/ui/semantics.json` + `lib/ui/theme.ts`，并附带独立的 `light.tokens.json`、`dark.tokens.json`（随库分发主题的 W3C DTCG 2025.10 快照，供导入 Figma Variables 明暗模式、Tokens Studio 或 Style Dictionary v4）与 `DESIGN.md`（供编码代理阅读的主题设计规范；均不随之后对 `theme.json` 的修改更新），每个 `nsh.json` 指向 `theme.json`；应用里还会配好 `@/` 导入别名（`tsconfig.json` 的 paths 加 `"@/*": ["./*"]`，`nsh.json` 加 `"resolve": { "alias": { "@": "./" } }`），文档示例里的 `@/components/ui/<name>`、`@/lib/ui/theme` 因此可解析。`add` 复制文件，并用你的包管理器装上条目声明的包（含 `lucide`）。从此这些文件归你改。
+`init` 的选择记在 `nsh-ui.json`，主题写在 `theme.json` + `lib/ui/theme.ts`，并附带 `DESIGN.md`（供编码代理阅读的主题设计规范；不随之后对 `theme.json` 的修改更新）。每个 `nsh.json` 指向 `theme.json`；应用里还会配好 `@/` 导入别名（`tsconfig.json` 的 paths 加 `"@/*": ["./*"]`，`nsh.json` 加 `"resolve": { "alias": { "@": "./" } }`），文档示例里的 `@/components/ui/<name>`、`@/lib/ui/theme` 因此可解析。`add` 把源码复制进应用，并装上条目声明的 npm 包。组件自带基础图标，通常一次 `add` 不需要再装包。从此这些文件归你改。
 
 `list`、`view`、`diff` 只读不写：`npx shadcn-nsh list`、`view button`、`diff`（应用的副本与 registry 不同时退出码 1）。每个命令都接受 `-c <dir>`，`add` 另有 `--dry-run` 与 `--overwrite`。参数与默认值见 [CLI 参考](https://shadcn-nsh.aning.dev/docs/cli)。
 

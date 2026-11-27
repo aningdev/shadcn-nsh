@@ -2,8 +2,6 @@
 // reader is at the end, and stay where they are when the reader has scrolled up. The viewport is
 // `nsh`'s virtualized `List`, so only the turns near the screen exist, however long it grows.
 
-import { follow, motion } from "@shadcn-nsh/theme";
-import { ArrowDown, ArrowUp } from "lucide";
 import type {
   JSX,
   ListContentStyle,
@@ -17,8 +15,9 @@ import type {
 } from "nsh";
 import { cleanup, context, List, signal, split, View } from "nsh";
 
+import { follow, motion } from "../theme";
 import { Button, buttonGlyph, type ButtonProps } from "./button";
-import { Icon } from "./lib/icons";
+import { ArrowDown, ArrowUp, Icon } from "./lib/icons";
 import { PILL_RADIUS } from "./lib/surface";
 
 /** Which way a scroller's button sends the viewport: `end`, the newest message; `start`, the

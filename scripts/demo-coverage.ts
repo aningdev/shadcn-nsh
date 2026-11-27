@@ -192,15 +192,15 @@ function functionsIn(node: Node, out: Node[] = []): Node[] {
   return out;
 }
 
-/** The module the shared `Tone` comes from. */
-const THEME = "@shadcn-nsh/theme";
+/** Modules the shared `Tone` comes from: the relative theme entry, or the package name. */
+const THEME_MODULES = new Set(["../theme", "../../theme", "@shadcn-nsh/theme"]);
 
 /** Whether a type names the theme's shared `Tone`, imported into this module (`Tone`, `Live<Tone>`). */
 function namesTone(node: Node, module: Module): boolean {
   if (!node || typeof node !== "object") return false;
   if (node.type === "TSTypeReference") {
     const name = (node.typeName as Node).name as string | undefined;
-    return !!name && name === "Tone" && module.imports.get(name) === THEME;
+    return !!name && name === "Tone" && THEME_MODULES.has(module.imports.get(name) ?? "");
   }
   for (const [key, value] of Object.entries(node)) {
     if (key === "start" || key === "end" || key === "type") continue;

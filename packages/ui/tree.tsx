@@ -1,13 +1,12 @@
 // A tree: the row (`TreeRow`) and the `Tree` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, terminal, TERMINAL_COLUMN, TERMINAL_GAP, font } from "@shadcn-nsh/theme";
-import { ChevronRight, File, Folder, FolderOpen, type IconNode } from "lucide";
 import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import { Tree as BaseTree, type TreeEntry, type TreeProps as BaseTreeProps } from "nsh/base";
 
-import { Icon } from "./lib/icons";
+import { colors, terminal, TERMINAL_COLUMN, TERMINAL_GAP, font } from "../theme";
+import { ChevronRight, File, Folder, FolderOpen, Icon, type IconNode } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 import { joinClass } from "./lib/utils";
 

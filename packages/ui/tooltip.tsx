@@ -1,7 +1,6 @@
 // A tooltip: the parts first. The bubble's look is private; `tooltipTextStyle` and `tooltipNote` stay shared.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { surface, surfaceBorderWidth } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -10,6 +9,7 @@ import {
   type TooltipProps as BaseTooltipProps,
 } from "nsh/base";
 
+import { surface, surfaceBorderWidth } from "../theme";
 import { Button, type ButtonVariant } from "./button";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
 import { AsText, joinClass } from "./lib/utils";

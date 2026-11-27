@@ -1,6 +1,10 @@
 // A checkbox: the look (`checkboxLook` and its companions) and the `Checkbox` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { AnimatedValue, JSX, ViewStyle } from "nsh";
+import { reduceMotion, split, View } from "nsh";
+import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
+
 import {
   colors,
   control,
@@ -13,12 +17,7 @@ import {
   surface,
   terminal,
   TERMINAL_ROW,
-} from "@shadcn-nsh/theme";
-import { Check, Minus, type IconNode } from "lucide";
-import type { AnimatedValue, JSX, ViewStyle } from "nsh";
-import { reduceMotion, split, View } from "nsh";
-import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
-
+} from "../theme";
 import {
   choiceCorner,
   choiceEdge,
@@ -29,7 +28,7 @@ import {
   choiceWell,
   type ChoiceSize,
 } from "./lib/choice";
-import { Icon } from "./lib/icons";
+import { Check, Icon, Minus, type IconNode } from "./lib/icons";
 import { cssMotion } from "./lib/motion";
 import { AsText, joinClass, type Live, read } from "./lib/utils";
 

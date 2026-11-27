@@ -2,8 +2,6 @@
 // `numberInputClasses` stays shared: gallery tests read its frame class.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, control, terminal } from "@shadcn-nsh/theme";
-import { ChevronDown, ChevronUp, Minus, Plus, type IconNode } from "lucide";
 import type { InputStyle, ViewStyle } from "nsh";
 import { platform, signal, split, Text } from "nsh";
 import {
@@ -11,6 +9,7 @@ import {
   type NumberInputProps as BaseNumberInputProps,
 } from "nsh/base";
 
+import { colors, control, terminal } from "../theme";
 import {
   edgeClass,
   fieldCornerClass,
@@ -19,7 +18,7 @@ import {
   fieldLook as fieldWellLook,
   fieldSize,
 } from "./lib/field-look";
-import { Icon } from "./lib/icons";
+import { ChevronDown, ChevronUp, Icon, Minus, Plus, type IconNode } from "./lib/icons";
 import { joinClass, type Live } from "./lib/utils";
 
 /**

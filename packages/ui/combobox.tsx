@@ -1,19 +1,6 @@
 // A combobox: `Combobox` and its parts. The field, chip and chips looks are private.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  control,
-  feedback,
-  focusRing,
-  rounded,
-  surface,
-  surfaceBorderWidth,
-  terminal,
-  shape,
-  stroke,
-} from "@shadcn-nsh/theme";
-import { X } from "lucide";
 import type { InputStyle, JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import {
   cleanup,
@@ -34,6 +21,18 @@ import {
   type SelectItem as SelectItemData,
 } from "nsh/base";
 
+import {
+  colors,
+  control,
+  feedback,
+  focusRing,
+  rounded,
+  surface,
+  surfaceBorderWidth,
+  terminal,
+  shape,
+  stroke,
+} from "../theme";
 import { Button, type ButtonVariant } from "./button";
 import {
   edgeClass,
@@ -48,7 +47,7 @@ import {
   fieldSize,
   insetShade,
 } from "./lib/field-look";
-import { Icon } from "./lib/icons";
+import { Icon, X } from "./lib/icons";
 import {
   Chevron,
   clearButtonLook,

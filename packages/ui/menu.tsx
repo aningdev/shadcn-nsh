@@ -1,20 +1,6 @@
 // A menu: the parts first, and the shared row and popup looks (`menuItemLook`, `menuPopup`, …) below.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  alpha,
-  colors,
-  controlHeight,
-  cornerCurve,
-  feedback,
-  iconSize,
-  rounded,
-  font,
-  shape,
-  stroke,
-  surface,
-} from "@shadcn-nsh/theme";
-import { ChevronLeft, ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { context, horizontalSizeClass, platform, split, Text, token, View } from "nsh";
 import {
@@ -32,6 +18,19 @@ import {
 } from "nsh/base";
 
 import {
+  alpha,
+  colors,
+  controlHeight,
+  cornerCurve,
+  feedback,
+  iconSize,
+  rounded,
+  font,
+  shape,
+  stroke,
+  surface,
+} from "../theme";
+import {
   Button,
   type ButtonProps,
   type ButtonSize,
@@ -39,7 +38,7 @@ import {
   buttonLook,
   type ButtonVariant,
 } from "./button";
-import { Icon } from "./lib/icons";
+import { ChevronLeft, ChevronRight, Icon } from "./lib/icons";
 import {
   backdrop,
   MenuMark,

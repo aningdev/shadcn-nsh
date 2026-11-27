@@ -1,6 +1,13 @@
 // A trace: the steps an agent took, one line each — a reasoning, a tool call, a source — and a line
 // that opens onto what it did.
 
+import type { JSX, StyleProp, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
+import { context, effect, reduceMotion, signal, split, Text, View } from "nsh";
+import {
+  Collapsible as BaseCollapsible,
+  type CollapsibleProps as BaseCollapsibleProps,
+} from "nsh/base";
+
 import {
   colors,
   controlHeight,
@@ -10,17 +17,9 @@ import {
   rounded,
   shape,
   terminal,
-} from "@shadcn-nsh/theme";
-import { ChevronRight } from "lucide";
-import type { JSX, StyleProp, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, effect, reduceMotion, signal, split, Text, View } from "nsh";
-import {
-  Collapsible as BaseCollapsible,
-  type CollapsibleProps as BaseCollapsibleProps,
-} from "nsh/base";
-
+} from "../theme";
 import type { CollapsibleOpenChangeReason, CollapsibleProps } from "./collapsible";
-import { Icon } from "./lib/icons";
+import { ChevronRight, Icon } from "./lib/icons";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/state";
 import { AsText, joinClass } from "./lib/utils";
 import { Spinner } from "./spinner";

@@ -2,7 +2,6 @@
 // card's header, footer, title and description. The panel is `sheet.tsx`'s (`sheetPanel`); the title
 // and text are `dialog.tsx`'s (`dialogTitle`, `dialogText`).
 
-import { alpha, colors, rounded } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -11,6 +10,7 @@ import {
   type SheetProps as BaseSheetProps,
 } from "nsh/base";
 
+import { alpha, colors, rounded } from "../theme";
 import { Action, type ButtonVariant } from "./button";
 import { dialogText, dialogTitle } from "./dialog";
 import { backdrop } from "./lib/popup";

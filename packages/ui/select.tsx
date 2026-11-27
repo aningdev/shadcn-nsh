@@ -2,18 +2,6 @@
 // `SelectTrigger`, `SelectContent`), which wear the shared listbox look.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  control,
-  feedback,
-  rounded,
-  shape,
-  stroke,
-  surface,
-  terminal,
-  TERMINAL_COLUMN,
-} from "@shadcn-nsh/theme";
-import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, effect, platform, reduceMotion, signal, split, Text, View } from "nsh";
 import {
@@ -24,6 +12,17 @@ import {
   type SelectProps as BaseSelectProps,
 } from "nsh/base";
 
+import {
+  colors,
+  control,
+  feedback,
+  rounded,
+  shape,
+  stroke,
+  surface,
+  terminal,
+  TERMINAL_COLUMN,
+} from "../theme";
 import {
   fieldCorners,
   fieldDrawn,
@@ -36,7 +35,7 @@ import {
   fieldSize,
   insetShade,
 } from "./lib/field-look";
-import { Icon } from "./lib/icons";
+import { Icon, type IconNode } from "./lib/icons";
 import {
   Chevron,
   clearButtonLook,

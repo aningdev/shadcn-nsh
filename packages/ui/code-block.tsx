@@ -1,22 +1,12 @@
 // A code block: a titled block of code or output, a copy button that flips to a check, line numbers
 // and a footer.
 
-import {
-  alpha,
-  colors,
-  font,
-  rounded,
-  shape,
-  stroke,
-  surface,
-  type TypeRole,
-} from "@shadcn-nsh/theme";
-import { Check, Copy } from "lucide";
 import type { JSX, ScrollProps, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { Clipboard, context, Scroll, split, Text, View } from "nsh";
 
+import { alpha, colors, font, rounded, shape, stroke, surface, type TypeRole } from "../theme";
 import { IconButton, iconButtonGlyph, type IconButtonProps } from "./button";
-import { IconLabel } from "./lib/icons";
+import { Check, Copy, IconLabel } from "./lib/icons";
 import { useCopied } from "./lib/state";
 import { density } from "./lib/surface";
 import { AsText } from "./lib/utils";

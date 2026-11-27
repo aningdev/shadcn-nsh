@@ -2,6 +2,9 @@
 // and category colors, grid, baseline, cross line, hover dot, wash, axis text, tooltip), plus `Legend`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import { split, Text, View } from "nsh";
+import type { StyleProp, TextStyle, ViewStyle } from "nsh";
+
 import {
   alpha,
   chart,
@@ -12,9 +15,7 @@ import {
   surfaceBorderWidth,
   terminal,
   font,
-} from "@shadcn-nsh/theme";
-import { split, Text, View } from "nsh";
-import type { StyleProp, TextStyle, ViewStyle } from "nsh";
+} from "../theme";
 
 // Every mark, so a chart asks one module for its parts and their look.
 export {

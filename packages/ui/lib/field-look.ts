@@ -2,6 +2,9 @@
 // well, text, size and time-field classes every field control reads.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
+import type { InputStyle, ViewStyle } from "nsh";
+import { platform, reduceMotion } from "nsh";
+
 import {
   activeSpec,
   alpha,
@@ -17,11 +20,8 @@ import {
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
-} from "@shadcn-nsh/theme";
-import type { ResolvedControlMap } from "@shadcn-nsh/theme";
-import type { InputStyle, ViewStyle } from "nsh";
-import { platform, reduceMotion } from "nsh";
-
+} from "../../theme";
+import type { ResolvedControlMap } from "../../theme";
 import { type Live, read } from "./utils";
 
 /** A field's resolved frame (`control("field")`). */

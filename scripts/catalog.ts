@@ -7,8 +7,8 @@
  * The NSH runtime cannot import this module (`node:fs`), so the runtime's list is generated:
  * `apps/website/demos/catalog.generated.ts`, read by `App.tsx`.
  *
- *   bun run catalog           # write catalog.generated.ts
- *   bun run catalog --check   # fail when the set is inconsistent or the file is stale
+ *   bun run catalog           # write catalog.generated.ts and the root nsh.json
+ *   bun run catalog --check   # fail when the set is inconsistent or either file is stale
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -265,6 +265,112 @@ export function writeGenerated(cat: Catalog): void {
   fs.writeFileSync(cat.paths.generated, renderGenerated(cat));
 }
 
+const NSH_NAME = "shadcn-nsh";
+const NSH_RANGE = ">=0.7";
+
+/** Theme exports, in the order the manifest publishes them. Components follow, sorted. */
+const THEME_EXPORTS: readonly (readonly [string, string])[] = [
+  [`${NSH_NAME}/theme`, "packages/theme/index.ts"],
+  [`${NSH_NAME}/themes`, "packages/theme/themes/index.ts"],
+  [`${NSH_NAME}/themes/nsh-gallery`, "packages/theme/themes/nsh-gallery/index.ts"],
+  [`${NSH_NAME}/themes/shadcn`, "packages/theme/themes/shadcn/index.ts"],
+  [`${NSH_NAME}/themes/solid-glass`, "packages/theme/themes/solid-glass/index.ts"],
+  [`${NSH_NAME}/themes/apple`, "packages/theme/themes/apple/index.ts"],
+  [`${NSH_NAME}/themes/material`, "packages/theme/themes/material/index.ts"],
+  [`${NSH_NAME}/themes/winui`, "packages/theme/themes/winui/index.ts"],
+  [`${NSH_NAME}/themes/native`, "packages/theme/themes/native/index.ts"],
+];
+
+/** `packages/cli/package.json`'s version, or `null` when this root has no CLI package (a fixture). */
+export function cliVersion(root: string): string | null {
+  const file = path.join(root, "packages/cli/package.json");
+  if (!isFile(file)) return null;
+  const parsed = JSON.parse(fs.readFileSync(file, "utf8")) as { version?: unknown };
+  return typeof parsed.version === "string" ? parsed.version : null;
+}
+
+/** The root `nsh.json`: the TSX `nshm` manifest. `version` matches the CLI package. */
+export function renderNshManifest(cat: Catalog, version: string): string {
+  const exports: Record<string, string> = {
+    [NSH_NAME]: "packages/ui/index.ts",
+  };
+  for (const [key, target] of THEME_EXPORTS) exports[key] = target;
+  for (const id of cat.components.map((component) => component.id).sort()) {
+    exports[`${NSH_NAME}/${id}`] = `packages/ui/${id}.tsx`;
+  }
+  return `${JSON.stringify({ name: NSH_NAME, version, nsh: NSH_RANGE, exports }, null, 2)}\n`;
+}
+
+/** Component ids named by `shadcn-nsh/<id>` exports. `theme` and `themes/…` are not components. */
+function componentExportIds(exports: Record<string, unknown>): string[] {
+  const ids: string[] = [];
+  for (const key of Object.keys(exports)) {
+    const match = /^shadcn-nsh\/([^/]+)$/.exec(key);
+    // `shadcn-nsh/theme` and `shadcn-nsh/themes` are the theme entry, not components.
+    if (!match || match[1] === "theme" || match[1] === "themes") continue;
+    ids.push(match[1]!);
+  }
+  return ids;
+}
+
+/**
+ * The root `nsh.json` against the CLI version and the `registry:ui` set. A fixture with no CLI
+ * package is not a manifest root, so it has nothing to check. A byte-level difference that still
+ * names the right components is `isNshManifestCurrent`'s to report.
+ */
+export function checkNshManifest(cat: Catalog): string[] {
+  const version = cliVersion(cat.root);
+  if (version == null) return [];
+  const file = path.join(cat.root, "nsh.json");
+  if (!isFile(file)) return ["nsh.json: missing (run bun run catalog)"];
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch {
+    return ["nsh.json: not JSON"];
+  }
+  if (parsed == null || typeof parsed !== "object") return ["nsh.json: not an object"];
+  const manifest = parsed as { version?: unknown; exports?: unknown };
+  const problems: string[] = [];
+  if (manifest.version !== version) {
+    problems.push(
+      `nsh.json: version ${JSON.stringify(manifest.version)} does not match packages/cli/package.json ${JSON.stringify(version)}`,
+    );
+  }
+  const exports =
+    manifest.exports != null && typeof manifest.exports === "object"
+      ? (manifest.exports as Record<string, unknown>)
+      : {};
+  const expected = new Set(cat.components.map((component) => component.id));
+  const found = new Set(componentExportIds(exports));
+  for (const id of [...expected].filter((name) => !found.has(name)).sort()) {
+    problems.push(`nsh.json: exports missing "${id}"`);
+  }
+  for (const id of [...found].filter((name) => !expected.has(name)).sort()) {
+    problems.push(`nsh.json: exports include "${id}", which is not a registry:ui item`);
+  }
+  return problems;
+}
+
+/** True when the checked-in `nsh.json` is exactly what `bun run catalog` would write. */
+export function isNshManifestCurrent(cat: Catalog): boolean {
+  const version = cliVersion(cat.root);
+  if (version == null) return true;
+  const file = path.join(cat.root, "nsh.json");
+  return isFile(file) && fs.readFileSync(file, "utf8") === renderNshManifest(cat, version);
+}
+
+/** Write the root `nsh.json`. */
+export function writeNshManifest(cat: Catalog): void {
+  const version = cliVersion(cat.root);
+  if (version == null) {
+    throw new Error(
+      `${cat.root}: packages/cli/package.json has no version, so nsh.json cannot be written`,
+    );
+  }
+  fs.writeFileSync(path.join(cat.root, "nsh.json"), renderNshManifest(cat, version));
+}
+
 if (import.meta.main) {
   const cat = catalog();
   const problems = checkCatalog(cat);
@@ -280,17 +386,30 @@ if (import.meta.main) {
     process.exit(1);
   }
   if (process.argv.includes("--check")) {
-    if (!isGeneratedCurrent(cat)) {
-      console.error("catalog.generated.ts is out of date; run `bun run catalog`.");
+    problems.push(...checkNshManifest(cat));
+    if (problems.length > 0) {
+      for (const problem of problems) console.error(`catalog: ${problem}`);
+      console.error(`catalog: ${problems.length} problem(s)`);
       process.exit(1);
     }
+    let stale = false;
+    if (!isGeneratedCurrent(cat)) {
+      console.error("catalog.generated.ts is out of date; run `bun run catalog`.");
+      stale = true;
+    }
+    if (!isNshManifestCurrent(cat)) {
+      console.error("nsh.json is out of date; run `bun run catalog`.");
+      stale = true;
+    }
+    if (stale) process.exit(1);
     console.log(
-      `catalog ok — ${cat.components.length} components; catalog.generated.ts is current.`,
+      `catalog ok — ${cat.components.length} components; catalog.generated.ts and nsh.json are current.`,
     );
   } else {
     writeGenerated(cat);
+    writeNshManifest(cat);
     console.log(
-      `catalog: wrote ${path.relative(cat.root, cat.paths.generated)} (${cat.components.length} components).`,
+      `catalog: wrote ${path.relative(cat.root, cat.paths.generated)} and nsh.json (${cat.components.length} components).`,
     );
   }
 }

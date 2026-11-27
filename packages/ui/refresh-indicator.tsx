@@ -1,11 +1,10 @@
 // A refresh indicator: the round chip a pull-to-refresh draws over the top of a scroll view.
 
-import { colors, controlHeight, iconSize, stroke, surface } from "@shadcn-nsh/theme";
-import { ArrowDown } from "lucide";
 import type { AnimatedValue, ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 
-import { Icon } from "./lib/icons";
+import { colors, controlHeight, iconSize, stroke, surface } from "../theme";
+import { ArrowDown, Icon } from "./lib/icons";
 import { Spinner } from "./spinner";
 
 /** A refresh indicator's props. */

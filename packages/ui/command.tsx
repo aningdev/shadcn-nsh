@@ -1,8 +1,6 @@
 // Command: palette parts (`commandClasses`, `CommandRow`) and the `Command` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, control, rounded, terminal, font } from "@shadcn-nsh/theme";
-import { Check, Search, type IconNode } from "lucide";
 import type { InputStyle, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -14,8 +12,9 @@ import {
   type CommandRef,
 } from "nsh/base";
 
+import { colors, control, rounded, terminal, font } from "../theme";
 import { Kbd } from "./kbd";
-import { Icon } from "./lib/icons";
+import { Check, Icon, Search, type IconNode } from "./lib/icons";
 import { itemRadius, itemSpacing, listPadding, rowVerticalPad } from "./lib/popup";
 import { controlSize } from "./lib/surface";
 import { joinClass } from "./lib/utils";

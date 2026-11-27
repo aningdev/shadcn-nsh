@@ -1,16 +1,6 @@
 // A segmented control: the look (`segmentedLook`) and the parts that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  controlHeight,
-  feedback,
-  font,
-  rounded,
-  shape,
-  stroke,
-  surface,
-} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, signal, split, Text, View } from "nsh";
 import {
@@ -20,6 +10,7 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
+import { colors, controlHeight, feedback, font, rounded, shape, stroke, surface } from "../theme";
 import { joinClass, type Live, read } from "./lib/utils";
 import { hoverOf, type TabLook, type TabState } from "./tabs";
 
