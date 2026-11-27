@@ -9,6 +9,7 @@ import {
   focusRing,
   rounded,
   surface,
+  surfaceBorderWidth,
   terminal,
   shape,
   stroke,
@@ -77,6 +78,8 @@ export interface ComboboxLookOptions {
    * people"`): drawn in the text color, as a value, rather than faint as
    * an empty field's prompt. */
   filled?: Live<boolean>;
+  /** The field currently renders chips at its start (`ComboboxChips`): slightly tighter start padding so chips balance inside the frame. */
+  hasChips?: Live<boolean | undefined>;
 }
 
 /** As wide as a select's trigger with a pointer, and no narrower than its rows. */
@@ -103,8 +106,8 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
           ? { width: fieldWidth, flexShrink: 1, minWidth: fieldMinWidth }
           : { alignSelf: "stretch" }),
         minHeight: fieldSize.height,
-        // The query starts where a select's title does, and stops 4 points short of the toggle.
-        paddingStart: triggerPadding(),
+        // The query starts where a select's title does (or slightly closer when chips lead), and stops 4 points short of the toggle.
+        paddingStart: read(o?.hasChips) && !terminal ? 6 : triggerPadding(),
         paddingEnd: 4,
         ...fieldCorners(field),
         ...fieldEdgeWidths(field),
@@ -182,14 +185,18 @@ export function ComboToggle(props: { open: boolean; id?: string; label?: string 
 export interface ChipLookOptions {
   /** The root is disabled: the chip dims, and its remove button takes no press. */
   disabled?: Live<boolean | undefined>;
+  /** The chip carries a leading element (`Avatar`, status dot) before its label, keeping tight start padding. */
+  hasLead?: Live<boolean | undefined>;
+  /** The chip shows a trailing remove button (default `true`); `false` balances the end padding to match a text-only capsule. */
+  removable?: Live<boolean | undefined>;
 }
 
 /**
  * A chip's look (the gallery's `Chip`): one chosen value as a label of its own, on the theme's
- * `chip` finish (its fill, edge and shadow — a raised label in the NSH Gallery theme, a flat grey one
- * in shadcn, glass in Solid Glass), its corners half its height. `lead` goes at the start, the
- * remove button at the end: a round target lit under the pointer, `removeGlyph`'s muted mark at its
- * middle (a terminal's mark is text, so that part draws it). A disabled chip dims to half.
+ * `raised` finish (without backdrop blur/glass so inline pills stay crisp inside a field), its
+ * corners half its height. `lead` goes at the start, the remove button at the end: a round target
+ * lit under the pointer, `removeGlyph`'s muted mark at its middle (a terminal's mark is text, so
+ * that part draws it). A disabled chip dims to half.
  */
 export function chipLook(o?: ChipLookOptions) {
   const height = pointer ? 26 : 32;
@@ -197,16 +204,26 @@ export function chipLook(o?: ChipLookOptions) {
   const remove = height - (pointer ? 8 : 4);
   return {
     get style(): ViewStyle {
+      const raised = surface("raised").style;
+      const { backdropFilter: _bf, glassEffect: _ge, glassTintColor: _gt, ...chipFace } = raised;
+      const borderWidth = terminal
+        ? stroke.control
+        : surfaceBorderWidth(
+            typeof raised.borderColor === "string" ? raised.borderColor : undefined,
+          );
+      const hasLead = !!read(o?.hasLead);
+      const removable = read(o?.removable) ?? true;
+      const textPad = pointer ? 9 : 11;
       return {
         flexDirection: "row",
         alignItems: "center",
         gap: 6,
         height: terminal ? undefined : height,
-        paddingLeft: 3,
-        paddingRight: 3,
+        paddingStart: terminal ? 0 : hasLead ? 3 : textPad,
+        paddingEnd: terminal ? 0 : removable ? 3 : textPad,
         borderRadius: terminal ? 0 : height / 2,
-        borderWidth: stroke.control,
-        ...surface("raised").style,
+        ...chipFace,
+        borderWidth,
         opacity: read(o?.disabled) ? feedback.disabled.contentOpacity : 1,
       };
     },
@@ -241,10 +258,10 @@ export function chipsLook(): ViewStyle {
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
-    gap: 6,
+    gap: 5,
     flexShrink: 1,
     minWidth: 0,
-    paddingVertical: 3,
+    paddingVertical: 4,
     paddingEnd: 6,
   };
 }
@@ -557,7 +574,12 @@ export function ComboboxChips(props: ComboboxChipsProps) {
 export function ComboboxChip(props: ComboboxChipProps) {
   const ctx = useCombobox();
   const title = props.children ?? titleOf(ctx, props.value);
-  const look = chipLook({ disabled: () => ctx.root.disabled });
+  const showRemove = props.showRemove ?? true;
+  const look = chipLook({
+    disabled: () => ctx.root.disabled,
+    hasLead: () => props.lead != null,
+    removable: () => showRemove,
+  });
   const pop = terminal || reduceMotion() ? null : createMotion({ enter: "popIn", duration: 320 });
   cleanup(() => pop?.stop());
   const remove = () => ctx.change({ value: ctx.value().filter((value) => value !== props.value) });
@@ -565,7 +587,7 @@ export function ComboboxChip(props: ComboboxChipProps) {
     <View style={[look.style, pop?.style ?? null, props.style ?? null]}>
       {props.lead ?? null}
       <Text style={look.textStyle}>{title}</Text>
-      {(props.showRemove ?? true) ? (
+      {showRemove ? (
         <BaseButton
           accessibilityLabel={`Remove ${title}`}
           disabled={ctx.root.disabled}
@@ -619,7 +641,10 @@ export function ComboboxContent(props: ComboboxContentProps) {
     <View>
       {props.children}
       {() => {
-        const look = comboboxLook(ctx.open, { filled: ctx.filled });
+        const look = comboboxLook(ctx.open, {
+          filled: ctx.filled,
+          hasChips: () => Boolean(ctx.chips.get()) && ctx.value().length > 0,
+        });
         const chrome = listboxProps({
           get minWidth() {
             return props.minWidth;
