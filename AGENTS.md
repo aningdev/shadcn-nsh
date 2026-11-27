@@ -12,22 +12,22 @@
 
 ## 目录
 
-| 路径                         | 内容                                                                                                                    |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `docs/`                      | 四篇：架构与词汇、组件写法、主题契约、主题值表                                                                          |
-| `packages/theme`             | 真源 `themes/<id>/index.ts`；`tokens:build` 导出 `theme.json`、`{light,dark}.tokens.json`、`DESIGN.md`；`theme.ts` 读取 |
-| `packages/ui`                | 组件（look + 外壳）。`lib/` 为共享模块                                                                                  |
-| `apps/website/demos`         | 验收演示、演示适配层 `stage.tsx`                                                                                        |
-| `apps/website/content/docs`  | 文档站页面。路由在 `apps/website/src/routes/`                                                                           |
-| `apps/showcase`              | 展示应用。首页 “See it running” 嵌入其打包产物                                                                          |
-| `registry.json` → `public/r` | shadcn registry 产物                                                                                                    |
-| `apps/gallery`               | 原生行为测试与冒烟页                                                                                                    |
-| `packages/cli`               | `shadcn-nsh` CLI                                                                                                        |
+| 路径                         | 内容                                                                                                                   |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `docs/`                      | 四篇：架构与词汇、组件写法、主题契约、主题值表                                                                         |
+| `packages/theme`             | 真源 `themes/<id>/index.ts`；`theme:build` 导出 `theme.json`、`{light,dark}.tokens.json`、`DESIGN.md`；`theme.ts` 读取 |
+| `packages/ui`                | 组件（look + 外壳）。`lib/` 为共享模块                                                                                 |
+| `apps/website/demos`         | 验收演示、演示适配层 `stage.tsx`                                                                                       |
+| `apps/website/content/docs`  | 文档站页面。路由在 `apps/website/src/routes/`                                                                          |
+| `apps/showcase`              | 展示应用。首页 “See it running” 嵌入其打包产物                                                                         |
+| `registry.json` → `public/r` | shadcn registry 产物                                                                                                   |
+| `apps/gallery`               | 原生行为测试与冒烟页                                                                                                   |
+| `packages/cli`               | `shadcn-nsh` CLI                                                                                                       |
 
 ## 分层
 
 ```
-packages/theme   themes/<id>/index.ts --[tokens:build]--> theme.json + {light,dark}.tokens.json + DESIGN.md
+packages/theme   themes/<id>/index.ts --[theme:build]--> theme.json + {light,dark}.tokens.json + DESIGN.md
 packages/ui/lib  没有所属控件的共享部分
 packages/ui/<id>.tsx  一个组件 = look + 外壳
 apps/website/demos、docs
@@ -36,7 +36,7 @@ apps/website/demos、docs
 registry.json → public/r → shadcn-nsh add
 ```
 
-依赖向下：本库 → `nsh/base` → `nsh`。六套主题的真源是 `packages/theme/themes/<id>/index.ts`。`bun run tokens:build` 单向导出。运行时读 `theme.ts`。平台主题的依据见各自主题目录的 `README.md`。
+依赖向下：本库 → `nsh/base` → `nsh`。六套主题的真源是 `packages/theme/themes/<id>/index.ts`。`bun run theme:build` 单向导出。运行时读 `theme.ts`。平台主题的依据见各自主题目录的 `README.md`。
 
 ## 工作约定
 
@@ -68,7 +68,6 @@ bun run test:unit
 bun run test:gallery
 nsh test apps/showcase
 bun run test:install
-bun run shots
 nsh run apps/website/demos/button.tsx
 ```
 

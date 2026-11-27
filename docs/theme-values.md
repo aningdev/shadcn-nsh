@@ -1,6 +1,6 @@
 # 每套主题解析后的值
 
-> 本页由 `bun run docs:semantics` 生成，请勿手改：修改 `packages/theme/themes/` 源码或生成器 `scripts/theme/semantics-table.ts` 后重新生成。`bun run check` 中的 `docs:semantics --check` 会校验一致性。
+> 本页由 `bun run docs:semantics` 生成，请勿手改：修改 `packages/theme/themes/` 源码或生成器 `scripts/theme/semantics.ts` 后重新生成。`bun run check:theme` 会校验一致性。
 
 本页列出 Theme v5 下五套基准主题（NSH Gallery、shadcn/ui、Apple、Material、WinUI 3）解析后的语义字段。架构与角色见 [`theme.md`](theme.md)，组件怎么读这些值见 [`component-authoring.md`](component-authoring.md)。
 

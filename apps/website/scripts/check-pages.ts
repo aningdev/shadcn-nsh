@@ -26,7 +26,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { catalog } from "../../../scripts/catalog";
+import { catalog } from "../../../scripts/registry/catalog";
 import { PALETTES } from "../demos/palettes";
 import { components } from "../src/lib/components.generated";
 import { NSH_ELEMENTS, SHADCN_UI, type OfficialEntry } from "../src/lib/official";

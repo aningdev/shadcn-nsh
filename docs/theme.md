@@ -2,7 +2,7 @@
 
 Theme v5 的现行契约。真源是 `packages/theme/themes/<id>/index.ts`：`nsh-gallery` 写出完整的 `base` `ThemeSpec`，`shadcn`、`solid-glass`、`apple`、`material`、`winui` 用 `defineTheme({ extends: base })` 只写差异。`themes/native` 的 `nativeTheme()` 在 `platform.os` 为 `ios` / `macos` 时返回 Apple，`android` 返回 Material，`windows` 返回 WinUI 3，其余返回 NSH Gallery。
 
-`bun run tokens:build` 从解析后的 spec 单向导出三样东西，运行时只读前两样里的 `theme.json` 与 TypeScript spec：
+`bun run theme:build` 从解析后的 spec 单向导出三样东西，运行时只读前两样里的 `theme.json` 与 TypeScript spec：
 
 | 产物                       | 用途                                     |
 | -------------------------- | ---------------------------------------- |
@@ -91,11 +91,11 @@ Theme v5 的现行契约。真源是 `packages/theme/themes/<id>/index.ts`：`ns
 改 `themes/<id>/index.ts`，然后：
 
 ```sh
-bun run tokens:build          # 导出 theme.json、DTCG、DESIGN.md
-bun run check:theme           # theme-lint：键、分档、不变量
-bun run theme:contrast        # WCAG 2 AA 与填充分离
+bun run theme:build           # 导出 theme.json、DTCG、DESIGN.md
+bun run check:theme           # build --check + lint + contrast + semantics --check
+bun run theme:contrast        # 单独跑 WCAG 2 AA 与填充分离
 bun run docs:semantics        # 重写 docs/theme-values.md
 bun run theme:diff            # 与 origin/main 比解析后的值；--same 不许已有键变
 ```
 
-只改颜色时，`tokens:build --check`、`check:theme`、`theme:contrast`、`theme:diff` 足够。改了尺寸、材质、状态或动效，打开受影响的演示看结果。契约（`schema.ts`、`theme.ts`、`themes/nsh-gallery/index.ts`、导出脚本）或键的增删要先跑 `theme:diff`，再看每一套主题下的演示。`theme:diff` 把每个改动键分成颜色、其余值、契约（键的增删）。
+只改颜色时，`check:theme`、`theme:diff` 足够。改了尺寸、材质、状态或动效，打开受影响的演示看结果。契约（`schema.ts`、`theme.ts`、`themes/nsh-gallery/index.ts`、导出脚本）或键的增删要先跑 `theme:diff`，再看每一套主题下的演示。`theme:diff` 把每个改动键分成颜色、其余值、契约（键的增删）。

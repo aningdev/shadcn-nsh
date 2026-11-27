@@ -180,7 +180,7 @@ export function PopIn(props: {
   children: JSX.Element;
 }) {
   const m = createMotion({ enter: popIn(props.side) });
-  // Read once (`check:children`); the branch below reads `surface("overlay")` on theme switches.
+  // Read once (`check:ui`); the branch below reads `surface("overlay")` on theme switches.
   const kids = props.children;
   return (
     <>

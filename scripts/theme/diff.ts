@@ -7,7 +7,12 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { BUILD_ROOT_THEME, tokenKind } from "./tokens";
+import { BUILD_ROOT_THEME } from "../../packages/theme/themes";
+
+function tokenKind(value: string): "color" | "dimension" {
+  if (/^\d+(?:\.\d+)?(?:px|rem)$/.test(value.trim())) return "dimension";
+  return "color";
+}
 
 const repo = path.resolve(import.meta.dir, "../..");
 
@@ -60,8 +65,9 @@ function contractWhy(file: string): string | undefined {
   if (file === "packages/theme/themes/nsh-gallery/index.ts") {
     return "the base theme spec";
   }
-  if (file.startsWith("scripts/tokens/")) return "the token exporter";
-  if (file === "scripts/theme/tokens.ts") return "the token helper";
+  if (file === "scripts/theme/build.ts" || file === "scripts/theme/export.ts") {
+    return "the theme exporter";
+  }
   return undefined;
 }
 

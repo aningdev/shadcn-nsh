@@ -209,7 +209,7 @@ export interface ThemedSurfaceProps {
  * plain view, including in the terminal and wherever shaders are unavailable.
  */
 export function ThemedSurface(props: ThemedSurfaceProps) {
-  // Read once in the body (`check:children`); reactive render reads `surface(role)` on theme switches.
+  // Read once in the body (`check:ui`); reactive render reads `surface(role)` on theme switches.
   const kids = props.children;
   return (
     <>

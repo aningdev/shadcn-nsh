@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { catalog } from "../../../scripts/catalog";
+import { catalog } from "../../../scripts/registry/catalog";
 import type { ComponentDoc } from "../src/lib/components";
 import { KINDS, kindOf } from "../src/lib/kinds";
 import { nshElementOf, shadcnOf } from "../src/lib/official";

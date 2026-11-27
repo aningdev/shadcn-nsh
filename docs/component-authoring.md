@@ -87,7 +87,7 @@ bun run new:component <id> --view [--family]
 
 照片在 `photos.ts` 与 `avatar-data.ts`，只供演示。页面先 `Image.prefetch`，全部到位后再画。
 
-**窄屏。** `bun run check:narrow` 在 320 × 2000 下截每页首帧到 `shots/narrow/<id>.png`，页面右边 16 点必须是空白。写演示时：固定宽度同时写 `maxWidth: "100%"`；行里的文字列写 `flexShrink: 1, minWidth: 0`；一行放不下的块用 `flexWrap: "wrap"` 或 `axis="block"`。占满整屏、自带边距的演示登记在 `scripts/narrow-check.ts` 的 `FILLS_THE_SCREEN`，并写明理由。
+**窄屏。** `bun run check:narrow` 在 320 × 2000 下截每页首帧到 `shots/narrow/<id>.png`，页面右边 16 点必须是空白。写演示时：固定宽度同时写 `maxWidth: "100%"`；行里的文字列写 `flexShrink: 1, minWidth: 0`；一行放不下的块用 `flexWrap: "wrap"` 或 `axis="block"`。占满整屏、自带边距的演示登记在 `scripts/lint/narrow.ts` 的 `FILLS_THE_SCREEN`，并写明理由。
 
 照片类演示（`avatar`、`carousel`、`image-viewer`、`pressable`、`text-view`）用活网络打开，等图片到位再截。
 
@@ -117,7 +117,7 @@ bun run check
 
 - 改了演示布局：`bun run check:narrow`
 - 改了行为：`bun run test:gallery`；改了展示壳：`nsh test apps/showcase`
-- 改了主题数据：`bun run tokens:build`，然后 `theme:diff` 与 `theme:contrast`（颜色变化不另画截图；尺寸、材质、状态、动效看受影响的演示）
+- 改了主题数据：`bun run theme:build`，然后 `check:theme` 与 `theme:diff`（颜色变化不另画截图；尺寸、材质、状态、动效看受影响的演示）
 - 改了 `registry.json` 或组件文件：`bun run registry:build`，把 `public/r` 一起提交
 - 改了 registry 条目或 CLI：`bun run test:install`
 

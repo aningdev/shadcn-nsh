@@ -45,12 +45,7 @@ bun run prepare:types
 ```text
 vp check --fix
 bun run catalog --check
-bun run tokens:build --check
 bun run check:theme
-bun run theme:contrast
-bun run docs:semantics --check
-bun run check:children
-bun run check:rtl
 bun run check:ui
 bun run registry:build --check
 bun run check:demos
@@ -64,7 +59,7 @@ bun run check:docs
 按改动再补：
 
 - 改了演示布局 → `bun run check:narrow`。
-- 改了主题数据 → `bun run theme:diff`。只改颜色时，`tokens:build --check`、`check:theme`、`theme:contrast`、`theme:diff` 足够。尺寸、材质、状态或动效要看受影响的演示。平台表达不了的取舍写进 `packages/theme/themes/<id>/README.md`。契约见 [`docs/theme.md`](docs/theme.md)。
+- 改了主题数据 → `bun run theme:diff`。只改颜色时，`bun run check:theme` 与 `bun run theme:diff` 足够。尺寸、材质、状态或动效要看受影响的演示。平台表达不了的取舍写进 `packages/theme/themes/<id>/README.md`。契约见 [`docs/theme.md`](docs/theme.md)。
 - 改了行为 → `bun run test:gallery`。改了展示壳 → `nsh test apps/showcase`。
 - 改了 registry 条目或 CLI → `bun run test:install`。
 - 改了 `registry.json` 或组件文件 → `bun run registry:build`，`public/r` 一起提交。

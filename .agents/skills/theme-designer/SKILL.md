@@ -92,9 +92,8 @@ Motion springs: `motion.spring` plus optional named tiers `motion.springs.{snapp
 - Body text and icons meet WCAG 2.2 AA (`4.5:1`). A selected or hovered fill separates from `background` / `card` / `popover` by OKLCH lightness `>= 0.015`. A platform exception is a `meta.contrastWaivers` entry.
 
 ```sh
-bun run tokens:build
+bun run theme:build
 bun run check:theme
-bun run theme:contrast
 bun run test:unit
 ```
 

@@ -1,5 +1,5 @@
 // The narrow check: every demo opened on a 320-point phone (an iPhone SE's width), its first frame
-// taken; `scripts/narrow-check.ts` then reads the page's right margin, which must be bare page.
+// taken; `scripts/lint/narrow.ts` then reads the page's right margin, which must be bare page.
 //
 //   bun run check:narrow [--only <id,...>]
 //

@@ -49,7 +49,7 @@ selectTheme(nativeTheme());
 
 `theme.json` is the layer NSH and Tailwind read: `cssVars.theme` (fonts, `radius`, `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`) and the same color roles in `cssVars.light` and `cssVars.dark`. Edit keys, and keep the set. Both appearances need the same keys. Components refer to roles by name.
 
-In this repository, `bun run tokens:build` exports three artifacts from the resolved spec. They are generated. Change the TypeScript spec, then run the build. Do not hand-edit the exports and expect the spec to follow.
+In this repository, `bun run theme:build` exports three artifacts from the resolved spec. They are generated. Change the TypeScript spec, then run the build. Do not hand-edit the exports and expect the spec to follow.
 
 | Artifact                                | What it is                                                                                        |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------- |

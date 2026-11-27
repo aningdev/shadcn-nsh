@@ -7,8 +7,8 @@ const ignoreVendored = [".agents/**"];
 // TanStack Router writes this file on every build in its own style and asks to
 // be left out of formatters; formatting it would dirty the tree after a build.
 // The compiled runtime files, per-appearance DTCG files, and per-theme DESIGN.md docs
-// are tokens:build output in their own style (tokens:build --check owns them). The values page is
-// scripts/theme/semantics-table.ts output (docs:semantics --check owns it): one cell per field,
+// are theme:build output in their own style (check:theme owns them). The values page is
+// scripts/theme/semantics.ts output (check:theme owns it): one cell per field,
 // wrapping it would undo the table.
 const ignoreFmt = [
   ...ignoreVendored,

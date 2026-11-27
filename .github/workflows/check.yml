@@ -80,25 +80,10 @@ jobs:
       - name: Catalog
         run: bun run catalog --check
 
-      - name: Tokens build check
-        run: bun run tokens:build --check
-
-      - name: Theme roles
+      - name: Theme checks
         run: bun run check:theme
 
-      - name: Theme contrast
-        run: bun run theme:contrast
-
-      - name: Theme semantics
-        run: bun run docs:semantics --check
-
-      - name: Children read once
-        run: bun run check:children
-
-      - name: Right-to-left sides
-        run: bun run check:rtl
-
-      - name: UI rules
+      - name: UI checks
         run: bun run check:ui
 
       - name: Registry check

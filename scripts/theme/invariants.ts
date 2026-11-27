@@ -1,5 +1,5 @@
 /**
- * Theme v5 structural, pointer/touch ergonomic, and physics motion invariants (`scripts/theme-lint.ts`).
+ * Theme v5 structural, pointer/touch ergonomic, and physics motion invariants (`scripts/theme/check.ts`).
  */
 import { resolveMaterial } from "../../packages/theme/materials";
 import {
@@ -12,7 +12,7 @@ import {
   type TieredOrFlat,
   type TypeRole,
 } from "../../packages/theme/schema";
-import { resolveColour, varsOf } from "./css-colour";
+import { resolveColour, varsOf } from "./color";
 
 export const ALLOWED_SPACING = new Set([4, 8, 12, 16, 24, 32]);
 

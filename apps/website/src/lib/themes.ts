@@ -1,7 +1,7 @@
 /**
  * The themes the docs site shows: each palette of the demos (`demos/palettes.ts`) with the theme it
  * draws — `packages/theme/themes/<id>/index.ts` as `defineTheme()` compiled it (`ALL_THEMES`) and the
- * `theme.json` that `bun run tokens:build` exports from the same spec. `ALL_THEMES` is imported
+ * `theme.json` that `bun run theme:build` exports from the same spec. `ALL_THEMES` is imported
  * once, eagerly, so a theme page is drawn from the same data at build time and in the browser — no
  * `node:fs`, and the page prerenders like any other. `check:pages` holds the registry items and the
  * theme pages to the same list, so a theme is never written twice here.

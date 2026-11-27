@@ -1,5 +1,5 @@
 /**
- * Package each catalog demo (`apps/website/demos/<id>.tsx`, from `scripts/catalog.ts`), the site's
+ * Package each catalog demo (`apps/website/demos/<id>.tsx`, from `scripts/registry/catalog.ts`), the site's
  * own page demos (`PAGE_DEMOS`: the themes page's showcase) and the showcase app
  * (`apps/showcase/App.tsx`, framed on the home page) with `nsh package --target web` into
  * apps/website/public/<name>/ (flattened index.html).
@@ -17,7 +17,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { catalog, PAGE_DEMOS } from "../../../scripts/catalog";
+import { catalog, PAGE_DEMOS } from "../../../scripts/registry/catalog";
 import {
   ensureWebRuntime,
   PACKAGE_CONCURRENCY,

@@ -93,7 +93,7 @@ describe("contractSources and contractMoves", () => {
       "packages/theme/theme.ts",
       "packages/theme/materials.ts",
       "packages/theme/themes/nsh-gallery/index.ts",
-      "scripts/tokens/export.ts",
+      "scripts/theme/export.ts",
       "packages/theme/themes/apple/index.ts",
     ]);
     expect(hits.map((h) => h.file)).toEqual([
@@ -101,7 +101,7 @@ describe("contractSources and contractMoves", () => {
       "packages/theme/theme.ts",
       "packages/theme/materials.ts",
       "packages/theme/themes/nsh-gallery/index.ts",
-      "scripts/tokens/export.ts",
+      "scripts/theme/export.ts",
     ]);
   });
 
