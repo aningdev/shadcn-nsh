@@ -9,10 +9,11 @@ import {
   animate,
   colors,
   surface,
-  control,
   focusRing,
   hovered,
   motion,
+  rounded,
+  shape,
   terminal,
 } from "@shadcn-nsh/theme";
 import {
@@ -329,8 +330,12 @@ function Formatting() {
 
 function Views() {
   const view = signal<"grid" | "list">("grid");
-  const seg = pointer ? 30 : 38;
+  const seg = pointer ? 32 : 40;
   const inset = 2;
+  const channel = () => surface("channel").style;
+  const plate = () => surface("plate").style;
+  const borderW = (s: ViewStyle) =>
+    s.borderColor === undefined || s.borderColor === "transparent" ? 0 : 1;
   const x = createAnimatedValue(0);
   effect(() => {
     const to = view() === "grid" ? 0 : seg;
@@ -348,12 +353,23 @@ function Views() {
       accessibilityLabel={label}
       onChange={({ pressed }) => choose(value, pressed)}
       style={{
+        minWidth: 0,
         width: terminal ? undefined : seg,
         height: terminal ? undefined : seg - 2 * inset,
+        paddingHorizontal: 0,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: 7,
+        backgroundColor: "transparent",
+        borderWidth: 0,
+        borderColor: "transparent",
+        boxShadow: "none",
+        ...rounded(shape.control, inset),
         ...transition(),
+      }}
+      pressedStyle={{
+        backgroundColor: "transparent",
+        borderColor: "transparent",
+        boxShadow: "none",
       }}
       hoverStyle={view() === value ? undefined : hovered()}
       activeStyle={{ transform: [{ scale: 0.9 }] }}
@@ -431,13 +447,11 @@ function Views() {
         style={{
           flexDirection: "row",
           alignSelf: "flex-start",
+          gap: 0,
           padding: inset,
-          borderRadius: 9,
-          borderCurve: "continuous",
-          borderWidth: 1,
-          borderColor: colors.border,
-          backgroundColor: colors.muted,
-          boxShadow: surface("inset").style.boxShadow,
+          ...rounded(shape.control),
+          ...channel(),
+          borderWidth: borderW(channel()),
         }}
       >
         {/* The thumb, in points: a terminal's Cells show the selected toggle as its own band instead. */}
@@ -450,10 +464,10 @@ function Views() {
               bottom: inset,
               left: inset,
               width: seg,
-              borderRadius: 7,
-              borderCurve: "continuous",
-              borderWidth: 1,
-              ...control("switch").knobStyle(false),
+              ...rounded(shape.control, inset),
+              borderWidth: borderW(plate()),
+              borderColor: "transparent",
+              ...plate(),
               transform: [{ translateX: x }],
             }}
           />

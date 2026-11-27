@@ -349,6 +349,7 @@ function Palette() {
 function MoveTo() {
   const folder = signal("projects/nsh");
   const searchable = signal(true);
+  let aligned = false;
   return (
     <Card
       title="Move to"
@@ -358,6 +359,12 @@ function MoveTo() {
       }
     >
       <Command
+        ref={(r) => {
+          if (!aligned) {
+            aligned = true;
+            r.highlight(folder());
+          }
+        }}
         items={FOLDERS.map((f) => ({
           id: f.id,
           label: f.label,

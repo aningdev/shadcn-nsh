@@ -231,7 +231,10 @@ function over<T>(under: T, top: StyleProp<T> | undefined): StyleProp<T> {
 
 /** A command palette: search field over virtualized, natively filtered rows. */
 export function Command(props: CommandProps) {
+  let cmd: CommandRef | null = null;
   const [, rest] = split(props, [
+    "ref",
+    "onSelect",
     "class",
     "searchBarClass",
     "searchBarStyle",
@@ -255,6 +258,14 @@ export function Command(props: CommandProps) {
   return (
     <BaseCommand
       {...rest}
+      ref={(r) => {
+        cmd = r;
+        if (typeof props.ref === "function") props.ref(r);
+      }}
+      onSelect={(event) => {
+        cmd?.highlight(event.id);
+        props.onSelect?.(event);
+      }}
       class={joinClass(commandClasses.root, props.class)}
       searchBarClass={joinClass(commandClasses.searchBar, props.searchBarClass)}
       searchBarStyle={over(commandSearchBarStyle(), props.searchBarStyle)}

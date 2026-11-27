@@ -36,3 +36,12 @@ test("Escape clears a Command query, then cancels", async () => {
   await app.wait(50);
   expect(has(app.texts(), "cancel=1")).toBe(true);
 });
+
+test("pressing a Command row moves the highlight to the selected row", async () => {
+  const app = await open("./command.fixture.tsx", { platform: "macos", reducedMotion: true });
+  await app.waitFor("text:hi=new");
+  await app.press("text:Toggle Theme");
+  await app.wait(50);
+  expect(has(app.texts(), "chosen=theme")).toBe(true);
+  expect(has(app.texts(), "hi=theme")).toBe(true);
+});

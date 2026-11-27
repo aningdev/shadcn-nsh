@@ -3,6 +3,7 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
+  colors,
   feedback,
   motion as themeMotion,
   press,
@@ -184,7 +185,13 @@ export function Roll(props: { value: number; style?: StyleProp<TextStyle>; child
     });
   });
   return (
-    <Text style={[props.style ?? null, { transform: motion.transform, opacity: motion.opacity }]}>
+    <Text
+      style={[
+        { color: colors.foreground },
+        props.style ?? null,
+        { transform: motion.transform, opacity: motion.opacity },
+      ]}
+    >
       {props.children}
     </Text>
   );
