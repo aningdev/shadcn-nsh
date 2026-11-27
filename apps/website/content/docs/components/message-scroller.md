@@ -325,12 +325,12 @@ the list — the last one loads older turns) and the child that renders a row; a
 `sm`). `alignment="bottom"` pins a short conversation to the bottom of the viewport. `indicator`
 is a mark at the button's top-end corner (an arrival dot); the arrow stays.
 
-| Part                      | Props                                                                       | Description                                                             |
-| ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `MessageScroller`         | `initialScroll`                                                             | Renders `View` (`messageScrollerLook().root`)                           |
-| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `alignment`, `onLoadMoreAtStart`, `ref` | Renders `List` (`messageScrollerLook().viewport`); `ref` is a `ListRef` |
-| `MessageScrollerItem`     |                                                                             | Renders `View` (`messageScrollerLook().item`)                           |
-| `MessageScrollerButton`   | `direction`, `variant`, `size`, `indicator`                                 | Renders `Button` (`messageScrollerLook().slot(direction)`)              |
+| Part                      | Props                                                                       | Description                                                       |
+| ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `MessageScroller`         | `initialScroll`                                                             | Renders `View`: a column that fills its parent and clips          |
+| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `alignment`, `onLoadMoreAtStart`, `ref` | Renders `List`; `ref` is a `ListRef`                              |
+| `MessageScrollerItem`     |                                                                             | Renders `View`: the box one turn sits in                          |
+| `MessageScrollerButton`   | `direction`, `variant`, `size`, `indicator`                                 | Renders `Button`, floating 16 points from the edge it points past |
 
 | Prop            | On                        | Type                                                  | Default       |
 | --------------- | ------------------------- | ----------------------------------------------------- | ------------- |
@@ -355,5 +355,4 @@ is a mark at the button's top-end corner (an arrival dot); the arrow stays.
 | `animated`     | `boolean`                      | `true`  |
 
 The frame fills its parent, clips what is in it, and holds its viewport and its buttons; the list's
-content is 32 points apart; a button floats 16 points from its edge. `messageScrollerLook()` is
-exported for a frame an app draws itself.
+content is 32 points apart; a button floats 16 points from its edge.

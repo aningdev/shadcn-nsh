@@ -160,13 +160,13 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Bub
 [`nsh` Text](https://nsh.dev/elements/text), and `BubbleContent` draws a string child as a
 `BubbleText`. Style props go over the look's.
 
-| Part              | Props              | Description                                                                                                                           |
-| ----------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `BubbleGroup`     | —                  | Consecutive bubbles from one sender, 8 points apart: `bubbleLook().group`.                                                            |
-| `Bubble`          | `variant`, `align` | One turn's frame, as wide as what it holds up to 80% of its column: `.root(variant, align)`.                                          |
-| `BubbleContent`   | `children`         | The frame and the turn, a string drawn as `BubbleText`: `bubbleLook().content(variant)`.                                              |
-| `BubbleText`      | —                  | A paragraph in the turn's type and the variant's ink: `bubbleLook().text(variant)`.                                                   |
-| `BubbleReactions` | `side`, `align`    | The pill hung three quarters of its height off the bubble's edge: `.reactions(side, align)`; the bubble keeps `.reactionsRoom(side)`. |
+| Part              | Props              | Description                                                                                                |
+| ----------------- | ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `BubbleGroup`     | —                  | Consecutive bubbles from one sender, 8 points apart.                                                       |
+| `Bubble`          | `variant`, `align` | One turn's frame, as wide as what it holds up to 80% of its column.                                        |
+| `BubbleContent`   | `children`         | The frame and the turn, a string drawn as `BubbleText`.                                                    |
+| `BubbleText`      | —                  | A paragraph in the turn's type and the variant's ink.                                                      |
+| `BubbleReactions` | `side`, `align`    | The pill hung three quarters of its height off the bubble's edge; the bubble keeps that room on that side. |
 
 | Prop       | On                | Type                                                                                       | Default   |
 | ---------- | ----------------- | ------------------------------------------------------------------------------------------ | --------- |
@@ -181,5 +181,4 @@ The frame is `shape.container` (12 points) with 12 points of room either side an
 the turn's type is the body's size (13 points with a pointer, 15 on a touch screen) with a step of
 leading, in the ink the fill carries — `primary-foreground` on `default`, the page's text color on
 the neutral fills, `destructive` on `destructive`. Reactions are 6 points either side, 3 above and
-below, 4 apart, ringed 3 points in the card's color. `bubbleLook()` is exported for a frame an app
-draws itself.
+below, 4 apart, ringed 3 points in the card's color.

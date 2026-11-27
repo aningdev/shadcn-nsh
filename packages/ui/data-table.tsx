@@ -11,6 +11,36 @@ import {
 
 import { mergeClasses } from "./lib/utils";
 
+/**
+ * `nsh/base` DataTable with `dataTableClasses` by default. Sorting, selection,
+ * resize, and column moves stay in base.
+ */
+export type DataTableProps<T = unknown> = BaseDataTableProps<T>;
+
+/** The classes of a table's parts (`dataTableClasses`), from `nsh/base`. */
+export type { DataTableClasses };
+
+/**
+ * A table that scrolls both ways over any number of rows and columns. Its rows stay 32 points in
+ * both idioms (the table has no size axis): nine of a phone's fit, where six finger-sized rows
+ * would.
+ */
+export function DataTable<T>(props: DataTableProps<T>) {
+  const [, rest] = split(props, ["classes", "class", "classList", "style"]);
+  return (
+    <BaseDataTable
+      {...rest}
+      classes={mergeClasses(dataTableClasses, props.classes)}
+      class={props.class}
+      classList={props.classList}
+      style={props.style}
+    />
+  );
+}
+
+// Shared data-table primitives
+// `table`, the showcase and gallery read `dataTableClasses`.
+
 /** The chosen column's arrow: both directions print it at the same strength, so only the arrow's turn says which. */
 const sortChosen = "text-muted-foreground opacity-60 selected:text-foreground selected:opacity-100";
 
@@ -45,22 +75,3 @@ export const dataTableClasses: DataTableClasses = {
   rowHeader: "text-muted-foreground",
   fixedEdge: "bg-border",
 };
-
-/**
- * `nsh/base` DataTable with `dataTableClasses` by default. Sorting, selection,
- * resize, and column moves stay in base.
- */
-export type DataTableProps<T = unknown> = BaseDataTableProps<T>;
-
-/**
- * A table that scrolls both ways over any number of rows and columns. Its rows stay 32 points in
- * both idioms (the table has no size axis): nine of a phone's fit, where six finger-sized rows
- * would.
- */
-export function DataTable<T>(props: DataTableProps<T>) {
-  const [, rest] = split(props, ["classes"]);
-  return <BaseDataTable {...rest} classes={mergeClasses(dataTableClasses, props.classes)} />;
-}
-
-/** The classes of a table's parts (`dataTableClasses`), from `nsh/base`. */
-export type { DataTableClasses };
