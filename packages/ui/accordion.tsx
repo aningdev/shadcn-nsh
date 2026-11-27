@@ -2,7 +2,7 @@
 // at the top, and the parts that wear it below.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors } from "@shadcn-nsh/theme";
+import { colors, motion } from "@shadcn-nsh/theme";
 import { ChevronDown, ChevronRight } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { split, View } from "nsh";
@@ -263,9 +263,23 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
 
 /** Revealed content with `disclosurePanel` padding inside. */
 export function AccordionPanel(props: AccordionPanelProps) {
-  const [, rest] = split(props, ["style", "children", "reveal", "start", "end", "gap"]);
+  const [, rest] = split(props, [
+    "style",
+    "children",
+    "reveal",
+    "revealSpring",
+    "start",
+    "end",
+    "gap",
+  ]);
+  const revealSpring = props.revealSpring ?? motion.revealSpring;
   return (
-    <BaseAccordionPanel {...rest} reveal={props.reveal ?? true} style={props.style}>
+    <BaseAccordionPanel
+      {...rest}
+      reveal={props.reveal ?? true}
+      {...(revealSpring !== undefined ? { revealSpring } : {})}
+      style={props.style}
+    >
       <View style={disclosurePanel({ start: props.start, end: props.end, gap: props.gap })}>
         {props.children}
       </View>

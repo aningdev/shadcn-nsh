@@ -83,7 +83,7 @@ test("built-in themes expose their surface effect and theme-switch shader", asyn
   expect(app.texts()).toContain("live");
 
   await app.press("text:Apple");
-  expect(find(app.texts(), "fx=")).toBe("i=0.35;off=4;shade=true;bd=true;ct=true");
+  expect(find(app.texts(), "fx=")).toBe("i=0.5;off=6;shade=true;bd=true;ct=true");
   expect(find(app.texts(), "sw=")).toBe("dissolve:shader");
   expect(app.texts()).toContain("live");
 

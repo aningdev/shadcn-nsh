@@ -50,6 +50,12 @@ export function tooltipLook(o?: TooltipLookOptions) {
       get backdropFilter() {
         return (surface("inverse").style as { backdropFilter?: string }).backdropFilter;
       },
+      get glassEffect() {
+        return surface("inverse").style.glassEffect;
+      },
+      get glassTintColor() {
+        return surface("inverse").style.glassTintColor;
+      },
     } satisfies ViewStyle,
   };
 }

@@ -300,7 +300,7 @@ export const SECTIONS: Section[] = [
   {
     id: "motion",
     field: "字段",
-    note: "三档过渡时长与缓动、可选弹性曲线（`spring`），以及入场预设。",
+    note: "过渡时长与缓动、默认弹簧与 snappy / smooth / bouncy 分档，以及入场、指示器、展开和按压预设。",
     rows: (t) => walkCells(t.spec.motion, "motion"),
   },
   {
@@ -395,16 +395,30 @@ const DESCRIPTIONS: Record<string, string> = {
   "motion.spring.stiffness": "物理弹性刚度",
   "motion.spring.damping": "物理弹性阻尼",
   "motion.spring.mass": "物理弹性质量",
+  "motion.springs.snappy.stiffness": "灵敏弹簧刚度",
+  "motion.springs.snappy.damping": "灵敏弹簧阻尼",
+  "motion.springs.snappy.mass": "灵敏弹簧质量",
+  "motion.springs.smooth.stiffness": "顺滑弹簧刚度",
+  "motion.springs.smooth.damping": "顺滑弹簧阻尼",
+  "motion.springs.smooth.mass": "顺滑弹簧质量",
+  "motion.springs.bouncy.stiffness": "回弹弹簧刚度",
+  "motion.springs.bouncy.damping": "回弹弹簧阻尼",
+  "motion.springs.bouncy.mass": "回弹弹簧质量",
   "motion.presets.popoverEnter.fromScale": "弹出层入场初始缩放",
   "motion.presets.popoverEnter.fromY": "弹出层入场初始 Y 偏移",
   "motion.presets.popoverEnter.timing": "弹出层入场使用的时序档位",
-  "motion.presets.popoverEnter.spring": "弹出层入场是否启用主题物理弹簧",
+  "motion.presets.popoverEnter.spring":
+    "弹出层入场弹簧：true 用默认弹簧，或 snappy / smooth / bouncy",
   "motion.presets.dialogEnter.fromScale": "对话框入场初始缩放",
   "motion.presets.dialogEnter.fromY": "对话框入场初始 Y 偏移",
   "motion.presets.dialogEnter.timing": "对话框入场使用的时序档位",
-  "motion.presets.dialogEnter.spring": "对话框入场是否启用主题物理弹簧",
+  "motion.presets.dialogEnter.spring":
+    "对话框入场弹簧：true 用默认弹簧，或 snappy / smooth / bouncy",
   "motion.presets.indicatorGlide.timing": "指示器/滑块滑动使用的时序档位",
-  "motion.presets.indicatorGlide.spring": "指示器/滑块滑动是否启用主题物理弹簧",
+  "motion.presets.indicatorGlide.spring":
+    "指示器滑动弹簧：true 用默认弹簧，或 snappy / smooth / bouncy",
+  "motion.presets.reveal.spring": "展开面板的弹簧：true 用默认弹簧，或 snappy / smooth / bouncy",
+  "motion.presets.press.spring": "按压过渡的弹簧：true 用默认弹簧，或 snappy / smooth / bouncy",
   "motion.presets.themeSwitch.kind": "运行时切换主题的屏幕过渡方式",
   "motion.presets.themeSwitch.duration": "运行时切换主题过渡时长",
 

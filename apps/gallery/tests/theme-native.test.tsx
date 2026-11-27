@@ -20,7 +20,7 @@ test("nativeTheme() is apple on macOS, and its glass reaches a popover's finish"
   // Glass is the effect and the layer's own fill as its tint (docs/specs/native-themes.md §3.5).
   expect(find(app.texts(), "menu=")).toBe("glassEffect,glassTintColor");
   expect(find(app.texts(), "menuEffect=")).toBe("regular");
-  expect(find(app.texts(), "glassEffect=")).toBe("regular");
+  expect(find(app.texts(), "glassEffect=")).toBe("clear");
   expect(find(app.texts(), "raisedEffect=")).toBe("regular");
   // A card stays flat: no glass keys, no platform props.
   expect(find(app.texts(), "card=")).toBe("|{}");

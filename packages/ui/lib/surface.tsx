@@ -460,6 +460,68 @@ export interface ToolbarTrackOptions {
   vertical?: boolean;
 }
 
+/** Options of `progressiveBlurStyle` and `ProgressiveBlur`. */
+export interface ProgressiveBlurOptions {
+  /** Which edge stays sharp. Default `top`. */
+  readonly edge?: "top" | "bottom";
+  /** Backdrop blur radius in points. Default 20. */
+  readonly blur?: number;
+  /** Where the mask reaches transparent, as a fraction of the bar. Default 0.68. */
+  readonly fadeStop?: number;
+}
+
+/**
+ * A backdrop blur that fades off one edge: NSH `backdropFilter: blur()` masked by a linear
+ * gradient. The mask is opaque at the edge and clear by `fadeStop`, so content under the far
+ * side stays sharp. Colors in the gradient are mask coverage, not paint.
+ */
+export function progressiveBlurStyle(options?: ProgressiveBlurOptions): ViewStyle {
+  const edge = options?.edge ?? "top";
+  const blur = options?.blur ?? 20;
+  const fadeStop = Math.round((options?.fadeStop ?? 0.68) * 100);
+  const mask =
+    edge === "bottom"
+      ? `linear-gradient(to top, black 0%, transparent ${fadeStop}%)`
+      : `linear-gradient(to bottom, black 0%, transparent ${fadeStop}%)`;
+  return {
+    backdropFilter: `blur(${blur}px)`,
+    maskImage: mask,
+  };
+}
+
+/** Props of `ProgressiveBlur`. */
+export interface ProgressiveBlurProps extends ProgressiveBlurOptions {
+  readonly class?: string;
+  readonly style?: StyleProp<ViewStyle>;
+}
+
+/**
+ * A non-interactive band of `progressiveBlurStyle` along the top (or bottom) of the nearest
+ * positioned ancestor. The terminal draws nothing: a blur there has no backdrop to sample.
+ * `style` covers the default band (64 points, pinned to `start` and `end`).
+ */
+export function ProgressiveBlur(props: ProgressiveBlurProps) {
+  if (terminal) return null;
+  const edge = props.edge ?? "top";
+  return (
+    <View
+      class={props.class}
+      style={[
+        {
+          pointerEvents: "none",
+          position: "absolute",
+          start: 0,
+          end: 0,
+          height: 64,
+          ...(edge === "bottom" ? { bottom: 0 } : { top: 0 }),
+          ...progressiveBlurStyle({ edge, blur: props.blur, fadeStop: props.fadeStop }),
+        },
+        props.style ?? null,
+      ]}
+    />
+  );
+}
+
 /**
  * The inset track a toolbar or a `ToggleGroup` sits in: its tools in a row
  * (a column when `vertical`) 2 points apart, 3 points inside its edge, on

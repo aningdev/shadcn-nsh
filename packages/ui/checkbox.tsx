@@ -8,6 +8,7 @@ import {
   focusRing,
   follow,
   metrics,
+  motion,
   press,
   rounded,
   shape,
@@ -24,7 +25,7 @@ import { reduceMotion, split, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
 import { Icon } from "./lib/icons";
-import { pressSink } from "./lib/motion";
+import { cssMotion, pressSink } from "./lib/motion";
 import { AsText, joinClass, type Live, read } from "./lib/utils";
 
 /** A choice control resolved recipe (`control("choice")`). */
@@ -153,6 +154,7 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
       const { control: box, height } = dims(o?.scale);
       const look = choiceLook();
       const corner = Math.round(choiceCorner(look) * (o?.scale ?? 1));
+      const glide = motion.indicatorGlide;
       return {
         width: box,
         height,
@@ -163,6 +165,12 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
         ...choiceWell({ look, disabled: !!read(o?.disabled) }),
         ...(lit() && !read(o?.disabled) && look.checkedStyle !== null
           ? { borderColor: "transparent" }
+          : {}),
+        ...(glide.spring && !reduceMotion()
+          ? {
+              transitionProperty: "background-color, border-color, box-shadow",
+              ...cssMotion(glide.timing, glide.spring),
+            }
           : {}),
       };
     },
@@ -307,6 +315,14 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
   return {
     get style(): ViewStyle {
       const on = lit();
+      const glide = motion.indicatorGlide;
+      const timed =
+        glide.spring && !reduceMotion()
+          ? cssMotion(glide.timing, glide.spring)
+          : {
+              transitionDuration: reduceMotion() ? 0 : 150,
+              transitionTimingFunction: "ease-out" as const,
+            };
       return {
         flex: 1,
         minWidth: 0,
@@ -318,8 +334,7 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
         backgroundColor: on ? tints.brand : colors.surface,
         boxShadow: on ? "none" : surface("raised").style.boxShadow,
         transitionProperty: "transform, border-color, background-color, box-shadow",
-        transitionDuration: reduceMotion() ? 0 : 150,
-        transitionTimingFunction: "ease-out",
+        ...timed,
         ...(read(o?.style) ?? {}),
       };
     },

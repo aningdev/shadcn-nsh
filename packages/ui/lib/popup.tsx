@@ -15,7 +15,7 @@ import {
   TERMINAL_COLUMN,
 } from "@shadcn-nsh/theme";
 import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
-import { createMotion, reduceMotion, View } from "nsh";
+import { createMotion, reduceMotion, ShaderEffect, shadersAvailable, View } from "nsh";
 
 import { CheckMark } from "./icons";
 
@@ -159,7 +159,7 @@ export function popInStyles(
   return {
     style: {
       transformOrigin: origins[side],
-      ...motion.transition("opacity, transform", preset.role),
+      ...motion.transition("opacity, transform", preset.role, preset.spring),
     },
     starting: { opacity: 0, transform: [{ scale: preset.fromScale }, slide] },
   };
@@ -178,17 +178,37 @@ export function PopIn(props: {
   children: JSX.Element;
 }) {
   const m = createMotion({ enter: popIn(props.side) });
+  // Read once (`check:children`); the branch below reads `surface("overlay")` on theme switches.
+  const kids = props.children;
   return (
-    <View
-      {...surface("overlay").platformProps}
-      class={props.class}
-      style={[
-        props.style ?? null,
-        { transformOrigin: origins[props.side ?? "bottom"], ...m.style },
-      ]}
-    >
-      {props.children}
-    </View>
+    <>
+      {() => {
+        const overlay = surface("overlay");
+        const style = [
+          props.style ?? null,
+          { transformOrigin: origins[props.side ?? "bottom"], ...m.style },
+        ];
+        if (overlay.effect && shadersAvailable() && !terminal) {
+          return (
+            <ShaderEffect
+              source={overlay.effect.source}
+              uniforms={overlay.effect.uniforms}
+              maxSampleOffset={overlay.effect.maxSampleOffset}
+              {...overlay.platformProps}
+              class={props.class}
+              style={style}
+            >
+              {kids}
+            </ShaderEffect>
+          );
+        }
+        return (
+          <View {...overlay.platformProps} class={props.class} style={style}>
+            {kids}
+          </View>
+        );
+      }}
+    </>
   );
 }
 

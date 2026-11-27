@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Apple
-description: "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and Liquid Glass on floating and raised surfaces."
+description: "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass, iOS materials, macOS visual-effect roles, saturate blur, specular hairlines, and a rounded-rect refraction shader."
 colors:
   scrim: "#00000066"
   media: "#10131a"
@@ -161,19 +161,19 @@ components:
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   menu-popover:
-    backgroundColor: "#ffffffb8"
+    backgroundColor: "#ffffffad"
     textColor: "{colors.light.foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.card}"
+    backgroundColor: "#ffffffc7"
     textColor: "{colors.light.foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
-    backgroundColor: "#ffffffb8"
+    backgroundColor: "#ffffffb3"
     textColor: "{colors.light.foreground}"
     typography: "{typography.detail}"
     rounded: "{rounded.container}"
@@ -183,7 +183,7 @@ components:
 
 ## Overview
 
-Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and Liquid Glass on floating and raised surfaces.
+Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass, iOS materials, macOS visual-effect roles, saturate blur, specular hairlines, and a rounded-rect refraction shader.
 
 ## Colors
 
@@ -226,7 +226,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 
 ## Elevation & Depth
 
-Apple Liquid Glass and Retina hairline depth: `glass`, `overlay`, `inverse`, and `raised` finishes request `material: "glass"`.
+Apple Liquid Glass depth: `raised` (thin / headerView, blur 24), `overlay` (regular / popover, blur 30, liquid-glass 0.42), `modal` (thick / sheet, blur 36, liquid-glass 0.30), `inverse` (regular / hudWindow, blur 28, liquid-glass 0.36), and `glass` (clear / ultraThin / hudWindow, blur 26, liquid-glass 0.50). Each fill stays at or above its material minOpacity. Motion uses snappy, smooth, and bouncy springs.
 
 ## Shapes
 
@@ -234,7 +234,7 @@ Apple Liquid Glass and Retina hairline depth: `glass`, `overlay`, `inverse`, and
 
 ## Motion & Micro-interaction
 
-- Press scale: `1`, state transition: 120ms `out-cubic`, spring `340/30/1`, theme switch: `dissolve` (240ms).
+- Press scale: `0.97`, state transition: 120ms `out-cubic`, spring `360/30/1`, theme switch: `dissolve` (240ms).
 
 ## Voice & Content Strategy
 

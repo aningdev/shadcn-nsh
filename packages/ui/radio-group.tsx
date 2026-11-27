@@ -1,9 +1,9 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, feedback, follow, press, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
+import { colors, feedback, follow, motion, press, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
-import { split, View } from "nsh";
+import { reduceMotion, split, View } from "nsh";
 import {
   Radio as BaseRadio,
   RadioGroup as BaseRadioGroup,
@@ -21,6 +21,7 @@ import {
   choiceWell,
   type ChoiceSize,
 } from "./checkbox";
+import { cssMotion } from "./lib/motion";
 import { AsText, joinClass } from "./lib/utils";
 
 /**
@@ -46,6 +47,14 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
     return wellStyle().borderColor ?? colors.border;
   };
   const on = follow(() => (props.on ? 1 : 0));
+  const glide = motion.indicatorGlide;
+  const ringMotion: ViewStyle =
+    glide.spring && !reduceMotion()
+      ? {
+          transitionProperty: "background-color, border-color, box-shadow",
+          ...cssMotion(glide.timing, glide.spring),
+        }
+      : {};
   const dotStyle = (): ViewStyle => ({
     width: dot(),
     height: dot(),
@@ -66,6 +75,7 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
         borderWidth: border(),
         ...wellStyle(),
         borderColor: ringBorderColor(),
+        ...ringMotion,
       }}
     >
       {look().radioCheckedStyle === null ? null : (

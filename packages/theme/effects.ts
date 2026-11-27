@@ -39,26 +39,66 @@ export const SURFACE_SHADERS: Record<
 > = {
   "liquid-glass": {
     defaultIntensity: 0.35,
-    maxSampleOffset: 4,
+    // Bend 4.2pt + ring 1.35pt stays inside this budget. Do not grow either without raising it.
+    maxSampleOffset: 6,
     source: /* wgsl */ `
 struct Uniforms { intensity: f32 }
+
+fn sd_round_box(p: vec2f, half: vec2f, rad: f32) -> f32 {
+  let q = abs(p) - half + vec2f(rad);
+  return length(max(q, vec2f(0.0))) + min(max(q.x, q.y), 0.0) - rad;
+}
+
+fn box_normal(p: vec2f, half: vec2f, rad: f32) -> vec2f {
+  let q = abs(p) - half + vec2f(rad);
+  let outside = max(q, vec2f(0.0));
+  let len = length(outside);
+  let corner = q.x > 0.0 && q.y > 0.0 && len > 0.0001;
+  let along_x = q.x >= q.y;
+  let sx = select(-1.0, 1.0, p.x > 0.0);
+  let sy = select(-1.0, 1.0, p.y > 0.0);
+  let axis = select(vec2f(0.0, sy), vec2f(sx, 0.0), along_x);
+  let curved = vec2f((outside.x / max(len, 0.0001)) * sx, (outside.y / max(len, 0.0001)) * sy);
+  return select(axis, curved, corner);
+}
+
 fn shade(uv: vec2f) -> vec4f {
-  let px = 1.0 / max(nsh.size, vec2f(1.0));
-  let from_edge = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
-  let rim = smoothstep(0.14, 0.0, from_edge);
-  let delta = uv - vec2f(0.5);
-  let bend = delta * rim * uniforms.intensity * 8.0 * px;
-  let split = vec2f(px.x, 0.0) * rim * uniforms.intensity;
-  let backdrop_r = sample_backdrop(uv + bend + split);
-  let backdrop_g = sample_backdrop(uv + bend);
-  let backdrop_b = sample_backdrop(uv + bend - split);
-  let glass = vec4f(backdrop_r.r, backdrop_g.g, backdrop_b.b, backdrop_g.a);
+  let size = max(nsh.size, vec2f(1.0));
+  let p = (uv - vec2f(0.5)) * size;
+  let rad = min(min(size.x, size.y) * 0.28, 18.0);
+  let sd = sd_round_box(p, size * 0.5, rad);
+  let nrm = box_normal(p, size * 0.5, rad);
+  let rim = smoothstep(14.0, 0.0, -sd);
+  let bend = nrm * rim * uniforms.intensity * 4.2;
+  let ring = uniforms.intensity * 1.35;
+  let chroma = nrm * rim * uniforms.intensity * 0.4;
+  let diag = 0.70710678;
+  let t0 = sample_backdrop(uv + bend / size);
+  let t1 = sample_backdrop(uv + (bend + vec2f(ring, 0.0)) / size);
+  let t2 = sample_backdrop(uv + (bend + vec2f(-ring, 0.0)) / size);
+  let t3 = sample_backdrop(uv + (bend + vec2f(0.0, ring)) / size);
+  let t4 = sample_backdrop(uv + (bend + vec2f(0.0, -ring)) / size);
+  let t5 = sample_backdrop(uv + (bend + vec2f(ring * diag, ring * diag)) / size);
+  let t6 = sample_backdrop(uv + (bend + vec2f(-ring * diag, ring * diag)) / size);
+  let t7 = sample_backdrop(uv + (bend + vec2f(ring * diag, -ring * diag)) / size);
+  let t8 = sample_backdrop(uv + (bend + vec2f(-ring * diag, -ring * diag)) / size);
+  let soft = (t0 * 4.0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8) / 12.0;
+  let split_r = sample_backdrop(uv + (bend + chroma) / size);
+  let split_b = sample_backdrop(uv + (bend - chroma) / size);
+  let dispersed = vec4f(split_r.r, soft.g, split_b.b, soft.a);
+  let glass = mix(soft, dispersed, rim * 0.85);
+  let luma = dot(glass.rgb, vec3f(0.2126, 0.7152, 0.0722));
+  let vivid = clamp(mix(vec3f(luma), glass.rgb, 1.0 + uniforms.intensity * 0.35), vec3f(0.0), vec3f(1.0));
   let content = sample_content(uv);
-  var color = mix(glass, content, content.a);
-  let graz = smoothstep(0.16, 0.0, uv.y);
-  let sheen = graz * uniforms.intensity;
-  color = vec4f(mix(color.rgb, vec3f(1.0), sheen * 0.7), max(color.a, sheen * 0.22));
-  return color;
+  let color = mix(vec4f(vivid, glass.a), content, content.a);
+  let top = clamp(-nrm.y, 0.0, 1.0) * rim;
+  let sheen = top * uniforms.intensity;
+  let edge = smoothstep(1.6, 0.0, abs(sd));
+  let bottom = clamp(nrm.y, 0.0, 1.0) * rim * uniforms.intensity * 0.18;
+  var rgb = mix(color.rgb, vec3f(1.0), sheen * 0.55);
+  rgb = mix(rgb, vec3f(1.0), edge * uniforms.intensity * 0.28);
+  rgb = rgb * (1.0 - bottom);
+  return vec4f(clamp(rgb, vec3f(0.0), vec3f(1.0)), max(color.a, sheen * 0.18 + edge * 0.08));
 }`,
   },
   "acrylic-noise": {

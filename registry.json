@@ -445,7 +445,7 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "A sunk ring that fills in citrus, with a dot growing in \u2014 alone or as a choice tile.",
-      "registryDependencies": ["checkbox", "theme", "utils"],
+      "registryDependencies": ["checkbox", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",
@@ -778,7 +778,7 @@
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "A disclosure row that reveals a panel beneath it.",
-      "registryDependencies": ["accordion", "state", "surface"],
+      "registryDependencies": ["accordion", "state", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",

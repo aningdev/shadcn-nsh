@@ -1,6 +1,7 @@
 // A collapsible: `nsh/base`'s Collapsible in the disclosure look of `accordion.tsx` — a trigger row
 // and the panel it reveals.
 
+import { motion } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -137,13 +138,15 @@ export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
 export function CollapsibleContent(props: CollapsibleContentProps) {
   const ctx = useCollapsible();
   const trigger = ctx.trigger.get();
-  const [, rest] = split(props, ["style", "children", "reveal", "panel"]);
+  const [, rest] = split(props, ["style", "children", "reveal", "revealSpring", "panel"]);
   const panel = props.panel;
+  const revealSpring = props.revealSpring ?? motion.revealSpring;
   return (
     <BaseCollapsible
       {...rest}
       open={ctx.open()}
       reveal={props.reveal ?? true}
+      {...(revealSpring !== undefined ? { revealSpring } : {})}
       style={[{ alignItems: "stretch" }, props.style ?? null]}
       content={<View style={disclosurePanel(panel)}>{props.children}</View>}
     >

@@ -254,7 +254,7 @@ nsh-gallery 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按�
 - `themed()` 读 finish 时，要玻璃的面把配方的 `glassEffect` 放进 style，`glassTintColor` 是该面自己的 `background`（色值走 alias 路径，不写字面量）；`material` 本身从不进 style。`ios`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 按配方返回；`elevation` 是 Android 自己的阴影高度（dp），在同一处作为 `android.elevation` 给出。组件在同一个 View 上 `{...platformMaterial("overlay")}` 铺开。`material` 为 `null` 时 style 的键与以前完全一样。
 - 用 finish 的组件需要多铺开一组 props。`nsh/base` 的弹层（`Menu`、`Select`、`Popover` 的 popup）只开放 `popupStyle`，所以那里只有 style 里的玻璃键生效，`ios` / `windows` 铺不上去；这是已知限制，要用就在应用自己的 View 上铺。
 - 各主题的分配：`apple` 的 `overlay`、`inverse`、`raised`、`glass` 用 `glass`；`winui` 的 `overlay` 用 `acrylic`；其余全部 `"none"`。`material` 的层级只用 `elevation`（`card`/`raised`/`hover`/`pressed` 1、`overlay`/`glass` 3、`modal`/`inverse` 6）。
-- 记下没做的部分（不是待办，是取舍）：Acrylic 的颗粒（`sc_noiseOpacity` 0.02）、luminosity 混合与 1.25 饱和度；Mica、macOS 的 `behindWindow` 与侧栏 vibrancy（窗口层，属于应用的事）；CSS 的折射。`macos.backdrop` 也不写：显式写它会盖过 macOS 26 上的 `glassEffect`（见 `references/nsh/docs/dev/macos.md`），26 以下由模糊回落兜住。
+- 记下没做的部分（不是待办，是取舍）：Acrylic 的颗粒（`sc_noiseOpacity` 0.02）、luminosity 混合与 1.25 饱和度；Mica、macOS 的 `behindWindow` 与侧栏 vibrancy（窗口层，属于应用的事）。Apple 的玻璃层现在写 `macos.backdrop`：NSH 在同一视图上用它代替 `glassEffect`（`references/nsh/docs/dev/macos.md`），`backdropFilter` 与 liquid-glass 着色器仍在。
 
 ### 3.4 按平台自动选主题
 

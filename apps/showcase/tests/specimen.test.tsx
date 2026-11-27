@@ -10,10 +10,12 @@ test("Theme Specimen switches Apple, Material, Editorial Paper, and back to NSH 
   await app.press("label:Theme Specimen");
   await app.waitFor("text:Theme contract");
   await app.waitFor("text:Theme: NSH Gallery");
+  await app.waitFor("text:Liquid Glass & Physics");
 
   await app.press("label:Theme Apple");
   await app.waitFor("text:Theme: Apple");
   await app.waitFor("text:Switch: dissolve");
+  await app.waitFor("text:Liquid Glass & Physics");
 
   await app.press("label:Theme Material");
   await app.waitFor("text:Theme: Material");
@@ -26,4 +28,5 @@ test("Theme Specimen switches Apple, Material, Editorial Paper, and back to NSH 
   await app.press("label:Theme NSH Gallery");
   await app.waitFor("text:Theme: NSH Gallery");
   await app.waitFor("text:Switch: fade");
+  await app.waitFor("text:Liquid Glass & Physics");
 });

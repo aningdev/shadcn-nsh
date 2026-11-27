@@ -8,6 +8,7 @@ import type {
   AnimatedValue,
   BackdropMaterial,
   Easing as EasingCurve,
+  MacOsBackdrop,
   MotionSpec as NshMotionSpec,
   TextStyle,
   Theme,
@@ -49,6 +50,7 @@ import {
   type ModeOrFlat,
   type MotionSpringSpec,
   type ShadowExpr,
+  type SpringRole,
   type ShadowPart,
   type SlotCorner,
   type SlotSize,
@@ -79,6 +81,7 @@ export type {
   ModeOrFlat,
   MotionSpringSpec,
   ResolvedSurfaceEffect,
+  SpringRole,
   SlotCorner,
   SlotSize,
   SurfaceEffectKind,
@@ -534,6 +537,7 @@ function resolveShadow(shadow: ShadowExpr | undefined): string | undefined {
 export interface PlatformMaterialProps {
   readonly ios?: { backdropMaterial: BackdropMaterial };
   readonly windows?: { backdrop: { material: WindowsBackdropMaterial } };
+  readonly macos?: { readonly backdrop: MacOsBackdrop };
   readonly android?: { elevation?: number };
 }
 
@@ -566,8 +570,10 @@ function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
   if (borderBottom !== null) style.borderBottomColor = borderBottom;
 
   const resolved = layer.material ? resolveMaterial(layer.material) : undefined;
-  if (layer.backdropFilter !== undefined) {
-    if (layer.backdropFilter !== null) style.backdropFilter = layer.backdropFilter;
+  // A string is a hand-written filter. `null` clears an inherited one and still lets a material
+  // generate `blur()` / `saturate()`. `undefined` does the same when a material is present.
+  if (typeof layer.backdropFilter === "string") {
+    style.backdropFilter = layer.backdropFilter;
   } else if (resolved) {
     style.backdropFilter = backdropFilterFor(resolved);
   }
@@ -594,6 +600,7 @@ function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
   const platformProps: PlatformMaterialProps = {
     ...(resolved?.props.ios ? { ios: resolved.props.ios } : {}),
     ...(resolved?.props.windows ? { windows: resolved.props.windows } : {}),
+    ...(resolved?.props.macos ? { macos: resolved.props.macos } : {}),
     ...(typeof layer.elevation === "number" ? { android: { elevation: layer.elevation } } : {}),
   };
   const effect = terminal || reduceMotion() ? null : resolveSurfaceEffect(layer.effect);
@@ -712,6 +719,18 @@ const motionRole = (read: () => TimingSpec): Timing => {
 export type MotionPresetName = "popoverEnter" | "dialogEnter";
 export type EnterSide = "top" | "bottom" | "left" | "right";
 
+/**
+ * The spring a preset asks for. `true` is `motion.spring`; a role is that named spring,
+ * falling back to `motion.spring` when the role is unset. Reduced motion asks for none.
+ */
+function resolveSpringSetting(
+  setting: boolean | SpringRole | undefined,
+): MotionSpringSpec | undefined {
+  if (!setting || reduceMotion()) return undefined;
+  if (setting === true) return activeSpec().motion.spring;
+  return motion.springOf(setting);
+}
+
 /** Motion timing channels, optional spring, CSS transition helper, and enter/indicator presets. */
 export const motion = {
   fast: motionRole(() => activeSpec().motion.fast),
@@ -720,6 +739,27 @@ export const motion = {
   state: motionRole(() => activeSpec().motion.state),
   get spring(): MotionSpringSpec | undefined {
     return activeSpec().motion.spring;
+  },
+  /** Named spring, or `motion.spring` when the role is omitted or that role is unset. */
+  springOf(role?: SpringRole): MotionSpringSpec | undefined {
+    const spec = activeSpec().motion;
+    if (role && spec.springs?.[role]) return spec.springs[role];
+    return spec.spring;
+  },
+  /** NSH `transitionTimingFunction: spring(...)`. Mass 1 (the default) is omitted. */
+  springCss(spring: MotionSpringSpec): `spring(${string})` {
+    if (spring.mass === undefined || spring.mass === 1) {
+      return `spring(${spring.stiffness}, ${spring.damping})`;
+    }
+    return `spring(${spring.stiffness}, ${spring.damping}, ${spring.mass})`;
+  },
+  /** Resolved reveal spring (`presets.reveal`), or `undefined` when the theme asks for none. */
+  get revealSpring(): MotionSpringSpec | undefined {
+    return resolveSpringSetting(activeSpec().motion.presets.reveal?.spring);
+  },
+  /** Resolved press spring (`presets.press`), or `undefined` when the theme asks for none. */
+  get pressSpring(): MotionSpringSpec | undefined {
+    return resolveSpringSetting(activeSpec().motion.presets.press?.spring);
   },
   preset(name: MotionPresetName) {
     const m = activeSpec().motion;
@@ -730,7 +770,7 @@ export const motion = {
       fromY: reduced ? 0 : p.fromY,
       role: p.timing,
       timing: motion[p.timing],
-      spring: !reduced && p.spring && m.spring ? m.spring : undefined,
+      spring: resolveSpringSetting(p.spring),
     };
   },
   /** Build an NSH `MotionSpec` from a named theme enter preset, honoring `reduceMotion()` and `spring`. */
@@ -766,11 +806,10 @@ export const motion = {
   },
   /** Timing & optional spring used when switch/tab/segmented indicators glide between states. */
   get indicatorGlide(): { readonly timing: Timing; readonly spring: MotionSpringSpec | undefined } {
-    const m = activeSpec().motion;
-    const g = m.presets.indicatorGlide;
+    const g = activeSpec().motion.presets.indicatorGlide;
     return {
       timing: motion[g.timing],
-      spring: !reduceMotion() && g.spring && m.spring ? m.spring : undefined,
+      spring: resolveSpringSetting(g.spring),
     };
   },
   /** Transition policy when switching runtime themes (`selectTheme`). */
@@ -787,8 +826,18 @@ export const motion = {
       shader: resolveTransitionShader(sw.kind),
     };
   },
-  transition(properties: string, role: "state" | "fast" | "default" | "slow" = "state"): ViewStyle {
+  transition(
+    properties: string,
+    role: "state" | "fast" | "default" | "slow" = "state",
+    spring?: MotionSpringSpec,
+  ): ViewStyle {
     if (reduceMotion()) return { transitionProperty: "none" };
+    if (spring) {
+      return {
+        transitionProperty: properties,
+        transitionTimingFunction: motion.springCss(spring),
+      };
+    }
     const spec = activeSpec().motion[role];
     const [x1, y1, x2, y2] = EASING_BEZIERS[spec.easing];
     return {

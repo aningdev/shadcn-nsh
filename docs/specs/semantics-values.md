@@ -106,7 +106,7 @@
 | `feedback.hover.surface.border` | 悬停表面的边 | `border` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `oklch(0 0 0 / 0.059)` / `oklch(1 0 0 / 0.071)` |
 | `feedback.hover.surface.borderTop` | 悬停表面的上边 | `border` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `oklch(0 0 0 / 0.059)` / `oklch(1 0 0 / 0.094)` |
 | `feedback.hover.surface.borderBottom` | 悬停表面的下边 | `border` / `oklch(0 0 0 / 0.5)` | `transparent` | `transparent` | `transparent` | `oklch(0 0 0 / 0.161)` / `oklch(1 0 0 / 0.071)` |
-| `feedback.press.scale` | 按下缩放倍数（1 不缩放） | 0.97 | 1 | 1 | 1 | 1 |
+| `feedback.press.scale` | 按下缩放倍数（1 不缩放） | 0.97 | 1 | 0.97 | 1 | 1 |
 | `feedback.press.translateY` | 按下垂直位移（pt） | 0 | 0 | 0 | 0 | 0 |
 | `feedback.press.overlay` | 按下状态的墨色叠层透明度 | 0 | 0 | 0 | 0.1 | 0 |
 | `feedback.press.surface.foreground` | 按下表面的前景色 | `foreground` | `foreground` | `foreground` | `foreground` | `muted-foreground` |
@@ -133,7 +133,7 @@
 
 ## 6 motion
 
-三档过渡时长与缓动、可选弹性曲线（`spring`），以及入场预设。
+过渡时长与缓动、默认弹簧与 snappy / smooth / bouncy 分档，以及入场、指示器、展开和按压预设。
 
 | 字段 | 说明 | NSH Gallery | shadcn/ui | Apple | Material | WinUI |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -145,21 +145,32 @@
 | `motion.default.easing` | 日常反馈的缓动曲线 | `out-cubic` | `out-cubic` | `out-cubic` | `standard` | `decelerate` |
 | `motion.slow.duration` | 大面过渡的时长（ms） | 350 | 350 | 350 | 400 | 250 |
 | `motion.slow.easing` | 大面过渡的缓动曲线 | `out-cubic` | `out-cubic` | `out-cubic` | `emphasized-decelerate` | `decelerate` |
-| `motion.presets.popoverEnter.fromScale` | 弹出层入场初始缩放 | 0.96 | 0.96 | 0.96 | 0.96 | 1 |
-| `motion.presets.popoverEnter.fromY` | 弹出层入场初始 Y 偏移 | 0 | 0 | 0 | -4 | -6 |
+| `motion.presets.popoverEnter.fromScale` | 弹出层入场初始缩放 | 0.96 | 0.96 | 0.94 | 0.96 | 1 |
+| `motion.presets.popoverEnter.fromY` | 弹出层入场初始 Y 偏移 | 0 | 0 | -4 | -4 | -6 |
 | `motion.presets.popoverEnter.timing` | 弹出层入场使用的时序档位 | `fast` | `fast` | `fast` | `fast` | `fast` |
-| `motion.presets.dialogEnter.fromScale` | 对话框入场初始缩放 | 0.96 | 0.96 | 0.96 | 0.94 | 1.04 |
-| `motion.presets.dialogEnter.fromY` | 对话框入场初始 Y 偏移 | 0 | 0 | 0 | 8 | 0 |
+| `motion.presets.dialogEnter.fromScale` | 对话框入场初始缩放 | 0.96 | 0.96 | 0.94 | 0.94 | 1.04 |
+| `motion.presets.dialogEnter.fromY` | 对话框入场初始 Y 偏移 | 0 | 0 | 8 | 8 | 0 |
 | `motion.presets.dialogEnter.timing` | 对话框入场使用的时序档位 | `default` | `default` | `default` | `slow` | `default` |
 | `motion.presets.indicatorGlide.timing` | 指示器/滑块滑动使用的时序档位 | `fast` | `fast` | `fast` | `fast` | `fast` |
 | `motion.presets.themeSwitch.kind` | 运行时切换主题的屏幕过渡方式 | `fade` | `none` | `dissolve` | `radial-wipe` | `fade` |
 | `motion.presets.themeSwitch.duration` | 运行时切换主题过渡时长 | 200 | 0 | 240 | 320 | 167 |
-| `motion.presets.popoverEnter.spring` | 弹出层入场是否启用主题物理弹簧 | — | — | true | true | — |
-| `motion.presets.dialogEnter.spring` | 对话框入场是否启用主题物理弹簧 | — | — | true | true | — |
-| `motion.presets.indicatorGlide.spring` | 指示器/滑块滑动是否启用主题物理弹簧 | — | — | true | true | — |
-| `motion.spring.stiffness` | 物理弹性刚度 | — | — | 340 | 380 | — |
+| `motion.presets.popoverEnter.spring` | 弹出层入场弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `smooth` | true | — |
+| `motion.presets.dialogEnter.spring` | 对话框入场弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `bouncy` | true | — |
+| `motion.presets.indicatorGlide.spring` | 指示器滑动弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `snappy` | true | — |
+| `motion.presets.reveal.spring` | 展开面板的弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `smooth` | — | — |
+| `motion.presets.press.spring` | 按压过渡的弹簧：true 用默认弹簧，或 snappy / smooth / bouncy | — | — | `snappy` | — | — |
+| `motion.spring.stiffness` | 物理弹性刚度 | — | — | 360 | 380 | — |
 | `motion.spring.damping` | 物理弹性阻尼 | — | — | 30 | 32 | — |
 | `motion.spring.mass` | 物理弹性质量 | — | — | 1 | 1 | — |
+| `motion.springs.snappy.stiffness` | 灵敏弹簧刚度 | — | — | 520 | — | — |
+| `motion.springs.snappy.damping` | 灵敏弹簧阻尼 | — | — | 34 | — | — |
+| `motion.springs.snappy.mass` | 灵敏弹簧质量 | — | — | 1 | — | — |
+| `motion.springs.smooth.stiffness` | 顺滑弹簧刚度 | — | — | 340 | — | — |
+| `motion.springs.smooth.damping` | 顺滑弹簧阻尼 | — | — | 34 | — | — |
+| `motion.springs.smooth.mass` | 顺滑弹簧质量 | — | — | 1 | — | — |
+| `motion.springs.bouncy.stiffness` | 回弹弹簧刚度 | — | — | 380 | — | — |
+| `motion.springs.bouncy.damping` | 回弹弹簧阻尼 | — | — | 26 | — | — |
+| `motion.springs.bouncy.mass` | 回弹弹簧质量 | — | — | 1 | — | — |
 
 ## 7 surfaces
 
@@ -189,23 +200,23 @@
 | `surfaces.plate.shadow` | 井内选中滑块面的投影 | `["edgeSurface","sm"]` | `sm` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)` | — | — |
 | `surfaces.plate.background` | 井内选中滑块面的底 | `card` / `surface` | `card` / `input/30` | `card` / `surface` | `secondary` | `card` |
 | `surfaces.plate.border` | 井内选中滑块面的边 | `border` / `oklch(0 0 0 / 0.5)` | `transparent` / `input` | `transparent` | `transparent` | `transparent` |
-| `surfaces.overlay.background` | 菜单与浮层面的底 | `popover` | `card` | `popover/72` | `popover` | `popover/85` / `popover/96` |
+| `surfaces.overlay.background` | 菜单与浮层面的底 | `popover` | `card` | `popover/68` / `popover/70` | `popover` | `popover/85` / `popover/96` |
 | `surfaces.overlay.foreground` | 菜单与浮层面的前景色 | `foreground` | `foreground` | `foreground` | `foreground` | `foreground` |
 | `surfaces.overlay.border` | 菜单与浮层面的边 | `border` | `border` | `transparent` | `transparent` | `oklch(0 0 0 / 0.059)` / `oklch(0 0 0 / 0.2)` |
 | `surfaces.overlay.shadow` | 菜单与浮层面的投影 | `lg` | `lg` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)` | `lg` | `lg` |
-| `surfaces.modal.background` | 对话框与抽屉面的底 | `card` | `card` | `card` | `oklch(0.93251 0.01479 312.24)` / `oklch(0.2859 0.01293 298.633)` | `background` |
+| `surfaces.modal.background` | 对话框与抽屉面的底 | `card` | `card` | `card/78` / `popover/78` | `oklch(0.93251 0.01479 312.24)` / `oklch(0.2859 0.01293 298.633)` | `background` |
 | `surfaces.modal.foreground` | 对话框与抽屉面的前景色 | `foreground` | `foreground` | `foreground` | `foreground` | `foreground` |
 | `surfaces.modal.border` | 对话框与抽屉面的边 | `border` | `border` | `transparent` | `transparent` | `oklch(0.5624 0 0 / 0.4)` |
 | `surfaces.modal.shadow` | 对话框与抽屉面的投影 | `xl` | `xl` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 18px 48px oklch(0 0 0 / 0.2)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 18px 48px oklch(0 0 0 / 0.5)` | `xl` | `xl` |
-| `surfaces.inverse.background` | 反色面的底 | `card` | `foreground` | `popover/72` | `oklch(0.31066 0.01135 308.056)` / `oklch(0.91401 0.01366 314.754)` | `popover` |
+| `surfaces.inverse.background` | 反色面的底 | `card` | `foreground` | `popover/70` | `oklch(0.31066 0.01135 308.056)` / `oklch(0.91401 0.01366 314.754)` | `popover` |
 | `surfaces.inverse.foreground` | 反色面的前景色 | `foreground` | `background` | `foreground` | `oklch(0.95906 0.01235 317.742)` / `oklch(0.31066 0.01135 308.056)` | `foreground` |
 | `surfaces.inverse.border` | 反色面的边 | `border` | `transparent` | `transparent` | `transparent` | `line` |
 | `surfaces.inverse.shadow` | 反色面的投影 | `lg` | `none` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)` | `xl` | `md` |
 | `surfaces.glass.foreground` | 玻璃面的前景色 | `foreground` | `foreground` | `foreground` | `foreground` | `foreground` |
 | `surfaces.glass.border` | 玻璃面的边 | `border` | `border` | `border` | `transparent` | `line` |
 | `surfaces.glass.shadow` | 玻璃面的投影 | `["edgeSurface","sm"]` | `sm` | `0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)` / `0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)` | `lg` | — |
-| `surfaces.glass.backdropFilter` | 玻璃面的背景模糊 | `blur(20px)` | `blur(20px)` | `blur(30px)` | — | `blur(30px)` |
-| `surfaces.glass.background` | 玻璃面的底 | `popover/80` / `card/78` | `card/80` | `popover/72` | `popover` | `popover/85` / `popover/96` |
+| `surfaces.glass.backdropFilter` | 玻璃面的背景模糊 | `blur(20px)` | `blur(20px)` | — | — | `blur(30px)` |
+| `surfaces.glass.background` | 玻璃面的底 | `popover/80` / `card/78` | `card/80` | `popover/60` | `popover` | `popover/85` / `popover/96` |
 | `surfaces.accent.background` | 强调填充面的底 | `primary` | `primary` | `primary` | `primary` | `primary` |
 | `surfaces.accent.foreground` | 强调填充面的前景色 | `primary-foreground` | `primary-foreground` | `primary-foreground` | `primary-foreground` | `primary-foreground` |
 | `surfaces.accent.shadow` | 强调填充面的投影 | `edgeAccent` | — | — | — | — |
@@ -216,15 +227,15 @@
 | `surfaces.fill.background` | 进度与选中填充面的底 | `oklch(0.75073 0.18465 126.794)` / `oklch(0.83973 0.16469 124.137)` | `primary` | `primary` | `primary` | `primary` |
 | `surfaces.fill.gradient` | 进度与选中填充面的渐变 | `linear-gradient(180deg, oklch(0.80472 0.1815 126.061) 0%, oklch(0.75073 0.18465 126.794) 100%)` / `linear-gradient(180deg, oklch(0.88348 0.15928 123.937) 0%, oklch(0.83973 0.16469 124.137) 100%)` | — | — | — | — |
 | `surfaces.fill.border` | 进度与选中填充面的边 | `oklch(0.69169 0.17204 126.956)` / `oklch(0.71963 0.15821 125.456)` | `transparent` | `transparent` | `transparent` | `oklch(0.52768 0.14982 252.341)` / `oklch(0.81732 0.11439 230)` |
-| `surfaces.raised.backdropFilter` | 凸起控件面的背景模糊 | — | — | `blur(30px)` | — | — |
-| `surfaces.raised.material` | 凸起控件面的材质 | — | — | `glass` | — | — |
-| `surfaces.overlay.backdropFilter` | 菜单与浮层面的背景模糊 | — | — | `blur(30px)` | — | — |
-| `surfaces.overlay.material` | 菜单与浮层面的材质 | — | — | `glass` | — | `acrylic` |
-| `surfaces.overlay.effect` | 菜单与浮层面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.35}` | — | `{"kind":"acrylic-noise","intensity":0.035}` |
-| `surfaces.inverse.backdropFilter` | 反色面的背景模糊 | — | — | `blur(30px)` | — | — |
-| `surfaces.inverse.material` | 反色面的材质 | — | — | `glass` | — | — |
-| `surfaces.glass.material` | 玻璃面的材质 | — | — | `glass` | — | `acrylic` |
-| `surfaces.glass.effect` | 玻璃面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.35}` | — | `{"kind":"acrylic-noise","intensity":0.035}` |
+| `surfaces.raised.material` | 凸起控件面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":24,"saturate":1.8,"minOpacity":0.68,"ios":"thin","macos":"headerView","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":24,"saturate":1.8,"minOpacity":0.68,"ios":"thin","macos":"headerView","specular":"oklch(1 0 0 / 0.16)"}` | — | — |
+| `surfaces.overlay.effect` | 菜单与浮层面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.42}` | — | `{"kind":"acrylic-noise","intensity":0.035}` |
+| `surfaces.overlay.material` | 菜单与浮层面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":30,"saturate":1.9,"minOpacity":0.64,"ios":"regular","macos":"popover","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":30,"saturate":1.9,"minOpacity":0.64,"ios":"regular","macos":"popover","specular":"oklch(1 0 0 / 0.16)"}` | — | `acrylic` |
+| `surfaces.modal.effect` | 对话框与抽屉面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.3}` | — | — |
+| `surfaces.modal.material` | 对话框与抽屉面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":36,"saturate":1.8,"minOpacity":0.72,"ios":"thick","macos":"sheet","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":36,"saturate":1.8,"minOpacity":0.72,"ios":"thick","macos":"sheet","specular":"oklch(1 0 0 / 0.16)"}` | — | — |
+| `surfaces.inverse.effect` | 反色面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.36}` | — | — |
+| `surfaces.inverse.material` | 反色面的材质 | — | — | `{"kind":"glass","glass":"regular","blur":28,"saturate":1.8,"minOpacity":0.68,"ios":"regular","macos":"hudWindow","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"regular","blur":28,"saturate":1.8,"minOpacity":0.68,"ios":"regular","macos":"hudWindow","specular":"oklch(1 0 0 / 0.16)"}` | — | — |
+| `surfaces.glass.effect` | 玻璃面的GPU 表面着色 | — | — | `{"kind":"liquid-glass","intensity":0.5}` | — | `{"kind":"acrylic-noise","intensity":0.035}` |
+| `surfaces.glass.material` | 玻璃面的材质 | — | — | `{"kind":"glass","glass":"clear","blur":26,"saturate":2,"minOpacity":0.58,"ios":"ultraThin","macos":"hudWindow","specular":"oklch(1 0 0 / 0.55)"}` / `{"kind":"glass","glass":"clear","blur":26,"saturate":2,"minOpacity":0.58,"ios":"ultraThin","macos":"hudWindow","specular":"oklch(1 0 0 / 0.16)"}` | — | `acrylic` |
 | `surfaces.card.elevation` | 卡片面的平台阴影高度（dp） | — | — | — | 1 | — |
 | `surfaces.raised.elevation` | 凸起控件面的平台阴影高度（dp） | — | — | — | 1 | — |
 | `surfaces.plate.elevation` | 井内选中滑块面的平台阴影高度（dp） | — | — | — | 0 | — |
@@ -293,7 +304,7 @@
 | `controls.switch.edge.color` | 开关边框色 | `border` | `none` | `none` | `input` | `input` |
 | `controls.switch.knob.size` | 开关滑块常态尺寸 | `{"pointer":16,"touch":20}` | `{"pointer":16,"touch":20}` | `{"pointer":[31,20],"touch":[37,24]}` | `{"pointer":16,"touch":20}` | `{"pointer":12,"touch":14}` |
 | `controls.switch.knob.on` | 开关滑块打开态尺寸（`same` 表示不变，Material 为放大） | `same` | `same` | `same` | `{"pointer":20,"touch":24}` | `same` |
-| `controls.switch.knob.pressed` | 开关滑块按下态尺寸 | `same` | `same` | `same` | `{"pointer":22,"touch":28}` | `{"pointer":[17,14],"touch":[19,16]}` |
+| `controls.switch.knob.pressed` | 开关滑块按下态尺寸 | `same` | `same` | `{"pointer":[36,20],"touch":[43,24]}` | `{"pointer":22,"touch":28}` | `{"pointer":[17,14],"touch":[19,16]}` |
 | `controls.switch.knob.background` | 开关滑块常态底色 | `{"light":"oklch(1 0 0)","dark":"oklch(0.92199 0.00419 271.367)"}` | `{"light":"background","dark":"foreground"}` | `primary-foreground` | `{"light":"muted-foreground","dark":"faint"}` | `{"light":"muted-foreground","dark":"muted-foreground"}` |
 | `controls.switch.knob.gradient` | 开关滑块常态渐变 | `{"light":"linear-gradient(180deg, oklch(1 0 0) 0%, {surface} 100%)","dark":"linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)"}` | — | — | — | — |
 | `controls.switch.knob.border` | 开关滑块常态边色 | `{"light":"input","dark":"oklch(0.8324 0.00597 264.528)"}` | `transparent` | `transparent` | `transparent` | `transparent` |

@@ -46,21 +46,27 @@ const cardWidth = pointer ? 360 : 320;
  * card that outgrows the window scrolls instead of running off it.
  */
 export function dialogCard(width?: number): ViewStyle {
+  const modal = surface("modal").style;
+  const glass: ViewStyle = {};
+  if (modal.backdropFilter !== undefined) glass.backdropFilter = modal.backdropFilter;
+  if (modal.glassEffect !== undefined) glass.glassEffect = modal.glassEffect;
+  if (modal.glassTintColor !== undefined) glass.glassTintColor = modal.glassTintColor;
   return {
     ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
     ...rounded(shape.modal),
     borderWidth: terminal
       ? stroke.hairline
-      : surfaceBorderWidth(surface("modal").style.borderColor as string | undefined),
+      : surfaceBorderWidth(modal.borderColor as string | undefined),
     padding: 20,
     gap: 12,
     maxHeight: windowSize().height - safeArea().top - safeArea().bottom - 48,
     ...(terminal
       ? { borderColor: colors.border }
       : {
-          backgroundColor: surface("modal").style.backgroundColor,
-          boxShadow: surface("modal").style.boxShadow,
-          borderColor: surface("modal").style.borderColor,
+          backgroundColor: modal.backgroundColor,
+          boxShadow: modal.boxShadow,
+          borderColor: modal.borderColor,
+          ...glass,
         }),
   };
 }

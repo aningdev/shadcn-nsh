@@ -2,7 +2,14 @@
 // rolling counters, press sink transforms, and touch hit-target expansion.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { feedback, motion as themeMotion, press, terminal, type Timing } from "@shadcn-nsh/theme";
+import {
+  feedback,
+  motion as themeMotion,
+  press,
+  terminal,
+  type MotionSpringSpec,
+  type Timing,
+} from "@shadcn-nsh/theme";
 import type { MotionSpec as NshMotionSpec, StyleProp, TextStyle, ViewStyle } from "nsh";
 import {
   createMotion,
@@ -28,11 +35,18 @@ export function dialogMotion(): NshMotionSpec {
  *
  * A role gives its own duration and its curve as `cubic-bezier`. A named curve
  * (`Easing.out(Easing.cubic)`) has no CSS spelling, so it falls back to `ease-out`.
+ * A spring uses NSH's `spring()` timing, which settles on its own, so it sets no duration.
  */
-export function cssMotion(m: Timing): {
-  transitionDuration: number;
+export function cssMotion(
+  m: Timing,
+  spring?: MotionSpringSpec,
+): {
+  transitionDuration?: number;
   transitionTimingFunction: ViewStyle["transitionTimingFunction"];
 } {
+  if (spring && !reduceMotion()) {
+    return { transitionTimingFunction: themeMotion.springCss(spring) };
+  }
   const curve = m.timingFunction;
   return {
     transitionDuration: m.duration,
@@ -48,9 +62,10 @@ export function cssMotion(m: Timing): {
  * `"background-color, opacity"`) alike, over the theme's `motion.state`.
  */
 export function pressTransition(also?: string): ViewStyle {
+  const spring = themeMotion.pressSpring;
   return {
     transitionProperty: also ? `${also}, transform` : "transform",
-    ...cssMotion(themeMotion.state),
+    ...cssMotion(themeMotion.state, spring && !reduceMotion() ? spring : undefined),
   };
 }
 

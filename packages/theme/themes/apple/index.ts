@@ -2,8 +2,35 @@
  * Apple HIG / UIKit theme (`systemBlue`, continuous corners, Liquid Glass) as a sparse Theme v5
  * override over `base` (`docs/decisions/0020-theme-v5.md`).
  */
-import { defineTheme } from "../../schema";
+import {
+  defineTheme,
+  type IosBackdropMaterial,
+  type MacOsBackdropMaterial,
+  type MaterialSpec,
+} from "../../schema";
 import { base } from "../nsh-gallery";
+
+/** One Apple glass recipe. Specular is per appearance, so each mode carries a full material. */
+function appleGlass(
+  glass: "regular" | "clear",
+  blur: number,
+  saturate: number,
+  minOpacity: number,
+  ios: IosBackdropMaterial,
+  macos: MacOsBackdropMaterial,
+  mode: "light" | "dark",
+): MaterialSpec {
+  return {
+    kind: "glass",
+    glass,
+    blur,
+    saturate,
+    minOpacity,
+    ios,
+    macos,
+    specular: mode === "light" ? "oklch(1 0 0 / 0.55)" : "oklch(1 0 0 / 0.16)",
+  };
+}
 
 export const apple = defineTheme({
   id: "apple",
@@ -116,19 +143,19 @@ export const apple = defineTheme({
     },
     raised: {
       background: { color: "surface", alpha: 0.72 },
-      backdropFilter: "blur(30px)",
-      material: "glass",
       light: {
         border: "transparent",
         borderTop: "transparent",
         borderBottom: "transparent",
         shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)",
+        material: appleGlass("regular", 24, 1.8, 0.68, "thin", "headerView", "light"),
       },
       dark: {
         border: "transparent",
         borderTop: "transparent",
         borderBottom: "transparent",
         shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)",
+        material: appleGlass("regular", 24, 1.8, 0.68, "thin", "headerView", "dark"),
       },
     },
     plate: {
@@ -145,39 +172,61 @@ export const apple = defineTheme({
       },
     },
     overlay: {
-      background: { color: "popover", alpha: 0.72 },
       border: "transparent",
-      backdropFilter: "blur(30px)",
-      material: "glass",
-      effect: { kind: "liquid-glass", intensity: 0.35 },
-      light: { shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)" },
-      dark: { shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)" },
+      effect: { kind: "liquid-glass", intensity: 0.42 },
+      light: {
+        background: { color: "popover", alpha: 0.68 },
+        shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)",
+        material: appleGlass("regular", 30, 1.9, 0.64, "regular", "popover", "light"),
+      },
+      dark: {
+        background: { color: "popover", alpha: 0.7 },
+        shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)",
+        material: appleGlass("regular", 30, 1.9, 0.64, "regular", "popover", "dark"),
+      },
     },
     modal: {
       border: "transparent",
-      light: { shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 18px 48px oklch(0 0 0 / 0.2)" },
-      dark: { shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 18px 48px oklch(0 0 0 / 0.5)" },
-    },
-    inverse: {
-      background: { color: "popover", alpha: 0.72 },
-      foreground: "foreground",
-      border: "transparent",
-      backdropFilter: "blur(30px)",
-      material: "glass",
-      light: { shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)" },
-      dark: { shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)" },
-    },
-    glass: {
-      backdropFilter: "blur(30px)",
-      material: "glass",
-      effect: { kind: "liquid-glass", intensity: 0.35 },
+      effect: { kind: "liquid-glass", intensity: 0.3 },
       light: {
-        background: { color: "popover", alpha: 0.72 },
-        shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)",
+        background: { color: "card", alpha: 0.78 },
+        shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 18px 48px oklch(0 0 0 / 0.2)",
+        material: appleGlass("regular", 36, 1.8, 0.72, "thick", "sheet", "light"),
       },
       dark: {
-        background: { color: "popover", alpha: 0.72 },
+        background: { color: "popover", alpha: 0.78 },
+        shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 18px 48px oklch(0 0 0 / 0.5)",
+        material: appleGlass("regular", 36, 1.8, 0.72, "thick", "sheet", "dark"),
+      },
+    },
+    inverse: {
+      background: { color: "popover", alpha: 0.7 },
+      foreground: "foreground",
+      border: "transparent",
+      effect: { kind: "liquid-glass", intensity: 0.36 },
+      light: {
+        shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 24px oklch(0 0 0 / 0.14)",
+        material: appleGlass("regular", 28, 1.8, 0.68, "regular", "hudWindow", "light"),
+      },
+      dark: {
+        shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 24px oklch(0 0 0 / 0.38)",
+        material: appleGlass("regular", 28, 1.8, 0.68, "regular", "hudWindow", "dark"),
+      },
+    },
+    glass: {
+      background: { color: "popover", alpha: 0.6 },
+      // Clears the base `blur(20px)` so this layer's material writes `blur(26px) saturate(200%)`.
+      backdropFilter: null,
+      effect: { kind: "liquid-glass", intensity: 0.5 },
+      light: {
+        background: { color: "popover", alpha: 0.6 },
+        shadow: "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.12)",
+        material: appleGlass("clear", 26, 2, 0.58, "ultraThin", "hudWindow", "light"),
+      },
+      dark: {
+        background: { color: "popover", alpha: 0.6 },
         shadow: "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.2)",
+        material: appleGlass("clear", 26, 2, 0.58, "ultraThin", "hudWindow", "dark"),
       },
     },
     accent: {
@@ -212,7 +261,7 @@ export const apple = defineTheme({
       },
     },
     press: {
-      scale: 1,
+      scale: 0.97,
       surface: {
         shadow: null,
         light: { background: { color: "foreground", alpha: 0.16 }, border: "transparent" },
@@ -229,11 +278,18 @@ export const apple = defineTheme({
     },
   },
   motion: {
-    spring: { stiffness: 340, damping: 30, mass: 1 },
+    spring: { stiffness: 360, damping: 30, mass: 1 },
+    springs: {
+      snappy: { stiffness: 520, damping: 34, mass: 1 },
+      smooth: { stiffness: 340, damping: 34, mass: 1 },
+      bouncy: { stiffness: 380, damping: 26, mass: 1 },
+    },
     presets: {
-      popoverEnter: { spring: true },
-      dialogEnter: { spring: true },
-      indicatorGlide: { timing: "fast", spring: true },
+      popoverEnter: { fromScale: 0.94, fromY: -4, timing: "fast", spring: "smooth" },
+      dialogEnter: { fromScale: 0.94, fromY: 8, timing: "default", spring: "bouncy" },
+      indicatorGlide: { timing: "fast", spring: "snappy" },
+      reveal: { spring: "smooth" },
+      press: { spring: "snappy" },
       themeSwitch: { kind: "dissolve", duration: 240 },
     },
   },
@@ -272,6 +328,7 @@ export const apple = defineTheme({
       edge: { off: 0, on: 0, color: "none" },
       knob: {
         size: { pointer: [31, 20], touch: [37, 24] },
+        pressed: { pointer: [36, 20], touch: [43, 24] },
         background: "primary-foreground",
         gradient: null,
         border: "transparent",
@@ -305,9 +362,9 @@ export const apple = defineTheme({
   },
   meta: {
     overview:
-      "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and Liquid Glass on floating and raised surfaces.",
+      "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass, iOS materials, macOS visual-effect roles, saturate blur, specular hairlines, and a rounded-rect refraction shader.",
     elevationNote:
-      'Apple Liquid Glass and Retina hairline depth: `glass`, `overlay`, `inverse`, and `raised` finishes request `material: "glass"`.',
+      "Apple Liquid Glass depth: `raised` (thin / headerView, blur 24), `overlay` (regular / popover, blur 30, liquid-glass 0.42), `modal` (thick / sheet, blur 36, liquid-glass 0.30), `inverse` (regular / hudWindow, blur 28, liquid-glass 0.36), and `glass` (clear / ultraThin / hudWindow, blur 26, liquid-glass 0.50). Each fill stays at or above its material minOpacity. Motion uses snappy, smooth, and bouncy springs.",
     dos: [
       "Respect pointer (macOS) vs touch (iOS 44pt hit target) metrics and continuous squircle corners.",
       "Spread `platformProps` on native glass views (`surface().platformProps`).",

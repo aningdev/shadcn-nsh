@@ -1,4 +1,4 @@
-import { colors, shape } from "@shadcn-nsh/theme";
+import { colors, motion, selectTheme, shape, surface } from "@shadcn-nsh/theme";
 import {
   choiceTileLook,
   drawIcon,
@@ -13,6 +13,8 @@ import {
   switchSlop,
 } from "@shadcn-nsh/ui";
 import { mount, Text, View } from "nsh";
+
+import apple from "../../../packages/theme/themes/apple/index";
 
 type IconNode = Parameters<typeof drawIcon>[0];
 const CHECK_ICON: IconNode = [["path", { d: "M20 6 9 17l-5-5" }]];
@@ -340,6 +342,66 @@ const results: string[] = [
   check("checkbox:choiceTileCorner", () => {
     const radius = choiceTileLook(() => false).style.borderRadius;
     return radius === shape.control ? null : `radius=${String(radius)}`;
+  }),
+  check("apple:liquidGlass", () => {
+    selectTheme(apple);
+    try {
+      const glass = surface("glass");
+      const overlay = surface("overlay");
+      const modal = surface("modal");
+      if (glass.style.glassEffect !== "clear")
+        return `glassEffect=${String(glass.style.glassEffect)}`;
+      if (overlay.style.glassEffect !== "regular") {
+        return `overlayGlass=${String(overlay.style.glassEffect)}`;
+      }
+      if (modal.style.glassEffect !== "regular") {
+        return `modalGlass=${String(modal.style.glassEffect)}`;
+      }
+      const filters: Record<string, string> = {
+        glass: "blur(26px) saturate(200%)",
+        overlay: "blur(30px) saturate(190%)",
+        modal: "blur(36px) saturate(180%)",
+      };
+      for (const [name, layer] of [
+        ["glass", glass],
+        ["overlay", overlay],
+        ["modal", modal],
+      ] as const) {
+        if (layer.style.backdropFilter !== filters[name]) {
+          return `${name} blur=${String(layer.style.backdropFilter)}`;
+        }
+        const shadow = layer.style.boxShadow;
+        const shadowText = typeof shadow === "string" ? shadow : JSON.stringify(shadow ?? null);
+        if (!shadowText.includes("inset 0 1px 0")) return `${name} shadow=${shadowText}`;
+      }
+      const glassMac = glass.platformProps.macos?.backdrop;
+      if (
+        glassMac?.material !== "hudWindow" ||
+        glassMac.blending !== "withinWindow" ||
+        glassMac.state !== "followsWindowActiveState"
+      ) {
+        return `glass macos=${JSON.stringify(glass.platformProps.macos)}`;
+      }
+      if (overlay.platformProps.macos?.backdrop.material !== "popover") return "overlay macos";
+      if (modal.platformProps.macos?.backdrop.material !== "sheet") return "modal macos";
+      if (motion.springCss({ stiffness: 360, damping: 30, mass: 1 }) !== "spring(360, 30)") {
+        return "springCss mass 1";
+      }
+      if (motion.springCss({ stiffness: 360, damping: 30, mass: 1.2 }) !== "spring(360, 30, 1.2)") {
+        return "springCss mass";
+      }
+      const reveal = motion.revealSpring;
+      const pressed = motion.pressSpring;
+      if (!reveal || reveal.stiffness !== 340 || reveal.damping !== 34) {
+        return `reveal=${JSON.stringify(reveal)}`;
+      }
+      if (!pressed || pressed.stiffness !== 520 || pressed.damping !== 34) {
+        return `press=${JSON.stringify(pressed)}`;
+      }
+      return null;
+    } finally {
+      selectTheme(null);
+    }
   }),
 ];
 

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- **Apple Liquid Glass, progressive blur, and physics springs.** Apple's raised, overlay, modal, inverse, and glass surfaces are layered Liquid Glass: native regular or clear glass, an iOS material, a macOS visual-effect role, a saturate blur, a specular hairline, and a rounded-rect liquid-glass shader. `ProgressiveBlur` fades a backdrop blur off the top or bottom edge. A theme can name `snappy`, `smooth`, and `bouncy` springs; popovers, dialogs, indicators, reveals, and presses use NSH's `spring()` timing when the theme asks for one.
+
 ## v0.11.0 — 2026-11-26
 
 ### Added

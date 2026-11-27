@@ -24,9 +24,13 @@ describe("built-in surface and transition shaders", () => {
       expect(shader.source, kind).toContain("fn shade(uv: vec2f) -> vec4f");
       expect(shader.source, kind).toContain("sample_content");
     }
-    expect(SURFACE_SHADERS["liquid-glass"].source).toContain("sample_backdrop");
+    const liquid = SURFACE_SHADERS["liquid-glass"].source;
+    expect(liquid).toContain("sample_backdrop");
+    expect(liquid).toContain("nsh.size");
+    expect(liquid).toContain("sd_round_box");
+    expect(liquid.split("sample_backdrop").length - 1).toBeGreaterThanOrEqual(9);
     expect(SURFACE_SHADERS["liquid-glass"].defaultIntensity).toBe(0.35);
-    expect(SURFACE_SHADERS["liquid-glass"].maxSampleOffset).toBe(4);
+    expect(SURFACE_SHADERS["liquid-glass"].maxSampleOffset).toBe(6);
     expect(SURFACE_SHADERS["acrylic-noise"].defaultIntensity).toBe(0.035);
     expect(SURFACE_SHADERS["acrylic-noise"].maxSampleOffset).toBe(0);
     expect(SURFACE_SHADERS["specular-rim"].defaultIntensity).toBe(0.4);
@@ -59,7 +63,7 @@ describe("built-in surface and transition shaders", () => {
 
     const custom = resolveSurfaceEffect({ kind: "liquid-glass", intensity: 0.6 });
     expect(custom?.uniforms.intensity).toBe(0.6);
-    expect(custom?.maxSampleOffset).toBe(4);
+    expect(custom?.maxSampleOffset).toBe(6);
     expect(custom?.source).toBe(SURFACE_SHADERS["liquid-glass"].source);
 
     const wgsl = "fn shade(uv: vec2f) -> vec4f { return sample_content(uv); }";
@@ -116,6 +120,62 @@ describe("resolveMaterial", () => {
       blur: 16,
       minOpacity: 0.68,
       saturate: 1.2,
+    });
+  });
+
+  test("glass clear, ios materials, and macos backdrops fill platform defaults", () => {
+    expect(
+      resolveMaterial({
+        kind: "glass",
+        glass: "clear",
+        ios: "ultraThin",
+        macos: "hudWindow",
+      }),
+    ).toEqual({
+      glassEffect: "clear",
+      props: {
+        ios: { backdropMaterial: "ultraThin" },
+        macos: {
+          backdrop: {
+            material: "hudWindow",
+            blending: "withinWindow",
+            state: "followsWindowActiveState",
+          },
+        },
+      },
+      blur: 30,
+      minOpacity: 0.72,
+    });
+    expect(
+      resolveMaterial({
+        kind: "acrylic",
+        macos: { material: "sidebar", blending: "behindWindow", state: "active" },
+      }),
+    ).toEqual({
+      props: {
+        windows: { backdrop: { material: "blur" } },
+        macos: {
+          backdrop: { material: "sidebar", blending: "behindWindow", state: "active" },
+        },
+      },
+      blur: 30,
+      minOpacity: 0.85,
+    });
+    expect(
+      resolveMaterial({
+        kind: "blur",
+        ios: "thin",
+        macos: { blending: "behindWindow" },
+      }),
+    ).toEqual({
+      props: {
+        ios: { backdropMaterial: "thin" },
+        macos: {
+          backdrop: { blending: "behindWindow", state: "followsWindowActiveState" },
+        },
+      },
+      blur: 16,
+      minOpacity: 0.68,
     });
   });
 });
