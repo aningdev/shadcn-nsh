@@ -3,6 +3,7 @@ description: >-
   Install the NSH CLI with the official installer, cache `~/.nsh`, put `nsh` on
   PATH and print its version. Nothing is compiled: the project installs the CLI
   with `install.sh`. The version is `engines.nsh` in the root package.json.
+  Runs after setup-bun: it reads that file with `bun -p`.
 
 inputs:
   channel:
@@ -11,6 +12,13 @@ inputs:
       default) installs `engines.nsh` from the root package.json.
     required: false
     default: ""
+  web:
+    description: >-
+      Also cache the web runtime (`nsh component add web`), which only
+      `nsh package --target web` needs. It has a cache entry of its own, so jobs
+      that never package for the web do not download it.
+    required: false
+    default: "false"
 
 outputs:
   version:
@@ -27,11 +35,16 @@ runs:
       shell: bash
       env:
         NSH_CHANNEL: ${{ inputs.channel }}
+        WEB: ${{ inputs.web }}
       run: |
         set -euo pipefail
-        channel="${NSH_CHANNEL:-$(node -p "require('./package.json').engines?.nsh || 'nightly'")}"
+        channel="${NSH_CHANNEL:-$(bun -p "require('./package.json').engines?.nsh || 'nightly'")}"
         echo "channel=$channel" >> "$GITHUB_OUTPUT"
-        if [ "$channel" = nightly ]; then echo "day=$(date -u +%Y-%m-%d)"; else echo "day=release"; fi >> "$GITHUB_OUTPUT"
+        if [ "$channel" = nightly ]; then day="$(date -u +%Y-%m-%d)"; else day=release; fi
+        # The web runtime is optional: keeping it out of the plain cache keeps that
+        # download off every job that does not package for the web.
+        if [ "$WEB" = "true" ]; then day="$day-web"; fi
+        echo "day=$day" >> "$GITHUB_OUTPUT"
 
     - name: Restore ~/.nsh
       id: cache
@@ -45,6 +58,7 @@ runs:
       shell: bash
       env:
         NSH_CHANNEL: ${{ steps.day.outputs.channel }}
+        WEB: ${{ inputs.web }}
       run: |
         set -euo pipefail
         channel="$NSH_CHANNEL"
@@ -63,9 +77,11 @@ runs:
         mkdir -p "$HOME/.local/bin"
         ln -sfn "$HOME/.nsh/bin/nsh" "$HOME/.local/bin/nsh"
         echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-        # The installer leaves the web runtime out. Add it here so the cache holds it
-        # and later jobs do not unpack it at the same time.
-        [ -f "$HOME/.nsh/runtime/web/nsh-syntaxes.bin" ] || "$HOME/.nsh/bin/nsh" component add web
+        # The installer leaves the web runtime out. Add it here, before anything packages, so
+        # the cache holds it and the parallel packagers do not unpack it at the same time.
+        if [ "$WEB" = "true" ] && [ ! -f "$HOME/.nsh/runtime/web/nsh-syntaxes.bin" ]; then
+          "$HOME/.nsh/bin/nsh" component add web
+        fi
         version="$("$HOME/.local/bin/nsh" --version)"
         echo "version=$version" >> "$GITHUB_OUTPUT"
         printf 'nsh: %s\n' "$version"

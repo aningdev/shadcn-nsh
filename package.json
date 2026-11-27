@@ -30,7 +30,7 @@
     "registry:serve": "bun packages/cli/src/index.ts serve",
     "shadcn-nsh": "bun packages/cli/src/index.ts",
     "cli:build": "bun --filter shadcn-nsh build",
-    "check": "vp check --fix && bun run catalog --check && bun run check:theme && bun run check:ui && bun run registry:build --check && bun run check:demos && nsh check apps/website/demos && nsh check apps/gallery && nsh check apps/showcase && bun run check:pages && bun run check:docs",
+    "check": "vp check --fix && bun run cli:build && bun --filter shadcn-nsh typecheck && bun run catalog --check && bun run check:theme && bun run check:ui && bun run registry:build --check && bun run check:demos && nsh check apps/website/demos && nsh check apps/gallery && nsh check apps/showcase && bun run check:pages && bun run check:docs",
     "test:gallery": "nsh test apps/gallery",
     "test:install": "bun scripts/registry/install-test.ts",
     "test:unit": "bun test ./packages/cli ./packages/theme ./scripts",
