@@ -1119,7 +1119,11 @@ export function control<K extends keyof ThemeSpec["controls"]>(name: K): Resolve
         corner: buttonCorner,
         shade: shadeStyle,
         selected: {
-          style: selFace?.style ?? {},
+          style: {
+            borderColor: "transparent",
+            boxShadow: "none",
+            ...(selFace?.style ?? {}),
+          } satisfies ViewStyle,
           ink: resolveColor(b.selected.ink) ?? colors.primaryForeground,
         },
         secondary: {

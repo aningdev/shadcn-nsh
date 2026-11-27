@@ -313,19 +313,13 @@ function Mention(props: {
           <Button
             style={{ flex: 1 }}
             variant={following() ? "secondary" : "default"}
+            icon={following() ? Check : Plus}
             onPress={() => {
               following.set(!following());
               log(`${following() ? "followed" : "unfollowed"} ${person.name}`);
             }}
           >
-            <>
-              <Icon
-                icon={following() ? Check : Plus}
-                size={14}
-                tint={following() ? colors.foreground : colors.primaryForeground}
-              />
-              <Text>{following() ? "Following" : "Follow"}</Text>
-            </>
+            {following() ? "Following" : "Follow"}
           </Button>
           <Button
             style={{ flex: 1 }}
