@@ -47,7 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: read
+      # Writing the release page needs contents: write; reading the tagged tree comes with it.
+      contents: write
       # npm provenance: the package says which workflow run built it.
       id-token: write
     defaults:
@@ -105,3 +106,33 @@ jobs:
             *-*) npm publish --access public --provenance --tag next ;;
             *) npm publish --access public --provenance ;;
           esac
+
+      # The release page is the changelog, not a second copy of it: the tag's own section becomes
+      # the notes, so a release cannot ship without them and the two cannot drift. Re-running the
+      # job edits the notes instead of failing on an existing release.
+      - name: Create the GitHub release
+        if: github.event_name == 'push'
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          notes="${RUNNER_TEMP}/notes.md"
+          # The section for this version, up to the next "## ": the whole release body.
+          awk -v v="${version}" '
+            index($0, "## v" v) == 1 {
+              rest = substr($0, 5 + length(v))
+              if (rest == "" || substr(rest, 1, 1) == " ") { on = 1; next }
+            }
+            substr($0, 1, 3) == "## " { on = 0 }
+            on
+          ' CHANGELOG.md > "${notes}"
+          if [ ! -s "${notes}" ]; then
+            echo "::error::CHANGELOG.md has no '## v${version}' section to publish as the release notes"
+            exit 1
+          fi
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release edit "${GITHUB_REF_NAME}" --title "${GITHUB_REF_NAME}" --notes-file "${notes}"
+          else
+            gh release create "${GITHUB_REF_NAME}" --title "${GITHUB_REF_NAME}" --notes-file "${notes}" --verify-tag
+          fi
