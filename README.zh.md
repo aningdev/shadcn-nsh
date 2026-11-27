@@ -68,6 +68,7 @@ npx shadcn-nsh@latest add theme-material   # 额外安装一套主题供运行�
 
 | shadcn-nsh | NSH CLI |
 | ---------- | ------- |
+| 0.12.x     | v0.7.2  |
 | 0.11.x     | v0.7.2  |
 | 0.10.x     | v0.6.1  |
 | 0.9.x      | v0.6.1  |

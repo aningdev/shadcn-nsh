@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.12.0 — 2026-11-27
+
 ### Added
 
 - **Apple Liquid Glass (`apple`) and a stronger Native preset.** Apple's `raised`, `overlay`, `modal`, `inverse`, and `glass` surfaces layer native regular/clear glass, iOS materials, saturate blur, specular hairlines, and a rounded-rect `liquid-glass` shader. `ProgressiveBlur` fades backdrop blur off an edge. Themes can declare `snappy`, `smooth`, and `bouncy` springs, and `themes/native` picks the platform theme via `nativeTheme()`.
