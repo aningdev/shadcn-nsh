@@ -8,11 +8,11 @@
  *
  * The keys end in `.md`, because that is what `src/routes/docs/$.tsx` asks for (`<slugs>.md`). A
  * page that embeds components is an `.mdx` file with the same route, so it is registered under both
- * its own name and that alias: `components/coverage.mdx` answers `/docs/components/coverage`.
+ * its own name and that alias: `themes.mdx` answers `/docs/themes`.
  */
 const FILES = import.meta.glob("../../content/docs/**/*.{md,mdx}");
 
-/** `components/button.md`, `getting-started.md`, `components/coverage.mdx` — every page the build has. */
+/** `components/button.md`, `getting-started.md`, `themes.mdx` — every page the build has. */
 export const CONTENT_PATHS: ReadonlySet<string> = new Set(
   Object.keys(FILES).flatMap((file) => {
     const path = file.replace("../../content/docs/", "");

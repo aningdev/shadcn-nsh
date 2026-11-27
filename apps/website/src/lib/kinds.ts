@@ -1,6 +1,6 @@
 /**
  * The components' two kinds: whether a component is aligned with an NSH element or is this library's
- * own. The sidebar, the components index and the coverage page group the set by these,
+ * own. The sidebar and the components index group the set by these,
  * one kind per component, in this order.
  *
  * A component is not filed by hand: `src/lib/official.ts` says which NSH element
@@ -13,7 +13,7 @@ import { NSH_ELEMENTS } from "./official";
 
 export type ComponentKindId = "official" | "own";
 
-/** What a kind is called in the sidebar, on the index and on the coverage page. */
+/** What a kind is called in the sidebar and on the components index. */
 export const KIND_LABELS: Record<ComponentKindId, string> = {
   official: "Base",
   own: "Enhanced",

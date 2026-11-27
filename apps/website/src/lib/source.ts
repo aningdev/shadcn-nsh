@@ -59,25 +59,29 @@ function nodes(pages: SidebarPage[]): Node[] {
 }
 
 /**
- * The sidebar, in the order `src/lib/nav.ts` keeps: "Start here", then the component pages one run
- * per kind ("Base", then "Enhanced"), each run labelled with a separator, as the Astro
- * `Sidebar.astro` did. Pages the content does not have yet are left out: the tree is the pages
- * that exist, ordered by the list, so a half-migrated content folder still navigates.
+ * The sidebar, in the order `src/lib/nav.ts` keeps: Get started, Theming (Themes folds its
+ * pages), then the component pages one run per kind ("Base", then "Enhanced"). Pages the content
+ * does not have yet are left out: the tree is the pages that exist, ordered by the list.
  */
 export function pageTree(): Root {
   const existing = new Set(source.getPages().map((page) => page.url));
   const listed = SIDEBAR_PAGES.filter((page) => existing.has(page.route));
 
   const start = listed.filter((page) => page.group === "start");
+  const theming = listed.filter((page) => page.group === "theming");
   const components = listed.filter((page) => page.group === "components");
 
   const children: Node[] = [];
   if (start.length > 0) {
-    children.push({ type: "separator", name: "Start here" });
+    children.push({ type: "separator", name: "Get started" });
     children.push(...nodes(start));
   }
-  // "All components" and "Coverage" are the group's own pages, above the two runs (they carry no
-  // kind: they list the set rather than belong to one).
+  if (theming.length > 0) {
+    children.push({ type: "separator", name: "Theming" });
+    children.push(...nodes(theming));
+  }
+  // "All components" is the group's own page, above the two runs (it carries no kind: it lists
+  // the set rather than belonging to one).
   const group = components.filter((page) => page.kind === undefined);
   if (components.length > 0) {
     children.push({ type: "separator", name: "Components" });

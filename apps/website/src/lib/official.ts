@@ -5,8 +5,8 @@
  * One row per official component, named by the page's file name. `ours` lists the pages here that
  * serve it (first closest, a renamed one shows the rename), and a row with nothing serving it
  * says why in `status` and `note`. One page may serve several rows: `input` is shadcn's `input`,
- * and its `textarea` — one field, multiline. The components index, each page's header links and
- * `/docs/components/coverage` read these tables; nothing there is written by hand.
+ * and its `textarea` — one field, multiline. The components index and each page's header links
+ * read these tables; nothing there is written by hand.
  *
  * `bun run check:pages` fails when a row names a page that does not exist, and when a row serves
  * nothing without saying why. A `planned` row starts linking the day its page lands.
@@ -20,7 +20,7 @@ export type OfficialEntry = {
   ours: readonly string[];
   /** Why nothing serves it; absent when `ours` is not empty. */
   status?: OfficialStatus;
-  /** One line on the coverage page; required when `ours` is empty. */
+  /** Why nothing serves it, in one line; required when `ours` is empty. */
   note?: string;
 };
 
@@ -272,14 +272,6 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
     note: "No wrapper: `nsh` WebView.",
   },
 ];
-
-/** What a row is on the coverage page: its status, or covered once a page serves it. */
-export type OfficialState = "covered" | OfficialStatus;
-
-export function stateOf(entry: OfficialEntry, pages: ReadonlySet<string>): OfficialState {
-  if (entry.ours.some((slug) => pages.has(slug))) return "covered";
-  return entry.status ?? "missing";
-}
 
 /**
  * The shadcn/ui component a page stands in for, when one does. Several rows may name one page

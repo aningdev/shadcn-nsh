@@ -3,6 +3,7 @@
 import { sitePath } from "@/lib/base";
 import { REPO_URL } from "@/lib/layout.shared";
 import { choosePalette } from "@/lib/palette";
+import { THEME_META, themeBinding } from "@/lib/theme-meta";
 import { surfaceSampleCss, themePages, type ThemePage, type TokenGroup } from "@/lib/themes";
 
 /**
@@ -16,6 +17,7 @@ import { surfaceSampleCss, themePages, type ThemePage, type TokenGroup } from "@
  * this theme and opens that overview.
  */
 import type { PaletteId } from "../../../demos/palettes";
+import { CommandBlock } from "./command-block";
 import { InstallTabs } from "./install-tabs";
 
 const themes = themePages();
@@ -76,9 +78,18 @@ function ShowInPreview({ id }: { id: PaletteId }) {
  * the build-time note the NSH Gallery theme carries. */
 export function ThemeIntro({ id }: { id: PaletteId }) {
   const theme = themeOf(id);
+  const meta = THEME_META[id];
   return (
     <>
       {theme.overview === null ? null : <p>{theme.overview}</p>}
+      <p>
+        Style inspiration rather than a 1:1 native clone. This theme distills the colors, radii,
+        surfaces, and motion of {meta.reference.name}
+        {meta.platforms.length > 0 ? ` (${meta.platforms.join(", ")})` : ""}.{" "}
+        <a href={meta.reference.href} target="_blank" rel="noopener noreferrer">
+          {meta.reference.name} ↗
+        </a>
+      </p>
       <p>
         A theme is one TypeScript module — <code>index.ts</code> for its spec, the tokens, metrics,
         elevation, surfaces, feedback, motion and controls <code>defineTheme()</code> compiles — and
@@ -113,19 +124,33 @@ export function ThemeIntro({ id }: { id: PaletteId }) {
   );
 }
 
-/** The install command and what <code>add</code> writes beside the build-time theme. */
+/** CLI install, and the same theme as an `nshm` import. */
 export function ThemeInstall({ id }: { id: PaletteId }) {
   const theme = themeOf(id);
+  const binding = themeBinding(theme.palette.id);
+  const nshm = `import ${binding} from "shadcn-nsh/themes/${theme.palette.id}";
+import { selectTheme } from "shadcn-nsh/theme";
+
+selectTheme(${binding});`;
   return (
     <>
+      <p>
+        <strong>TSX nshm.</strong> The module is the theme. <code>selectTheme</code> switches to it
+        while the app runs. <code>selectTheme(null)</code> returns to the theme the app was built
+        with.
+      </p>
+      <CommandBlock code={nshm} label="Copy" />
+      <p>
+        <strong>CLI.</strong> <code>init --theme {theme.palette.id}</code> builds the app on this
+        theme. <code>add {theme.item}</code> installs <code>themes/{theme.palette.id}.ts</code> and{" "}
+        <code>themes/{theme.palette.id}/</code> beside the build-time theme and leaves that one as
+        it is.
+      </p>
+      <InstallTabs command={`npx shadcn-nsh@latest init --theme ${theme.palette.id}`} />
       <InstallTabs command={`npx shadcn-nsh@latest add ${theme.item}`} />
       <p>
-        <code>add {theme.item}</code> installs <code>themes/{theme.palette.id}/</code> beside the
-        app&apos;s build-time theme and leaves that one as it is; the app lists the theme and calls{" "}
-        <code>selectTheme</code> to switch to it. To build the app on this theme instead, run{" "}
-        <code>init --theme {theme.palette.id}</code> (or{" "}
-        <code>init --theme {theme.palette.id} --overwrite</code> on an app that already has one
-        theme).
+        On an app that already has a theme, <code>init --theme {theme.palette.id} --overwrite</code>{" "}
+        replaces the build-time theme. <code>add {theme.item}</code> does not.
       </p>
     </>
   );

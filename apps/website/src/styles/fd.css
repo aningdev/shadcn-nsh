@@ -17,3 +17,12 @@ html > body[data-scroll-locked] {
 #nd-sidebar {
   background-color: var(--color-fd-background);
 }
+
+/* A theme swatch paints its own color. The ring is the site's ink, so light and dark both read. */
+.home-swatch-dot {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-fd-foreground) 22%, transparent);
+}

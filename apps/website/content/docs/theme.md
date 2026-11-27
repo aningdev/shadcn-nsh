@@ -1,5 +1,5 @@
 ---
-title: Theme
+title: Theme specification
 description: One TypeScript spec is the look; theme.json and DESIGN.md are its exports, and lib/ui/theme.ts reads it for every component.
 ---
 

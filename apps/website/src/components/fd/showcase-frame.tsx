@@ -66,7 +66,10 @@ export function ShowcaseFrame() {
   const { width } = LAYOUTS[layout];
 
   return (
-    <div className="not-prose flex flex-col gap-3">
+    <div className="not-prose border-fd-border bg-fd-card/30 flex flex-col gap-3 rounded-2xl border p-3 sm:p-4">
+      <p className="text-fd-muted-foreground text-sm">
+        Interactive shell. Desktop and Phone reload the frame. Light and dark follow this site.
+      </p>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <ToggleGroup
           label="Layout"
@@ -88,7 +91,7 @@ export function ShowcaseFrame() {
         </a>
       </div>
       <div
-        className={`border-fd-border overflow-hidden rounded-xl border ${
+        className={`border-fd-border overflow-hidden rounded-xl border shadow-sm ${
           width
             ? "bg-fd-muted/45 bg-[radial-gradient(color-mix(in_oklab,var(--color-fd-foreground)_10%,transparent)_1px,transparent_1px)] [background-size:16px_16px] p-4 sm:p-6"
             : "bg-fd-card"

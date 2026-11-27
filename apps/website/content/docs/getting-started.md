@@ -110,7 +110,7 @@ bun run shadcn-nsh -- add button -c apps/web --registry "http://127.0.0.1:4173/{
 
 ## Theme
 
-The look is `theme.json` (the roles of both appearances, three `radius-*` layer lengths, the fixed `scrim` / `media` / `on-media` values and any font families) plus `lib/ui/theme.ts`, the readers; the deeper half of a theme — surfaces, feedback, controls, metrics — is the spec in `lib/ui/themes/<id>.ts`, which `add theme-<id>` installs. `init` installs them and points each `nsh.json` at `theme.json`; in a monorepo they live under `packages/ui`. See [Theme](./theme) for the keys, and [Customizing](./customizing) to change colors, one control's look, or its shell after copying.
+The look is `theme.json` (the roles of both appearances, three `radius-*` layer lengths, the fixed `scrim` / `media` / `on-media` values and any font families) plus `lib/ui/theme.ts`, the readers; the deeper half of a theme — surfaces, feedback, controls, metrics — is the spec in `themes/<id>.ts`, which `add theme-<id>` installs beside the build-time theme. `init` installs the build-time theme and points each `nsh.json` at `theme.json`; in a monorepo they live under `packages/ui`. See [Theme specification](./theme) for the keys, and [Customizing](./customizing) to derive a theme or to change a copied component.
 
 ## Behavior, previews and native tests
 

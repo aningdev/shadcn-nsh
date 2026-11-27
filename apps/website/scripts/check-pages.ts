@@ -419,6 +419,14 @@ const THEME_OUTLINE = [
   "## Surfaces",
 ];
 
+/** Platform themes append one heading. The other palettes keep the shared outline only. */
+const PLATFORM_NOTES = new Set(["apple", "material", "winui"]);
+const NOTES_HEADING = "## Design notes and trade-offs";
+
+function expectedThemeOutline(id: string): string[] {
+  return PLATFORM_NOTES.has(id) ? [...THEME_OUTLINE, NOTES_HEADING] : [...THEME_OUTLINE];
+}
+
 /** Headings in a markdown body, frontmatter stripped. The table of contents is this list. */
 function themeOutline(source: string): string[] {
   const body = source.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
@@ -460,7 +468,8 @@ for (const palette of PALETTES) {
   }
   const outline = themeOutline(source);
   outlines.push(outline);
-  if (outline.join("\n") !== THEME_OUTLINE.join("\n")) {
+  const expected = expectedThemeOutline(palette.id);
+  if (outline.join("\n") !== expected.join("\n")) {
     fail(`${where}: headings are not the shared outline (${outline.join(" | ")})`);
   }
   for (const part of [
@@ -480,11 +489,8 @@ for (const file of themeFiles) {
     fail(`apps/website/content/docs/themes/${file}: no palette with id "${id}"`);
   }
 }
-if (outlines.length > 1) {
-  const first = outlines[0]!.join("\n");
-  for (const outline of outlines.slice(1)) {
-    if (outline.join("\n") !== first) fail("theme pages: heading lists differ");
-  }
+if (outlines.length !== PALETTES.length) {
+  fail("theme pages: not every palette produced an outline");
 }
 
 const themesSource = fs.readFileSync(

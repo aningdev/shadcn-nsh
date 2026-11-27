@@ -7,7 +7,7 @@ import { VersionSwitch } from "@/components/fd/version-switch";
 export const SITE_TITLE = "shadcn-nsh";
 
 export const SITE_DESCRIPTION =
-  "Styled component layer for Native Shell: copy-into-app components on nsh/base, same idea as shadcn/ui on Radix.";
+  "Styled, themeable UI for Native Shell, built on nsh/base. Install with TSX nshm or the copy-into-app CLI. No third-party runtime dependency.";
 
 /** The repository the docs are edited in; the URLs below are read from it. */
 export const gitConfig = {
@@ -25,7 +25,7 @@ export const NSH_SITE_URL = "https://nsh.dev";
 /**
  * The chrome the home layout and the docs layout share: the name linking home and a version
  * selector next to it to switch between the latest release (`/`) and `dev` (`/dev/`). No
- * `links`: the sidebar's tree already starts with Getting started, CLI, Theme and the components,
+ * `links`: the sidebar's tree already starts with Get started, Theming, and the components,
  * and the docs layout draws `links` in that same sidebar, so they would be listed twice.
  */
 export function baseOptions(): BaseLayoutProps {

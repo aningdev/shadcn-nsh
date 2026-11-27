@@ -62,7 +62,7 @@ A file the app lacks is written, one identical to the registry's is skipped, and
 
 The packages the items import (`lucide`) are installed with the app's own package manager, unless its `package.json` already declares them at a version in range: an exact `"lucide": "1.66.0"` is left as written.
 
-Naming a theme (`add theme-shadcn`) installs **one more**: `lib/ui/themes/shadcn.ts`, a theme the app can switch to while it runs (`selectTheme`) — one sparse module `defineTheme()` resolves over the theme it extends, so it states only what it changes. It writes nothing over the app's build-time theme, and `nsh-ui.json` stays as it is; that theme is `init --theme <name> --overwrite`.
+Naming a theme (`add theme-shadcn`) installs **one more**: `themes/shadcn.ts`, plus `themes/shadcn/theme.json` and `DESIGN.md`. The app switches to it with `selectTheme`. The module is a sparse `defineTheme()` delta, so it states only what it changes. It writes nothing over the app's build-time theme, and `nsh-ui.json` stays as it is; that theme is `init --theme <name> --overwrite`.
 
 ## list
 

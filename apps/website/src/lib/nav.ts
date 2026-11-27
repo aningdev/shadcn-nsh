@@ -1,7 +1,7 @@
 import { components } from "./components";
 import type { ComponentKindId } from "./kinds";
 
-export type SidebarGroupId = "start" | "components";
+export type SidebarGroupId = "start" | "theming" | "components";
 
 export type SidebarPage = {
   /** Route, e.g. `/docs/components/button`. */
@@ -15,8 +15,8 @@ export type SidebarPage = {
 };
 
 /**
- * Flat docs pages in sidebar / pager order (NSH-style consecutive groups), one run per component
- * kind: the generated list is already in kind order, which is the index's order too.
+ * Flat docs pages in sidebar / pager order. Get started, then theming (the theme pages stay
+ * immediately under Themes, in palette order), then the components one run per kind.
  */
 export const SIDEBAR_PAGES: SidebarPage[] = [
   {
@@ -25,61 +25,13 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     group: "start",
   },
   {
+    route: "/docs/architecture",
+    title: "Architecture",
+    group: "start",
+  },
+  {
     route: "/docs/cli",
     title: "CLI",
-    group: "start",
-  },
-  {
-    route: "/docs/theme",
-    title: "Theme",
-    group: "start",
-  },
-  // The overview and each theme page are `.mdx`. A theme page's headings are markdown, so they
-  // land in the table of contents; the rows are still drawn from the palette list.
-  {
-    route: "/docs/themes",
-    title: "Themes",
-    group: "start",
-  },
-  {
-    route: "/docs/themes/nsh-gallery",
-    title: "NSH Gallery",
-    group: "start",
-    parent: "/docs/themes",
-  },
-  {
-    route: "/docs/themes/shadcn",
-    title: "shadcn",
-    group: "start",
-    parent: "/docs/themes",
-  },
-  {
-    route: "/docs/themes/solid-glass",
-    title: "Solid Glass",
-    group: "start",
-    parent: "/docs/themes",
-  },
-  {
-    route: "/docs/themes/apple",
-    title: "Apple",
-    group: "start",
-    parent: "/docs/themes",
-  },
-  {
-    route: "/docs/themes/material",
-    title: "Material",
-    group: "start",
-    parent: "/docs/themes",
-  },
-  {
-    route: "/docs/themes/winui",
-    title: "WinUI 3",
-    group: "start",
-    parent: "/docs/themes",
-  },
-  {
-    route: "/docs/customizing",
-    title: "Customizing",
     group: "start",
   },
   {
@@ -87,14 +39,62 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     title: "Icons",
     group: "start",
   },
+  // The overview and each theme page are `.mdx`. A theme page's headings are markdown, so they
+  // land in the table of contents; the rows are still drawn from the palette list.
+  {
+    route: "/docs/themes",
+    title: "Themes",
+    group: "theming",
+  },
+  {
+    route: "/docs/themes/nsh-gallery",
+    title: "NSH Gallery",
+    group: "theming",
+    parent: "/docs/themes",
+  },
+  {
+    route: "/docs/themes/shadcn",
+    title: "shadcn/ui",
+    group: "theming",
+    parent: "/docs/themes",
+  },
+  {
+    route: "/docs/themes/solid-glass",
+    title: "Solid Glass",
+    group: "theming",
+    parent: "/docs/themes",
+  },
+  {
+    route: "/docs/themes/apple",
+    title: "Apple",
+    group: "theming",
+    parent: "/docs/themes",
+  },
+  {
+    route: "/docs/themes/material",
+    title: "Material",
+    group: "theming",
+    parent: "/docs/themes",
+  },
+  {
+    route: "/docs/themes/winui",
+    title: "WinUI 3",
+    group: "theming",
+    parent: "/docs/themes",
+  },
+  {
+    route: "/docs/theme",
+    title: "Theme specification",
+    group: "theming",
+  },
+  {
+    route: "/docs/customizing",
+    title: "Customizing",
+    group: "theming",
+  },
   {
     route: "/docs/components",
     title: "All components",
-    group: "components",
-  },
-  {
-    route: "/docs/components/coverage",
-    title: "Coverage",
     group: "components",
   },
   ...components.map((c): SidebarPage => ({
