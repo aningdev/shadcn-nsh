@@ -42,16 +42,18 @@ const EXPECTED_LIGHT_KEYS = [
 ] as const;
 
 const REQUIRED_THEME_KEYS = [
+  "font-mono",
+  "font-sans",
   "media",
   "on-media",
   "radius",
-  "radius-container",
-  "radius-control",
-  "radius-modal",
+  "radius-lg",
+  "radius-md",
+  "radius-xl",
   "scrim",
 ] as const;
 
-const OPTIONAL_THEME_KEYS = new Set(["font-sans", "font-mono"]);
+const FONT_THEME_KEYS = new Set(["font-sans", "font-mono"]);
 
 // 1. Build-root artifacts must match themes/nsh-gallery byte for byte.
 for (const file of ["theme.json", "DESIGN.md", "light.tokens.json", "dark.tokens.json"]) {
@@ -88,14 +90,11 @@ function validateTheme(entry: AppTheme) {
   }
 
   for (const k of Object.keys(theme.cssVars.theme)) {
-    if (!REQUIRED_THEME_KEYS.includes(k as never) && !OPTIONAL_THEME_KEYS.has(k)) {
+    if (!REQUIRED_THEME_KEYS.includes(k as never)) {
       fail(`${tag}: unexpected cssVars.theme key \`${k}\``);
     }
-    if (
-      OPTIONAL_THEME_KEYS.has(k) &&
-      (!theme.cssVars.theme[k] || !theme.cssVars.theme[k]!.trim())
-    ) {
-      fail(`${tag}: optional \`${k}\` must be non-empty when set`);
+    if (FONT_THEME_KEYS.has(k) && (!theme.cssVars.theme[k] || !theme.cssVars.theme[k]!.trim())) {
+      fail(`${tag}: \`${k}\` must be a non-empty string`);
     }
   }
   for (const req of REQUIRED_THEME_KEYS) {

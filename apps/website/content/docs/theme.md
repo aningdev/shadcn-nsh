@@ -10,7 +10,7 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 | File                                    | What it holds                                                                                                                                                                                                                                                                                              |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `themes/<id>/index.ts`                  | The spec: `tokens` (21 appearance roles per mode, the fixed `scrim` / `media` / `on-media`, radii, fonts, tints, charts), `metrics`, `elevation`, the eleven `surfaces`, `feedback`, `motion`, `controls` — a full `ThemeSpec` for `nsh-gallery`, a `defineTheme({ extends, … })` delta for the other five |
-| `theme.json`                            | The build export in shadcn's `cssVars` shape: `cssVars.theme` (radius, `radius-control` / `-container` / `-modal`, `scrim`, `media`, `on-media`, optional `font-sans` / `font-mono`), `cssVars.light` and `cssVars.dark` (the same 21 keys)                                                                |
+| `theme.json`                            | The build export in shadcn's `cssVars` shape: `cssVars.theme` (`font-sans`, `font-mono`, `radius`, `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`), `cssVars.light` and `cssVars.dark` (the same 21 keys)                                                                             |
 | `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from the same spec                                                                                                                                                                                                     |
 | `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio and Style Dictionary v4                                                                                                                  |
 | `lib/ui/theme.ts`                       | `colors`, `surface`, `control`, `feedback`, `shape`, `font`, `metrics`, `elevation`, `motion`, `focusRing` and `alpha`, read reactively from the spec                                                                                                                                                      |
@@ -161,14 +161,14 @@ The names are `button`, `badge`, `field`, `choice`, `switch`, `slider`, `progres
 
 ## Radii
 
-`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-control` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-container` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-modal` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-control`. `shape` resolves each role reactively via `token()`, and `buttonCorner(size)` reads `control("button").corner` (`"control"` or `"full"` capsule):
+`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-md` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-lg` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-xl` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-md`. `shape` resolves each role reactively via `token()`, and `buttonCorner(size)` reads `control("button").corner` (`"control"` or `"full"` capsule):
 
 ```tsx
 import { buttonCorner, shape } from "@shadcn-nsh/theme";
 
-shape.control; // 8, from radius-control
-shape.container; // 12, from radius-container
-shape.modal; // 14, from radius-modal
+shape.control; // 8, from radius-md
+shape.container; // 12, from radius-lg
+shape.modal; // 14, from radius-xl
 buttonCorner("default"); // 999 when button.corner.md is "full", else shape.control
 ```
 
@@ -232,11 +232,11 @@ The theme file stays complete: copy it, then edit. Every role of both appearance
 }
 ```
 
-Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-control`, `radius-container` or `radius-modal` in `cssVars.theme` (keep `radius` equal to `radius-control`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. A surface's shape and depth and a control's geometry are the spec's, so an app that changes them edits `themes/<id>.ts` — the file `add theme-<id>` installs — and copies it into its own reader if it does not. Fonts are the app's own: see [Fonts](#fonts).
+Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-md`, `radius-lg` or `radius-xl` in `cssVars.theme` (keep `radius` equal to `radius-md`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. A surface's shape and depth and a control's geometry are the spec's, so an app that changes them edits `themes/<id>.ts` — the file `add theme-<id>` installs — and copies it into its own reader if it does not. Fonts are the app's own: see [Fonts](#fonts).
 
 ## Fonts
 
-A theme owns no font: none of the shipped themes declares a family unless its app's does, and one type scale (sizes and line heights) serves them all, so switching themes never reflows text. Each theme states its own weight and letter spacing per role. Text names no family of its own; it takes the app's `font-sans`, and monospaced text (the `font-mono` class, code in a `Text`) takes `font-mono` — this library writes the generic `monospace` where it needs a monospaced face. The user's system font size scales every size.
+Every `theme.json` writes `font-sans` and `font-mono`. Built-in themes leave `tokens.font` unset, so those keys are `system-ui` and `monospace` — the system's own faces — and one type scale (sizes and line heights) serves them all, so switching themes never reflows text. Each theme states its own weight and letter spacing per role. `font.sans` and `font.mono` read the two keys; the `font-sans` and `font-mono` classes read the same CSS variables. The user's system font size scales every size.
 
 Set the app's families in the `cssVars.theme` block of its own `theme.json`:
 

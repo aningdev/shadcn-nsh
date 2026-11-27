@@ -26,7 +26,7 @@ const size = {
  * scroll view clips what reaches past its sides.
  */
 export const treeItemClass =
-  "group rounded-(--radius-control) transition-colors duration-150 motion-reduce:transition-none hover:bg-accent active:opacity-70 " +
+  "group rounded-(--radius-md) transition-colors duration-150 motion-reduce:transition-none hover:bg-accent active:opacity-70 " +
   "selected:bg-brand/15 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring disabled:opacity-50";
 
 /** How far each level is indented, in points. */
@@ -127,7 +127,7 @@ function TerminalTreeRow(props: { entry: TreeEntry; detail?: string }) {
   );
 }
 
-const treeFrameClass = "overflow-hidden rounded-(--radius-container) border border-border bg-card";
+const treeFrameClass = "overflow-hidden rounded-(--radius-lg) border border-border bg-card";
 
 /** `nsh/base` Tree with row chrome and `TreeRow` by default. */
 export type TreeProps = BaseTreeProps;

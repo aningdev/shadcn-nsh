@@ -55,14 +55,12 @@ export function fieldCorners(field: FieldLook): ViewStyle {
 }
 
 /**
- * `fieldCorners` for a frame drawn in classes: `rounded-(--radius-control)` names the control radius
+ * `fieldCorners` for a frame drawn in classes: `rounded-(--radius-md)` names the control radius
  * every theme's field corner names, and a class's corner is a circular one, the curve those frames
  * already draw. The bottom stays square where the theme draws a line under the text.
  */
 export function fieldCornerClass(field: FieldLook): string {
-  return fieldDrawn(field).bottomRadius === 0
-    ? "rounded-t-(--radius-control)"
-    : "rounded-(--radius-control)";
+  return fieldDrawn(field).bottomRadius === 0 ? "rounded-t-(--radius-md)" : "rounded-(--radius-md)";
 }
 
 /** A field's edge widths: every side, its bottom edge alone for a line, or none when borderless. */

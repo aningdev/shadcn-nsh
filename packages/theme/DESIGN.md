@@ -211,7 +211,7 @@ NSH Gallery: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`)
 
 ## Typography
 
-- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).
+- `theme.json` writes `font-sans: system-ui` and `font-mono: monospace`.
 - **`caption`**: 11px / 16px, weight 400, letter-spacing 0px
 - **`detail`**: 12px / 16px, weight 400, letter-spacing 0px
 - **`body`**: 13px / 20px, weight 400, letter-spacing 0px
@@ -230,7 +230,7 @@ Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline bor
 
 ## Shapes
 
-- Radii: control 8px, container 12px, modal 14px (`curve: "continuous"`).
+- Radii: `radius-md` (control) 8px, `radius-lg` (container) 12px, `radius-xl` (modal) 14px; A-layer `radius` equals `radius-md` (`curve: "continuous"`).
 
 ## Motion & Micro-interaction
 

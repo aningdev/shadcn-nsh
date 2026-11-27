@@ -384,13 +384,13 @@ export const chart = {
 /** Corner radii by layer, read reactively from `theme.json` + active `ThemeSpec`. */
 export const shape = {
   get control(): number {
-    return token("radius-control") as number;
+    return token("radius-md") as number;
   },
   get container(): number {
-    return token("radius-container") as number;
+    return token("radius-lg") as number;
   },
   get modal(): number {
-    return token("radius-modal") as number;
+    return token("radius-xl") as number;
   },
   get curve(): "continuous" | "circular" {
     return activeSpec().tokens.radius.curve;
@@ -429,6 +429,14 @@ export const font = {
   weight: (role: TypeRole) =>
     activeSpec().metrics.typography[role].fontWeight as NonNullable<TextStyle["fontWeight"]>,
   letterSpacing: (role: TypeRole) => activeSpec().metrics.typography[role].letterSpacing,
+  get sans(): string {
+    // NSH leaves a generic `system-ui` out of `Tokens` (the system font). Built-in
+    // themes write that default, so the key is cast; a missing token falls back.
+    return (token("font-sans" as keyof Tokens) as string | undefined) ?? "system-ui";
+  },
+  get mono(): string {
+    return (token("font-mono") as string | undefined) ?? "monospace";
+  },
 };
 
 /** Stroke widths (`hairline`, `control`). */

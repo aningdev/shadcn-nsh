@@ -18,19 +18,19 @@
 
 1. 在 `packages/theme/themes/<id>/index.ts` 使用 `defineTheme({ id, label, extends: base, ... })` 声明稀疏覆写：
    - **仅当需要整体替换调色板时**：提供 `tokens.light` 与 `tokens.dark`（21 个核心颜色键；省略 `brand` 将自动使用 `var(--primary)`）；切勿依赖继承 `base` 的 `brand` / `tints` / `chart`。
-   - **字体（可选）**：仅当设计语言明确要求特定字体族时配置 `tokens.font.{sans,mono}`，默认省略以使用系统原生字体栈。
+   - **字体**：`theme.json` 始终写出 `font-sans` 与 `font-mono`。不配置 `tokens.font` 时为 `system-ui` 与 `monospace`；只有设计语言明确要求特定字体族时才覆写 `tokens.font.{sans,mono}`。
    - **结构与交互**：按需覆写 `metrics`、`elevation`、`surfaces`（11 角色）、`feedback`、`motion`、`controls`（13 组）。
    - **豁免说明**：若依据平台官方规范保留了低于 WCAG 2.2 AA (4.5:1) 的配色对，必须在 `meta.contrastWaivers` 中登记理由与规范出处。
 2. 在 `packages/theme/themes/index.ts` 与 `packages/theme/preset.ts` 注册该主题。
 3. 运行 `bun run tokens:build`，自动导出该主题目录下的：
-   - `theme.json`（7 共享键 + 可选字体 + 21 亮暗颜色键）
+   - `theme.json`（9 个共享键：`font-sans`、`font-mono`、`radius`、`radius-md`、`radius-lg`、`radius-xl`、`scrim`、`media`、`on-media`；外加 21 个亮暗颜色键）
    - `light.tokens.json` / `dark.tokens.json`（W3C DTCG 2025.10 互操作导出）
    - `DESIGN.md`（经 `@google/design.md/linter` 校验的视觉语言规格文档）
 4. 注册进 `registry.json` 并运行 `bun run registry:build` 更新 CLI 分发清单。
 
 ### 1.2 应用侧定制
 
-通过 `shadcn-nsh init --theme <id>` 初始化后，项目根目录会获得 `theme.json` 与 `DESIGN.md`，`lib/ui/` 下获得精简的主题源码（`schema.ts`、`materials.ts`、`effects.ts`、`paradigm.ts`、`base.ts`、`preset.ts`、`theme.ts`）。应用可直接微调 `theme.json` 的颜色、圆角或可选的 `font-sans`/`font-mono`，或借助 `base.ts` + `defineTheme()` 扩展视觉行为。
+通过 `shadcn-nsh init --theme <id>` 初始化后，项目根目录会获得 `theme.json` 与 `DESIGN.md`，`lib/ui/` 下获得精简的主题源码（`schema.ts`、`materials.ts`、`effects.ts`、`paradigm.ts`、`base.ts`、`preset.ts`、`theme.ts`）。应用可直接微调 `theme.json` 的颜色、圆角（`radius`、`radius-md`、`radius-lg`、`radius-xl`）或 `font-sans`/`font-mono`，或借助 `base.ts` + `defineTheme()` 扩展视觉行为。
 
 ### 1.3 L1 `ThemeParadigm`
 

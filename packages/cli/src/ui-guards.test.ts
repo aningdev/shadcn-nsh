@@ -34,7 +34,7 @@ const rules: Record<string, RegExp> = {
   // A class names a theme token (`bg-raised`), not a palette entry (`border-white`, `text-red-500`).
   "tailwind palette color":
     /\b(?:bg|text|border|ring|from|via|to|fill|stroke|outline|shadow|divide|placeholder|accent|caret|decoration)-(?:white|black|(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3})\b/,
-  // A class radius names one of the theme's tiers (`rounded-(--radius-control)`): Tailwind's fixed
+  // A class radius names one of the theme's tiers (`rounded-(--radius-md)`): Tailwind's fixed
   // steps (`rounded-md`) ignore `radius*`, so a control that wore one kept its corners through a
   // theme change (#53). A deliberate fixed geometry stays `rounded-full` or `rounded-[Npx]`, with a
   // comment saying why.
@@ -136,10 +136,8 @@ describe("component sources (P3: colors come from the theme)", () => {
       expect(rule.test(line), line).toBe(true);
     }
     // The theme's tiers, a pill and a written-out corner are all the radius a class may name.
-    expect(rule.test('class="rounded-(--radius-control) rounded-(--radius-container)"')).toBe(
-      false,
-    );
-    expect(rule.test('class="rounded-t-(--radius-container)"')).toBe(false);
+    expect(rule.test('class="rounded-(--radius-md) rounded-(--radius-lg)"')).toBe(false);
+    expect(rule.test('class="rounded-t-(--radius-lg)"')).toBe(false);
     expect(rule.test('class="rounded-full rounded-[4px]"')).toBe(false);
   });
 });

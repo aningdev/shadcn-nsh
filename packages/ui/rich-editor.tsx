@@ -31,7 +31,7 @@ export const richEditorClasses: RichEditorClasses = {
     "heading[level=2]": "text-2xl font-semibold tracking-tight",
     "heading[level=3]": "text-xl font-semibold",
     blockquote: "border-l-4 border-border pl-4 text-muted-foreground italic",
-    codeBlock: "font-mono text-sm bg-muted rounded-(--radius-control) px-4 py-3",
+    codeBlock: "font-mono text-sm bg-muted rounded-(--radius-md) px-4 py-3",
     bulletList: "gap-1.5 pl-6",
     orderedList: "gap-1.5 pl-6",
     taskList: "gap-1.5",

@@ -24,15 +24,15 @@ export interface TooltipLookOptions {
  * A tooltip's bubble (`class` and `style`, on the view inside `nsh/base`'s `Tooltip`):
  * the theme's inverse surface (`surface("inverse")`), its face, shadow, edge and backdrop blur.
  * One line: a row 8 points apart, 8 by 4 points of padding,
- * the theme's control corners (`radius-control`); `rich`: a column, 10 points of padding, the
- * theme's container corners (`radius-container`).
+ * the theme's control corners (`radius-md`); `rich`: a column, 10 points of padding, the
+ * theme's container corners (`radius-lg`).
  * Its text takes `tooltipTextStyle()`, a shortcut or a note `tooltipNote()`.
  */
 export function tooltipLook(o?: TooltipLookOptions) {
   return {
     class: o?.rich
-      ? "gap-2 rounded-(--radius-container) p-2.5"
-      : "flex-row items-center gap-2 rounded-(--radius-control) px-2 py-1",
+      ? "gap-2 rounded-(--radius-lg) p-2.5"
+      : "flex-row items-center gap-2 rounded-(--radius-md) px-2 py-1",
     style: {
       get backgroundColor() {
         return surface("inverse").style.backgroundColor;

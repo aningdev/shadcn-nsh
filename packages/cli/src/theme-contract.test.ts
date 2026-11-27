@@ -7,12 +7,14 @@ type Theme = { cssVars: { theme: Vars; light: Vars; dark: Vars } };
 const read = (file: string) =>
   JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8")) as Theme;
 
-/** Theme v5 minimal 25-key contract (`docs/decisions/0020-theme-v5.md`). */
+/** Theme v5 shared contract: 9 `cssVars.theme` keys (`docs/decisions/0020-theme-v5.md`). */
 const REQUIRED_THEME = [
+  "font-sans",
+  "font-mono",
   "radius",
-  "radius-control",
-  "radius-container",
-  "radius-modal",
+  "radius-md",
+  "radius-lg",
+  "radius-xl",
   "scrim",
   "media",
   "on-media",
@@ -64,10 +66,13 @@ const REMOVED = [
 const ours = read("../../../packages/theme/theme.json");
 
 describe("theme.json (Theme v5)", () => {
-  test("declares all 7 shared theme keys and 21 light/dark core keys", () => {
+  test("declares all 9 shared theme keys and 21 light/dark core keys", () => {
     for (const key of REQUIRED_THEME) {
       expect(key in ours.cssVars.theme, `theme.${key}`).toBe(true);
     }
+    expect(ours.cssVars.theme["font-sans"]).toBe("system-ui");
+    expect(ours.cssVars.theme["font-mono"]).toBe("monospace");
+    expect(ours.cssVars.theme.radius).toBe(ours.cssVars.theme["radius-md"]);
     expect(Object.keys(ours.cssVars.light).sort()).toEqual([...REQUIRED_MODE].sort());
     expect(Object.keys(ours.cssVars.dark).sort()).toEqual([...REQUIRED_MODE].sort());
   });

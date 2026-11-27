@@ -4,6 +4,8 @@
 - **Status**: Accepted
 - **Supersedes**: `0004`, `0006`, `0007`, `0013`, `0019` (DTCG-as-source, 58-key `theme.json`, `semantics.json`, `finish-fields.ts`, and single-theme control slots)
 
+> **Revision (2026-11-27)**: `cssVars.theme` always writes `font-sans` (default `system-ui`) and `font-mono` (default `monospace`). The layer radius keys are `radius-md`, `radius-lg`, and `radius-xl` (no `radius-control` / `radius-container` / `radius-modal` aliases). `radius` still equals the control radius (`radius-md`). `shape.control` / `shape.container` / `shape.modal` keep their names. `font.sans` and `font.mono` read the font keys. The decision text below records the contract as accepted on 2026-11-26.
+
 ## Context
 
 Over Contracts v1–v4, the theme system accumulated three structural burdens that hindered maintainability and copy-into-app usability:

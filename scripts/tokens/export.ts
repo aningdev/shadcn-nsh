@@ -1,6 +1,6 @@
 /**
  * One-way exporters from Theme v5 TypeScript specs (`ThemeSpec` / `AppTheme`) to:
- * 1. `theme.json` (`AppTheme.theme`, 25-key NSH CSS variables + optional `font-sans`/`font-mono`)
+ * 1. `theme.json` (`AppTheme.theme`: NSH CSS variables, always including `font-sans` / `font-mono`)
  * 2. Standalone W3C DTCG 2025.10 `{light,dark}.tokens.json` (for Figma / Tokens Studio)
  * 3. Google Labs `DESIGN.md` (`version: "alpha"`, passing `@google/design.md/linter`)
  */
@@ -412,11 +412,9 @@ export function exportDesignMd(entry: AppTheme): string {
   lines.push("");
   lines.push("## Typography");
   lines.push("");
-  lines.push(
-    spec.tokens.font?.sans
-      ? `- Font sans: \`${spec.tokens.font.sans}\`; font mono: \`${spec.tokens.font.mono ?? "monospace"}\`.`
-      : "- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).",
-  );
+  const fontSans = spec.tokens.font?.sans ?? "system-ui";
+  const fontMono = spec.tokens.font?.mono ?? "monospace";
+  lines.push(`- \`theme.json\` writes \`font-sans: ${fontSans}\` and \`font-mono: ${fontMono}\`.`);
   for (const role of TYPE_ROLES) {
     const scale = SHARED_TYPE_SCALE[role];
     const m = spec.metrics.typography[role];
@@ -440,7 +438,7 @@ export function exportDesignMd(entry: AppTheme): string {
   lines.push("## Shapes");
   lines.push("");
   lines.push(
-    `- Radii: control ${spec.tokens.radius.control}px, container ${spec.tokens.radius.container}px, modal ${spec.tokens.radius.modal}px (\`curve: "${spec.tokens.radius.curve}"\`).`,
+    `- Radii: \`radius-md\` (control) ${spec.tokens.radius.control}px, \`radius-lg\` (container) ${spec.tokens.radius.container}px, \`radius-xl\` (modal) ${spec.tokens.radius.modal}px; A-layer \`radius\` equals \`radius-md\` (\`curve: "${spec.tokens.radius.curve}"\`).`,
   );
   lines.push("");
   lines.push("## Motion & Micro-interaction");

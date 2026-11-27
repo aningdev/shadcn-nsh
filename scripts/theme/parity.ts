@@ -35,8 +35,9 @@ const EXEMPT: Exemption[] = [
   { key: "media", reason: "v5 C-layer media ground" },
   { key: "on-media", reason: "v5 C-layer media ink" },
   { key: "radius-card", reason: "upstream card radius" },
-  { key: "radius-container", reason: "v5 layer radius scale" },
-  { key: "radius-modal", reason: "v5 layer radius scale" },
+  { key: "radius-md", reason: "v5 layer radius scale (Tailwind radius-md)" },
+  { key: "radius-lg", reason: "v5 layer radius scale (Tailwind radius-lg)" },
+  { key: "radius-xl", reason: "v5 layer radius scale (Tailwind radius-xl)" },
   // Keys removed/internalized from theme.json in Theme v5 (`ADR 0020`)
   { key: "sidebar", reason: "removed in ADR 0020; sidebar reads `background`" },
   { key: "sidebar-foreground", reason: "removed in ADR 0020" },

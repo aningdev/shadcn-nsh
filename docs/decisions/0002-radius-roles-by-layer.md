@@ -4,6 +4,8 @@
 - 状态：已采纳（2026-11-23）
 - 规范：[`docs/specs/theme-contract-v2.md`](../specs/theme-contract-v2.md) 第 2 节（#253）
 
+> **修订（2026-11-27）**：`cssVars.theme` 的三个层圆角键改为 `radius-md`（control）、`radius-lg`（container）、`radius-xl`（modal），与 Tailwind CSS v4 / shadcn/ui 对齐，不保留旧键。A 层 `radius` 仍由 control 派生，值等于 `radius-md`。`shape.control` / `shape.container` / `shape.modal` 的属性名不变。下文保留决定当时的键名。
+
 ## 背景
 
 此前主题按组件族定义了 8 个圆角角色（`radius`、`card`、`control`、`field`、`chip`、`overlay`、`dialog`、`sheet`）及 `size.control.corner`（5 / 7），主题作者要填的键多且多处同值重复。同时 `control` 身兼两职：在 `apple` 与 `material` 里既表示"按钮是 999 胶囊"，又被输入框、列表行、标签与色区直接读取，导致 `Select` / `Combobox` 触发器、列表行与 `ColorPicker` 色区也变成药丸或半椭圆。

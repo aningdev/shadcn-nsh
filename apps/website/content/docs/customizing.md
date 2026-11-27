@@ -15,7 +15,7 @@ In a monorepo, every path starts at `packages/ui/` instead of the app root.
 
 ## Colors, radii and shadows
 
-`theme.json` holds the colors for both appearances, the three `radius-*` layer lengths, the fixed `scrim` / `media` / `on-media` values and, if the app has its own, the font families. Every component reads them through `lib/ui/theme.ts`.
+`theme.json` holds the colors for both appearances, the three layer radii (`radius-md`, `radius-lg`, `radius-xl`, with `radius` equal to `radius-md`), the fixed `scrim` / `media` / `on-media` values, and `font-sans` / `font-mono` (`system-ui` and `monospace` unless the theme sets `tokens.font`). Every component reads them through `lib/ui/theme.ts`.
 
 ```sh
 theme.json               # the roles of both appearances, 3 radii, fonts
@@ -31,10 +31,12 @@ What `theme.json` does not carry is the spec's own depth: the eleven `surfaces` 
 {
   "cssVars": {
     "theme": {
+      "font-sans": "system-ui",
+      "font-mono": "monospace",
       "radius": "8px",
-      "radius-control": "8px",
-      "radius-container": "12px",
-      "radius-modal": "14px"
+      "radius-md": "8px",
+      "radius-lg": "12px",
+      "radius-xl": "14px"
     },
     "light": { "background": "#f6f6f9", "primary": "#c6ef6a" },
     "dark": { "background": "#16191f", "primary": "#c4ec6a" }

@@ -211,7 +211,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemBa
 
 ## Typography
 
-- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).
+- `theme.json` writes `font-sans: system-ui` and `font-mono: monospace`.
 - **`caption`**: 11px / 16px, weight 400, letter-spacing 0px
 - **`detail`**: 12px / 16px, weight 400, letter-spacing 0px
 - **`body`**: 13px / 20px, weight 400, letter-spacing 0px
@@ -230,7 +230,7 @@ Apple Liquid Glass depth: `raised` (regular / thin, blur 24), `overlay` (regular
 
 ## Shapes
 
-- Radii: control 8px, container 12px, modal 16px (`curve: "continuous"`).
+- Radii: `radius-md` (control) 8px, `radius-lg` (container) 12px, `radius-xl` (modal) 16px; A-layer `radius` equals `radius-md` (`curve: "continuous"`).
 
 ## Motion & Micro-interaction
 

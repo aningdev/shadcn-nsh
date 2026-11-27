@@ -76,7 +76,7 @@ _Avoid_: 把 `Label` 组件当作无障碍名、把控件的文字抄进 `access
 _Avoid_: 重写行为, 缩减 props
 
 **Theme Source**:
-`nsh-gallery`（NSH Gallery，本库这套，也是构建时根主题）的真源是 `packages/theme/tokens/`（W3C DTCG 2025.10：`base/` 与 `themes/nsh-gallery/`），经 `bun run tokens:build` 编译为运行时产物 `theme.json`（基础 token 层：颜色、3 个层圆角 `radius-{control,container,modal}` 及 A 层 `radius` 槽，oklch 存储）、`semantics.json`（跨平台语义层：风格数据与 `finishes` 的 `shared` + 稀疏 `light`/`dark`，以 `{token}` 引用基础层）与 `themes/nsh-gallery/{theme,semantics}.json`；其余主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）同样由 DTCG 源码编译；`theme.ts` 读取编译产物。分层规则见 [`specs/design-semantics.md`](specs/design-semantics.md)，角色清单见 [`specs/theme-roles.md`](specs/theme-roles.md)，DTCG 2025.10 标准见 [`specs/design-tokens.md`](specs/design-tokens.md)。
+`nsh-gallery`（NSH Gallery，本库这套，也是构建时根主题）的真源是 `packages/theme/tokens/`（W3C DTCG 2025.10：`base/` 与 `themes/nsh-gallery/`），经 `bun run tokens:build` 编译为运行时产物 `theme.json`（基础 token 层：颜色、3 个层圆角 `radius-md` / `radius-lg` / `radius-xl` 及由 control 派生的 A 层 `radius`，以及始终写出的 `font-sans` / `font-mono`，颜色以 oklch 存储）、`semantics.json`（跨平台语义层：风格数据与 `finishes` 的 `shared` + 稀疏 `light`/`dark`，以 `{token}` 引用基础层）与 `themes/nsh-gallery/{theme,semantics}.json`；其余主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）同样由 DTCG 源码编译；`theme.ts` 读取编译产物。分层规则见 [`specs/design-semantics.md`](specs/design-semantics.md)，角色清单见 [`specs/theme-roles.md`](specs/theme-roles.md)，DTCG 2025.10 标准见 [`specs/design-tokens.md`](specs/design-tokens.md)。
 _Avoid_: neutral 映射, `custom-*` 键
 
 **Design Semantics（语义层 / `semantics.json`）**:
@@ -84,7 +84,7 @@ _Avoid_: neutral 映射, `custom-*` 键
 _Avoid_: `finishes.json`（旧文件名）、在语义层重复写颜色/圆角字面量
 
 **Token**:
-`theme.json` 里的一个基础设计量（按 DTCG `$type` 分 `color`、`dimension`）：颜色（`cssVars.light` / `cssVars.dark` 逐外观，或 `cssVars.theme` 共用）、按层划分的 3 个圆角（`radius-control`、`radius-container`、`radius-modal`，以及由 `radius-control` 派生的 A 层 `radius` 槽）。字体族不是 token（[决策 0009](decisions/0009-no-theme-type-scale.md)）。`theme.json` 内部用 `var(--token)`，语义层用 `{token}` 引用。A 层是 shadcn 的 31 个槽（NSH 的 `Theme::of` 逐名字解析，缺一个就退回 shadcn 的灰），B 层是本库自己的颜色扩展，C 层是明暗共用的 token。
+`theme.json` 里的一个基础设计量（按 DTCG `$type` 分 `color`、`dimension`，字体族是字符串）：颜色（`cssVars.light` / `cssVars.dark` 逐外观，或 `cssVars.theme` 共用）、按层划分的 3 个圆角（`radius-md`、`radius-lg`、`radius-xl`，以及由 `radius-md` 派生的 A 层 `radius` 槽）、`font-sans` 与 `font-mono`（默认 `system-ui` / `monospace`，`font.sans` / `font.mono` 读取）。`theme.json` 内部用 `var(--token)`，语义层用 `{token}` 引用。A 层是 shadcn 的 31 个槽（NSH 的 `Theme::of` 逐名字解析，缺一个就退回 shadcn 的灰），B 层是本库自己的颜色扩展，C 层是明暗共用的 token。
 _Avoid_: 用别的词指它；在 B 层另起一个与 A 层槽同义的名字
 
 **Finish（Finish Role）**:

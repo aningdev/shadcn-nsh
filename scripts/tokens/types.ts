@@ -135,9 +135,9 @@ export const NAMED_CUBIC_BEZIERS: Record<
 };
 
 export const RADIUS_KEYS = [
-  { cssVar: "radius-control", dtcg: "control" },
-  { cssVar: "radius-container", dtcg: "container" },
-  { cssVar: "radius-modal", dtcg: "modal" },
+  { cssVar: "radius-md", dtcg: "control" },
+  { cssVar: "radius-lg", dtcg: "container" },
+  { cssVar: "radius-xl", dtcg: "modal" },
 ] as const;
 
 export const TYPE_ROLES = [
@@ -151,8 +151,8 @@ export const TYPE_ROLES = [
 ] as const;
 
 /**
- * The DTCG typography composite requires a `fontFamily`. A theme owns no family (ADR 0009): the
- * app's `font-sans` does, and no component reads this one. Every role writes this placeholder.
+ * The DTCG typography composite requires a `fontFamily`. `theme.json` always writes `font-sans`
+ * and `font-mono` (defaults `system-ui` / `monospace`). No component reads this placeholder.
  */
 export const TYPOGRAPHY_FONT_FAMILY = "system-ui";
 

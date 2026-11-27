@@ -14,15 +14,15 @@ Theme v5 主题契约与运行时读取层（决策见 [`docs/decisions/0020-the
 | `themes/<id>/index.ts`                  | 稀疏覆写主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）与 `themes/native/`                                                                                                                           |
 | `preset.ts`                             | 构建时预设导出（`init --theme <id>` 时指向所选主题）                                                                                                                                                               |
 | `theme.ts`                              | 零 Proxy 强类型运行时读取：`colors`、`tints`、`chart`、`shape`、`metrics`、`surface()`、`feedback`、`motion`（`springOf`、`springCss`、`revealSpring`、`pressSpring`）、`control()`、`selectTheme`、`currentTheme` |
-| `theme.json`                            | 导出的精简 25 键 NSH 变量（7 共享 + 21 亮暗键 + 可选 `font-sans`/`font-mono`）                                                                                                                                     |
+| `theme.json`                            | 导出的 NSH 变量（`cssVars.theme` 含 `font-sans` / `font-mono` 与圆角刻度；亮暗各 21 键）                                                                                                                           |
 | `light.tokens.json`, `dark.tokens.json` | W3C DTCG 2025.10 单向静态导出（仅作工具链互操作，运行时不读）                                                                                                                                                      |
 | `DESIGN.md`                             | 生成的 Google Labs `DESIGN.md`（`alpha`）视觉规范（随 CLI `init` 复制进应用根目录）                                                                                                                                |
 
 ## 架构摘要（Theme v5）
 
 - **三层写法**：L1 `ThemeParadigm`（`paradigm.ts` 六轴，`defineTheme` 展开后从 `ThemeSpec` 去掉），L2 稀疏 `ThemeSpec` 覆写，L3 `MaterialSpec` 与 `effects.ts` 的 WGSL（`<ThemedSurface>`、`<ThemeTransition>`）。见 `.agents/skills/theme-designer/SKILL.md`。
-- **精简 `theme.json`（25 个核心角色 + 可选字体）**：
-  - `cssVars.theme`：必需 `radius`、`radius-control`、`radius-container`、`radius-modal`、`scrim`、`media`、`on-media`；可选 `font-sans`、`font-mono`（内置主题默认省略以沿用系统字体）。
+- **`theme.json` 共享键**：
+  - `cssVars.theme`：必需 `font-sans`（默认 `system-ui`）、`font-mono`（默认 `monospace`）、`radius`（等于 `radius-md`）、`radius-md`、`radius-lg`、`radius-xl`、`scrim`、`media`、`on-media`。`font.sans` 与 `font.mono` 读取这两个字体键。
   - `cssVars.light` / `cssVars.dark`：21 个核心颜色角色（`background`、`card`、`popover`、`muted`、`surface`、`foreground`、`muted-foreground`、`faint`、`primary`、`primary-foreground`、`secondary`、`accent`、`brand`、`border`、`line`、`input`、`ring`、`info`、`success`、`warning`、`destructive`）。
   - 移除 `sidebar-*`、冗余 `*-foreground`、静态 `*-tint`（运行时通过 `tints.*` 反应式计算）、必选 `chart-1..5` 与单一控件颜色键；将 `up` / `warn` / `raised` 标准化为 `success` / `warning` / `surface`。
 - **四层正交模型**：

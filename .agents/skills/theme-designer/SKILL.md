@@ -53,7 +53,7 @@ Merge order: extended theme, then `expandParadigm(paradigm)`, then the call's ow
 
 21 `CorePalette` keys, per appearance: `background`, `card`, `popover`, `muted`, `surface`, `foreground`, `muted-foreground`, `faint`, `primary`, `primary-foreground`, `secondary`, `accent`, `brand`, `border`, `line`, `input`, `ring`, `info`, `success`, `warning`, `destructive`.
 
-7 shared `theme.json` keys: `radius`, `radius-control`, `radius-container`, `radius-modal`, `scrim`, `media`, `on-media`. Optional `font-sans` / `font-mono`.
+9 shared `theme.json` keys: `font-sans` (default `system-ui`), `font-mono` (default `monospace`), `radius` (equals `radius-md`), `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`. `font.sans` and `font.mono` read the font keys. Set `tokens.font` only to override the defaults.
 
 `brand` defaults to `var(--primary)` when omitted. Replacing `tokens.light` or `tokens.dark` clears inherited `tints` and `chart`; set them in that same patch. `tints.*` and `chart.*` are runtime roles. Never name a color after a component (`button`, `sidebar`, `field`).
 

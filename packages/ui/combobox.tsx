@@ -171,7 +171,7 @@ export function ComboToggle(props: { open: boolean; id?: string; label?: string 
         height: toggleSide,
         alignItems: "center",
         justifyContent: "center",
-        // A step inside a control's corners (`radius-control`).
+        // A step inside a control's corners (`radius-md`).
         ...rounded(shape.control, 1),
       }}
       hoverStyle={feedback.hoverStyle()}

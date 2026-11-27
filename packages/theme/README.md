@@ -14,15 +14,15 @@ Theme v5 runtime and theme definitions (`docs/decisions/0020-theme-v5.md`). One 
 | `themes/<id>/index.ts`                  | Sparse overrides (`shadcn`, `solid-glass`, `apple`, `material`, `winui`) and `themes/native/`                                                                                                                             |
 | `preset.ts`                             | Build-time preset re-export (replaced by `init --theme <id>` with the chosen theme)                                                                                                                                       |
 | `theme.ts`                              | Zero-Proxy strongly typed readers: `colors`, `tints`, `chart`, `shape`, `metrics`, `surface()`, `feedback`, `motion` (`springOf`, `springCss`, `revealSpring`, `pressSpring`), `control()`, `selectTheme`, `currentTheme` |
-| `theme.json`                            | Compiled 25-key NSH CSS variables (`cssVars.theme` + 21 `cssVars.{light,dark}` + optional `font-sans`/`font-mono`)                                                                                                        |
+| `theme.json`                            | Compiled NSH CSS variables (`cssVars.theme` includes `font-sans` / `font-mono` and the radius scale; 21 `cssVars.{light,dark}` keys)                                                                                      |
 | `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 one-way exports (interchange only; not read at runtime)                                                                                                                                       |
 | `DESIGN.md`                             | Generated Google Labs `DESIGN.md` (`alpha`) specification copied to app root on `init`                                                                                                                                    |
 
 ## Architecture (Theme v5)
 
 - **Three authoring layers**: L1 `ThemeParadigm` (`paradigm.ts`, six axes, stripped after `defineTheme`), L2 sparse `ThemeSpec` overrides, L3 `MaterialSpec` plus the WGSL in `effects.ts` (`<ThemedSurface>`, `<ThemeTransition>`). See `.agents/skills/theme-designer/SKILL.md`.
-- **Minimal 25-key `theme.json` + optional fonts**:
-  - `cssVars.theme`: required `radius`, `radius-control`, `radius-container`, `radius-modal`, `scrim`, `media`, `on-media`; optional `font-sans`, `font-mono` (omitted by default in built-in themes to keep system fonts).
+- **`theme.json` shared keys**:
+  - `cssVars.theme`: required `font-sans` (default `system-ui`), `font-mono` (default `monospace`), `radius` (equals `radius-md`), `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`. `font.sans` and `font.mono` read the font keys.
   - `cssVars.light` / `cssVars.dark`: 21 core keys (`background`, `card`, `popover`, `muted`, `surface`, `foreground`, `muted-foreground`, `faint`, `primary`, `primary-foreground`, `secondary`, `accent`, `brand`, `border`, `line`, `input`, `ring`, `info`, `success`, `warning`, `destructive`).
   - Removed from `theme.json`: `sidebar-*`, redundant `*-foreground`, static `*-tint` (computed reactively via `tints.*` + `tintAlpha`), `chart-1..5` (defaults to `[brand, info, success, warning, destructive]`), and single-use control/surface keys.
 - **Four Orthogonal Layers**:

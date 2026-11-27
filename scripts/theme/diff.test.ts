@@ -20,10 +20,12 @@ const sampleTheme = (
   name: "sample",
   cssVars: {
     theme: {
+      "font-sans": "system-ui",
+      "font-mono": "monospace",
       radius: "8px",
-      "radius-control": "8px",
-      "radius-container": "12px",
-      "radius-modal": "16px",
+      "radius-md": "8px",
+      "radius-lg": "12px",
+      "radius-xl": "16px",
       scrim: "oklch(0 0 0 / 0.45)",
       media: "oklch(0.1 0 0)",
       "on-media": "oklch(0.98 0 0)",

@@ -2,10 +2,12 @@
   "name": "WinUI 3",
   "cssVars": {
     "theme": {
+      "font-sans": "system-ui",
+      "font-mono": "monospace",
       "radius": "4px",
-      "radius-control": "4px",
-      "radius-container": "8px",
-      "radius-modal": "8px",
+      "radius-md": "4px",
+      "radius-lg": "8px",
+      "radius-xl": "8px",
       "scrim": "oklch(0 0 0 / 0.302)",
       "media": "oklch(0.1869 0.0151 266.766)",
       "on-media": "oklch(1 0 0)"

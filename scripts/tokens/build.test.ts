@@ -18,17 +18,17 @@ const readText = (rel: string) => fs.readFileSync(path.join(root, rel), "utf8");
 const readJson = (rel: string) => JSON.parse(readText(rel));
 
 describe("Theme v5 schema & compilation", () => {
-  test("compiles 25 core keys + omits optional fonts by default", () => {
+  test("compiles shared theme keys and writes default fonts", () => {
     expect(Object.keys(nshGallery.theme.cssVars.light)).toHaveLength(21);
     expect(Object.keys(nshGallery.theme.cssVars.dark)).toHaveLength(21);
-    expect(nshGallery.theme.cssVars.theme["font-sans"]).toBeUndefined();
-    expect(nshGallery.theme.cssVars.theme["font-mono"]).toBeUndefined();
-    expect(nshGallery.theme.cssVars.theme.radius).toBe(
-      nshGallery.theme.cssVars.theme["radius-control"],
-    );
+    expect(nshGallery.theme.cssVars.theme["font-sans"]).toBe("system-ui");
+    expect(nshGallery.theme.cssVars.theme["font-mono"]).toBe("monospace");
+    expect(nshGallery.theme.cssVars.theme.radius).toBe(nshGallery.theme.cssVars.theme["radius-md"]);
+    expect(nshGallery.theme.cssVars.theme["radius-lg"]).toBeTruthy();
+    expect(nshGallery.theme.cssVars.theme["radius-xl"]).toBeTruthy();
   });
 
-  test("emits optional font-sans / font-mono into cssVars.theme when configured", () => {
+  test("emits configured font-sans / font-mono into cssVars.theme", () => {
     const custom = defineTheme({
       id: "font-fixture",
       label: "Font Fixture",

@@ -39,9 +39,9 @@ export const dockClasses = {
   handleClass: "basis-px bg-line",
   handleThumbClass: handleThumb,
   dockClass: "bg-muted",
-  dropIndicatorClass: "rounded-(--radius-container) border-2 border-brand bg-brand/15",
+  dropIndicatorClass: "rounded-(--radius-lg) border-2 border-brand bg-brand/15",
   drawerClass: "border-r border-border bg-card",
-  sheetClass: "rounded-t-(--radius-modal) border-t border-border bg-card",
+  sheetClass: "rounded-t-(--radius-xl) border-t border-border bg-card",
   backdropClass: "bg-scrim",
 };
 
@@ -86,14 +86,14 @@ export function DockTab(props: {
 export const dockTabCloseClass = terminal
   ? "size-5 items-center justify-center opacity-0 group-hover:opacity-100"
   : platform.desktop
-    ? "absolute right-1 top-2 size-5 items-center justify-center rounded-(--radius-control) bg-muted opacity-0 transition-opacity group-hover:opacity-100 hover:bg-surface"
-    : "-mr-1.5 size-5 items-center justify-center rounded-(--radius-control) active:opacity-70";
+    ? "absolute right-1 top-2 size-5 items-center justify-center rounded-(--radius-md) bg-muted opacity-0 transition-opacity group-hover:opacity-100 hover:bg-surface"
+    : "-mr-1.5 size-5 items-center justify-center rounded-(--radius-md) active:opacity-70";
 
 /** A dragged tab's preview (what `renderDragPreview` returns): its title on a raised chip. */
 export function DockDragPreview(props: { title: string }) {
   return (
     <View
-      class="border-border rounded-(--radius-control) border px-3 py-1.5"
+      class="border-border rounded-(--radius-md) border px-3 py-1.5"
       style={surface("raised").style}
     >
       <Text class="text-foreground text-[13px] font-medium">{props.title}</Text>

@@ -211,7 +211,7 @@ Material 3 Expressive (`material-web` / Compose M3) with tonal surface container
 
 ## Typography
 
-- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).
+- `theme.json` writes `font-sans: system-ui` and `font-mono: monospace`.
 - **`caption`**: 11px / 16px, weight 500, letter-spacing 0.5px
 - **`detail`**: 12px / 16px, weight 400, letter-spacing 0.4px
 - **`body`**: 13px / 20px, weight 400, letter-spacing 0.25px
@@ -230,7 +230,7 @@ Tonal surface stepping plus Material Web Level 1–3 shadows and Android native 
 
 ## Shapes
 
-- Radii: control 4px, container 12px, modal 28px (`curve: "circular"`).
+- Radii: `radius-md` (control) 4px, `radius-lg` (container) 12px, `radius-xl` (modal) 28px; A-layer `radius` equals `radius-md` (`curve: "circular"`).
 
 ## Motion & Micro-interaction
 

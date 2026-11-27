@@ -5,7 +5,7 @@ import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
 import { Button, dialogCard } from "../../../packages/ui";
 
 /**
- * Simulates a host override of `radius-modal` through `selectTheme` (which calls `setTheme`):
+ * Simulates a host override of `radius-xl` through `selectTheme` (which calls `setTheme`):
  * the spec's `shape.modal` reads the compiled `theme.json`, so the corner reaches components on
  * the next frame without editing the theme's own tokens.
  */
@@ -19,7 +19,7 @@ const hostOverridden = {
       ...nshGallery.theme.cssVars,
       theme: {
         ...nshGallery.theme.cssVars?.theme,
-        "radius-modal": "32px",
+        "radius-xl": "32px",
       },
     },
   },

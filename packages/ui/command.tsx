@@ -45,7 +45,7 @@ const size = {
  */
 export const commandClasses = {
   /** The palette's frame. */
-  root: "overflow-hidden rounded-(--radius-container) border border-border bg-card",
+  root: "overflow-hidden rounded-(--radius-lg) border border-border bg-card",
   /**
    * The row of the search icon, the field and the spinner. A terminal's
    * field is a raised band: the band spans the row, as the rows' do, and

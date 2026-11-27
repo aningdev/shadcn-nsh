@@ -1,6 +1,6 @@
 /**
  * One-way compiler from Theme v5 TS specs (`packages/theme/themes/`) to:
- * - `theme.json` (NSH runtime 25-key CSS vars + optional `font-sans`/`font-mono`)
+ * - `theme.json` (NSH runtime CSS vars, always including `font-sans` / `font-mono`)
  * - `{light,dark}.tokens.json` (W3C DTCG 2025.10 exports)
  * - `DESIGN.md` (Google Labs DESIGN.md spec)
  *

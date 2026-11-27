@@ -3,7 +3,7 @@ import { expect, open, test } from "nsh/test";
 const read = (texts: string[], key: string) =>
   texts.find((text) => text.startsWith(`${key}:`))?.slice(key.length + 1);
 
-test("a host-style override of radius-modal reaches components on the next frame", async () => {
+test("a host-style override of radius-xl reaches components on the next frame", async () => {
   const app = await open("./theme-overrides.fixture.tsx", { platform: "macos" });
 
   expect(read(app.texts(), "theme")).toBe("build-time");

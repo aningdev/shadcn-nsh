@@ -2,10 +2,12 @@
   "name": "Material",
   "cssVars": {
     "theme": {
+      "font-sans": "system-ui",
+      "font-mono": "monospace",
       "radius": "4px",
-      "radius-control": "4px",
-      "radius-container": "12px",
-      "radius-modal": "28px",
+      "radius-md": "4px",
+      "radius-lg": "12px",
+      "radius-xl": "28px",
       "scrim": "oklch(0 0 0 / 0.32)",
       "media": "oklch(0.1869 0.0151 266.766)",
       "on-media": "oklch(1 0 0)"

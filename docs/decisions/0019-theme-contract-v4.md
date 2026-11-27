@@ -3,6 +3,8 @@
 - **Date**: 2026-11-26
 - **Status**: Accepted
 
+> **Revision (2026-11-27)**: the layer radius CSS names cited below later became `radius-md` / `radius-lg` / `radius-xl`. This record keeps the names that contract v4 used.
+
 ## Context
 
 Over Contracts v1–v3 (`0004`, `0007`, `0009`, `0013`, `0016`), incremental fixes and theme ports accumulated parallel mechanisms, dead fields, constant slots, string-enum drift (`text` slots), and flat string-keyed lookup in `semantics.json` (`slots`):

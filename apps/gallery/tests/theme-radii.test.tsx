@@ -6,7 +6,7 @@ const read = (texts: string[], key: string) =>
 
 /**
  * A control rounded by a class (`numberInputClasses.frame`) and one rounded by a style
- * (`buttonLook`) name the same token, `radius-control`: the class names it in the string, the
+ * (`buttonLook`) name the same token, `radius-md`: the class names it in the string, the
  * style reads it as a number, so both report one corner. `selectTheme` swaps the tokens, and the
  * two move together — the class side with them, which is what the fixed Tailwind steps never did.
  */
@@ -22,7 +22,7 @@ test("a class-rounded control's corners follow the theme, like a style-rounded o
   // The build-time theme's control tier is 8 points, read by both sides.
   expect(before.token).toBe("8");
   expect(before.style).toBe("8");
-  expect(read(app.texts(), "class")).toContain("rounded-(--radius-control)");
+  expect(read(app.texts(), "class")).toContain("rounded-(--radius-md)");
 
   await app.press("text:Solid Glass");
 
@@ -35,7 +35,7 @@ test("a class-rounded control's corners follow the theme, like a style-rounded o
   // Solid Glass draws rounder controls (11 points), and the class side moved with them.
   expect(after.token).toBe("11");
   expect(after.style).toBe("11");
-  expect(read(app.texts(), "class")).toContain("rounded-(--radius-control)");
+  expect(read(app.texts(), "class")).toContain("rounded-(--radius-md)");
   expect(after.token).not.toBe(before.token);
 
   await app.press("text:Build-time");

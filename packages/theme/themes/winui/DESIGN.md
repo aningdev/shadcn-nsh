@@ -211,7 +211,7 @@ Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered 
 
 ## Typography
 
-- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).
+- `theme.json` writes `font-sans: system-ui` and `font-mono: monospace`.
 - **`caption`**: 11px / 16px, weight 400, letter-spacing 0px
 - **`detail`**: 12px / 16px, weight 400, letter-spacing 0px
 - **`body`**: 13px / 20px, weight 400, letter-spacing 0px
@@ -230,7 +230,7 @@ WinUI 3 soft ambient elevation (`md`, `lg`, `xl`) and beveled 1px strokes on rai
 
 ## Shapes
 
-- Radii: control 4px, container 8px, modal 8px (`curve: "circular"`).
+- Radii: `radius-md` (control) 4px, `radius-lg` (container) 8px, `radius-xl` (modal) 8px; A-layer `radius` equals `radius-md` (`curve: "circular"`).
 
 ## Motion & Micro-interaction
 

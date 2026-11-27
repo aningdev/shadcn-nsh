@@ -211,7 +211,7 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass (`g
 
 ## Typography
 
-- Uses system `font-sans` / `font-mono` unless configured in `theme.json` (`font-sans`, `font-mono`).
+- `theme.json` writes `font-sans: system-ui` and `font-mono: monospace`.
 - **`caption`**: 11px / 16px, weight 400, letter-spacing 0px
 - **`detail`**: 12px / 16px, weight 400, letter-spacing 0px
 - **`body`**: 13px / 20px, weight 400, letter-spacing 0px
@@ -230,7 +230,7 @@ Layered smoky glass elevation combining translucent fills, backdrop blur + satur
 
 ## Shapes
 
-- Radii: control 11px, container 14px, modal 20px (`curve: "continuous"`).
+- Radii: `radius-md` (control) 11px, `radius-lg` (container) 14px, `radius-xl` (modal) 20px; A-layer `radius` equals `radius-md` (`curve: "continuous"`).
 
 ## Motion & Micro-interaction
 

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+- **BREAKING: layer radii use Tailwind names, and `theme.json` always writes font families.** `cssVars.theme` renames `radius-control` / `radius-container` / `radius-modal` to `radius-md` / `radius-lg` / `radius-xl` (no aliases). The A-layer `radius` slot stays and still equals the control radius (`radius-md`). `shape.control` / `shape.container` / `shape.modal` keep their names and read the new keys. Classes use `rounded-(--radius-md|lg|xl)`. Every built-in `theme.json` writes `font-sans` (`system-ui` unless `tokens.font.sans` is set) and `font-mono` (`monospace` unless `tokens.font.mono` is set). `@shadcn-nsh/theme` exposes them as `font.sans` and `font.mono`.
+
 ### Added
 
 - **Material 3 Expressive & Solid Glass polish.** Material 3 gains spatial vs. effects physics spring tiers (`snappy`, `smooth`, `bouncy`) and `reveal` springs. Solid Glass extends smoky backdrop blur + `specular-rim` across `overlay`, `inverse`, and `modal` alongside three-tier soft springs.

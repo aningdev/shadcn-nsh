@@ -8,27 +8,27 @@
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `packages/theme/schema.ts`              | 类型契约、`SHARED_TYPE_SCALE`、`EASING_BEZIERS`、`defineTheme()`、`compileNshTheme()`                                     |
 | `packages/theme/themes/<id>/index.ts`   | 单一主题定义（`tokens`、`metrics`、`elevation`、`surfaces`、`feedback`、`motion`、`controls`）                            |
-| `packages/theme/themes/<id>/theme.json` | 导出的精简 `theme.json`（7 共享 + 21 亮暗键），供 NSH Tailwind / `setTheme` 消费                                          |
+| `packages/theme/themes/<id>/theme.json` | 导出的精简 `theme.json`（9 共享 + 21 亮暗键），供 NSH Tailwind / `setTheme` 消费                                          |
 | `packages/theme/themes/<id>/DESIGN.md`  | 导出的平台视觉语言规格（随 CLI `init` 复制到应用根目录）                                                                  |
 | `packages/theme/theme.ts`               | 零 Proxy 强类型运行时读取：`colors`、`tints`、`chart`、`shape`、`metrics`、`surface()`、`feedback`、`motion`、`control()` |
 
-## 1 精简 `theme.json`（25 个核心角色 + 可选字体）
+## 1 精简 `theme.json`（9 个共享键 + 21 个亮暗颜色键）
 
 `theme.json` 的 `cssVars` 精简为三组（校验脚本：`bun run check:theme`）：
 
 ### `cssVars.theme`（appearance-invariant）
 
-| 键                 | 必需 | 说明                                         |
-| ------------------ | ---- | -------------------------------------------- |
-| `radius`           | 是   | 等同于 `radius-control`（shadcn 兼容槽）     |
-| `radius-control`   | 是   | 控件圆角                                     |
-| `radius-container` | 是   | 卡片与面板容器圆角                           |
-| `radius-modal`     | 是   | 浮层与模态框圆角                             |
-| `scrim`            | 是   | 模态背罩透明度颜色                           |
-| `media`            | 是   | 媒体内容默认深底，不随外观翻转               |
-| `on-media`         | 是   | 媒体表面前景白字，不随外观翻转               |
-| `font-sans`        | 否   | 可选无衬线字体家族（默认省略，沿用系统字体） |
-| `font-mono`        | 否   | 可选等宽字体家族（默认省略，沿用系统等宽）   |
+| 键          | 必需 | 说明                                                           |
+| ----------- | ---- | -------------------------------------------------------------- |
+| `font-sans` | 是   | 无衬线字体家族；未配置时编译为 `system-ui`。`font.sans` 读取它 |
+| `font-mono` | 是   | 等宽字体家族；未配置时编译为 `monospace`。`font.mono` 读取它   |
+| `radius`    | 是   | A 层槽，等同于 `radius-md`（`nsh-base` 按长度解析）            |
+| `radius-md` | 是   | 控件圆角（层角色 `control`）                                   |
+| `radius-lg` | 是   | 卡片与面板容器圆角（层角色 `container`）                       |
+| `radius-xl` | 是   | 浮层与模态框圆角（层角色 `modal`）                             |
+| `scrim`     | 是   | 模态背罩透明度颜色                                             |
+| `media`     | 是   | 媒体内容默认深底，不随外观翻转                                 |
+| `on-media`  | 是   | 媒体表面前景白字，不随外观翻转                                 |
 
 ### `cssVars.light` / `cssVars.dark`（21 个核心颜色角色）
 

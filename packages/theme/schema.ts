@@ -2,7 +2,7 @@
  * Theme v5 schema and sparse inheritance builder (`docs/decisions/0020-theme-v5.md`).
  *
  * A theme is four orthogonal TypeScript layers derived from one `base` theme via `defineTheme()`:
- * 1. `tokens`   — the 25 core CSS variables compiled into `theme.json` + optional `font.{sans,mono}`
+ * 1. `tokens`   — the core CSS variables compiled into `theme.json`, including `font-sans` / `font-mono`
  * 2. `metrics`  — pointer/touch dimensions, icon sizes, strokes, and per-role font weight/tracking
  * 3. `surfaces` — 11 semantic surface layers + per-appearance elevation scales (no finish-fields allowlist)
  * 4. `feedback` & `motion` — unified hover/press/focus/disabled feedback primitives and motion timings/presets
@@ -249,7 +249,10 @@ export interface TimingSpec {
 }
 
 export interface TokensSpec {
-  /** Optional app/theme font families emitted into `theme.json` `cssVars.theme`. */
+  /**
+   * Font families emitted into `theme.json` `cssVars.theme`.
+   * Omitted families compile to `font-sans: system-ui` and `font-mono: monospace`.
+   */
   readonly font?: {
     readonly sans?: string;
     readonly mono?: string;
@@ -586,7 +589,7 @@ export interface NshThemeFile {
 export interface AppTheme {
   readonly id: string;
   readonly label: string;
-  /** Compiled minimal 25-key `theme.json` for NSH `setTheme`. */
+  /** Compiled `theme.json` for NSH `setTheme` (shared radii and fonts, plus 21 colors per appearance). */
   readonly theme: NshThemeFile;
   /** Resolved semantic spec (`tokens` + `metrics` + `surfaces` + `feedback` + `motion` + `controls`). */
   readonly spec: ThemeSpec;
@@ -673,12 +676,12 @@ function compilePalette(palette: CorePalette): Record<string, string> {
 export function compileNshTheme(spec: ThemeSpec): NshThemeFile {
   const { font, radius, fixed, light, dark } = spec.tokens;
   const themeVars: Record<string, string> = {
-    ...(font?.sans ? { "font-sans": font.sans } : {}),
-    ...(font?.mono ? { "font-mono": font.mono } : {}),
+    "font-sans": font?.sans ?? "system-ui",
+    "font-mono": font?.mono ?? "monospace",
     radius: `${radius.control}px`,
-    "radius-control": `${radius.control}px`,
-    "radius-container": `${radius.container}px`,
-    "radius-modal": `${radius.modal}px`,
+    "radius-md": `${radius.control}px`,
+    "radius-lg": `${radius.container}px`,
+    "radius-xl": `${radius.modal}px`,
     scrim: fixed.scrim,
     media: fixed.media,
     "on-media": fixed["on-media"],
