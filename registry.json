@@ -392,7 +392,7 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A button, an icon button, a round button, and a split button.",
+      "description": "A button, an icon button, and a round button.",
       "registryDependencies": ["icons", "motion", "spinner", "theme", "utils"],
       "files": [
         {
@@ -402,6 +402,20 @@
         }
       ],
       "dependencies": ["lucide@^1.66.0"]
+    },
+    {
+      "name": "split-button",
+      "type": "registry:ui",
+      "title": "Split Button",
+      "description": "A main action and the menu of its variants in one silhouette.",
+      "registryDependencies": ["button", "motion", "theme", "utils"],
+      "files": [
+        {
+          "path": "packages/ui/split-button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/split-button.tsx"
+        }
+      ]
     },
     {
       "name": "switch",

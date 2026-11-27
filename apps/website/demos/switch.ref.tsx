@@ -1,50 +1,20 @@
-// The reference of `switch.tsx`: the same scene as upstream writes it, `switchLook` spread on
-// `nsh/base`'s Switch, and the settings row's `fieldFamilyLook`s on its views and texts. The
-// render check requires the two to draw the same pixels.
-import { colors } from "@shadcn-nsh/theme";
+// The reference of `switch.tsx`. `switchLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
 import { mount, signal, Text, View } from "nsh";
-import { Switch } from "nsh/base";
 
-import { fieldFamilyLook } from "@/packages/ui/field";
+import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from "@/packages/ui/field";
 import { listRow, RowDivider, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
-import { switchFocusStyle, switchHitSlop, switchLook, type SwitchSize } from "@/packages/ui/switch";
+import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
-
-/** A switch standing alone: its track is all of it, with the touch screen's hit slop. */
-function Alone(props: {
-  label: string;
-  size: SwitchSize;
-  checked: boolean;
-  disabled?: boolean;
-  onChange: (event: { checked: boolean }) => void;
-}) {
-  const look = switchLook(() => props.checked, {
-    size: () => props.size,
-    disabled: () => !!props.disabled,
-  });
-  return (
-    <Switch
-      accessibilityLabel={props.label}
-      checked={props.checked}
-      disabled={props.disabled}
-      onChange={props.onChange}
-      hitSlop={switchHitSlop(props.size)}
-      focusVisibleStyle={switchFocusStyle(props.size)}
-      {...look}
-    />
-  );
-}
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 /**
- * A family's looks, read where they are drawn: `fieldFamilyLook` makes its label's color once, when
- * it is called, so a look kept in the component body would keep the appearance the page opened in.
+ * A settings row at the call site, as shadcn composes it: a `Field` in a row, its title and its
+ * description in `FieldContent` (which takes the room the control leaves), the switch after them.
+ * The switch is the control, so it carries the row's title as its name and is read as a switch
+ * that is on or off; nothing is pinned to a side, so a right-to-left app puts the switch first.
  */
-const fields = () => fieldFamilyLook();
-
-/** A settings row, as `switch.tsx` composes it: `fieldFamilyLook`'s row (the content taking the
- * room the control leaves), its label and description, and the switch after them. */
 function SettingRow(props: {
   label: string;
   detail: string;
@@ -53,19 +23,18 @@ function SettingRow(props: {
   onChange: (event: { checked: boolean }) => void;
 }) {
   return (
-    <View role="group" style={fields().field(true)}>
-      <View style={fields().content}>
-        <Text style={fields().title}>{props.label}</Text>
-        <Text style={fields().description}>{props.detail}</Text>
-      </View>
-      <Alone
-        label={props.label}
-        size="default"
+    <Field orientation="horizontal">
+      <FieldContent>
+        <FieldLabel>{props.label}</FieldLabel>
+        <FieldDescription>{props.detail}</FieldDescription>
+      </FieldContent>
+      <Switch
+        accessibilityLabel={props.label}
         checked={props.checked}
         disabled={props.disabled}
         onChange={props.onChange}
       />
-    </View>
+    </Field>
   );
 }
 
@@ -85,7 +54,7 @@ function App() {
 
   return (
     <DemoPage title="Switch">
-      <Text style={{ color: colors.mutedForeground }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a row, or Tab to a switch and press Space"
           : "Tap a row: the label toggles it too"}
@@ -96,12 +65,12 @@ function App() {
         inspector={
           <>
             <Panel title="checked · disabled">
-              <Text style={{ fontSize: 13, color: colors.foreground }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {`Wi-Fi ${wifi() ? "on" : "off"} · ask ${ask() ? "on" : "off"}`}
                 {wifi() ? "" : " (disabled)"}
                 {` · Bluetooth ${bluetooth() ? "on" : "off"}`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.foreground }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {`extract ${extract() ? "on" : "off"} · usage ${usage() ? "on" : "off"}`}
               </Text>
             </Panel>
@@ -109,11 +78,12 @@ function App() {
           </>
         }
       >
+        {/* The row is the switch itself, its track at the trailing edge (`listRow`: the hover
+            fill reaching past the content, the keyboard's focus ring, a press that dims). */}
         <View style={sectionSurface({ padded: true })}>
           <Switch
             checked={wifi()}
             onChange={change("Wi-Fi", (next) => wifi.set(next))}
-            {...switchLook(() => wifi(), { disabledSurface: false })}
             {...listRow({ first: true, style: { flexDirection: "row-reverse" } })}
           >
             <RowDivider show={false} />
@@ -123,10 +93,6 @@ function App() {
             checked={ask()}
             disabled={!wifi()}
             onChange={change("Ask to join", (next) => ask.set(next))}
-            {...switchLook(() => ask(), {
-              disabled: () => !wifi(),
-              disabledSurface: false,
-            })}
             {...listRow({ disabled: () => !wifi(), style: { flexDirection: "row-reverse" } })}
           >
             <RowDivider show />
@@ -138,7 +104,6 @@ function App() {
           <Switch
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
-            {...switchLook(() => bluetooth(), { disabledSurface: false })}
             {...listRow({ style: { flexDirection: "row-reverse" } })}
           >
             <RowDivider show />
@@ -149,25 +114,25 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Size">
-          <Alone
-            label="Bluetooth, small"
+          <Switch
+            accessibilityLabel="Bluetooth, small"
             size="sm"
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
           />
-          <Alone
-            label="Bluetooth"
+          <Switch
+            accessibilityLabel="Bluetooth"
             size="default"
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
           />
-          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+          <Text style={{ fontSize: 13, color: ui().muted }}>
             Bluetooth {bluetooth() ? "on" : "off"}
           </Text>
         </DemoSection>
 
         <DemoSection title="Settings rows" axis="block">
-          <View style={fieldFamilyLook().group}>
+          <FieldGroup>
             <SettingRow
               label="Extract text from images"
               detail="Read the text in a screenshot you paste or open."
@@ -187,10 +152,12 @@ function App() {
               disabled
               onChange={() => {}}
             />
-          </View>
+          </FieldGroup>
         </DemoSection>
 
         <DemoSection title="Right to left" axis="block">
+          {/* The same row in a right-to-left app: the content is still written first and the switch
+              after it, and the direction puts them the other way round. */}
           <View style={{ direction: "rtl" }}>
             <SettingRow
               label="Extract text from images"

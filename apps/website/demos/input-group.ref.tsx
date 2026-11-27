@@ -13,7 +13,7 @@ import {
   buttonLook,
   buttonSizes,
   roundButtonGlyph,
-  roundButtonLook,
+  RoundButton,
   type ButtonSize,
 } from "@/packages/ui/button";
 import {
@@ -126,33 +126,6 @@ function GroupButton(props: {
       ) : (
         props.children
       )}
-    </Button>
-  );
-}
-
-/**
- * A round button: `roundButtonLook` on `nsh/base`'s Button at the `sm` scale, its glyph from
- * `roundButtonGlyph`. `style` goes over the look's (the composer's plus turns with it).
- */
-function Round(props: {
-  variant?: "default" | "secondary";
-  accessibilityLabel: string;
-  disabled?: boolean;
-  onPress?: () => void;
-  style?: ViewStyle;
-  children: JSX.Element;
-}) {
-  const variant = props.variant ?? "default";
-  const look = roundButtonLook(variant, { size: "sm", disabled: () => !!props.disabled });
-  return (
-    <Button
-      accessibilityLabel={props.accessibilityLabel}
-      disabled={props.disabled}
-      onPress={props.onPress}
-      {...look}
-      style={[look.style, props.style ?? null]}
-    >
-      {props.children}
     </Button>
   );
 }
@@ -425,21 +398,19 @@ function App() {
                   offset={10}
                   onOpenChange={({ open }) => attaching.set(open)}
                   trigger={
-                    <Button
+                    <RoundButton
+                      variant="secondary"
+                      size="sm"
                       accessibilityLabel="Add an attachment"
-                      {...roundButtonLook("secondary", { size: "sm" })}
-                      style={[
-                        roundButtonLook("secondary", { size: "sm" }).style,
-                        {
-                          transform: attaching() ? "rotate(45deg)" : undefined,
-                          transitionProperty: "transform",
-                          transitionDuration: 200,
-                          transitionTimingFunction: "ease-out",
-                        },
-                      ]}
+                      style={{
+                        transform: attaching() ? "rotate(45deg)" : undefined,
+                        transitionProperty: "transform",
+                        transitionDuration: 200,
+                        transitionTimingFunction: "ease-out",
+                      }}
                     >
                       <Icon icon={Plus} {...roundButtonGlyph("secondary", { size: "sm" })} />
-                    </Button>
+                    </RoundButton>
                   }
                 >
                   {() => (
@@ -476,7 +447,8 @@ function App() {
                     : "Return breaks the line"}
                 </Text>
                 {replying() ? (
-                  <Round
+                  <RoundButton
+                    size="sm"
                     accessibilityLabel="Stop the reply"
                     onPress={() => {
                       stop();
@@ -484,15 +456,16 @@ function App() {
                     }}
                   >
                     <Icon icon={Square} {...roundButtonGlyph("default", { size: "sm" })} />
-                  </Round>
+                  </RoundButton>
                 ) : (
-                  <Round
+                  <RoundButton
+                    size="sm"
                     accessibilityLabel="Send"
                     disabled={message().trim().length === 0}
                     onPress={send}
                   >
                     <Icon icon={Send} {...roundButtonGlyph("default", { size: "sm" })} />
-                  </Round>
+                  </RoundButton>
                 )}
               </GroupAddon>
             </View>

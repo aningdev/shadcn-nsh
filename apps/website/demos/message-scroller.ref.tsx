@@ -6,7 +6,7 @@ import { alpha, colors } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, FileText, GitPullRequest, Sparkles } from "lucide";
 import type { JSX } from "nsh";
 import { cleanup, List, mount, signal, Text, View } from "nsh";
-import { Button, Input } from "nsh/base";
+import { Button } from "nsh/base";
 
 import {
   Attachment,
@@ -22,9 +22,9 @@ import {
   buttonGlyph,
   buttonLook,
   roundButtonGlyph,
-  roundButtonLook,
+  RoundButton,
 } from "@/packages/ui/button";
-import { inputLook } from "@/packages/ui/input";
+import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Message, MessageAvatar, MessageContent } from "@/packages/ui/message";
 import { type MessageScrollerDirection, messageScrollerLook } from "@/packages/ui/message-scroller";
@@ -361,19 +361,16 @@ function App() {
                 accessibilityLabel="Message"
                 submitBehavior={desktop ? "submit" : "newline"}
                 onSubmit={() => send()}
-                {...inputLook({ style: { flex: 1, height: 40, borderRadius: 20 } })}
+                style={{ flex: 1, height: 40, borderRadius: 20 }}
               />
-              <Button
+              <RoundButton
+                side={40}
                 accessibilityLabel="Send"
                 disabled={draft().trim().length === 0}
                 onPress={() => send()}
-                {...roundButtonLook("default", {
-                  side: 40,
-                  disabled: () => draft().trim().length === 0,
-                })}
               >
                 <Icon icon={ArrowUp} {...roundButtonGlyph("default", { side: 40 })} />
-              </Button>
+              </RoundButton>
             </View>
           </DemoSection>
 

@@ -185,11 +185,11 @@ The segments keep the field's own width — a bar of four parts, each a share of
 keeps a column at the end, so the meter does not reflow as the word changes from `Empty` to
 `Strong`.
 
-### The look alone
+### Ghost
 
 ```tsx
-<Input {...inputLook({ invalid: true })} />
-<Input {...inputLook({ variant: "ghost" })} />
+<Input invalid accessibilityLabel="Invalid" />
+<Input variant="ghost" accessibilityLabel="Ghost" />
 ```
 
 ## API

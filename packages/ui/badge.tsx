@@ -23,12 +23,6 @@ export type BadgeVariant = "default" | "outline";
 /** A badge's size: `sm` 18 points tall, `default` 20. */
 export type BadgeSize = "sm" | "default";
 
-/** A badge's height, label size and horizontal padding, by size. */
-export const badgeSizes: Record<BadgeSize, { height: number; font: number; pad: number }> = {
-  sm: { height: 18, font: 11, pad: 6 },
-  default: { height: 20, font: 12, pad: 8 },
-};
-
 /**
  * The props of `Badge`: the label and the tone, plus every view prop (`style`,
  * `class`, `testID`, the accessibility ones), spread on the capsule after
@@ -98,3 +92,11 @@ export function Badge(props: BadgeProps) {
     </View>
   );
 }
+
+// Private helpers
+
+/** A badge's height, label size and horizontal padding, by size. */
+const badgeSizes: Record<BadgeSize, { height: number; font: number; pad: number }> = {
+  sm: { height: 18, font: 11, pad: 6 },
+  default: { height: 20, font: 12, pad: 8 },
+};

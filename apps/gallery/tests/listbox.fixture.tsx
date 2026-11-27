@@ -13,8 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
   comboboxLook,
+  fieldSize,
   listboxPopup,
-  pickerLook,
   sliderFill,
   sliderLook,
 } from "../../../packages/ui";
@@ -40,7 +40,6 @@ function App() {
   const locked = signal<string[]>(["blue"]);
   const frameworkOpen = signal(false);
   const tagsOpen = signal(false);
-  const selectLook = pickerLook({ open: () => false });
   const comboLook = comboboxLook(() => frameworkOpen());
   const rowH = platform.desktop ? 30 : 44;
   return (
@@ -111,7 +110,7 @@ function App() {
       </Combobox>
       <Text>desktop={String(platform.desktop)}</Text>
       <Text>
-        select-size={selectLook.style.height}|{selectLook.style.minWidth ?? 0}|{rowH}
+        select-size={fieldSize.height}|{platform.desktop ? 180 : 0}|{rowH}
       </Text>
       <Text>
         combo-size={comboLook.style.height ?? comboLook.style.minHeight}|{rowH}

@@ -62,9 +62,6 @@ import {
   buttonLook,
   IconButton,
   iconButtonGlyph,
-  SplitButton,
-  SplitButtonDivider,
-  SplitButtonSegment,
   type ButtonSize,
 } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
@@ -79,6 +76,7 @@ import {
   MenuTrigger,
 } from "@/packages/ui/menu";
 import { Spinner } from "@/packages/ui/spinner";
+import { SplitButton, SplitButtonDivider, SplitButtonSegment } from "@/packages/ui/split-button";
 import { Switch } from "@/packages/ui/switch";
 import { Tooltip, TooltipTrigger } from "@/packages/ui/tooltip";
 

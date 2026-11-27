@@ -7,10 +7,11 @@ import {
   DatePicker,
   DatePickerContent,
   DatePickerTrigger,
+  Picker,
   TimeField,
   calendarLook,
+  fieldSize,
   listboxPopup,
-  pickerLook,
   timeFieldClass,
 } from "../../../packages/ui";
 
@@ -23,8 +24,8 @@ function popupChrome() {
 }
 
 function pickerSize() {
-  const look = pickerLook({ open: false });
-  return `${look.style.height}|${look.style.minWidth ?? 0}`;
+  // Height is the shared field's. A pointer trigger is at least 180 wide; a touch one is not.
+  return `${fieldSize.height}|${platform.desktop ? 180 : 0}`;
 }
 
 function timeSize() {
@@ -44,6 +45,13 @@ function App() {
         calendar-size={calendarLook.cell}|{calendarLook.monthGap}|{platform.desktop ? 13 : 15}
       </Text>
       <Text>picker-size={pickerSize()}</Text>
+      {/* On screen, so `app.layout` can read the trigger. The date picker below the calendars is off screen. */}
+      <Picker
+        title="Due date"
+        open={false}
+        testID="due-date-size"
+        accessibilityLabel="Due date size"
+      />
       <Text>popup={popupChrome()}</Text>
       <Text>time-size={timeSize()}</Text>
       <Calendar

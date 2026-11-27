@@ -2,12 +2,12 @@
 // `nsh/base`'s OtpInput. The render check requires the two to draw the same pixels.
 import { colors } from "@shadcn-nsh/theme";
 import { Clipboard, cleanup, mount, signal, Text, View } from "nsh";
-import { Button, OtpInput, Switch } from "nsh/base";
+import { Button, OtpInput } from "nsh/base";
 
 import { buttonLabel, buttonLook } from "@/packages/ui/button";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import { otpCells, otpCellLook } from "@/packages/ui/otp-input";
-import { switchLook } from "@/packages/ui/switch";
+import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split } from "./stage";
@@ -23,7 +23,6 @@ function Option(props: { label: string; checked: boolean; onChange: (next: boole
       checked={props.checked}
       onChange={({ checked }) => props.onChange(checked)}
       {...listRow({ first: true, style: { flexDirection: "row-reverse" } })}
-      {...switchLook(() => props.checked)}
     >
       <RowLabel label={props.label} />
     </Switch>

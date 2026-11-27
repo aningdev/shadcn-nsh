@@ -1,15 +1,12 @@
-// The reference of `input.tsx`: the same scene as upstream writes it, `inputLook` spread on
-// `nsh/base`'s Input, and the strength meter drawn out of views and text. The render check
-// requires the two to draw the same pixels.
+// The reference of `input.tsx`. `inputLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
 import { alpha } from "@shadcn-nsh/theme";
 import { Check } from "lucide";
 import type { InputRef, JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
-import { Button, Input } from "nsh/base";
 
-import { buttonLabel, buttonLook } from "@/packages/ui/button";
-import { inputLook } from "@/packages/ui/input";
-import { multilineFieldPad } from "@/packages/ui/lib/field-look";
+import { Button } from "@/packages/ui/button";
+import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
@@ -36,7 +33,10 @@ function strength(value: string): number {
   return value === "" ? 0 : PASSWORD_RULES.filter((rule) => rule.test(value)).length;
 }
 
-/** Four segments, the word for the score, and the rules: `View` and `Text`, as the look writes it. */
+/**
+ * Four segments that fill as the password takes on what it needs, the word for how far it got, and
+ * the rules beneath, each a dot until it is met and then a tick in the tone that says it is.
+ */
 function Strength(props: { value: string }) {
   const score = () => strength(props.value);
   const tone = () => [ui().faint, ui().danger, ui().warn, ui().info, ui().up][score()];
@@ -115,7 +115,6 @@ function App() {
   const name = signal("");
   const password = signal("");
   const notes = signal(NOTE);
-  const notesContent = signal(0);
   const submitted = signal("");
   let passwordInput!: InputRef;
   const signIn = () => submitted.set(`Signed in as ${name() || "nobody"}`);
@@ -164,7 +163,6 @@ function App() {
               maxLength={20}
               returnKeyType="next"
               onSubmit={() => passwordInput.focus()}
-              {...inputLook()}
             />
           </Field>
           <Field label="Password" after={<Strength value={password()} />}>
@@ -175,37 +173,24 @@ function App() {
               masked
               returnKeyType="done"
               onSubmit={signIn}
-              {...inputLook()}
             />
           </Field>
           <Field label="Notes (multiline, as tall as its text)">
             <Input
               multiline
+              grow
               value={notes()}
               onChange={({ value }) => notes.set(value)}
               placeholder="Anything else?"
-              onContentSizeChange={({ size }) => notesContent.set(size.height)}
-              {...inputLook({
-                multiline: true,
-                // The height rides in the look's own `style`: a second one over the spread is
-                // lost when the theme switches and the box clips its text.
-                style: () => ({
-                  height: notesContent() === 0 ? undefined : notesContent() + multilineFieldPad(),
-                }),
-              })}
             />
           </Field>
           <Button
+            variant="default"
             disabled={password().length === 0}
             onPress={signIn}
-            {...buttonLook("default", {
-              disabled: () => password().length === 0,
-              style: buttonStyle({ marginTop: 4 }),
-            })}
+            style={buttonStyle({ marginTop: 4 })}
           >
-            <Text style={buttonLabel("default", { disabled: () => password().length === 0 })}>
-              Sign in
-            </Text>
+            Sign in
           </Button>
         </View>
       </Split>
@@ -213,18 +198,15 @@ function App() {
       <DemoCard>
         <DemoSection title="Ghost">
           <View style={{ gap: 10, flex: 1 }}>
+            <Input variant="ghost" placeholder="Search" accessibilityLabel="Search" />
             <Input
-              placeholder="Search"
-              accessibilityLabel="Search"
-              {...inputLook({ variant: "ghost" })}
-            />
-            <Input
+              variant="ghost"
               value="Untitled note"
               onChange={({ value }) => notes.set(value)}
               accessibilityLabel="Title"
-              {...inputLook({ variant: "ghost", style: { fontSize: 17, fontWeight: "600" } })}
+              style={{ fontSize: 17, fontWeight: "600" }}
             />
-            <Input value="For comparison" accessibilityLabel="For comparison" {...inputLook()} />
+            <Input variant="default" value="For comparison" accessibilityLabel="For comparison" />
           </View>
         </DemoSection>
       </DemoCard>
@@ -232,19 +214,9 @@ function App() {
       <DemoCard>
         <DemoSection title="States">
           <View style={{ gap: 10, flex: 1 }}>
-            <Input
-              value="Read only"
-              readonly
-              accessibilityLabel="Read only"
-              {...inputLook({ readonly: true })}
-            />
-            <Input value="Invalid" accessibilityLabel="Invalid" {...inputLook({ invalid: true })} />
-            <Input
-              value="Disabled"
-              disabled
-              accessibilityLabel="Disabled"
-              {...inputLook({ disabled: true })}
-            />
+            <Input value="Read only" readonly accessibilityLabel="Read only" />
+            <Input value="Invalid" invalid accessibilityLabel="Invalid" />
+            <Input value="Disabled" disabled accessibilityLabel="Disabled" />
           </View>
         </DemoSection>
       </DemoCard>
@@ -257,20 +229,21 @@ function App() {
               value="Reviewed by the design team on 12 March."
               readonly
               accessibilityLabel="Read only"
-              {...inputLook({ multiline: true, readonly: true, style: { height: 64 } })}
+              style={{ height: 64 }}
             />
             <Input
               multiline
               value="This comment is archived."
+              invalid
               accessibilityLabel="Invalid"
-              {...inputLook({ multiline: true, invalid: true, style: { height: 64 } })}
+              style={{ height: 64 }}
             />
             <Input
               multiline
               value="The thread is locked; the note stays for the record."
               disabled
               accessibilityLabel="Disabled"
-              {...inputLook({ multiline: true, disabled: true, style: { height: 64 } })}
+              style={{ height: 64 }}
             />
           </View>
         </DemoSection>

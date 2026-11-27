@@ -1,13 +1,19 @@
-// The reference of `card.tsx`: the same page with the card's look spread on plain views and
-// texts, the way shadcn writes a card (`cardLook`). The render check requires the two pages to
-// draw the same pixels, so this is what proves the seven parts change nothing.
-import { terminal } from "@shadcn-nsh/theme";
+// The reference of `card.tsx`. `cardLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
 import type { JSX } from "nsh";
 import { mount, Text, View } from "nsh";
 
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
-import { cardLook } from "@/packages/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/packages/ui/card";
 import { Input } from "@/packages/ui/input";
 import { density } from "@/packages/ui/lib/surface";
 
@@ -38,19 +44,17 @@ function App() {
   return (
     <DemoPage title="Card">
       <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "flex-start", gap: 16 }}>
-        <View style={[cardLook().card, cardStyle]} accessibilityLabel="Login">
-          <View style={cardLook().header}>
-            <Text style={cardLook().title}>Login to your account</Text>
-            <Text style={cardLook().description}>
-              Enter your email below to login to your account.
-            </Text>
-            <View style={cardLook().action}>
+        <Card style={cardStyle} accessibilityLabel="Login">
+          <CardHeader>
+            <CardTitle>Login to your account</CardTitle>
+            <CardDescription>Enter your email below to login to your account.</CardDescription>
+            <CardAction>
               <Button variant="ghost" size="sm">
                 Sign up
               </Button>
-            </View>
-          </View>
-          <View style={cardLook().content}>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
             <View style={{ gap: 10 }}>
               <Labeled label="Email">
                 <Input placeholder="m@example.com" />
@@ -59,26 +63,26 @@ function App() {
                 <Input masked placeholder="••••••••" />
               </Labeled>
             </View>
-          </View>
-          <View style={cardLook().footer}>
+          </CardContent>
+          <CardFooter>
             <Button variant="secondary" style={{ flexGrow: 1 }}>
               Login
             </Button>
             <Button variant="ghost" style={{ flexGrow: 1 }}>
               Google
             </Button>
-          </View>
-        </View>
+          </CardFooter>
+        </Card>
 
-        <View style={[cardLook().card, cardStyle]} accessibilityLabel="Deployments">
-          <View style={cardLook().header}>
-            <Text style={cardLook().title}>Deployments</Text>
-            <Text style={cardLook().description}>Three environments, one still building.</Text>
-            <View style={cardLook().action}>
+        <Card style={cardStyle} accessibilityLabel="Deployments">
+          <CardHeader>
+            <CardTitle>Deployments</CardTitle>
+            <CardDescription>Three environments, one still building.</CardDescription>
+            <CardAction>
               <Badge tone="info">Live</Badge>
-            </View>
-          </View>
-          <View style={cardLook().content}>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
             <View style={{ gap: 8 }}>
               {environments.map((env) => (
                 <View
@@ -96,27 +100,22 @@ function App() {
                 </View>
               ))}
             </View>
-          </View>
-          <View style={cardLook().footer}>
+          </CardContent>
+          <CardFooter>
             <Button variant="secondary">View all</Button>
             <Text style={{ fontSize: density.note, color: ui().faint }}>Updated 2 hours ago</Text>
-          </View>
-        </View>
+          </CardFooter>
+        </Card>
 
-        <View style={[cardLook().card, cardStyle]} accessibilityLabel="Cover">
-          <View style={cardLook().header}>
-            <Text style={cardLook().title}>Cover</Text>
-            <Text style={cardLook().description}>The picture meets the card's edges.</Text>
-          </View>
-          <View
-            style={[
-              cardLook().content,
-              terminal ? null : { paddingHorizontal: 0, marginBottom: -density.pad },
-            ]}
-          >
+        <Card style={cardStyle} accessibilityLabel="Cover">
+          <CardHeader>
+            <CardTitle>Cover</CardTitle>
+            <CardDescription>The picture meets the card's edges.</CardDescription>
+          </CardHeader>
+          <CardContent flush>
             <View style={{ height: 96, backgroundColor: ui().inset.backgroundColor }} />
-          </View>
-        </View>
+          </CardContent>
+        </Card>
       </View>
     </DemoPage>
   );

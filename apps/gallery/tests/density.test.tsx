@@ -19,6 +19,15 @@ test("the switch knob sits as far from the track's end on as off", async () => {
   // width less two (border + inset) less the knob: 36 - 4 - 16, 28 - 4 - 12; then 44 - 4 - 20, 36 - 4 - 16 — the knob's own width either way.
   expect(find(desktop.texts(), "travel=")).toBe("16|12");
   expect(find(touch.texts(), "travel=")).toBe("20|16");
+  const size = (texts: string[], which: 0 | 1) => {
+    const part = (find(texts, "track=") ?? "").split("|")[which] ?? "";
+    const [width, height] = part.split("x").map(Number);
+    return { width, height };
+  };
+  expect(desktop.layout("label:Track")).toMatchObject(size(desktop.texts(), 0));
+  expect(desktop.layout("label:Small track")).toMatchObject(size(desktop.texts(), 1));
+  expect(touch.layout("label:Track")).toMatchObject(size(touch.texts(), 0));
+  expect(touch.layout("label:Small track")).toMatchObject(size(touch.texts(), 1));
 });
 
 test("a standalone switch gets a 44 point target on a touch screen", async () => {

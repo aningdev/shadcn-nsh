@@ -3,7 +3,7 @@
 // the two to draw the same pixels.
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
-import { Button, Select, Switch } from "nsh/base";
+import { Button, Select } from "nsh/base";
 
 import { buttonLabel, buttonLook } from "@/packages/ui/button";
 import {
@@ -16,7 +16,7 @@ import {
 } from "@/packages/ui/lib/listbox";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import { Picker } from "@/packages/ui/select";
-import { switchLook } from "@/packages/ui/switch";
+import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
 import { buttonStyle, desktop, Log, Panel, Split, ui } from "./stage";
@@ -139,7 +139,6 @@ function App() {
                 checked={locked()}
                 onChange={({ checked }) => locked.set(checked)}
                 {...listRow({ first: true, style: { flexDirection: "row-reverse", marginTop: 4 } })}
-                {...switchLook(() => locked())}
               >
                 <RowLabel label="Region disabled" />
               </Switch>

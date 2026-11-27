@@ -2,19 +2,15 @@
 // parts: a counter that reports each press (down, up, press), a switch that disables it, two
 // formatting toggles, and an inspector with what the page heard; a second card lists the kinds,
 // the sizes and the icon buttons.
-import { ChevronDown, Play, Plus, Save, Search, Star, Trash } from "lucide";
+import { Play, Plus, Save, Search, Star, Trash } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 
 import {
   Button,
-  buttonGlyph,
   IconButton,
   iconButtonGlyph,
   RoundButton,
   roundButtonGlyph,
-  SplitButton,
-  SplitButtonDivider,
-  SplitButtonSegment,
 } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Switch } from "@/packages/ui/switch";
@@ -255,32 +251,6 @@ function App() {
           <RoundButton accessibilityLabel="Plus" variant="secondary" onPress={() => press("plus")}>
             <Icon icon={Plus} {...roundButtonGlyph("secondary")} />
           </RoundButton>
-        </DemoSection>
-        <DemoSection title="Split">
-          <SplitButton variant="default">
-            <SplitButtonSegment onPress={() => press("save")}>Save</SplitButtonSegment>
-            <SplitButtonDivider />
-            <SplitButtonSegment
-              accessibilityLabel="More save options"
-              selected={starred()}
-              onPress={() => {
-                starred.set(!starred());
-                press("save options");
-              }}
-            >
-              <Icon icon={ChevronDown} {...buttonGlyph("default")} />
-            </SplitButtonSegment>
-          </SplitButton>
-          <SplitButton variant="secondary">
-            <SplitButtonSegment onPress={() => press("export")}>Export</SplitButtonSegment>
-            <SplitButtonDivider />
-            <SplitButtonSegment
-              accessibilityLabel="More export options"
-              onPress={() => press("export options")}
-            >
-              <Icon icon={ChevronDown} {...buttonGlyph("secondary")} />
-            </SplitButtonSegment>
-          </SplitButton>
         </DemoSection>
       </DemoCard>
     </DemoPage>

@@ -358,12 +358,25 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A button, an icon button, a round button, and a split button.",
+      "description": "A button, an icon button, and a round button.",
       "files": [
         {
           "path": "packages/ui/button.tsx",
           "type": "registry:ui",
           "target": "components/ui/button.tsx"
+        }
+      ]
+    },
+    {
+      "name": "split-button",
+      "type": "registry:ui",
+      "title": "Split Button",
+      "description": "A main action and the menu of its variants in one silhouette.",
+      "files": [
+        {
+          "path": "packages/ui/split-button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/split-button.tsx"
         }
       ]
     },

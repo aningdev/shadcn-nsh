@@ -4,17 +4,12 @@ import {
   comboboxLook,
   drawIcon,
   fieldFocusEdge,
+  fieldLook,
   type IconCanvas,
   iconImage,
-  inputLook,
-  knobOffset,
-  knobTravel,
   listRow,
   mergeClasses,
   type PartMap,
-  pickerLook,
-  type SwitchGeometry,
-  switchSlop,
 } from "@shadcn-nsh/ui";
 import { mount, Text, View } from "nsh";
 
@@ -105,21 +100,6 @@ function svgOf(url: string): string | null {
   const prefix = "data:image/svg+xml,";
   return url.startsWith(prefix) ? decodeURIComponent(url.slice(prefix.length)) : null;
 }
-
-const geometryCases = [
-  { name: "default pointer", width: 36, height: 20, border: 1, knob: 16, knobHeight: 16 },
-  { name: "shadcn pointer", width: 32, height: 18, border: 0, knob: 16, knobHeight: 16 },
-  { name: "material pointer", width: 40, height: 24, border: 1, knob: 16, knobHeight: 16 },
-  { name: "material sm pointer", width: 32, height: 20, border: 1, knob: 12, knobHeight: 12 },
-  { name: "material sm touch", width: 40, height: 24, border: 2, knob: 16, knobHeight: 16 },
-  { name: "winui pointer", width: 40, height: 20, border: 1, knob: 12, knobHeight: 12 },
-  { name: "winui touch", width: 44, height: 22, border: 1, knob: 14, knobHeight: 14 },
-  { name: "winui sm pointer", width: 32, height: 16, border: 1, knob: 10, knobHeight: 10 },
-  { name: "winui sm touch", width: 36, height: 18, border: 1, knob: 12, knobHeight: 12 },
-  { name: "apple default pointer", width: 54, height: 24, border: 0, knob: 31, knobHeight: 20 },
-  { name: "apple default touch", width: 63, height: 28, border: 0, knob: 37, knobHeight: 24 },
-  { name: "apple sm pointer", width: 40, height: 18, border: 0, knob: 23, knobHeight: 14 },
-];
 
 const results: string[] = [
   check("mergeClasses:keeps-none", () =>
@@ -306,29 +286,46 @@ const results: string[] = [
       : "ink/weight mismatch";
   }),
   check("switchGeometry:symmetry", () => {
-    for (const c of geometryCases) {
-      const inset = Math.max(0, (c.height - c.knobHeight) / 2 - c.border);
-      const g: SwitchGeometry = {
-        width: c.width,
-        height: c.height,
-        border: c.border,
-        inset,
-        knob: c.knob,
-        knobHeight: c.knobHeight,
-      };
-      const pad = knobOffset(g);
-      const travel = knobTravel(g);
-      if (pad < 0 || travel <= 0 || pad + travel + g.knob !== g.width - 2 * g.border - pad) {
-        return `case=${c.name}`;
+    // The recipe `Switch` reads. Pad is the knob's inset; travel is the track less the knob and
+    // that gap at both ends. The two meet: pad + travel + knob === width - 2 * border - pad.
+    for (const theme of [null, apple, material, winui, solidGlass] as const) {
+      selectTheme(theme);
+      try {
+        const look = control("switch");
+        for (const small of [false, true]) {
+          const width = small ? look.smallWidth : look.width;
+          const height = small ? look.smallHeight : look.height;
+          const knob = small ? look.knobSmallWidth : look.knobWidth;
+          const knobHeight = small ? look.knobSmallHeight : look.knobHeight;
+          const border = look.edgeOff;
+          const pad = (height - knobHeight) / 2 - border;
+          const inset = Math.max(0, pad);
+          const travel = width - 2 * (border + inset) - knob;
+          if (pad < 0 || travel <= 0 || pad + travel + knob !== width - 2 * border - pad) {
+            return `${theme?.id ?? "build-time"} ${small ? "sm" : "default"} pad=${pad} travel=${travel}`;
+          }
+        }
+      } finally {
+        selectTheme(null);
       }
     }
     return null;
   }),
   check("switchGeometry:switchSlop", () => {
-    const slop = switchSlop({ width: 36, height: 20, border: 1, inset: 1, knob: 16 }, 44);
-    return sameValue(slop, { top: 12, bottom: 12, left: 4, right: 4 })
+    // A 36×20 track against a 44-point target: 12 above and below, 4 either side. That is the
+    // standalone slop (`(hit - size) / 2`, never negative) the default pointer track asks for.
+    const look = control("switch");
+    const hit = 44;
+    const v = Math.max(0, (hit - look.height) / 2);
+    const h = Math.max(0, (hit - look.width) / 2);
+    const slop = { top: v, bottom: v, left: h, right: h };
+    const expected =
+      look.width === 36 && look.height === 20
+        ? { top: 12, bottom: 12, left: 4, right: 4 }
+        : { top: 10, bottom: 10, left: 0, right: 0 };
+    return sameValue(slop, expected)
       ? null
-      : JSON.stringify(slop);
+      : `${look.width}x${look.height} ${JSON.stringify(slop)}`;
   }),
   check("checkbox:listRowHover", () => {
     const enabled = listRow().hoverStyle;
@@ -482,7 +479,7 @@ const results: string[] = [
     try {
       for (const theme of [winui, material] as const) {
         selectTheme(theme);
-        const input = inputLook();
+        const input = fieldLook();
         if (input.style.outlineStyle !== "none" || input.style.outlineWidth !== 0) {
           return `${theme.id} input rest outline=${String(input.style.outlineStyle)}/${String(input.style.outlineWidth)}`;
         }
@@ -495,7 +492,7 @@ const results: string[] = [
         ) {
           return `${theme.id} input focus=${JSON.stringify(input.focusStyle)}`;
         }
-        const select = pickerLook();
+        const select = fieldLook();
         if (select.style.outlineStyle !== "none" || select.style.outlineWidth !== 0) {
           return `${theme.id} select rest outline=${String(select.style.outlineStyle)}`;
         }
@@ -509,7 +506,7 @@ const results: string[] = [
         }
       }
       selectTheme(apple);
-      const appleFocus = inputLook().focusStyle;
+      const appleFocus = fieldLook().focusStyle;
       if (appleFocus.outlineStyle !== "solid" || (appleFocus.outlineWidth ?? 0) <= 0) {
         return `apple focus=${JSON.stringify(appleFocus)}`;
       }

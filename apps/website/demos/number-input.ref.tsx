@@ -3,11 +3,11 @@
 // pixels.
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
-import { NumberInput, Switch } from "nsh/base";
+import { NumberInput } from "nsh/base";
 
 import { listRow, plainRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import { numberInputLook, numberInputSteps, numberInputText } from "@/packages/ui/number-input";
-import { switchLook } from "@/packages/ui/switch";
+import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, ui } from "./stage";
@@ -63,7 +63,6 @@ function App() {
                 checked={disabled()}
                 onChange={({ checked }) => disabled.set(checked)}
                 {...listRow({ first: true, style: { flexDirection: "row-reverse" } })}
-                {...switchLook(() => disabled())}
               >
                 <RowLabel label="Disabled" />
               </Switch>

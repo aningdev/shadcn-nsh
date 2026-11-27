@@ -26,97 +26,6 @@ import { backdrop } from "./lib/popup";
 import { createOpenState, type OpenState } from "./lib/state";
 import { AsText } from "./lib/utils";
 
-const pointer = platform.desktop;
-
-/** A card's width where the app gives none: 360 points with a pointer, 320 on a touch screen
- * (upstream's dialog demo, `el-dialog`; never wider than 90% of the window). */
-const cardWidth = pointer ? 360 : 320;
-
-/**
- * A dialog shown as a card in the middle of the window, over `backdrop()`:
- * the modal face (`finish.modal`: the card's colour, the border's edge and the
- * floating shadow of a menu), the theme's card radius, 20 points of
- * padding, its rows 12 apart. Given a `width`, it is `nsh/base`'s `Dialog`'s `style` itself:
- * centered, `width` across and never wider than 90% of the window; without
- * one, the look alone, for a view inside the dialog (one that springs in).
- * A terminal draws its edge alone.
- *
- * It is never taller than the window holds inside the safe areas, 24 points
- * clear of either edge (`DialogContent` scrolls its body under that cap): a
- * card that outgrows the window scrolls instead of running off it.
- */
-export function dialogCard(width?: number): ViewStyle {
-  const modal = surface("modal").style;
-  const glass: ViewStyle = {};
-  if (modal.backdropFilter !== undefined) glass.backdropFilter = modal.backdropFilter;
-  if (modal.glassEffect !== undefined) glass.glassEffect = modal.glassEffect;
-  if (modal.glassTintColor !== undefined) glass.glassTintColor = modal.glassTintColor;
-  return {
-    ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
-    ...rounded(shape.modal),
-    borderWidth: terminal
-      ? stroke.hairline
-      : surfaceBorderWidth(modal.borderColor as string | undefined),
-    padding: 20,
-    gap: 12,
-    maxHeight: windowSize().height - safeArea().top - safeArea().bottom - 48,
-    ...(terminal
-      ? { borderColor: colors.border }
-      : {
-          backgroundColor: modal.backgroundColor,
-          boxShadow: modal.boxShadow,
-          borderColor: modal.borderColor,
-          ...glass,
-        }),
-  };
-}
-
-/**
- * A dialog that is a page rather than a card in the middle of the window: it fills what the
- * `nsh/base` dialog gives it, over the page's fill, and takes the card's edge, radius, shadow,
- * padding, width and height cap off (it fills the window) — the content is laid out as a page.
- *
- * `DialogContent` wears it for a `presentation` the system presents itself (`fullScreen`,
- * `pageSheet`, `formSheet`), which draws the card there; pass it as `style` for a dialog of the
- * app's own that owns its whole surface on every platform — a lightbox, a full-screen editor.
- */
-export function dialogPage(): ViewStyle {
-  return {
-    flex: 1,
-    margin: 0,
-    // Over a card's width and height cap, when this is passed as `style` to the card's dialog.
-    width: "100%",
-    maxWidth: "100%",
-    maxHeight: "100%",
-    borderWidth: 0,
-    borderColor: "transparent",
-    borderRadius: 0,
-    padding: 0,
-    gap: 0,
-    boxShadow: "none",
-    ...(terminal ? {} : { backgroundColor: colors.background }),
-  };
-}
-
-/** A card dialog's title (`dialogCard`): 17 points semibold with a pointer, 20 on a touch screen. */
-export function dialogTitle(): TextStyle {
-  return {
-    // No type role has this size: a card dialog's title is 17 / 20.
-    fontSize: pointer ? 17 : 20,
-    fontWeight: font.weight("title"),
-    color: colors.foreground,
-  };
-}
-
-/** A card dialog's text under its title: 13 points with a pointer, 15 on a touch screen, muted. */
-export function dialogText(): TextStyle {
-  return {
-    fontSize: font.size("body"),
-    lineHeight: font.lineHeight("body"),
-    color: colors.mutedForeground,
-  };
-}
-
 /** The root: it owns whether the dialog is open, and nothing of how it looks. */
 export type DialogProps = {
   /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
@@ -176,21 +85,6 @@ export type DialogFooterProps = {
   children?: JSX.Element;
   style?: StyleProp<ViewStyle>;
 };
-
-type DialogContextValue = OpenState &
-  Pick<DialogProps, "onOpen" | "onClose" | "onCancel"> & {
-    /** Where `DialogFooter` leaves its row: `DialogContent` draws it under the scrolling body. */
-    footer: Signal<JSX.Element | null>;
-    setFooter: (node: JSX.Element | null) => void;
-  };
-
-const DialogContext = context<DialogContextValue | null>(null);
-
-function useDialog() {
-  const ctx = DialogContext();
-  if (!ctx) throw new Error("Dialog parts must be used within <Dialog>");
-  return ctx;
-}
 
 /** The root of a dialog's parts. */
 export function Dialog(props: DialogProps) {
@@ -322,4 +216,115 @@ export function DialogFooter(props: DialogFooterProps) {
     </View>,
   );
   return null;
+}
+
+// Shared dialog primitives
+// `image-viewer` wears `dialogPage`. `sheet` and `drawer` wear the title and the text.
+
+/**
+ * A dialog that is a page rather than a card in the middle of the window: it fills what the
+ * `nsh/base` dialog gives it, over the page's fill, and takes the card's edge, radius, shadow,
+ * padding, width and height cap off (it fills the window) — the content is laid out as a page.
+ *
+ * `DialogContent` wears it for a `presentation` the system presents itself (`fullScreen`,
+ * `pageSheet`, `formSheet`), which draws the card there; pass it as `style` for a dialog of the
+ * app's own that owns its whole surface on every platform — a lightbox, a full-screen editor.
+ */
+export function dialogPage(): ViewStyle {
+  return {
+    flex: 1,
+    margin: 0,
+    // Over a card's width and height cap, when this is passed as `style` to the card's dialog.
+    width: "100%",
+    maxWidth: "100%",
+    maxHeight: "100%",
+    borderWidth: 0,
+    borderColor: "transparent",
+    borderRadius: 0,
+    padding: 0,
+    gap: 0,
+    boxShadow: "none",
+    ...(terminal ? {} : { backgroundColor: colors.background }),
+  };
+}
+
+/** A card dialog's title (`dialogCard`): 17 points semibold with a pointer, 20 on a touch screen. */
+export function dialogTitle(): TextStyle {
+  return {
+    // No type role has this size: a card dialog's title is 17 / 20.
+    fontSize: pointer ? 17 : 20,
+    fontWeight: font.weight("title"),
+    color: colors.foreground,
+  };
+}
+
+/** A card dialog's text under its title: 13 points with a pointer, 15 on a touch screen, muted. */
+export function dialogText(): TextStyle {
+  return {
+    fontSize: font.size("body"),
+    lineHeight: font.lineHeight("body"),
+    color: colors.mutedForeground,
+  };
+}
+
+// Private helpers
+
+const pointer = platform.desktop;
+
+/** A card's width where the app gives none: 360 points with a pointer, 320 on a touch screen
+ * (upstream's dialog demo, `el-dialog`; never wider than 90% of the window). */
+const cardWidth = pointer ? 360 : 320;
+
+/**
+ * A dialog shown as a card in the middle of the window, over `backdrop()`:
+ * the modal face (`finish.modal`: the card's colour, the border's edge and the
+ * floating shadow of a menu), the theme's card radius, 20 points of
+ * padding, its rows 12 apart. Given a `width`, it is `nsh/base`'s `Dialog`'s `style` itself:
+ * centered, `width` across and never wider than 90% of the window; without
+ * one, the look alone, for a view inside the dialog (one that springs in).
+ * A terminal draws its edge alone.
+ *
+ * It is never taller than the window holds inside the safe areas, 24 points
+ * clear of either edge (`DialogContent` scrolls its body under that cap): a
+ * card that outgrows the window scrolls instead of running off it.
+ */
+function dialogCard(width?: number): ViewStyle {
+  const modal = surface("modal").style;
+  const glass: ViewStyle = {};
+  if (modal.backdropFilter !== undefined) glass.backdropFilter = modal.backdropFilter;
+  if (modal.glassEffect !== undefined) glass.glassEffect = modal.glassEffect;
+  if (modal.glassTintColor !== undefined) glass.glassTintColor = modal.glassTintColor;
+  return {
+    ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
+    ...rounded(shape.modal),
+    borderWidth: terminal
+      ? stroke.hairline
+      : surfaceBorderWidth(modal.borderColor as string | undefined),
+    padding: 20,
+    gap: 12,
+    maxHeight: windowSize().height - safeArea().top - safeArea().bottom - 48,
+    ...(terminal
+      ? { borderColor: colors.border }
+      : {
+          backgroundColor: modal.backgroundColor,
+          boxShadow: modal.boxShadow,
+          borderColor: modal.borderColor,
+          ...glass,
+        }),
+  };
+}
+
+type DialogContextValue = OpenState &
+  Pick<DialogProps, "onOpen" | "onClose" | "onCancel"> & {
+    /** Where `DialogFooter` leaves its row: `DialogContent` draws it under the scrolling body. */
+    footer: Signal<JSX.Element | null>;
+    setFooter: (node: JSX.Element | null) => void;
+  };
+
+const DialogContext = context<DialogContextValue | null>(null);
+
+function useDialog() {
+  const ctx = DialogContext();
+  if (!ctx) throw new Error("Dialog parts must be used within <Dialog>");
+  return ctx;
 }

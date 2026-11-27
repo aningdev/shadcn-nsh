@@ -117,6 +117,7 @@ const overrides: Record<string, Override> = {
   // A row checked after the page opened: the box's mark and fill must follow the value (the
   // reference page computes them from it), which a first-frame screenshot never shows.
   checkbox: {
+    selfReference: "checkboxLook is private to checkbox.tsx",
     steps: async (app) => {
       await app.press("text:Documents");
       await app.wait(300);
@@ -145,7 +146,10 @@ const overrides: Record<string, Override> = {
       await app.wait(300);
     },
   },
-  dialog: { steps: (app) => app.press("Open a card") },
+  dialog: {
+    selfReference: "dialogCard is private to dialog.tsx",
+    steps: (app) => app.press("Open a card"),
+  },
   // The pointer rests on the trail's first step: its ink goes from the muted one to the page's
   // text color, the one state a still can show (the keyboard's ring needs the keyboard). A phone
   // has no pointer, so the touch pass keeps the resting look.
@@ -269,7 +273,11 @@ const overrides: Record<string, Override> = {
   pressable: { photos: true, steps: photosReady },
   "image-viewer": { photos: true, steps: photosReady },
   "text-view": { photos: true, steps: photosReady },
+  card: { selfReference: "cardLook is private to card.tsx" },
+  input: { selfReference: "inputLook is private to input.tsx" },
+  switch: { selfReference: "switchLook is private to switch.tsx" },
   spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
+  "split-button": { selfReference: "splitButtonLook is private to split-button.tsx" },
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
   status: { selfReference: "upstream's own Status, with no shell to compare against" },
   stat: { selfReference: "upstream's own Stat, with no shell to compare against" },

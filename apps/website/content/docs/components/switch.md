@@ -103,32 +103,6 @@ is already at least that wide, so the hit slop only fills the height.
 />
 ```
 
-### The look alone
-
-`switchLook` gives the track and knob classes to a `nsh/base` switch of your own; `switchHitSlop` gives the touch target.
-
-```tsx
-<BaseSwitch
-  {...switchLook(() => on(), "default")}
-  checked={on()}
-  onChange={({ checked }) => on.set(checked)}
-/>
-```
-
-The settings row's looks are the field family's, for a `nsh/base` view of your own:
-
-```tsx
-<View style={fieldFamilyLook().field(true)}>
-  <View style={fieldFamilyLook().content}>
-    <Text style={fieldFamilyLook().title}>Extract text from images</Text>
-    <Text style={fieldFamilyLook().description}>Read the text in a screenshot.</Text>
-  </View>
-  <BaseSwitch {...switchLook(() => on())} checked={on()} />
-</View>
-```
-
-Each part of `fieldFamilyLook()` reads the theme when it is drawn, so a look kept in a `const` still follows the scheme.
-
 ## API
 
 Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes through. `trackClass`, `trackStyle` and `thumbStyle` go over the look's.

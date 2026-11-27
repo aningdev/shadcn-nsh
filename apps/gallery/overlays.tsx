@@ -1,12 +1,19 @@
 import type { ViewStyle } from "nsh";
-import { Text, View, mount } from "nsh";
+import { Text, View, mount, safeArea, windowSize } from "nsh";
 
 // Family 6: tooltip, popover, dialog, sheet, toast — every surface, in the first screen.
-import { colors } from "../../packages/theme";
+import {
+  colors,
+  rounded,
+  shape,
+  stroke,
+  surface,
+  surfaceBorderWidth,
+  terminal,
+} from "../../packages/theme";
 import {
   Button,
   Toast,
-  dialogCard,
   dialogText,
   dialogTitle,
   popoverLook,
@@ -24,6 +31,35 @@ import {
 import { Page, Panel, Row } from "./demo-kit";
 
 const box = { width: 220, flexShrink: 0 };
+
+/** The card a dialog wears, from the public theme roles `dialogCard` reads. The look itself stays in `dialog.tsx`. */
+function dialogFace(width: number): ViewStyle {
+  const modal = surface("modal").style;
+  const glass: ViewStyle = {};
+  if (modal.backdropFilter !== undefined) glass.backdropFilter = modal.backdropFilter;
+  if (modal.glassEffect !== undefined) glass.glassEffect = modal.glassEffect;
+  if (modal.glassTintColor !== undefined) glass.glassTintColor = modal.glassTintColor;
+  return {
+    margin: "auto",
+    width,
+    maxWidth: "90%",
+    ...rounded(shape.modal),
+    borderWidth: terminal
+      ? stroke.hairline
+      : surfaceBorderWidth(modal.borderColor as string | undefined),
+    padding: 20,
+    gap: 12,
+    maxHeight: windowSize().height - safeArea().top - safeArea().bottom - 48,
+    ...(terminal
+      ? { borderColor: colors.border }
+      : {
+          backgroundColor: modal.backgroundColor,
+          boxShadow: modal.boxShadow,
+          borderColor: modal.borderColor,
+          ...glass,
+        }),
+  };
+}
 
 function SheetFrame(props: { side: "bottom" | "right"; children: unknown }) {
   const bottom = props.side === "bottom";
@@ -70,7 +106,7 @@ mount(() => (
         </View>
       </Row>
       <Row label="dialog">
-        <View style={[dialogCard(220), box, { margin: 0, maxWidth: 220, gap: 12 }]}>
+        <View style={[dialogFace(220), box, { margin: 0, maxWidth: 220, gap: 12 }]}>
           <Text style={dialogTitle()}>Delete file?</Text>
           <Text style={dialogText()}>This cannot be undone.</Text>
           <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end" }}>

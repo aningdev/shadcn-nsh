@@ -19,8 +19,9 @@ import {
   Button,
   buttonLook,
   carouselArrowLook,
-  roundButtonLook,
-  splitButtonLook,
+  RoundButton,
+  SplitButton,
+  SplitButtonSegment,
   toastCloseLook,
   Toggle,
   toggleLook,
@@ -78,8 +79,6 @@ function App() {
   const direct = createAnimatedValue(0);
 
   const defaultBtn = buttonLook("default");
-  const roundBtn = roundButtonLook("default");
-  const splitSeg = splitButtonLook("default").segment();
   const onToggle = toggleLook({ on: true });
   const toastClose = toastCloseLook();
   const arrow = carouselArrowLook({ glass: true });
@@ -113,6 +112,12 @@ function App() {
         <Button variant="ghost" onPress={() => selectTheme(winui)}>
           WinUI
         </Button>
+        <RoundButton accessibilityLabel="Round">
+          <Text>R</Text>
+        </RoundButton>
+        <SplitButton>
+          <SplitButtonSegment accessibilityLabel="Split">Save</SplitButtonSegment>
+        </SplitButton>
       </View>
       <Text>{`focus=${JSON.stringify(focusRing())}`}</Text>
       <Text>{`ringTokens=${String(token("ring"))}|${String(token("card"))}`}</Text>
@@ -121,8 +126,6 @@ function App() {
       <Text>{`motionSlow=${showMotion(motion.slow)}`}</Text>
       <Text>{`motionPresets=${showPresets()}`}</Text>
       <Text>{`btnHover=${JSON.stringify(defaultBtn.hoverStyle ?? null)}`}</Text>
-      <Text>{`roundHover=${JSON.stringify(roundBtn.hoverStyle ?? null)}`}</Text>
-      <Text>{`splitHover=${JSON.stringify(splitSeg.hoverStyle ?? null)}`}</Text>
       <Text>{`toggleOnHover=${JSON.stringify(onToggle.hoverStyle ?? null)}`}</Text>
       <Text>{`toastHover=${JSON.stringify(toastClose.hoverStyle)}`}</Text>
       <Text>{`arrowHover=${JSON.stringify(arrow.hoverStyle)}`}</Text>

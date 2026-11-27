@@ -1,6 +1,5 @@
 // A text field: `Input`, wearing the shared field well (`fieldLook` and `fieldText` in
-// `lib/field-look`) as `inputLook`.
-// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+// `lib/field-look`) as a private `inputLook`.
 
 import type { InputStyle, ViewStyle } from "nsh";
 import { signal, split } from "nsh";
@@ -16,41 +15,6 @@ import {
 } from "./lib/field-look";
 import { createRejectShake } from "./lib/motion";
 import { joinClass, read } from "./lib/utils";
-
-/**
- * A lone `<Input>`'s props (`<Input {...inputLook()} />`): the well and its
- * states (`fieldLook`) and the text in it (`fieldText`) on the input itself.
- */
-export function inputLook(o?: FieldLookOptions) {
-  const look = fieldLook(o);
-  return {
-    get class(): string {
-      return look.class;
-    },
-    get style(): InputStyle {
-      const text = fieldText({
-        readonly: !!read(o?.readonly),
-        disabled: !!read(o?.disabled),
-        multiline: !!read(o?.multiline),
-      });
-      // A lone input is its own well: the text takes no `flex`, which a field's text has for the
-      // parts beside it.
-      return { ...fieldFrame(o), ...text, flex: undefined, ...read(o?.style) } as InputStyle;
-    },
-    get hoverStyle(): ViewStyle | undefined {
-      return look.hoverStyle;
-    },
-    get focusStyle(): ViewStyle {
-      return look.focusStyle;
-    },
-    get focusWithinStyle(): ViewStyle {
-      return look.focusWithinStyle;
-    },
-    get disabledStyle(): ViewStyle {
-      return look.disabledStyle;
-    },
-  };
-}
 
 /**
  * `nsh/base`'s Input in the look of `inputLook`. Every base prop passes through; `class`, `style`,
@@ -135,4 +99,41 @@ export function Input(props: InputProps) {
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     />
   );
+}
+
+// Private helpers
+
+/**
+ * A lone `<Input>`'s props (`<Input {...inputLook()} />`): the well and its
+ * states (`fieldLook`) and the text in it (`fieldText`) on the input itself.
+ */
+function inputLook(o?: FieldLookOptions) {
+  const look = fieldLook(o);
+  return {
+    get class(): string {
+      return look.class;
+    },
+    get style(): InputStyle {
+      const text = fieldText({
+        readonly: !!read(o?.readonly),
+        disabled: !!read(o?.disabled),
+        multiline: !!read(o?.multiline),
+      });
+      // A lone input is its own well: the text takes no `flex`, which a field's text has for the
+      // parts beside it.
+      return { ...fieldFrame(o), ...text, flex: undefined, ...read(o?.style) } as InputStyle;
+    },
+    get hoverStyle(): ViewStyle | undefined {
+      return look.hoverStyle;
+    },
+    get focusStyle(): ViewStyle {
+      return look.focusStyle;
+    },
+    get focusWithinStyle(): ViewStyle {
+      return look.focusWithinStyle;
+    },
+    get disabledStyle(): ViewStyle {
+      return look.disabledStyle;
+    },
+  };
 }

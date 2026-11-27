@@ -33,7 +33,7 @@ export const components: ComponentDoc[] = [
     kind: "official",
     shadcn: "button",
     nshElement: "button",
-    description: "A button, an icon button, a round button, and a split button.",
+    description: "A button, an icon button, and a round button.",
   },
   {
     slug: "calendar",
@@ -662,6 +662,14 @@ export const components: ComponentDoc[] = [
     shadcn: "spinner",
     nshElement: null,
     description: "A turning ring: work going on.",
+  },
+  {
+    slug: "split-button",
+    title: "Split Button",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description: "A main action and the menu of its variants in one silhouette.",
   },
   {
     slug: "stat",

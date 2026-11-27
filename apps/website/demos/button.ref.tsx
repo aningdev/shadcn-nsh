@@ -2,9 +2,9 @@
 // `nsh/base`'s Button, Switch and Toggle. The render check requires the two to draw the same
 // pixels.
 import { colors } from "@shadcn-nsh/theme";
-import { ChevronDown, Play, Plus, Save, Search, Star, Trash, type IconNode } from "lucide";
+import { Play, Plus, Save, Search, Star, Trash, type IconNode } from "lucide";
 import { mount, signal, Text, View } from "nsh";
-import { Button, Switch, Toggle } from "nsh/base";
+import { Button, Toggle } from "nsh/base";
 
 import {
   type ButtonVariant,
@@ -16,13 +16,12 @@ import {
   iconButtonLook,
   type IconButtonLookOptions,
   type IconButtonSize,
+  RoundButton,
   roundButtonGlyph,
-  roundButtonLook,
-  splitButtonLook,
 } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Spinner } from "@/packages/ui/spinner";
-import { switchLook } from "@/packages/ui/switch";
+import { Switch } from "@/packages/ui/switch";
 import { toggleLabel, toggleLook } from "@/packages/ui/toggle";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
@@ -148,9 +147,6 @@ function App() {
     </Toggle>
   );
 
-  const primarySplit = splitButtonLook("default");
-  const secondarySplit = splitButtonLook("secondary");
-
   return (
     <DemoPage title="Button">
       <Text style={{ color: colors.mutedForeground }}>
@@ -197,7 +193,6 @@ function App() {
                 checked={disabled()}
                 onChange={({ checked }) => disabled.set(checked)}
                 class="flex-row items-center gap-2 active:opacity-70"
-                {...switchLook(() => disabled())}
               >
                 <Text style={label()}>{disabled() ? "Enable it" : "Disable it"}</Text>
               </Switch>
@@ -284,52 +279,12 @@ function App() {
             variant="destructive"
             onPress={() => press("delete")}
           />
-          <Button
-            accessibilityLabel="Play"
-            onPress={() => press("play")}
-            {...roundButtonLook("default")}
-          >
+          <RoundButton accessibilityLabel="Play" onPress={() => press("play")}>
             <Icon icon={Play} fill {...roundButtonGlyph("default")} />
-          </Button>
-          <Button
-            accessibilityLabel="Plus"
-            onPress={() => press("plus")}
-            {...roundButtonLook("secondary")}
-          >
+          </RoundButton>
+          <RoundButton accessibilityLabel="Plus" variant="secondary" onPress={() => press("plus")}>
             <Icon icon={Plus} {...roundButtonGlyph("secondary")} />
-          </Button>
-        </DemoSection>
-        <DemoSection title="Split">
-          <View style={primarySplit.frame.style}>
-            <Button onPress={() => press("save")} {...primarySplit.segment()}>
-              <Text style={buttonLabel("default")}>Save</Text>
-            </Button>
-            <View style={primarySplit.divider} />
-            <Button
-              accessibilityLabel="More save options"
-              selected={starred()}
-              onPress={() => {
-                starred.set(!starred());
-                press("save options");
-              }}
-              {...primarySplit.segment({ selected: () => starred() })}
-            >
-              <Icon icon={ChevronDown} {...buttonGlyph("default")} />
-            </Button>
-          </View>
-          <View style={secondarySplit.frame.style}>
-            <Button onPress={() => press("export")} {...secondarySplit.segment()}>
-              <Text style={buttonLabel("secondary")}>Export</Text>
-            </Button>
-            <View style={secondarySplit.divider} />
-            <Button
-              accessibilityLabel="More export options"
-              onPress={() => press("export options")}
-              {...secondarySplit.segment()}
-            >
-              <Icon icon={ChevronDown} {...buttonGlyph("secondary")} />
-            </Button>
-          </View>
+          </RoundButton>
         </DemoSection>
       </DemoCard>
     </DemoPage>

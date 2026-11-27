@@ -39,6 +39,7 @@ export * from "./select";
 export * from "./sheet";
 export * from "./slider";
 export * from "./spinner";
+export * from "./split-button";
 export * from "./stat";
 export * from "./status";
 export * from "./switch";

@@ -1,8 +1,8 @@
-import { currentTheme, selectTheme, shape } from "@shadcn-nsh/theme";
+import { currentTheme, rounded, selectTheme, shape } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import nshGallery from "../../../packages/theme/themes/nsh-gallery/index";
-import { Button, dialogCard } from "../../../packages/ui";
+import { Button } from "../../../packages/ui";
 
 /**
  * Simulates a host override of `radius-xl` through `selectTheme` (which calls `setTheme`):
@@ -28,7 +28,7 @@ const hostOverridden = {
 function App() {
   return (
     <View>
-      <Text testID="dialog-radius">{`dialog-radius:${dialogCard().borderRadius}`}</Text>
+      <Text testID="dialog-radius">{`dialog-radius:${rounded(shape.modal).borderRadius}`}</Text>
       <Text testID="shape-modal">{`shape-modal:${shape.modal}`}</Text>
       <Text testID="sample">Sample</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>

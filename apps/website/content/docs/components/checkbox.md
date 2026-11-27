@@ -59,21 +59,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 </Checkbox>
 ```
 
-### The look alone
-
-The look is a function, for a checkbox of your own.
-
-```tsx
-<Checkbox
-  class="group"
-  checked={on()}
-  {...checkboxLook()}
-  indicator={<CheckboxMark mark={on() ? "check" : null} />}
->
-  Photos
-</Checkbox>
-```
-
 ### Names for screen readers
 
 A string child is the row's label and its name for screen readers, so the box and its text are one control to a reader; `accessibilityLabel` wins when it should differ. Children drawn as given are named by the texts inside them.
