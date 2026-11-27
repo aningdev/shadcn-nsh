@@ -24,9 +24,9 @@ colors:
     line: "#cac4d0"
     input: "#79747e"
     ring: "#625b71"
-    info: "#1e63d2"
-    success: "#138a5a"
-    warning: "#b26a00"
+    info: "#0b57d0"
+    success: "#146c2e"
+    warning: "#8f4e00"
     destructive: "#b3261e"
   dark:
     background: "#141218"
@@ -46,9 +46,9 @@ colors:
     line: "#49454f"
     input: "#938f99"
     ring: "#ccc2dc"
-    info: "#81b3fc"
-    success: "#45d49a"
-    warning: "#ffb547"
+    info: "#a8c7fa"
+    success: "#6dd58c"
+    warning: "#ffb951"
     destructive: "#f2b8b5"
 typography:
   caption:
@@ -204,9 +204,9 @@ Material 3 Expressive (`material-web` / Compose M3) with tonal surface container
 - **`line`**: light `#cac4d0`, dark `#49454f`
 - **`input`**: light `#79747e`, dark `#938f99`
 - **`ring`**: light `#625b71`, dark `#ccc2dc`
-- **`info`**: light `#1e63d2`, dark `#81b3fc`
-- **`success`**: light `#138a5a`, dark `#45d49a`
-- **`warning`**: light `#b26a00`, dark `#ffb547`
+- **`info`**: light `#0b57d0`, dark `#a8c7fa`
+- **`success`**: light `#146c2e`, dark `#6dd58c`
+- **`warning`**: light `#8f4e00`, dark `#ffb951`
 - **`destructive`**: light `#b3261e`, dark `#f2b8b5`
 
 ## Typography

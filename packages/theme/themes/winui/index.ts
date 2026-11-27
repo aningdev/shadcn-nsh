@@ -45,7 +45,7 @@ export const winui = defineTheme({
       line: "oklch(0.92191 0 0)",
       input: "oklch(0.62006 0 0)",
       ring: "oklch(0.21779 0 0)",
-      info: "oklch(0.56769 0.16654 251.313)",
+      info: "oklch(0.49147 0.15959 254.594)",
       success: "oklch(0.50725 0.16489 142.658)",
       warning: "oklch(0.53885 0.12069 65.216)",
       destructive: "oklch(0.53615 0.19119 30.071)",
@@ -76,14 +76,14 @@ export const winui = defineTheme({
     tints: {
       light: {
         brand: "oklch(0.91469 0.01564 247.999)",
-        info: "oklch(0.97015 0 0)",
+        info: "oklch(0.9521 0.01859 242.967)",
         warning: "oklch(0.96621 0.05066 93.747)",
         destructive: "oklch(0.9462 0.02418 11.286)",
         success: "oklch(0.94958 0.04104 143.026)",
       },
       dark: {
         brand: "oklch(0.30508 0.01746 227.257)",
-        info: "oklch(0.27274 0 0)",
+        info: "oklch(0.30996 0.04454 249.438)",
         warning: "oklch(0.33731 0.04713 83.238)",
         destructive: "oklch(0.30954 0.04407 22.054)",
         success: "oklch(0.34726 0.05298 114.732)",

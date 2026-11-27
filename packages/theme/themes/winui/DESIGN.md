@@ -24,7 +24,7 @@ colors:
     line: "#e5e5e5"
     input: "#868686"
     ring: "#1a1a1a"
-    info: "#0078d4"
+    info: "#005fb8"
     success: "#0f7b0f"
     warning: "#9d5d00"
     destructive: "#c42b1c"
@@ -204,7 +204,7 @@ Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered 
 - **`line`**: light `#e5e5e5`, dark `#323232`
 - **`input`**: light `#868686`, dark `#9a9a9a`
 - **`ring`**: light `#1a1a1a`, dark `#ffffff`
-- **`info`**: light `#0078d4`, dark `#60cdff`
+- **`info`**: light `#005fb8`, dark `#60cdff`
 - **`success`**: light `#0f7b0f`, dark `#6ccb5f`
 - **`warning`**: light `#9d5d00`, dark `#fce100`
 - **`destructive`**: light `#c42b1c`, dark `#ff99a4`
