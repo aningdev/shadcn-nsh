@@ -113,7 +113,11 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         ...(read(open) && fieldHasUniformEdge(field)
           ? { borderColor: colors.faint }
           : fieldRestEdge(field)),
-        ...(terminal ? {} : fieldRing(fieldFocusTone(field, false))),
+        ...(terminal
+          ? {}
+          : field.focusLine
+            ? { outlineStyle: "none", outlineWidth: 0 }
+            : fieldRing(fieldFocusTone(field, false))),
         transitionProperty: "border-color, outline-color, opacity",
         transitionDuration: reduceMotion() ? 0 : 120,
         ...read(o?.style),
@@ -144,6 +148,7 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         flex: 1,
         minWidth: 40,
         height: fieldSize.height - fieldEdgeThickness(control("field")),
+        ...(terminal ? {} : { outlineStyle: "none" }),
       };
     },
   };

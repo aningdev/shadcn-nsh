@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "WinUI 3"
-description: "Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with a four-layer acrylic-noise shader, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring)."
+description: "Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with backdrop blur, specular rim and acrylic-noise grain, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring)."
 colors:
   scrim: "#0000004d"
   media: "#10131a"
@@ -183,7 +183,7 @@ components:
 
 ## Overview
 
-Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with a four-layer acrylic-noise shader, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring).
+Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with backdrop blur, specular rim and acrylic-noise grain, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring).
 
 ## Colors
 

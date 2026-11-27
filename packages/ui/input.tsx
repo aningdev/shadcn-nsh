@@ -345,12 +345,15 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
             ? { borderColor: colors.line }
             : fieldRestEdge(field);
   const tone = fieldFocusTone(field, invalid);
-  const ringInit: ViewStyle =
-    terminal || field.focusLine || focused
-      ? {}
-      : invalid && field.width === 0
-        ? fieldFocusEdge(field, tone)
-        : fieldRing(tone);
+  const ringInit: ViewStyle = terminal
+    ? {}
+    : field.focusLine
+      ? { outlineStyle: "none", outlineWidth: 0 }
+      : focused
+        ? {}
+        : invalid && field.width === 0
+          ? fieldFocusEdge(field, tone)
+          : fieldRing(tone);
   return {
     ...fieldCorners(field),
     ...fieldEdgeWidths(field),

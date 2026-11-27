@@ -1,4 +1,4 @@
-import { colors, rounded, shape } from "@shadcn-nsh/theme";
+import { activeTheme, colors, rounded, shape } from "@shadcn-nsh/theme";
 // The showcase's shell, after the official NSH Gallery (`references/nsh/examples/gallery/App.tsx`):
 // a desktop gets a sidebar of the demos grouped by what each is for, beside the chosen demo under
 // a page header (its group, its name, one line of what it shows); a phone gets the index as one
@@ -15,6 +15,7 @@ import { PALETTES } from "@/apps/website/demos/palettes";
 import { IconButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
+import { ThemeTransition } from "@/packages/ui/lib/motion";
 import { createNavStack, NavPage, NavStack } from "@/packages/ui/nav-stack";
 import {
   Popover,
@@ -485,6 +486,7 @@ function Phone() {
 function App() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <ThemeTransition value={activeTheme().id} />
       <If when={desktop()} else={<Phone />}>
         <Desktop />
       </If>

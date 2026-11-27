@@ -415,7 +415,7 @@ export const winui = defineTheme({
   },
   meta: {
     overview:
-      "Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with a four-layer acrylic-noise shader, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring).",
+      "Windows 11 WinUI 3: crisp 4px control corners, bevel elevation strokes, layered Fluent 2 Acrylic (overlay, glass, inverse, modal) with backdrop blur, specular rim and acrylic-noise grain, double focus rings, and critically damped motion (83/167/250/333 ms, zeta >= 1, no press spring).",
     elevationNote:
       "WinUI 3 soft ambient elevation (`md`, `lg`, `xl`) and beveled 1px strokes on raised controls. Acrylic layers: `overlay` blur 30 saturate 1.25 minOpacity 0.85 (noise 0.04), `glass` blur 32 saturate 1.3 minOpacity 0.78 (noise 0.045), `inverse` blur 24 saturate 1.2 minOpacity 0.85 (noise 0.03), `modal` blur 24 saturate 1.15 minOpacity 0.9 (noise 0.025). Each fill stays at or above its minOpacity. Motion uses critically damped snappy, smooth, and bouncy springs; press stays a color change.",
     dos: [

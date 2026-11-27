@@ -183,10 +183,10 @@ export function fieldFocusEdge(field: FieldLook, tone: string): ViewStyle {
   const look = fieldDrawn(field);
   if (look.focusLine) {
     return {
-      ...fieldRing(tone),
+      outlineStyle: "none",
+      outlineWidth: 0,
       borderBottomColor: tone,
       borderBottomWidth: look.focusWidth,
-      outlineColor: alpha(tone, 0),
     };
   }
   if (!look.focusUsesRing) {

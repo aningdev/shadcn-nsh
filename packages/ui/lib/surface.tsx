@@ -19,7 +19,16 @@ import {
   type SurfaceRole,
 } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { computed, platform, ShaderEffect, shadersAvailable, Text, View, windowSize } from "nsh";
+import {
+  computed,
+  platform,
+  Shader,
+  ShaderEffect,
+  shadersAvailable,
+  Text,
+  View,
+  windowSize,
+} from "nsh";
 
 import { type Live, read } from "./utils";
 
@@ -208,17 +217,50 @@ export function ThemedSurface(props: ThemedSurfaceProps) {
         const s = surface(props.role);
         const style = [s.style, props.style ?? null];
         if (s.effect && shadersAvailable() && !terminal) {
+          if (s.effect.source.includes("sample_content")) {
+            return (
+              <ShaderEffect
+                source={s.effect.source}
+                uniforms={s.effect.uniforms}
+                maxSampleOffset={s.effect.maxSampleOffset}
+                {...s.platformProps}
+                class={props.class}
+                style={style}
+              >
+                {kids}
+              </ShaderEffect>
+            );
+          }
+          if (s.effect.source.includes("sample_backdrop")) {
+            return (
+              <View {...s.platformProps} class={props.class} style={style}>
+                <ShaderEffect
+                  source={s.effect.source}
+                  uniforms={s.effect.uniforms}
+                  maxSampleOffset={s.effect.maxSampleOffset}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    pointerEvents: "none",
+                  }}
+                />
+                {kids}
+              </View>
+            );
+          }
           return (
-            <ShaderEffect
+            <Shader
               source={s.effect.source}
               uniforms={s.effect.uniforms}
-              maxSampleOffset={s.effect.maxSampleOffset}
               {...s.platformProps}
               class={props.class}
               style={style}
             >
               {kids}
-            </ShaderEffect>
+            </Shader>
           );
         }
         return (

@@ -22,26 +22,23 @@ describe("built-in surface and transition shaders", () => {
       const shader = SURFACE_SHADERS[kind];
       expect(shader.source, kind).toContain("struct Uniforms { intensity: f32 }");
       expect(shader.source, kind).toContain("fn shade(uv: vec2f) -> vec4f");
-      expect(shader.source, kind).toContain("sample_content");
+      expect(shader.source, kind).not.toContain("sample_content");
     }
     const liquid = SURFACE_SHADERS["liquid-glass"].source;
     expect(liquid).toContain("sample_backdrop");
     expect(liquid).toContain("nsh.size");
     expect(liquid).toContain("sd_round_box");
-    expect(liquid.split("sample_backdrop").length - 1).toBeGreaterThanOrEqual(9);
+    expect(liquid.split("sample_backdrop").length - 1).toBeGreaterThanOrEqual(3);
     expect(SURFACE_SHADERS["liquid-glass"].defaultIntensity).toBe(0.35);
     expect(SURFACE_SHADERS["liquid-glass"].maxSampleOffset).toBe(6);
-    expect(SURFACE_SHADERS["acrylic-noise"].defaultIntensity).toBe(0.035);
-    expect(SURFACE_SHADERS["acrylic-noise"].maxSampleOffset).toBe(6);
+    expect(SURFACE_SHADERS["acrylic-noise"].defaultIntensity).toBe(0.04);
+    expect(SURFACE_SHADERS["acrylic-noise"].maxSampleOffset).toBe(0);
     expect(SURFACE_SHADERS["specular-rim"].defaultIntensity).toBe(0.4);
     expect(SURFACE_SHADERS["specular-rim"].maxSampleOffset).toBe(0);
-    expect(SURFACE_SHADERS["paper-grain"].defaultIntensity).toBe(0.025);
+    expect(SURFACE_SHADERS["paper-grain"].defaultIntensity).toBe(0.03);
     expect(SURFACE_SHADERS["paper-grain"].maxSampleOffset).toBe(0);
     const acrylic = SURFACE_SHADERS["acrylic-noise"].source;
-    expect(acrylic.split("sample_backdrop").length - 1).toBeGreaterThanOrEqual(9);
-    expect(acrylic).toContain("0.2126, 0.7152, 0.0722");
-    expect(acrylic).toContain("let luma = dot(soft.rgb, vec3f(0.2126, 0.7152, 0.0722))");
-    expect(acrylic).toContain("mix(vec3f(luma), soft.rgb, 0.72)");
+    expect(acrylic).not.toContain("sample_backdrop");
     expect(acrylic).toContain("hash(uv * nsh.size * max(nsh.scale, 1.0)) - 0.5");
     expect(acrylic).not.toContain("split_r");
     expect(acrylic).not.toContain("dispersed");
@@ -66,7 +63,7 @@ describe("built-in surface and transition shaders", () => {
     const defaults = resolveSurfaceEffect({ kind: "paper-grain" });
     expect(defaults).toEqual({
       source: SURFACE_SHADERS["paper-grain"].source,
-      uniforms: { intensity: 0.025 },
+      uniforms: { intensity: 0.03 },
       maxSampleOffset: 0,
     });
 

@@ -78,6 +78,7 @@ export function inputGroupControlLook(o?: InputGroupControlLookOptions) {
       return {
         ...fieldText({ multiline: !!read(o?.multiline), inWell: true }),
         backgroundColor: "transparent",
+        ...(terminal ? {} : { outlineStyle: "none" }),
         ...read(o?.style),
       };
     },

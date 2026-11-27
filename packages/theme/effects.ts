@@ -39,7 +39,7 @@ export const SURFACE_SHADERS: Record<
 > = {
   "liquid-glass": {
     defaultIntensity: 0.35,
-    // Bend 4.2pt + ring 1.35pt stays inside this budget. Do not grow either without raising it.
+    // Bend 4.5pt + chroma 0.7pt stays inside this budget. Do not grow either without raising it.
     maxSampleOffset: 6,
     source: /* wgsl */ `
 struct Uniforms { intensity: f32 }
@@ -67,71 +67,55 @@ fn shade(uv: vec2f) -> vec4f {
   let p = (uv - vec2f(0.5)) * size;
   let rad = min(min(size.x, size.y) * 0.28, 18.0);
   let sd = sd_round_box(p, size * 0.5, rad);
+  let inside = smoothstep(0.5, -0.5, sd);
   let nrm = box_normal(p, size * 0.5, rad);
-  let rim = smoothstep(14.0, 0.0, -sd);
-  let bend = nrm * rim * uniforms.intensity * 4.2;
-  let ring = uniforms.intensity * 1.35;
-  let chroma = nrm * rim * uniforms.intensity * 0.4;
-  let diag = 0.70710678;
-  let t0 = sample_backdrop(uv + bend / size);
-  let t1 = sample_backdrop(uv + (bend + vec2f(ring, 0.0)) / size);
-  let t2 = sample_backdrop(uv + (bend + vec2f(-ring, 0.0)) / size);
-  let t3 = sample_backdrop(uv + (bend + vec2f(0.0, ring)) / size);
-  let t4 = sample_backdrop(uv + (bend + vec2f(0.0, -ring)) / size);
-  let t5 = sample_backdrop(uv + (bend + vec2f(ring * diag, ring * diag)) / size);
-  let t6 = sample_backdrop(uv + (bend + vec2f(-ring * diag, ring * diag)) / size);
-  let t7 = sample_backdrop(uv + (bend + vec2f(ring * diag, -ring * diag)) / size);
-  let t8 = sample_backdrop(uv + (bend + vec2f(-ring * diag, -ring * diag)) / size);
-  let soft = (t0 * 4.0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8) / 12.0;
+  let rim = smoothstep(16.0, 0.0, -sd) * inside;
+
+  // Transparent optical rim overlay: leave the center clear so native NSGlassEffectView / CSS
+  // backdropFilter and surface fill show through, while refracting and highlighting the bezel.
+  let bend = nrm * rim * uniforms.intensity * 4.5;
+  let chroma = nrm * rim * uniforms.intensity * 0.7;
+  let sample_mid = sample_backdrop(uv + bend / size);
   let split_r = sample_backdrop(uv + (bend + chroma) / size);
   let split_b = sample_backdrop(uv + (bend - chroma) / size);
-  let dispersed = vec4f(split_r.r, soft.g, split_b.b, soft.a);
-  let glass = mix(soft, dispersed, rim * 0.85);
-  let luma = dot(glass.rgb, vec3f(0.2126, 0.7152, 0.0722));
-  let vivid = clamp(mix(vec3f(luma), glass.rgb, 1.0 + uniforms.intensity * 0.35), vec3f(0.0), vec3f(1.0));
-  let content = sample_content(uv);
-  let color = mix(vec4f(vivid, glass.a), content, content.a);
+  let lens = vec3f(split_r.r, sample_mid.g, split_b.b);
+  let luma = dot(lens, vec3f(0.2126, 0.7152, 0.0722));
+  let vivid = clamp(mix(vec3f(luma), lens, 1.0 + uniforms.intensity * 0.45), vec3f(0.0), vec3f(1.0));
+  let refract_a = rim * rim * uniforms.intensity * 0.55 * sample_mid.a;
+
   let top = clamp(-nrm.y, 0.0, 1.0) * rim;
-  let sheen = top * uniforms.intensity;
-  let edge = smoothstep(1.6, 0.0, abs(sd));
-  let bottom = clamp(nrm.y, 0.0, 1.0) * rim * uniforms.intensity * 0.18;
-  var rgb = mix(color.rgb, vec3f(1.0), sheen * 0.55);
-  rgb = mix(rgb, vec3f(1.0), edge * uniforms.intensity * 0.28);
-  rgb = rgb * (1.0 - bottom);
-  return vec4f(clamp(rgb, vec3f(0.0), vec3f(1.0)), max(color.a, sheen * 0.18 + edge * 0.08));
+  let sheen_a = clamp(top * uniforms.intensity * 0.65, 0.0, 1.0);
+  let edge = smoothstep(1.5, 0.0, abs(sd)) * inside;
+  let edge_a = clamp(edge * uniforms.intensity * 0.45, 0.0, 1.0);
+  let bottom = clamp(nrm.y, 0.0, 1.0) * rim;
+  let shadow_a = clamp(bottom * uniforms.intensity * 0.22, 0.0, 1.0);
+
+  let light_a = clamp(sheen_a + edge_a, 0.0, 1.0);
+  let base_rgb = mix(vivid, vec3f(0.0), shadow_a);
+  let base_a = clamp(refract_a + shadow_a, 0.0, 1.0);
+  let total_a = clamp(base_a + light_a * (1.0 - base_a), 0.0, 1.0);
+  let rgb = select(vec3f(0.0), mix(base_rgb * base_a, vec3f(1.0), light_a) / total_a, total_a > 0.001);
+  return vec4f(clamp(rgb, vec3f(0.0), vec3f(1.0)), total_a * inside);
 }`,
   },
   "acrylic-noise": {
-    defaultIntensity: 0.035,
-    // Uniform 4.5pt ring stays inside this budget. Acrylic is flat frost, not a lens, so do not bend it.
-    maxSampleOffset: 6,
+    defaultIntensity: 0.04,
+    // Pure grain + 1px specular highlight overlay; backdrop blur & tint live on the host layer.
+    maxSampleOffset: 0,
     source: /* wgsl */ `${HASH}
 struct Uniforms { intensity: f32 }
 fn shade(uv: vec2f) -> vec4f {
   let size = max(nsh.size, vec2f(1.0));
-  let radius = 4.5 / size;
-  let diag = 0.70710678;
-  let t0 = sample_backdrop(uv);
-  let t1 = sample_backdrop(uv + vec2f(radius.x, 0.0));
-  let t2 = sample_backdrop(uv + vec2f(-radius.x, 0.0));
-  let t3 = sample_backdrop(uv + vec2f(0.0, radius.y));
-  let t4 = sample_backdrop(uv + vec2f(0.0, -radius.y));
-  let t5 = sample_backdrop(uv + vec2f(radius.x * diag, radius.y * diag));
-  let t6 = sample_backdrop(uv + vec2f(-radius.x * diag, radius.y * diag));
-  let t7 = sample_backdrop(uv + vec2f(radius.x * diag, -radius.y * diag));
-  let t8 = sample_backdrop(uv + vec2f(-radius.x * diag, -radius.y * diag));
-  let soft = (t0 * 4.0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8) / 12.0;
-  let luma = dot(soft.rgb, vec3f(0.2126, 0.7152, 0.0722));
-  let muted = mix(vec3f(luma), soft.rgb, 0.72);
-  let frosted = mix(muted, vec3f(0.96, 0.96, 0.95), 0.06);
-  let content = sample_content(uv);
-  let tinted = mix(vec4f(frosted, soft.a), content, content.a);
   let grain = hash(uv * nsh.size * max(nsh.scale, 1.0)) - 0.5;
-  var rgb = clamp(tinted.rgb + vec3f(grain * uniforms.intensity), vec3f(0.0), vec3f(1.0));
   let px = 1.0 / max(nsh.scale, 1.0);
   let top = smoothstep(px, 0.0, uv.y * size.y);
-  rgb = mix(rgb, vec3f(1.0), top * 0.16);
-  return vec4f(rgb, max(tinted.a, top * 0.05));
+
+  let grain_rgb = select(vec3f(0.0), vec3f(1.0), grain > 0.0);
+  let grain_a = clamp(abs(grain) * uniforms.intensity * 1.6, 0.0, 1.0);
+  let top_a = clamp(top * 0.22, 0.0, 1.0);
+  let total_a = clamp(grain_a + top_a * (1.0 - grain_a), 0.0, 1.0);
+  let rgb = select(vec3f(0.0), mix(grain_rgb * grain_a, vec3f(1.0), top_a) / total_a, total_a > 0.001);
+  return vec4f(clamp(rgb, vec3f(0.0), vec3f(1.0)), total_a);
 }`,
   },
   "specular-rim": {
@@ -140,31 +124,35 @@ fn shade(uv: vec2f) -> vec4f {
     source: /* wgsl */ `
 struct Uniforms { intensity: f32 }
 fn shade(uv: vec2f) -> vec4f {
-  let content = sample_content(uv);
-  let top = smoothstep(0.2, 0.0, uv.y);
+  let top = smoothstep(0.22, 0.0, uv.y);
   let edge = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
-  let rim = smoothstep(0.07, 0.0, edge);
+  let rim = smoothstep(0.06, 0.0, edge);
   let bottom = smoothstep(0.76, 1.0, uv.y);
-  var rgb = mix(content.rgb, vec3f(1.0), top * uniforms.intensity * 0.55);
-  rgb = mix(rgb, vec3f(1.0), rim * uniforms.intensity * 0.22);
-  rgb = mix(rgb, rgb * vec3f(0.62), bottom * uniforms.intensity);
-  return vec4f(clamp(rgb, vec3f(0.0), vec3f(1.0)), content.a);
+
+  let light_a = clamp((top * 0.32 + rim * 0.28) * uniforms.intensity, 0.0, 1.0);
+  let dark_a = clamp(bottom * uniforms.intensity * 0.22, 0.0, 1.0);
+  let total_a = clamp(dark_a + light_a * (1.0 - dark_a), 0.0, 1.0);
+  let rgb = select(vec3f(0.0), vec3f(light_a / total_a), total_a > 0.001);
+  return vec4f(clamp(rgb, vec3f(0.0), vec3f(1.0)), total_a);
 }`,
   },
   "paper-grain": {
-    defaultIntensity: 0.025,
+    defaultIntensity: 0.03,
     maxSampleOffset: 0,
     source: /* wgsl */ `${NOISE}
 struct Uniforms { intensity: f32 }
 fn shade(uv: vec2f) -> vec4f {
-  let content = sample_content(uv);
   let p = uv * nsh.size * max(nsh.scale, 1.0);
   let low = noise(p / 42.0);
   let high = noise(p / 3.5);
   let grain = (low - 0.5) * 0.65 + (high - 0.5) * 0.35;
-  let warm = vec3f(0.02, 0.008, -0.012) * uniforms.intensity;
-  let rgb = clamp(content.rgb + vec3f(grain * uniforms.intensity) + warm, vec3f(0.0), vec3f(1.0));
-  return vec4f(rgb, content.a);
+  let warm_rgb = vec3f(0.88, 0.82, 0.72);
+  let warm_a = clamp(uniforms.intensity * 0.65, 0.0, 1.0);
+  let grain_rgb = select(vec3f(0.25, 0.22, 0.18), vec3f(1.0), grain > 0.0);
+  let grain_a = clamp(abs(grain) * uniforms.intensity * 1.4, 0.0, 1.0);
+  let total_a = clamp(warm_a + grain_a * (1.0 - warm_a), 0.0, 1.0);
+  let rgb = select(vec3f(0.0), (warm_rgb * warm_a * (1.0 - grain_a) + grain_rgb * grain_a) / total_a, total_a > 0.001);
+  return vec4f(clamp(rgb, vec3f(0.0), vec3f(1.0)), total_a);
 }`,
   },
 };

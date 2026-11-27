@@ -15,7 +15,7 @@ import {
   TERMINAL_COLUMN,
 } from "@shadcn-nsh/theme";
 import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
-import { createMotion, reduceMotion, ShaderEffect, shadersAvailable, View } from "nsh";
+import { createMotion, reduceMotion, Shader, ShaderEffect, shadersAvailable, View } from "nsh";
 
 import { CheckMark } from "./icons";
 
@@ -189,17 +189,50 @@ export function PopIn(props: {
           { transformOrigin: origins[props.side ?? "bottom"], ...m.style },
         ];
         if (overlay.effect && shadersAvailable() && !terminal) {
+          if (overlay.effect.source.includes("sample_content")) {
+            return (
+              <ShaderEffect
+                source={overlay.effect.source}
+                uniforms={overlay.effect.uniforms}
+                maxSampleOffset={overlay.effect.maxSampleOffset}
+                {...overlay.platformProps}
+                class={props.class}
+                style={style}
+              >
+                {kids}
+              </ShaderEffect>
+            );
+          }
+          if (overlay.effect.source.includes("sample_backdrop")) {
+            return (
+              <View {...overlay.platformProps} class={props.class} style={style}>
+                <ShaderEffect
+                  source={overlay.effect.source}
+                  uniforms={overlay.effect.uniforms}
+                  maxSampleOffset={overlay.effect.maxSampleOffset}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    pointerEvents: "none",
+                  }}
+                />
+                {kids}
+              </View>
+            );
+          }
           return (
-            <ShaderEffect
+            <Shader
               source={overlay.effect.source}
               uniforms={overlay.effect.uniforms}
-              maxSampleOffset={overlay.effect.maxSampleOffset}
               {...overlay.platformProps}
               class={props.class}
               style={style}
             >
               {kids}
-            </ShaderEffect>
+            </Shader>
           );
         }
         return (

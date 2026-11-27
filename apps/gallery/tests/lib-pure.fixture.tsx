@@ -1,14 +1,18 @@
-import { colors, motion, selectTheme, shape, surface } from "@shadcn-nsh/theme";
+import { colors, control, motion, selectTheme, shape, surface } from "@shadcn-nsh/theme";
 import {
   choiceTileLook,
+  comboboxLook,
   drawIcon,
+  fieldFocusEdge,
   type IconCanvas,
   iconImage,
+  inputLook,
   knobOffset,
   knobTravel,
   listRow,
   mergeClasses,
   type PartMap,
+  pickerLook,
   type SwitchGeometry,
   switchSlop,
 } from "@shadcn-nsh/ui";
@@ -469,6 +473,46 @@ const results: string[] = [
       if (motion.springOf("smooth")?.damping !== 30) return "solidGlass smooth";
       if (motion.springOf("bouncy")?.damping !== 24) return "solidGlass bouncy";
       if (readReveal()?.stiffness !== 280) return "solidGlass reveal";
+      return null;
+    } finally {
+      selectTheme(null);
+    }
+  }),
+  check("fieldFocusLine:noBlackOutlineFlash", () => {
+    try {
+      for (const theme of [winui, material] as const) {
+        selectTheme(theme);
+        const input = inputLook();
+        if (input.style.outlineStyle !== "none" || input.style.outlineWidth !== 0) {
+          return `${theme.id} input rest outline=${String(input.style.outlineStyle)}/${String(input.style.outlineWidth)}`;
+        }
+        if (
+          input.focusStyle.outlineStyle !== "none" ||
+          input.focusStyle.outlineWidth !== 0 ||
+          input.focusStyle.outlineColor !== undefined ||
+          input.focusStyle.borderBottomWidth !== 2 ||
+          input.focusStyle.borderBottomColor !== colors.brand
+        ) {
+          return `${theme.id} input focus=${JSON.stringify(input.focusStyle)}`;
+        }
+        const select = pickerLook();
+        if (select.style.outlineStyle !== "none" || select.style.outlineWidth !== 0) {
+          return `${theme.id} select rest outline=${String(select.style.outlineStyle)}`;
+        }
+        const combo = comboboxLook(false);
+        if (combo.style.outlineStyle !== "none" || combo.inputStyle.outlineStyle !== "none") {
+          return `${theme.id} combo outline=${String(combo.style.outlineStyle)}/${String(combo.inputStyle.outlineStyle)}`;
+        }
+        const edge = fieldFocusEdge(control("field"), colors.brand);
+        if (edge.outlineStyle !== "none" || edge.outlineColor !== undefined) {
+          return `${theme.id} edge=${JSON.stringify(edge)}`;
+        }
+      }
+      selectTheme(apple);
+      const appleFocus = inputLook().focusStyle;
+      if (appleFocus.outlineStyle !== "solid" || (appleFocus.outlineWidth ?? 0) <= 0) {
+        return `apple focus=${JSON.stringify(appleFocus)}`;
+      }
       return null;
     } finally {
       selectTheme(null);

@@ -83,12 +83,12 @@ test("built-in themes expose their surface effect and theme-switch shader", asyn
   expect(app.texts()).toContain("live");
 
   await app.press("text:Apple");
-  expect(find(app.texts(), "fx=")).toBe("i=0.5;off=6;shade=true;bd=true;ct=true");
+  expect(find(app.texts(), "fx=")).toBe("i=0.5;off=6;shade=true;bd=true;ct=false");
   expect(find(app.texts(), "sw=")).toBe("dissolve:shader");
   expect(app.texts()).toContain("live");
 
   await app.press("text:WinUI");
-  expect(find(app.texts(), "fx=")).toBe("i=0.045;off=6;shade=true;bd=true;ct=true");
+  expect(find(app.texts(), "fx=")).toBe("i=0.045;off=0;shade=true;bd=false;ct=false");
   expect(find(app.texts(), "glassBlur=")).toBe("blur(32px) saturate(130%)");
   expect(find(app.texts(), "menuBlur=")).toBe("blur(30px) saturate(125%)");
   expect(find(app.texts(), "glassAlpha=")).toBe("0.8");
@@ -97,7 +97,7 @@ test("built-in themes expose their surface effect and theme-switch shader", asyn
   expect(app.texts()).toContain("live");
 
   await app.press("text:Solid Glass");
-  expect(find(app.texts(), "fx=")).toBe("i=0.4;off=0;shade=true;bd=false;ct=true");
+  expect(find(app.texts(), "fx=")).toBe("i=0.4;off=0;shade=true;bd=false;ct=false");
   expect(find(app.texts(), "sw=")).toBe("dissolve:shader");
   expect(app.texts()).toContain("live");
 

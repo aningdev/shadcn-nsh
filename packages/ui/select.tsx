@@ -164,7 +164,11 @@ export function pickerLook(o?: PickerLookOptions) {
             : outline || off
               ? {}
               : fieldRestEdge(field)),
-        ...(terminal ? {} : fieldRing(fieldFocusTone(field, invalid()))),
+        ...(terminal
+          ? {}
+          : field.focusLine
+            ? { outlineStyle: "none", outlineWidth: 0 }
+            : fieldRing(fieldFocusTone(field, invalid()))),
         transitionProperty: "border-color, background-color, outline-color, opacity",
         transitionDuration: reduceMotion() ? 0 : edgeFade,
         // The look is one object (it is spread on the trigger's view), so a list of styles is
