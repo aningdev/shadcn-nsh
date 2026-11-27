@@ -19,7 +19,7 @@ import {
   Volleyball,
 } from "lucide";
 import type { StyleProp, TextStyle, ViewStyle } from "nsh";
-import { platform, signal, Text, View } from "nsh";
+import { platform, signal, split, Text, View } from "nsh";
 import {
   EmojiPicker,
   Tab,
@@ -35,56 +35,23 @@ import {
 import { Icon } from "./lib/icons";
 import { joinClass } from "./lib/utils";
 
-/**
- * The groups, their names and their tabs' icons; in the terminal, which draws no icons, an emoji of
- * the group (two Cells, no variation selector, whose width terminals disagree on).
- */
-export const emojiGroups: { id: EmojiGroupId; label: string; icon: IconNode; emoji: string }[] = [
-  { id: "recent", label: "Frequently used", icon: Clock, emoji: "🕘" },
-  { id: "smileysEmotion", label: "Smileys & emotion", icon: Smile, emoji: "😀" },
-  { id: "peopleBody", label: "People & body", icon: User, emoji: "👋" },
-  { id: "animalsNature", label: "Animals & nature", icon: Leaf, emoji: "🐻" },
-  { id: "foodDrink", label: "Food & drink", icon: Utensils, emoji: "🍔" },
-  { id: "travelPlaces", label: "Travel & places", icon: Car, emoji: "🚗" },
-  { id: "activities", label: "Activities", icon: Volleyball, emoji: "⚽" },
-  { id: "objects", label: "Objects", icon: Lightbulb, emoji: "💡" },
-  { id: "symbols", label: "Symbols", icon: Heart, emoji: "🔣" },
-  { id: "flags", label: "Flags", icon: Flag, emoji: "🏁" },
-];
+/** An emoji as the picker hands it over (`onSelect`, `renderItem`), from `nsh/base`. */
+export type { EmojiEntry };
 
-/** The groups' headings. */
-export const emojiGroupLabels = Object.fromEntries(
-  emojiGroups.map((g) => [g.id, g.label]),
-) as EmojiGroupLabels;
+/** A section of the picker's tabs, from `nsh/base`. */
+export type { EmojiGroup };
 
-/** The skin tones in the hand's order, and the hand that shows each. */
-const tones: { tone: EmojiSkinTone; hand: string; label: string }[] = [
-  { tone: "none", hand: "✋", label: "Default skin tone" },
-  { tone: "light", hand: "✋🏻", label: "Light skin tone" },
-  { tone: "mediumLight", hand: "✋🏼", label: "Medium-light skin tone" },
-  { tone: "medium", hand: "✋🏽", label: "Medium skin tone" },
-  { tone: "mediumDark", hand: "✋🏾", label: "Medium-dark skin tone" },
-  { tone: "dark", hand: "✋🏿", label: "Dark skin tone" },
-];
+/** A section's id, from `nsh/base`. */
+export type { EmojiGroupId };
 
-/** The classes of the picker's parts. */
-export const emojiPickerClasses = {
-  searchBar: `flex-row items-center gap-2 rounded-(--radius-md) bg-surface ${platform.desktop ? "mx-2.5 mt-2 h-8 pl-2.5 pr-1" : "mx-3 mt-1 h-10 pl-3 pr-1.5"}`,
-  search: `flex-1 ${platform.desktop ? "text-[13px]" : "text-base"} text-foreground placeholder:text-muted-foreground`,
-  list: "mt-1 flex-1",
-  /** Eight points each side: some glyphs (🫡) reach past their cell. */
-  row: "px-2",
-  group: platform.desktop ? "px-3 pt-2.5 pb-1" : "px-3.5 pt-3 pb-1.5",
-  /**
-   * A cell: quiet until the pointer or the keys are on it (one gray for both, as Slack's), sunk
-   * while pressed; in the terminal three Cells, the emoji's two and a column between them.
-   */
-  item: terminal
-    ? "w-6 h-4 items-center justify-center focus:bg-surface"
-    : platform.desktop
-      ? "size-9 items-center justify-center rounded-(--radius-md) text-[22px] transition-colors duration-100 motion-reduce:transition-none hover:bg-surface focus:bg-surface active:scale-90"
-      : "h-12 flex-1 items-center justify-center rounded-(--radius-md) text-[28px] active:bg-surface",
-};
+/** The app's names for the sections, from `nsh/base`. */
+export type { EmojiGroupLabels };
+
+/** The picker's ref, from `nsh/base`. */
+export type { EmojiPickerRef };
+
+/** A skin tone of the picker, from `nsh/base`. */
+export type { EmojiSkinTone };
 
 /** A group's heading: quiet semibold, as Slack's. */
 export function EmojiHeading(props: {
@@ -96,8 +63,10 @@ export function EmojiHeading(props: {
   /** Style over the heading. `style` wins over `class`. */
   style?: StyleProp<TextStyle>;
 }) {
+  const [, rest] = split(props, ["group", "class", "classList", "style"]);
   return (
     <Text
+      {...rest}
       class={props.class}
       classList={props.classList}
       style={[
@@ -126,8 +95,10 @@ export function EmojiTabs(props: {
   /** Style over the tab row. `style` wins over `class`. */
   style?: StyleProp<ViewStyle>;
 }) {
+  const [, rest] = split(props, ["group", "groups", "onPress", "class", "classList", "style"]);
   return (
     <Tabs
+      {...rest}
       class={joinClass(
         `flex-row justify-between ${platform.desktop ? "mx-2 mt-1.5 h-9 items-start" : "border-border mx-1 h-12 items-end border-t"}`,
         props.class,
@@ -177,12 +148,14 @@ export function EmojiTones(props: {
   /** Style over that root. `style` wins over `class`. */
   style?: StyleProp<ViewStyle>;
 }) {
+  const [, rest] = split(props, ["tone", "onChange", "class", "classList", "style"]);
   const open = signal(false);
   const current = () => tones.find((t) => t.tone === props.tone) ?? tones[0];
   // One hand: the chosen one sits on the page's fill, cut out of the panel — `selectedStyle`,
   // the same state it announces (`accessibilityState.selected`).
   const hand = (t: (typeof tones)[number], onPress: () => void, selected = false, root = false) => (
     <View
+      {...(root ? rest : {})}
       role="button"
       accessibilityLabel={t.label}
       accessibilityState={{ selected }}
@@ -201,6 +174,7 @@ export function EmojiTones(props: {
   return (
     <If when={open()} else={hand(current(), () => open.set(true), false, true)}>
       <View
+        {...rest}
         class={props.class}
         classList={props.classList}
         style={[{ flexDirection: "row", gap: 1 }, props.style ?? null]}
@@ -220,9 +194,6 @@ export function EmojiTones(props: {
   );
 }
 
-/** A label's first letter up: the emoji's name as a sentence. */
-const capitalized = (s: string) => (s ? s[0].toLocaleUpperCase() + s.slice(1) : s);
-
 /** The emoji under the pointer or the keys, named; a hint while none is. */
 export function EmojiPreview(props: {
   entry: EmojiEntry | null;
@@ -234,8 +205,10 @@ export function EmojiPreview(props: {
   /** Style over the preview. `style` wins over `class`. */
   style?: StyleProp<ViewStyle>;
 }) {
+  const [, rest] = split(props, ["entry", "hint", "class", "classList", "style"]);
   return (
     <View
+      {...rest}
       class={joinClass(
         "border-border h-12 flex-row items-center gap-2.5 border-t px-3",
         props.class,
@@ -293,6 +266,17 @@ export function EmojiPanel(props: {
   /** What screen readers call the grid and its search field (default "Emoji"). */
   accessibilityLabel?: string;
 }) {
+  const [, rest] = split(props, [
+    "onSelect",
+    "onCancel",
+    "recent",
+    "fill",
+    "class",
+    "classList",
+    "style",
+    "testID",
+    "accessibilityLabel",
+  ]);
   const tone = signal<EmojiSkinTone>("none");
   const group = signal<string>("");
   const active = signal<EmojiEntry | null>(null);
@@ -308,6 +292,7 @@ export function EmojiPanel(props: {
   );
   return (
     <EmojiPicker
+      {...rest}
       ref={(r) => (picker = r)}
       // In the terminal as wide as its grid: twelve cells of three columns and the rows' padding.
       class={joinClass(
@@ -364,20 +349,58 @@ export function EmojiPanel(props: {
   );
 }
 
-/** An emoji as the picker hands it over (`onSelect`, `renderItem`), from `nsh/base`. */
-export type { EmojiEntry };
+// Private helpers & looks
 
-/** A section of the picker's tabs, from `nsh/base`. */
-export type { EmojiGroup };
+/**
+ * The groups, their names and their tabs' icons; in the terminal, which draws no icons, an emoji of
+ * the group (two Cells, no variation selector, whose width terminals disagree on).
+ */
+const emojiGroups: { id: EmojiGroupId; label: string; icon: IconNode; emoji: string }[] = [
+  { id: "recent", label: "Frequently used", icon: Clock, emoji: "🕘" },
+  { id: "smileysEmotion", label: "Smileys & emotion", icon: Smile, emoji: "😀" },
+  { id: "peopleBody", label: "People & body", icon: User, emoji: "👋" },
+  { id: "animalsNature", label: "Animals & nature", icon: Leaf, emoji: "🐻" },
+  { id: "foodDrink", label: "Food & drink", icon: Utensils, emoji: "🍔" },
+  { id: "travelPlaces", label: "Travel & places", icon: Car, emoji: "🚗" },
+  { id: "activities", label: "Activities", icon: Volleyball, emoji: "⚽" },
+  { id: "objects", label: "Objects", icon: Lightbulb, emoji: "💡" },
+  { id: "symbols", label: "Symbols", icon: Heart, emoji: "🔣" },
+  { id: "flags", label: "Flags", icon: Flag, emoji: "🏁" },
+];
 
-/** A section's id, from `nsh/base`. */
-export type { EmojiGroupId };
+/** The groups' headings. */
+const emojiGroupLabels = Object.fromEntries(
+  emojiGroups.map((g) => [g.id, g.label]),
+) as EmojiGroupLabels;
 
-/** The app's names for the sections, from `nsh/base`. */
-export type { EmojiGroupLabels };
+/** The skin tones in the hand's order, and the hand that shows each. */
+const tones: { tone: EmojiSkinTone; hand: string; label: string }[] = [
+  { tone: "none", hand: "✋", label: "Default skin tone" },
+  { tone: "light", hand: "✋🏻", label: "Light skin tone" },
+  { tone: "mediumLight", hand: "✋🏼", label: "Medium-light skin tone" },
+  { tone: "medium", hand: "✋🏽", label: "Medium skin tone" },
+  { tone: "mediumDark", hand: "✋🏾", label: "Medium-dark skin tone" },
+  { tone: "dark", hand: "✋🏿", label: "Dark skin tone" },
+];
 
-/** The picker's ref, from `nsh/base`. */
-export type { EmojiPickerRef };
+/** The classes of the picker's parts. */
+const emojiPickerClasses = {
+  searchBar: `flex-row items-center gap-2 rounded-(--radius-md) bg-surface ${platform.desktop ? "mx-2.5 mt-2 h-8 pl-2.5 pr-1" : "mx-3 mt-1 h-10 pl-3 pr-1.5"}`,
+  search: `flex-1 ${platform.desktop ? "text-[13px]" : "text-base"} text-foreground placeholder:text-muted-foreground`,
+  list: "mt-1 flex-1",
+  /** Eight points each side: some glyphs (🫡) reach past their cell. */
+  row: "px-2",
+  group: platform.desktop ? "px-3 pt-2.5 pb-1" : "px-3.5 pt-3 pb-1.5",
+  /**
+   * A cell: quiet until the pointer or the keys are on it (one gray for both, as Slack's), sunk
+   * while pressed; in the terminal three Cells, the emoji's two and a column between them.
+   */
+  item: terminal
+    ? "w-6 h-4 items-center justify-center focus:bg-surface"
+    : platform.desktop
+      ? "size-9 items-center justify-center rounded-(--radius-md) text-[22px] transition-colors duration-100 motion-reduce:transition-none hover:bg-surface focus:bg-surface active:scale-90"
+      : "h-12 flex-1 items-center justify-center rounded-(--radius-md) text-[28px] active:bg-surface",
+};
 
-/** A skin tone of the picker, from `nsh/base`. */
-export type { EmojiSkinTone };
+/** A label's first letter up: the emoji's name as a sentence. */
+const capitalized = (s: string) => (s ? s[0].toLocaleUpperCase() + s.slice(1) : s);

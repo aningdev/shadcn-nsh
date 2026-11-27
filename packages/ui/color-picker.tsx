@@ -1,5 +1,5 @@
-// A color picker: the look (`colorChecker`, `colorAreaLook`, `colorSliderLook`) and the fields, panel, trigger and
-// popover that wear it.
+// A color picker: the fields, panel, trigger and popover, and the looks a custom layout spreads
+// (`formatColor`, `inkOn`, `colorAreaLook`, `colorSliderLook`).
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
@@ -15,7 +15,7 @@ import {
 } from "@shadcn-nsh/theme";
 import { Check, ChevronDown, Copy, Pipette } from "lucide";
 import type { InputStyle, JSX, StyleProp, ViewStyle } from "nsh";
-import { Clipboard, platform, signal, Text, token, View } from "nsh";
+import { Clipboard, platform, signal, split, Text, token, View } from "nsh";
 import {
   type ColorChannel,
   ColorArea,
@@ -41,271 +41,6 @@ import { menuItemLabel, menuItemLook, menuItemNote, menuItemSize, menuPopup } fr
 import { popoverLook } from "./popover";
 import { Picker } from "./select";
 
-/** `v` to `decimals` places, trailing zeros dropped (as the picker writes its numbers). */
-function numberText(v: number, decimals: number): string {
-  const text = v.toFixed(decimals);
-  const trimmed = text.includes(".") ? text.replace(/0+$/, "").replace(/\.$/, "") : text;
-  return trimmed === "-0" ? "0" : trimmed;
-}
-
-/** The hue of an sRGB color, in degrees: `max` its largest channel, `delta` its largest less its smallest. */
-function hue([r, g, b]: number[], max: number, delta: number): number {
-  if (delta <= 0) return 0;
-  const h =
-    max === r ? ((g - b) / delta) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
-  return (h * 60 + 360) % 360;
-}
-
-const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-
-/** A `#rrggbbaa` color's channels, 0 to 1: red, green, blue, and the alpha (1 when it is left out). */
-function channels(value: string): [number, number, number, number] {
-  const hex = value.replace(/^#/, "");
-  const at = (i: number) => parseInt(hex.slice(i, i + 2), 16) / 255;
-  return [at(0), at(2), at(4), hex.length >= 8 ? at(6) : 1];
-}
-
-/**
- * A color the picker reported (`value`: `#rrggbbaa`) written as `format` writes it, as the picker writes it: for the
- * copy button, the format menu's previews and a trigger's text, which show any format, not only the picker's own.
- */
-export function formatColor(value: string, format: ColorFormat): string {
-  const hex = value.replace(/^#/, "").toLowerCase();
-  const [r, g, b, a] = channels(value);
-  const rgb = [r, g, b];
-  const opaque = a >= 1;
-  const tail = opaque ? "" : ` / ${numberText(a, 2)}`;
-  const max = Math.max(...rgb);
-  const min = Math.min(...rgb);
-  const delta = max - min;
-  switch (format) {
-    case "hex":
-      return `#${hex.slice(0, opaque ? 6 : 8)}`;
-    case "rgb":
-      return `rgb(${rgb.map((c) => Math.round(c * 255)).join(" ")}${tail})`;
-    case "hsl": {
-      const l = (max + min) / 2;
-      const s = delta <= 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-      return `hsl(${numberText(hue(rgb, max, delta), 1)} ${numberText(s * 100, 1)}% ${numberText(l * 100, 1)}%${tail})`;
-    }
-    case "hsb": {
-      const s = max <= 0 ? 0 : delta / max;
-      return `hsb(${numberText(hue(rgb, max, delta), 1)} ${numberText(s * 100, 1)}% ${numberText(max * 100, 1)}%${tail})`;
-    }
-    case "oklch": {
-      const [linR, linG, linB] = rgb.map(toLinear);
-      const l = Math.cbrt(0.4122214708 * linR + 0.5363325363 * linG + 0.0514459929 * linB);
-      const m = Math.cbrt(0.2119034982 * linR + 0.6806995451 * linG + 0.1073969566 * linB);
-      const s = Math.cbrt(0.0883024619 * linR + 0.2817188376 * linG + 0.6299787005 * linB);
-      const lightness = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
-      const oa = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
-      const ob = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
-      const chroma = Math.hypot(oa, ob);
-      const h = chroma < 1e-4 ? 0 : ((Math.atan2(ob, oa) * 180) / Math.PI + 360) % 360;
-      return `oklch(${numberText(lightness * 100, 1)}% ${numberText(chroma, 3)} ${numberText(h, 1)}${tail})`;
-    }
-  }
-}
-
-/** The relative luminance at which black ink starts to read better than white on a color (sRGB's weights). */
-const BLACK_INK_FROM = 0.36;
-
-/** Ink that reads on `value` (a color the user picks, not the theme's): black on a light one, white on a dark one. */
-export function inkOn(value: string): string {
-  const [r, g, b] = channels(value).slice(0, 3).map(toLinear);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b > BLACK_INK_FROM ? "black" : "white";
-}
-
-const pointer = platform.desktop;
-
-/** The thumbs' side and the sliders' tracks' height: 16 and 12 with a pointer, 22 and 14 on a touch screen. */
-const THUMB = pointer ? 16 : 22;
-
-const TRACK = pointer ? 12 : 14;
-
-/**
- * A thumb: the color in a white ring with a hairline outline and a small shadow, so it shows on any color under it
- * (a color the user picks, not the theme's, so the ring is white in either appearance).
- */
-const thumbClass = "rounded-full border-2 border-white ring-1 ring-black/15 shadow-sm"; // color: edge and ring that read on any user colour
-
-const thumbStyle = { width: THUMB, height: THUMB };
-
-/** A hairline inside the edge of a field of colors, so the area's white corner and a track's light end show on the card. */
-const EDGE = "border border-foreground/10";
-
-/**
- * The area's hairline: a frame laid over the colors. A border of the panel itself would show the hue under it (the
- * panel's own fill is the hue, its gradients lie inside the border), a saturated line round a white or black corner.
- */
-function AreaEdge() {
-  return terminal ? null : (
-    <View
-      class="border-foreground/10 absolute inset-0 border"
-      style={{ pointerEvents: "none", ...rounded(shape.control) }}
-    />
-  );
-}
-
-/**
- * The checkerboard under translucent colors, in the theme's tokens: the muted fill's squares over the page color
- * (spread it on an alpha `ColorSlider` or a `ColorSwatch`).
- */
-export function colorChecker() {
-  return {
-    get checkerboardColor(): string {
-      return token("muted");
-    },
-    checkerboardSize: 4,
-  };
-}
-
-/** The saturation and brightness area's props (`<ColorArea {...colorAreaLook()} />`): 160 high with a pointer, the thumb filled with the color. A terminal's is eight rows of Cells. */
-export function colorAreaLook() {
-  if (terminal) return { style: { height: 8 * TERMINAL_ROW } };
-  return {
-    style: { height: pointer ? 160 : 192 },
-    get panelStyle(): ViewStyle {
-      return { ...rounded(shape.control) };
-    },
-    thumbClass,
-    thumbStyle,
-    fillThumb: true,
-  };
-}
-
-/**
- * A `ColorSlider`'s props: a round track (`alpha`: over the checkerboard), half a thumb free at each end so the thumb
- * stays inside, the thumb filled with the color; `style` goes on the slider (`{ flex: 1 }` in a row). A terminal's
- * slider is one row of its colors.
- */
-export function colorSliderLook(o?: { alpha?: boolean; style?: ViewStyle }) {
-  if (terminal) return o?.style ? { style: o.style } : {};
-  const checker = colorChecker();
-  return {
-    style: {
-      height: THUMB,
-      justifyContent: "center",
-      paddingHorizontal: THUMB / 2,
-      ...o?.style,
-    } as ViewStyle,
-    trackClass: `rounded-full ${EDGE}${o?.alpha ? " bg-background" : ""}`,
-    trackStyle: { height: TRACK },
-    thumbClass,
-    thumbStyle,
-    fillThumb: true,
-    ...(o?.alpha
-      ? {
-          get checkerboardColor() {
-            return checker.checkerboardColor;
-          },
-          checkerboardSize: checker.checkerboardSize,
-        }
-      : {}),
-  };
-}
-
-/** The formats the fields' menu offers, as their menu names them. */
-export const colorFormats: readonly { value: ColorFormat; label: string }[] = [
-  { value: "hex", label: "HEX" },
-  { value: "rgb", label: "RGB" },
-  { value: "hsl", label: "HSL" },
-  { value: "hsb", label: "HSB" },
-  { value: "oklch", label: "OKLCH" },
-];
-
-/** The fields of a format: the whole color for hex, else the channels of its space. */
-const FORMAT_FIELDS: Record<
-  ColorFormat,
-  { space: ColorSpace; channels: { channel: ColorChannel; name: string }[] } | null
-> = {
-  hex: null,
-  rgb: {
-    space: "rgb",
-    channels: [
-      { channel: "red", name: "Red" },
-      { channel: "green", name: "Green" },
-      { channel: "blue", name: "Blue" },
-    ],
-  },
-  hsl: {
-    space: "hsl",
-    channels: [
-      { channel: "hue", name: "Hue" },
-      { channel: "saturation", name: "Saturation" },
-      { channel: "lightness", name: "Lightness" },
-    ],
-  },
-  hsb: {
-    space: "hsb",
-    channels: [
-      { channel: "hue", name: "Hue" },
-      { channel: "saturation", name: "Saturation" },
-      { channel: "brightness", name: "Brightness" },
-    ],
-  },
-  oklch: {
-    space: "oklch",
-    channels: [
-      { channel: "lightness", name: "Lightness" },
-      { channel: "chroma", name: "Chroma" },
-      { channel: "hue", name: "Hue" },
-    ],
-  },
-};
-
-/** A rule between two of the joined fields: the field's inner line, a Cell of room in a terminal. */
-function Divider() {
-  return (
-    <View
-      style={
-        terminal
-          ? { width: TERMINAL_COLUMN }
-          : { width: stroke.hairline, backgroundColor: colors.line }
-      }
-    />
-  );
-}
-
-/** A joined field's text: the field's size and colors, no well of its own (the group is the well), tabular figures. */
-function joinedText(o?: { width?: number }): InputStyle {
-  const { height: _height, flex: _flex, ...text } = fieldText();
-  return {
-    ...text,
-    ...(o?.width ? { width: o.width } : { flex: 1 }),
-    minWidth: 0,
-    alignSelf: "stretch",
-    paddingStart: terminal ? 0 : 8,
-    paddingEnd: terminal ? 0 : 4,
-    fontVariant: ["tabular-nums"],
-  } as InputStyle;
-}
-
-/** The format menu's button inside the fields' well: a quiet button, its name and a chevron. */
-function FormatButton(props: { label: string }) {
-  return (
-    <View
-      hoverStyle={terminal ? undefined : hovered()}
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        alignSelf: "center",
-        gap: 2,
-        height: terminal ? TERMINAL_ROW : fieldSize.height - 10,
-        marginStart: terminal ? 0 : 4,
-        marginEnd: terminal ? TERMINAL_COLUMN : 4,
-        paddingHorizontal: terminal ? 0 : 6,
-        ...rounded(shape.control, 3),
-      }}
-    >
-      <Text style={{ fontSize: 12, fontWeight: font.weight("label"), color: colors.foreground }}>
-        {terminal ? `${props.label} ▾` : props.label}
-      </Text>
-      {terminal ? null : <Icon icon={ChevronDown} size={12} tint={colors.mutedForeground} />}
-    </View>
-  );
-}
-
 /** Props of `ColorFields`. */
 export interface ColorFieldsProps {
   /** The color as the picker last reported it (`#rrggbbaa`): the menu's previews. */
@@ -326,18 +61,71 @@ export interface ColorFieldsProps {
   style?: StyleProp<ViewStyle>;
 }
 
+/** Props of `ColorPanel`. */
+export interface ColorPanelProps extends ColorFieldsProps {
+  /** Preset swatches under the fields. */
+  swatches?: readonly string[];
+  /** Tailwind classes on the panel. */
+  class?: string;
+  /** Tailwind classes toggled on the panel. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** Style over the panel. `style` wins over `class`. */
+  style?: StyleProp<ViewStyle>;
+}
+
+/** Props of `ColorPopover`. */
+export interface ColorPopoverProps {
+  /** What screen readers call the trigger and the panel's parts; the trigger reads `<name>, <value>`. */
+  name: string;
+  /** The color, `#rrggbbaa`, as the picker reports it. */
+  value: string;
+  /** The format the fields, the trigger and `onChangeEnd`'s text use. */
+  format: ColorFormat;
+  /** The opacity too: its slider and field, and a wider popover for the field. */
+  alpha?: boolean;
+  /** Tailwind classes on the trigger, after its look. */
+  class?: string;
+  /** Tailwind classes toggled on the trigger. */
+  classList?: Record<string, boolean | null | undefined>;
+  /** The trigger's own style (its width), over the look's. */
+  style?: StyleProp<ViewStyle>;
+  onChange: (value: string) => void;
+  onFormatChange: (format: ColorFormat) => void;
+  onChangeEnd?: (formatted: string) => void;
+}
+
+/** What a channel of the panel edits (red, hue, chroma…), from `nsh/base`. */
+export type { ColorChannel };
+
+/** How a color is written out (`hex`, `rgb`, `hsl`, `oklch`…), from `nsh/base`. */
+export type { ColorFormat };
+
+/** The space the sliders and the plane work in, from `nsh/base`. */
+export type { ColorSpace };
+
 /**
  * The color's fields joined in one field's well (`fieldLook`): a menu of the formats first, then the hex field or the
  * channels of the format's space, then the opacity, parted by the field's inner line. Each item of the menu shows the
  * color in its format.
  */
 export function ColorFields(props: ColorFieldsProps) {
+  const [, rest] = split(props, [
+    "value",
+    "name",
+    "format",
+    "onFormatChange",
+    "alpha",
+    "class",
+    "classList",
+    "style",
+  ]);
   const fields = () => FORMAT_FIELDS[props.format];
   const label = () => colorFormats.find((f) => f.value === props.format)?.label ?? props.format;
   return (
     // In the terminal one row with no frame of its own, as the panel's other rows: a framed well is
     // three rows for one line of numbers.
     <View
+      {...rest}
       {...(terminal
         ? { style: { flexDirection: "row", height: TERMINAL_ROW } }
         : fieldLook({
@@ -457,9 +245,11 @@ export function ColorCopy(props: {
   /** Style over the button. `style` wins over `class`. */
   style?: StyleProp<ViewStyle>;
 }) {
+  const [, rest] = split(props, ["name", "text", "class", "classList", "style"]);
   const { copied, mark } = useCopied();
   return (
     <IconButton
+      {...rest}
       class={props.class}
       classList={props.classList}
       style={props.style}
@@ -492,8 +282,10 @@ export function ColorDropper(props: {
   /** Style over the icon-button look. `style` wins over `class`. */
   style?: StyleProp<ViewStyle>;
 }) {
+  const [, rest] = split(props, ["name", "class", "classList", "style"]);
   return (
     <ColorEyeDropper
+      {...rest}
       accessibilityLabel={`Pick ${props.name.toLocaleLowerCase()} from the screen`}
       {...iconButtonLook()}
       class={joinClass("disabled:hidden", props.class)}
@@ -523,9 +315,11 @@ export function ColorSwatches(props: {
   /** Style over the row. `style` wins over `class`. */
   style?: StyleProp<ViewStyle>;
 }) {
+  const [, rest] = split(props, ["colors", "class", "classList", "style"]);
   const checker = colorChecker();
   return (
     <View
+      {...rest}
       class={props.class}
       classList={props.classList}
       style={[
@@ -566,18 +360,6 @@ export function ColorSwatches(props: {
   );
 }
 
-/** Props of `ColorPanel`. */
-export interface ColorPanelProps extends ColorFieldsProps {
-  /** Preset swatches under the fields. */
-  swatches?: readonly string[];
-  /** Tailwind classes on the panel. */
-  class?: string;
-  /** Tailwind classes toggled on the panel. */
-  classList?: Record<string, boolean | null | undefined>;
-  /** Style over the panel. `style` wins over `class`. */
-  style?: StyleProp<ViewStyle>;
-}
-
 /**
  * The whole picker in place (inside a `ColorPicker`, or a popover in one): the area; the eyedropper, the hue slider
  * (and the opacity's, `alpha`) and the copy button on one row; the joined fields; the swatches. Its parts are named
@@ -586,8 +368,20 @@ export interface ColorPanelProps extends ColorFieldsProps {
  * of its own to fall back on.
  */
 export function ColorPanel(props: ColorPanelProps) {
+  const [, rest] = split(props, [
+    "value",
+    "name",
+    "format",
+    "onFormatChange",
+    "alpha",
+    "swatches",
+    "class",
+    "classList",
+    "style",
+  ]);
   return (
     <View
+      {...rest}
       class={props.class}
       classList={props.classList}
       style={[{ gap: terminal ? TERMINAL_ROW : 10 }, props.style ?? null]}
@@ -645,9 +439,11 @@ export function ColorTrigger(props: {
   classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 }): JSX.Element {
+  const [, rest] = split(props, ["open", "value", "class", "classList", "style"]);
   const checker = colorChecker();
   return (
     <Picker
+      {...rest}
       title={props.value}
       open={props.open}
       class={props.class}
@@ -669,35 +465,27 @@ export function ColorTrigger(props: {
   );
 }
 
-/** Props of `ColorPopover`. */
-export interface ColorPopoverProps {
-  /** What screen readers call the trigger and the panel's parts; the trigger reads `<name>, <value>`. */
-  name: string;
-  /** The color, `#rrggbbaa`, as the picker reports it. */
-  value: string;
-  /** The format the fields, the trigger and `onChangeEnd`'s text use. */
-  format: ColorFormat;
-  /** The opacity too: its slider and field, and a wider popover for the field. */
-  alpha?: boolean;
-  /** Tailwind classes on the trigger, after its look. */
-  class?: string;
-  /** Tailwind classes toggled on the trigger. */
-  classList?: Record<string, boolean | null | undefined>;
-  /** The trigger's own style (its width), over the look's. */
-  style?: StyleProp<ViewStyle>;
-  onChange: (value: string) => void;
-  onFormatChange: (format: ColorFormat) => void;
-  onChangeEnd?: (formatted: string) => void;
-}
-
 /**
  * A picker opened from a field's trigger: `ColorTrigger` shows the color and its value in the fields' format, the
  * popover (the gallery's popover surface, popping in under the trigger) the whole `ColorPanel`.
  */
 export function ColorPopover(props: ColorPopoverProps): JSX.Element {
+  const [, rest] = split(props, [
+    "name",
+    "value",
+    "format",
+    "alpha",
+    "class",
+    "classList",
+    "style",
+    "onChange",
+    "onFormatChange",
+    "onChangeEnd",
+  ]);
   const open = signal(false);
   return (
     <ColorPicker
+      {...rest}
       value={props.value}
       format={props.format}
       onChange={({ value }) => props.onChange(value)}
@@ -735,11 +523,272 @@ export function ColorPopover(props: ColorPopoverProps): JSX.Element {
   );
 }
 
-/** What a channel of the panel edits (red, hue, chroma…), from `nsh/base`. */
-export type { ColorChannel };
+// Shared color picker primitives
+// Showcase reads `formatColor` and `inkOn`. A custom layout spreads `colorAreaLook` and `colorSliderLook`.
 
-/** How a color is written out (`hex`, `rgb`, `hsl`, `oklch`…), from `nsh/base`. */
-export type { ColorFormat };
+/**
+ * A color the picker reported (`value`: `#rrggbbaa`) written as `format` writes it, as the picker writes it: for the
+ * copy button, the format menu's previews and a trigger's text, which show any format, not only the picker's own.
+ */
+export function formatColor(value: string, format: ColorFormat): string {
+  const hex = value.replace(/^#/, "").toLowerCase();
+  const [r, g, b, a] = channels(value);
+  const rgb = [r, g, b];
+  const opaque = a >= 1;
+  const tail = opaque ? "" : ` / ${numberText(a, 2)}`;
+  const max = Math.max(...rgb);
+  const min = Math.min(...rgb);
+  const delta = max - min;
+  switch (format) {
+    case "hex":
+      return `#${hex.slice(0, opaque ? 6 : 8)}`;
+    case "rgb":
+      return `rgb(${rgb.map((c) => Math.round(c * 255)).join(" ")}${tail})`;
+    case "hsl": {
+      const l = (max + min) / 2;
+      const s = delta <= 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+      return `hsl(${numberText(hue(rgb, max, delta), 1)} ${numberText(s * 100, 1)}% ${numberText(l * 100, 1)}%${tail})`;
+    }
+    case "hsb": {
+      const s = max <= 0 ? 0 : delta / max;
+      return `hsb(${numberText(hue(rgb, max, delta), 1)} ${numberText(s * 100, 1)}% ${numberText(max * 100, 1)}%${tail})`;
+    }
+    case "oklch": {
+      const [linR, linG, linB] = rgb.map(toLinear);
+      const l = Math.cbrt(0.4122214708 * linR + 0.5363325363 * linG + 0.0514459929 * linB);
+      const m = Math.cbrt(0.2119034982 * linR + 0.6806995451 * linG + 0.1073969566 * linB);
+      const s = Math.cbrt(0.0883024619 * linR + 0.2817188376 * linG + 0.6299787005 * linB);
+      const lightness = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+      const oa = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+      const ob = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+      const chroma = Math.hypot(oa, ob);
+      const h = chroma < 1e-4 ? 0 : ((Math.atan2(ob, oa) * 180) / Math.PI + 360) % 360;
+      return `oklch(${numberText(lightness * 100, 1)}% ${numberText(chroma, 3)} ${numberText(h, 1)}${tail})`;
+    }
+  }
+}
 
-/** The space the sliders and the plane work in, from `nsh/base`. */
-export type { ColorSpace };
+/** Ink that reads on `value` (a color the user picks, not the theme's): black on a light one, white on a dark one. */
+export function inkOn(value: string): string {
+  const [r, g, b] = channels(value).slice(0, 3).map(toLinear);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > BLACK_INK_FROM ? "black" : "white";
+}
+
+/** The saturation and brightness area's props (`<ColorArea {...colorAreaLook()} />`): 160 high with a pointer, the thumb filled with the color. A terminal's is eight rows of Cells. */
+export function colorAreaLook() {
+  if (terminal) return { style: { height: 8 * TERMINAL_ROW } };
+  return {
+    style: { height: pointer ? 160 : 192 },
+    get panelStyle(): ViewStyle {
+      return { ...rounded(shape.control) };
+    },
+    thumbClass,
+    thumbStyle,
+    fillThumb: true,
+  };
+}
+
+/**
+ * A `ColorSlider`'s props: a round track (`alpha`: over the checkerboard), half a thumb free at each end so the thumb
+ * stays inside, the thumb filled with the color; `style` goes on the slider (`{ flex: 1 }` in a row). A terminal's
+ * slider is one row of its colors.
+ */
+export function colorSliderLook(o?: { alpha?: boolean; style?: ViewStyle }) {
+  if (terminal) return o?.style ? { style: o.style } : {};
+  const checker = colorChecker();
+  return {
+    style: {
+      height: THUMB,
+      justifyContent: "center",
+      paddingHorizontal: THUMB / 2,
+      ...o?.style,
+    } as ViewStyle,
+    trackClass: `rounded-full ${EDGE}${o?.alpha ? " bg-background" : ""}`,
+    trackStyle: { height: TRACK },
+    thumbClass,
+    thumbStyle,
+    fillThumb: true,
+    ...(o?.alpha
+      ? {
+          get checkerboardColor() {
+            return checker.checkerboardColor;
+          },
+          checkerboardSize: checker.checkerboardSize,
+        }
+      : {}),
+  };
+}
+
+// Private helpers & looks
+
+/** `v` to `decimals` places, trailing zeros dropped (as the picker writes its numbers). */
+function numberText(v: number, decimals: number): string {
+  const text = v.toFixed(decimals);
+  const trimmed = text.includes(".") ? text.replace(/0+$/, "").replace(/\.$/, "") : text;
+  return trimmed === "-0" ? "0" : trimmed;
+}
+
+/** The hue of an sRGB color, in degrees: `max` its largest channel, `delta` its largest less its smallest. */
+function hue([r, g, b]: number[], max: number, delta: number): number {
+  if (delta <= 0) return 0;
+  const h =
+    max === r ? ((g - b) / delta) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
+  return (h * 60 + 360) % 360;
+}
+
+const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+
+/** A `#rrggbbaa` color's channels, 0 to 1: red, green, blue, and the alpha (1 when it is left out). */
+function channels(value: string): [number, number, number, number] {
+  const hex = value.replace(/^#/, "");
+  const at = (i: number) => parseInt(hex.slice(i, i + 2), 16) / 255;
+  return [at(0), at(2), at(4), hex.length >= 8 ? at(6) : 1];
+}
+
+/** The relative luminance at which black ink starts to read better than white on a color (sRGB's weights). */
+const BLACK_INK_FROM = 0.36;
+
+const pointer = platform.desktop;
+
+/** The thumbs' side and the sliders' tracks' height: 16 and 12 with a pointer, 22 and 14 on a touch screen. */
+const THUMB = pointer ? 16 : 22;
+
+const TRACK = pointer ? 12 : 14;
+
+/**
+ * A thumb: the color in a white ring with a hairline outline and a small shadow, so it shows on any color under it
+ * (a color the user picks, not the theme's, so the ring is white in either appearance).
+ */
+const thumbClass = "rounded-full border-2 border-white ring-1 ring-black/15 shadow-sm"; // color: edge and ring that read on any user colour
+
+const thumbStyle = { width: THUMB, height: THUMB };
+
+/** A hairline inside the edge of a field of colors, so the area's white corner and a track's light end show on the card. */
+const EDGE = "border border-foreground/10";
+
+/**
+ * The area's hairline: a frame laid over the colors. A border of the panel itself would show the hue under it (the
+ * panel's own fill is the hue, its gradients lie inside the border), a saturated line round a white or black corner.
+ */
+function AreaEdge() {
+  return terminal ? null : (
+    <View
+      class="border-foreground/10 absolute inset-0 border"
+      style={{ pointerEvents: "none", ...rounded(shape.control) }}
+    />
+  );
+}
+
+/**
+ * The checkerboard under translucent colors, in the theme's tokens: the muted fill's squares over the page color
+ * (spread it on an alpha `ColorSlider` or a `ColorSwatch`).
+ */
+function colorChecker() {
+  return {
+    get checkerboardColor(): string {
+      return token("muted");
+    },
+    checkerboardSize: 4,
+  };
+}
+
+/** The formats the fields' menu offers, as their menu names them. */
+const colorFormats: readonly { value: ColorFormat; label: string }[] = [
+  { value: "hex", label: "HEX" },
+  { value: "rgb", label: "RGB" },
+  { value: "hsl", label: "HSL" },
+  { value: "hsb", label: "HSB" },
+  { value: "oklch", label: "OKLCH" },
+];
+
+/** The fields of a format: the whole color for hex, else the channels of its space. */
+const FORMAT_FIELDS: Record<
+  ColorFormat,
+  { space: ColorSpace; channels: { channel: ColorChannel; name: string }[] } | null
+> = {
+  hex: null,
+  rgb: {
+    space: "rgb",
+    channels: [
+      { channel: "red", name: "Red" },
+      { channel: "green", name: "Green" },
+      { channel: "blue", name: "Blue" },
+    ],
+  },
+  hsl: {
+    space: "hsl",
+    channels: [
+      { channel: "hue", name: "Hue" },
+      { channel: "saturation", name: "Saturation" },
+      { channel: "lightness", name: "Lightness" },
+    ],
+  },
+  hsb: {
+    space: "hsb",
+    channels: [
+      { channel: "hue", name: "Hue" },
+      { channel: "saturation", name: "Saturation" },
+      { channel: "brightness", name: "Brightness" },
+    ],
+  },
+  oklch: {
+    space: "oklch",
+    channels: [
+      { channel: "lightness", name: "Lightness" },
+      { channel: "chroma", name: "Chroma" },
+      { channel: "hue", name: "Hue" },
+    ],
+  },
+};
+
+/** A rule between two of the joined fields: the field's inner line, a Cell of room in a terminal. */
+function Divider() {
+  return (
+    <View
+      style={
+        terminal
+          ? { width: TERMINAL_COLUMN }
+          : { width: stroke.hairline, backgroundColor: colors.line }
+      }
+    />
+  );
+}
+
+/** A joined field's text: the field's size and colors, no well of its own (the group is the well), tabular figures. */
+function joinedText(o?: { width?: number }): InputStyle {
+  const { height: _height, flex: _flex, ...text } = fieldText();
+  return {
+    ...text,
+    ...(o?.width ? { width: o.width } : { flex: 1 }),
+    minWidth: 0,
+    alignSelf: "stretch",
+    paddingStart: terminal ? 0 : 8,
+    paddingEnd: terminal ? 0 : 4,
+    fontVariant: ["tabular-nums"],
+  } as InputStyle;
+}
+
+/** The format menu's button inside the fields' well: a quiet button, its name and a chevron. */
+function FormatButton(props: { label: string }) {
+  return (
+    <View
+      hoverStyle={terminal ? undefined : hovered()}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        alignSelf: "center",
+        gap: 2,
+        height: terminal ? TERMINAL_ROW : fieldSize.height - 10,
+        marginStart: terminal ? 0 : 4,
+        marginEnd: terminal ? TERMINAL_COLUMN : 4,
+        paddingHorizontal: terminal ? 0 : 6,
+        ...rounded(shape.control, 3),
+      }}
+    >
+      <Text style={{ fontSize: 12, fontWeight: font.weight("label"), color: colors.foreground }}>
+        {terminal ? `${props.label} ▾` : props.label}
+      </Text>
+      {terminal ? null : <Icon icon={ChevronDown} size={12} tint={colors.mutedForeground} />}
+    </View>
+  );
+}

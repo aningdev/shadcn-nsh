@@ -1,18 +1,9 @@
-// Editor: `editorClasses`, `editorFrame`, the `Editor` that wears them and the `EditorFindBar`
-// that finds in it.
+// Editor: the `Editor` on the field's well, and the `EditorFindBar` that finds in it.
 
-import { colors, control, surface, font } from "@shadcn-nsh/theme";
+import { colors, control, font, surface } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
-import {
-  cleanup,
-  signal,
-  split,
-  Text,
-  View,
-  type InputRef,
-  type StyleProp,
-  type ViewStyle,
-} from "nsh";
+import type { InputRef, StyleProp, ViewStyle } from "nsh";
+import { cleanup, signal, split, Text, View } from "nsh";
 import {
   Editor as BaseEditor,
   type EditorClasses,
@@ -31,97 +22,10 @@ import { mergeClasses } from "./lib/utils";
 import { Toggle } from "./toggle";
 
 /**
- * An editor's parts, as classes: line numbers and fold markers muted, the lines with a caret
- * and their numbers in the text color, the caret's line a faint `muted` band behind the text,
- * selected text a tint of the brand, the carets and the indent guides in the text and border
- * colors, the placeholder muted, search matches in the warning tone (the one on the selection
- * stronger), and diagnostics underlined in the theme's semantic colors — `destructive` for an
- * error, `warn` for a warning, `info` for information, `muted-foreground` for a hint.
- */
-export const editorClasses: EditorClasses = {
-  gutter: "bg-muted/40",
-  lineNumber: "text-muted-foreground",
-  activeLineNumber: "text-foreground",
-  foldMarker: "text-muted-foreground",
-  activeLine: "bg-muted/50",
-  selection: "bg-brand/25",
-  caret: "bg-foreground",
-  composition: "text-foreground",
-  searchMatch: "bg-warning/25",
-  currentSearchMatch: "bg-warning/40",
-  matchingBracket: "border-border",
-  indentGuide: "bg-border",
-  placeholder: "text-muted-foreground",
-  diagnosticError: "text-destructive",
-  diagnosticWarning: "text-warning",
-  diagnosticInfo: "text-info",
-  diagnosticHint: "text-muted-foreground",
-  unnecessaryText: "text-muted-foreground",
-  deprecatedText: "text-muted-foreground",
-  whitespace: "text-muted-foreground/60",
-  ruler: "bg-border",
-};
-
-/**
- * The surface the editor sits on (its `style`): the field's well — the field color, a hairline
- * of the field's edge, the control tier's corners and the finish a field has — the same well a text
- * field has, so a file and a value look like the two kinds of field they are. Read where it is
- * used, so it follows the appearance and the theme; an app's `style` goes over it.
- */
-export function editorFrame(): ViewStyle {
-  const field = control("field");
-  return {
-    ...(field.ground ? { backgroundColor: field.ground } : {}),
-    ...fieldEdgeWidths(field),
-    ...fieldRestEdge(field),
-    ...fieldCorners(field),
-    boxShadow: surface("inset").style.boxShadow,
-  };
-}
-
-/**
  * Every prop of `nsh/base` Editor: the text model, the highlighting, the editing keys, folding,
  * search and diagnostics stay in base.
  */
 export type EditorProps = BaseEditorProps;
-
-/**
- * An editor on the field's well. Pass `language` for the highlighting and the editing rules
- * (`"typescript"`, `"json"`, `"css"`, or an extension or file name), `value` and `onChange` to
- * control the text, `diagnostics` to mark problems; `classes` and `styles` paint its parts over
- * `editorClasses`, and `style` goes over `editorFrame()`. It fills the box the app gives
- * it and scrolls its rows inside.
- */
-export function Editor(props: EditorProps) {
-  const [, rest] = split(props, ["class", "style", "classes", "styles"]);
-  return (
-    <BaseEditor
-      {...rest}
-      class={props.class}
-      style={[editorFrame(), props.style ?? null]}
-      classes={mergeClasses(editorClasses, props.classes)}
-      styles={props.styles}
-    />
-  );
-}
-
-/** How long the bar says what Replace all replaced, in milliseconds. */
-const REPLACED_FOR = 2000;
-
-/**
- * What the bar says about the search: which match of how many the selection is on, that there are
- * none, or that the query is not a regular expression; nothing while the query is empty.
- */
-function matchLabel(search: EditorSearch, result: EditorSearchResult | null | undefined): string {
-  if (!search.query) return "";
-  if (result?.error) return "Invalid pattern";
-  const count = result?.count ?? 0;
-  if (count === 0) return "No results";
-  const current = result?.current;
-  return current === undefined || current === null
-    ? `${count} matches`
-    : `${current + 1} of ${count}`;
-}
 
 /**
  * A find bar's props: the editor it finds in, the search it edits, what the editor found, and what
@@ -156,6 +60,72 @@ export type EditorFindBarProps = {
 };
 
 /**
+ * The session an app drives the editor with, from `nsh/base`, so `@/components/ui/editor` is the
+ * only import.
+ */
+export type {
+  EditorBounds,
+  EditorClasses,
+  EditorCodeActionRequest,
+  EditorCommand,
+  EditorCompletionAcceptEvent,
+  EditorCompletionItem,
+  EditorCompletionKind,
+  EditorCompletionRequest,
+  EditorCompletionTrigger,
+  EditorContextMenuEvent,
+  EditorDecoration,
+  EditorDefinitionRequest,
+  EditorDefinitionTrigger,
+  EditorDiagnostic,
+  EditorDiagnosticCodeDescription,
+  EditorDiagnosticRelatedInformation,
+  EditorDiagnosticSeverity,
+  EditorDiagnosticTag,
+  EditorEdit,
+  EditorFoldRange,
+  EditorGutterMark,
+  EditorGutterPlacement,
+  EditorHoverEvent,
+  EditorInlineCompletionRequest,
+  EditorLocation,
+  EditorOverviewRulerLane,
+  EditorOverviewRulerMark,
+  EditorPosition,
+  EditorRange,
+  EditorRect,
+  EditorRef,
+  EditorReplaceAll,
+  EditorSearch,
+  EditorSearchResult,
+  EditorSelection,
+  EditorStyles,
+  EditorTextPressEvent,
+  EditorToken,
+} from "nsh/base";
+
+/**
+ * An editor on the field's well. Pass `language` for the highlighting and the editing rules
+ * (`"typescript"`, `"json"`, `"css"`, or an extension or file name), `value` and `onChange` to
+ * control the text, `diagnostics` to mark problems; `classes` and `styles` paint its parts over
+ * the shell's classes, and `style` goes over the field's well. It fills the box the app gives
+ * it and scrolls its rows inside.
+ */
+export function Editor(props: EditorProps) {
+  const [, rest] = split(props, ["class", "classList", "style", "classes", "styles"]);
+  return (
+    <BaseEditor
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[editorFrame(), props.style ?? null]}
+      classes={mergeClasses(editorClasses, props.classes)}
+      styles={props.styles}
+    />
+  );
+}
+
+/**
  * The find bar of an editor: the query with its count, its three matching modes and the two
  * buttons that step through the matches, and a line that replaces: a replacement, one match, or
  * all of them, its count shown in the place of the search's for a moment. Escape, and the keys
@@ -164,6 +134,7 @@ export type EditorFindBarProps = {
 export function EditorFindBar(props: EditorFindBarProps) {
   const [, rest] = split(props, [
     "class",
+    "classList",
     "style",
     "editor",
     "search",
@@ -196,6 +167,7 @@ export function EditorFindBar(props: EditorFindBarProps) {
       {...surface("overlay").platformProps}
       {...rest}
       class={props.class}
+      classList={props.classList}
       style={[{ ...popupSurface(), gap: 4 }, props.style ?? null]}
     >
       <InputGroup invalid={!!props.result?.error}>
@@ -309,47 +281,71 @@ export function EditorFindBar(props: EditorFindBarProps) {
   );
 }
 
+// Private helpers & looks
+
+/** How long the bar says what Replace all replaced, in milliseconds. */
+const REPLACED_FOR = 2000;
+
 /**
- * The session an app drives the editor with, from `nsh/base`, so `@/components/ui/editor` is the
- * only import.
+ * What the bar says about the search: which match of how many the selection is on, that there are
+ * none, or that the query is not a regular expression; nothing while the query is empty.
  */
-export type {
-  EditorBounds,
-  EditorClasses,
-  EditorCodeActionRequest,
-  EditorCommand,
-  EditorCompletionAcceptEvent,
-  EditorCompletionItem,
-  EditorCompletionKind,
-  EditorCompletionRequest,
-  EditorCompletionTrigger,
-  EditorContextMenuEvent,
-  EditorDecoration,
-  EditorDefinitionRequest,
-  EditorDefinitionTrigger,
-  EditorDiagnostic,
-  EditorDiagnosticCodeDescription,
-  EditorDiagnosticRelatedInformation,
-  EditorDiagnosticSeverity,
-  EditorDiagnosticTag,
-  EditorEdit,
-  EditorFoldRange,
-  EditorGutterMark,
-  EditorGutterPlacement,
-  EditorHoverEvent,
-  EditorInlineCompletionRequest,
-  EditorLocation,
-  EditorOverviewRulerLane,
-  EditorOverviewRulerMark,
-  EditorPosition,
-  EditorRange,
-  EditorRect,
-  EditorRef,
-  EditorReplaceAll,
-  EditorSearch,
-  EditorSearchResult,
-  EditorSelection,
-  EditorStyles,
-  EditorTextPressEvent,
-  EditorToken,
-} from "nsh/base";
+function matchLabel(search: EditorSearch, result: EditorSearchResult | null | undefined): string {
+  if (!search.query) return "";
+  if (result?.error) return "Invalid pattern";
+  const count = result?.count ?? 0;
+  if (count === 0) return "No results";
+  const current = result?.current;
+  return current === undefined || current === null
+    ? `${count} matches`
+    : `${current + 1} of ${count}`;
+}
+
+/**
+ * An editor's parts, as classes: line numbers and fold markers muted, the lines with a caret
+ * and their numbers in the text color, the caret's line a faint `muted` band behind the text,
+ * selected text a tint of the brand, the carets and the indent guides in the text and border
+ * colors, the placeholder muted, search matches in the warning tone (the one on the selection
+ * stronger), and diagnostics underlined in the theme's semantic colors — `destructive` for an
+ * error, `warn` for a warning, `info` for information, `muted-foreground` for a hint.
+ */
+const editorClasses: EditorClasses = {
+  gutter: "bg-muted/40",
+  lineNumber: "text-muted-foreground",
+  activeLineNumber: "text-foreground",
+  foldMarker: "text-muted-foreground",
+  activeLine: "bg-muted/50",
+  selection: "bg-brand/25",
+  caret: "bg-foreground",
+  composition: "text-foreground",
+  searchMatch: "bg-warning/25",
+  currentSearchMatch: "bg-warning/40",
+  matchingBracket: "border-border",
+  indentGuide: "bg-border",
+  placeholder: "text-muted-foreground",
+  diagnosticError: "text-destructive",
+  diagnosticWarning: "text-warning",
+  diagnosticInfo: "text-info",
+  diagnosticHint: "text-muted-foreground",
+  unnecessaryText: "text-muted-foreground",
+  deprecatedText: "text-muted-foreground",
+  whitespace: "text-muted-foreground/60",
+  ruler: "bg-border",
+};
+
+/**
+ * The surface the editor sits on (its `style`): the field's well — the field color, a hairline
+ * of the field's edge, the control tier's corners and the finish a field has — the same well a text
+ * field has, so a file and a value look like the two kinds of field they are. Read where it is
+ * used, so it follows the appearance and the theme; an app's `style` goes over it.
+ */
+function editorFrame(): ViewStyle {
+  const field = control("field");
+  return {
+    ...(field.ground ? { backgroundColor: field.ground } : {}),
+    ...fieldEdgeWidths(field),
+    ...fieldRestEdge(field),
+    ...fieldCorners(field),
+    boxShadow: surface("inset").style.boxShadow,
+  };
+}

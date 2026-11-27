@@ -156,5 +156,3 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on ever
 | `TraceCollapsible`        | `open`: `boolean`; `defaultOpen`: `boolean`; `onOpenChange`: `(event: { open, reason }) => void`   | A line and what it opens onto; owns whether it is open.                                                         |
 | `TraceCollapsibleTrigger` | `disabled`: `boolean`; `accessibilityLabel`; `style`, `hoverStyle`, `focusVisibleStyle`            | The pressable row: a `TraceLine` and a chevron that turns a quarter as it opens.                                |
 | `TraceCollapsibleContent` | `children`: `string \| JSX.Element` (a string is muted text); `reveal`: `boolean` (default `true`) | The panel under the line.                                                                                       |
-
-`traceLook()` is exported for a trace the app draws itself: its parts as the styles they wear (`root`, `line`, `icon`, `title`, `description`, `collapsible`, `trigger`, `chevron`, `content`).

@@ -28,6 +28,271 @@ import { Spinner } from "./spinner";
 /** A line's state: `running` spins its icon and pulses its title, `pending` is dimmed, `error` takes the destructive role. */
 export type TraceStatus = "running" | "pending" | "error";
 
+/** The column the steps stand in. */
+export type TraceProps = ViewProps;
+
+/** One step of a trace. */
+export type TraceLineProps = ViewProps & {
+  /** `running` spins the icon and pulses the title, `pending` dims the line, `error` takes the destructive role. Default none: a step that is done. */
+  status?: TraceStatus;
+  /** A line that is not a `TraceCollapsibleTrigger` becomes a pressable with this. */
+  onPress?: () => void;
+  hoverStyle?: StyleProp<ViewStyle>;
+  accessibilityLabel?: string | null;
+};
+
+/** The icon slot of a line. */
+export type TraceIconProps = ViewProps;
+
+/** What a line says it is doing or did. */
+export type TraceTitleProps = TextProps;
+
+/** A quieter note after the title: a duration, a count. */
+export type TraceDescriptionProps = TextProps;
+
+/** The column of a line that opens onto its content. */
+export type TraceCollapsibleProps = CollapsibleProps;
+
+/** The row that opens a collapsible line. */
+export type TraceCollapsibleTriggerProps = {
+  /** A `TraceLine`; the trigger adds the chevron after it. */
+  children?: JSX.Element;
+  disabled?: boolean;
+  /** Tailwind classes on the row, after the line's look. */
+  class?: string | null;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<ViewStyle>;
+  hoverStyle?: StyleProp<ViewStyle>;
+  activeStyle?: StyleProp<ViewStyle>;
+  focusVisibleStyle?: StyleProp<ViewStyle>;
+  disabledStyle?: StyleProp<ViewStyle>;
+  accessibilityLabel?: string | null;
+};
+
+/** What a line opened onto. */
+export type TraceCollapsibleContentProps = Omit<
+  BaseCollapsibleProps,
+  "open" | "content" | "children"
+> & {
+  /** A string is drawn as muted text; anything else as given. */
+  children?: string | JSX.Element;
+};
+
+/**
+ * A trace, after shadcn/ui's: a column of lines — `TraceLine`s, or `TraceCollapsible`s for the
+ * ones that open onto what they did. Lines are as wide as their content.
+ */
+export function Trace(props: TraceProps) {
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[traceLook().root, props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/**
+ * One step: a `TraceIcon`, a `TraceTitle` and a `TraceDescription`, in a row. Inside a
+ * `TraceCollapsibleTrigger` the trigger presses; with `onPress` the line itself does, and takes
+ * the text color under the pointer.
+ */
+export function TraceLine(props: TraceLineProps) {
+  const [, rest] = split(props, [
+    "status",
+    "onPress",
+    "class",
+    "classList",
+    "style",
+    "accessibilityLabel",
+  ]);
+  const collapsible = TraceCollapsibleContext();
+  // The trigger's chevron follows the line's state, wherever it changes.
+  effect(() => collapsible?.status.set(props.status));
+  const state: TraceLineState = {
+    get status() {
+      return props.status;
+    },
+  };
+  const press = () => props.onPress;
+  return (
+    <TraceLineContext.Provider value={state}>
+      <View
+        {...rest}
+        accessible={props.onPress ? true : undefined}
+        role={props.onPress ? "button" : undefined}
+        accessibilityLabel={props.accessibilityLabel ?? undefined}
+        accessibilityState={props.status === "running" ? { busy: true } : undefined}
+        class={joinClass(traceLook().lineClass, props.class)}
+        classList={props.classList}
+        onPress={press()}
+        style={[traceLook().line(props.status), props.style ?? null]}
+        focusVisibleStyle={props.onPress ? traceLook().focusVisible : undefined}
+      >
+        {props.children}
+      </View>
+    </TraceLineContext.Provider>
+  );
+}
+
+/**
+ * The icon slot of a line: its children, the theme's middle icon square — an `Icon` tinted in the
+ * muted ink (`destructive` for an `error` line). While the line is `running` it shows a `Spinner`
+ * instead.
+ */
+export function TraceIcon(props: TraceIconProps) {
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  const line = TraceLineContext();
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[traceLook().icon, props.style ?? null]}
+    >
+      {line.status === "running" ? (
+        <Spinner side={spinnerSide()} tint={colors.mutedForeground} />
+      ) : (
+        props.children
+      )}
+    </View>
+  );
+}
+
+/** What a line says it is doing or did: one line, cut with an ellipsis; it pulses while the line is `running`. */
+export function TraceTitle(props: TraceTitleProps) {
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  const line = TraceLineContext();
+  return (
+    <Text
+      {...rest}
+      class={joinClass(traceLook().titleClass(line.status), props.class)}
+      classList={props.classList}
+      style={[traceLook().title, props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** A quieter note after the title (`3 s`, `4 results`): it keeps its width, and its digits do not jump as they count. */
+export function TraceDescription(props: TraceDescriptionProps) {
+  const [, rest] = split(props, ["class", "classList", "style"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[traceLook().description, props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/**
+ * A line and the content it opens onto: owns whether it is open (`open` with `onOpenChange`, or
+ * `defaultOpen`). Put a `TraceCollapsibleTrigger` with the `TraceLine` first and a
+ * `TraceCollapsibleContent` after it. The same contract as [`Collapsible`](./collapsible), on a
+ * trigger of a line's look.
+ */
+export function TraceCollapsible(props: TraceCollapsibleProps) {
+  const state = createOpenState<CollapsibleOpenChangeReason>(props);
+  const status = signal<TraceStatus | undefined>(undefined);
+  const value: TraceCollapsibleState = {
+    ...state,
+    trigger: createSlot<JSX.Element>(),
+    status: Object.assign(() => status(), {
+      set: (next: TraceStatus | undefined) => status.set(next),
+    }),
+  };
+  return (
+    <TraceCollapsibleContext.Provider value={value}>
+      <View style={traceLook().collapsible}>{props.children}</View>
+    </TraceCollapsibleContext.Provider>
+  );
+}
+
+/** Opens and closes the content: a pressable row of its line and a trailing chevron that turns as it opens. */
+export function TraceCollapsibleTrigger(props: TraceCollapsibleTriggerProps) {
+  const [, rest] = split(props, [
+    "children",
+    "disabled",
+    "class",
+    "classList",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "accessibilityLabel",
+  ]);
+  const ctx = TraceCollapsibleContext();
+  if (!ctx) throw new Error("TraceCollapsibleTrigger must be used within <TraceCollapsible>");
+  const disabled = Boolean(props.disabled);
+  // The marker takes the line's status, in a terminal as on a canvas: a failed step's is destructive.
+  const chevronInk = () => (ctx.status() === "error" ? colors.destructive : colors.mutedForeground);
+  // Built once and handed to the content, which places it (as `CollapsibleTrigger` does).
+  ctx.trigger.set(
+    <View
+      {...rest}
+      accessible
+      role="button"
+      accessibilityLabel={props.accessibilityLabel ?? undefined}
+      accessibilityState={{ expanded: ctx.open(), disabled }}
+      class={joinClass(traceLook().lineClass, props.class)}
+      classList={props.classList}
+      onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
+      style={[traceLook().trigger, props.style ?? null]}
+      hoverStyle={props.hoverStyle}
+      activeStyle={props.activeStyle}
+      focusVisibleStyle={[traceLook().focusVisible, props.focusVisibleStyle ?? null]}
+      disabledStyle={[{ opacity: feedback.disabled.contentOpacity }, props.disabledStyle ?? null]}
+    >
+      {props.children}
+      <View style={[traceLook().icon, traceLook().chevron(ctx.open())]}>
+        {terminal ? (
+          <Text style={{ color: chevronInk() }}>›</Text>
+        ) : (
+          <Icon icon={ChevronRight} size={iconSide()} tint={chevronInk()} />
+        )}
+      </View>
+    </View>,
+  );
+  return null;
+}
+
+/** The panel under the line: it grows open and shut with the line. A string child is muted text. */
+export function TraceCollapsibleContent(props: TraceCollapsibleContentProps) {
+  const ctx = TraceCollapsibleContext();
+  if (!ctx) throw new Error("TraceCollapsibleContent must be used within <TraceCollapsible>");
+  const [, rest] = split(props, ["class", "classList", "style", "children", "reveal"]);
+  return (
+    <BaseCollapsible
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      open={ctx.open()}
+      reveal={props.reveal ?? true}
+      style={[{ alignItems: "stretch" }, props.style ?? null]}
+      content={
+        <View style={traceLook().content}>
+          <AsText style={traceLook().contentText}>{props.children}</AsText>
+        </View>
+      }
+    >
+      {ctx.trigger.get() ?? <View />}
+    </BaseCollapsible>
+  );
+}
+
+// Private helpers & looks
+
 /** A color fade that stands still with reduced motion. */
 const fade = "transition-colors duration-150 motion-reduce:transition-none";
 
@@ -38,7 +303,7 @@ const iconSide = () => iconSize.md;
 const spinnerSide = () => iconSize.sm;
 
 /** A trace's parts as the styles and classes they wear: spread each one onto the part that matches its name. */
-export interface TraceLook {
+interface TraceLook {
   /** The column (`Trace`). */
   readonly root: ViewStyle;
   /** A line (`TraceLine`): a row as wide as its content, dimmed while `pending`. */
@@ -73,7 +338,7 @@ export interface TraceLook {
  * pointer and the theme's focus ring with the keyboard on it; `error` is destructive, `pending`
  * at 60 % opacity.
  */
-export function traceLook(): TraceLook {
+function traceLook(): TraceLook {
   return {
     get root(): ViewStyle {
       return { flexDirection: "column", alignItems: "stretch", minWidth: 0, width: "100%" };
@@ -183,227 +448,3 @@ type TraceCollapsibleState = OpenState & {
 };
 
 const TraceCollapsibleContext = context<TraceCollapsibleState | null>(null);
-
-/** The column the steps stand in. */
-export type TraceProps = ViewProps;
-
-/**
- * A trace, after shadcn/ui's: a column of lines — `TraceLine`s, or `TraceCollapsible`s for the
- * ones that open onto what they did. Lines are as wide as their content.
- */
-export function Trace(props: TraceProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <View {...rest} style={[traceLook().root, props.style ?? null]}>
-      {props.children}
-    </View>
-  );
-}
-
-/** One step of a trace. */
-export type TraceLineProps = ViewProps & {
-  /** `running` spins the icon and pulses the title, `pending` dims the line, `error` takes the destructive role. Default none: a step that is done. */
-  status?: TraceStatus;
-  /** A line that is not a `TraceCollapsibleTrigger` becomes a pressable with this. */
-  onPress?: () => void;
-  hoverStyle?: StyleProp<ViewStyle>;
-  accessibilityLabel?: string | null;
-};
-
-/**
- * One step: a `TraceIcon`, a `TraceTitle` and a `TraceDescription`, in a row. Inside a
- * `TraceCollapsibleTrigger` the trigger presses; with `onPress` the line itself does, and takes
- * the text color under the pointer.
- */
-export function TraceLine(props: TraceLineProps) {
-  const [, rest] = split(props, ["status", "onPress", "style", "accessibilityLabel"]);
-  const collapsible = TraceCollapsibleContext();
-  // The trigger's chevron follows the line's state, wherever it changes.
-  effect(() => collapsible?.status.set(props.status));
-  const state: TraceLineState = {
-    get status() {
-      return props.status;
-    },
-  };
-  const press = () => props.onPress;
-  return (
-    <TraceLineContext.Provider value={state}>
-      <View
-        {...rest}
-        accessible={props.onPress ? true : undefined}
-        role={props.onPress ? "button" : undefined}
-        accessibilityLabel={props.accessibilityLabel ?? undefined}
-        accessibilityState={props.status === "running" ? { busy: true } : undefined}
-        class={traceLook().lineClass}
-        onPress={press()}
-        style={[traceLook().line(props.status), props.style ?? null]}
-        focusVisibleStyle={props.onPress ? traceLook().focusVisible : undefined}
-      >
-        {props.children}
-      </View>
-    </TraceLineContext.Provider>
-  );
-}
-
-/** The icon slot of a line. */
-export type TraceIconProps = ViewProps;
-
-/**
- * The icon slot of a line: its children, the theme's middle icon square — an `Icon` tinted in the
- * muted ink (`destructive` for an `error` line). While the line is `running` it shows a `Spinner`
- * instead.
- */
-export function TraceIcon(props: TraceIconProps) {
-  const [, rest] = split(props, ["style"]);
-  const line = TraceLineContext();
-  return (
-    <View {...rest} style={[traceLook().icon, props.style ?? null]}>
-      {line.status === "running" ? (
-        <Spinner side={spinnerSide()} tint={colors.mutedForeground} />
-      ) : (
-        props.children
-      )}
-    </View>
-  );
-}
-
-/** What a line says it is doing or did. */
-export type TraceTitleProps = TextProps;
-
-/** What a line says it is doing or did: one line, cut with an ellipsis; it pulses while the line is `running`. */
-export function TraceTitle(props: TraceTitleProps) {
-  const [, rest] = split(props, ["style", "class"]);
-  const line = TraceLineContext();
-  return (
-    <Text
-      {...rest}
-      class={joinClass(traceLook().titleClass(line.status), props.class)}
-      style={[traceLook().title, props.style ?? null]}
-    >
-      {props.children}
-    </Text>
-  );
-}
-
-/** A quieter note after the title: a duration, a count. */
-export type TraceDescriptionProps = TextProps;
-
-/** A quieter note after the title (`3 s`, `4 results`): it keeps its width, and its digits do not jump as they count. */
-export function TraceDescription(props: TraceDescriptionProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <Text {...rest} style={[traceLook().description, props.style ?? null]}>
-      {props.children}
-    </Text>
-  );
-}
-
-/** The column of a line that opens onto its content. */
-export type TraceCollapsibleProps = CollapsibleProps;
-
-/**
- * A line and the content it opens onto: owns whether it is open (`open` with `onOpenChange`, or
- * `defaultOpen`). Put a `TraceCollapsibleTrigger` with the `TraceLine` first and a
- * `TraceCollapsibleContent` after it. The same contract as [`Collapsible`](./collapsible), on a
- * trigger of a line's look.
- */
-export function TraceCollapsible(props: TraceCollapsibleProps) {
-  const state = createOpenState<CollapsibleOpenChangeReason>(props);
-  const status = signal<TraceStatus | undefined>(undefined);
-  const value: TraceCollapsibleState = {
-    ...state,
-    trigger: createSlot<JSX.Element>(),
-    status: Object.assign(() => status(), {
-      set: (next: TraceStatus | undefined) => status.set(next),
-    }),
-  };
-  return (
-    <TraceCollapsibleContext.Provider value={value}>
-      <View style={traceLook().collapsible}>{props.children}</View>
-    </TraceCollapsibleContext.Provider>
-  );
-}
-
-/** The row that opens a collapsible line. */
-export type TraceCollapsibleTriggerProps = {
-  /** A `TraceLine`; the trigger adds the chevron after it. */
-  children?: JSX.Element;
-  disabled?: boolean;
-  /** Tailwind classes on the row, after the line's look. */
-  class?: string | null;
-  /** Tailwind classes toggled on the row. */
-  classList?: Record<string, boolean | null | undefined>;
-  style?: StyleProp<ViewStyle>;
-  hoverStyle?: StyleProp<ViewStyle>;
-  activeStyle?: StyleProp<ViewStyle>;
-  focusVisibleStyle?: StyleProp<ViewStyle>;
-  disabledStyle?: StyleProp<ViewStyle>;
-  accessibilityLabel?: string | null;
-};
-
-/** Opens and closes the content: a pressable row of its line and a trailing chevron that turns as it opens. */
-export function TraceCollapsibleTrigger(props: TraceCollapsibleTriggerProps) {
-  const ctx = TraceCollapsibleContext();
-  if (!ctx) throw new Error("TraceCollapsibleTrigger must be used within <TraceCollapsible>");
-  const disabled = Boolean(props.disabled);
-  // The marker takes the line's status, in a terminal as on a canvas: a failed step's is destructive.
-  const chevronInk = () => (ctx.status() === "error" ? colors.destructive : colors.mutedForeground);
-  // Built once and handed to the content, which places it (as `CollapsibleTrigger` does).
-  ctx.trigger.set(
-    <View
-      accessible
-      role="button"
-      accessibilityLabel={props.accessibilityLabel ?? undefined}
-      accessibilityState={{ expanded: ctx.open(), disabled }}
-      class={joinClass(traceLook().lineClass, props.class)}
-      classList={props.classList}
-      onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
-      style={[traceLook().trigger, props.style ?? null]}
-      hoverStyle={props.hoverStyle}
-      activeStyle={props.activeStyle}
-      focusVisibleStyle={[traceLook().focusVisible, props.focusVisibleStyle ?? null]}
-      disabledStyle={[{ opacity: feedback.disabled.contentOpacity }, props.disabledStyle ?? null]}
-    >
-      {props.children}
-      <View style={[traceLook().icon, traceLook().chevron(ctx.open())]}>
-        {terminal ? (
-          <Text style={{ color: chevronInk() }}>›</Text>
-        ) : (
-          <Icon icon={ChevronRight} size={iconSide()} tint={chevronInk()} />
-        )}
-      </View>
-    </View>,
-  );
-  return null;
-}
-
-/** What a line opened onto. */
-export type TraceCollapsibleContentProps = Omit<
-  BaseCollapsibleProps,
-  "open" | "content" | "children"
-> & {
-  /** A string is drawn as muted text; anything else as given. */
-  children?: string | JSX.Element;
-};
-
-/** The panel under the line: it grows open and shut with the line. A string child is muted text. */
-export function TraceCollapsibleContent(props: TraceCollapsibleContentProps) {
-  const ctx = TraceCollapsibleContext();
-  if (!ctx) throw new Error("TraceCollapsibleContent must be used within <TraceCollapsible>");
-  const [, rest] = split(props, ["style", "children", "reveal"]);
-  return (
-    <BaseCollapsible
-      {...rest}
-      open={ctx.open()}
-      reveal={props.reveal ?? true}
-      style={[{ alignItems: "stretch" }, props.style ?? null]}
-      content={
-        <View style={traceLook().content}>
-          <AsText style={traceLook().contentText}>{props.children}</AsText>
-        </View>
-      }
-    >
-      {ctx.trigger.get() ?? <View />}
-    </BaseCollapsible>
-  );
-}

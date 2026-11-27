@@ -13,25 +13,29 @@ import {
 
 import { mergeClasses } from "./lib/utils";
 
-/** A `TextView`'s links (its `classes`): the brand color over a faint
- * underline of it. */
-export const textViewLinkClasses = { link: "text-brand decoration-brand/40" };
-
-/** A streaming `TextView`'s caret (a view of this class, its
- * `streamingCaret`): a brand-colored block a line high that pulses. Its corner is its own small
- * fixed geometry (an 8-point-wide block), not a theme tier. */
-export const textViewCaretClass = "ml-0.5 h-4 w-2 animate-pulse rounded-[4px] bg-brand";
-
 /** Every prop of `nsh/base` TextView; parsing stays in base. */
 export type TextViewProps = BaseTextViewProps;
 
+/** A document as `TextView.parse` returns it, from `nsh/base`. */
+export type { TextViewDocument };
+
+/** The classes of a text view's parts, from `nsh/base`. */
+export type { TextViewClasses };
+
+/** An image of a document (`renderImage`, `onImagePress`), from `nsh/base`. */
+export type { TextViewImage };
+
+/** A text view's ref, from `nsh/base`. */
+export type { TextViewRef };
+
 /** The view the static parsers are attached to, so the export below carries them. */
 function TextViewRoot(props: TextViewProps) {
-  const [, rest] = split(props, ["classes", "class", "style"]);
+  const [, rest] = split(props, ["classes", "class", "classList", "style"]);
   return (
     <BaseTextView
       {...rest}
       class={props.class}
+      classList={props.classList}
       style={props.style}
       classes={mergeClasses<TextViewClasses>(textViewLinkClasses, props.classes)}
     />
@@ -46,14 +50,14 @@ export const TextView = Object.assign(TextViewRoot, {
   plainText: BaseTextView.plainText.bind(BaseTextView),
 });
 
-/** A document as `TextView.parse` returns it, from `nsh/base`. */
-export type { TextViewDocument };
+// Shared text view primitives
+// Showcase and the demos read `textViewLinkClasses` and `textViewCaretClass`.
 
-/** The classes of a text view's parts, from `nsh/base`. */
-export type { TextViewClasses };
+/** A `TextView`'s links (its `classes`): the brand color over a faint
+ * underline of it. */
+export const textViewLinkClasses = { link: "text-brand decoration-brand/40" };
 
-/** An image of a document (`renderImage`, `onImagePress`), from `nsh/base`. */
-export type { TextViewImage };
-
-/** A text view's ref, from `nsh/base`. */
-export type { TextViewRef };
+/** A streaming `TextView`'s caret (a view of this class, its
+ * `streamingCaret`): a brand-colored block a line high that pulses. Its corner is its own small
+ * fixed geometry (an 8-point-wide block), not a theme tier. */
+export const textViewCaretClass = "ml-0.5 h-4 w-2 animate-pulse rounded-[4px] bg-brand";

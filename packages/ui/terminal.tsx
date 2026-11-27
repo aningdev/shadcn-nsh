@@ -1,14 +1,14 @@
-// A terminal: the look (`terminalLook`) and the `Terminal` that wears it.
+// A terminal: the `Terminal` on the field's well (`ghost` draws none).
 
 import {
   alpha,
   colors,
   control,
+  stroke,
   surface,
+  terminal as terminalIdiom,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
-  terminal as terminalIdiom,
-  stroke,
   tier,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
@@ -27,8 +27,39 @@ import { type Live, read } from "./lib/utils";
  */
 export type TerminalVariant = "default" | "ghost";
 
+/** Every prop of `nsh/base` Terminal, plus the look's `variant`. */
+export type TerminalProps = BaseTerminalProps & {
+  /** `default` (the well) unless `ghost` (the app's own surface). */
+  variant?: TerminalVariant;
+};
+
+/** A terminal's ref — `write`, `reset`, `text`, `focus` — from `nsh/base`. */
+export type { TerminalRef } from "nsh/base";
+
+/**
+ * A program's output on a themed surface, the keys typed back to it. The emulator, the scrollback,
+ * the keys and the size in cells stay in base; the program is the app's (`write` on the ref,
+ * `onData` and `onResize` on events). The text is the theme's monospaced family (base's default),
+ * and what a program colors comes from its own escape sequences.
+ */
+export function Terminal(props: TerminalProps) {
+  const [, rest] = split(props, ["variant", "class", "classList", "style", "cursorStyle"]);
+  const look = terminalLook({ variant: () => props.variant });
+  return (
+    <BaseTerminal
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[look.style, props.style ?? null]}
+      cursorStyle={[look.cursorStyle, props.cursorStyle ?? null]}
+    />
+  );
+}
+
+// Private helpers & looks
+
 /** Options of `terminalLook`. */
-export interface TerminalLookOptions {
+interface TerminalLookOptions {
   /** `default` (the well) unless `ghost` (the app's own surface). */
   variant?: Live<TerminalVariant | undefined>;
   /** More style (a height, a margin), over the look's. */
@@ -52,20 +83,11 @@ const wellPad = (): { x: number; y: number } =>
  * In the terminal idiom a well is a one-point border whose rows and columns the padding fills out,
  * as every surface there is; the colors a program asks for are NSH's own and never this library's.
  */
-export function terminalLook(o?: TerminalLookOptions) {
+function terminalLook(o?: TerminalLookOptions) {
   return {
     get style(): ViewStyle {
       if (read(o?.variant) === "ghost") return { ...read(o?.style) };
-      if (terminalIdiom) {
-        return {
-          backgroundColor: control("field").ground,
-          borderWidth: stroke.hairline,
-          borderColor: colors.border,
-          paddingVertical: TERMINAL_ROW - 1,
-          paddingHorizontal: 2 * TERMINAL_COLUMN - 1,
-          ...read(o?.style),
-        };
-      }
+      if (terminalIdiom) return { ...terminalWell(), ...read(o?.style) };
       // A well outside the terminal idiom is a field's: the recipe decides the fill, how many sides
       // carry an edge and in which colour, and the corners — so a terminal matches the fields and
       // selects beside it in every theme, and only its padding is the terminal's own.
@@ -87,29 +109,15 @@ export function terminalLook(o?: TerminalLookOptions) {
   };
 }
 
-/** Every prop of `nsh/base` Terminal, plus the look's `variant`. */
-export type TerminalProps = BaseTerminalProps & {
-  /** `default` (the well) unless `ghost` (the app's own surface). */
-  variant?: TerminalVariant;
-};
+// Terminal
 
-/**
- * A program's output on a themed surface, the keys typed back to it. The emulator, the scrollback,
- * the keys and the size in cells stay in base; the program is the app's (`write` on the ref,
- * `onData` and `onResize` on events). The text is the theme's monospaced family (base's default),
- * and what a program colors comes from its own escape sequences.
- */
-export function Terminal(props: TerminalProps) {
-  const [, rest] = split(props, ["variant", "style", "cursorStyle"]);
-  const look = terminalLook({ variant: () => props.variant });
-  return (
-    <BaseTerminal
-      {...rest}
-      style={[look.style, props.style ?? null]}
-      cursorStyle={[look.cursorStyle, props.cursorStyle ?? null]}
-    />
-  );
+/** A well in the terminal idiom: a one-point border, the padding filling out its rows and columns. */
+function terminalWell(): ViewStyle {
+  return {
+    backgroundColor: control("field").ground,
+    borderWidth: stroke.hairline,
+    borderColor: colors.border,
+    paddingVertical: TERMINAL_ROW - 1,
+    paddingHorizontal: 2 * TERMINAL_COLUMN - 1,
+  };
 }
-
-/** A terminal's ref — `write`, `reset`, `text`, `focus` — from `nsh/base`. */
-export type { TerminalRef } from "nsh/base";
