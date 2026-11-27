@@ -17,6 +17,10 @@ function App() {
         <Text>★</Text>
         Upload 3 photos
       </Button>
+      {/* A busy button reports its busy accessibility state and drops presses. */}
+      <Button busy onPress={() => presses.set(presses() + 1)}>
+        Saving
+      </Button>
       <Text>{`pressed ${presses()}`}</Text>
     </>
   );

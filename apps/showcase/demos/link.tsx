@@ -9,7 +9,7 @@ import { platform, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
 import { Link } from "@/packages/ui/link";
-import { TextView, textViewLinkClasses } from "@/packages/ui/text-view";
+import { TextView, textViewClasses } from "@/packages/ui/text-view";
 
 import { DemoPage } from "../kit";
 import { Card } from "./actions-shared";
@@ -280,7 +280,7 @@ function Destinations() {
       <View style={{ paddingTop: 10, borderTopWidth: 1, borderTopColor: colors.line }}>
         <TextView
           markdown={TITLED}
-          classes={{ ...textViewLinkClasses, root: "text-[13px] leading-[19px]" }}
+          classes={{ ...textViewClasses, root: "text-[13px] leading-[19px]" }}
           onLinkPress={({ url }) => note(`onLinkPress ${url}`)}
         />
       </View>

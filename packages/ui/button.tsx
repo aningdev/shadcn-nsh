@@ -97,6 +97,7 @@ export function Button(props: ButtonProps) {
   return (
     <BaseButton
       {...rest}
+      busy={props.busy}
       // Busy, it keeps its focus and its look and takes no second press.
       onPress={() => !props.busy && props.onPress?.()}
       onPressDown={() => {

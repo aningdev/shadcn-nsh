@@ -953,7 +953,7 @@ function DocumentWindow() {
       {/* The title bar: dragging it moves the window, a double click zooms or maximizes it; its
           buttons stay buttons. Its padding is the writing app's own: 14 points before the document's
           name, and the caption buttons flush against the window's corner. */}
-      <TitleBar style={{ paddingStart: 14, paddingEnd: mac ? 10 : 0 }}>
+      <TitleBar contentStyle={{ paddingStart: 14, paddingEnd: mac ? 10 : 0 }}>
         <If when={mac}>
           <WindowControls />
         </If>

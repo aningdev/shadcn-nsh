@@ -85,6 +85,7 @@ export type {
  * scroll view, so its scroll bar runs along the editor's edge; relaxed
  * paragraphs, tight large headings, a quiet quote, code on the muted fill,
  * indented lists, task checkboxes filled with the primary once checked,
+ * table cell selections, grips, resize handles and drop indicators, and
  * brand-colored links. NSH's editor draws nothing of its own.
  */
 export const richEditorClasses: RichEditorClasses = {
@@ -93,6 +94,10 @@ export const richEditorClasses: RichEditorClasses = {
   listMarker: "text-muted-foreground",
   taskCheckbox:
     "size-4 mr-2 mt-1 rounded border border-border cursor-pointer transition duration-150 ease-out hover:border-foreground/40 hover:bg-foreground/5 active:scale-90 checked:bg-primary checked:border-primary checked:hover:bg-primary/80",
+  selectedCell: "bg-primary/10",
+  tableGrip: "rounded-full bg-muted-foreground/60",
+  tableResizeHandle: "bg-primary",
+  tableDropIndicator: "bg-primary",
   nodes: {
     paragraph: "leading-relaxed",
     "heading[level=1]": "text-3xl font-bold tracking-tight",

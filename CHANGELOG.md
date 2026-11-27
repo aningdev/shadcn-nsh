@@ -22,6 +22,8 @@
 
 - **Built-in icons.** The components ship the 39 UI icons they draw, as lucide-compatible `IconNode` values, so they no longer require the `lucide` package at run time. An app can still pass an icon imported from `lucide`.
 
+- **NSH v0.7.2 component alignment.** `Button` passes `busy` through to `nsh/base` `Button` for native screen-reader state; `TitleBar` wraps `nsh/base` `TitleBar` for automatic window-control inset and full-screen updates (with `contentStyle` for inner row padding); `richEditorClasses` adds table interaction classes (`selectedCell`, `tableGrip`, `tableResizeHandle`, `tableDropIndicator`); `textViewLinkClasses` expands to `textViewClasses` (`link`, `tableGrid`).
+
 ### Breaking
 
 - **Internal `*Look` and `*Sizes` helpers are private.** Helpers only one component uses are no longer exported (`cardLook`, `switchLook`, `checkboxLook`, `inputLook`, `roundButtonLook`, `buttonGroupLook`, `dialogCard`, `pickerLook`, and the size tables beside them). `buttonLook`, `iconButtonLook`, `fieldLook`, `choiceLook`, and `pressableLook` stay exported.

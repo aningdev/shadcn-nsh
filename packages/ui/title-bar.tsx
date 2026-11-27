@@ -1,12 +1,12 @@
 // A desktop window's title bar and the window controls it holds: the bar that drags a window whose
 // title bar is hidden, the window buttons of a frameless window, and the edges that resize it.
 
-import type { ViewProps, ViewStyle } from "nsh";
+import type { StyleProp, ViewProps, ViewStyle } from "nsh";
 import { signal, split, View } from "nsh";
+import { TitleBar as BaseTitleBar, type TitleBarProps as BaseTitleBarProps } from "nsh/base";
 import {
   currentWindow,
   isAvailable,
-  titleBar,
   type ResizeEdge,
   type WindowControl,
   type WindowRef,
@@ -29,15 +29,20 @@ export const CAPTION_BUTTON = 46;
  * leading end of the bar; `caption`, Windows' and Linux's cells at its trailing end. */
 export type WindowControlsVariant = "traffic-lights" | "caption";
 
-/** A title bar's props: every `nsh` view prop passes through; `style` goes over the look's. */
-export type TitleBarProps = ViewProps;
+/** A title bar's props: every `nsh/base` `TitleBar` prop passes through; `style` goes over the outer bar, and `contentStyle` styles the inner content row. */
+export type TitleBarProps = BaseTitleBarProps & {
+  /** Style applied to the inner content row (use this for horizontal padding so the outer bar keeps `nsh/base`'s automatic window-control inset). */
+  contentStyle?: StyleProp<ViewStyle>;
+};
 
 /**
- * A desktop window's title bar: the row that drags the window while its title bar is hidden
- * (`desktop={{ windowDrag: true }}`), a double click zooming or maximizing it, padded clear of
- * the system's window buttons and `TITLE_BAR_HEIGHT` tall where the window reports no height of
- * its own. Its children are the app's — a logo, the document's name, a search field, a button —
- * and the views inside that take presses (a field, a button) stay clickable.
+ * A desktop window's title bar built on `nsh/base`'s `TitleBar`: the row that drags the window
+ * while its title bar is hidden, zooming or maximizing on double click, and at least
+ * `TITLE_BAR_HEIGHT` tall while automatically clearing the current window's system buttons
+ * (including across split views and full-screen transitions). Its children are the app's — a logo,
+ * the document's name, a search field, a button — and the views inside that take presses stay
+ * clickable. Use `contentStyle` for extra padding inside the bar rather than `style` padding, which
+ * would replace the system inset.
  *
  * It draws nothing where there is no window of the app's own (the web, phones): a browser's page
  * has the browser's window, and a phone has no title bar to hide.
@@ -45,16 +50,12 @@ export type TitleBarProps = ViewProps;
 export function TitleBar(props: TitleBarProps) {
   // No window, no bar: this is chrome for a window the app draws itself.
   if (!isAvailable) return null;
-  const [, rest] = split(props, ["style"]);
-  const win = activeWindow();
+  const [, rest] = split(props, ["style", "contentStyle", "children"]);
+  const look = titleBarLook();
   return (
-    <View
-      {...rest}
-      desktop={{ windowDrag: true }}
-      style={[titleBarLook(win).root(), props.style ?? null]}
-    >
-      {props.children}
-    </View>
+    <BaseTitleBar {...rest} style={[look.root(), props.style ?? null]}>
+      <View style={[look.content(), props.contentStyle ?? null]}>{props.children}</View>
+    </BaseTitleBar>
   );
 }
 
@@ -184,10 +185,10 @@ const lightEdge = alpha("#000000", 0.12); // color: the traffic lights' own ink,
 
 /** A title bar's parts as the styles they wear: spread each one. */
 interface TitleBarLook {
-  /** The bar: a row that drags the window, `TITLE_BAR_HEIGHT` tall or the height the system's
-   * title bar has, padded clear of the system's window buttons, on the inset fill with a hairline
-   * under it. */
+  /** The outer bar (`BaseTitleBar`): at least `TITLE_BAR_HEIGHT` tall, on the inset fill with a hairline under it. */
   root(): ViewStyle;
+  /** The inner content row: fills the remaining bar after `BaseTitleBar`'s automatic button inset. */
+  content(): ViewStyle;
   /** The window buttons' row: the traffic lights' group, or the caption buttons' cells. */
   controls(variant: WindowControlsVariant): ViewStyle;
   /** A traffic light: a disc in its tone, grey while the window is in the background. */
@@ -213,39 +214,27 @@ function activeWindow(): WindowRef | null {
 /**
  * A title bar's look, from the platform: macOS's traffic lights in the system's hues on the bar of
  * an inset fill, or Windows' and Linux's caption cells at the trailing end, the glyphs' ink over
- * them and the close cell washing the danger tint while the pointer is on it. The bar keeps
- * `barPad` (12 points) beside the system's window buttons — the traffic lights on macOS, the
- * caption buttons on Windows and Linux — so a hidden title bar's own content starts after them.
- *
- * `titleBar()` is the area the system's window buttons take: it is zero while the system's title
- * bar shows and in a frameless window, so a bar of `TITLE_BAR_HEIGHT` (40 points) is drawn there.
- * Pass `win` captured during setup so reactive styles do not call `currentWindow()` inside effects.
+ * them and the close cell washing the danger tint while the pointer is on it. The inner row keeps
+ * `barPad` (12 points) around its children while `BaseTitleBar` pads the outer bar clear of the
+ * system's window controls.
  */
-function titleBarLook(win?: WindowRef | null): TitleBarLook {
-  const bar = () => {
-    if (win) return win.titleBar();
-    try {
-      return titleBar();
-    } catch {
-      return { height: 0, left: 0, right: 0 };
-    }
-  };
+function titleBarLook(): TitleBarLook {
   return {
-    root: (): ViewStyle => {
-      const area = bar();
-      return {
-        height: area.height || TITLE_BAR_HEIGHT,
-        flexShrink: 0,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        paddingStart: area.left + barPad,
-        paddingEnd: area.right + barPad,
-        backgroundColor: surface("inset").style.backgroundColor,
-        borderBottomWidth: stroke.hairline,
-        borderBottomColor: colors.line,
-      };
-    },
+    root: (): ViewStyle => ({
+      minHeight: TITLE_BAR_HEIGHT,
+      flexShrink: 0,
+      alignItems: "stretch",
+      backgroundColor: surface("inset").style.backgroundColor,
+      borderBottomWidth: stroke.hairline,
+      borderBottomColor: colors.line,
+    }),
+    content: (): ViewStyle => ({
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      paddingHorizontal: barPad,
+    }),
     controls: (variant: WindowControlsVariant): ViewStyle =>
       variant === "caption"
         ? { flexDirection: "row", alignSelf: "stretch" }

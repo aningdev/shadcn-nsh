@@ -1,4 +1,4 @@
-// Text view: the link and caret classes, and the `TextView` that wears them.
+// Text view: `textViewClasses`, `textViewCaretClass`, and the `TextView` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { split } from "nsh";
@@ -37,7 +37,7 @@ function TextViewRoot(props: TextViewProps) {
       class={props.class}
       classList={props.classList}
       style={props.style}
-      classes={mergeClasses<TextViewClasses>(textViewLinkClasses, props.classes)}
+      classes={mergeClasses<TextViewClasses>(textViewClasses, props.classes)}
     />
   );
 }
@@ -51,11 +51,13 @@ export const TextView = Object.assign(TextViewRoot, {
 });
 
 // Shared text view primitives
-// Showcase and the demos read `textViewLinkClasses` and `textViewCaretClass`.
+// Showcase and the demos read `textViewClasses` and `textViewCaretClass`.
 
-/** A `TextView`'s links (its `classes`): the brand color over a faint
- * underline of it. */
-export const textViewLinkClasses = { link: "text-brand decoration-brand/40" };
+/** A `TextView`'s default classes: brand-colored links over a faint underline, and a `tableGrid` bordered with `border`. */
+export const textViewClasses: TextViewClasses = {
+  link: "text-brand decoration-brand/40",
+  tableGrid: "border-t border-l border-border",
+};
 
 /** A streaming `TextView`'s caret (a view of this class, its
  * `streamingCaret`): a brand-colored block a line high that pulses. Its corner is its own small
