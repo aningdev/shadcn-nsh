@@ -141,11 +141,11 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Ale
 `style` goes over the look's on each. The root is `role="alert"`, so a notice is read out when it
 appears.
 
-| Part               | Props                                                         | Description                                                                                          |
-| ------------------ | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `Alert`            | `variant`: `"default" \| "destructive"` (default `"default"`) | The notice's surface: `alertLook().root()`.                                                          |
-| `AlertTitle`       | —                                                             | The title, a `Text` in `alertLook().title(variant)`.                                                 |
-| `AlertDescription` | —                                                             | The note: `alertLook().descriptionFrame()`, its string child `alertLook().descriptionText(variant)`. |
+| Part               | Props                                                         | Description                                                                |
+| ------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `Alert`            | `variant`: `"default" \| "destructive"` (default `"default"`) | The notice's surface: the card, a hairline edge, the icon beside the text. |
+| `AlertTitle`       | —                                                             | The title, one line, in the notice's ink.                                  |
+| `AlertDescription` | —                                                             | The note under the title, or beside the icon when there is no title.       |
 
 | Prop      | Type                         | Default   |
 | --------- | ---------------------------- | --------- |
@@ -153,5 +153,4 @@ appears.
 
 The surface is the card's, with one hairline edge and the theme's inset corners, padded 16 by 12;
 the icon's column is as wide as the icon, the text's takes the rest, a gap of 12 between them.
-`alertLook()` is exported for a notice the app draws itself, and `ALERT_ICON` is the size its icon
-is drawn at.
+`ALERT_ICON` is the size its icon is drawn at.

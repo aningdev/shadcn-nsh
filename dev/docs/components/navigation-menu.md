@@ -63,9 +63,8 @@ the window is narrow. An item is its trigger, or a link of its own. A trigger is
 item's content, which is what places it in the bar: a `NavigationMenuTrigger` declared after its
 `NavigationMenuContent` draws nothing.
 
-A trigger is the theme's tallest height step high and 16 points in either side
-(`navigationMenuSize`), its name in the bar's type and a chevron after it — the theme's smallest
-icon, an indicator's.
+A trigger is the theme's tallest height step high and 16 points in either side, its name in the
+bar's type and a chevron after it — the theme's smallest icon, an indicator's.
 
 ### What a trigger opens [#what-a-trigger-opens]
 
@@ -148,6 +147,5 @@ and leave, which drive the item's delays. `NavigationMenu` and `NavigationMenuLi
 row.
 
 The look is `navigationMenuLook()` — `root`, `list`, `item`, `panel`, `link`, `linkText`,
-`linkHint` — and `navigationMenuTriggerLook({ open })` and
-`navigationMenuLinkLook({ active, disabled })` for the parts that open and go. Spread them on the
-part they name; `navigationMenuSize` has the numbers.
+`linkHint` — and `navigationMenuTriggerLook({ open })` for a trigger. Spread them on the part they
+name.

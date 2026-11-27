@@ -1,1 +1,0 @@
-export{t as oramaStaticClient,n as staticClient,r as useStaticSearch}from"./orama-static-CsompOUb.js";

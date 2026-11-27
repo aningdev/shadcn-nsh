@@ -1,17 +1,20 @@
 # Components (/dev/docs/components)
 
-83 components, one page each: Installation, Usage, an optional Composition,
-Examples and API. They are grouped in two: <strong>Base</strong>, aligned with an NSH element,
-and <strong>Enhanced</strong>, this library's additions with no NSH element of their own.
-Behavior, keyboard support and the full unstyled props live on
-[nsh.dev/elements](https://nsh.dev/elements); each page links its base element and the shadcn/ui
-component it stands in for.
+Styled shells on `nsh/base`. Install a component either way:
 
-The list is generated from `registry.json` and these pages, so every `registry:ui` item has a page
-and every page has an item. The group comes from 
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
 
-<a href="/docs/components/coverage">Coverage</a>: a page registered in one of its NSH rows is
-Base, one in none is Enhanced. Add one with `npx shadcn-nsh@latest add <name>`.
+```npm
+npx shadcn-nsh@latest add <name>
+```
+
+With `nshm`, import from `shadcn-nsh/<name>`. With the CLI, the file is copied into the app and the snippets on each page import from `@/components/ui/<name>`.
+
+Each page has Installation, Usage, an optional Composition, Examples, and API. **Base** components align with an NSH element. **Enhanced** components are this library's own. Behavior, keyboard support, and the unstyled props live on [nsh.dev/elements](https://nsh.dev/elements). Each page links its base element and the shadcn/ui component it stands in for.
+
+The list is generated from `registry.json` and these pages, so every `registry:ui` item has a page and every page has an item. A page registered on an NSH element is Base. A page registered on none is Enhanced.
 
 ## Base [#base]
 

@@ -278,6 +278,5 @@ disappears the moment the text does.
 | `PageHeader`     | `title`, `right`, `back`, `above`                                      | The drawn header, for a `header` that adds to it; `above()` says whether a page is below |
 | `createNavStack` | `routes`, `push`, `pop`, `popToRoot`, `replace`, `setRoutes`, `remove` | `nsh/base`'s, re-exported                                                                |
 
-The looks — spread them on the views they name, or read their words for content of your own:
-`navStackLook()` (`root`) and `navPageLook()` (`page`, `header`, `title`, `backGlyph`).
-`navPageSize` has the header's numbers.
+The page's look — spread it on the views it names, or read its words for content of your own:
+`navPageLook()` (`page`, `header`, `title`, `backGlyph`).

@@ -1,11 +1,12 @@
 # Docs
 
+- [Architecture](/dev/docs/architecture.md): How nsh/base, the three-layer theme, and the component shells fit together, and how nshm and the CLI share one source.
 - [CLI](/dev/docs/cli.md): Every shadcn-nsh@latest command, with its flags and defaults.
-- [Components](/dev/docs/components.md): Copy-into-app components for Native Shell, built on nsh/base.
-- [Customizing](/dev/docs/customizing.md): The three places to change a copied component: the theme, its look, and its shell.
+- [Components](/dev/docs/components.md): Styled components for Native Shell, built on nsh/base. Install with nshm or the copy-into-app CLI.
+- [Customizing](/dev/docs/customizing.md): Derive a theme with defineTheme, or change a copied component's shell and its private look.
 - [Getting started](/dev/docs/getting-started.md): Add shadcn-nsh to an existing NSH app.
-- [Icons](/dev/docs/icons.md): lucide's icons, drawn by `Icon` in the size and color a component gives them.
-- [Theme](/dev/docs/theme.md): One TypeScript spec is the look; theme.json and DESIGN.md are its exports, and lib/ui/theme.ts reads it for every component.
+- [Icons](/dev/docs/icons.md): Built-in UI icons, plus any lucide IconNode an app passes in.
+- [Theme specification](/dev/docs/theme.md): One TypeScript spec is the look; theme.json and DESIGN.md are its exports, and lib/ui/theme.ts reads it for every component.
 - [Themes](/dev/docs/themes.md): The palettes the demos can draw in: what a theme is, the radius layers, and a page for each palette.
 - Components
   - [Accordion](/dev/docs/components/accordion.md): List rows that reveal panels with a turning chevron.
@@ -18,7 +19,7 @@
   - [Breadcrumb](/dev/docs/components/breadcrumb.md): The trail from where the app starts to the page it shows.
   - [Bubble](/dev/docs/components/bubble.md): The framed surface of one turn of a conversation, and the reactions that hang off it.
   - [Button group](/dev/docs/components/button-group.md): Buttons joined into one control, in a row or a column.
-  - [Button](/dev/docs/components/button.md): A button, an icon button, a round button, and a split button.
+  - [Button](/dev/docs/components/button.md): A button, an icon button, and a round button.
   - [Calendar](/dev/docs/components/calendar.md): A month of days to pick a date or a range, on the shared calendar look.
   - [Card](/dev/docs/components/card.md): A flat surface that groups related content: a header with its action, a body and a footer.
   - [Carousel](/dev/docs/components/carousel.md): Snapping slides with arrows and a traveling dot pill.
@@ -30,7 +31,6 @@
   - [Combobox](/dev/docs/components/combobox.md): A searchable field with a list of choices and chips for the values chosen, on the shared listbox look.
   - [Command](/dev/docs/components/command.md): A search palette with sectioned, virtualized rows.
   - [Context Menu](/dev/docs/components/context-menu.md): A menu at the pointer, on the shared menu look.
-  - [Coverage](/dev/docs/components/coverage.md): Every shadcn/ui component and every NSH element, and what this library has for it.
   - [DataTable](/dev/docs/components/data-table.md): A striped table with sortable, resizable columns.
   - [Date Picker](/dev/docs/components/date-picker.md): A calendar in a popup from a field trigger, on the shared listbox look.
   - [Dialog](/dev/docs/components/dialog.md): A card dialog with a trigger, content, title, description, footer and close.

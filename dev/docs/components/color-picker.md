@@ -41,8 +41,7 @@ import {
 `ColorPanel` lays out the area, the sliders, the fields and the swatches. It has to sit
 inside [`nsh/base`'s `ColorPicker`](https://nsh.dev/elements/color-picker): the panel's
 parts look their picker up from that root, and outside it they log
-`` `<part>` is outside a `ColorPicker`: its color goes nowhere `` and take no input
-(`references/nsh/crates/nsh-base/src/color_picker/mod.rs:59`).
+`` `<part>` is outside a `ColorPicker`: its color goes nowhere `` and take no input.
 
 ```tsx
 <ColorPicker value={fill()} onChange={({ value }) => fill.set(value)}>
@@ -82,7 +81,7 @@ parts look their picker up from that root, and outside it they log
 
 ## API [#api]
 
-Look helpers: `colorAreaLook`, `colorSliderLook`, `colorChecker`, `ColorFields`, `ColorTrigger`, `ColorSwatches`, `ColorCopy`, `ColorDropper`, `colorFormats`. Behavior stays in [`nsh/base` ColorPicker](https://nsh.dev/elements/color-picker) parts.
+Look helpers: `colorAreaLook`, `colorSliderLook`, `formatColor`, `inkOn`. Parts: `ColorFields`, `ColorTrigger`, `ColorSwatches`, `ColorCopy`, `ColorDropper`. Behavior stays in [`nsh/base` ColorPicker](https://nsh.dev/elements/color-picker) parts.
 
 | Part            | Props                                                                                    | Description                                                         |
 | --------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |

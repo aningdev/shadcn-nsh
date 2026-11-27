@@ -1,3 +1,86 @@
+# Architecture (/dev/docs/architecture)
+
+This page is the map of the library you install. Behavior stays in `nsh/base`. Appearance comes from the theme. The file you import, or copy, is a styled shell. The same source is published two ways, and neither way adds a third-party runtime dependency.
+
+## Layers [#layers]
+
+| Layer                       | Owns                                                                                                                            | You read it as                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `nsh/base`                  | Behavior, keyboard navigation, focus, dismissal, accessibility                                                                  | The unstyled props. This library does not change them.                 |
+| Theme, layer 1              | Tokens: both appearances, the three radii, fonts, `scrim` / `media` / `on-media`                                                | `theme.json`, compiled from the spec                                   |
+| Theme, layer 2              | `ThemeSpec`: surfaces, controls, metrics, elevation, feedback, motion                                                           | `defineTheme()` in `themes/<id>/index.ts`                              |
+| Theme, layer 3              | Native materials (`glass`, `acrylic`, `blur`) and WGSL effects (`liquid-glass`, `acrylic-noise`, `specular-rim`, `paper-grain`) | Fields on a surface. A material or an effect is replaced as a whole.   |
+| Component shells and `lib/` | The JSX you compose, and the helpers more than one component shares                                                             | `shadcn-nsh/<name>`, or `components/ui/<name>` after the CLI copies it |
+
+`nativeTheme()` picks a built-in theme from `platform.os`: Apple on iOS and macOS, Material on Android, WinUI 3 on Windows, and NSH Gallery everywhere else. `defineTheme({ extends })` derives a theme from one that already exists. [Customizing](./customizing) is the working example. [Theme specification](./theme) is the contract. [Themes](./themes) is each built-in theme's own spec.
+
+A built-in theme distills a design system's colors, radii, surfaces, and motion. It does not clone that system's widgets one to one.
+
+## What a component file looks like [#what-a-component-file-looks-like]
+
+One component is one file. The public part is the top of the file. The private part is the bottom.
+
+1. A one-line purpose, then imports.
+2. **Public types.** `Variant`, `Size`, and `Props`. A control built on `nsh/base` starts from that control's props and adds its own axes.
+3. **Public shell.** The JSX. The root passes `class`, `classList`, and `style` through. The caller's `class` is applied after the shell's own class (`joinClass`). Style props are arrays, and the caller's style is last, so it wins.
+4. **Private look.** Unexported `*Look` helpers, sizes, and geometry live at the bottom. When a component adapts to the terminal, that code sits in a `// Terminal` section at the end of the file.
+
+A look that more than one component uses stays exported, or lives in `lib/`: `buttonLook` and `iconButtonLook` from the button file, `pressableLook` from the pressable file, `fieldLook` from `lib/ui/field-look.ts`, and `choiceLook` from `lib/ui/choice.tsx`. A look only that file uses is not exported.
+
+```tsx
+export type ButtonProps = { variant?: "default" | "secondary" };
+
+// Public shell. The caller's class and style come last.
+export function Button(props: ButtonProps) {
+  const look = buttonLook(() => props.variant);
+  return (
+    <BaseButton
+      {...look}
+      class={joinClass(look.class, props.class)}
+      style={[look.style, props.style]}
+    />
+  );
+}
+
+// Private look. Read the theme here, in the getter, not once at module scope.
+function quietFace() {
+  return { backgroundColor: colors.muted };
+}
+
+// Terminal
+// platform.idiom === "terminal": one row high, one column of padding.
+```
+
+The sketch is the shape of the file, not a copy of `button.tsx`. `buttonLook` is a real shared export. Keyboard, focus, and dismissal stay in `nsh/base`.
+
+## Appearance follows the theme, live [#appearance-follows-the-theme-live]
+
+Read a color, a surface, or a control slot in JSX or in a getter: `colors.primary`, `surface("card")`, `control("button")`. `selectTheme()` and the light/dark switch then update the next render.
+
+Do not copy a theme value into a module-level constant, or into a `const` in the component body. That read happens once and stays on the theme that was active then.
+
+The same shell serves pointer, touch, and terminal. Heights, icons, padding, and hit targets come from the theme's `pointer` and `touch` tiers. In the terminal, row and column sizes come from the theme's terminal metrics. Keep content inside the safe area with `env(safe-area-inset-*)` on padding and margin. Read `safeArea()` only when the layout has to do arithmetic with the inset.
+
+## One source, two installs [#one-source-two-installs]
+
+|                 | TSX `nshm`                                                                         | Copy-into-app CLI                                                                         |
+| --------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Install         | `nsh add github:aningdev/shadcn-nsh`                                               | `npx shadcn-nsh@latest init`, then `add <name>`                                           |
+| What you import | `shadcn-nsh/<name>`, `shadcn-nsh/theme`, `shadcn-nsh/themes/<id>`                  | `@/components/ui/<name>` after the copy                                                   |
+| npm             | None                                                                               | None for the components. An icon from `lucide` is the app's own dependency.               |
+| Editing         | Use the module as shipped. Change appearance with `defineTheme` and `selectTheme`. | The files are yours. `diff` shows the drift. `add <name> --overwrite` replaces your copy. |
+
+The root `nsh.json` lists the exports: the component barrel, the theme runtime, each built-in theme, and every component. `public/r` is the registry the CLI copies from. Both are built from `packages/ui` and `packages/theme`.
+
+Icons are part of that source. `lib/ui/icons.tsx` ships 39 UI icons with the same `IconNode` shape as lucide, so a component does not need the `lucide` package at run time. An app can still pass a lucide icon into any prop that takes an `IconNode`. See [Icons](./icons).
+
+## Where to go next [#where-to-go-next]
+
+- [Getting started](./getting-started) installs either way.
+- [CLI](./cli) is every command and flag.
+- [Themes](./themes) is each built-in theme.
+- [Customizing](./customizing) derives a theme and edits a copied component.
+
 # CLI (/dev/docs/cli)
 
 `shadcn-nsh@latest` copies registry items into an existing NSH app. The component pages use `npx shadcn-nsh@latest add <name>`; this page is the command reference.
@@ -59,7 +142,7 @@ A file the app lacks is written, one identical to the registry's is skipped, and
 
 The packages the items import (`lucide`) are installed with the app's own package manager, unless its `package.json` already declares them at a version in range: an exact `"lucide": "1.66.0"` is left as written.
 
-Naming a theme (`add theme-shadcn`) installs **one more**: `lib/ui/themes/shadcn.ts`, a theme the app can switch to while it runs (`selectTheme`) — one sparse module `defineTheme()` resolves over the theme it extends, so it states only what it changes. It writes nothing over the app's build-time theme, and `nsh-ui.json` stays as it is; that theme is `init --theme <name> --overwrite`.
+Naming a theme (`add theme-shadcn`) installs **one more**: `themes/shadcn.ts`, plus `themes/shadcn/theme.json` and `DESIGN.md`. The app switches to it with `selectTheme`. The module is a sparse `defineTheme()` delta, so it states only what it changes. It writes nothing over the app's build-time theme, and `nsh-ui.json` stays as it is; that theme is `init --theme <name> --overwrite`.
 
 ## list [#list]
 
@@ -364,12 +447,12 @@ AlertDialog
 
 `AlertDialog` asks one question and waits for the answer; `Dialog` is the app's own card.
 
-|                            | `AlertDialog`               | `Dialog`                                  |
-| -------------------------- | --------------------------- | ----------------------------------------- |
-| Who draws it               | the platform                | the app, with `dialogCard` and `backdrop` |
-| What it holds              | a title, a message, buttons | any content (fields, lists, pictures)     |
-| Does it follow the theme   | no                          | yes                                       |
-| Escape, backdrop and swipe | off (`closeOn*` props)      | on                                        |
+|                            | `AlertDialog`               | `Dialog`                              |
+| -------------------------- | --------------------------- | ------------------------------------- |
+| Who draws it               | the platform                | the app, with its card and `backdrop` |
+| What it holds              | a title, a message, buttons | any content (fields, lists, pictures) |
+| Does it follow the theme   | no                          | yes                                   |
+| Escape, backdrop and swipe | off (`closeOn*` props)      | on                                    |
 
 Use `Dialog` when the box needs content of the app's own or the app's look; use `AlertDialog` when
 it is a yes/no question the system should ask.
@@ -645,11 +728,11 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Ale
 `style` goes over the look's on each. The root is `role="alert"`, so a notice is read out when it
 appears.
 
-| Part               | Props                                                         | Description                                                                                          |
-| ------------------ | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `Alert`            | `variant`: `"default" \| "destructive"` (default `"default"`) | The notice's surface: `alertLook().root()`.                                                          |
-| `AlertTitle`       | —                                                             | The title, a `Text` in `alertLook().title(variant)`.                                                 |
-| `AlertDescription` | —                                                             | The note: `alertLook().descriptionFrame()`, its string child `alertLook().descriptionText(variant)`. |
+| Part               | Props                                                         | Description                                                                |
+| ------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `Alert`            | `variant`: `"default" \| "destructive"` (default `"default"`) | The notice's surface: the card, a hairline edge, the icon beside the text. |
+| `AlertTitle`       | —                                                             | The title, one line, in the notice's ink.                                  |
+| `AlertDescription` | —                                                             | The note under the title, or beside the icon when there is no title.       |
 
 | Prop      | Type                         | Default   |
 | --------- | ---------------------------- | --------- |
@@ -657,8 +740,7 @@ appears.
 
 The surface is the card's, with one hairline edge and the theme's inset corners, padded 16 by 12;
 the icon's column is as wide as the icon, the text's takes the rest, a gap of 12 between them.
-`alertLook()` is exported for a notice the app draws itself, and `ALERT_ICON` is the size its icon
-is drawn at.
+`ALERT_ICON` is the size its icon is drawn at.
 
 # Aspect ratio (/dev/docs/components/aspect-ratio)
 
@@ -735,7 +817,7 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style
 
 The box is as wide as its column (`width: "100%"`) and its height is that width over the ratio; its
 content is clipped to it (`overflow: "hidden"`), so a picture fills the box rather than spilling out
-of it. `aspectRatioLook(ratio)` is exported for a box an app draws itself.
+of it.
 
 # Attachment (/dev/docs/components/attachment)
 
@@ -908,13 +990,13 @@ truncated.
 
 | Part                    | Props                          | Description                                                                                            |
 | ----------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `Attachment`            | `state`, `size`, `orientation` | The frame that carries one file: `attachmentLook().root(state, size, orientation)`.                    |
-| `AttachmentGroup`       | —                              | A row 12 points apart that scrolls sideways when the files do not fit: `.group`, `.groupContent`.      |
-| `AttachmentMedia`       | `variant`                      | The file's icon or picture: `attachmentLook().media(size, orientation, variant, state)`.               |
-| `AttachmentContent`     | —                              | The text beside the media: `attachmentLook().content(orientation)`.                                    |
-| `AttachmentTitle`       | —                              | The file's name, one line, truncated: `attachmentLook().title(size)`.                                  |
-| `AttachmentDescription` | —                              | How the file is doing, one line: `attachmentLook().description(state)`.                                |
-| `AttachmentActions`     | —                              | What can be done to it: `attachmentLook().actions(orientation)`.                                       |
+| `Attachment`            | `state`, `size`, `orientation` | The frame that carries one file, in the card's fill, as wide as it holds.                              |
+| `AttachmentGroup`       | —                              | A row 12 points apart that scrolls sideways when the files do not fit.                                 |
+| `AttachmentMedia`       | `variant`                      | The file's icon or picture, a square of the muted fill.                                                |
+| `AttachmentContent`     | —                              | The text beside the media, a column that takes the room left.                                          |
+| `AttachmentTitle`       | —                              | The file's name, one line, truncated.                                                                  |
+| `AttachmentDescription` | —                              | How the file is doing, one line, in the muted ink (the danger tone on a failure).                      |
+| `AttachmentActions`     | —                              | What can be done to it: beside the text, or in the corner of a vertical attachment.                    |
 | `AttachmentTrigger`     | —                              | A pressable over the whole frame: press it to open the file.                                           |
 | `AttachmentAction`      | —                              | An action on the file, this library's `Button` ghost and small: `buttonLook("ghost", { size: "sm" })`. |
 
@@ -929,8 +1011,7 @@ The frame is as wide as what it holds (`default` 160 points wide at least, 120 w
 the card's fill with a hairline edge and the card's corners (`inset`'s at `xs`), 10 / 8 / 6 points
 in from its edge and 8 / 6 / 4 above and below; the title is medium in the page's ink and the
 description the note's size in the muted ink. The frame always pads as if it holds text, so a
-media on its own sits in that padding. `attachmentLook()` and
-`attachmentGlyph(size, orientation)` are exported for a frame an app draws itself.
+media on its own sits in that padding. `attachmentGlyph(size, orientation)` is exported for a glyph an app draws itself.
 
 # Avatar (/dev/docs/components/avatar)
 
@@ -1022,7 +1103,7 @@ A picture that fails to load leaves the initials on the ring, as a gone picture 
 
 ## API [#api]
 
-Uses `avatarIdentity` and `avatarHue`. Every prop of [`nsh/base` Avatar](https://nsh.dev/elements/avatar) passes through on `Avatar`, and every prop of [`nsh/base` AvatarGroup](https://nsh.dev/elements/avatar) on `AvatarGroup` (`limit`, `total`, `overflow`, `overflowAccessibilityLabel`).
+Uses `avatarIdentity` for a named fallback's colors. Every prop of [`nsh/base` Avatar](https://nsh.dev/elements/avatar) passes through on `Avatar`, and every prop of [`nsh/base` AvatarGroup](https://nsh.dev/elements/avatar) on `AvatarGroup` (`limit`, `total`, `overflow`, `overflowAccessibilityLabel`).
 
 | Part               | Props                        | Description                                                                |
 | ------------------ | ---------------------------- | -------------------------------------------------------------------------- |
@@ -1089,7 +1170,7 @@ import { Badge } from "@/components/ui/badge";
 
 ## API [#api]
 
-Gallery atom: no `nsh/base` counterpart. The children are the label, and the axes take the vocabulary of [`api-unify.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/api-unify.md).
+Gallery atom: no `nsh/base` counterpart. The children are the label, and the variant/tone/size axes follow the library's unified component conventions.
 
 | Part    | Props                                                                                                                                                                                                    | Description                                                  |
 | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -1097,7 +1178,7 @@ Gallery atom: no `nsh/base` counterpart. The children are the label, and the axe
 
 The view props (`style`, `class`, `testID`, `role`, the accessibility ones) are spread on the capsule after the badge's own, so an app can name it to a screen reader or take it out of the layout without a wrapper.
 
-`BadgeVariant` is `"default" | "outline"`: the two the capsule's look has. `BadgeSize` is `"sm" | "default"`, and `badgeSizes` is the table: `height`, `font` and `pad`, by size.
+`BadgeVariant` is `"default" | "outline"`: the two the capsule's look has. `BadgeSize` is `"sm" | "default"`: 18 points tall, or 20.
 
 # Breadcrumb (/dev/docs/components/breadcrumb)
 
@@ -1400,13 +1481,13 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Bub
 [`nsh` Text](https://nsh.dev/elements/text), and `BubbleContent` draws a string child as a
 `BubbleText`. Style props go over the look's.
 
-| Part              | Props              | Description                                                                                                                           |
-| ----------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `BubbleGroup`     | —                  | Consecutive bubbles from one sender, 8 points apart: `bubbleLook().group`.                                                            |
-| `Bubble`          | `variant`, `align` | One turn's frame, as wide as what it holds up to 80% of its column: `.root(variant, align)`.                                          |
-| `BubbleContent`   | `children`         | The frame and the turn, a string drawn as `BubbleText`: `bubbleLook().content(variant)`.                                              |
-| `BubbleText`      | —                  | A paragraph in the turn's type and the variant's ink: `bubbleLook().text(variant)`.                                                   |
-| `BubbleReactions` | `side`, `align`    | The pill hung three quarters of its height off the bubble's edge: `.reactions(side, align)`; the bubble keeps `.reactionsRoom(side)`. |
+| Part              | Props              | Description                                                                                                |
+| ----------------- | ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `BubbleGroup`     | —                  | Consecutive bubbles from one sender, 8 points apart.                                                       |
+| `Bubble`          | `variant`, `align` | One turn's frame, as wide as what it holds up to 80% of its column.                                        |
+| `BubbleContent`   | `children`         | The frame and the turn, a string drawn as `BubbleText`.                                                    |
+| `BubbleText`      | —                  | A paragraph in the turn's type and the variant's ink.                                                      |
+| `BubbleReactions` | `side`, `align`    | The pill hung three quarters of its height off the bubble's edge; the bubble keeps that room on that side. |
 
 | Prop       | On                | Type                                                                                       | Default   |
 | ---------- | ----------------- | ------------------------------------------------------------------------------------------ | --------- |
@@ -1421,8 +1502,7 @@ The frame is `shape.container` (12 points) with 12 points of room either side an
 the turn's type is the body's size (13 points with a pointer, 15 on a touch screen) with a step of
 leading, in the ink the fill carries — `primary-foreground` on `default`, the page's text color on
 the neutral fills, `destructive` on `destructive`. Reactions are 6 points either side, 3 above and
-below, 4 apart, ringed 3 points in the card's color. `bubbleLook()` is exported for a frame an app
-draws itself.
+below, 4 apart, ringed 3 points in the card's color.
 
 # Button group (/dev/docs/components/button-group)
 
@@ -1435,18 +1515,18 @@ npx shadcn-nsh@latest add button-group
 ## Usage [#usage]
 
 ```tsx
-import { ButtonGroup, buttonGroupLook } from "@/components/ui/button-group";
+import { ButtonGroup, buttonGroupItem } from "@/components/ui/button-group";
 ```
 
 ```tsx
 <ButtonGroup>
-  <Button variant="outline" style={buttonGroupLook().item("horizontal", "first")}>
+  <Button variant="outline" style={buttonGroupItem("first")}>
     Back
   </Button>
-  <Button variant="outline" style={buttonGroupLook().item("horizontal", "middle")}>
+  <Button variant="outline" style={buttonGroupItem("middle")}>
     Archive
   </Button>
-  <Button variant="outline" style={buttonGroupLook().item("horizontal", "last")}>
+  <Button variant="outline" style={buttonGroupItem("last")}>
     Next
   </Button>
 </ButtonGroup>
@@ -1467,17 +1547,18 @@ ButtonGroup
 ### The join [#the-join]
 
 A view styles itself and not its children, so each button wears its own place in the group:
-`item(orientation, position)` squares the sides that touch and keeps one edge per join (the one
+`buttonGroupItem(position)` squares the sides that touch and keeps one edge per join (the one
 before it), the outer sides keeping the corners and the edge the button came with. `first` at the
-leading edge, `last` at the trailing one, `middle` between two others. Pair `variant="outline"`
-buttons when joining bordered actions directly.
+leading edge, `last` at the trailing one, `middle` between two others. The orientation is the
+group's, so a row does not pass it. Pair `variant="outline"` buttons when joining bordered
+actions directly.
 
 ```tsx
 <ButtonGroup>
-  <Button variant="outline" style={buttonGroupLook().item("horizontal", "first")}>
+  <Button variant="outline" style={buttonGroupItem("first")}>
     Back
   </Button>
-  <Button variant="outline" style={buttonGroupLook().item("horizontal", "last")}>
+  <Button variant="outline" style={buttonGroupItem("last")}>
     Next
   </Button>
 </ButtonGroup>
@@ -1487,19 +1568,20 @@ The group is `role="group"`, so a reader hears the buttons as one set.
 
 ### A column [#a-column]
 
-`orientation="vertical"` stacks them: the top and bottom corners are clamped to `shape.container`
-so capsule buttons stay tidy in a column, the touching sides are squared, and one hairline is left
-between adjacent items. Shadows are dropped inside the stack so seams stay clean.
+`orientation="vertical"` stacks them. `buttonGroupItem` reads that orientation from the group:
+the top and bottom corners are clamped to `shape.container` so capsule buttons stay tidy in a
+column, the touching sides are squared, and one hairline is left between adjacent items. Shadows
+are dropped inside the stack so seams stay clean.
 
 ```tsx
 <ButtonGroup orientation="vertical">
-  <Button variant="outline" style={buttonGroupLook().item("vertical", "first")}>
+  <Button variant="outline" style={buttonGroupItem("first")}>
     Copy the path
   </Button>
-  <Button variant="outline" style={buttonGroupLook().item("vertical", "middle")}>
+  <Button variant="outline" style={buttonGroupItem("middle")}>
     Open in a new window
   </Button>
-  <Button variant="outline" style={buttonGroupLook().item("vertical", "last")}>
+  <Button variant="outline" style={buttonGroupItem("last")}>
     Reveal in the file manager
   </Button>
 </ButtonGroup>
@@ -1509,15 +1591,15 @@ between adjacent items. Shadows are dropped inside the stack so seams stay clean
 
 `ButtonGroupSeparator` puts a hairline between borderless filled buttons (`secondary` or
 `default`). The separator turns with the group — vertical down a row, horizontal across a column —
-and is hidden from screen readers.
+and is hidden from screen readers. Pass `orientation` to draw the line the other way.
 
 ```tsx
 <ButtonGroup>
-  <Button variant="secondary" style={buttonGroupLook().item("horizontal", "first")}>
+  <Button variant="secondary" style={buttonGroupItem("first")}>
     Cut
   </Button>
   <ButtonGroupSeparator />
-  <Button variant="secondary" style={buttonGroupLook().item("horizontal", "last")}>
+  <Button variant="secondary" style={buttonGroupItem("last")}>
     Copy
   </Button>
 </ButtonGroup>
@@ -1526,36 +1608,70 @@ and is hidden from screen readers.
 ### With a text addon [#with-a-text-addon]
 
 `ButtonGroupText` sits on the muted fill with the same outline edge (`button.outline.edge`) and
-height (`controlHeight.md`) as an outline button, so it joins directly with `item(...)` and shares
-one clean border.
+height (`controlHeight.md`) as an outline button, so it joins directly with `buttonGroupItem` and
+shares one clean border.
 
 ```tsx
 <ButtonGroup>
-  <ButtonGroupText style={buttonGroupLook().item("horizontal", "first")}>Path</ButtonGroupText>
-  <Button variant="outline" style={buttonGroupLook().item("horizontal", "last")}>
+  <ButtonGroupText style={buttonGroupItem("first")}>Path</ButtonGroupText>
+  <Button variant="outline" style={buttonGroupItem("last")}>
     Copy
+  </Button>
+</ButtonGroup>
+```
+
+### Split button [#split-button]
+
+A main action and the button that opens its menu are one group. Filled buttons (`default`,
+`secondary`) take a `ButtonGroupSeparator` so the seam stays a hairline on the accent face. Outline
+buttons join on their own edge, the same way shadcn's dropdown split does.
+
+```tsx
+<ButtonGroup>
+  <Button variant="default" style={buttonGroupItem("first")}>
+    Save
+  </Button>
+  <ButtonGroupSeparator />
+  <Button variant="default" accessibilityLabel="More save options" style={buttonGroupItem("last")}>
+    <Icon icon={ChevronDown} {...buttonGlyph("default")} />
+  </Button>
+</ButtonGroup>
+```
+
+```tsx
+<ButtonGroup>
+  <Button variant="outline" style={buttonGroupItem("first")}>
+    Follow
+  </Button>
+  <Button
+    variant="outline"
+    accessibilityLabel="More follow options"
+    style={buttonGroupItem("last")}
+  >
+    <Icon icon={ChevronDown} {...buttonGlyph("outline")} />
   </Button>
 </ButtonGroup>
 ```
 
 ## API [#api]
 
-Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all three parts;
-`style` goes over the look's on each.
+Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all three parts,
+including `class` and `classList`. `style` goes over the part's own.
 
-| Part                   | Props                                                                | Description                                                                                                  |
-| ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `ButtonGroup`          | `orientation`: `"horizontal" \| "vertical"` (default `"horizontal"`) | Buttons joined into one control, in a row or a column: `buttonGroupLook().root(orientation)`.                |
-| `ButtonGroupText`      | —                                                                    | A word inside the group on the muted fill, joined as a button would be joined: `.textFrame()` and `.text()`. |
-| `ButtonGroupSeparator` | —                                                                    | The separator's own hairline (`.separator()`), turned to the group's orientation; hidden from a reader.      |
+| Part                   | Props                                                                | Description                                                                                        |
+| ---------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `ButtonGroup`          | `orientation`: `"horizontal" \| "vertical"` (default `"horizontal"`) | Buttons joined into one control, in a row or a column.                                             |
+| `ButtonGroupText`      | —                                                                    | A word inside the group on the muted fill, joined with `buttonGroupItem`.                          |
+| `ButtonGroupSeparator` | `orientation`: `"horizontal" \| "vertical"`                          | A hairline. Unset, perpendicular to the group (down a row, across a column). Hidden from a reader. |
 
-| Prop          | Type                         | Default      |
-| ------------- | ---------------------------- | ------------ |
-| `orientation` | `"horizontal" \| "vertical"` | `horizontal` |
+| Prop          | Type                         | Default                                                   |
+| ------------- | ---------------------------- | --------------------------------------------------------- |
+| `orientation` | `"horizontal" \| "vertical"` | `horizontal` on the group; perpendicular on the separator |
 
-`buttonGroupLook()` is exported for a group the app lays out itself: `root(orientation)` the group,
-`item(orientation, position)` the join each button wears, `textFrame()` and `text()` the word's box
-and its type, and `separator()` the divider's hairline.
+`buttonGroupItem(position, orientation?)` is the join each button or text addon wears.
+`position` is `"first"`, `"middle"`, or `"last"`. Leave `orientation` unset inside a
+`ButtonGroup` and it follows the group; pass it when the control is joined outside one.
+A column clamps its outer corners to `shape.container` and drops the stack's shadow.
 
 # Button (/dev/docs/components/button)
 
@@ -1577,6 +1693,8 @@ The examples draw icons with `Icon` from `lib/ui/icons`; see [Icons](../icons) f
 ```tsx
 <Button onPress={save}>Save</Button>
 ```
+
+A main action and the menu of its variants, in one control, is a [Button group](./button-group) used as a split button.
 
 ## Examples [#examples]
 
@@ -1666,8 +1784,7 @@ chosen.
 
 `icon` draws a lucide node in the look's size and tint: the chosen surface's ink while selected, the danger tone as
 `destructive`; in the terminal, which draws no icons, the `accessibilityLabel` is its text. For an
-icon of your own, pass it as `children` and spread `iconButtonGlyph` on it. `iconButtonSizes` is the
-table, for geometry that has to match a square. A ghost icon button keeps the scale's metrics (28
+icon of your own, pass it as `children` and spread `iconButtonGlyph` on it. A ghost icon button keeps the scale's metrics (28
 points with 12 of padding at `default`, 32 and 16 at `lg`), so a bare square is `IconButton` with
 `size="xs"`; a bare text button — a Dock header's Hide — is `size="sm"`; there is no separate bare
 variant.
@@ -1693,20 +1810,6 @@ A tool in a rich text toolbar, at upstream's 32 pt:
 </RoundButton>
 ```
 
-### Split button [#split-button]
-
-A main action and a menu half in one silhouette.
-
-```tsx
-<SplitButton variant="default">
-  <SplitButtonSegment onPress={save}>Save</SplitButtonSegment>
-  <SplitButtonDivider />
-  <SplitButtonSegment accessibilityLabel="More" onPress={openMenu}>
-    <Icon icon={ChevronDown} {...buttonGlyph("default")} />
-  </SplitButtonSegment>
-</SplitButton>
-```
-
 ### The look alone [#the-look-alone]
 
 The look is a function, for a pressable of your own.
@@ -1725,14 +1828,11 @@ it: the padding is the look's own.
 
 ## API [#api]
 
-| Part                 | Props                                                                       | Description                                                                     |
-| -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `Button`             | `variant`, `size`, `icon`, `busy`, `accessibilityLabel`, `children`         | A press that acts; a string child is the label and its name for screen readers. |
-| `IconButton`         | `variant`, `size`, `icon`, `accessibilityLabel`, `children`                 | A square icon-only button; it will not compile without an `accessibilityLabel`. |
-| `RoundButton`        | `variant`, `size`, `side`, `icon`, `accessibilityLabel`, `children`         | A round icon-only button; `side` is an exact diameter where the scale is off.   |
-| `SplitButton`        | `variant`, `size`                                                           | A main action and a menu half in one silhouette.                                |
-| `SplitButtonSegment` | every [`nsh/base` Button](https://nsh.dev/elements/button) prop; `children` | One half; a string child is the label and its name for screen readers.          |
-| `SplitButtonDivider` | `style`                                                                     | The hairline between the main action and the menu half.                         |
+| Part          | Props                                                               | Description                                                                     |
+| ------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `Button`      | `variant`, `size`, `icon`, `busy`, `accessibilityLabel`, `children` | A press that acts; a string child is the label and its name for screen readers. |
+| `IconButton`  | `variant`, `size`, `icon`, `accessibilityLabel`, `children`         | A square icon-only button; it will not compile without an `accessibilityLabel`. |
+| `RoundButton` | `variant`, `size`, `side`, `icon`, `accessibilityLabel`, `children` | A round icon-only button; `side` is an exact diameter where the scale is off.   |
 
 ### Button [#button]
 
@@ -1757,8 +1857,7 @@ Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes throug
 | `accessibilityLabel` | `string` (required: an icon names nothing)             |
 | `children`           | `JSX.Element`                                          |             |
 
-`selected` (a base prop) shows it as chosen. `iconButtonSizes` is the table: `side`, the square's
-side in points, and `glyph`, the icon's size.
+`selected` (a base prop) shows it as chosen. The square is 20 / 24 / 28 / 32 points across with a pointer (32 / 36 / 40 / 44 on a touch screen), and the icon grows with it.
 
 ### RoundButton [#roundbutton]
 
@@ -1770,15 +1869,6 @@ side in points, and `glyph`, the icon's size.
 | `icon`               | `IconNode` (lucide)                        |             |
 | `accessibilityLabel` | `string` (required: an icon names nothing) |
 | `children`           | `JSX.Element`                              |             |
-
-### SplitButton [#splitbutton]
-
-| Prop      | Type                                                                | Default     |
-| --------- | ------------------------------------------------------------------- | ----------- |
-| `variant` | `"default" \| "secondary" \| "outline" \| "ghost" \| "destructive"` | `"default"` |
-| `size`    | `"sm" \| "default" \| "lg"`                                         | `"default"` |
-
-`SplitButtonSegment` takes every prop of [`nsh/base` Button](https://nsh.dev/elements/button); a string child is the label, and its name for screen readers.
 
 # Calendar (/dev/docs/components/calendar)
 
@@ -1954,23 +2044,22 @@ squeezing both.
 
 ## API [#api]
 
-Each part is the `nsh` element it is drawn with, wearing the look `cardLook()` gives it. Every
-view prop passes through; `style` goes over the look's.
+Each part is the `nsh` element it is drawn with. Every view prop passes through; `style` goes over
+the part's own.
 
-| Part              | Props   | Description                                                                             |
-| ----------------- | ------- | --------------------------------------------------------------------------------------- |
-| `Card`            | —       | The flat surface holding related content: `cardLook().card`.                            |
-| `CardHeader`      | —       | Title over description in the first column, the action at the trailing edge: `.header`. |
-| `CardTitle`       | —       | A step larger than body, semibold, the text colour: `.title`.                           |
-| `CardDescription` | —       | Body size in the muted colour: `.description`.                                          |
-| `CardAction`      | —       | The control at the trailing edge, beside title and description: `.action`.              |
-| `CardContent`     | `flush` | What the card is about. `flush` meets the card's side and bottom edges: `.content`.     |
-| `CardFooter`      | —       | A wrapping row, centred, 8 apart: `.footer`.                                            |
+| Part              | Props   | Description                                                                  |
+| ----------------- | ------- | ---------------------------------------------------------------------------- |
+| `Card`            | —       | The flat surface holding related content.                                    |
+| `CardHeader`      | —       | Title over description in the first column, the action at the trailing edge. |
+| `CardTitle`       | —       | A step larger than body, semibold, the text colour.                          |
+| `CardDescription` | —       | Body size in the muted colour.                                               |
+| `CardAction`      | —       | The control at the trailing edge, beside title and description.              |
+| `CardContent`     | `flush` | What the card is about. `flush` meets the card's side and bottom edges.      |
+| `CardFooter`      | —       | A wrapping row, centred, 8 apart.                                            |
 
 `CardTitle` and `CardDescription` are `Text`, so they take text props (`numberOfLines`, `role`).
 `CardHeader` is a grid of two columns: the title over the description in the first and the action
 at the trailing edge of the first row, whichever order the three are written in.
-`cardLook()` is exported for a card the app draws itself.
 
 # Carousel (/dev/docs/components/carousel)
 
@@ -2230,21 +2319,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 </Checkbox>
 ```
 
-### The look alone [#the-look-alone]
-
-The look is a function, for a checkbox of your own.
-
-```tsx
-<Checkbox
-  class="group"
-  checked={on()}
-  {...checkboxLook()}
-  indicator={<CheckboxMark mark={on() ? "check" : null} />}
->
-  Photos
-</Checkbox>
-```
-
 ### Names for screen readers [#names-for-screen-readers]
 
 A string child is the row's label and its name for screen readers, so the box and its text are one control to a reader; `accessibilityLabel` wins when it should differ. Children drawn as given are named by the texts inside them.
@@ -2258,7 +2332,7 @@ Every prop of [`nsh/base` Checkbox](https://nsh.dev/elements/checkbox) passes th
 | `Checkbox`     | `size`: `ChoiceSize` (default `"default"`), `round` (default `false`), `children`: `string \| JSX.Element` | The box of the theme's choice recipe, filling as it is checked; the row is the group it sinks with. |
 | `CheckboxMark` | `mark`: `"check" \| "dash" \| null`, `scale`, `round`                                                      | The check or the dash that springs in, drawn into the look's `indicator`.                           |
 
-`ChoiceSize` is `"sm" | "default" | "lg"`: 0.8, 1 or 1.25 times the page's control size, shared with `Radio` (`choiceScales` is the table).
+`ChoiceSize` is `"sm" | "default" | "lg"`: 0.8, 1 or 1.25 times the page's control size, shared with `Radio`. The table is `choiceScales` in `lib/choice`.
 
 # CodeBlock (/dev/docs/components/code-block)
 
@@ -2731,8 +2805,7 @@ import {
 `ColorPanel` lays out the area, the sliders, the fields and the swatches. It has to sit
 inside [`nsh/base`'s `ColorPicker`](https://nsh.dev/elements/color-picker): the panel's
 parts look their picker up from that root, and outside it they log
-`` `<part>` is outside a `ColorPicker`: its color goes nowhere `` and take no input
-(`references/nsh/crates/nsh-base/src/color_picker/mod.rs:59`).
+`` `<part>` is outside a `ColorPicker`: its color goes nowhere `` and take no input.
 
 ```tsx
 <ColorPicker value={fill()} onChange={({ value }) => fill.set(value)}>
@@ -2772,7 +2845,7 @@ parts look their picker up from that root, and outside it they log
 
 ## API [#api]
 
-Look helpers: `colorAreaLook`, `colorSliderLook`, `colorChecker`, `ColorFields`, `ColorTrigger`, `ColorSwatches`, `ColorCopy`, `ColorDropper`, `colorFormats`. Behavior stays in [`nsh/base` ColorPicker](https://nsh.dev/elements/color-picker) parts.
+Look helpers: `colorAreaLook`, `colorSliderLook`, `formatColor`, `inkOn`. Parts: `ColorFields`, `ColorTrigger`, `ColorSwatches`, `ColorCopy`, `ColorDropper`. Behavior stays in [`nsh/base` ColorPicker](https://nsh.dev/elements/color-picker) parts.
 
 | Part            | Props                                                                                    | Description                                                         |
 | --------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -2934,7 +3007,7 @@ chevron with no text of its own).
 
 ## API [#api]
 
-The root owns the open flag and the chosen values; `ComboboxContent` mounts [`nsh/base` Combobox](https://nsh.dev/elements/combobox) and every base prop passes through except those. `comboboxLook`, `listboxProps` and `OptionRow` fill the field, the popup and the rows by default.
+The root owns the open flag and the chosen values; `ComboboxContent` mounts [`nsh/base` Combobox](https://nsh.dev/elements/combobox) and every base prop passes through except those. The combobox look, `listboxProps` and `OptionRow` fill the field, the popup and the rows by default.
 
 | Part              | Props                                                                                                                                                                                                               | Description                                                                                                                            |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -2996,10 +3069,9 @@ const items: CommandItem[] = [
 ### Search [#search]
 
 The field filters the rows as you type. The shell sets the search bar's row and the field's text
-and placeholder color inline (`commandSearchBarStyle`, `commandSearchStyle`), over
-`commandClasses`, so an icon in `searchPrefix` stays beside the field and the placeholder stays
-the muted foreground — including when `searchable` turns the bar on after the palette has mounted.
-A caller's `searchBarStyle` and `searchStyle` win over those.
+and placeholder color inline, over `commandClasses`, so an icon in `searchPrefix` stays beside the
+field and the placeholder stays the muted foreground — including when `searchable` turns the bar on
+after the palette has mounted. A caller's `searchBarStyle` and `searchStyle` win over those.
 
 ```tsx
 <Command
@@ -3180,35 +3252,6 @@ Row and popup looks come from Menu. Items, separators, labels and submenus are r
 | `ContextMenuTrigger` | `children`, `style`                                                                                                                                      | Secondary click or long press; wraps its children, in a `View` when it takes a `style` |
 | `ContextMenuContent` | every `nsh/base` ContextMenu prop but open state, `disabled`, `trigger` and the lifecycle callbacks; `offset` (default 4), `popupStyle`, `backdropStyle` | The popup or sheet                                                                     |
 | `ContextMenuItem` …  | as the Menu counterparts                                                                                                                                 | Rows, labels, separators and submenus                                                  |
-
-# Coverage (/dev/docs/components/coverage)
-
-Two official sets are worth answering for: the
-
-<a href="https://ui.shadcn.com/docs/components">shadcn/ui components</a>, whose parts and API names
-this library follows, and the <a href="https://nsh.dev/elements">NSH elements</a> it is built on.
-Each table lists every component of theirs and where it went here: a page under another name counts,
-and a row with no page says why there is none.
-
-This page is generated from `apps/website/src/lib/official.ts`; do not edit it. Add a component there,
-then run `bun run docs:components`. Its NSH rows are also what makes a page _Official_ on 
-
-<a href="/docs/components">Components</a>: a page named in one of them is aligned with an NSH
-element, and a page named in none is this library's own. `bun run check:pages` fails when an
-official component has no row, when a row names a page that does not exist, and when a row serves
-nothing without saying why.
-
-## shadcn/ui [#shadcnui]
-
-<CoverageTable group="shadcn" />
-
-## NSH base [#nsh-base]
-
-<CoverageTable group="base" />
-
-## NSH primitives [#nsh-primitives]
-
-<CoverageTable group="primitives" />
 
 # DataTable (/dev/docs/components/data-table)
 
@@ -3423,7 +3466,7 @@ Without a value the trigger shows `placeholder` (default "Pick a date") muted.
 `testID` finds the trigger in UI tests, and `accessibilityLabel` names it when the
 content does not name the field. The root owns the open flag and the value;
 `DatePickerContent` mounts [`nsh/base` DatePicker](https://nsh.dev/elements/date-picker)
-and every base prop passes through except those. `datePickerLook` fills the popup, the scrim, the calendar and the time's row by default.
+and every base prop passes through except those. The date picker's look fills the popup, the scrim, the calendar and the time's row by default.
 
 # Dialog (/dev/docs/components/dialog)
 
@@ -3573,15 +3616,15 @@ Escape, a backdrop press and a downward swipe close the dialog; turn any of them
 
 `Dialog` owns the open state. `DialogContent` mounts [`nsh/base` Dialog](https://nsh.dev/elements/dialog); every base prop passes through it, and base owns the backdrop, the popup host and Escape, back and swipe.
 
-| Part                | Props                                                                                                                                                                     | Description                                                    |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `Dialog`            | `open`, `defaultOpen`, `onOpenChange({ open, reason })`, `onOpen`, `onClose`, `onCancel`                                                                                  | Open state                                                     |
-| `DialogTrigger`     | `children`, `variant`, `disabled`, `style`                                                                                                                                | What opens the dialog                                          |
-| `DialogContent`     | `width`, `scroll`, every `nsh/base` Dialog prop (`presentation`); `style` over `dialogCard` (or `dialogPage` when the system presents it), `backdropStyle` over the scrim | The card                                                       |
-| `DialogTitle`       | `children`; a string takes `dialogTitle`                                                                                                                                  | The card's title                                               |
-| `DialogDescription` | `children`; a string takes `dialogText`                                                                                                                                   | The muted line under the title                                 |
-| `DialogFooter`      | `children`, `style`                                                                                                                                                       | The row of actions at the card's end, under the scrolling body |
-| `DialogClose`       | As `DialogTrigger`, plus `onPress` before it closes                                                                                                                       | What closes the dialog                                         |
+| Part                | Props                                                                                                                                                                 | Description                                                    |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `Dialog`            | `open`, `defaultOpen`, `onOpenChange({ open, reason })`, `onOpen`, `onClose`, `onCancel`                                                                              | Open state                                                     |
+| `DialogTrigger`     | `children`, `variant`, `disabled`, `style`                                                                                                                            | What opens the dialog                                          |
+| `DialogContent`     | `width`, `scroll`, every `nsh/base` Dialog prop (`presentation`); `style` over the card (or `dialogPage` when the system presents it), `backdropStyle` over the scrim | The card                                                       |
+| `DialogTitle`       | `children`; a string takes `dialogTitle`                                                                                                                              | The card's title                                               |
+| `DialogDescription` | `children`; a string takes `dialogText`                                                                                                                               | The muted line under the title                                 |
+| `DialogFooter`      | `children`, `style`                                                                                                                                                   | The row of actions at the card's end, under the scrolling body |
+| `DialogClose`       | As `DialogTrigger`, plus `onPress` before it closes                                                                                                                   | What closes the dialog                                         |
 
 A string child of `DialogTrigger` or `DialogClose` is a `Button`; `variant` picks its look (`secondary` by default). Anything else is drawn as given.
 
@@ -3694,7 +3737,7 @@ npx shadcn-nsh@latest add dock-area
 ## Usage [#usage]
 
 ```tsx
-import { DockArea, DockTab, dockClasses } from "@/components/ui/dock-area";
+import { DockArea, DockDragPreview, DockTab, dockTabCloseClass } from "@/components/ui/dock-area";
 ```
 
 ```tsx
@@ -3723,7 +3766,7 @@ const layout: DockAreaLayout = {
 
 ### Default chrome [#default-chrome]
 
-Leave the render props out and the area uses `DockTab` and `DockDragPreview`; `dockClasses` is the chrome of every part.
+Leave the render props out and the area uses `DockTab` and `DockDragPreview`. The area's own classes are the chrome of every part, and a class you pass follows them.
 
 ```tsx
 <DockArea defaultLayout={layout} style={{ height: 240 }} />
@@ -3731,13 +3774,13 @@ Leave the render props out and the area uses `DockTab` and `DockDragPreview`; `d
 
 ## API [#api]
 
-| Part              | Props                                                                                                                   | Description                 |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| `DockArea`        | every `nsh/base` DockArea prop; `renderTab`, `renderDragPreview`, `renderEmpty` and the part classes over `dockClasses` | Tabs, splits and edge docks |
-| `DockTab`         | `title`, `active`, `testID`, `children`                                                                                 | A tab's title and underline |
-| `DockDragPreview` | `title`                                                                                                                 | A dragged tab's chip        |
+| Part              | Props                                                                                                                               | Description                 |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| `DockArea`        | every `nsh/base` DockArea prop; `renderTab`, `renderDragPreview`, `renderEmpty` and the part classes, the caller's after the area's | Tabs, splits and edge docks |
+| `DockTab`         | `title`, `active`, `testID`, `children`                                                                                             | A tab's title and underline |
+| `DockDragPreview` | `title`                                                                                                                             | A dragged tab's chip        |
 
-`DockArea` spreads `dockClasses` and default tab/panel renderers. Every prop of [`nsh/base` DockArea](https://nsh.dev/elements/dock) passes through, and so do the types those props, its ref and its callbacks name — a call site reads them from this file, not from `nsh/base`: `DockAreaProps`, `DockAreaRef`, `DockAreaLayout`, `DockRegion`, `DockNode`, `DockPlacement`, `DockPanel`, `DockPanelOptions`, `DockTarget`, `DockDropIndicator` and `DockInfo`.
+`DockArea` applies its chrome classes and default tab, preview and empty renderers. Every prop of [`nsh/base` DockArea](https://nsh.dev/elements/dock) passes through, and so do the types those props, its ref and its callbacks name — a call site reads them from this file, not from `nsh/base`: `DockAreaProps`, `DockAreaRef`, `DockAreaLayout`, `DockRegion`, `DockNode`, `DockPlacement`, `DockPanel`, `DockPanelOptions`, `DockTarget`, `DockDropIndicator` and `DockInfo`.
 
 `groupClass` is applied after the look's `flex-1 bg-muted`. A later background utility replaces the fill, so `groupClass="bg-card"` draws card-colored groups without `groupStyle`.
 
@@ -3818,10 +3861,9 @@ on the scrim close it too; all of them are `nsh/base`'s, and `closeOnEscape` /
 
 ### The grabber [#the-grabber]
 
-The pill at the top edge is the drawer's (`drawerGrabber`: 100 by 8 points, fully round, in the muted
-fill) and it shows on a bottom drawer only, the one it can be dragged from. `sheetGrabber` is the
-sheet's narrower pill; a drawer that should not be dragged takes `DrawerContent` without the look —
-the grabber is drawn by the component, not by the app.
+The pill at the top edge is 100 by 8 points, fully round, in the muted fill, and it shows on a
+bottom drawer only, the one it can be dragged from. A sheet's grabber is the narrower pill. The
+grabber is drawn by the component, not by the app.
 
 ### Another edge [#another-edge]
 
@@ -3887,7 +3929,7 @@ import { Editor } from "@/components/ui/editor";
 <Editor defaultValue={source} language="typescript" style={{ height: 240 }} />
 ```
 
-Every prop of [`nsh/base` Editor](https://nsh.dev/elements/editor) passes through: the text (`value` / `defaultValue`, `onChange`), the language and its highlighting, folding, soft wrap, search, the editing keys and the diagnostics. The shell adds the look (`editorClasses`) and the surface (`editorFrame()`).
+Every prop of [`nsh/base` Editor](https://nsh.dev/elements/editor) passes through: the text (`value` / `defaultValue`, `onChange`), the language and its highlighting, folding, soft wrap, search, the editing keys and the diagnostics. The shell adds the look of the editor's parts and the field's well.
 
 ## Composition [#composition]
 
@@ -3986,7 +4028,7 @@ keymap.bind("mod+f", () => finding.set(true));
 
 ### Parts [#parts]
 
-`classes` goes over `editorClasses` part by part (an app's classes come after ours; `null` drops ours), and `style` over `editorFrame()`. The font is set with `fontFamily`, `fontSize` and `lineHeight`, which the editor measures its rows in.
+`classes` goes over the shell's classes part by part (an app's classes come after the shell's; `null` drops the shell's), and `style` over the field's well. The font is set with `fontFamily`, `fontSize` and `lineHeight`, which the editor measures its rows in.
 
 ```tsx
 <Editor
@@ -4099,8 +4141,6 @@ const source = signal(SAMPLE);
 | `EditorProps`        | —                                                               | `nsh/base`'s `EditorProps`, unchanged.                                       |
 | `EditorFindBar`      | `EditorFindBarProps`                                            | The find bar: the query with its count, its modes, and replace.              |
 | `EditorFindBarProps` | —                                                               | `editor`, `search`, `onSearchChange`, `result`, `onClose`, `class`, `style`. |
-| `editorClasses`      | —                                                               | The look of the editor's parts (classes, by part).                           |
-| `editorFrame`        | —                                                               | The surface's style: the field's fill, edge and control corners.             |
 
 The session types the props name are re-exported from this file, so an app does not import them from `nsh/base`: `EditorRef`, `EditorDecoration`, `EditorDiagnostic`, `EditorPosition`, `EditorRange`, `EditorSelection`, `EditorSearchResult`, `EditorCommand`, `EditorCompletionItem`, and the rest of the editor's value types.
 
@@ -4259,8 +4299,6 @@ then a `Popover` whose trigger is a plus, with the same `EmojiPanel` inside it a
 
 `EmojiPanel` wraps [`nsh/base` EmojiPicker](https://nsh.dev/elements/emoji-picker) with gallery classes and chrome. Pass through any base picker prop via extending the shell later; today only the upstream panel props are supported.
 
-Also exports `emojiGroups`, `emojiGroupLabels` and `emojiPickerClasses` for custom layouts.
-
 # Empty (/dev/docs/components/empty)
 
 ## Installation [#installation]
@@ -4377,14 +4415,14 @@ actions, the title and the description as plain text.
 
 ## API [#api]
 
-| Part               | Props                                                               | Description                                      |
-| ------------------ | ------------------------------------------------------------------- | ------------------------------------------------ |
-| `Empty`            | every `nsh` View prop; look `emptyLook().root()`                    | A centered block that takes the room it is given |
-| `EmptyHeader`      | every `nsh` View prop; look `emptyLook().header()`                  | The media and the words under it                 |
-| `EmptyMedia`       | `variant`; every `nsh` View prop; look `emptyLook().media(variant)` | The media's box                                  |
-| `EmptyTitle`       | every `nsh` Text prop; look `emptyLook().title()`                   | The line that says there is nothing here         |
-| `EmptyDescription` | every `nsh` Text prop; look `emptyLook().description()`             | The line under the title, a step quieter         |
-| `EmptyContent`     | every `nsh` View prop; look `emptyLook().content()`                 | What the reader can do about it                  |
+| Part               | Props                            | Description                                      |
+| ------------------ | -------------------------------- | ------------------------------------------------ |
+| `Empty`            | every `nsh` View prop            | A centered block that takes the room it is given |
+| `EmptyHeader`      | every `nsh` View prop            | The media and the words under it                 |
+| `EmptyMedia`       | `variant`; every `nsh` View prop | The media's box                                  |
+| `EmptyTitle`       | every `nsh` Text prop            | The line that says there is nothing here         |
+| `EmptyDescription` | every `nsh` Text prop            | The line under the title, a step quieter         |
+| `EmptyContent`     | every `nsh` View prop            | What the reader can do about it                  |
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Empty`,
 `EmptyHeader`, `EmptyMedia` and `EmptyContent`, and every prop of
@@ -4398,8 +4436,7 @@ over the look's on each.
 The block is a centered column padded 24, its header a step of 8 apart from its content, the words
 and the actions no wider than 384 points. The title is medium at `body + 2` (15 points with a
 pointer, 17 on a touch screen), the description the body's size in the muted ink, both centered.
-`emptyLook()` is exported for a state the app lays out itself, and `EMPTY_ICON` is the size an
-icon takes in the `icon` variant.
+`EMPTY_ICON` is the size an icon takes in the `icon` variant.
 
 # Field (/dev/docs/components/field)
 
@@ -4719,9 +4756,7 @@ const image = signal<ImageViewerImage | null>(null);
 | ------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `ImageViewer` | `image`: `{ src: string; alt?: string } \| null`; `onClose`: `() => void` | The viewer, open while `image` is set. The image stays while the dialog fades out. |
 
-`imageViewerLook()` is exported for a viewer the app draws itself: its parts as the styles they wear (`page`, `ground`, `caption`, `captionText`, `closeCorner`, `close`, `closeHover`).
-
-There are no `ImageViewerClose` or `ImageViewerCaption` parts. The close button is always there and the caption is always the `alt`, so a part would only be a place to put what the viewer already draws; a viewer with other chrome draws it from `imageViewerLook()`. A gallery of several images in one viewer is the app's: set `image` to the next one.
+There are no `ImageViewerClose` or `ImageViewerCaption` parts. The close button is always there and the caption is always the `alt`, so a part would only be a place to put what the viewer already draws. A gallery of several images in one viewer is the app's: set `image` to the next one.
 
 The ink is `on-media` and the ground is the theme's `media`, the pair that stays dark in either appearance and in every theme; the caption strip and the close chip carry a wash of that ink so they read over any photograph.
 
@@ -4954,6 +4989,8 @@ and Shift-Return breaks the line under a keyboard (`submitBehavior="submit"` on 
 touch screen Return breaks the line, and the button sends.
 
 ```tsx
+import { grownFieldHeight } from "@/components/ui/lib/field-look";
+
 const message = signal("");
 const grown = signal(0);
 const replying = signal(false);
@@ -5039,7 +5076,7 @@ let search: InputRef | undefined;
 
 ### The look alone [#the-look-alone]
 
-`inputGroupLook` is the frame's props and `inputGroupControlLook` the control's, for a `nsh/base` control of your own; `inputGroupAddonLook` and `inputGroupTextLook` are the addon's and its text's. This is what the reference page draws, and what `InputGroup` wraps.
+`inputGroupLook` is the frame's props and `inputGroupControlLook` the control's, for a `nsh/base` control of your own. This is what `InputGroup` wraps.
 
 ```tsx
 <View {...inputGroupLook({ invalid: true, style: { borderRadius: 22, padding: 6 } })}>
@@ -5130,7 +5167,8 @@ The box grows only as the app sizes it: [`nsh/base`'s multi-line input](https://
 ```tsx
 import { signal } from "nsh";
 
-import { fieldText, Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { fieldText } from "@/components/ui/lib/field-look";
 
 const note = signal("");
 const content = signal(0);
@@ -5248,11 +5286,11 @@ The segments keep the field's own width — a bar of four parts, each a share of
 keeps a column at the end, so the meter does not reflow as the word changes from `Empty` to
 `Strong`.
 
-### The look alone [#the-look-alone]
+### Ghost [#ghost]
 
 ```tsx
-<Input {...inputLook({ invalid: true })} />
-<Input {...inputLook({ variant: "ghost" })} />
+<Input invalid accessibilityLabel="Invalid" />
+<Input variant="ghost" accessibilityLabel="Ghost" />
 ```
 
 ## API [#api]
@@ -5578,10 +5616,10 @@ and no edge.
 
 ## API [#api]
 
-| Part       | Props                                                                            | Description         |
-| ---------- | -------------------------------------------------------------------------------- | ------------------- |
-| `Kbd`      | `children`: `string \| JSX.Element`; every `nsh` View prop; look `kbdLook().kbd` | A key of a shortcut |
-| `KbdGroup` | every `nsh` View prop; look `kbdLook().group`                                    | Keys side by side   |
+| Part       | Props                                                      | Description         |
+| ---------- | ---------------------------------------------------------- | ------------------- |
+| `Kbd`      | `children`: `string \| JSX.Element`; every `nsh` View prop | A key of a shortcut |
+| `KbdGroup` | every `nsh` View prop                                      | Keys side by side   |
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on both parts (`style`, `accessibilityLabel`, …); `style` goes over the look's.
 
@@ -5591,8 +5629,7 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on both
 
 A `Kbd` is one line high with a minimum width (20 points with a pointer, one Cell row in the
 terminal), a hairline edge and the `muted` fill; its name is small type in the muted ink. There is
-no axis. `kbdLook()` is exported — `kbd`, `text` and `group` — for a cap or a row the app draws
-itself.
+no axis. A key is one cap; a group is those caps in a row.
 
 # Label (/dev/docs/components/label)
 
@@ -5680,8 +5717,8 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style
 | `children` | `string \| JSX.Element` |         |
 
 There is no other axis: the text is `controlSize.label` (14 points with a pointer, 15 on a touch
-screen) and medium, in the theme's text color, a row with a gap of 8. `labelLook({ disabled })` is
-exported — `root` and `text` — for a label the app draws itself.
+screen) and medium, in the theme's text color, a row with a gap of 8. `disabled` dims that row to
+half.
 
 # Link (/dev/docs/components/link)
 
@@ -5743,7 +5780,7 @@ A string child is the link's name for screen readers too, so `<Link href="/docs"
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
 | `Link` | `quiet`: `boolean` (muted footer style), `current`: `boolean` (current page), `visited`: `boolean` (muted once opened), `inline`: `boolean` (in a paragraph), `icon`: `boolean` (external arrow); every `nsh/base` Link prop | A text link with the underline motion |
 
-Uses `linkLook` and `LinkText`. Every prop of [`nsh/base` Link](https://nsh.dev/elements/link) passes through.
+Every prop of [`nsh/base` Link](https://nsh.dev/elements/link) passes through.
 
 # Marker (/dev/docs/components/marker)
 
@@ -5843,11 +5880,11 @@ hand.
 
 ## API [#api]
 
-| Part            | Props                                                                   | Description                                    |
-| --------------- | ----------------------------------------------------------------------- | ---------------------------------------------- |
-| `Marker`        | `variant`; every `nsh` View prop; look `markerLook().root(variant)`     | A line in a conversation that is not a message |
-| `MarkerIcon`    | `icon`, `children`; every `nsh` View prop; look `markerLook().icon`     | The icon beside the line                       |
-| `MarkerContent` | `children`; every `nsh` Text prop; look `markerLook().content(variant)` | The line's words                               |
+| Part            | Props                                     | Description                                    |
+| --------------- | ----------------------------------------- | ---------------------------------------------- |
+| `Marker`        | `variant`; every `nsh` View prop          | A line in a conversation that is not a message |
+| `MarkerIcon`    | `icon`, `children`; every `nsh` View prop | The icon beside the line                       |
+| `MarkerContent` | `children`; every `nsh` Text prop         | The line's words                               |
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Marker` and
 `MarkerIcon` (`role`, `onPress`, `accessibilityLabel`, …), and every prop of
@@ -5863,7 +5900,7 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Mar
 The line is in the muted ink at the body's size (13 points with a pointer, 15 on a touch screen),
 its icon 16 points in the same ink; a marker's icon box is never shrunk by a tight row. In a
 terminal the icon is drawn as NSH draws icons there (a check is `✓`, the others show nothing) and
-the rules are hairlines. `markerLook()` is exported for a line an app draws itself.
+the rules are hairlines.
 
 # Menu (/dev/docs/components/menu)
 
@@ -6081,7 +6118,7 @@ Menubar
 
 `Menubar` is a row a step over its triggers — the theme's height step under a row, the room either
 side of them and its own 1-point edge — inside a 1-point edge with the card's fill, its triggers 8
-points either side (`menubarLook().bar`). It places nothing itself: a `MenubarMenu` gives a trigger
+points either side. It places nothing itself: a `MenubarMenu` gives a trigger
 and its popup, and the trigger stands in the bar, not in a box of its
 own.
 
@@ -6485,12 +6522,12 @@ the list — the last one loads older turns) and the child that renders a row; a
 `sm`). `alignment="bottom"` pins a short conversation to the bottom of the viewport. `indicator`
 is a mark at the button's top-end corner (an arrival dot); the arrow stays.
 
-| Part                      | Props                                                                       | Description                                                             |
-| ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `MessageScroller`         | `initialScroll`                                                             | Renders `View` (`messageScrollerLook().root`)                           |
-| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `alignment`, `onLoadMoreAtStart`, `ref` | Renders `List` (`messageScrollerLook().viewport`); `ref` is a `ListRef` |
-| `MessageScrollerItem`     |                                                                             | Renders `View` (`messageScrollerLook().item`)                           |
-| `MessageScrollerButton`   | `direction`, `variant`, `size`, `indicator`                                 | Renders `Button` (`messageScrollerLook().slot(direction)`)              |
+| Part                      | Props                                                                       | Description                                                       |
+| ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `MessageScroller`         | `initialScroll`                                                             | Renders `View`: a column that fills its parent and clips          |
+| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `alignment`, `onLoadMoreAtStart`, `ref` | Renders `List`; `ref` is a `ListRef`                              |
+| `MessageScrollerItem`     |                                                                             | Renders `View`: the box one turn sits in                          |
+| `MessageScrollerButton`   | `direction`, `variant`, `size`, `indicator`                                 | Renders `Button`, floating 16 points from the edge it points past |
 
 | Prop            | On                        | Type                                                  | Default       |
 | --------------- | ------------------------- | ----------------------------------------------------- | ------------- |
@@ -6515,8 +6552,7 @@ is a mark at the button's top-end corner (an arrival dot); the arrow stays.
 | `animated`     | `boolean`                      | `true`  |
 
 The frame fills its parent, clips what is in it, and holds its viewport and its buttons; the list's
-content is 32 points apart; a button floats 16 points from its edge. `messageScrollerLook()` is
-exported for a frame an app draws itself.
+content is 32 points apart; a button floats 16 points from its edge.
 
 # Message (/dev/docs/components/message)
 
@@ -6862,14 +6898,14 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Mes
 and the image props are not used). A string child of `MessageFooter` and of `MessageHeader` is
 drawn as [`nsh` Text](https://nsh.dev/elements/text).
 
-| Part             | Props                     | Description                                                                                         |
-| ---------------- | ------------------------- | --------------------------------------------------------------------------------------------------- |
-| `MessageGroup`   |                           | Renders `View` (`messageLook().group`)                                                              |
-| `Message`        | `align`                   | Renders `View` (`messageLook().row(align)`)                                                         |
-| `MessageAvatar`  | `name`, `src`, `children` | Renders `Avatar` (`messageLook().avatar`), or a `View` (`messageLook().avatarSlot`) with `children` |
-| `MessageContent` |                           | Renders `View` (`messageLook().content(align)`)                                                     |
-| `MessageHeader`  | `children`                | Renders `View` (`messageLook().header`)                                                             |
-| `MessageFooter`  | `children`                | Renders `View` (`messageLook().footer(align)`)                                                      |
+| Part             | Props                     | Description                                                                |
+| ---------------- | ------------------------- | -------------------------------------------------------------------------- |
+| `MessageGroup`   |                           | Renders `View`: a column, 8 points apart                                   |
+| `Message`        | `align`                   | Renders `View`: the avatar and the content, mirrored when `align` is `end` |
+| `MessageAvatar`  | `name`, `src`, `children` | Renders `Avatar`, or a round `View` with `children`                        |
+| `MessageContent` |                           | Renders `View`: the header, the turn and the footer, on the message's side |
+| `MessageHeader`  | `children`                | Renders `View`: who sent it, at the start of the row                       |
+| `MessageFooter`  | `children`                | Renders `View`: what is under the turn, on the message's side              |
 
 | Prop       | On              | Type                    | Default |
 | ---------- | --------------- | ----------------------- | ------- |
@@ -6882,8 +6918,7 @@ drawn as [`nsh` Text](https://nsh.dev/elements/text).
 
 The row is its avatar and its content 8 points apart, the content a column 10 points apart in the
 body's size; the header and the footer are small (12 with a pointer, 13 on a touch screen), medium
-and in the muted ink, 12 points in from the turn's edge. `messageLook()` is exported for a row an
-app draws itself.
+and in the muted ink, 12 points in from the turn's edge.
 
 # NavStack (/dev/docs/components/nav-stack)
 
@@ -7165,9 +7200,8 @@ disappears the moment the text does.
 | `PageHeader`     | `title`, `right`, `back`, `above`                                      | The drawn header, for a `header` that adds to it; `above()` says whether a page is below |
 | `createNavStack` | `routes`, `push`, `pop`, `popToRoot`, `replace`, `setRoutes`, `remove` | `nsh/base`'s, re-exported                                                                |
 
-The looks — spread them on the views they name, or read their words for content of your own:
-`navStackLook()` (`root`) and `navPageLook()` (`page`, `header`, `title`, `backGlyph`).
-`navPageSize` has the header's numbers.
+The page's look — spread it on the views it names, or read its words for content of your own:
+`navPageLook()` (`page`, `header`, `title`, `backGlyph`).
 
 # Navigation Menu (/dev/docs/components/navigation-menu)
 
@@ -7234,9 +7268,8 @@ the window is narrow. An item is its trigger, or a link of its own. A trigger is
 item's content, which is what places it in the bar: a `NavigationMenuTrigger` declared after its
 `NavigationMenuContent` draws nothing.
 
-A trigger is the theme's tallest height step high and 16 points in either side
-(`navigationMenuSize`), its name in the bar's type and a chevron after it — the theme's smallest
-icon, an indicator's.
+A trigger is the theme's tallest height step high and 16 points in either side, its name in the
+bar's type and a chevron after it — the theme's smallest icon, an indicator's.
 
 ### What a trigger opens [#what-a-trigger-opens]
 
@@ -7319,9 +7352,8 @@ and leave, which drive the item's delays. `NavigationMenu` and `NavigationMenuLi
 row.
 
 The look is `navigationMenuLook()` — `root`, `list`, `item`, `panel`, `link`, `linkText`,
-`linkHint` — and `navigationMenuTriggerLook({ open })` and
-`navigationMenuLinkLook({ active, disabled })` for the parts that open and go. Spread them on the
-part they name; `navigationMenuSize` has the numbers.
+`linkHint` — and `navigationMenuTriggerLook({ open })` for a trigger. Spread them on the part they
+name.
 
 # Number Input (/dev/docs/components/number-input)
 
@@ -7356,16 +7388,6 @@ import { NumberInput } from "@/components/ui/number-input";
 ```
 
 Default `pair`: chevrons stacked at the end. `split`: − before the field and + after it.
-
-### The look alone [#the-look-alone]
-
-```tsx
-<NumberInput
-  class={numberInputClasses.frame}
-  inputStyle={numberInputText()}
-  {...numberInputSteps("pair", "w-8", 14)}
-/>
-```
 
 ### A rolling figure [#a-rolling-figure]
 
@@ -7428,10 +7450,10 @@ A verdict tints every cell of the whole code.
 <OtpInput length={6} value="000000" tone="destructive" />
 ```
 
-### The look alone [#the-look-alone]
+### A verdict that changes [#a-verdict-that-changes]
 
 ```tsx
-<OtpInput length={6} {...otpCellLook({ tone: () => verdict() })} />
+<OtpInput length={6} tone={() => verdict()} />
 ```
 
 ## API [#api]
@@ -8098,7 +8120,7 @@ never the form.
 | `ProgressSteps` | every `nsh` View prop                                                                                                                                                                | The row of marks over the bar, centred on it; a child of `Progress` |
 | `ProgressStep`  | `state` (`"done" \| "current" \| "upcoming"`, default `upcoming`), `children` (a string is the label)                                                                                | One mark, its label under it                                        |
 
-`progressStepsLook()`, `ProgressStepMark` and `progressStepSize()` are the look's parts, for a row of your own.
+`ProgressStepMark` and `progressStepSize()` are the look's parts, for a row of your own.
 
 # Radio (/dev/docs/components/radio-group)
 
@@ -8162,11 +8184,11 @@ RadioGroup
 
 ### The look alone [#the-look-alone]
 
-`choiceTileLook` is the checkbox module's, shared by the tile radio: import it from
-`@/components/ui/checkbox`.
+`choiceTileLook` is shared by the tile radio and the checkbox. Import it from
+`@/components/ui/lib/choice`.
 
 ```tsx
-import { choiceTileLook } from "@/components/ui/checkbox";
+import { choiceTileLook } from "@/components/ui/lib/choice";
 
 <Radio class="group" checked={on()} {...choiceTileLook(() => on())}>
   <RadioRing on={on()} />
@@ -8347,7 +8369,7 @@ ResizablePanelGroup
 
 `ResizablePanelGroup` spreads `resizableHandleLook` for the axis. Every prop of [`nsh/base` ResizablePanelGroup](https://nsh.dev/elements/resizable) passes through.
 
-Also export `resizableHandleLook`, `resizableHandle`, and `handleThumb` for custom layouts.
+Also export `resizableHandleLook` and `handleThumb` for a handle the app lays out itself.
 
 | Part                  | Props | Description                                              |
 | --------------------- | ----- | -------------------------------------------------------- |
@@ -8687,7 +8709,7 @@ well holding a raised block. The thumb is always as big as a segment's own box, 
 hover shade covers exactly the box the chosen block covers. Every theme draws this one form — the
 list reads no control dimension, so `apple`'s capsule-in-a-capsule and `material`'s connected
 cells are gone; what the native controls look like instead is in the theme's difference table
-(`docs/specs/native-themes.md` §3.6).
+(`packages/theme/themes/material/README.md` / `packages/theme/themes/apple/README.md`).
 
 ```tsx
 <SegmentedList size="default" fill>
@@ -8922,8 +8944,7 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style
 | `Separator` | `orientation` (`"horizontal" \| "vertical"`, default `"horizontal"`), `decorative` (`boolean`, default `true`) | The line is one point of the theme's edge color |
 
 The line is one point of the theme's edge color (`colors.border`, `theme.json`'s `border`), with
-no other look: a corner is the caller's `style`, and so is its room. `separatorLook(orientation)`
-is exported for a line the app draws itself.
+no other look: a corner is the caller's `style`, and so is its room.
 
 # Sheet (/dev/docs/components/sheet)
 
@@ -8990,8 +9011,8 @@ Sheet
 ### Grabber [#grabber]
 
 A bottom sheet has a grabber at its top: `nsh/base`'s own handle, which screen readers adjust to
-change the detent and which moves to the next larger one when pressed, drawn in the theme's look
-(`sheetGrabber`). It is the handle itself, not a picture of one, so a sheet never shows two. `grabber`
+change the detent and which moves to the next larger one when pressed. It is the handle itself,
+not a picture of one, so a sheet never shows two. `grabber`
 off shows it; `grabberAccessibilityLabel` names it ("Sheet" by default).
 
 ```tsx
@@ -9000,7 +9021,7 @@ off shows it; `grabberAccessibilityLabel` names it ("Sheet" by default).
 </SheetContent>
 ```
 
-The look alone is `sheetPanel(side)` and `sheetGrabber()`.
+The panel's look is `sheetPanel(side)`.
 
 ### Detents [#detents]
 
@@ -9165,7 +9186,7 @@ SidebarProvider
 
 ### The column [#the-column]
 
-`Sidebar` is a column as wide as the sidebar (`sidebarSize.width`, 256 points) on the sidebar's fill,
+`Sidebar` is a column 256 points wide on the sidebar's fill,
 its edge against the page, holding a `SidebarHeader`, the groups in a `SidebarContent` that scrolls
 when they do not fit, and a `SidebarFooter`.
 
@@ -9176,7 +9197,7 @@ Three axes say how it meets the window:
   window's air, 8 points of room around it; `inset` a card on the sidebar's ground, with the page's
   own card beside it on that same ground, 8 points from it and from the window's edges.
 - `collapsible` — `offcanvas` (default) leaves the window when it closes; `icon` folds to a strip of
-  icons (`sidebarSize.icon`, 48 points); `none` never closes.
+  icons (48 points); `none` never closes.
 
 ```tsx
 <Sidebar side="right" variant="inset" collapsible="icon">
@@ -9276,7 +9297,7 @@ const row = sidebarMenuButtonLook({ size: () => "sm" });
 </SidebarMenuButton>;
 ```
 
-Folded to icons, the row is a square the height of a row (`sidebarSize.folded`) with its icon, and
+Folded to icons, the row is a square the height of a row with its icon, and
 `tooltip` names it on a desktop: a
 string is the name, or the tooltip's own props (`placement`, `delay`, …). It also names the row for
 screen readers when nothing else does — and it replaces `nsh/base`'s element `tooltip`, which is what
@@ -9295,17 +9316,15 @@ they need, so the row's name stops short of them; both on one row, the action st
 badge's width rather than drawing over it.
 
 ```tsx
-const action = sidebarMenuActionLook();
-
 <SidebarMenuItem>
   <SidebarMenuButton size="sm" tooltip={project.name}>
     {project.name}
   </SidebarMenuButton>
   <SidebarMenuBadge>{project.unread}</SidebarMenuBadge>
   <SidebarMenuAction accessibilityLabel={`More about ${project.name}`} onPress={more}>
-    <Icon icon={Ellipsis} size={action.glyph.size} tint={action.glyph.tint} />
+    <Icon icon={Ellipsis} size={16} />
   </SidebarMenuAction>
-</SidebarMenuItem>;
+</SidebarMenuItem>
 ```
 
 An action is always there: hover alone is something a touch screen has no way to do.
@@ -9389,13 +9408,8 @@ library's `Sheet`). Every `nsh` view prop passes through; a row is an `nsh/base`
 | `SidebarMenuSkeleton`  | `showIcon`, `width`                                                                                                             | The skeleton's blocks where an icon and a name will be                                                                          |
 | `useSidebar()`         | —                                                                                                                               | What the parts read inside the provider: `state`, `open`, `openMobile`, `isMobile`, `setOpen`, `setOpenMobile`, `toggleSidebar` |
 
-The looks — spread them on the view they name, or read their words for content of your own:
-`sidebarLook({ side, variant, collapsible, open, isMobile })` (`root`, `frame`, `column`, `inset`,
-`rail`, `railLine`, `header`, `footer`, `content`, `contentRows`, `separator`),
-`sidebarGroupLook()`, `sidebarMenuButtonLook({ size, variant, isActive, trailing })`,
-`sidebarMenuActionLook({ trailing })`, `sidebarMenuBadgeLook()`, `sidebarMenuSubLook()`,
-`sidebarMenuSubButtonLook({ size, isActive })`, `sidebarMenuSkeletonLook()` and
-`sidebarInputLook()`. `sidebarSize` has the numbers.
+`sidebarMenuButtonLook({ size, variant, active, trailing })` is exported for a row the app draws
+itself: its `label` and its `glyph` (`size`, `tint`). The other looks stay with the parts.
 
 # Skeleton (/dev/docs/components/skeleton)
 
@@ -9464,7 +9478,7 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style
 | `Skeleton` | `ViewProps` | The block; its box, corners and breathing are the look's and `style`. |
 
 There is no axis: a skeleton is one look — the theme's `accent` fill, the theme's control corners,
-the breathing. `skeletonLook()` is exported for a block the app draws (or animates) itself.
+the breathing. The box, including a radius of the app's own, is the caller's `style`.
 
 # Slider (/dev/docs/components/slider)
 
@@ -9513,10 +9527,10 @@ touch screen) on every form.
 A string of your own replaces the formatted number and keeps that place.
 
 ```tsx
-import { sliderValueClass, sliderValueStyle } from "@/components/ui/slider";
+import { sliderValueStyle } from "@/components/ui/slider";
 
 <Slider showValue value={volume()} onChange={({ value }) => volume.set(value as number)}>
-  <Text class={sliderValueClass} style={sliderValueStyle()}>
+  <Text class="w-[42px] text-right font-mono text-[11px] leading-none" style={sliderValueStyle()}>
     64%
   </Text>
 </Slider>;
@@ -9550,12 +9564,12 @@ const at = (db + 12) / 24;
 
 `Slider` is [`nsh/base` Slider](https://nsh.dev/elements/slider) wearing `sliderLook` and `sliderFill`: every base prop passes through, and the look's classes and styles are defaults the caller can override.
 
-| Part                                     | Props                                                                                                                                         | Description                                                                                                                                         |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Slider`                                 | `axis`, `showValue`, and every `nsh/base` Slider prop (`value`, `min`, `max`, `step`, `onChange`, `onChangeEnd`, `disabled`, `rangeStyle`, …) | The rail, the thumb and the fill. `showValue` lays the value beside a horizontal rail, or above a vertical one                                      |
-| `sliderLook()`                           | `vertical`, `value`                                                                                                                           | The parts to spread on a slider of your own: `class`, `trackClass`, `indicatorClass` / `indicatorStyle`, `rangeClass`, `thumbClass` / `thumbStyle`  |
-| `sliderFill()`                           | `from`, `to`, `vertical`                                                                                                                      | The accent between `from` and `to` when `from` is past the rail's start. A `from` of 0 or less leaves placement to nsh, so a thumb can drag the run |
-| `sliderValueClass`, `sliderValueStyle()` | —                                                                                                                                             | The horizontal value column's label: 42 points, right aligned, monospaced. A vertical readout uses a centered line instead                          |
+| Part                 | Props                                                                                                                                         | Description                                                                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Slider`             | `axis`, `showValue`, and every `nsh/base` Slider prop (`value`, `min`, `max`, `step`, `onChange`, `onChangeEnd`, `disabled`, `rangeStyle`, …) | The rail, the thumb and the fill. `showValue` lays the value beside a horizontal rail, or above a vertical one                                      |
+| `sliderLook()`       | `vertical`, `value`                                                                                                                           | The parts to spread on a slider of your own: `class`, `trackClass`, `indicatorClass` / `indicatorStyle`, `rangeClass`, `thumbClass` / `thumbStyle`  |
+| `sliderFill()`       | `from`, `to`, `vertical`                                                                                                                      | The accent between `from` and `to` when `from` is past the rail's start. A `from` of 0 or less leaves placement to nsh, so a thumb can drag the run |
+| `sliderValueStyle()` | —                                                                                                                                             | The value label's color. A horizontal column is `w-[42px] text-right font-mono text-[11px] leading-none`; a vertical readout is a centered line     |
 
 # Spinner (/dev/docs/components/spinner)
 
@@ -9765,7 +9779,7 @@ const visibility = signal<ColumnVisibility>("all");
 | `SplitViewHeader`  | `column`, `title`, `leading`, `trailing`                             | The bar a desktop draws. `header` on a column page replaces it  |
 | `SplitViewTrigger` | `columnVisibility`, `onColumnVisibilityChange`, `accessibilityLabel` | The sidebar button. A press reports `"doubleColumn"` or `"all"` |
 
-The looks — spread them on the views they name: `splitViewLook()` (`root`), `splitViewColumnLook(column)` (`page`), `splitViewHeaderLook(column)` (`bar`, `title`) and `splitViewTriggerLook()` (`style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle`, `glyph`).
+`style` on the view, a column page, the header and the sidebar button goes over the look each one wears.
 
 # Stat (/dev/docs/components/stat)
 
@@ -10027,32 +10041,6 @@ is already at least that wide, so the hit slop only fills the height.
   onChange={({ checked }) => bluetooth.set(checked)}
 />
 ```
-
-### The look alone [#the-look-alone]
-
-`switchLook` gives the track and knob classes to a `nsh/base` switch of your own; `switchHitSlop` gives the touch target.
-
-```tsx
-<BaseSwitch
-  {...switchLook(() => on(), "default")}
-  checked={on()}
-  onChange={({ checked }) => on.set(checked)}
-/>
-```
-
-The settings row's looks are the field family's, for a `nsh/base` view of your own:
-
-```tsx
-<View style={fieldFamilyLook().field(true)}>
-  <View style={fieldFamilyLook().content}>
-    <Text style={fieldFamilyLook().title}>Extract text from images</Text>
-    <Text style={fieldFamilyLook().description}>Read the text in a screenshot.</Text>
-  </View>
-  <BaseSwitch {...switchLook(() => on())} checked={on()} />
-</View>
-```
-
-Each part of `fieldFamilyLook()` reads the theme when it is drawn, so a look kept in a `const` still follows the scheme.
 
 ## API [#api]
 
@@ -10328,7 +10316,7 @@ npx shadcn-nsh@latest add text-view
 ## Usage [#usage]
 
 ```tsx
-import { TextView, textViewCaretClass, textViewLinkClasses } from "@/components/ui/text-view";
+import { TextView, textViewCaretClass, textViewClasses } from "@/components/ui/text-view";
 ```
 
 ```tsx
@@ -10340,7 +10328,7 @@ import { TextView, textViewCaretClass, textViewLinkClasses } from "@/components/
 />
 ```
 
-`TextView` merges `textViewLinkClasses` into `classes` by default.
+`TextView` merges `textViewClasses` into `classes` by default.
 
 ## Examples [#examples]
 
@@ -10486,12 +10474,12 @@ const viewing = signal<ImageViewerImage | null>(null);
 
 `TextView.parse`, `parseHtml`, and `plainText` are re-exported from base. Every prop of [`nsh/base` TextView](https://nsh.dev/elements/text-view) passes through.
 
-| Part                                       | Props                                     | Description                                                                     |
-| ------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------- |
-| `TextView`                                 | every `nsh/base` TextView prop; `classes` | A Markdown, HTML or block document; `classes` merges over `textViewLinkClasses` |
-| `TextView.parse`, `parseHtml`, `plainText` | base's parsers                            | A document, parsed ahead of drawing                                             |
-| `textViewLinkClasses`                      | `{ link }`                                | The link classes the view merges in: the brand color over a faint underline     |
-| `textViewCaretClass`                       | —                                         | The streaming caret: a brand block a line high, pulsing                         |
+| Part                                       | Props                                     | Description                                                                       |
+| ------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `TextView`                                 | every `nsh/base` TextView prop; `classes` | A Markdown, HTML or block document; `classes` merges over `textViewClasses`       |
+| `TextView.parse`, `parseHtml`, `plainText` | base's parsers                            | A document, parsed ahead of drawing                                               |
+| `textViewClasses`                          | `{ link, tableGrid }`                     | Default classes merged into `classes`: brand underlined links and bordered tables |
+| `textViewCaretClass`                       | —                                         | The streaming caret: a brand block a line high, pulsing                           |
 
 # Time Field (/dev/docs/components/time-field)
 
@@ -10516,17 +10504,19 @@ import { TimeField } from "@/components/ui/time-field";
 ### The look alone [#the-look-alone]
 
 ```tsx
-<TimeField class={timeFieldClass()} value={time()} />
+import { timeFieldClass } from "@/components/ui/lib/field-look";
+
+<TimeField class={timeFieldClass()} value={time()} />;
 ```
 
 ## API [#api]
 
 Every prop of [`nsh/base` TimeField](https://nsh.dev/elements/time-field) passes through; `class`, `segmentClass`, `separatorStyle` and `renderSegment` go over the look's.
 
-| Part             | Props                                                    | Description                                                                           |
-| ---------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `TimeField`      | `value`, `onChange`, and every `nsh/base` TimeField prop | A time of day, one segment at a time, in the input's well and the calendar's segments |
-| `timeFieldClass` | —                                                        | The well, shared with `Input` so a field on a page and one in a popup read alike      |
+| Part             | Props                                                    | Description                                                                                          |
+| ---------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `TimeField`      | `value`, `onChange`, and every `nsh/base` TimeField prop | A time of day, one segment at a time, in the input's well and the calendar's segments                |
+| `timeFieldClass` | —                                                        | The well in `lib/field-look`, shared with `Input` so a field on a page and one in a popup read alike |
 
 Segment chrome lands with the listbox / date-picker family.
 
@@ -10552,8 +10542,9 @@ import {
 ```
 
 A desktop window with `titleBar: { style: "hidden" }` keeps the system's window buttons and leaves
-the rest of the bar to the app: `TitleBar` draws it, drags the window, and pads its children clear
-of the buttons (`titleBar()`'s `left` and `right`).
+the rest of the bar to the app: `TitleBar` builds on `nsh/base`'s `TitleBar` to draw the bar, drag
+the window, double click to zoom or maximize, and keep its children clear of the system buttons
+automatically across split panes and full-screen transitions.
 
 ```tsx
 <TitleBar>
@@ -10600,10 +10591,11 @@ lights turn grey while the window is in the background.
 ### Caption buttons [#caption-buttons]
 
 Windows' and Linux's buttons are cells at the trailing end of the bar, filling its height.
-They sit flush against the window's corner, so the bar's trailing padding goes to zero:
+They sit flush against the window's corner, so the inner content row's trailing padding goes to
+zero while keeping `TitleBar`'s own automatic window-control inset intact:
 
 ```tsx
-<TitleBar style={{ paddingEnd: 0 }}>
+<TitleBar contentStyle={{ paddingEnd: 0 }}>
   <Text style={{ flex: 1 }}>Notes.nsh</Text>
   <WindowControls variant="caption" />
 </TitleBar>
@@ -10613,9 +10605,9 @@ They sit flush against the window's corner, so the bar's trailing padding goes t
 
 The three parts are the shapes the platforms draw; an app that wants its own draws the same
 `desktop` views itself, and the platform still carries out the press. A round close button
-(`Icon` from `lib/ui/icons`, `lightInk` from `lib/ui/title-bar`, `X` from `lucide`; the
-traffic lights keep macOS's own hues whatever the theme, so the disc's colour is written out
-rather than read from a role):
+(`Icon` from `lib/ui/icons`, `X` from `lucide`; the traffic lights keep macOS's own hues
+whatever the theme, so the disc's colour is written out rather than read from a role, and the
+glyph on a light is black at half):
 
 ```tsx
 <View
@@ -10631,7 +10623,7 @@ rather than read from a role):
   }}
   hoverStyle={{ backgroundColor: "#FF5F57" }}
 >
-  <Icon icon={X} size={12} tint={lightInk} />
+  <Icon icon={X} size={12} />
 </View>
 ```
 
@@ -10640,25 +10632,25 @@ A bar of the app's own takes `desktop={{ windowDrag: true }}` to drag the window
 
 ## API [#api]
 
-| Part                | Props                                                               | Description                                 |
-| ------------------- | ------------------------------------------------------------------- | ------------------------------------------- |
-| `TitleBar`          | every `nsh` View prop; look `titleBarLook().root()`                 | The bar that drags the window               |
-| `WindowControls`    | `variant`; every `nsh` View prop; look `titleBarLook().controls(…)` | The window's own buttons                    |
-| `WindowResizeEdges` | look `titleBarLook().resize(edge)`                                  | The edges and corners of a frameless window |
+| Part                | Props                                                                                                                               | Description                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `TitleBar`          | every [`nsh/base` TitleBar](https://nsh.dev/elements/title-bar) prop; `style` over the outer bar; `contentStyle` over the inner row | The bar that drags the window               |
+| `WindowControls`    | `variant`; every `nsh` View prop; `style` over the controls                                                                         | The window's own buttons                    |
+| `WindowResizeEdges` |                                                                                                                                     | The edges and corners of a frameless window |
 
-Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all three, and `style`
-goes over the look's on `TitleBar` and `WindowControls`.
+`TitleBar` wraps [`nsh/base` TitleBar](https://nsh.dev/elements/title-bar); pass inner padding on `contentStyle` rather than `style` so the automatic window-control padding is preserved. Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `WindowControls` and `WindowResizeEdges`, and `style` goes over the look's on `WindowControls`.
 
-| Prop      | Type                            | Default          |
-| --------- | ------------------------------- | ---------------- |
-| `variant` | `"traffic-lights" \| "caption"` | `traffic-lights` |
+| Prop           | Type                            | Default          |
+| -------------- | ------------------------------- | ---------------- |
+| `contentStyle` | `StyleProp<ViewStyle>`          | `undefined`      |
+| `variant`      | `"traffic-lights" \| "caption"` | `traffic-lights` |
 
-`TitleBar` is `TITLE_BAR_HEIGHT` (40 points) tall, or the height the system's title bar has, on
+`TitleBar` is at least `TITLE_BAR_HEIGHT` (40 points) tall, or the height the system's title bar has, on
 the inset fill with a hairline under it; its children start `12` points after the system's buttons.
-A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in macOS's own close, minimize and zoom hues wherever the theme goes (`lightTone`, with glyphs in `lightInk` and the disc's `lightEdge`), and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
+A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in macOS's own close, minimize and zoom hues wherever the theme goes, with glyphs in black at half and a hairline of black at an eighth around the disc, and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
 washes the destructive tint while the pointer is on it. `WindowResizeEdges` draws eight strips —
 `5` points along the edges, `12` at the corners — as the last child of the window's root.
-`titleBarLook()` is exported for a bar the app lays out itself.
+A bar the app lays out itself takes `desktop={{ windowDrag: true }}` and pads by `titleBar().left` and `titleBar().right`.
 
 # Toast (/dev/docs/components/toast)
 
@@ -10686,12 +10678,10 @@ toast("Copied", { description: "The link is on the clipboard." });
 ### Action [#action]
 
 ```tsx
-<Toast>
-  <Text style={toastTitle()}>Deleted</Text>
-  <Button {...toastActionLook()}>
-    <Text style={toastActionLabel()}>Undo</Text>
-  </Button>
-</Toast>
+toast("Deleted", {
+  description: "Undo to restore.",
+  action: { label: "Undo", onClick: () => {} },
+});
 ```
 
 ### From code [#from-code]
@@ -10712,7 +10702,7 @@ An action's `onClick` runs when it is pressed, and `onDismiss` hears that action
 
 ## API [#api]
 
-Every prop of [`nsh/base` Toast](https://nsh.dev/elements/toast) passes through. `style` goes over `toastLook`.
+Every prop of [`nsh/base` Toast](https://nsh.dev/elements/toast) passes through. `style` goes over the banner's own look.
 
 | Part            | Props                                                                                     | Description                                                                            |
 | --------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -10723,7 +10713,7 @@ Every prop of [`nsh/base` Toast](https://nsh.dev/elements/toast) passes through.
 | `toast.dismiss` | `(id?)`                                                                                   | Closes one toast, or every toast when `id` is omitted                                  |
 | `Toaster`       |                                                                                           | The stack at the foot of the window. Mount it once                                     |
 
-`toastLook`, `toastTitle`, `toastText`, `toastCloseLook`, `toastActionLook` and `toastActionLabel` are the look's parts, for content of your own.
+Without `children`, `Toast` draws `title` and `description`. An action and a close button are `toast`'s `action` and `closeButton`.
 
 # Toggle (/dev/docs/components/toggle)
 
@@ -11208,7 +11198,7 @@ A title and a note in a column, 10 points of padding.
 
 ```tsx
 <TooltipContent rich>
-  <Text class={tooltipText}>Delete forever</Text>
+  <Text style={tooltipTextStyle()}>Delete forever</Text>
   <Text style={tooltipNote()}>⌘⌫</Text>
 </TooltipContent>
 ```
@@ -11256,14 +11246,14 @@ part, which draws nothing for the hint's host to wrap.
 
 ## API [#api]
 
-`nsh/base`'s Tooltip is the bubble itself, shown through a host's `tooltip` prop, so the root renders one host view around its trigger. `TooltipContent` mounts [`nsh/base` Tooltip](https://nsh.dev/elements/tooltip); every base prop passes through and `class` goes over `tooltipLook`'s.
+`nsh/base`'s Tooltip is the bubble itself, shown through a host's `tooltip` prop, so the root renders one host view around its trigger. `TooltipContent` mounts [`nsh/base` Tooltip](https://nsh.dev/elements/tooltip); every base prop passes through and `class` goes over the bubble's own. A string child is drawn in `tooltipTextStyle()`; a shortcut or a note takes `tooltipNote()`.
 
-| Part                                          | Props                                                                                                                               | Description                                                                            |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `Tooltip`                                     | `open` / `defaultOpen`, `placement`, `align`, `offset`, `margin`, `delay`, `disabled`, `style`, `onOpenChange`, `onOpen`, `onClose` | The root: it owns whether the hint shows, and renders one host view around its trigger |
-| `TooltipTrigger`                              | The host: `variant` (a string child's `Button`), `disabled`, `style`                                                                | The element the hint hangs on                                                          |
-| `TooltipContent`                              | The bubble: `rich`, and base's `placement`, `align`, `offset`, `margin`, `delay`, `disabled`; alone, it is a host's `tooltip`       | The hint itself, in the look of `tooltipLook`                                          |
-| `tooltipLook`, `tooltipText`, `tooltipNote()` | `rich`                                                                                                                              | The look's parts, for a bubble of your own                                             |
+| Part                                  | Props                                                                                                                               | Description                                                                            |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `Tooltip`                             | `open` / `defaultOpen`, `placement`, `align`, `offset`, `margin`, `delay`, `disabled`, `style`, `onOpenChange`, `onOpen`, `onClose` | The root: it owns whether the hint shows, and renders one host view around its trigger |
+| `TooltipTrigger`                      | The host: `variant` (a string child's `Button`), `disabled`, `style`                                                                | The element the hint hangs on                                                          |
+| `TooltipContent`                      | The bubble: `rich`, and base's `placement`, `align`, `offset`, `margin`, `delay`, `disabled`; alone, it is a host's `tooltip`       | The hint itself, on the inverse surface                                                |
+| `tooltipTextStyle()`, `tooltipNote()` |                                                                                                                                     | The type of a string child, and of a shortcut or a note in a bubble of your own        |
 
 # Trace (/dev/docs/components/trace)
 
@@ -11419,8 +11409,6 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on ever
 | `TraceCollapsibleTrigger` | `disabled`: `boolean`; `accessibilityLabel`; `style`, `hoverStyle`, `focusVisibleStyle`            | The pressable row: a `TraceLine` and a chevron that turns a quarter as it opens.                                |
 | `TraceCollapsibleContent` | `children`: `string \| JSX.Element` (a string is muted text); `reveal`: `boolean` (default `true`) | The panel under the line.                                                                                       |
 
-`traceLook()` is exported for a trace the app draws itself: its parts as the styles they wear (`root`, `line`, `icon`, `title`, `description`, `collapsible`, `trigger`, `chevron`, `content`).
-
 # Tree (/dev/docs/components/tree)
 
 ## Installation [#installation]
@@ -11508,29 +11496,31 @@ const logs: TreeItem[] = Array.from({ length: 100 }, (_, f) => ({
 
 ## API [#api]
 
-Uses `treeItemClass` and `TreeRow` by default. Every prop of [`nsh/base` Tree](https://nsh.dev/elements/tree) passes through.
+Uses `TreeRow` by default. Every prop of [`nsh/base` Tree](https://nsh.dev/elements/tree) passes through.
 
 | Part            | Props                                                                                | Description                                                     |
 | --------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
 | `Tree`          | `items`, `defaultExpanded`, `renderItem`, `onSelect`, and every `nsh/base` Tree prop | The virtualized list of rows, in a card, `TreeRow` by default   |
 | `TreeRow`       | `entry`, `icon`, `tint`, `detail`                                                    | A row: its chevron, its icon, its label and a detail at the end |
-| `treeItemClass` | —                                                                                    | The row's look, for a row you draw yourself                     |
 | `treeRowHeight` | —                                                                                    | A row's height: 28 with a pointer, 44 on a touch screen         |
 
 # Components (/dev/docs/components)
 
-83 components, one page each: Installation, Usage, an optional Composition,
-Examples and API. They are grouped in two: <strong>Base</strong>, aligned with an NSH element,
-and <strong>Enhanced</strong>, this library's additions with no NSH element of their own.
-Behavior, keyboard support and the full unstyled props live on
-[nsh.dev/elements](https://nsh.dev/elements); each page links its base element and the shadcn/ui
-component it stands in for.
+Styled shells on `nsh/base`. Install a component either way:
 
-The list is generated from `registry.json` and these pages, so every `registry:ui` item has a page
-and every page has an item. The group comes from 
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
 
-<a href="/docs/components/coverage">Coverage</a>: a page registered in one of its NSH rows is
-Base, one in none is Enhanced. Add one with `npx shadcn-nsh@latest add <name>`.
+```npm
+npx shadcn-nsh@latest add <name>
+```
+
+With `nshm`, import from `shadcn-nsh/<name>`. With the CLI, the file is copied into the app and the snippets on each page import from `@/components/ui/<name>`.
+
+Each page has Installation, Usage, an optional Composition, Examples, and API. **Base** components align with an NSH element. **Enhanced** components are this library's own. Behavior, keyboard support, and the unstyled props live on [nsh.dev/elements](https://nsh.dev/elements). Each page links its base element and the shadcn/ui component it stands in for.
+
+The list is generated from `registry.json` and these pages, so every `registry:ui` item has a page and every page has an item. A page registered on an NSH element is Base. A page registered on none is Enhanced.
 
 ## Base [#base]
 
@@ -11542,38 +11532,72 @@ Base, one in none is Enhanced. Add one with `npx shadcn-nsh@latest add <name>`.
 
 # Customizing (/dev/docs/customizing)
 
-`init` and `add` copy files into the app; after that they are the app's own. There are three places to change them.
+Two kinds of change. A theme reaches every component. A copied file reaches that component. The TSX `nshm` install does not copy files, so appearance changes there go through [Custom themes](#custom-themes). Editing a shell or a look is the copy-into-app CLI, in [Customizing copied components](#customizing-copied-components).
 
-| Change                  | Where                                                    | Reaches                                   |
-| ----------------------- | -------------------------------------------------------- | ----------------------------------------- |
-| Colors, radii, surfaces | `theme.json` (and `lib/ui/themes/<id>.ts` for the rest)  | every component                           |
-| One control's look      | its `*Look` function in `components/ui/<id>.tsx`         | that control's variants, sizes and states |
-| Structure or API        | the component and parts after the look, in the same file | that component's props and parts          |
+## Custom themes [#custom-themes]
 
-In a monorepo, every path starts at `packages/ui/` instead of the app root.
+A theme is a `ThemeSpec` compiled by `defineTheme()`. Pass another theme's `spec` as `extends` and state only what you change. `selectTheme()` applies the result while the app runs. `selectTheme(null)` returns to the theme the app was built with.
 
-## Colors, radii and shadows [#colors-radii-and-shadows]
+```tsx
+import { defineTheme, selectTheme } from "shadcn-nsh/theme";
+import shadcnTheme from "shadcn-nsh/themes/shadcn";
 
-`theme.json` holds the colors for both appearances, the three `radius-*` layer lengths, the fixed `scrim` / `media` / `on-media` values and, if the app has its own, the font families. Every component reads them through `lib/ui/theme.ts`.
+const brandTheme = defineTheme({
+  id: "brand",
+  label: "Brand",
+  extends: shadcnTheme.spec,
+  tokens: {
+    light: {
+      primary: "oklch(0.546 0.245 262.881)",
+      "primary-foreground": "oklch(0.985 0 0)",
+    },
+    dark: {
+      primary: "oklch(0.707 0.165 254.624)",
+      "primary-foreground": "oklch(0.205 0 0)",
+    },
+  },
+});
 
-```sh
-theme.json               # the roles of both appearances, 3 radii, fonts
-lib/ui/theme.ts          # colors, surface, control, feedback, shape, font, focusRing, alpha
-lib/ui/themes/<id>.ts    # the spec itself: surfaces, metrics, motion — add theme-<id>
+selectTheme(brandTheme);
 ```
 
-Edit the values and keep the keys: components and surfaces refer to them by name, and both appearances need the same set. This is the change that reaches every component at once. [Theme](./theme) lists the roles.
+`extends` is the theme's `spec`, not the `AppTheme` wrapper. Fields you leave out are kept. Omitting `brand` compiles it to `var(--primary)`. Omitting `tints` and `chart` uses the derived tints and the default chart ramp. A radius change is the same kind of patch: `tokens.radius` is `control`, `container`, `modal`, and `curve` (`"continuous"` or `"circular"`).
 
-What `theme.json` does not carry is the spec's own depth: the eleven `surfaces` (fill, gradient, shadow, edges, material), `feedback` (hover, press, focus, disabled, passive), `controls` (a switch's track, a field's focus line) and `metrics` (sizes per input tier). Those live in `lib/ui/themes/<id>.ts`, which `add theme-<id>` installs and which `defineTheme()` compiles: a field a surface leaves out is a neutral (no gradient, no material, no shadow), and a shadow names the parts of the theme's own `elevation` scale rather than writing one. If you add a surface, copy every field of a neighbouring one and change the ones that differ, and state device-dependent sizes twice, under `pointer` and `touch`, with the same keys.
+With the CLI, the same call lives in a file the app owns. `npx shadcn-nsh@latest add theme-shadcn` writes `themes/shadcn.ts` plus `themes/shadcn/theme.json` and `DESIGN.md`, beside the build-time theme. Import that module and pass it to `selectTheme`. `init --theme <id>` builds the app on that theme instead. See [Themes](./themes).
+
+`nativeTheme()` from `shadcn-nsh/themes/native` returns Apple on iOS and macOS, Material on Android, WinUI 3 on Windows, and NSH Gallery elsewhere:
+
+```tsx
+import { selectTheme } from "shadcn-nsh/theme";
+import nativeTheme from "shadcn-nsh/themes/native";
+
+selectTheme(nativeTheme());
+```
+
+### What the build writes [#what-the-build-writes]
+
+`theme.json` is the layer NSH and Tailwind read: `cssVars.theme` (fonts, `radius`, `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`) and the same color roles in `cssVars.light` and `cssVars.dark`. Edit keys, and keep the set. Both appearances need the same keys. Components refer to roles by name.
+
+In this repository, `bun run theme:build` exports three artifacts from the resolved spec. They are generated. Change the TypeScript spec, then run the build. Do not hand-edit the exports and expect the spec to follow.
+
+| Artifact                                | What it is                                                                                        |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `theme.json`                            | CSS variables for `setTheme` and Tailwind                                                         |
+| `light.tokens.json`, `dark.tokens.json` | W3C Design Tokens Community Group format, 2025.10, one file per appearance. Not read at run time. |
+| `DESIGN.md`                             | The design language in words, for agents. Generated.                                              |
+
+An app that only needs different colors can edit the copied `theme.json`. A later `add` merges keys the file lacks and keeps values you changed, unless you pass `--overwrite`. Surfaces, controls, metrics, and motion are not in `theme.json`. Those stay on the spec, in `themes/<id>.ts` after a copy, or in the module `nshm` resolves. [Theme specification](./theme) lists the roles. [Architecture](./architecture) is the three layers.
 
 ```json
 {
   "cssVars": {
     "theme": {
+      "font-sans": "system-ui",
+      "font-mono": "monospace",
       "radius": "8px",
-      "radius-control": "8px",
-      "radius-container": "12px",
-      "radius-modal": "14px"
+      "radius-md": "8px",
+      "radius-lg": "12px",
+      "radius-xl": "14px"
     },
     "light": { "background": "#f6f6f9", "primary": "#c6ef6a" },
     "dark": { "background": "#16191f", "primary": "#c4ec6a" }
@@ -11581,55 +11605,106 @@ What `theme.json` does not carry is the spec's own depth: the eleven `surfaces` 
 }
 ```
 
-## One control's look [#one-controls-look]
+## Customizing copied components [#customizing-copied-components]
 
-The look is the function that turns a `variant` (shadcn's word: `default`, `secondary`, `ghost`, `destructive`), a `size` (`sm`, `default`, `lg`), a `tone` (the theme's `Tone`: `neutral`, `accent`, `info`, `success`, `warning`, `destructive`) and a state into the props `nsh/base` draws with. It sits at the top of a copied component, above the component itself.
+`init` and `add` copy files into the app. After that they are the app's own. This section is that path. `nshm` does not copy a file to edit.
+
+Public component shells sit at the top of each file. Component-private `*Look` helpers live at the bottom. The shell is what you change to add a prop or a part. The private look is what you change to restyle that control. Shared looks stay exported, because other files import them: `buttonLook` and `iconButtonLook` in `components/ui/button.tsx`, `pressableLook` in `components/ui/pressable.tsx`, `fieldLook` in `lib/ui/field-look.ts`, and `choiceLook` in `lib/ui/choice.tsx`.
+
+| Change                  | Where                                                      | Reaches                                    |
+| ----------------------- | ---------------------------------------------------------- | ------------------------------------------ |
+| Colors, radii, surfaces | `theme.json`, and `themes/<id>.ts` for the spec            | every component                            |
+| One control's look      | the private look at the bottom of `components/ui/<id>.tsx` | that control's variants, sizes, and states |
+| Structure or API        | the public shell at the top of the same file               | that component's props and parts           |
+
+In a monorepo, component files live under `packages/ui/` instead of the app root. The theme readers are still `lib/ui/`.
+
+### Colors, radii, and the spec [#colors-radii-and-the-spec]
+
+`theme.json` holds the colors for both appearances, the three layer radii (`radius-md`, `radius-lg`, `radius-xl`, with `radius` equal to `radius-md`), the fixed `scrim` / `media` / `on-media` values, and `font-sans` / `font-mono`. Every component reads them through `lib/ui/theme.ts`.
 
 ```tsx
-// components/ui/button.tsx
-export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: ButtonLookOptions) {
-  return {
-    get style(): ViewStyle {
-      const dims = dimensions(o);
-      return {
-        height: terminal ? TERMINAL_ROW : dims.height,
-        borderRadius: shape.control,
-        // ...
-      };
-    },
-    // hoverStyle, activeStyle, focusVisibleStyle, disabledStyle, hitSlop
-  };
-}
+import { colors, control, shape } from "@/lib/ui/theme";
 ```
 
-Change the values in that function — a height, a radius, a hover fill — and the shell below still spreads the result. Keep the props it returns; they are what the base control reads. `buttonLook` is one; `iconButtonLook`, `roundButtonLook` and `splitButtonLook` live in the same file, and other components name theirs the same way (`switchLook`, `checkboxLook`). Controls whose shape and dimensions vary by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/field-look.ts` for fields) read the theme's control geometry through `control("switch")`, `control("slider")`, `control("choice")` and `control("field")`; the per-component geometry that hangs off them stays right inside those component or lib files.
+With `nshm` the same values are `import { colors, control, shape } from "shadcn-nsh/theme"`.
 
-## Structure and API [#structure-and-api]
+What `theme.json` does not carry is the spec's depth: the eleven `surfaces` (fill, gradient, shadow, edges, material), `feedback` (hover, press, focus, disabled, passive), `controls` (a switch's track, a field's focus line), and `metrics` (sizes per input tier). `add theme-<id>` installs that spec as `themes/<id>.ts`. A field a surface leaves out is a neutral (no gradient, no material, no shadow). A shadow names a step of the theme's own `elevation` scale rather than writing a shadow literal. State a device-dependent size twice, under `pointer` and `touch`, with the same keys.
 
-The shell is the component and its parts, below the look. It reads props, spreads the look and gives a composite its roles.
+### One control's look [#one-controls-look]
+
+A look turns a `variant`, a `size`, a `tone`, and a state into the props `nsh/base` draws with. In a copied file the private helpers sit below the public shell. Change a height, a radius, or a hover fill there, and keep the props the base control reads. Helpers only that file uses stay private.
+
+Controls whose shape varies by platform (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`) read the theme's control geometry through `control("switch")`, `control("slider")`, `control("choice")`, and `control("field")`.
+
+### Structure and API [#structure-and-api]
+
+The shell is the component and its parts, above the look. It reads props, spreads the look, and gives a composite its roles.
 
 ```tsx
-// components/ui/button.tsx
-export function Button(props: ButtonProps) { ... }
-export function IconButton(props: IconButtonProps) { ... }
+// components/ui/button.tsx — public shell, top of the file
+export function Button(props: ButtonProps) {
+  /* ... */
+}
+export function IconButton(props: IconButtonProps) {
+  /* ... */
+}
 ```
 
 ```tsx
 // components/ui/dialog.tsx
-export function Dialog(props: DialogProps) { ... }
-export function DialogTrigger(props: DialogTriggerProps) { ... }
-export function DialogContent(props: DialogContentProps) { ... }
+export function Dialog(props: DialogProps) {
+  /* ... */
+}
+export function DialogTrigger(props: DialogTriggerProps) {
+  /* ... */
+}
+export function DialogContent(props: DialogContentProps) {
+  /* ... */
+}
 ```
 
-Change the shell to change which props a component takes, which parts it exports, and how they nest. A new prop is read in the shell and passed to the base control; keep the caller's `style`, `hoverStyle` and other style props after the look's, so they still win. Behavior — keyboard, focus, dismissal — stays in `nsh/base`; the shell passes its props through. See [nsh.dev/elements](https://nsh.dev/elements).
+Change the shell to change which props a component takes, which parts it exports, and how they nest. A new prop is read in the shell and passed to the base control. Keep the caller's `style`, `hoverStyle`, and other style props after the look's, so they still win. Behavior — keyboard, focus, dismissal — stays in `nsh/base`. The shell passes those props through. See [nsh.dev/elements](https://nsh.dev/elements).
 
-## After an update [#after-an-update]
+### After an update [#after-an-update]
 
-`add` keeps a file the app changed and reports it; `diff` shows the lines; `add --overwrite` replaces it. `theme.json` is the exception: one with missing keys is merged, and customized values are kept unless `--overwrite`.
+`add` keeps a file the app changed and reports it. `diff` shows the lines. `add <name> --overwrite` replaces the file.
+
+```npm
+npx shadcn-nsh@latest diff
+npx shadcn-nsh@latest add button --overwrite
+```
+
+`theme.json` is the exception: a file that only lacks keys is merged, and customized values are kept unless `--overwrite`.
 
 # Getting started (/dev/docs/getting-started)
 
-## An existing NSH app [#an-existing-nsh-app]
+## Two ways to install [#two-ways-to-install]
+
+|              | TSX `nshm`                           | Copy-into-app CLI                                                  |
+| ------------ | ------------------------------------ | ------------------------------------------------------------------ |
+| What you get | The module, resolved by NSH          | The source, copied into the app                                    |
+| Install      | `nsh add github:aningdev/shadcn-nsh` | `npx shadcn-nsh@latest init && npx shadcn-nsh@latest add button`   |
+| npm          | None                                 | Whatever an item declares (the components declare none)            |
+| Theme        | `selectTheme(...)` at run time       | `theme.json` at build time, plus `selectTheme` for any extra theme |
+
+### TSX `nshm` [#tsx-nshm]
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Button } from "shadcn-nsh";
+import { selectTheme } from "shadcn-nsh/theme";
+import apple from "shadcn-nsh/themes/apple";
+
+selectTheme(apple);
+```
+
+No `package.json` and no `node_modules`. `selectTheme` switches a built-in theme while the app runs. Tailwind token names such as `bg-surface` and `rounded-(--radius-md)` still need a build-time `theme.json`, which CLI `init` writes.
+
+### Copy-into-app [#copy-into-app]
 
 An app with `nsh.json` (from `nsh init`) is ready:
 
@@ -11638,7 +11713,7 @@ npx shadcn-nsh@latest init
 npx shadcn-nsh@latest add button
 ```
 
-`init` writes `nsh-ui.json`, installs the theme and points each `nsh.json` at `theme.json`; in an app it also sets up the `@/` import alias the docs' snippets use — `"@/*": ["./*"]` in `tsconfig.json`'s `compilerOptions.paths` (writing the file when there is none) and `"resolve": { "alias": { "@": "./" } }` in `nsh.json` — leaving values already there alone with a warning. `add` copies the component and its `registryDependencies` (the theme and the shared look files it imports) into the app; from then on the files are the app's own. [CLI](./cli) has every command, flag and default.
+`init` writes `nsh-ui.json`, installs the theme and points each `nsh.json` at `theme.json`; in an app it also sets up the `@/` import alias the docs' snippets use — `"@/*": ["./*"]` in `tsconfig.json`'s `compilerOptions.paths` (writing the file when there is none) and `"resolve": { "alias": { "@": "./" } }` in `nsh.json` — leaving values already there alone with a warning. `add` copies the component and its `registryDependencies` (the theme and the shared files it imports) into the app; from then on the files are the app's own. [CLI](./cli) has every command, flag and default.
 
 Consumer monorepo scaffolding (`shadcn-nsh create`) is not built. `init` and `add` work in a workspace that already has `apps/*` and a `packages/ui` named `@workspace/ui` (or already holding `nsh-ui.json`).
 
@@ -11711,7 +11786,7 @@ bun run shadcn-nsh -- add button -c apps/web --registry "http://127.0.0.1:4173/{
 
 ## Theme [#theme]
 
-The look is `theme.json` (the roles of both appearances, three `radius-*` layer lengths, the fixed `scrim` / `media` / `on-media` values and any font families) plus `lib/ui/theme.ts`, the readers; the deeper half of a theme — surfaces, feedback, controls, metrics — is the spec in `lib/ui/themes/<id>.ts`, which `add theme-<id>` installs. `init` installs them and points each `nsh.json` at `theme.json`; in a monorepo they live under `packages/ui`. See [Theme](./theme) for the keys, and [Customizing](./customizing) to change colors, one control's look, or its shell after copying.
+The look is `theme.json` (the roles of both appearances, three `radius-*` layer lengths, the fixed `scrim` / `media` / `on-media` values and any font families) plus `lib/ui/theme.ts`, the readers; the deeper half of a theme — surfaces, feedback, controls, metrics — is the spec in `themes/<id>.ts`, which `add theme-<id>` installs beside the build-time theme. `init` installs the build-time theme and points each `nsh.json` at `theme.json`; in a monorepo they live under `packages/ui`. See [Theme specification](./theme) for the keys, and [Customizing](./customizing) to derive a theme or to change a copied component.
 
 ## Behavior, previews and native tests [#behavior-previews-and-native-tests]
 
@@ -11724,7 +11799,9 @@ Behavior, keyboard support and accessibility belong to `nsh/base`: [nsh.dev/elem
 
 # Icons (/dev/docs/icons)
 
-The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/ui/icons.tsx`: an icon is a lucide node, stroked on a canvas in its 24-unit box, so it reads at the same size and weight as lucide anywhere else.
+The components draw their own basic UI icons. `lib/ui/icons.tsx` ships those nodes, so a component does not need the `lucide` package at run time. `Icon` strokes a node on a canvas in its 24-unit box.
+
+An icon value from [`lucide`](https://lucide.dev/icons) has the same shape (`[tag, attrs][]`) and assigns to `IconNode`. Pass one anywhere a component takes an icon.
 
 ## Installation [#installation]
 
@@ -11732,14 +11809,12 @@ The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/ui
 npx shadcn-nsh@latest add icons
 ```
 
-This copies `lib/ui/icons.tsx` and installs `lucide`. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings them when it is added. `button`, `alert`, `empty` and the other components that take an icon as a child do not: add `icons` once before writing the examples on their pages.
+This copies `lib/ui/icons.tsx` and does not install an npm package. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings `icons` when it is added. With the TSX `nshm` install the same module is `shadcn-nsh`'s `Icon` export; nothing else is installed.
 
 ## Usage [#usage]
 
 ```tsx
-import { Plus } from "lucide";
-
-import { Icon } from "@/lib/ui/icons";
+import { Icon, Plus } from "@/lib/ui/icons";
 import { colors } from "@/lib/ui/theme";
 ```
 
@@ -11747,7 +11822,17 @@ import { colors } from "@/lib/ui/theme";
 <Icon icon={Plus} size={16} tint={colors.foreground} />
 ```
 
-Import each icon by name from `lucide`, as a front end does: the [icon list](https://lucide.dev/icons) gives the names (`ChevronDown`, `Trash`, `CircleX`). The color is one of the theme's roles, never a literal.
+The built-in names are the ones the components draw (`ChevronDown`, `Plus`, `Search`, `X`, and the rest of that set). An icon the set does not include still comes from `lucide`:
+
+```tsx
+import { Sparkles } from "lucide";
+
+import { Button } from "@/components/ui/button";
+
+<Button icon={Sparkles}>New</Button>;
+```
+
+The color is one of the theme's roles, never a literal.
 
 ## Size and color [#size-and-color]
 
@@ -11836,7 +11921,7 @@ import { IconLabel } from "@/lib/ui/icons";
 
 `lib/ui/icons.tsx` is the app's own after `add`. To use another set, keep `Icon`'s props and change what it draws: the components only ever pass an icon, a size, a tint and a weight.
 
-# Theme (/dev/docs/theme)
+# Theme specification (/dev/docs/theme)
 
 The theme is the upstream gallery's: a graphite page (paper in light appearance), cards and wells, one citrus accent, compact controls with a pointer and roomier ones on a touch screen. It is **one TypeScript module** — the spec `defineTheme()` compiles — plus the module that reads it, and every component takes its colors, radii, typography, motion and depth from there. `theme.json` and `DESIGN.md` are exports of that same spec, so a theme is written once and drawn, shipped and documented from one place. No component writes a color of its own.
 
@@ -11845,12 +11930,12 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 | File                                    | What it holds                                                                                                                                                                                                                                                                                              |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `themes/<id>/index.ts`                  | The spec: `tokens` (21 appearance roles per mode, the fixed `scrim` / `media` / `on-media`, radii, fonts, tints, charts), `metrics`, `elevation`, the eleven `surfaces`, `feedback`, `motion`, `controls` — a full `ThemeSpec` for `nsh-gallery`, a `defineTheme({ extends, … })` delta for the other five |
-| `theme.json`                            | The build export in shadcn's `cssVars` shape: `cssVars.theme` (radius, `radius-control` / `-container` / `-modal`, `scrim`, `media`, `on-media`, optional `font-sans` / `font-mono`), `cssVars.light` and `cssVars.dark` (the same 21 keys)                                                                |
+| `theme.json`                            | The build export in shadcn's `cssVars` shape: `cssVars.theme` (`font-sans`, `font-mono`, `radius`, `radius-md`, `radius-lg`, `radius-xl`, `scrim`, `media`, `on-media`), `cssVars.light` and `cssVars.dark` (the same 21 keys)                                                                             |
 | `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from the same spec                                                                                                                                                                                                     |
 | `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio and Style Dictionary v4                                                                                                                  |
 | `lib/ui/theme.ts`                       | `colors`, `surface`, `control`, `feedback`, `shape`, `font`, `metrics`, `elevation`, `motion`, `focusRing` and `alpha`, read reactively from the spec                                                                                                                                                      |
 
-`bun run tokens:build` writes `theme.json`, `DESIGN.md` and the two `.tokens.json` files from `themes/<id>/index.ts`; they are build outputs, so edit the spec, not them.
+`bun run theme:build` writes `theme.json`, `DESIGN.md` and the two `.tokens.json` files from `themes/<id>/index.ts`; they are build outputs, so edit the spec, not them.
 
 ## Installation [#installation]
 
@@ -11996,14 +12081,14 @@ The names are `button`, `badge`, `field`, `choice`, `switch`, `slider`, `progres
 
 ## Radii [#radii]
 
-`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-control` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-container` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-modal` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-control`. `shape` resolves each role reactively via `token()`, and `buttonCorner(size)` reads `control("button").corner` (`"control"` or `"full"` capsule):
+`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-md` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-lg` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-xl` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-md`. `shape` resolves each role reactively via `token()`, and `buttonCorner(size)` reads `control("button").corner` (`"control"` or `"full"` capsule):
 
 ```tsx
 import { buttonCorner, shape } from "@shadcn-nsh/theme";
 
-shape.control; // 8, from radius-control
-shape.container; // 12, from radius-container
-shape.modal; // 14, from radius-modal
+shape.control; // 8, from radius-md
+shape.container; // 12, from radius-lg
+shape.modal; // 14, from radius-xl
 buttonCorner("default"); // 999 when button.corner.md is "full", else shape.control
 ```
 
@@ -12067,11 +12152,11 @@ The theme file stays complete: copy it, then edit. Every role of both appearance
 }
 ```
 
-Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-control`, `radius-container` or `radius-modal` in `cssVars.theme` (keep `radius` equal to `radius-control`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. A surface's shape and depth and a control's geometry are the spec's, so an app that changes them edits `themes/<id>.ts` — the file `add theme-<id>` installs — and copies it into its own reader if it does not. Fonts are the app's own: see [Fonts](#fonts).
+Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-md`, `radius-lg` or `radius-xl` in `cssVars.theme` (keep `radius` equal to `radius-md`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. A surface's shape and depth and a control's geometry are the spec's, so an app that changes them edits `themes/<id>.ts` — the file `add theme-<id>` installs — and copies it into its own reader if it does not. Fonts are the app's own: see [Fonts](#fonts).
 
 ## Fonts [#fonts]
 
-A theme owns no font: none of the shipped themes declares a family unless its app's does, and one type scale (sizes and line heights) serves them all, so switching themes never reflows text. Each theme states its own weight and letter spacing per role. Text names no family of its own; it takes the app's `font-sans`, and monospaced text (the `font-mono` class, code in a `Text`) takes `font-mono` — this library writes the generic `monospace` where it needs a monospaced face. The user's system font size scales every size.
+Every `theme.json` writes `font-sans` and `font-mono`. Built-in themes leave `tokens.font` unset, so those keys are `system-ui` and `monospace` — the system's own faces — and one type scale (sizes and line heights) serves them all, so switching themes never reflows text. Each theme states its own weight and letter spacing per role. `font.sans` and `font.mono` read the two keys; the `font-sans` and `font-mono` classes read the same CSS variables. The user's system font size scales every size.
 
 Set the app's families in the `cssVars.theme` block of its own `theme.json`:
 
@@ -12098,15 +12183,15 @@ This library distributes no font files: `add theme` writes JSON and TypeScript a
 
 ## Restyling [#restyling]
 
-Edit the spec; every component follows. Change a brand colour in `tokens.light` and `tokens.dark`, a radius in `tokens.radius`, a shadow part in `elevation`, a gradient, a surface or a control in the theme's own `index.ts` — then `bun run tokens:build` re-exports `theme.json`, `DESIGN.md` and the two `.tokens.json` files. Keep the keys: components and surfaces refer to them by name. A value that follows the device is stated twice, `pointer` and `touch`, with the same keys.
+Edit the spec; every component follows. Change a brand colour in `tokens.light` and `tokens.dark`, a radius in `tokens.radius`, a shadow part in `elevation`, a gradient, a surface or a control in the theme's own `index.ts` — then `bun run theme:build` re-exports `theme.json`, `DESIGN.md` and the two `.tokens.json` files. Keep the keys: components and surfaces refer to them by name. A value that follows the device is stated twice, `pointer` and `touch`, with the same keys.
 
 - A theme of your own is a `defineTheme()` delta over one that ships: `defineTheme({ id, label, extends: nshGallery.spec, tokens: { … } })`, sparse — what it does not state, it inherits. `ALL_THEMES` in `packages/theme/themes` is the list, and adding one there gives it a page on this site and a registry item.
 - Add a shipped theme to an app with `shadcn-nsh add theme` (or let `init` do it); subsequent `add` runs key-merge missing entries into `theme.json` while keeping your values.
 - The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn, Solid Glass, Apple, Material or WinUI 3) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette — its install command and every role it sets — has a page linked from [Themes](./themes).
 - To change one component's look instead, edit its look function in the copied component; to change structure or API, edit the shell. See [Customizing](./customizing).
-- Maintaining this repository: edit the look in `packages/ui` (all of it is ours; a credit line in the header says where it began); `port:check` lists upstream's changes and `bun run port:review` marks them read. After editing `packages/theme`, run `bun run registry:build` and commit `public/r`.
+- Maintaining this repository: edit the look in `packages/ui` (all of it is ours; a credit line in the header says where it began). After editing `packages/theme`, run `bun run theme:build` and `bun run registry:build`, and commit `public/r`.
 
-Theme rules and decisions: [`docs/specs/theme-roles.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/theme-roles.md), [`docs/decisions/0020-theme-v5.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/decisions/0020-theme-v5.md) and [`packages/theme/README.md`](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md). Behavior and accessibility are `nsh/base`'s: [nsh.dev/elements](https://nsh.dev/elements).
+Theme rules: [`docs/theme.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/theme.md) and [`packages/theme/README.md`](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md). Behavior and accessibility are `nsh/base`'s: [nsh.dev/elements](https://nsh.dev/elements).
 
 # Apple (/dev/docs/themes/apple)
 
@@ -12132,6 +12217,18 @@ Theme rules and decisions: [`docs/specs/theme-roles.md`](https://github.com/anin
 
 <ThemeSurfaces id="apple" />
 
+## Design notes and trade-offs [#design-notes-and-trade-offs]
+
+This theme maps Apple's system colors and Liquid Glass onto the shared control slots. It does not clone every UIKit or AppKit widget. The official reference is the [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/).
+
+**Color.** Light `background`, `card`, and `popover` are white (`#FFFFFF`); `foreground` is black. `primary`, `ring`, and `info` are systemBlue `#007AFF` (`oklch(0.60276 0.21771 257.424)`). Dark `primary` is `oklch(0.62425 0.20558 255.486)`. Light `inset` is `#F2F2F7`. The palette does not inherit a separate `brand`, so `theme.json` compiles `brand` to `var(--primary)`. `tintAlpha` is `0.12`. `scrim` is `oklch(0 0 0 / 0.4)`. The five chart colors are stated system colors, not the default `[brand, info, success, warning, destructive]` ramp.
+
+**Material.** `appleGlass()` omits `macos.backdrop`, so macOS 26 and later use `NSGlassEffectView` (`glassEffect` and `glassTintColor`). Earlier macOS and the web fall back to `backdropFilter`. The specular highlight is `oklch(1 0 0 / 0.55)` in light and `oklch(1 0 0 / 0.16)` in dark. Optical `liquid-glass` is only on `overlay`, `modal`, `inverse`, and `glass`. Cards have no shadow. Shadows elsewhere are a 0.5px hairline plus a shadow.
+
+**Radii and density.** `control` / `container` / `modal` are 8 / 12 / 16, with `curve: "continuous"`. Pointer button corners are 5 / 6 / 8; touch buttons are `"full"`; badges are capsules. Hairline stroke is 0.5; control strokes are 1. Pointer heights are 24 / 28 / 32. Touch heights are 32 / 44 / 56. Keep the 0.5px continuous corners. Do not replace them with a thick border or `curve: "circular"`.
+
+**Controls.** Buttons are not capsules on pointer. Fields keep a four-edge box (the baseline `input` edge), not an underline. Choice is a rounded box, not a circular radio disc. Switch and slider press change geometry (the thumb stretches). There is no drag lens; optical refraction stays on the glass surfaces. Spinner `trackOpacity` is `0`, so no track ring is drawn. `AlertDialog` calls `nsh/base` `AlertDialog.show` on every platform, so this theme's Liquid Glass modal is not applied to alerts.
+
 # Material (/dev/docs/themes/material)
 
 <ThemeIntro id="material" />
@@ -12155,6 +12252,18 @@ Theme rules and decisions: [`docs/specs/theme-roles.md`](https://github.com/anin
 ## Surfaces [#surfaces]
 
 <ThemeSurfaces id="material" />
+
+## Design notes and trade-offs [#design-notes-and-trade-offs]
+
+This theme maps Material 3 Expressive onto the shared control slots: tonal surfaces, circular corners, and state layers. It does not clone every Material widget. The official reference is [Material Design 3](https://m3.material.io/).
+
+**Color.** Light `background` is `#FEF7FF` (`oklch(0.98379 0.01284 321.894)`). Light `primary` is `#6750A4` (`oklch(0.49552 0.13046 293.709)`). Light `secondary` is `#E8DEF8`. Dark `primary` is `oklch(0.83493 0.09457 298.018)`. `scrim` is `oklch(0 0 0 / 0.32)`. Tints are solid tonal containers for `brand`, `info`, `success`, `warning`, and `destructive`, not a `tintAlpha` wash. After the palette override, `brand` in `theme.json` is `var(--primary)`.
+
+**Surfaces.** Elevation is tonal steps plus the Material Web double shadow. There is no backdrop blur. `glass` has no `backdropFilter`. `meta.donts`: do not add blur or a border to a tonal container.
+
+**Radii and density.** `control` / `container` / `modal` are 4 / 12 / 28 (Corner Extra Small / Medium / Extra Large), with `curve: "circular"`. Buttons and badges are `"full"` at every size. Material 3 has no official desktop density. Pointer heights 24 / 32 / 40 are this library's tier. Touch heights are 32 / 40 / 56. `hit.touch` is 48.
+
+**Motion and controls.** Press is an 8% hover overlay and a 10% press overlay (`scale` stays 1), not an Android ripple. `themeSwitch` is a `radial-wipe` of 320 ms. Fields are filled: sides have no edge, the bottom edge is `muted-foreground`, and focus is a 2px `brand` underline, not a four-edge box. A selected checkbox face is `primary`. A selected radio face is `none`, so the disc is not filled. Popup corners use `control` (4), not the container radius 12. Switch press expands the thumb. The library does not draw an optional thumb icon.
 
 # NSH Gallery (/dev/docs/themes/nsh-gallery)
 
@@ -12252,6 +12361,18 @@ Theme rules and decisions: [`docs/specs/theme-roles.md`](https://github.com/anin
 
 <ThemeSurfaces id="winui" />
 
+## Design notes and trade-offs [#design-notes-and-trade-offs]
+
+This theme maps Fluent 2 and WinUI 3 onto the shared control slots: Accent blue, 4- and 8-point circular corners, in-app Acrylic, and decelerating motion. It does not clone every WinUI control. The official reference is [Windows App Design](https://learn.microsoft.com/windows/apps/design/).
+
+**Color.** Light `background` is `#F3F3F3` (`oklch(0.96415 0 0)`). Light `primary` and `info` are `#005FB8`. Light `brand` is `#003E92`. Dark `primary` and `info` are `#60CDFF`. Dark `brand` is `oklch(0.8943 0.08425 214.859)`. Info tints are solid: light `#E5F1FB`, dark `#1E3246`. `scrim` is `oklch(0 0 0 / 0.302)`. Chart colors are `primary`, `success`, `warning`, `destructive`, and `input`.
+
+**Material.** Component material is in-app Acrylic (`kind: "acrylic"` plus `acrylic-noise`), not window Mica. Mica is the app shell's `window.backdrop`. This library falls back to Acrylic or an opaque fill. The specular highlight is `oklch(1 0 0 / 0.6)` in light and `oklch(1 0 0 / 0.09)` in dark. `raised` is a translucent top and bottom edge, with no drop shadow. Cards have a translucent black edge and no shadow.
+
+**Radii and motion.** `control` / `container` / `modal` are 4 / 8 / 8, with `curve: "circular"`. Do not switch the curve to `continuous`. Durations are 83 / 167 / 250 / 333 ms, decelerating, with a damping ratio of at least 1 and no overshoot. Focus is a double ring (width 2, offset 0). Hover swaps color. It is not an overlay.
+
+**Controls.** Buttons stay at the control radius 4. They are not capsules. Press swaps color. Fields are a box: four edges in `line`, a stronger bottom edge in `input`, and a 2px `brand` focus line. Choice and radio both fill with `primary`. Switch press only widens the thumb. Slider and progress tracks use `input`, not a brand fill.
+
 # Themes (/dev/docs/themes)
 
 ## One look, more than one palette [#one-look-more-than-one-palette]
@@ -12263,19 +12384,22 @@ eleven surfaces, feedback, motion and controls — and the `theme.json` that sam
 what it changes. An app is _built_ with one theme and can _carry_ more, switching between them while
 it runs with `selectTheme`.
 
+Each built-in theme distills the visual style of its design system — colors, radii, surfaces, and
+motion — rather than replicating every platform widget 1:1. Apple, Material, and WinUI record that
+mapping under Design notes and trade-offs. A theme of your own is [Customizing](./customizing).
+
 Every demo on this site can be drawn in any of these palettes: pick one with the **Demo theme**
 switch in the nav, and the previews load again in it. The panel above is the showcase — buttons, a
 card with a field, badges, switches, a slider and a progress bar, with the card, inset and press surfaces
 the palette brings. The list is `apps/website/demos/palettes.ts`. Each palette has its own page,
 with the same sections: how to install it, every token it sets, and every surface it draws. Those
-pages read each theme's own spec, following the
-[theme roles spec](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/theme-roles.md) and
-[the Theme v5 decision](https://github.com/aningdev/shadcn-nsh/blob/main/docs/decisions/0020-theme-v5.md).
+pages read each theme's own spec. The contract is
+[`docs/theme.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/theme.md).
 
 ## Radii by role [#radii-by-role]
 
-`theme.json` states one corner radius per layer in `cssVars.theme` — `radius-control` (in-page
-elements), `radius-container` (cards, menus, popovers, toasts) and `radius-modal` (dialogs, sheets) —
+`theme.json` states one corner radius per layer in `cssVars.theme` — `radius-md` (in-page
+elements), `radius-lg` (cards, menus, popovers, toasts) and `radius-xl` (dialogs, sheets) —
 and `control("button").corner.*` makes buttons capsules (`material`, touch `apple`) or points / `control` (the rest). A surface nested in
 another takes the concentric corner, `rounded(outer, inset)`. Every corner that reads a theme radius
 uses `shape.curve` (`"continuous"` or `"circular"`), which `rounded()` applies in one place.

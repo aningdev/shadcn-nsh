@@ -67,10 +67,9 @@ on the scrim close it too; all of them are `nsh/base`'s, and `closeOnEscape` /
 
 ### The grabber [#the-grabber]
 
-The pill at the top edge is the drawer's (`drawerGrabber`: 100 by 8 points, fully round, in the muted
-fill) and it shows on a bottom drawer only, the one it can be dragged from. `sheetGrabber` is the
-sheet's narrower pill; a drawer that should not be dragged takes `DrawerContent` without the look —
-the grabber is drawn by the component, not by the app.
+The pill at the top edge is 100 by 8 points, fully round, in the muted fill, and it shows on a
+bottom drawer only, the one it can be dragged from. A sheet's grabber is the narrower pill. The
+grabber is drawn by the component, not by the app.
 
 ### Another edge [#another-edge]
 

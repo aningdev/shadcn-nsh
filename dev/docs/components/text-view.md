@@ -9,7 +9,7 @@ npx shadcn-nsh@latest add text-view
 ## Usage [#usage]
 
 ```tsx
-import { TextView, textViewCaretClass, textViewLinkClasses } from "@/components/ui/text-view";
+import { TextView, textViewCaretClass, textViewClasses } from "@/components/ui/text-view";
 ```
 
 ```tsx
@@ -21,7 +21,7 @@ import { TextView, textViewCaretClass, textViewLinkClasses } from "@/components/
 />
 ```
 
-`TextView` merges `textViewLinkClasses` into `classes` by default.
+`TextView` merges `textViewClasses` into `classes` by default.
 
 ## Examples [#examples]
 
@@ -167,9 +167,9 @@ const viewing = signal<ImageViewerImage | null>(null);
 
 `TextView.parse`, `parseHtml`, and `plainText` are re-exported from base. Every prop of [`nsh/base` TextView](https://nsh.dev/elements/text-view) passes through.
 
-| Part                                       | Props                                     | Description                                                                     |
-| ------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------- |
-| `TextView`                                 | every `nsh/base` TextView prop; `classes` | A Markdown, HTML or block document; `classes` merges over `textViewLinkClasses` |
-| `TextView.parse`, `parseHtml`, `plainText` | base's parsers                            | A document, parsed ahead of drawing                                             |
-| `textViewLinkClasses`                      | `{ link }`                                | The link classes the view merges in: the brand color over a faint underline     |
-| `textViewCaretClass`                       | —                                         | The streaming caret: a brand block a line high, pulsing                         |
+| Part                                       | Props                                     | Description                                                                       |
+| ------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `TextView`                                 | every `nsh/base` TextView prop; `classes` | A Markdown, HTML or block document; `classes` merges over `textViewClasses`       |
+| `TextView.parse`, `parseHtml`, `plainText` | base's parsers                            | A document, parsed ahead of drawing                                               |
+| `textViewClasses`                          | `{ link, tableGrid }`                     | Default classes merged into `classes`: brand underlined links and bordered tables |
+| `textViewCaretClass`                       | —                                         | The streaming caret: a brand block a line high, pulsing                           |

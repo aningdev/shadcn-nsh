@@ -59,7 +59,7 @@ Menubar
 
 `Menubar` is a row a step over its triggers — the theme's height step under a row, the room either
 side of them and its own 1-point edge — inside a 1-point edge with the card's fill, its triggers 8
-points either side (`menubarLook().bar`). It places nothing itself: a `MenubarMenu` gives a trigger
+points either side. It places nothing itself: a `MenubarMenu` gives a trigger
 and its popup, and the trigger stands in the bar, not in a box of its
 own.
 

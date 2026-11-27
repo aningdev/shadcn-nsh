@@ -84,5 +84,5 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style
 | `children` | `string \| JSX.Element` |         |
 
 There is no other axis: the text is `controlSize.label` (14 points with a pointer, 15 on a touch
-screen) and medium, in the theme's text color, a row with a gap of 8. `labelLook({ disabled })` is
-exported — `root` and `text` — for a label the app draws itself.
+screen) and medium, in the theme's text color, a row with a gap of 8. `disabled` dims that row to
+half.

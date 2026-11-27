@@ -9,7 +9,7 @@ npx shadcn-nsh@latest add dock-area
 ## Usage [#usage]
 
 ```tsx
-import { DockArea, DockTab, dockClasses } from "@/components/ui/dock-area";
+import { DockArea, DockDragPreview, DockTab, dockTabCloseClass } from "@/components/ui/dock-area";
 ```
 
 ```tsx
@@ -38,7 +38,7 @@ const layout: DockAreaLayout = {
 
 ### Default chrome [#default-chrome]
 
-Leave the render props out and the area uses `DockTab` and `DockDragPreview`; `dockClasses` is the chrome of every part.
+Leave the render props out and the area uses `DockTab` and `DockDragPreview`. The area's own classes are the chrome of every part, and a class you pass follows them.
 
 ```tsx
 <DockArea defaultLayout={layout} style={{ height: 240 }} />
@@ -46,13 +46,13 @@ Leave the render props out and the area uses `DockTab` and `DockDragPreview`; `d
 
 ## API [#api]
 
-| Part              | Props                                                                                                                   | Description                 |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| `DockArea`        | every `nsh/base` DockArea prop; `renderTab`, `renderDragPreview`, `renderEmpty` and the part classes over `dockClasses` | Tabs, splits and edge docks |
-| `DockTab`         | `title`, `active`, `testID`, `children`                                                                                 | A tab's title and underline |
-| `DockDragPreview` | `title`                                                                                                                 | A dragged tab's chip        |
+| Part              | Props                                                                                                                               | Description                 |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| `DockArea`        | every `nsh/base` DockArea prop; `renderTab`, `renderDragPreview`, `renderEmpty` and the part classes, the caller's after the area's | Tabs, splits and edge docks |
+| `DockTab`         | `title`, `active`, `testID`, `children`                                                                                             | A tab's title and underline |
+| `DockDragPreview` | `title`                                                                                                                             | A dragged tab's chip        |
 
-`DockArea` spreads `dockClasses` and default tab/panel renderers. Every prop of [`nsh/base` DockArea](https://nsh.dev/elements/dock) passes through, and so do the types those props, its ref and its callbacks name — a call site reads them from this file, not from `nsh/base`: `DockAreaProps`, `DockAreaRef`, `DockAreaLayout`, `DockRegion`, `DockNode`, `DockPlacement`, `DockPanel`, `DockPanelOptions`, `DockTarget`, `DockDropIndicator` and `DockInfo`.
+`DockArea` applies its chrome classes and default tab, preview and empty renderers. Every prop of [`nsh/base` DockArea](https://nsh.dev/elements/dock) passes through, and so do the types those props, its ref and its callbacks name — a call site reads them from this file, not from `nsh/base`: `DockAreaProps`, `DockAreaRef`, `DockAreaLayout`, `DockRegion`, `DockNode`, `DockPlacement`, `DockPanel`, `DockPanelOptions`, `DockTarget`, `DockDropIndicator` and `DockInfo`.
 
 `groupClass` is applied after the look's `flex-1 bg-muted`. A later background utility replaces the fill, so `groupClass="bg-card"` draws card-colored groups without `groupStyle`.
 
