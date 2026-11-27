@@ -607,7 +607,7 @@
       "type": "registry:ui",
       "title": "Toast",
       "description": "A raised banner, and a toaster: toast(), update and dismiss on nsh/base's queue.",
-      "registryDependencies": ["button", "icons", "motion", "spinner", "theme"],
+      "registryDependencies": ["button", "icons", "motion", "spinner", "theme", "utils"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -651,7 +651,7 @@
       "type": "registry:ui",
       "title": "Context Menu",
       "description": "A menu at the pointer, on the shared menu look.",
-      "registryDependencies": ["menu", "state"],
+      "registryDependencies": ["menu", "state", "utils"],
       "files": [
         {
           "path": "packages/ui/context-menu.tsx",

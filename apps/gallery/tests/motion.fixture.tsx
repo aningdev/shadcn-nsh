@@ -13,8 +13,8 @@ import {
   pressSink,
   progressGlide,
   sliderLook,
+  pressTransition,
   tableRowClass,
-  toastCloseLook,
   toggleLook,
 } from "../../../packages/ui";
 
@@ -36,7 +36,8 @@ function App() {
   const press = pressSink(0.97, "background-color");
   sliderLook();
   const popup = popInStyles("bottom");
-  const close = toastCloseLook();
+  // The close control's transition is `pressTransition("background-color")` spread onto its style.
+  const close = { style: pressTransition("background-color") };
   const classes = [
     optionClass,
     "transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none",

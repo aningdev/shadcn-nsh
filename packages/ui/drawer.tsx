@@ -15,46 +15,13 @@ import { Action, type ButtonVariant } from "./button";
 import { dialogText, dialogTitle } from "./dialog";
 import { backdrop } from "./lib/popup";
 import { createOpenState, type OpenState } from "./lib/state";
-import { AsText } from "./lib/utils";
+import { AsText, joinClass } from "./lib/utils";
 import { sheetPanel, type SheetSide } from "./sheet";
-
-/**
- * The pill at the top of a bottom drawer (a view's `style`): 100 by 8 points, fully round, in
- * `mutedForeground` at 35% so it reads cleanly on any tonal or elevated modal surface — wider and
- * heavier than a sheet's grabber, since a drawer is dragged from it. Spread it on a view of your
- * own when the app draws the drawer from the look.
- */
-export function drawerGrabber(): ViewStyle {
-  return {
-    width: 100,
-    height: 8,
-    ...rounded(4),
-    alignSelf: "center",
-    backgroundColor: alpha(colors.mutedForeground, 0.35),
-  };
-}
-
-/**
- * The block holding a drawer's title and description, inside the panel's padding: a column, 2 points
- * apart, each part as wide as the drawer (shadcn's `gap-0.5`).
- */
-export function drawerHeader(): ViewStyle {
-  return { gap: 2 };
-}
-
-/**
- * The block holding a drawer's actions, inside the panel's padding: a column, 8 points apart, each
- * action as wide as the drawer — a drawer's actions stack, so a finger reaches the one under another
- * (shadcn's footer).
- */
-export function drawerFooter(): ViewStyle {
-  return { gap: 8, paddingTop: 4 };
-}
 
 /** Why a drawer closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type DrawerOpenChangeReason = OpenChangeReason;
 
-/** The root: it owns whether the drawer is open, and nothing of how it looks. */
+/** The root: it owns whether the drawer is open, and nothing of how it looks. It draws no view. */
 export type DrawerProps = {
   /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
   open?: boolean | null;
@@ -87,6 +54,10 @@ export type DrawerTriggerProps = {
   /** The button's variant, for a string child (default `secondary`). */
   variant?: ButtonVariant;
   disabled?: boolean;
+  /** Tailwind classes on the trigger. */
+  class?: string;
+  /** Tailwind classes toggled on the trigger. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -98,33 +69,35 @@ export type DrawerCloseProps = DrawerTriggerProps & {
 /** The block of a drawer's heading: its title and its description. */
 export type DrawerHeaderProps = {
   children?: JSX.Element;
+  /** Tailwind classes on the block. */
+  class?: string;
+  /** Tailwind classes toggled on the block. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
 /** The block of a drawer's actions, a column as wide as the drawer. */
 export type DrawerFooterProps = {
   children?: JSX.Element;
+  /** Tailwind classes on the block. */
+  class?: string;
+  /** Tailwind classes toggled on the block. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
 /** A drawer's title text. */
 export type DrawerTitleProps = {
   children?: string | JSX.Element;
+  /** Tailwind classes on the text a string child draws. */
+  class?: string;
+  /** Tailwind classes toggled on that text. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<TextStyle>;
 };
 
 /** A drawer's description, the line under its title. */
 export type DrawerDescriptionProps = DrawerTitleProps;
-
-type DrawerContextValue = OpenState & Pick<DrawerProps, "onOpen" | "onClose" | "onCancel">;
-
-const DrawerContext = context<DrawerContextValue | null>(null);
-
-function useDrawer() {
-  const ctx = DrawerContext();
-  if (!ctx) throw new Error("Drawer parts must be used within <Drawer>");
-  return ctx;
-}
 
 /** The root of a drawer's parts. */
 export function Drawer(props: DrawerProps) {
@@ -158,9 +131,10 @@ export function DrawerTrigger(props: DrawerTriggerProps) {
 /** Closes the drawer, after its own `onPress`. */
 export function DrawerClose(props: DrawerCloseProps) {
   const ctx = useDrawer();
+  const [, rest] = split(props, ["onPress"]);
   return (
     <Action
-      {...props}
+      {...rest}
       onPress={() => {
         props.onPress?.();
         ctx.setOpen(false, "closePress");
@@ -201,20 +175,104 @@ export function DrawerContent(props: DrawerContentProps) {
 
 /** The heading block of the panel: its title and its description. */
 export function DrawerHeader(props: DrawerHeaderProps) {
-  return <View style={[drawerHeader(), props.style ?? null]}>{props.children}</View>;
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[drawerHeader(), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
 }
 
 /** The actions of the panel, one under the other, each as wide as the drawer. */
 export function DrawerFooter(props: DrawerFooterProps) {
-  return <View style={[drawerFooter(), props.style ?? null]}>{props.children}</View>;
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[drawerFooter(), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
 }
 
 /** The drawer's title; a string child takes `dialogTitle`'s type, anything else is drawn as given. */
 export function DrawerTitle(props: DrawerTitleProps) {
-  return <AsText style={[dialogTitle(), props.style ?? null]}>{props.children}</AsText>;
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <AsText
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[dialogTitle(), props.style ?? null]}
+    >
+      {props.children}
+    </AsText>
+  );
 }
 
 /** The drawer's description; a string child takes `dialogText`'s type, the muted line under the title. */
 export function DrawerDescription(props: DrawerDescriptionProps) {
-  return <AsText style={[dialogText(), props.style ?? null]}>{props.children}</AsText>;
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <AsText
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[dialogText(), props.style ?? null]}
+    >
+      {props.children}
+    </AsText>
+  );
+}
+
+// Private helpers
+
+type DrawerContextValue = OpenState & Pick<DrawerProps, "onOpen" | "onClose" | "onCancel">;
+
+const DrawerContext = context<DrawerContextValue | null>(null);
+
+function useDrawer() {
+  const ctx = DrawerContext();
+  if (!ctx) throw new Error("Drawer parts must be used within <Drawer>");
+  return ctx;
+}
+
+/**
+ * The pill at the top of a bottom drawer (a view's `style`): 100 by 8 points, fully round, in
+ * `mutedForeground` at 35% so it reads cleanly on any tonal or elevated modal surface — wider and
+ * heavier than a sheet's grabber, since a drawer is dragged from it.
+ */
+function drawerGrabber(): ViewStyle {
+  return {
+    width: 100,
+    height: 8,
+    ...rounded(4),
+    alignSelf: "center",
+    backgroundColor: alpha(colors.mutedForeground, 0.35),
+  };
+}
+
+/**
+ * The block holding a drawer's title and description, inside the panel's padding: a column, 2 points
+ * apart, each part as wide as the drawer (shadcn's `gap-0.5`).
+ */
+function drawerHeader(): ViewStyle {
+  return { gap: 2 };
+}
+
+/**
+ * The block holding a drawer's actions, inside the panel's padding: a column, 8 points apart, each
+ * action as wide as the drawer — a drawer's actions stack, so a finger reaches the one under another
+ * (shadcn's footer).
+ */
+function drawerFooter(): ViewStyle {
+  return { gap: 8, paddingTop: 4 };
 }

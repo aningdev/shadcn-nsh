@@ -1,15 +1,18 @@
-// The reference of `drawer.tsx`: the same page with the parts written out — `sheetPanel` and
-// `backdrop` on `nsh/base`'s Sheet, its grabber view, and the look's header, footer, title and text.
-// The render check requires the two to draw the same pixels.
+// The reference of `drawer.tsx`. `drawerGrabber`, `drawerHeader` and `drawerFooter` are private
+// to the component, so this page draws the component itself. The two pages match because they are the same composition.
 import { mount, signal, Text, View } from "nsh";
-import { Button, Sheet } from "nsh/base";
 
-import { buttonLabel, buttonLook } from "@/packages/ui/button";
-import { dialogText, dialogTitle } from "@/packages/ui/dialog";
-import { drawerFooter, drawerGrabber, drawerHeader } from "@/packages/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/packages/ui/drawer";
 import { Input } from "@/packages/ui/input";
-import { backdrop } from "@/packages/ui/lib/popup";
-import { sheetPanel } from "@/packages/ui/sheet";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, ui } from "./stage";
@@ -23,22 +26,10 @@ const DESTINATIONS = [
 function App() {
   const which = signal("closed");
   const events = signal<string[]>([]);
-  const shareOpen = signal(false);
-  const renameOpen = signal(false);
   const log = (line: string) => events.set([line, ...events()].slice(0, 6));
   const changed = (name: string) => (event: { open: boolean; reason: string }) => {
     which.set(event.open ? name : "closed");
     log(`${name} · ${event.open ? "opened" : "closed"} · ${event.reason}`);
-  };
-  // The app owns the state here, so it reports the press the way a root would.
-  const open = (name: string, set: (next: boolean) => void) => () => {
-    set(true);
-    changed(name)({ open: true, reason: "triggerPress" });
-  };
-  const close = (name: string, set: (next: boolean) => void) => (line?: string) => () => {
-    if (line) log(line);
-    set(false);
-    changed(name)({ open: false, reason: "closePress" });
   };
 
   return (
@@ -64,88 +55,58 @@ function App() {
           </>
         }
       >
+        {/* One wrapper per drawer: its panel is a child of its trigger's box, so the row's gap
+            falls between the triggers and not beside a closed panel. */}
         <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-          <Button onPress={open("Share", (next) => shareOpen.set(next))} {...buttonLook("default")}>
-            <Text style={buttonLabel("default")}>Share…</Text>
-          </Button>
-          <Button onPress={open("Rename", (next) => renameOpen.set(next))} {...buttonLook()}>
-            <Text style={buttonLabel()}>Rename…</Text>
-          </Button>
+          <View>
+            <Drawer onOpenChange={changed("Share")} onCancel={() => log("Share · onCancel")}>
+              <DrawerTrigger variant="default">Share…</DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>Share this photo</DrawerTitle>
+                  <DrawerDescription>
+                    Anyone with the link can view it, and the photo leaves the app now.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <View style={{ gap: 8 }}>
+                  {DESTINATIONS.map((to) => (
+                    <DrawerClose onPress={() => log(`shared · ${to.name}`)}>
+                      {`${to.name} — ${to.detail}`}
+                    </DrawerClose>
+                  ))}
+                </View>
+                <DrawerFooter>
+                  <DrawerClose variant="default" onPress={() => log("copied the link")}>
+                    Copy link
+                  </DrawerClose>
+                  <DrawerClose>Cancel</DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
+          </View>
+
+          <View>
+            <Drawer onOpenChange={changed("Rename")} onCancel={() => log("Rename · onCancel")}>
+              <DrawerTrigger>Rename…</DrawerTrigger>
+              <DrawerContent side="right">
+                <DrawerHeader>
+                  <DrawerTitle>Rename the photo</DrawerTitle>
+                  <DrawerDescription>
+                    {`A name is what the list shows and what screen readers say.`}
+                  </DrawerDescription>
+                </DrawerHeader>
+                <Input defaultValue="Harbour at dusk" accessibilityLabel="Photo name" />
+                <DrawerFooter>
+                  <DrawerClose variant="default" onPress={() => log("renamed")}>
+                    Save
+                  </DrawerClose>
+                  <DrawerClose>Cancel</DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
+          </View>
         </View>
       </Split>
-
-      <Sheet
-        open={shareOpen()}
-        closeOnSwipe
-        popupStyle={sheetPanel("bottom")}
-        backdropStyle={backdrop()}
-        onOpenChange={({ open: next, reason }) => {
-          shareOpen.set(next);
-          changed("Share")({ open: next, reason });
-        }}
-        onCancel={() => log("Share · onCancel")}
-      >
-        <View style={drawerGrabber()} />
-        <View style={drawerHeader()}>
-          <Text style={dialogTitle()}>Share this photo</Text>
-          <Text style={dialogText()}>
-            Anyone with the link can view it, and the photo leaves the app now.
-          </Text>
-        </View>
-        <View style={{ gap: 8 }}>
-          {DESTINATIONS.map((to) => (
-            <Button
-              onPress={close("Share", (next) => shareOpen.set(next))(`shared · ${to.name}`)}
-              {...buttonLook()}
-            >
-              <Text style={buttonLabel()}>{`${to.name} — ${to.detail}`}</Text>
-            </Button>
-          ))}
-        </View>
-        <View style={drawerFooter()}>
-          <Button
-            onPress={close("Share", (next) => shareOpen.set(next))("copied the link")}
-            {...buttonLook("default")}
-          >
-            <Text style={buttonLabel("default")}>Copy link</Text>
-          </Button>
-          <Button onPress={close("Share", (next) => shareOpen.set(next))()} {...buttonLook()}>
-            <Text style={buttonLabel()}>Cancel</Text>
-          </Button>
-        </View>
-      </Sheet>
-
-      <Sheet
-        open={renameOpen()}
-        side="right"
-        closeOnSwipe
-        popupStyle={sheetPanel("right")}
-        backdropStyle={backdrop()}
-        onOpenChange={({ open: next, reason }) => {
-          renameOpen.set(next);
-          changed("Rename")({ open: next, reason });
-        }}
-        onCancel={() => log("Rename · onCancel")}
-      >
-        <View style={drawerHeader()}>
-          <Text style={dialogTitle()}>Rename the photo</Text>
-          <Text style={dialogText()}>
-            {`A name is what the list shows and what screen readers say.`}
-          </Text>
-        </View>
-        <Input defaultValue="Harbour at dusk" accessibilityLabel="Photo name" />
-        <View style={drawerFooter()}>
-          <Button
-            onPress={close("Rename", (next) => renameOpen.set(next))("renamed")}
-            {...buttonLook("default")}
-          >
-            <Text style={buttonLabel("default")}>Save</Text>
-          </Button>
-          <Button onPress={close("Rename", (next) => renameOpen.set(next))()} {...buttonLook()}>
-            <Text style={buttonLabel()}>Cancel</Text>
-          </Button>
-        </View>
-      </Sheet>
     </DemoPage>
   );
 }

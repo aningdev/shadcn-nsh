@@ -80,26 +80,6 @@ export type HoverCardTriggerProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-type HoverCardContextValue = OpenState & {
-  trigger: Slot<JSX.Element>;
-  /** The trigger is disabled: the card stays closed. Reads the trigger's latest value. */
-  disabled: () => boolean;
-  setDisabled: (read: () => boolean) => void;
-  /** How long the pointer rests before the card opens, and is away before it closes. */
-  openDelay: () => number | undefined;
-  closeDelay: () => number | undefined;
-  onOpen?: () => void;
-  onClose?: () => void;
-};
-
-const HoverCardContext = context<HoverCardContextValue | null>(null);
-
-function useHoverCard() {
-  const ctx = HoverCardContext();
-  if (!ctx) throw new Error("HoverCard parts must be used within <HoverCard>");
-  return ctx;
-}
-
 /** The root of a hover card's parts. */
 export function HoverCard(props: HoverCardProps) {
   const state = createOpenState<OpenChangeReason>(props);
@@ -194,4 +174,26 @@ export function HoverCardContent(props: HoverCardContentProps) {
       )}
     </BaseHoverCard>
   );
+}
+
+// Private helpers
+
+type HoverCardContextValue = OpenState & {
+  trigger: Slot<JSX.Element>;
+  /** The trigger is disabled: the card stays closed. Reads the trigger's latest value. */
+  disabled: () => boolean;
+  setDisabled: (read: () => boolean) => void;
+  /** How long the pointer rests before the card opens, and is away before it closes. */
+  openDelay: () => number | undefined;
+  closeDelay: () => number | undefined;
+  onOpen?: () => void;
+  onClose?: () => void;
+};
+
+const HoverCardContext = context<HoverCardContextValue | null>(null);
+
+function useHoverCard() {
+  const ctx = HoverCardContext();
+  if (!ctx) throw new Error("HoverCard parts must be used within <HoverCard>");
+  return ctx;
 }

@@ -1,26 +1,30 @@
-// The reference of `sheet.tsx`: the same scene with the panel's look (`sheetPanel`, `backdrop`)
-// spread on `nsh/base`'s Sheet, the way the official example
-// (`references/nsh/website/demos/el-sheet.tsx`) writes it. It differs from the component page
-// only in the parts it names.
-import { colors } from "@shadcn-nsh/theme";
+// The reference of `sheet.tsx`. `sheetGrabber` is private to the component, so this page draws
+// the component itself. The two pages match because they are the same composition.
 import { mount, Scroll, signal, Text, View } from "nsh";
-import { Sheet } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
-import { dialogText, dialogTitle } from "@/packages/ui/dialog";
 import { Input } from "@/packages/ui/input";
-import { backdrop } from "@/packages/ui/lib/popup";
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { sheetGrabber, sheetPanel, type SheetSide } from "@/packages/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  type SheetSide,
+  SheetTitle,
+} from "@/packages/ui/sheet";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 const SIDES: SheetSide[] = ["top", "left", "right", "bottom"];
 
 type Detent = "medium" | "large";
 
+/** A thread the comments sheet holds: enough lines to make the detent matter. */
 const THREAD = [
   { who: "Ada", text: "The new numbers read well. Ship the summary first?", at: "9:12" },
   { who: "Marcel", text: "The chart's axis needs one more tick at the top.", at: "9:18" },
@@ -43,9 +47,11 @@ const PRICES: { value: Price; label: string }[] = [
 const SHARES: Record<Price, number> = { any: 1, under50: 0.35, mid: 0.45, over200: 0.2 };
 const NONE: Filters = { sort: "relevance", price: "any", stock: false, sale: false };
 
+/** How many of the 128 results the filters leave: a stub, so the footer's number moves. */
 const results = (f: Filters) =>
   Math.max(1, Math.round(128 * SHARES[f.price] * (f.stock ? 0.8 : 1) * (f.sale ? 0.35 : 1)));
 
+/** The chosen filters as one line, or that there are none. */
 function summary(f: Filters) {
   const parts: string[] = [];
   if (f.sort !== "relevance") parts.push(f.sort === "newest" ? "Newest" : "Price");
@@ -66,6 +72,7 @@ function App() {
     log(`open · side ${s}`);
   };
 
+  // The comments sheet: opened at medium, the grabber takes it to large.
   const commentsOpen = signal(false);
   const detent = signal<Detent>("medium");
   const thread = signal(THREAD);
@@ -80,6 +87,7 @@ function App() {
     commentLog(`comment · ${text.length} characters`);
   };
 
+  // The filter sheet: the draft is edited, and only the footer's button makes it applied.
   const filtersOpen = signal(false);
   const applied = signal<Filters>(NONE);
   const draft = signal<Filters>(NONE);
@@ -114,7 +122,7 @@ function App() {
 
   return (
     <DemoPage title="Sheet">
-      <Text style={{ color: colors.mutedForeground }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Open a side; click the backdrop or press Escape to close it"
           : "Open a side; tap the backdrop or Android's back to close it"}
@@ -125,7 +133,7 @@ function App() {
         inspector={
           <>
             <Panel title="open · side">
-              <Text style={{ fontSize: 13, color: colors.foreground }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {open() ? "open" : "closed"} · {side()}
               </Text>
             </Panel>
@@ -160,8 +168,8 @@ function App() {
       </Split>
 
       <View style={{ gap: 6 }}>
-        <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>Detents</Text>
-        <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+        <Text style={{ fontSize: 15, fontWeight: "600", color: ui().text }}>Detents</Text>
+        <Text style={{ fontSize: 13, color: ui().muted }}>
           {desktop
             ? "The sheet rests at medium; press the grabber or drag it up to large."
             : "The sheet rests at medium; drag the grabber up to large, down to close."}
@@ -173,7 +181,7 @@ function App() {
         inspector={
           <>
             <Panel title="detent">
-              <Text style={{ fontSize: 13, color: colors.foreground }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {commentsOpen() ? `${detent()} · ${thread().length} comments` : "closed"}
               </Text>
             </Panel>
@@ -187,14 +195,14 @@ function App() {
       >
         <View style={{ ...sectionSurface(), padding: 16, gap: 12, width: 360, maxWidth: "100%" }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Text style={{ flex: 1, fontSize: 15, fontWeight: "600", color: colors.foreground }}>
+            <Text style={{ flex: 1, fontSize: 15, fontWeight: "600", color: ui().text }}>
               Comments
             </Text>
-            <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
-              {`${thread().length} in thread`}
-            </Text>
+            <Text
+              style={{ fontSize: 12, color: ui().muted }}
+            >{`${thread().length} in thread`}</Text>
           </View>
-          <Text style={{ fontSize: 13, lineHeight: 19, color: colors.mutedForeground }}>
+          <Text style={{ fontSize: 13, lineHeight: 19, color: ui().muted }}>
             A bottom sheet with two detents. Start at medium, then raise it to large to see the
             whole thread; swipe it down from medium to close.
           </Text>
@@ -213,10 +221,10 @@ function App() {
       </Split>
 
       <View style={{ gap: 6 }}>
-        <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
+        <Text style={{ fontSize: 15, fontWeight: "600", color: ui().text }}>
           A draft the footer applies
         </Text>
-        <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+        <Text style={{ fontSize: 13, color: ui().muted }}>
           Change the filters, then apply them from the footer; closing the sheet throws the draft
           away.
         </Text>
@@ -227,8 +235,8 @@ function App() {
         inspector={
           <>
             <Panel title="applied · draft">
-              <Text style={{ fontSize: 13, color: colors.foreground }}>{summary(applied())}</Text>
-              <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>{summary(applied())}</Text>
+              <Text style={{ fontSize: 12, color: ui().muted }}>
                 {`${results(applied())} results · draft: ${summary(draft())}`}
               </Text>
             </Panel>
@@ -238,14 +246,14 @@ function App() {
       >
         <View style={{ ...sectionSurface(), padding: 16, gap: 12, width: 360, maxWidth: "100%" }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Text style={{ flex: 1, fontSize: 15, fontWeight: "600", color: colors.foreground }}>
+            <Text style={{ flex: 1, fontSize: 15, fontWeight: "600", color: ui().text }}>
               Filter the results
             </Text>
-            <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
-              {`${results(applied())} results`}
-            </Text>
+            <Text
+              style={{ fontSize: 12, color: ui().muted }}
+            >{`${results(applied())} results`}</Text>
           </View>
-          <Text style={{ fontSize: 13, lineHeight: 19, color: colors.mutedForeground }}>
+          <Text style={{ fontSize: 13, lineHeight: 19, color: ui().muted }}>
             {summary(applied())}
           </Text>
           <Button variant="secondary" onPress={openFilters} style={{ alignSelf: "flex-start" }}>
@@ -256,119 +264,97 @@ function App() {
 
       <Sheet
         open={open()}
-        closeOnSwipe
-        side={side()}
-        popupStyle={sheetPanel(side())}
-        backdropStyle={backdrop()}
         onOpenChange={({ open: next, reason }) => {
           open.set(next);
           log(`onOpenChange · ${next ? "opened" : "closed"} · ${reason}`);
         }}
         onCancel={() => log("onCancel")}
       >
-        <If when={side() === "bottom"}>
-          <View style={sheetGrabber()} />
-        </If>
-        <View style={{ gap: 2 }}>
-          <Text style={dialogTitle()}>Filters</Text>
-          <Text style={dialogText()}>
-            {`A panel at the ${side()} edge. `}
-            {desktop
-              ? "The backdrop and Escape close it."
-              : "The backdrop and Android's back close it."}
-          </Text>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-          <Button
-            variant="default"
-            onPress={() => {
-              open.set(false);
-              log("Done pressed");
-            }}
-          >
-            Done
-          </Button>
-        </View>
+        <SheetContent side={side()} closeOnSwipe>
+          <SheetHeader>
+            <SheetTitle>Filters</SheetTitle>
+            <SheetDescription>
+              {`A panel at the ${side()} edge. ${
+                desktop
+                  ? "The backdrop and Escape close it."
+                  : "The backdrop and Android's back close it."
+              }`}
+            </SheetDescription>
+          </SheetHeader>
+          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+            <SheetClose variant="default" onPress={() => log("Done pressed")}>
+              Done
+            </SheetClose>
+          </View>
+        </SheetContent>
       </Sheet>
 
       <Sheet
         open={commentsOpen()}
-        closeOnSwipe
-        side="bottom"
-        detents={["medium", "large"]}
-        detent={detent()}
-        grabber
-        grabberStyle={sheetGrabber()}
-        grabberAccessibilityLabel="Sheet"
-        popupStyle={sheetPanel("bottom")}
-        backdropStyle={backdrop()}
-        onDetentChange={({ detent: next }) => {
-          const value = next === "large" ? "large" : "medium";
-          detent.set(value);
-          commentLog(`detent → ${value}`);
-        }}
         onOpenChange={({ open: next, reason }) => {
           commentsOpen.set(next);
           if (!next) detent.set("medium");
           commentLog(`onOpenChange · ${next ? "opened" : "closed"} · ${reason}`);
         }}
         onCancel={() => commentLog("onCancel")}
-        footer={
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Input
-              value={comment()}
-              onChange={({ value }) => comment.set(value)}
-              placeholder="Add a comment"
-              returnKeyType="send"
-              onSubmit={send}
-              accessibilityLabel="Add a comment"
-              style={{ flex: 1 }}
-            />
-            <Button variant="default" disabled={comment().trim().length === 0} onPress={send}>
-              Send
-            </Button>
-          </View>
-        }
-        footerStyle={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 10 }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Text style={{ ...dialogTitle(), flex: 1 }}>Comments</Text>
-          <Button
-            variant="ghost"
-            onPress={() => {
-              commentsOpen.set(false);
-              commentLog("Done pressed");
-            }}
-          >
-            Done
-          </Button>
-        </View>
-        <Scroll style={{ flexShrink: 1 }} contentStyle={{ gap: 12 }}>
-          {thread().map((line) => (
-            <View style={{ gap: 2 }}>
-              <Text style={{ fontSize: 13, fontWeight: "600", color: colors.foreground }}>
-                {`${line.who} · ${line.at}`}
-              </Text>
-              <Text
-                style={{
-                  fontSize: desktop ? 13 : 15,
-                  lineHeight: desktop ? 19 : 21,
-                  color: colors.mutedForeground,
-                }}
-              >
-                {line.text}
-              </Text>
-            </View>
-          ))}
-        </Scroll>
+        <SheetContent
+          side="bottom"
+          detents={["medium", "large"]}
+          detent={detent()}
+          onDetentChange={({ detent: next }) => {
+            const value = next === "large" ? "large" : "medium";
+            detent.set(value);
+            commentLog(`detent → ${value}`);
+          }}
+          closeOnSwipe
+          footer={
+            <SheetFooter>
+              <Input
+                value={comment()}
+                onChange={({ value }) => comment.set(value)}
+                placeholder="Add a comment"
+                returnKeyType="send"
+                onSubmit={send}
+                accessibilityLabel="Add a comment"
+                style={{ flex: 1 }}
+              />
+              <Button variant="default" disabled={comment().trim().length === 0} onPress={send}>
+                Send
+              </Button>
+            </SheetFooter>
+          }
+          footerStyle={{ borderTopWidth: 1, borderColor: ui().line, paddingTop: 10 }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <SheetTitle style={{ flex: 1 }}>Comments</SheetTitle>
+            <SheetClose variant="ghost" onPress={() => commentLog("Done pressed")}>
+              Done
+            </SheetClose>
+          </View>
+          <Scroll style={{ flexShrink: 1 }} contentStyle={{ gap: 12 }}>
+            {thread().map((line) => (
+              <View style={{ gap: 2 }}>
+                <Text style={{ fontSize: 13, fontWeight: "600", color: ui().text }}>
+                  {`${line.who} · ${line.at}`}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: desktop ? 13 : 15,
+                    lineHeight: desktop ? 19 : 21,
+                    color: ui().muted,
+                  }}
+                >
+                  {line.text}
+                </Text>
+              </View>
+            ))}
+          </Scroll>
+        </SheetContent>
       </Sheet>
 
       <Sheet
         open={filtersOpen()}
-        closeOnSwipe
-        side={wide() ? "right" : "bottom"}
-        popupStyle={sheetPanel(wide() ? "right" : "bottom")}
-        backdropStyle={backdrop()}
         onOpenChange={({ open: next, reason }) => {
           filtersOpen.set(next);
           if (!next) draft.set(applied());
@@ -376,66 +362,69 @@ function App() {
         }}
         onCancel={() => filterLog("onCancel")}
       >
-        <View style={{ gap: 2 }}>
-          <Text style={dialogTitle()}>Filters</Text>
-          <Text style={dialogText()}>
-            The footer applies the draft. Closing without applying keeps the old filters.
-          </Text>
-        </View>
-        <Segmented
-          label="Sort by"
-          options={SORTS}
-          value={draft().sort}
-          onChange={(sort) => update({ sort })}
-        />
-        <View style={{ gap: 6 }}>
-          <Text style={{ fontSize: 12, fontWeight: "600", color: colors.mutedForeground }}>
-            Price
-          </Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {PRICES.map((price) => (
-              <Button
-                variant="secondary"
-                size="sm"
-                selected={draft().price === price.value}
-                onPress={() => update({ price: price.value })}
-              >
-                {price.label}
-              </Button>
-            ))}
+        <SheetContent side={wide() ? "right" : "bottom"} closeOnSwipe>
+          <SheetHeader>
+            <SheetTitle>Filters</SheetTitle>
+            <SheetDescription>
+              The footer applies the draft. Closing without applying keeps the old filters.
+            </SheetDescription>
+          </SheetHeader>
+          <Segmented
+            label="Sort by"
+            options={SORTS}
+            value={draft().sort}
+            onChange={(sort) => update({ sort })}
+          />
+          <View style={{ gap: 6 }}>
+            <Text style={{ fontSize: 12, fontWeight: "600", color: ui().muted }}>Price</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+              {PRICES.map((price) => (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  selected={draft().price === price.value}
+                  onPress={() => update({ price: price.value })}
+                >
+                  {price.label}
+                </Button>
+              ))}
+            </View>
           </View>
-        </View>
-        <View style={{ gap: 2 }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, height: 40 }}>
-            <Text style={{ flex: 1, fontSize: 14, color: colors.foreground }}>In stock only</Text>
-            <Switch
-              checked={draft().stock}
-              onChange={({ checked }) => update({ stock: checked })}
-            />
+          <View style={{ gap: 2 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, height: 40 }}>
+              <Text style={{ flex: 1, fontSize: 14, color: ui().text }}>In stock only</Text>
+              <Switch
+                checked={draft().stock}
+                onChange={({ checked }) => update({ stock: checked })}
+              />
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, height: 40 }}>
+              <Text style={{ flex: 1, fontSize: 14, color: ui().text }}>On sale</Text>
+              <Switch
+                checked={draft().sale}
+                onChange={({ checked }) => update({ sale: checked })}
+              />
+            </View>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, height: 40 }}>
-            <Text style={{ flex: 1, fontSize: 14, color: colors.foreground }}>On sale</Text>
-            <Switch checked={draft().sale} onChange={({ checked }) => update({ sale: checked })} />
-          </View>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Button
-            variant="ghost"
-            disabled={
-              draft().sort === NONE.sort &&
-              draft().price === NONE.price &&
-              !draft().stock &&
-              !draft().sale
-            }
-            onPress={reset}
-          >
-            Reset
-          </Button>
-          <View style={{ flex: 1 }} />
-          <Button variant="default" onPress={apply}>
-            {`Show ${results(draft())} results`}
-          </Button>
-        </View>
+          <SheetFooter>
+            <Button
+              variant="ghost"
+              disabled={
+                draft().sort === NONE.sort &&
+                draft().price === NONE.price &&
+                !draft().stock &&
+                !draft().sale
+              }
+              onPress={reset}
+            >
+              Reset
+            </Button>
+            <View style={{ flex: 1 }} />
+            <Button variant="default" onPress={apply}>
+              {`Show ${results(draft())} results`}
+            </Button>
+          </SheetFooter>
+        </SheetContent>
       </Sheet>
     </DemoPage>
   );

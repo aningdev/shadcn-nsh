@@ -1,4 +1,5 @@
-// A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
+// A sheet: the panel (`sheetPanel`, shared with `drawer`) and the parts that wear it. The grabber
+// is this file's own.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
@@ -23,117 +24,25 @@ import { Action, type ButtonVariant } from "./button";
 import { dialogText, dialogTitle } from "./dialog";
 import { backdrop } from "./lib/popup";
 import { createOpenState, type OpenState } from "./lib/state";
-import { AsText } from "./lib/utils";
+import { AsText, joinClass } from "./lib/utils";
 
 /** The edge of the screen a sheet comes from. */
 export type SheetSide = "bottom" | "top" | "left" | "right";
 
-/**
- * A sheet's panel (`nsh/base`'s `Sheet`'s `popupStyle`): the modal surface's
- * face (`surface("modal")`), shadow and edge (only along the inner side facing
- * the screen, never along the screen edge). At the bottom (or the top) it spans
- * the width, its two inner corners on `shape.modal`, 16 points of padding at
- * its sides and its rows 14 apart, kept above the home indicator (the sheet
- * itself stands above the keyboard), and never taller than the screen
- * below the status bar; put `sheetGrabber` first in a bottom one. At the
- * left or the right it is the full height, at most 360 points wide (48
- * short of a narrow window), its inner corners on `shape.modal`, 20
- * points of padding inside the safe area.
- */
-export function sheetPanel(side: SheetSide): ViewStyle {
-  const modal = surface("modal").style;
-  const edge = modal.borderColor;
-  const edgeWidth = terminal
-    ? stroke.hairline
-    : surfaceBorderWidth(typeof edge === "string" ? edge : undefined);
-  const face: ViewStyle = terminal ? { borderColor: colors.border } : { ...modal };
-  if (side === "bottom" || side === "top") {
-    const bottom = side === "bottom";
-    return {
-      ...face,
-      ...(bottom
-        ? {
-            borderTopWidth: edgeWidth,
-            borderTopLeftRadius: shape.modal,
-            borderTopRightRadius: shape.modal,
-            paddingTop: 8,
-          }
-        : {
-            borderBottomWidth: edgeWidth,
-            borderBottomLeftRadius: shape.modal,
-            borderBottomRightRadius: shape.modal,
-            paddingTop: safeArea().top + 16,
-            paddingBottom: 20,
-          }),
-      ...cornerCurve,
-      // A bottom sheet stands above the keyboard while a field has it (`Sheet` lifts it by the keyboard past the home
-      // indicator): its room is what the keyboard leaves.
-      maxHeight:
-        windowSize().height -
-        (bottom
-          ? safeArea().top + Math.max(0, keyboardFrame().height - safeArea().bottom)
-          : safeArea().bottom) -
-        24,
-      paddingHorizontal: 16,
-      // Above the home indicator, which is behind the keyboard while it is up.
-      ...(bottom ? { paddingBottom: safeArea().bottom + 16 } : {}),
-      gap: 14,
-    };
-  }
-  return {
-    ...face,
-    width: Math.min(360, windowSize().width - 48),
-    paddingHorizontal: 20,
-    paddingTop: safeArea().top + 16,
-    paddingBottom: safeArea().bottom + 16,
-    gap: 16,
-    ...cornerCurve,
-    // physical: `side` is the window edge the sheet stands on, so its inner edge (the border and the corners) is physical too.
-    ...(side === "right"
-      ? {
-          borderLeftWidth: edgeWidth,
-          borderTopLeftRadius: shape.modal,
-          borderBottomLeftRadius: shape.modal,
-        }
-      : {
-          borderRightWidth: edgeWidth,
-          borderTopRightRadius: shape.modal,
-          borderBottomRightRadius: shape.modal,
-        }),
-  };
-}
+/** Why a sheet closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
+export type SheetOpenChangeReason = OpenChangeReason;
 
-/** The grabber's geometry: one 36×5 pill in every theme, the platforms' common size (M3's drag
- * handle is 32×4; theme contract v2 keeps one grabber rather than a per-theme table). */
-const GRABBER_WIDTH = 36;
-const GRABBER_HEIGHT = 5;
-
-/** The grabber at the top of a bottom sheet (its `grabberStyle`): a pill centered at the top
- * edge in the muted ink the theme already dims with (`colors.mutedForeground` at 40%), so it
- * reads on the card and on whatever a sheet is dragged over. It is the sheet's own handle — the
- * one `nsh/base` lets a press and a screen reader drag between detents — not a picture of one, so
- * a sheet never shows two. */
-export function sheetGrabber(): ViewStyle {
-  return {
-    width: GRABBER_WIDTH,
-    height: GRABBER_HEIGHT,
-    borderRadius: Math.ceil(GRABBER_HEIGHT / 2),
-    alignSelf: "center",
-    backgroundColor: alpha(colors.mutedForeground, 0.4),
-  };
-}
-
-/** The root: it owns whether the sheet is open, and nothing of how it looks. */ export type SheetProps =
-  {
-    /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
-    open?: boolean | null;
-    defaultOpen?: boolean;
-    children?: JSX.Element;
-    onOpenChange?: (event: { open: boolean; reason: SheetOpenChangeReason }) => void;
-    onOpen?: () => void;
-    onClose?: () => void;
-    onCancel?: () => void;
-  };
+/** The root: it owns whether the sheet is open, and nothing of how it looks. It draws no view. */
+export type SheetProps = {
+  /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
+  open?: boolean | null;
+  defaultOpen?: boolean;
+  children?: JSX.Element;
+  onOpenChange?: (event: { open: boolean; reason: SheetOpenChangeReason }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
+};
 
 /**
  * The panel. Every prop of `nsh/base`'s Sheet passes through but the ones the root owns;
@@ -153,6 +62,10 @@ export type SheetTriggerProps = {
   children?: string | JSX.Element;
   variant?: ButtonVariant;
   disabled?: boolean;
+  /** Tailwind classes on the trigger. */
+  class?: string;
+  /** Tailwind classes toggled on the trigger. */
+  classList?: Record<string, boolean | null | undefined>;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -161,20 +74,49 @@ export type SheetCloseProps = SheetTriggerProps & {
   onPress?: () => void;
 };
 
-type SheetContextValue = OpenState &
-  Pick<SheetProps, "onOpen" | "onClose" | "onCancel"> & {
-    /** The title a `SheetTitle` registered, for the dialog's accessible name. */
-    title: () => string | null;
-    setTitle: (title: string | null) => void;
-  };
+/** The heading block of a sheet: a title and its description, 2 points apart. */
+export type SheetHeaderProps = {
+  children?: JSX.Element;
+  /** Tailwind classes on the block. */
+  class?: string;
+  /** Tailwind classes toggled on the block. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<ViewStyle>;
+};
 
-const SheetContext = context<SheetContextValue | null>(null);
+/** The actions of a sheet, in a row 8 points apart. */
+export type SheetFooterProps = {
+  children?: JSX.Element;
+  /** Tailwind classes on the row. */
+  class?: string;
+  /** Tailwind classes toggled on the row. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<ViewStyle>;
+};
 
-function useSheet() {
-  const ctx = SheetContext();
-  if (!ctx) throw new Error("Sheet parts must be used within <Sheet>");
-  return ctx;
-}
+/**
+ * A sheet's title, in `DialogTitle`'s type: 17 points with a pointer, 20 on a touch screen. A
+ * string title also names the sheet's dialog for screen readers, unless `SheetContent` has an
+ * `accessibilityLabel` of its own.
+ */
+export type SheetTitleProps = {
+  children?: string | JSX.Element;
+  /** Tailwind classes on the text a string child draws. */
+  class?: string;
+  /** Tailwind classes toggled on that text. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<TextStyle>;
+};
+
+/** A sheet's description, in `DialogDescription`'s type: the body size in the muted ink. */
+export type SheetDescriptionProps = {
+  children?: string | JSX.Element;
+  /** Tailwind classes on the text a string child draws. */
+  class?: string;
+  /** Tailwind classes toggled on that text. */
+  classList?: Record<string, boolean | null | undefined>;
+  style?: StyleProp<TextStyle>;
+};
 
 /** The root of a sheet's parts. */
 export function Sheet(props: SheetProps) {
@@ -213,9 +155,10 @@ export function SheetTrigger(props: SheetTriggerProps) {
 /** Closes the sheet, after its own `onPress`. */
 export function SheetClose(props: SheetCloseProps) {
   const ctx = useSheet();
+  const [, rest] = split(props, ["onPress"]);
   return (
     <Action
-      {...props}
+      {...rest}
       onPress={() => {
         props.onPress?.();
         ctx.setOpen(false, "closePress");
@@ -226,7 +169,7 @@ export function SheetClose(props: SheetCloseProps) {
 
 /**
  * The panel that slides in from `side`, over the theme's scrim. A bottom one shows the grabber
- * `nsh/base` gives it (`grabber`, default on), in `sheetGrabber()`'s look; give `grabber={false}`
+ * `nsh/base` gives it (`grabber`, default on), in the grabber's look; give `grabber={false}`
  * for a sheet the app drags by something of its own.
  */
 export function SheetContent(props: SheetContentProps) {
@@ -256,42 +199,183 @@ export function SheetContent(props: SheetContentProps) {
 }
 
 /** The heading block of a sheet: a title and its description, 2 points apart. */
-export function SheetHeader(props: { children?: JSX.Element; style?: StyleProp<ViewStyle> }) {
-  return <View style={[{ gap: 2 }, props.style ?? null]}>{props.children}</View>;
+export function SheetHeader(props: SheetHeaderProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[{ gap: 2 }, props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
 }
 
 /** The actions of a sheet, in a row 8 points apart. */
-export function SheetFooter(props: { children?: JSX.Element; style?: StyleProp<ViewStyle> }) {
+export function SheetFooter(props: SheetFooterProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
   return (
-    <View style={[{ flexDirection: "row", alignItems: "center", gap: 8 }, props.style ?? null]}>
+    <View
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[{ flexDirection: "row", alignItems: "center", gap: 8 }, props.style ?? null]}
+    >
       {props.children}
     </View>
   );
 }
 
 /**
- * A sheet's title, in `DialogTitle`'s type: 17 points with a pointer, 20 on a touch screen. A
- * string title also names the sheet's dialog for screen readers, unless `SheetContent` has an
- * `accessibilityLabel` of its own.
+ * A sheet's title, in `DialogTitle`'s type. A string title also names the sheet's dialog for
+ * screen readers, unless `SheetContent` has an `accessibilityLabel` of its own.
  */
-export function SheetTitle(props: {
-  children?: string | JSX.Element;
-  style?: StyleProp<TextStyle>;
-}) {
+export function SheetTitle(props: SheetTitleProps) {
   const ctx = useSheet();
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
   const kids = props.children;
   const text = typeof kids === "string" ? kids : null;
   if (ctx.title() !== text) ctx.setTitle(text);
-  return <AsText style={[dialogTitle(), props.style ?? null]}>{kids}</AsText>;
+  return (
+    <AsText
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[dialogTitle(), props.style ?? null]}
+    >
+      {kids}
+    </AsText>
+  );
 }
 
 /** A sheet's description, in `DialogDescription`'s type: the body size in the muted ink. */
-export function SheetDescription(props: {
-  children?: string | JSX.Element;
-  style?: StyleProp<TextStyle>;
-}) {
-  return <AsText style={[dialogText(), props.style ?? null]}>{props.children}</AsText>;
+export function SheetDescription(props: SheetDescriptionProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <AsText
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[dialogText(), props.style ?? null]}
+    >
+      {props.children}
+    </AsText>
+  );
 }
 
-/** Why a sheet closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
-export type SheetOpenChangeReason = OpenChangeReason;
+// Shared sheet primitives
+// `drawer` wears `sheetPanel`.
+
+/**
+ * A sheet's panel (`nsh/base`'s `Sheet`'s `popupStyle`): the modal surface's
+ * face (`surface("modal")`), shadow and edge (only along the inner side facing
+ * the screen, never along the screen edge). At the bottom (or the top) it spans
+ * the width, its two inner corners on `shape.modal`, 16 points of padding at
+ * its sides and its rows 14 apart, kept above the home indicator (the sheet
+ * itself stands above the keyboard), and never taller than the screen
+ * below the status bar; a bottom one leads with the grabber. At the
+ * left or the right it is the full height, at most 360 points wide (48
+ * short of a narrow window), its inner corners on `shape.modal`, 20
+ * points of padding inside the safe area.
+ */
+export function sheetPanel(side: SheetSide): ViewStyle {
+  const modal = surface("modal").style;
+  const edge = modal.borderColor;
+  const edgeWidth = terminal
+    ? stroke.hairline
+    : surfaceBorderWidth(typeof edge === "string" ? edge : undefined);
+  const face: ViewStyle = terminal ? { borderColor: colors.border } : { ...modal };
+  if (side === "bottom" || side === "top") {
+    const bottom = side === "bottom";
+    return {
+      ...face,
+      ...(bottom
+        ? {
+            borderTopWidth: edgeWidth,
+            borderTopLeftRadius: shape.modal,
+            borderTopRightRadius: shape.modal,
+            paddingTop: 8,
+          }
+        : {
+            borderBottomWidth: edgeWidth,
+            borderBottomLeftRadius: shape.modal,
+            borderBottomRightRadius: shape.modal,
+            paddingTop: "calc(env(safe-area-inset-top) + 16px)",
+            paddingBottom: 20,
+          }),
+      ...cornerCurve,
+      // A bottom sheet stands above the keyboard while a field has it (`Sheet` lifts it by the keyboard past the home
+      // indicator): its room is what the keyboard leaves.
+      maxHeight:
+        windowSize().height -
+        (bottom
+          ? safeArea().top + Math.max(0, keyboardFrame().height - safeArea().bottom)
+          : safeArea().bottom) -
+        24,
+      paddingHorizontal: 16,
+      // Above the home indicator, which is behind the keyboard while it is up.
+      ...(bottom ? { paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" } : {}),
+      gap: 14,
+    };
+  }
+  return {
+    ...face,
+    width: Math.min(360, windowSize().width - 48),
+    paddingHorizontal: 20,
+    paddingTop: "calc(env(safe-area-inset-top) + 16px)",
+    paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)",
+    gap: 16,
+    ...cornerCurve,
+    // physical: `side` is the window edge the sheet stands on, so its inner edge (the border and the corners) is physical too.
+    ...(side === "right"
+      ? {
+          borderLeftWidth: edgeWidth,
+          borderTopLeftRadius: shape.modal,
+          borderBottomLeftRadius: shape.modal,
+        }
+      : {
+          borderRightWidth: edgeWidth,
+          borderTopRightRadius: shape.modal,
+          borderBottomRightRadius: shape.modal,
+        }),
+  };
+}
+
+// Private helpers
+
+/** The grabber's geometry: one 36×5 pill in every theme, the platforms' common size (M3's drag
+ * handle is 32×4; theme contract v2 keeps one grabber rather than a per-theme table). */
+const GRABBER_WIDTH = 36;
+const GRABBER_HEIGHT = 5;
+
+/** The grabber at the top of a bottom sheet (its `grabberStyle`): a pill centered at the top
+ * edge in the muted ink the theme already dims with (`colors.mutedForeground` at 40%), so it
+ * reads on the card and on whatever a sheet is dragged over. It is the sheet's own handle — the
+ * one `nsh/base` lets a press and a screen reader drag between detents — not a picture of one, so
+ * a sheet never shows two. */
+function sheetGrabber(): ViewStyle {
+  return {
+    width: GRABBER_WIDTH,
+    height: GRABBER_HEIGHT,
+    borderRadius: Math.ceil(GRABBER_HEIGHT / 2),
+    alignSelf: "center",
+    backgroundColor: alpha(colors.mutedForeground, 0.4),
+  };
+}
+
+type SheetContextValue = OpenState &
+  Pick<SheetProps, "onOpen" | "onClose" | "onCancel"> & {
+    /** The title a `SheetTitle` registered, for the dialog's accessible name. */
+    title: () => string | null;
+    setTitle: (title: string | null) => void;
+  };
+
+const SheetContext = context<SheetContextValue | null>(null);
+
+function useSheet() {
+  const ctx = SheetContext();
+  if (!ctx) throw new Error("Sheet parts must be used within <Sheet>");
+  return ctx;
+}

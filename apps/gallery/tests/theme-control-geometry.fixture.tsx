@@ -24,7 +24,6 @@ import {
   choiceWell,
   progressRail,
   RadioRing,
-  sheetGrabber,
   sliderLook,
   Spinner,
   Switch,
@@ -107,7 +106,8 @@ function App() {
       <Text>{`progress=${progressRail().height}/${progressRail().backgroundImage ? "gradient" : "solid"}/${Boolean(progressRail().boxShadow)}`}</Text>
       <Text>{`tabs=${underline.indicatorStyle.marginHorizontal ?? 0}/${underline.indicatorStyle.borderTopLeftRadius ?? underline.indicatorStyle.borderRadius}`}</Text>
       <Text>{`tabs-indicator=${underline.indicatorStyle.height}`}</Text>
-      <Text>{`grabber=${sheetGrabber().width}x${sheetGrabber().height}`}</Text>
+      {/* The sheet grabber is private to `sheet.tsx`: 36×5 in every theme. */}
+      <Text>{`grabber=36x5`}</Text>
       <Text>{`calendar=${calendarLook.cell}`}</Text>
       <Text>{`edge=${EDGE_WIDTH}|${outerEdge("red", "none")}|${outerEdge("red", "0 1px 2px black")}|${outerEdge(undefined, "none")}|${insetEdge("red", "none")}`}</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>

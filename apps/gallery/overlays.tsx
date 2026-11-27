@@ -1,9 +1,13 @@
-import type { ViewStyle } from "nsh";
-import { Text, View, mount, safeArea, windowSize } from "nsh";
+import type { TextStyle, ViewStyle } from "nsh";
+import { Text, View, mount, platform, safeArea, windowSize } from "nsh";
 
 // Family 6: tooltip, popover, dialog, sheet, toast — every surface, in the first screen.
 import {
+  alpha,
   colors,
+  control,
+  feedback,
+  font,
   rounded,
   shape,
   stroke,
@@ -14,19 +18,15 @@ import {
 import {
   Button,
   Toast,
+  buttonLabel,
+  buttonLook,
   dialogText,
   dialogTitle,
   popoverLook,
-  sheetGrabber,
+  pressSink,
+  pressTransition,
   sheetPanel,
-  toastActionLabel,
-  toastActionLook,
-  toastCloseLook,
-  toastText,
-  toastTitle,
-  tooltipLook,
   tooltipNote,
-  tooltipText,
 } from "../../packages/ui";
 import { Page, Panel, Row } from "./demo-kit";
 
@@ -61,6 +61,85 @@ function dialogFace(width: number): ViewStyle {
   };
 }
 
+/** The tooltip bubble's class. The page paints `box` over the inverse surface, so only the class shows. */
+function tooltipClass(rich?: boolean) {
+  return rich
+    ? "gap-2 rounded-(--radius-lg) p-2.5"
+    : "flex-row items-center gap-2 rounded-(--radius-md) px-2 py-1";
+}
+
+/** The sheet grabber: one 36×5 pill, private to `sheet.tsx`. */
+function sheetGrabberFace(): ViewStyle {
+  const height = 5;
+  return {
+    width: 36,
+    height,
+    borderRadius: Math.ceil(height / 2),
+    alignSelf: "center",
+    backgroundColor: alpha(colors.mutedForeground, 0.4),
+  };
+}
+
+/** A toast's title: 14 points semibold, the inverse ink. Private to `toast.tsx`. */
+function toastTitleFace(): TextStyle {
+  return { fontSize: 14, fontWeight: font.weight("title"), color: surface("inverse").ink };
+}
+
+/** A toast's description: 13 points, tabular, the inverse ink. */
+function toastTextFace(): TextStyle {
+  return { fontSize: 13, color: surface("inverse").ink, fontVariant: ["tabular-nums"] };
+}
+
+const toastActionSize = platform.desktop
+  ? { style: { paddingHorizontal: 10 } }
+  : { size: "sm" as const };
+
+function toastActionFace() {
+  return buttonLook("default", toastActionSize);
+}
+
+function toastActionLabelFace(): TextStyle {
+  const label = buttonLabel("default", toastActionSize);
+  return {
+    get color() {
+      return control("button").selected.ink;
+    },
+    get fontSize() {
+      return label.fontSize;
+    },
+    get fontWeight() {
+      return label.fontWeight;
+    },
+  };
+}
+
+function toastCloseFace() {
+  return {
+    style: {
+      width: 24,
+      height: 24,
+      alignItems: "center",
+      justifyContent: "center",
+      ...rounded(shape.container),
+      ...pressTransition("background-color"),
+    } as ViewStyle,
+    get hoverStyle(): ViewStyle {
+      return feedback.hoverStyle("foreground");
+    },
+    get activeStyle(): ViewStyle {
+      return {
+        ...(feedback.pressOverlay > 0
+          ? feedback.press("surface", { ink: "foreground" }).activeStyle
+          : { backgroundColor: alpha(surface("inverse").ink, 0.1) }),
+        ...pressSink(0.9).activeStyle,
+      };
+    },
+    get focusVisibleStyle(): ViewStyle {
+      return feedback.focusRing();
+    },
+  };
+}
+
 function SheetFrame(props: { side: "bottom" | "right"; children: unknown }) {
   const bottom = props.side === "bottom";
   return (
@@ -84,13 +163,13 @@ mount(() => (
   <Page>
     <Panel title="Overlays">
       <Row label="line">
-        <View class={tooltipLook().class} style={box}>
-          <Text class={tooltipText}>Saved</Text>
+        <View class={tooltipClass()} style={box}>
+          <Text class="text-xs">Saved</Text>
         </View>
       </Row>
       <Row label="rich">
-        <View class={tooltipLook({ rich: true }).class} style={box}>
-          <Text class={tooltipText}>Share</Text>
+        <View class={tooltipClass(true)} style={box}>
+          <Text class="text-xs">Share</Text>
           <Text style={tooltipNote()}>Anyone with the link</Text>
         </View>
       </Row>
@@ -122,7 +201,7 @@ mount(() => (
       <Row label="bottom">
         <SheetFrame side="bottom">
           <View style={sheetPanel("bottom") as ViewStyle}>
-            <View style={sheetGrabber()} />
+            <View style={sheetGrabberFace()} />
             <Text style={dialogTitle()}>Filters</Text>
             <Text style={dialogText()}>Sort and price.</Text>
           </View>
@@ -139,13 +218,13 @@ mount(() => (
       <Row label="toast">
         <Toast style={box}>
           <View style={{ flex: 1, gap: 2 }}>
-            <Text style={toastTitle()}>Deleted</Text>
-            <Text style={toastText()}>Undo to restore.</Text>
+            <Text style={toastTitleFace()}>Deleted</Text>
+            <Text style={toastTextFace()}>Undo to restore.</Text>
           </View>
-          <Button {...toastActionLook()}>
-            <Text style={toastActionLabel()}>Undo</Text>
+          <Button {...toastActionFace()}>
+            <Text style={toastActionLabelFace()}>Undo</Text>
           </Button>
-          <View {...toastCloseLook()} accessibilityLabel="Dismiss">
+          <View {...toastCloseFace()} accessibilityLabel="Dismiss">
             <Text style={{ fontSize: 14 }}>×</Text>
           </View>
         </Toast>

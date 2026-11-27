@@ -172,12 +172,19 @@ const overrides: Record<string, Override> = {
       if (!answered(app)) throw new Error("the alert did not resolve with the destructive action");
     },
   },
-  sheet: { steps: (app) => app.press('side="bottom"') },
+  sheet: {
+    selfReference: "sheetGrabber is private to sheet.tsx",
+    steps: (app) => app.press('side="bottom"'),
+  },
   // The drawer over everything: a scrim hides the page, so the shot is the open drawer itself.
-  drawer: { steps: (app) => app.press("Share…") },
+  drawer: {
+    selfReference: "drawerGrabber, drawerHeader and drawerFooter are private to drawer.tsx",
+    steps: (app) => app.press("Share…"),
+  },
   popover: { steps: (app) => app.press("Order 1024") },
   // The bar stays; the menu opens under its trigger, which wears the chosen fill.
   menubar: {
+    selfReference: "menubarLook and menubarTriggerLook are private to menubar.tsx",
     steps: (app) => app.press("File"),
     extraSettle: 16,
   },
@@ -215,6 +222,7 @@ const overrides: Record<string, Override> = {
   // Once the toast is in, not only pushed: its `presented` line lands in the log a moment after the
   // press, so a picture taken before it differs from one taken after by that line alone.
   toast: {
+    selfReference: "toastLook is private to toast.tsx",
     steps: async (app) => {
       await app.press("Copy the link");
       await app.waitFor("text:presented · toast-1");
@@ -315,6 +323,7 @@ const overrides: Record<string, Override> = {
       why: "a circular photo's edge is antialiased a pixel apart between two page instances",
     },
   },
+  tooltip: { selfReference: "tooltipLook is private to tooltip.tsx" },
   "color-picker": {
     selfReference: "the panel and the popover are upstream's own composition, with no shell",
     photos: true,

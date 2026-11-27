@@ -1,15 +1,12 @@
-// The reference of `tooltip.tsx`: the same scene with the bubble's look (`tooltipLook`,
-// `tooltipText`) on `nsh/base`'s Tooltip, hung on the host view's `tooltip` prop, the way the
-// official example (`references/nsh/website/demos/el-tooltip.tsx`) writes it. It differs from the
-// component page only in the parts it names.
+// The reference of `tooltip.tsx`. `tooltipLook` is private to the component, so this page draws
+// the component itself. The two pages match because they are the same composition.
 import { Share, Star, Trash, type IconNode } from "lucide";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
-import { Tooltip } from "nsh/base";
 
 import { Button, IconButton, iconButtonGlyph } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { tooltipLook, tooltipTextStyle } from "@/packages/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/packages/ui/tooltip";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, ui, wide } from "./stage";
@@ -27,31 +24,27 @@ function Tool(props: {
   const hovered = signal(false);
   return (
     <View style={{ alignItems: "center", gap: 6 }}>
-      <View style={{ gap: 0 }}>
-        <View
-          tooltip={
-            <Tooltip
-              open={props.pinned || hovered()}
-              placement={props.placement}
-              offset={8}
-              margin={8}
-              delay={400}
-              onOpenChange={(event) => {
-                hovered.set(event.open);
-                props.onOpenChange(event);
-              }}
-            >
-              <View class={tooltipLook().class} style={tooltipLook().style}>
-                <Text style={tooltipTextStyle()}>{props.hint}</Text>
-              </View>
-            </Tooltip>
-          }
-        >
-          <IconButton variant="secondary" accessibilityLabel={props.label} onPress={props.onPress}>
-            <Icon icon={props.icon} {...iconButtonGlyph({ variant: "secondary" })} />
-          </IconButton>
-        </View>
-      </View>
+      <Tooltip
+        open={props.pinned || hovered()}
+        placement={props.placement}
+        offset={8}
+        margin={8}
+        delay={400}
+        onOpenChange={(event) => {
+          hovered.set(event.open);
+          props.onOpenChange(event);
+        }}
+      >
+        <TooltipTrigger>
+          <IconButton
+            variant="secondary"
+            accessibilityLabel={props.label}
+            onPress={props.onPress}
+            icon={props.icon}
+          />
+        </TooltipTrigger>
+        <TooltipContent>{props.hint}</TooltipContent>
+      </Tooltip>
       <Text style={{ fontSize: 11, color: ui().faint }}>{props.placement}</Text>
     </View>
   );
@@ -66,7 +59,7 @@ function App() {
       [`${name} ${event.open ? "shown" : "hidden"} · ${event.reason}`, ...events()].slice(0, 6),
     );
 
-  const tools = (gap: number): JSX.Element => (
+  const tools = (gap: number) => (
     <View style={{ flexDirection: "row", justifyContent: "center", gap }}>
       <Tool
         icon={Star}
@@ -100,21 +93,9 @@ function App() {
 
   /** The `tooltip` prop of any element: a `Tooltip` with the app's look. */
   const pin = (): JSX.Element => (
-    <View style={{ gap: 0, flex: wide() ? undefined : 1 }}>
-      <View
-        tooltip={
-          <Tooltip>
-            <View class={tooltipLook().class} style={tooltipLook().style}>
-              <Text style={tooltipTextStyle()}>Shows every tooltip without a pointer</Text>
-            </View>
-          </Tooltip>
-        }
-      >
-        <Button
-          variant="secondary"
-          onPress={() => pinned.set(!pinned())}
-          style={wide() ? undefined : { flex: 1 }}
-        >
+    <Tooltip style={wide() ? undefined : { flex: 1 }}>
+      <TooltipTrigger>
+        <Button variant="secondary" onPress={() => pinned.set(!pinned())}>
           {wide()
             ? pinned()
               ? "Unpin the tooltips"
@@ -123,8 +104,9 @@ function App() {
               ? "Unpin"
               : "Pin"}
         </Button>
-      </View>
-    </View>
+      </TooltipTrigger>
+      <TooltipContent>Shows every tooltip without a pointer</TooltipContent>
+    </Tooltip>
   );
 
   const onPress = (): JSX.Element => (

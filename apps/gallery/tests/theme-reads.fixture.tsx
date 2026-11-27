@@ -2,7 +2,7 @@
 // row, an item's icon tile, a refresh indicator's chip, the corners a drawer's grabber gets from
 // `rounded`, and a code block's title weight.
 
-import { selectTheme } from "@shadcn-nsh/theme";
+import { rounded, selectTheme } from "@shadcn-nsh/theme";
 import type { Bounds, Signal } from "nsh";
 import { createAnimatedValue, mount, signal, Text, View } from "nsh";
 
@@ -13,7 +13,6 @@ import {
   Button,
   codeBlockLook,
   CommandRow,
-  drawerGrabber,
   ItemMedia,
   REFRESH_INDICATOR_HEIGHT,
   refreshIndicatorLook,
@@ -37,7 +36,8 @@ function App() {
       <Text>{`row=${row()}`}</Text>
       <Text>{`tile=${tile()}`}</Text>
       <Text>{`chip=${chip()}`}</Text>
-      <Text>{`grabber-curve=${String(drawerGrabber().borderCurve)}`}</Text>
+      {/* The drawer's grabber is private; it spreads `rounded(4)`, which is where `borderCurve` comes from. */}
+      <Text>{`grabber-curve=${String(rounded(4).borderCurve)}`}</Text>
       <Text>{`title-weight=${String(codeBlockLook().title("default").fontWeight)}`}</Text>
 
       <Button onPress={() => selectTheme(materialTheme)}>Apply Material</Button>

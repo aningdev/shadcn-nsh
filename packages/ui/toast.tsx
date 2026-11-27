@@ -1,4 +1,4 @@
-// A toast: the look (`toastLook` and its companions) at the top, and the `Toast` that wears it below.
+// A toast: the banner, the queue and the stack. The banner's look is private to this file.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
@@ -15,7 +15,7 @@ import {
 } from "@shadcn-nsh/theme";
 import { CircleCheck, CircleX, Info, TriangleAlert, X, type IconNode } from "lucide";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
-import { Overlay, platform, safeArea, signal, split, Text, View, windowSize } from "nsh";
+import { Overlay, platform, signal, split, Text, View, windowSize } from "nsh";
 import {
   Toast as BaseToast,
   ToastManager,
@@ -27,109 +27,8 @@ import {
 import { Button, buttonLabel, buttonLook, type ButtonLookOptions } from "./button";
 import { Icon } from "./lib/icons";
 import { pressSink, pressTransition } from "./lib/motion";
+import { joinClass } from "./lib/utils";
 import { Spinner } from "./spinner";
-
-const pointer = platform.desktop;
-
-/**
- * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the inverse surface
- * (`surface("inverse")`), the theme's `popup.corner`, edge width following the surface's border (zero
- * where transparent), 12 by 14 points of padding. Its title takes `toastTitle`,
- * its description `toastText`.
- */
-export function toastLook(): ViewStyle {
-  const inverse = surface("inverse").style;
-  const edge = inverse.borderColor;
-  return {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    ...rounded(control("popup").corner),
-    borderWidth: surfaceBorderWidth(typeof edge === "string" ? edge : undefined),
-    ...inverse,
-  };
-}
-
-/** A toast's title: 14 points semibold. */
-export function toastTitle(): TextStyle {
-  // No type role has this size: a toast's title is 14 in both tiers.
-  return { fontSize: 14, fontWeight: font.weight("title"), color: surface("inverse").ink };
-}
-
-/** A toast's description: 13 points in the inverse surface's ink, its figures tabular. */
-export function toastText(): TextStyle {
-  // No type role has this size: a toast's description is 13 in both tiers.
-  return {
-    fontSize: 13,
-    color: surface("inverse").ink,
-    fontVariant: ["tabular-nums"],
-  };
-}
-
-/**
- * The size of a toast's action: 28 points tall with a pointer, 10 points of padding at its sides;
- * `small` on a touch screen (36, a hit slop making 44), so the toast stays a compact row.
- */
-const toastActionSize: ButtonLookOptions = pointer
-  ? { style: { paddingHorizontal: 10 } }
-  : { size: "sm" };
-
-/**
- * A toast's action (an Undo, a Retry), spread on a `Button` or a pressable view: the theme's
- * primary button, its fill and ink from `control("button")`. Its label takes `toastActionLabel`.
- */
-export function toastActionLook() {
-  return buttonLook("default", toastActionSize);
-}
-
-/** The label of a `toastActionLook` (`buttonLabel("default")`). */
-export function toastActionLabel(): TextStyle {
-  const label = buttonLabel("default", toastActionSize);
-  return {
-    get color() {
-      return control("button").selected.ink;
-    },
-    get fontSize() {
-      return label.fontSize;
-    },
-    get fontWeight() {
-      return label.fontWeight;
-    },
-  };
-}
-
-/** A toast's close button (its cross): a circle 24 points across (the theme's
- * `radius-lg` corners, half its side in the NSH Gallery theme), bare until the
- * pointer is over it, sinking to 90% while pressed (none with reduced
- * motion); keyboard focus `feedback.focusRing()`. */
-export function toastCloseLook() {
-  return {
-    style: {
-      width: 24,
-      height: 24,
-      alignItems: "center",
-      justifyContent: "center",
-      ...rounded(shape.container),
-      ...pressTransition("background-color"),
-    } as ViewStyle,
-    get hoverStyle(): ViewStyle {
-      return feedback.hoverStyle("foreground");
-    },
-    get activeStyle(): ViewStyle {
-      return {
-        ...(feedback.pressOverlay > 0
-          ? feedback.press("surface", { ink: "foreground" }).activeStyle
-          : { backgroundColor: alpha(surface("inverse").ink, 0.1) }),
-        ...pressSink(0.9).activeStyle,
-      };
-    },
-    get focusVisibleStyle(): ViewStyle {
-      return feedback.focusRing();
-    },
-  };
-}
 
 /**
  * `nsh/base`'s Toast in the look of `toastLook`. Every base prop passes through; `style` goes
@@ -143,28 +42,6 @@ export type ToastProps = Omit<BaseToastProps, "children"> & {
   description?: string;
   children?: JSX.Element;
 };
-
-/** The column that holds `title` and `description`: it takes the row's room and may shrink. */
-const toastTextColumn: ViewStyle = { flex: 1, gap: 2, minWidth: 0 };
-
-/** A toast banner. */
-export function Toast(props: ToastProps) {
-  const [, rest] = split(props, ["title", "description", "children", "style"]);
-  return (
-    <BaseToast
-      {...surface("inverse").platformProps}
-      {...rest}
-      style={[toastLook(), props.style ?? null]}
-    >
-      {props.children ?? (
-        <View style={toastTextColumn}>
-          {props.title ? <Text style={toastTitle()}>{props.title}</Text> : null}
-          {props.description ? <Text style={toastText()}>{props.description}</Text> : null}
-        </View>
-      )}
-    </BaseToast>
-  );
-}
 
 /** What a toast is about. Sonner's names: `success`, `error`, `warning`, `info`, `loading`. */
 export type ToastType = "success" | "error" | "warning" | "info" | "loading";
@@ -212,6 +89,257 @@ export interface ToastEvent {
   id?: string;
   expanded?: boolean;
 }
+
+/** A toast banner. */
+export function Toast(props: ToastProps) {
+  const [, rest] = split(props, [
+    "title",
+    "description",
+    "children",
+    "style",
+    "class",
+    "classList",
+  ]);
+  return (
+    <BaseToast
+      {...surface("inverse").platformProps}
+      {...rest}
+      class={joinClass(undefined, props.class)}
+      classList={props.classList}
+      style={[toastLook(), props.style ?? null]}
+    >
+      {props.children ?? (
+        <View style={toastTextColumn}>
+          {props.title ? <Text style={toastTitle()}>{props.title}</Text> : null}
+          {props.description ? <Text style={toastText()}>{props.description}</Text> : null}
+        </View>
+      )}
+    </BaseToast>
+  );
+}
+
+/** Hears every push, present, end, removal and expand. Returns the unsubscribe. */
+export function onToastEvent(listener: (event: ToastEvent) => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+/**
+ * Shows a toast and returns its id (`toast-1`, `toast-2`, …, or `options.id`). The same id
+ * replaces the toast that held it. `toast.success` and the other types set `type`.
+ */
+export function toast(title: string, options?: ToastOptions): string {
+  return raise(title, options);
+}
+
+toast.success = (title: string, options?: ToastOptions) =>
+  raise(title, { ...options, type: "success" });
+toast.error = (title: string, options?: ToastOptions) =>
+  raise(title, { ...options, type: "error" });
+toast.warning = (title: string, options?: ToastOptions) =>
+  raise(title, { ...options, type: "warning" });
+toast.info = (title: string, options?: ToastOptions) => raise(title, { ...options, type: "info" });
+toast.loading = (title: string, options?: ToastOptions) =>
+  raise(title, { ...options, type: "loading" });
+
+/**
+ * Changes the toast `id` where it is, without showing it again (a loading note becoming its
+ * result, a bar moving). A finite `duration` starts a new wait beside the one the push set.
+ * False when no such toast is showing.
+ */
+toast.update = (id: string, change: ToastUpdate): boolean => {
+  const record = records()[id];
+  if (!record) return false;
+  const next: ToastRecord = { ...record };
+  if (change.title !== undefined) next.title = change.title;
+  if ("description" in change) {
+    if (change.description) next.description = change.description;
+    else delete next.description;
+  }
+  if ("type" in change) next.type = change.type;
+  if ("action" in change) {
+    if (change.action) next.action = change.action;
+    else delete next.action;
+  }
+  if ("closeButton" in change) next.closeButton = change.closeButton;
+  if ("progress" in change) {
+    if (change.progress === null || change.progress === undefined) delete next.progress;
+    else next.progress = change.progress;
+  }
+  remember(id, next);
+  if (change.duration !== undefined) {
+    if (Number.isFinite(change.duration)) lingering.set(id, change.duration);
+    else lingering.delete(id);
+  }
+  return true;
+};
+
+/** Closes the toast `id`, or every toast when `id` is omitted. */
+toast.dismiss = (id?: string) => {
+  if (id === undefined) manager.dismissAll();
+  else manager.dismiss(id);
+  run();
+};
+
+/** Where the toasts show: the foot of the window, bottom-right when it is at least 700 points wide. */
+export function Toaster() {
+  const wide = () => windowSize().width >= 700;
+  const newest = () =>
+    shown()
+      .filter((entry) => entry.status !== "ending")
+      .at(-1);
+  if (terminal) {
+    return (
+      <ToastStack
+        onCancel={() => {
+          const id = newest()?.id;
+          if (id) toast.dismiss(id);
+        }}
+      >
+        <Each of={shown()} key={(entry) => entry.id}>
+          {(entry) => <ToastItem entry={entry()} />}
+        </Each>
+      </ToastStack>
+    );
+  }
+  return (
+    <Overlay
+      style={{
+        pointerEvents: "box-none",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        padding: 16,
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)",
+        alignItems: wide() ? "flex-end" : "center",
+      }}
+    >
+      <ToastStack
+        placement={wide() ? "bottomRight" : "bottomCenter"}
+        style={{ width: 340, maxWidth: "100%" }}
+        onExpandedChange={({ expanded: open }) => {
+          expanded.set(open);
+          emit({ phase: "expanded", expanded: open });
+        }}
+        onCancel={() => {
+          const id = newest()?.id;
+          if (id) toast.dismiss(id);
+        }}
+      >
+        <Each of={shown()} key={(entry) => entry.id}>
+          {(entry) => <ToastItem entry={entry()} />}
+        </Each>
+      </ToastStack>
+    </Overlay>
+  );
+}
+
+// Private helpers
+
+const pointer = platform.desktop;
+
+/**
+ * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the inverse surface
+ * (`surface("inverse")`), the theme's `popup.corner`, edge width following the surface's border (zero
+ * where transparent), 12 by 14 points of padding. Its title takes `toastTitle`,
+ * its description `toastText`.
+ */
+function toastLook(): ViewStyle {
+  const inverse = surface("inverse").style;
+  const edge = inverse.borderColor;
+  return {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    ...rounded(control("popup").corner),
+    borderWidth: surfaceBorderWidth(typeof edge === "string" ? edge : undefined),
+    ...inverse,
+  };
+}
+
+/** A toast's title: 14 points semibold. */
+function toastTitle(): TextStyle {
+  // No type role has this size: a toast's title is 14 in both tiers.
+  return { fontSize: 14, fontWeight: font.weight("title"), color: surface("inverse").ink };
+}
+
+/** A toast's description: 13 points in the inverse surface's ink, its figures tabular. */
+function toastText(): TextStyle {
+  // No type role has this size: a toast's description is 13 in both tiers.
+  return {
+    fontSize: 13,
+    color: surface("inverse").ink,
+    fontVariant: ["tabular-nums"],
+  };
+}
+
+/**
+ * The size of a toast's action: 28 points tall with a pointer, 10 points of padding at its sides;
+ * `small` on a touch screen (36, a hit slop making 44), so the toast stays a compact row.
+ */
+const toastActionSize: ButtonLookOptions = pointer
+  ? { style: { paddingHorizontal: 10 } }
+  : { size: "sm" };
+
+/**
+ * A toast's action (an Undo, a Retry), spread on a `Button` or a pressable view: the theme's
+ * primary button, its fill and ink from `control("button")`. Its label takes `toastActionLabel`.
+ */
+function toastActionLook() {
+  return buttonLook("default", toastActionSize);
+}
+
+/** The label of a `toastActionLook` (`buttonLabel("default")`). */
+function toastActionLabel(): TextStyle {
+  const label = buttonLabel("default", toastActionSize);
+  return {
+    get color() {
+      return control("button").selected.ink;
+    },
+    get fontSize() {
+      return label.fontSize;
+    },
+    get fontWeight() {
+      return label.fontWeight;
+    },
+  };
+}
+
+/** A toast's close button (its cross): a circle 24 points across (the theme's
+ * `radius-lg` corners, half its side in the NSH Gallery theme), bare until the
+ * pointer is over it, sinking to 90% while pressed (none with reduced
+ * motion); keyboard focus `feedback.focusRing()`. */
+function toastCloseLook() {
+  return {
+    style: {
+      width: 24,
+      height: 24,
+      alignItems: "center",
+      justifyContent: "center",
+      ...rounded(shape.container),
+      ...pressTransition("background-color"),
+    } as ViewStyle,
+    get hoverStyle(): ViewStyle {
+      return feedback.hoverStyle("foreground");
+    },
+    get activeStyle(): ViewStyle {
+      return {
+        ...(feedback.pressOverlay > 0
+          ? feedback.press("surface", { ink: "foreground" }).activeStyle
+          : { backgroundColor: alpha(surface("inverse").ink, 0.1) }),
+        ...pressSink(0.9).activeStyle,
+      };
+    },
+    get focusVisibleStyle(): ViewStyle {
+      return feedback.focusRing();
+    },
+  };
+}
+
+/** The column that holds `title` and `description`: it takes the row's room and may shrink. */
+const toastTextColumn: ViewStyle = { flex: 1, gap: 2, minWidth: 0 };
 
 /** What one toast shows. The manager holds the id; this holds the words. */
 interface ToastRecord {
@@ -306,12 +434,6 @@ function remember(id: string, record: ToastRecord) {
   records.set({ ...records(), [id]: record });
 }
 
-/** Hears every push, present, end, removal and expand. Returns the unsubscribe. */
-export function onToastEvent(listener: (event: ToastEvent) => void): () => void {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
-}
-
 function raise(title: string, options?: ToastOptions): string {
   const id = options?.id ?? `toast-${++count}`;
   const previous = records()[id];
@@ -333,63 +455,6 @@ function raise(title: string, options?: ToastOptions): string {
   run();
   return id;
 }
-
-/**
- * Shows a toast and returns its id (`toast-1`, `toast-2`, …, or `options.id`). The same id
- * replaces the toast that held it. `toast.success` and the other types set `type`.
- */
-export function toast(title: string, options?: ToastOptions): string {
-  return raise(title, options);
-}
-
-toast.success = (title: string, options?: ToastOptions) =>
-  raise(title, { ...options, type: "success" });
-toast.error = (title: string, options?: ToastOptions) =>
-  raise(title, { ...options, type: "error" });
-toast.warning = (title: string, options?: ToastOptions) =>
-  raise(title, { ...options, type: "warning" });
-toast.info = (title: string, options?: ToastOptions) => raise(title, { ...options, type: "info" });
-toast.loading = (title: string, options?: ToastOptions) =>
-  raise(title, { ...options, type: "loading" });
-
-/**
- * Changes the toast `id` where it is, without showing it again (a loading note becoming its
- * result, a bar moving). A finite `duration` starts a new wait beside the one the push set.
- * False when no such toast is showing.
- */
-toast.update = (id: string, change: ToastUpdate): boolean => {
-  const record = records()[id];
-  if (!record) return false;
-  const next: ToastRecord = { ...record };
-  if (change.title !== undefined) next.title = change.title;
-  if ("description" in change) {
-    if (change.description) next.description = change.description;
-    else delete next.description;
-  }
-  if ("type" in change) next.type = change.type;
-  if ("action" in change) {
-    if (change.action) next.action = change.action;
-    else delete next.action;
-  }
-  if ("closeButton" in change) next.closeButton = change.closeButton;
-  if ("progress" in change) {
-    if (change.progress === null || change.progress === undefined) delete next.progress;
-    else next.progress = change.progress;
-  }
-  remember(id, next);
-  if (change.duration !== undefined) {
-    if (Number.isFinite(change.duration)) lingering.set(id, change.duration);
-    else lingering.delete(id);
-  }
-  return true;
-};
-
-/** Closes the toast `id`, or every toast when `id` is omitted. */
-toast.dismiss = (id?: string) => {
-  if (id === undefined) manager.dismissAll();
-  else manager.dismiss(id);
-  run();
-};
 
 function choose(id: string, label: string) {
   records()[id]?.action?.onClick?.();
@@ -478,58 +543,5 @@ function ToastItem(props: { entry: ToastEntry }) {
         </View>
       </If>
     </Toast>
-  );
-}
-
-/** Where the toasts show: the foot of the window, bottom-right when it is at least 700 points wide. */
-export function Toaster() {
-  const wide = () => windowSize().width >= 700;
-  const newest = () =>
-    shown()
-      .filter((entry) => entry.status !== "ending")
-      .at(-1);
-  if (terminal) {
-    return (
-      <ToastStack
-        onCancel={() => {
-          const id = newest()?.id;
-          if (id) toast.dismiss(id);
-        }}
-      >
-        <Each of={shown()} key={(entry) => entry.id}>
-          {(entry) => <ToastItem entry={entry()} />}
-        </Each>
-      </ToastStack>
-    );
-  }
-  return (
-    <Overlay
-      style={{
-        pointerEvents: "box-none",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        padding: 16,
-        paddingBottom: safeArea().bottom + 16,
-        alignItems: wide() ? "flex-end" : "center",
-      }}
-    >
-      <ToastStack
-        placement={wide() ? "bottomRight" : "bottomCenter"}
-        style={{ width: 340, maxWidth: "100%" }}
-        onExpandedChange={({ expanded: open }) => {
-          expanded.set(open);
-          emit({ phase: "expanded", expanded: open });
-        }}
-        onCancel={() => {
-          const id = newest()?.id;
-          if (id) toast.dismiss(id);
-        }}
-      >
-        <Each of={shown()} key={(entry) => entry.id}>
-          {(entry) => <ToastItem entry={entry()} />}
-        </Each>
-      </ToastStack>
-    </Overlay>
   );
 }

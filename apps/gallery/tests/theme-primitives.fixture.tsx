@@ -2,6 +2,7 @@ import {
   animate,
   colors,
   defineTheme,
+  feedback,
   focusRing,
   follow,
   hovered,
@@ -22,7 +23,6 @@ import {
   buttonGroupItem,
   carouselArrowLook,
   RoundButton,
-  toastCloseLook,
   Toggle,
   toggleLook,
 } from "../../../packages/ui";
@@ -80,7 +80,12 @@ function App() {
 
   const defaultBtn = buttonLook("default");
   const onToggle = toggleLook({ on: true });
-  const toastClose = toastCloseLook();
+  // Read at stringify time, the same way the private close look's getter does.
+  const toastClose = {
+    get hoverStyle() {
+      return feedback.hoverStyle("foreground");
+    },
+  };
   const arrow = carouselArrowLook({ glass: true });
 
   return (
