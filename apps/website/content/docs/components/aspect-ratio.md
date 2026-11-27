@@ -78,4 +78,4 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style
 
 The box is as wide as its column (`width: "100%"`) and its height is that width over the ratio; its
 content is clipped to it (`overflow: "hidden"`), so a picture fills the box rather than spilling out
-of it. `aspectRatioLook(ratio)` is exported for a box an app draws itself.
+of it.

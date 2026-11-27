@@ -1,6 +1,6 @@
 // An empty state: a centered block that says there is nothing here yet, and what to do about it.
 
-import { colors, rounded, TERMINAL_ROW, terminal, font, shape } from "@shadcn-nsh/theme";
+import { colors, font, rounded, shape, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, token, View } from "nsh";
 
@@ -9,8 +9,132 @@ import { density } from "./lib/surface";
 /** An empty state's media: `default`, the app's own art or icon as it is; `icon`, a tinted square behind it. */
 export type EmptyMediaVariant = "default" | "icon";
 
-/** An empty state's parts as the styles they wear: spread each one. */
-export interface EmptyLook {
+/** An empty state's props: every `nsh` view prop passes through; `style` goes over the look's. */
+export type EmptyProps = ViewProps;
+
+/** The media and the words under it: `EmptyMedia`, `EmptyTitle`, `EmptyDescription`. */
+export type EmptyHeaderProps = ViewProps;
+
+/** The media's box. Besides `variant`, every `nsh` view prop passes through. */
+export type EmptyMediaProps = ViewProps & {
+  /** Default `default`: the app's own art. `icon` puts a square of the muted fill behind it. */
+  variant?: EmptyMediaVariant;
+};
+
+/** The line that says there is nothing here. */
+export type EmptyTitleProps = TextProps;
+
+/** The line under the title, a step quieter. */
+export type EmptyDescriptionProps = TextProps;
+
+/** What the reader can do about it: buttons, a field, a link. */
+export type EmptyContentProps = ViewProps;
+
+/** How big the icon in an empty state's media is drawn: the `icon` variant's own step. */
+export const EMPTY_ICON = 24;
+
+/**
+ * An empty state, after shadcn/ui's `Empty`: a centered column that takes the room its parent
+ * leaves it (`flexGrow: 1`), padded 24. Its parts go in order — `EmptyHeader` holding
+ * `EmptyMedia`, `EmptyTitle` and `EmptyDescription`, then `EmptyContent` for what the reader can do
+ * about it. In the terminal the block is its lines: no padding, and one Cell row between them.
+ */
+export function Empty(props: EmptyProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[emptyLook().root(), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** The media and the words under it, a column centered in the block. */
+export function EmptyHeader(props: EmptyHeaderProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[emptyLook().header(), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/**
+ * The art over the words: the app's own (an `Avatar`, an illustration, an `Icon` drawn large), or
+ * `variant="icon"` for a square of the muted fill with an `EMPTY_ICON` icon in it.
+ */
+export function EmptyMedia(props: EmptyMediaProps) {
+  const [, rest] = split(props, ["variant", "children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[emptyLook().media(props.variant ?? "default"), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** The line that says there is nothing here: medium, a step above the body's size. */
+export function EmptyTitle(props: EmptyTitleProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[emptyLook().title(), props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** The line under the title: the body's size, in the muted ink, centered. */
+export function EmptyDescription(props: EmptyDescriptionProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <Text
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[emptyLook().description(), props.style ?? null]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** What the reader can do about it: a button or two, a field, a link, a gap of 16 apart. */
+export function EmptyContent(props: EmptyContentProps) {
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
+  return (
+    <View
+      {...rest}
+      class={props.class}
+      classList={props.classList}
+      style={[emptyLook().content(), props.style ?? null]}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+// Private helpers
+
+/** An empty state's parts as the styles they wear. */
+interface EmptyLook {
   /** The block: a centered column that takes the room its parent leaves it. */
   root(): ViewStyle;
   /** The media and the words under it, a step apart from them. */
@@ -24,9 +148,6 @@ export interface EmptyLook {
   /** What the reader can do about it: a button or two, a field, a link. */
   content(): ViewStyle;
 }
-
-/** How big the icon in an empty state's media is drawn: the `icon` variant's own step. */
-export const EMPTY_ICON = 24;
 
 /** The side of the `icon` variant's square: one row of a list, a surface's padding either side. */
 const mediaSide = 40;
@@ -55,17 +176,18 @@ const centered = (step: number): ViewStyle => ({
  * the app's own (an avatar, an illustration) or the `icon` variant: a square of the muted fill with
  * a surface's corners and an `EMPTY_ICON` icon in it. Either way it sits a step above the title.
  */
-export function emptyLook(): EmptyLook {
+function emptyLook(): EmptyLook {
   return {
     root: (): ViewStyle => ({
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      gap: terminal ? TERMINAL_ROW : gap,
-      padding: terminal ? 0 : pad,
+      gap,
+      padding: pad,
       flexGrow: 1,
       minWidth: 0,
       width: "100%",
+      ...terminalEmpty(),
     }),
     header: (): ViewStyle => centered(8),
     media: (variant: EmptyMediaVariant): ViewStyle => ({
@@ -99,91 +221,10 @@ export function emptyLook(): EmptyLook {
   };
 }
 
-/** An empty state's props: every `nsh` view prop passes through; `style` goes over the look's. */
-export type EmptyProps = ViewProps;
+// Terminal
 
-/** The media and the words under it: `EmptyMedia`, `EmptyTitle`, `EmptyDescription`. */
-export type EmptyHeaderProps = ViewProps;
-
-/** The media's box. Besides `variant`, every `nsh` view prop passes through. */
-export type EmptyMediaProps = ViewProps & {
-  /** Default `default`: the app's own art. `icon` puts a square of the muted fill behind it. */
-  variant?: EmptyMediaVariant;
-};
-
-/** The line that says there is nothing here. */
-export type EmptyTitleProps = TextProps;
-
-/** The line under the title, a step quieter. */
-export type EmptyDescriptionProps = TextProps;
-
-/** What the reader can do about it: buttons, a field, a link. */
-export type EmptyContentProps = ViewProps;
-
-/**
- * An empty state, after shadcn/ui's `Empty`: a centered column that takes the room its parent
- * leaves it (`flexGrow: 1`), padded 24. Its parts go in order — `EmptyHeader` holding
- * `EmptyMedia`, `EmptyTitle` and `EmptyDescription`, then `EmptyContent` for what the reader can do
- * about it. In the terminal the block is its lines: no padding, and one Cell row between them.
- */
-export function Empty(props: EmptyProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <View {...rest} style={[emptyLook().root(), props.style ?? null]}>
-      {props.children}
-    </View>
-  );
-}
-
-/** The media and the words under it, a column centered in the block. */
-export function EmptyHeader(props: EmptyHeaderProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <View {...rest} style={[emptyLook().header(), props.style ?? null]}>
-      {props.children}
-    </View>
-  );
-}
-
-/**
- * The art over the words: the app's own (an `Avatar`, an illustration, an `Icon` drawn large), or
- * `variant="icon"` for a square of the muted fill with an `EMPTY_ICON` icon in it.
- */
-export function EmptyMedia(props: EmptyMediaProps) {
-  const [, rest] = split(props, ["variant", "style"]);
-  return (
-    <View {...rest} style={[emptyLook().media(props.variant ?? "default"), props.style ?? null]}>
-      {props.children}
-    </View>
-  );
-}
-
-/** The line that says there is nothing here: medium, a step above the body's size. */
-export function EmptyTitle(props: EmptyTitleProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <Text {...rest} style={[emptyLook().title(), props.style ?? null]}>
-      {props.children}
-    </Text>
-  );
-}
-
-/** The line under the title: the body's size, in the muted ink, centered. */
-export function EmptyDescription(props: EmptyDescriptionProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <Text {...rest} style={[emptyLook().description(), props.style ?? null]}>
-      {props.children}
-    </Text>
-  );
-}
-
-/** What the reader can do about it: a button or two, a field, a link, a gap of 16 apart. */
-export function EmptyContent(props: EmptyContentProps) {
-  const [, rest] = split(props, ["style"]);
-  return (
-    <View {...rest} style={[emptyLook().content(), props.style ?? null]}>
-      {props.children}
-    </View>
-  );
+/** A terminal block is its lines: one Cell row between them, and no padding around them. */
+function terminalEmpty(): ViewStyle {
+  if (!terminal) return {};
+  return { gap: TERMINAL_ROW, padding: 0 };
 }

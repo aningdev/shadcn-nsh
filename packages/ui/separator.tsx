@@ -12,23 +12,9 @@ import { split, View } from "nsh";
 export type SeparatorOrientation = "horizontal" | "vertical";
 
 /**
- * A separator's look: a hairline one point thick in the theme's edge color (`colors.border`),
- * across the content as `horizontal`, as tall as its row as `vertical`, and never shrunk by a
- * tight row. Spread it on a `View` of your own, or lay your boxes out by it.
- */
-export function separatorLook(orientation: SeparatorOrientation = "horizontal"): ViewStyle {
-  return {
-    flexShrink: 0,
-    backgroundColor: colors.border,
-    ...(orientation === "vertical"
-      ? { width: stroke.hairline, alignSelf: "stretch" }
-      : { height: stroke.hairline, alignSelf: "stretch", width: "100%" }),
-  };
-}
-
-/**
  * A separator's props. Besides `orientation` and `decorative`, every `nsh` view prop passes
- * through (`style`, `accessibilityLabel`, `role`, …); `style` goes over the look's.
+ * through (`class`, `classList`, `style`, `accessibilityLabel`, `role`, …); `style` goes over
+ * the look's.
  */
 export type SeparatorProps = Omit<ViewProps, "children"> & {
   /** Default `horizontal`: across the content. `vertical` runs down it, as tall as its row. */
@@ -49,7 +35,7 @@ export type SeparatorProps = Omit<ViewProps, "children"> & {
  * on it; `decorative={false}` keeps it in the accessibility tree.
  */
 export function Separator(props: SeparatorProps) {
-  const [, rest] = split(props, ["orientation", "decorative", "style"]);
+  const [, rest] = split(props, ["orientation", "decorative", "class", "classList", "style"]);
   const decorative = props.decorative !== false;
   return (
     <View
@@ -58,7 +44,26 @@ export function Separator(props: SeparatorProps) {
       accessibilityElementsHidden={decorative}
       importantForAccessibility={decorative ? "no-hide-descendants" : "auto"}
       {...rest}
+      class={props.class}
+      classList={props.classList}
       style={[separatorLook(props.orientation ?? "horizontal"), props.style ?? null]}
     />
   );
+}
+
+// Private helpers
+
+/**
+ * A separator's look: a hairline one point thick in the theme's edge color (`colors.border`),
+ * across the content as `horizontal`, as tall as its row as `vertical`, and never shrunk by a
+ * tight row.
+ */
+function separatorLook(orientation: SeparatorOrientation = "horizontal"): ViewStyle {
+  return {
+    flexShrink: 0,
+    backgroundColor: colors.border,
+    ...(orientation === "vertical"
+      ? { width: stroke.hairline, alignSelf: "stretch" }
+      : { height: stroke.hairline, alignSelf: "stretch", width: "100%" }),
+  };
 }

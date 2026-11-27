@@ -1,9 +1,9 @@
-// An avatar: the identity ring (`avatarIdentity`, `avatarHue`) and the `Avatar` that wears it.
+// An avatar: the identity ring (`avatarIdentity`) and the `Avatar` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, isDark, font, stroke } from "@shadcn-nsh/theme";
-import { computed, split, Text, token, View } from "nsh";
+import { colors, font, isDark, stroke } from "@shadcn-nsh/theme";
 import type { TextProps, ViewProps, ViewStyle } from "nsh";
+import { computed, split, Text, token, View } from "nsh";
 import {
   Avatar as BaseAvatar,
   AvatarGroup as BaseAvatarGroup,
@@ -13,76 +13,24 @@ import {
 
 import { joinClass } from "./lib/utils";
 
-/** The hues of the identity ring: twelve, evenly spaced. */
-const HUES = 12;
-
-/** FNV-1a of `text`: a stable hash, so a name keeps its hue. */
-function hash(text: string): number {
-  let h = 2166136261;
-  for (const c of text) {
-    h ^= c.codePointAt(0) ?? 0;
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
-
-/** The hue of `name` on the ring, in degrees. */
-export const avatarHue = (name: string) => (hash(name) % HUES) * (360 / HUES);
-
-/** `#rrggbb` of an OkLCH color (clipped to sRGB), so it fits an arbitrary
- * Tailwind class (`text-[#…]`) as well as a style. */
-function oklch(l: number, c: number, h: number): string {
-  const r = (h * Math.PI) / 180;
-  const a = c * Math.cos(r);
-  const b = c * Math.sin(r);
-  const l3 = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3;
-  const m3 = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3;
-  const s3 = (l - 0.0894841775 * a - 1.291485548 * b) ** 3;
-  const channel = (x: number) => {
-    const v = Math.min(1, Math.max(0, x));
-    const encoded = v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
-    return Math.round(encoded * 255)
-      .toString(16)
-      .padStart(2, "0");
-  };
-  return (
-    "#" +
-    channel(4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3) +
-    channel(-1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3) +
-    channel(-0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614701 * s3)
-  );
-}
-
-/**
- * The colors a fallback with `name`'s initials draws itself in, as
- * `gpui-component`'s avatar picks them: twelve OkLCH hues at one lightness
- * and chroma, so every avatar has one visual weight and its initials hold
- * WCAG AA on every hue, in light and dark appearance.
- */
-export function avatarIdentity(name: string) {
-  const h = avatarHue(name);
-  return isDark()
-    ? {
-        background: oklch(0.3, 0.05, h), // color: an identity's own hue, the same under every theme
-        foreground: oklch(0.82, 0.11, h), // color: an identity's own hue, the same under every theme
-        border: oklch(0.36, 0.06, h), // color: an identity's own hue, the same under every theme
-      }
-    : {
-        background: oklch(0.97, 0.032, h), // color: an identity's own hue, the same under every theme
-        foreground: oklch(0.5, 0.145, h), // color: an identity's own hue, the same under every theme
-        border: oklch(0.89, 0.05, h), // color: an identity's own hue, the same under every theme
-      };
-}
-
 /**
  * `nsh/base`'s Avatar with identity colors for a named fallback. Every base prop passes through.
  * `name` drives initials and hue via `avatarIdentity`; `src` is the picture, if there is one.
+ * `class` and `classList` pass through. `imageClass` and `fallbackClass` replace the look's when
+ * the app passes them.
  */
 export type AvatarProps = BaseAvatarProps;
 
 /** An avatar: picture or named initials on the identity ring. */
 export function Avatar(props: AvatarProps) {
-  const [, rest] = split(props, ["style", "fallbackStyle", "fallbackClass", "imageClass"]);
+  const [, rest] = split(props, [
+    "class",
+    "classList",
+    "style",
+    "fallbackStyle",
+    "fallbackClass",
+    "imageClass",
+  ]);
   // One identity per name and appearance, for the class and the style below: `avatarIdentity` runs a
   // hash and three OkLCH conversions, and the two bindings that ask for it ask at the same time.
   // Owned by this avatar, so it goes when the avatar does, and it follows the name and the
@@ -103,6 +51,8 @@ export function Avatar(props: AvatarProps) {
   return (
     <BaseAvatar
       {...rest}
+      class={props.class}
+      classList={props.classList}
       style={props.style}
       imageClass={props.imageClass ?? "rounded-full overflow-hidden"}
       fallbackClass={props.fallbackClass ?? ringClass()}
@@ -121,11 +71,18 @@ export type AvatarGroupProps = BaseAvatarGroupProps;
  * over that ring.
  */
 export function AvatarGroup(props: AvatarGroupProps) {
-  const [, rest] = split(props, ["class", "overflowClass", "overflowStyle", "children"]);
+  const [, rest] = split(props, [
+    "class",
+    "classList",
+    "overflowClass",
+    "overflowStyle",
+    "children",
+  ]);
   return (
     <BaseAvatarGroup
       {...rest}
       class={joinClass("flex-row items-center -space-x-2", props.class)}
+      classList={props.classList}
       overflowClass={joinClass(
         "relative shrink-0 items-center justify-center rounded-full",
         props.overflowClass,
@@ -149,10 +106,12 @@ export type AvatarGroupCountProps = TextProps;
 
 /** The people the group does not show ("+3"), drawn inside `AvatarGroup`'s overflow part. */
 export function AvatarGroupCount(props: AvatarGroupCountProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
   return (
     <Text
       {...rest}
+      class={props.class}
+      classList={props.classList}
       style={[
         {
           // No type role has this size: an avatar's count is 12 in both tiers.
@@ -178,10 +137,12 @@ export type AvatarBadgeProps = ViewProps;
  * It is not a status: say the presence in the avatar's `accessibilityLabel`.
  */
 export function AvatarBadge(props: AvatarBadgeProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["children", "class", "classList", "style"]);
   return (
     <View
       {...rest}
+      class={props.class}
+      classList={props.classList}
       style={[
         {
           position: "absolute",
@@ -200,4 +161,72 @@ export function AvatarBadge(props: AvatarBadgeProps) {
       {props.children}
     </View>
   );
+}
+
+// Shared avatar primitives
+// `avatarIdentity` stays public: hover-card's pages and the showcase paint a named fallback with it.
+
+/**
+ * The colors a fallback with `name`'s initials draws itself in, as
+ * `gpui-component`'s avatar picks them: twelve OkLCH hues at one lightness
+ * and chroma, so every avatar has one visual weight and its initials hold
+ * WCAG AA on every hue, in light and dark appearance.
+ */
+export function avatarIdentity(name: string) {
+  const h = avatarHue(name);
+  return isDark()
+    ? {
+        background: oklch(0.3, 0.05, h), // color: an identity's own hue, the same under every theme
+        foreground: oklch(0.82, 0.11, h), // color: an identity's own hue, the same under every theme
+        border: oklch(0.36, 0.06, h), // color: an identity's own hue, the same under every theme
+      }
+    : {
+        background: oklch(0.97, 0.032, h), // color: an identity's own hue, the same under every theme
+        foreground: oklch(0.5, 0.145, h), // color: an identity's own hue, the same under every theme
+        border: oklch(0.89, 0.05, h), // color: an identity's own hue, the same under every theme
+      };
+}
+
+// Private helpers
+
+/** The hues of the identity ring: twelve, evenly spaced. */
+const HUES = 12;
+
+/** FNV-1a of `text`: a stable hash, so a name keeps its hue. */
+function hash(text: string): number {
+  let h = 2166136261;
+  for (const c of text) {
+    h ^= c.codePointAt(0) ?? 0;
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/** `#rrggbb` of an OkLCH color (clipped to sRGB), so it fits an arbitrary
+ * Tailwind class (`text-[#…]`) as well as a style. */
+function oklch(l: number, c: number, h: number): string {
+  const r = (h * Math.PI) / 180;
+  const a = c * Math.cos(r);
+  const b = c * Math.sin(r);
+  const l3 = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m3 = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s3 = (l - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const channel = (x: number) => {
+    const v = Math.min(1, Math.max(0, x));
+    const encoded = v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
+    return Math.round(encoded * 255)
+      .toString(16)
+      .padStart(2, "0");
+  };
+  return (
+    "#" +
+    channel(4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3) +
+    channel(-1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3) +
+    channel(-0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614701 * s3)
+  );
+}
+
+/** The hue of `name` on the ring, in degrees. */
+function avatarHue(name: string): number {
+  return (hash(name) % HUES) * (360 / HUES);
 }

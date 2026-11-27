@@ -1,23 +1,16 @@
-// The reference of `alert.tsx`: the same page, the look spread on `nsh`'s own View and Text
-// instead of worn by the parts. The render check requires the two to draw the same pixels.
+// The reference of `alert.tsx`. `alertLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
+// shadcn's alert scenes with this library's parts: a notice that says what was saved, the same
+// notice with a title and no note, and the destructive one — an icon at the leading edge, the
+// title beside it, the note under it.
 import { AlertCircle, CheckCircle2 } from "lucide";
 import { mount, Text, View } from "nsh";
 
-import { ALERT_ICON, alertLook } from "@/packages/ui/alert";
+import { ALERT_ICON, Alert, AlertDescription, AlertTitle } from "@/packages/ui/alert";
 import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { ui } from "./stage";
-
-/** The notice's surface, as the look draws it. */
-function Frame(props: { variant?: "default" | "destructive"; children: unknown }) {
-  const variant = props.variant ?? "default";
-  return (
-    <View role="alert" style={[alertLook().root()]}>
-      {props.children as never}
-    </View>
-  );
-}
 
 function App() {
   return (
@@ -28,56 +21,47 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Default" axis="block">
-          <Frame>
+          <Alert variant="default">
             <Icon icon={CheckCircle2} size={ALERT_ICON} tint={ui().text} />
-            <Text style={[alertLook().title("default")]}>Changes saved</Text>
-            <View style={[alertLook().descriptionFrame()]}>
-              <Text style={[alertLook().descriptionText("default")]}>
-                Your changes have been saved.
-              </Text>
-            </View>
-          </Frame>
+            <AlertTitle>Changes saved</AlertTitle>
+            <AlertDescription>Your changes have been saved.</AlertDescription>
+          </Alert>
 
-          <Frame>
+          <Alert>
             <Icon icon={CheckCircle2} size={ALERT_ICON} tint={ui().text} />
-            <Text style={[alertLook().title("default")]}>
-              A title and an icon, and no note at all.
-            </Text>
-          </Frame>
+            <AlertTitle>A title and an icon, and no note at all.</AlertTitle>
+          </Alert>
         </DemoSection>
 
         <DemoSection title="Destructive" axis="block">
-          <Frame variant="destructive">
+          <Alert variant="destructive">
             <Icon icon={AlertCircle} size={ALERT_ICON} tint={ui().danger} />
-            <Text style={[alertLook().title("destructive")]}>Unable to process your payment.</Text>
-            <View style={[alertLook().descriptionFrame()]}>
-              <Text style={[alertLook().descriptionText("destructive")]}>
-                Please verify your billing information and try again.
-              </Text>
-            </View>
-          </Frame>
-          <Frame variant="destructive">
+            <AlertTitle>Unable to process your payment.</AlertTitle>
+            <AlertDescription>
+              Please verify your billing information and try again.
+            </AlertDescription>
+          </Alert>
+          <Alert variant="destructive">
             <Icon icon={AlertCircle} size={ALERT_ICON} tint={ui().danger} />
-            <View style={[alertLook().descriptionFrame()]}>
-              <Text style={[alertLook().descriptionText("destructive")]}>
-                The connection was lost before the reply finished. Check the network and try again.
-              </Text>
-            </View>
-          </Frame>
+            <AlertDescription>
+              The connection was lost before the reply finished. Check the network and try again.
+            </AlertDescription>
+          </Alert>
         </DemoSection>
 
         <DemoSection title="A note of the app's own" axis="block">
-          <Frame>
+          <Alert>
             <Icon icon={AlertCircle} size={ALERT_ICON} tint={ui().text} />
-            <Text style={[alertLook().title("default")]}>Three checks failed</Text>
-            <View style={[alertLook().descriptionFrame()]}>
+            <AlertTitle>Three checks failed</AlertTitle>
+            {/* The note is a frame: the app's own lines, in the ink it gives them. */}
+            <AlertDescription>
               <View style={{ gap: 4 }}>
                 {["The card's number is not valid", "The card has expired"].map((line) => (
                   <Text style={{ fontSize: 13, color: ui().muted }}>{`· ${line}`}</Text>
                 ))}
               </View>
-            </View>
-          </Frame>
+            </AlertDescription>
+          </Alert>
         </DemoSection>
       </DemoCard>
     </DemoPage>

@@ -1,31 +1,14 @@
-// The reference of `kbd.tsx`: the same page, the look spread on `nsh`'s own View and Text instead
-// of worn by the components. The render check requires the two to draw the same pixels.
+// The reference of `kbd.tsx`. `kbdLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
+// A key has no official example here, so this page is the library's own: the modifier keys of a
+// shortcut as caps of their own, a shortcut inside a sentence, and keys beside a button's label.
 import { mount, Text, View } from "nsh";
 
-import { buttonLabel, Button } from "@/packages/ui/button";
-import { kbdLook } from "@/packages/ui/kbd";
+import { Button, buttonLabel } from "@/packages/ui/button";
+import { Kbd, KbdGroup } from "@/packages/ui/kbd";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { ui } from "./stage";
-
-/** A cap as the look draws it, worn by a plain view. */
-function Cap(props: { children: string }) {
-  return (
-    <View style={kbdLook().kbd}>
-      <Text style={kbdLook().text}>{props.children}</Text>
-    </View>
-  );
-}
-
-function Caps(props: { keys: string[] }) {
-  return (
-    <View style={kbdLook().group}>
-      {props.keys.map((key) => (
-        <Cap>{key}</Cap>
-      ))}
-    </View>
-  );
-}
 
 function App() {
   return (
@@ -36,15 +19,26 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Modifiers">
-          <Caps keys={["⌘", "⇧", "⌥", "⌃"]} />
+          <KbdGroup>
+            <Kbd>⌘</Kbd>
+            <Kbd>⇧</Kbd>
+            <Kbd>⌥</Kbd>
+            <Kbd>⌃</Kbd>
+          </KbdGroup>
         </DemoSection>
 
         <DemoSection title="In a sentence" axis="block">
           <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
             <Text style={{ fontSize: 13, color: ui().muted }}>Press</Text>
-            <Caps keys={["Ctrl", "B"]} />
+            <KbdGroup>
+              <Kbd>Ctrl</Kbd>
+              <Kbd>B</Kbd>
+            </KbdGroup>
             <Text style={{ fontSize: 13, color: ui().muted }}>to open the sidebar, and</Text>
-            <Caps keys={["Ctrl", "K"]} />
+            <KbdGroup>
+              <Kbd>Ctrl</Kbd>
+              <Kbd>K</Kbd>
+            </KbdGroup>
             <Text style={{ fontSize: 13, color: ui().muted }}>for the command palette.</Text>
           </View>
         </DemoSection>
@@ -52,7 +46,10 @@ function App() {
         <DemoSection title="Beside a label">
           <Button variant="secondary">
             <Text style={buttonLabel("secondary")}>Search</Text>
-            <Caps keys={["⌘", "K"]} />
+            <KbdGroup>
+              <Kbd>⌘</Kbd>
+              <Kbd>K</Kbd>
+            </KbdGroup>
           </Button>
         </DemoSection>
       </DemoCard>

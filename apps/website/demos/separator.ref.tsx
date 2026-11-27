@@ -1,8 +1,11 @@
-// The reference of `separator.tsx`: the same page, the look spread on `nsh`'s own View instead of
-// worn by the component. The render check requires the two to draw the same pixels.
+// The reference of `separator.tsx`. `separatorLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
+// A separator has no official example, so this page is the library's own: a heading parted from
+// the note under it, a row of words parted from each other, and a separator a screen reader still
+// reaches (`decorative={false}`).
 import { mount, Text, View } from "nsh";
 
-import { separatorLook } from "@/packages/ui/separator";
+import { Separator } from "@/packages/ui/separator";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { ui } from "./stage";
@@ -26,7 +29,7 @@ function App() {
               Who can see this project, and what they can change.
             </Text>
           </View>
-          <View style={[separatorLook("horizontal"), { marginVertical: 12 }]} />
+          <Separator orientation="horizontal" style={{ marginVertical: 12 }} />
           <View style={{ gap: 6 }}>
             <Text style={{ fontSize: 14, fontWeight: "500", color: ui().text }}>Members</Text>
             <Text style={{ fontSize: 13, color: ui().muted }}>
@@ -40,7 +43,8 @@ function App() {
             {WORDS.map((word, i) => (
               <>
                 <Text style={{ fontSize: 13, color: ui().text }}>{word}</Text>
-                {i < WORDS.length - 1 ? <View style={[separatorLook("vertical")]} /> : null}
+                {/* Between the words, not after the last one. */}
+                {i < WORDS.length - 1 ? <Separator orientation="vertical" /> : null}
               </>
             ))}
           </View>
@@ -51,11 +55,10 @@ function App() {
             A decorative separator is a line of the layout, which a screen reader walks past. This
             one is not decorative: it is a boundary in the accessibility tree too.
           </Text>
-          <View
-            role="group"
-            accessible
+          <Separator
+            decorative={false}
             accessibilityLabel="End of the separator examples"
-            style={[separatorLook("horizontal"), { marginVertical: 4 }]}
+            style={{ marginVertical: 4 }}
           />
         </DemoSection>
       </DemoCard>

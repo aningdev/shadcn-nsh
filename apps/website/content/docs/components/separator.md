@@ -66,5 +66,4 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style
 | `Separator` | `orientation` (`"horizontal" \| "vertical"`, default `"horizontal"`), `decorative` (`boolean`, default `true`) | The line is one point of the theme's edge color |
 
 The line is one point of the theme's edge color (`colors.border`, `theme.json`'s `border`), with
-no other look: a corner is the caller's `style`, and so is its room. `separatorLook(orientation)`
-is exported for a line the app draws itself.
+no other look: a corner is the caller's `style`, and so is its room.

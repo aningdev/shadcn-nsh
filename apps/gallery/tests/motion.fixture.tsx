@@ -6,7 +6,6 @@ import {
   buttonLook,
   commandClasses,
   edgeClass,
-  linkLook,
   numberInputClasses,
   optionClass,
   paginationItemClass,
@@ -34,7 +33,6 @@ const describeMotion = (m: typeof motion.fast) => `${m.duration}|${typeof m.timi
 function App() {
   const button = buttonLook("secondary");
   const toggle = toggleLook();
-  linkLook();
   const press = pressSink(0.97, "background-color");
   sliderLook();
   const popup = popInStyles("bottom");

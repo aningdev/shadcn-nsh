@@ -119,14 +119,14 @@ actions, the title and the description as plain text.
 
 ## API
 
-| Part               | Props                                                               | Description                                      |
-| ------------------ | ------------------------------------------------------------------- | ------------------------------------------------ |
-| `Empty`            | every `nsh` View prop; look `emptyLook().root()`                    | A centered block that takes the room it is given |
-| `EmptyHeader`      | every `nsh` View prop; look `emptyLook().header()`                  | The media and the words under it                 |
-| `EmptyMedia`       | `variant`; every `nsh` View prop; look `emptyLook().media(variant)` | The media's box                                  |
-| `EmptyTitle`       | every `nsh` Text prop; look `emptyLook().title()`                   | The line that says there is nothing here         |
-| `EmptyDescription` | every `nsh` Text prop; look `emptyLook().description()`             | The line under the title, a step quieter         |
-| `EmptyContent`     | every `nsh` View prop; look `emptyLook().content()`                 | What the reader can do about it                  |
+| Part               | Props                            | Description                                      |
+| ------------------ | -------------------------------- | ------------------------------------------------ |
+| `Empty`            | every `nsh` View prop            | A centered block that takes the room it is given |
+| `EmptyHeader`      | every `nsh` View prop            | The media and the words under it                 |
+| `EmptyMedia`       | `variant`; every `nsh` View prop | The media's box                                  |
+| `EmptyTitle`       | every `nsh` Text prop            | The line that says there is nothing here         |
+| `EmptyDescription` | every `nsh` Text prop            | The line under the title, a step quieter         |
+| `EmptyContent`     | every `nsh` View prop            | What the reader can do about it                  |
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Empty`,
 `EmptyHeader`, `EmptyMedia` and `EmptyContent`, and every prop of
@@ -140,5 +140,4 @@ over the look's on each.
 The block is a centered column padded 24, its header a step of 8 apart from its content, the words
 and the actions no wider than 384 points. The title is medium at `body + 2` (15 points with a
 pointer, 17 on a touch screen), the description the body's size in the muted ink, both centered.
-`emptyLook()` is exported for a state the app lays out itself, and `EMPTY_ICON` is the size an
-icon takes in the `icon` variant.
+`EMPTY_ICON` is the size an icon takes in the `icon` variant.

@@ -1,8 +1,10 @@
-// The reference of `aspect-ratio.tsx`: the same page, the look spread on `nsh`'s own View instead
-// of worn by the component. The render check requires the two to draw the same pixels.
+// The reference of `aspect-ratio.tsx`. `aspectRatioLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
+// An aspect ratio has no official example here, so this page is the library's own: a 16 / 9 box and
+// a square, a cover in the card that holds it, and the ratio a box keeps as its column narrows.
 import { mount, Text, View } from "nsh";
 
-import { aspectRatioLook } from "@/packages/ui/aspect-ratio";
+import { AspectRatio } from "@/packages/ui/aspect-ratio";
 import { insetSurface } from "@/packages/ui/lib/surface";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
@@ -26,16 +28,16 @@ function App() {
 
       <DemoCard>
         <DemoSection title="16 / 9" axis="block">
-          <View style={[aspectRatioLook(16 / 9)]}>
+          <AspectRatio ratio={16 / 9}>
             <Block label="16 / 9" />
-          </View>
+          </AspectRatio>
         </DemoSection>
 
         <DemoSection title="1 / 1" axis="block">
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <View style={[aspectRatioLook(1), { width: 72 }]}>
+            <AspectRatio ratio={1} style={{ width: 72 }}>
               <Block label="1 / 1" />
-            </View>
+            </AspectRatio>
             <View style={{ flexShrink: 1, gap: 4 }}>
               <Text style={{ fontSize: 14, fontWeight: "500", color: ui().text }}>Team photo</Text>
               <Text style={{ fontSize: 13, color: ui().muted }}>
@@ -47,9 +49,9 @@ function App() {
 
         <DemoSection title="A cover in a card" axis="block">
           <View style={{ gap: 6 }}>
-            <View style={[aspectRatioLook(16 / 9)]}>
+            <AspectRatio ratio={16 / 9}>
               <Block label="Weekly review" />
-            </View>
+            </AspectRatio>
             <Text style={{ fontSize: 14, fontWeight: "500", color: ui().text }}>Weekly review</Text>
             <Text style={{ fontSize: 13, color: ui().muted }}>
               The cover keeps the card's shape whatever the window does.

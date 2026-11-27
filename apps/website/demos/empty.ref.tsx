@@ -1,10 +1,20 @@
-// The reference of `empty.tsx`: the same page, the look spread on `nsh`'s own View and Text
-// instead of worn by the parts. The render check requires the two to draw the same pixels.
+// The reference of `empty.tsx`. `emptyLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
+// shadcn's empty scenes with this library's parts: the empty state of a search, the `icon` variant
+// over a list that has nothing in it, and a state that is the app's own art and nothing else.
 import { Inbox, Plus, Search } from "lucide";
 import { mount, Text, View } from "nsh";
 
 import { Button, buttonLabel } from "@/packages/ui/button";
-import { EMPTY_ICON, emptyLook } from "@/packages/ui/empty";
+import {
+  EMPTY_ICON,
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/packages/ui/empty";
 import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
@@ -19,37 +29,37 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Icon media" axis="block">
-          <View style={[emptyLook().root()]}>
-            <View style={[emptyLook().header()]}>
-              <View style={[emptyLook().media("icon")]}>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
                 <Icon icon={Inbox} size={EMPTY_ICON} tint={ui().text} />
-              </View>
-              <Text style={[emptyLook().title()]}>No messages yet</Text>
-              <Text style={[emptyLook().description()]}>
+              </EmptyMedia>
+              <EmptyTitle>No messages yet</EmptyTitle>
+              <EmptyDescription>
                 Messages you receive will show up here. Start a conversation to see one.
-              </Text>
-            </View>
-            <View style={[emptyLook().content()]}>
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
               <Button>
                 <Icon icon={Plus} size={16} tint={ui().onPrimary} />
                 <Text style={buttonLabel("default")}>New message</Text>
               </Button>
-            </View>
-          </View>
+            </EmptyContent>
+          </Empty>
         </DemoSection>
 
         <DemoSection title="Default media" axis="block">
-          <View style={[emptyLook().root()]}>
-            <View style={[emptyLook().header()]}>
-              <View style={[emptyLook().media("default")]}>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="default">
                 <Icon icon={Search} size={32} tint={ui().faint} />
-              </View>
-              <Text style={[emptyLook().title()]}>Nothing matched that search</Text>
-              <Text style={[emptyLook().description()]}>
+              </EmptyMedia>
+              <EmptyTitle>Nothing matched that search</EmptyTitle>
+              <EmptyDescription>
                 Every field is required unless it is marked optional.
-              </Text>
-            </View>
-            <View style={[emptyLook().content()]}>
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
               <View style={{ flexDirection: "row", gap: 8 }}>
                 <Button variant="secondary">
                   <Text style={buttonLabel("secondary")}>Clear filters</Text>
@@ -58,16 +68,16 @@ function App() {
                   <Text style={buttonLabel("ghost")}>Save this search</Text>
                 </Button>
               </View>
-            </View>
-          </View>
+            </EmptyContent>
+          </Empty>
         </DemoSection>
 
         <DemoSection title="The block itself" axis="block">
-          <View style={[emptyLook().root()]}>
-            <Text style={[emptyLook().description()]}>
+          <Empty>
+            <EmptyDescription>
               An empty state with nothing in it but a line: the block centers whatever it is given.
-            </Text>
-          </View>
+            </EmptyDescription>
+          </Empty>
         </DemoSection>
       </DemoCard>
     </DemoPage>

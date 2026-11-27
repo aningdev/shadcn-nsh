@@ -1,15 +1,17 @@
-// The reference of `link.tsx`: the same scene with `linkLook` and `LinkText` on `nsh/base`'s
-// Link, the way the official example (`references/nsh/website/demos/el-link.tsx`) writes it. It
-// differs from the component page only in the parts it names.
-import { colors } from "@shadcn-nsh/theme";
+// The reference of `link.tsx`. `linkLook` is private to the component, so this
+// page draws the component itself. The two pages match because they are the same composition.
+// The official link scene (`references/nsh/website/demos/el-link.tsx`) with this library's part:
+// breadcrumbs whose current page is the route last opened, a paragraph with two links in it, a
+// site outside the app with its arrow, and an archived page that takes no press; the route and
+// what the app heard beside them.
+import { font } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
-import { Link } from "nsh/base";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { LinkText, linkColor, linkLook, linkSize } from "@/packages/ui/link";
+import { Link } from "@/packages/ui/link";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const visited = signal(new Set<string>());
 const events = signal<string[]>([]);
@@ -29,33 +31,21 @@ function DocLink(props: {
   icon?: boolean;
   inline?: boolean;
 }) {
-  const look = linkLook({ inline: props.inline });
-  // Read in the JSX, so the color follows the route, what was opened and the appearance.
-  const color = () =>
-    linkColor({
-      disabled: props.disabled,
-      current: props.current,
-      visited: visited().has(props.href),
-    });
   return (
     <Link
       href={props.href}
       openWith={props.openWith ?? "app"}
       disabled={props.disabled}
-      class={look.class}
-      focusVisibleStyle={look.focusVisibleStyle}
+      current={props.current}
+      visited={visited().has(props.href)}
+      inline={props.inline}
+      icon={props.icon}
       onOpen={(e: { href: string }) => {
         opened(e);
         if ((props.openWith ?? "app") === "app") route.set(e.href);
       }}
     >
-      <LinkText
-        label={props.label}
-        color={color()}
-        current={props.current}
-        disabled={props.disabled}
-        icon={props.icon}
-      />
+      {props.label}
     </Link>
   );
 }
@@ -64,10 +54,10 @@ function App() {
   const crumb = (href: string, label: string) => (
     <DocLink href={href} label={label} current={route() === href} />
   );
-  const slash = () => <Text style={{ color: colors.faint, fontSize: linkSize }}>/</Text>;
+  const slash = () => <Text style={{ color: ui().faint, fontSize: font.size("body") }}>/</Text>;
   return (
     <DemoPage title="Link">
-      <Text style={{ color: colors.mutedForeground }}>
+      <Text style={{ color: ui().muted }}>
         {desktop ? "Click a link, or Tab to one and press Return" : "Tap a link"}
       </Text>
 
@@ -76,7 +66,7 @@ function App() {
         inspector={
           <>
             <Panel title="route · visited">
-              <Text style={{ fontSize: 13, color: colors.foreground }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {route()} · {visited().size} visited
               </Text>
             </Panel>
@@ -99,14 +89,14 @@ function App() {
             {slash()}
             {crumb("/docs/link", "Link")}
           </View>
-          <Text style={{ fontSize: 15, lineHeight: 22, color: colors.foreground }}>
+          <Text style={{ fontSize: 15, lineHeight: 22, color: ui().text }}>
             {"Read the "}
             <DocLink href="/docs/release-notes" label="release notes" inline />
             {" and the "}
             <DocLink href="/docs/migration" label="migration guide" inline />
             {" before you update."}
           </Text>
-          <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ height: 1, backgroundColor: ui().line }} />
           <View style={{ gap: 10 }}>
             <DocLink href="https://example.com/" label="example.com" openWith="system" icon />
             <DocLink href="/docs/archive" label="Archived docs" disabled />

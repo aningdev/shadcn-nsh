@@ -1,6 +1,6 @@
 // What a theme switch redraws in the parts that read their sizes where they are drawn: a palette's
-// row, an item's icon tile, a refresh indicator's chip, the corners kbd and a drawer's grabber get
-// from `rounded`, and a code block's title weight.
+// row, an item's icon tile, a refresh indicator's chip, the corners a drawer's grabber gets from
+// `rounded`, and a code block's title weight.
 
 import { selectTheme } from "@shadcn-nsh/theme";
 import type { Bounds, Signal } from "nsh";
@@ -15,8 +15,6 @@ import {
   CommandRow,
   drawerGrabber,
   ItemMedia,
-  Kbd,
-  kbdLook,
   REFRESH_INDICATOR_HEIGHT,
   refreshIndicatorLook,
 } from "../../../packages/ui";
@@ -39,7 +37,6 @@ function App() {
       <Text>{`row=${row()}`}</Text>
       <Text>{`tile=${tile()}`}</Text>
       <Text>{`chip=${chip()}`}</Text>
-      <Text>{`kbd-curve=${String(kbdLook().kbd.borderCurve)}`}</Text>
       <Text>{`grabber-curve=${String(drawerGrabber().borderCurve)}`}</Text>
       <Text>{`title-weight=${String(codeBlockLook().title("default").fontWeight)}`}</Text>
 
@@ -61,7 +58,6 @@ function App() {
         style={{ ...refreshIndicatorLook().chip(pull, REFRESH_INDICATOR_HEIGHT), flexShrink: 0 }}
         onLayout={watch(chip, "width")}
       />
-      <Kbd>K</Kbd>
     </View>
   );
 }
