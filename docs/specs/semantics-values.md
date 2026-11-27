@@ -13,7 +13,7 @@
 
 | 角色 | 说明 | NSH Gallery | shadcn/ui | Apple | Material | WinUI |
 | --- | --- | --- | --- | --- | --- | --- |
-| `background` | 页面画布的底 | `oklch(0.97399 0.00397 286.326)` / `oklch(0.21297 0.01273 264.257)` | `oklch(1 0 0)` / `oklch(0.145 0 0)` | `oklch(0.96257 0.00665 286.274)` / `oklch(0 0 0)` | `oklch(0.98379 0.01284 321.894)` / `oklch(0.18738 0.01241 300.422)` | `oklch(0.96415 0 0)` / `oklch(0.24353 0 0)` |
+| `background` | 页面画布的底 | `oklch(0.97399 0.00397 286.326)` / `oklch(0.21297 0.01273 264.257)` | `oklch(1 0 0)` / `oklch(0.145 0 0)` | `oklch(1 0 0)` / `oklch(0 0 0)` | `oklch(0.98379 0.01284 321.894)` / `oklch(0.18738 0.01241 300.422)` | `oklch(0.96415 0 0)` / `oklch(0.24353 0 0)` |
 | `card` | 卡片与面板的底 | `oklch(1 0 0)` / `oklch(0.25145 0.01219 264.328)` | `oklch(1 0 0)` / `oklch(0.205 0 0)` | `oklch(1 0 0)` / `oklch(0.22728 0.00382 286.092)` | `oklch(0.96728 0.01181 313.217)` / `oklch(0.22652 0.00999 303.714)` | `oklch(0.98809 0 0)` / `oklch(0.28908 0 0)` |
 | `popover` | 浮层与菜单的底 | `oklch(0.97997 0.00397 286.326)` / `oklch(0.25145 0.01219 264.328)` | `oklch(1 0 0)` / `oklch(0.205 0 0)` | `oklch(1 0 0)` / `oklch(0.2939 0.00358 286.177)` | `oklch(0.95363 0.01471 312.243)` / `oklch(0.24451 0.01344 298.463)` | `oklch(0.98212 0 0)` / `oklch(0.29313 0 0)` |
 | `muted` | 弱化容器的底与浅底 | `oklch(0.95222 0.00415 271.369)` / `oklch(0.29661 0.01168 264.381)` | `oklch(0.97 0 0)` / `oklch(0.269 0 0)` | `oklch(0.93459 0.00268 286.348)` / `oklch(0.31868 0.00703 285.994)` | `oklch(0.91401 0.01366 314.754)` / `oklch(0.32979 0.01247 298.761)` | `oklch(0.94912 0 0)` / `oklch(0.22645 0 0)` |
@@ -185,7 +185,7 @@
 | `surfaces.inset.foreground` | 凹槽井面的前景色 | `foreground` | `foreground` | `foreground` | `foreground` | `foreground` |
 | `surfaces.inset.border` | 凹槽井面的边 | `border` | `border` | `input` | `muted-foreground` | `oklch(0 0 0 / 0.059)` / `oklch(1 0 0 / 0.071)` |
 | `surfaces.inset.shadow` | 凹槽井面的投影 | `inset` | `inset` | — | — | — |
-| `surfaces.inset.background` | 凹槽井面的底 | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `muted` | `oklch(0.96743 0.00133 286.375)` / `oklch(0.29471 0.00718 285.951)` | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
+| `surfaces.inset.background` | 凹槽井面的底 | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `muted` | `oklch(0.96257 0.00665 286.274)` / `oklch(0.29471 0.00718 285.951)` | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
 | `surfaces.channel.foreground` | 分段轨道面的前景色 | `foreground` | `foreground` | `foreground` | `foreground` | `foreground` |
 | `surfaces.channel.border` | 分段轨道面的边 | `border` | `border` | `transparent` | `line` | `line` |
 | `surfaces.channel.shadow` | 分段轨道面的投影 | `inset` | `inset` | — | — | — |
@@ -296,7 +296,7 @@
 | `controls.choice.radioChecked.face` | 单选框选中面 | `surface(accent)` | `none` | `surface(accent)` | `none` | `primary` |
 | `controls.choice.mark` | 单选框内圆点尺寸 | 6 / 8 | 8 / 10 | 6 / 8 | 10 / 12 | 12 / 14 |
 | `controls.switch.track` | 默认开关轨道宽高 `[w, h]` | `[36,20]` / `[44,24]` | `[32,18]` / `[44,24]` | `[54,24]` / `[63,28]` | `[40,24]` / `[52,32]` | `[40,20]` / `[44,22]` |
-| `controls.switch.trackOffFace` | 开关关闭态轨道底色 | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `input` / `oklch(0.28969 0 0)` | `oklch(0.96743 0.00133 286.375)` / `oklch(0.29471 0.00718 285.951)` | `muted` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
+| `controls.switch.trackOffFace` | 开关关闭态轨道底色 | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `input` / `oklch(0.28969 0 0)` | `oklch(0.928 0.004 286.3)` / `oklch(0.29471 0.00718 285.951)` | `muted` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
 | `controls.switch.small.track` | 小号开关轨道宽高 `[w, h]` | `[28,16]` / `[36,20]` | `[24,14]` / `[36,20]` | `[40,18]` / `[48,22]` | `[32,20]` / `[40,24]` | `[32,16]` / `[36,18]` |
 | `controls.switch.small.knob` | 小号开关滑块尺寸 | 12 / 16 | 12 / 16 | `[23,14]` / `[28,18]` | 12 / 16 | 10 / 12 |
 | `controls.switch.edge.off` | 开关关闭态边框宽 | 1 | 0 | 0 | 2 | 1 |
@@ -333,7 +333,7 @@
 | `controls.popup.corner` | 弹出层圆角策略 | `container` | `control` | `container` | `control` | `container` |
 | `controls.list.item.highlight` | 列表选中/聚焦项高亮底色 | `tint(brand)` | `accent` | `tint(brand)` | `accent` | `accent` |
 | `controls.list.item.edge` | 列表高亮项描边色 | `brand/30` | `none` | `none` | `none` | `none` |
-| `controls.tabs.track.face` | 标签栏轨道底色 | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `muted` | `oklch(0.96743 0.00133 286.375)` / `oklch(0.29471 0.00718 285.951)` | `none` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
+| `controls.tabs.track.face` | 标签栏轨道底色 | `oklch(0.96124 0.00414 271.369)` / `oklch(0.23027 0.01247 264.293)` | `muted` | `oklch(0.946 0.004 286.3)` / `oklch(0.29471 0.00718 285.951)` | `none` | `oklch(0.94611 0 0)` / `oklch(0.23075 0 0)` |
 | `controls.tabs.track.edge` | 标签栏轨道边色 | `border` | `none` | `border` | `border` | `line` |
 | `controls.tabs.track.corner` | 标签栏轨道圆角策略 | `full` | `control` | `full` | `full` | `control` |
 | `controls.menubar.bar` | 菜单栏底面样式 | `card` | `card` | `none` | `card` | `none` |

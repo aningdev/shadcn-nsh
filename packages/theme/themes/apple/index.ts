@@ -37,7 +37,7 @@ export const apple = defineTheme({
     radius: { control: 8, container: 12, modal: 16, curve: "continuous" },
     fixed: { scrim: "oklch(0 0 0 / 0.4)" },
     light: {
-      background: "oklch(0.96257 0.00665 286.274)",
+      background: "oklch(1 0 0)",
       card: "oklch(1 0 0)",
       popover: "oklch(1 0 0)",
       muted: "oklch(0.93459 0.00268 286.348)",
@@ -129,7 +129,7 @@ export const apple = defineTheme({
     inset: {
       border: "input",
       shadow: null,
-      light: { background: "oklch(0.96743 0.00133 286.375)" },
+      light: { background: "oklch(0.96257 0.00665 286.274)" },
       dark: { background: "oklch(0.29471 0.00718 285.951)" },
     },
     channel: {
@@ -315,7 +315,7 @@ export const apple = defineTheme({
     switch: {
       track: { pointer: [54, 24], touch: [63, 28] },
       trackOffFace: {
-        light: "oklch(0.96743 0.00133 286.375)",
+        light: "oklch(0.928 0.004 286.3)",
         dark: "oklch(0.29471 0.00718 285.951)",
       },
       small: {
@@ -351,7 +351,7 @@ export const apple = defineTheme({
     list: { item: { edge: "none" } },
     tabs: {
       track: {
-        face: { light: "oklch(0.96743 0.00133 286.375)", dark: "oklch(0.29471 0.00718 285.951)" },
+        face: { light: "oklch(0.946 0.004 286.3)", dark: "oklch(0.29471 0.00718 285.951)" },
       },
     },
     menubar: { bar: "none" },
@@ -359,7 +359,7 @@ export const apple = defineTheme({
   },
   meta: {
     overview:
-      "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader.",
+      "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader.",
     elevationNote:
       "Apple Liquid Glass depth: `raised` (regular / thin, blur 24), `overlay` (regular / regular, blur 30, liquid-glass 0.42), `modal` (regular / thick, blur 36, liquid-glass 0.30), `inverse` (regular / regular, blur 28, liquid-glass 0.36), and `glass` (clear / ultraThin, blur 26, liquid-glass 0.50). Each fill stays at or above its material minOpacity; `macos.backdrop` is omitted so NSGlassEffectView renders natively on macOS 26+. Motion uses snappy, smooth, and bouncy springs.",
     dos: [

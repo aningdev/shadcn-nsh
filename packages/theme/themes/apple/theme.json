@@ -11,7 +11,7 @@
       "on-media": "oklch(1 0 0)"
     },
     "light": {
-      "background": "oklch(0.96257 0.00665 286.274)",
+      "background": "oklch(1 0 0)",
       "card": "oklch(1 0 0)",
       "popover": "oklch(1 0 0)",
       "muted": "oklch(0.93459 0.00268 286.348)",

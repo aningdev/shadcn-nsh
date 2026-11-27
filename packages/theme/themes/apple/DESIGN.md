@@ -1,13 +1,13 @@
 ---
 version: alpha
 name: Apple
-description: "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader."
+description: "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader."
 colors:
   scrim: "#00000066"
   media: "#10131a"
   on-media: "#ffffff"
   light:
-    background: "#f2f2f7"
+    background: "#ffffff"
     card: "#ffffff"
     popover: "#ffffff"
     muted: "#e9e9eb"
@@ -183,11 +183,11 @@ components:
 
 ## Overview
 
-Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader.
+Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemBackground`, `label`) with Retina 0.5px hairlines, continuous corners, and layered Liquid Glass: native regular/clear glass (prioritizing macOS 26+ NSGlassEffectView), iOS backdrop materials, saturate blur, specular hairlines, and a rounded-rect refraction shader.
 
 ## Colors
 
-- **`background`**: light `#f2f2f7`, dark `#000000`
+- **`background`**: light `#ffffff`, dark `#000000`
 - **`card`**: light `#ffffff`, dark `#1c1c1e`
 - **`popover`**: light `#ffffff`, dark `#2c2c2e`
 - **`muted`**: light `#e9e9eb`, dark `#323236`
