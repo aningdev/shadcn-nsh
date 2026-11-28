@@ -133,7 +133,7 @@ jobs:
       # runtime they share (`share-packaged.ts`), so it is cached with them.
       - name: Cache packaged demos
         id: demos
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             apps/website/public/demos

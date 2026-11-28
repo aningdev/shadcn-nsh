@@ -48,7 +48,7 @@ runs:
 
     - name: Restore ~/.nsh
       id: cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ~/.nsh
         key: nsh-${{ steps.day.outputs.channel }}-${{ runner.os }}-${{ steps.day.outputs.day }}
