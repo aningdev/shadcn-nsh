@@ -14,7 +14,9 @@
 // theme is simply selected.
 //
 // The engine takes a theme up one render behind `setTheme`: a view keeps the styles it drew with
-// until the next render. So the page is shown two frames after the theme is selected, and
+// until the next render. So the page is shown two frames after the theme is selected — frames of
+// the page that shows the app, not the app's own: the player's realm iframe is `display: none`,
+// and Firefox runs no `requestAnimationFrame` in a frame that is not rendered (#428) — and
 // `check:palette` (the colors of the first frame a visitor can see) and `check:first-frame` (that
 // it comes within budget) hold both ends.
 //
@@ -28,26 +30,32 @@ import { Storage } from "nsh";
 import { paletteTheme } from "./palette-themes";
 import { PALETTES, PALETTE_KEY } from "./palettes";
 
-/** A document, as far as this module needs one: `#app`, the element the player draws an app into. */
-type Page = { getElementById(id: string): { style: { visibility: string } } | null };
+/** `#app`, the element the player draws an app into. */
+type Frame = { style: { visibility: string } };
 
-/** The app as the browser runs it: the page it is in (the player gives an app a page of its own, an
- * iframe, so the page carrying `#app` is usually the one around it), and the document itself when
- * the app runs in the page's own realm. Nothing on a native target. */
-const view = globalThis as unknown as { document?: Page; parent?: { document?: Page } };
-
-/** The element the app draws into: `#app` of the document around it, else of its own. */
-const frame = (): { style: { visibility: string } } | null => {
-  for (const page of [view.parent?.document, view.document]) {
-    const element = page?.getElementById("app");
-    if (element) return element;
-  }
-  return null;
+/** A window, as far as this module needs one: its document's `#app`, and its frames. */
+type Window = {
+  document?: { getElementById(id: string): Frame | null };
+  requestAnimationFrame?(callback: () => void): number;
 };
 
+/** The app as the browser runs it: the page it is in (the player gives an app a page of its own, an
+ * iframe, so the page carrying `#app` is usually the one around it), and the window itself when
+ * the app runs in the page's own realm. Nothing on a native target. */
+const view = globalThis as unknown as Window & { parent?: Window };
+
+/** The page the app draws into: `#app` and the window that renders it — the window around the
+ * app's, else its own. */
+const page = ((): { frame: Frame; window: Window } | null => {
+  for (const window of [view.parent, view]) {
+    const frame = window?.document?.getElementById("app");
+    if (window && frame) return { frame, window };
+  }
+  return null;
+})();
+
 // The page is hidden before the app's first frame; `start` shows it once the palette is in.
-const app = frame();
-if (app) app.style.visibility = "hidden";
+if (page) page.frame.style.visibility = "hidden";
 
 void start();
 
@@ -62,14 +70,17 @@ async function start() {
       await twoFrames();
     }
   } finally {
-    if (app) app.style.visibility = "";
+    if (page) page.frame.style.visibility = "";
   }
 }
 
 /** Resolves once a theme selected now is on screen: `setTheme` reaches the views one render behind
- * it, so two frames. */
+ * it, so two frames of the page that shows them. */
 function twoFrames() {
+  const frames = page?.window.requestAnimationFrame
+    ? (callback: () => void) => page.window.requestAnimationFrame!(callback)
+    : requestAnimationFrame;
   return new Promise<void>((resolve) => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    frames(() => frames(() => resolve()));
   });
 }
