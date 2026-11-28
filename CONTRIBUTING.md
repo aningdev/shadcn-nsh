@@ -60,9 +60,11 @@ Before opening a PR, run `bun run check` and supplement based on scope:
 - **Versioning**: Before `1.0`, bump `minor` for breaking component/registry/theme changes or new components/themes; bump `patch` for fixes, look refinements, and docs.
 - **Prepare release PR** (`chore/release-vX.Y.Z`, commit `chore(release): vX.Y.Z`):
   1. Rename `## Unreleased` in `CHANGELOG.md` to `## vX.Y.Z — YYYY-MM-DD` and add an empty `## Unreleased` header above it.
-  2. Update `version` in `packages/cli/package.json` to `X.Y.Z`.
+  2. Update `version` in `packages/cli/package.json` to `X.Y.Z`, then run `bun install` so `bun.lock` records it.
   3. Run `bun run catalog` so the root `nsh.json` version matches the CLI.
   4. Add a compatibility row in `README.md` and `README.zh.md`.
-  5. Run `bun run registry:build` and verify `bun run check` and `bun run test:install`.
+  5. Run `bun run registry:build` and verify `bun run check` and `bun run test:install`. CI runs the gallery and install jobs on every `chore/release-*` pull request, so the tag gate does not run them for the first time.
 - **Tag & publish**: After merging to `main`, push `git tag vX.Y.Z`. `publish-cli.yml` publishes npm and creates the GitHub release from that tag's `CHANGELOG.md` section, and `deploy-docs.yml` builds `/` (while pushes to `main` update `/dev/` using `DOCS_BASE=/dev/` and `sitePath()`).
+- **Verify**: Run `bun run release:verify vX.Y.Z`. It waits (up to 20 minutes; `--wait <minutes>` changes that) until the tag's workflow runs succeeded, npm has the version, the GitHub release exists, the docs root shows `vX.Y.Z` and `/dev/` answers, and it names whatever is still missing. Prefer it to polling `gh run view` by hand.
+- **One deployment per release commit**: Pages names a deployment after its commit and does not serve a second deployment of the same commit. So the `main` run of a release commit (one that changes `packages/cli/package.json`'s version) only writes `dev/` to the `site` branch, and the tag run deploys both. Until the tag is pushed, the live `/dev/` still shows the commit before the release. The tag run fails if the live root does not show the tag within five minutes of deploying.
 - **`github-pages` environment**: the deployment branch policy must allow both `branch: main` (updates `/dev/`) and `tag: v*` (rebuilds `/`), otherwise the tag run fails with `Tag "vX.Y.Z" is not allowed to deploy to github-pages due to environment protection rules`. Check with `gh api repos/{owner}/{repo}/environments/github-pages/deployment-branch-policies`; add the tag rule with `gh api -X POST repos/{owner}/{repo}/environments/github-pages/deployment-branch-policies -f name='v*' -f type='tag'`, then `gh run rerun <run-id> --failed`.
