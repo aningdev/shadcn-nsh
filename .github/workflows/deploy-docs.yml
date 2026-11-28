@@ -151,7 +151,7 @@ jobs:
         if: steps.demos.outputs.cache-hit == 'true'
         env:
           DOCS_BASE: ${{ steps.site.outputs.base }}
-        run: nsh check apps/website/demos && bun --filter @shadcn-nsh/website build
+        run: nsh check apps/website/demos && bun --filter @shadcn-nsh/website build && bun run check:size
 
       # The `site` branch is the published tree: the release at its root, `dev/` next to it. A
       # release replaces the root and leaves `dev/`; a dev build replaces only `dev/`. It is
