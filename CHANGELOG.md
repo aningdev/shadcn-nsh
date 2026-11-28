@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+- **Theme switches cost a fraction of what they did.** `packages/theme` derives each token, color, surface, control recipe, and transition once per theme — invalidated by `selectTheme`, the color scheme, or reduced motion — instead of once per style read, so a full re-commit after a switch no longer recomputes every surface dozens of times (showcase: ~460 ms of JS per switch down to ~100 ms).
+
 ## v0.12.1 — 2026-11-28
 
 ### Changed

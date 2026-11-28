@@ -157,13 +157,72 @@ export function currentTheme(): string | null {
   return theme === null ? null : theme.id;
 }
 
+/**
+ * Everything a derived theme value depends on besides the spec: the selected theme, the light/dark
+ * scheme, and reduced motion. The epoch carries all three as one number, so a getter reads one
+ * signal to stay subscribed and knows when its memo tables are stale. Deriving a theme value costs
+ * a full surface compile plus color resolution; a committed tree reads thousands of them per
+ * switch, so each is computed once per theme instead of once per read.
+ */
+let epochs = 0;
+const epoch = computed(() => {
+  void selected();
+  void colorScheme();
+  void reduceMotion();
+  return ++epochs;
+});
+
+interface Memo {
+  readonly tokens: Map<string, unknown>;
+  readonly aliases: Map<string, string>;
+  readonly colors: Map<string, string | null>;
+  readonly tints: Map<string, string>;
+  readonly charts: Map<number, string>;
+  readonly surfaces: Map<SurfaceRole, ResolvedSurface>;
+  readonly layers: WeakMap<SurfaceLayer, ResolvedSurface>;
+  readonly merged: WeakMap<SurfaceSpec, SurfaceLayer>;
+  readonly controls: Map<string, unknown>;
+  readonly washes: Map<string, ViewStyle>;
+  readonly elevations: Map<ElevationLevel, string>;
+  readonly transitions: Map<string, ViewStyle>;
+  scale?: ElevationScale;
+}
+
+const newMemo = (): Memo => ({
+  tokens: new Map(),
+  aliases: new Map(),
+  colors: new Map(),
+  tints: new Map(),
+  charts: new Map(),
+  surfaces: new Map(),
+  layers: new WeakMap(),
+  merged: new WeakMap(),
+  controls: new Map(),
+  washes: new Map(),
+  elevations: new Map(),
+  transitions: new Map(),
+});
+
+let memo: Memo = newMemo();
+let memoEpoch = -1;
+
+/** Memo tables for the active theme, empty again after a theme, appearance, or motion change. */
+function cache(): Memo {
+  const current = epoch();
+  if (current !== memoEpoch) {
+    memoEpoch = current;
+    memo = newMemo();
+  }
+  return memo;
+}
+
 /** Reactive token proxy object backed by NSH `token()`. */
 function tokenGetters<K extends string>(names: Record<K, keyof Tokens>): Record<K, string> {
   const out = {} as Record<K, string>;
   for (const key of Object.keys(names) as K[]) {
     Object.defineProperty(out, key, {
       enumerable: true,
-      get: () => token(names[key]) as string,
+      get: () => readToken(names[key]) as string,
     });
   }
   return out;
@@ -234,11 +293,13 @@ const COLOR_TOKENS = {
 export const colors: Palette = tokenGetters(COLOR_TOKENS);
 
 /**
- * Read one token by name. Same reason as `COLOR_TOKENS`: a consumer without `theme.json` does not
- * list `radius-*` or `font-*` on `Tokens`.
+ * Read one token by name, once per theme. Same reason as `COLOR_TOKENS`: a consumer without
+ * `theme.json` does not list `radius-*` or `font-*` on `Tokens`.
  */
-function readToken(name: string) {
-  return token(name as keyof Tokens);
+function readToken(name: string): unknown {
+  const m = cache();
+  if (!m.tokens.has(name)) m.tokens.set(name, token(name as keyof Tokens));
+  return m.tokens.get(name);
 }
 
 /** Mix `color` with transparency (`0`–`1`) using CSS `color-mix`. */
@@ -254,6 +315,15 @@ const atAlpha = (color: string, a: number) =>
     .padStart(2, "0")}`;
 
 function resolveTokenAliases(value: string): string {
+  const m = cache();
+  const cached = m.aliases.get(value);
+  if (cached !== undefined) return cached;
+  const out = aliases(value);
+  m.aliases.set(value, out);
+  return out;
+}
+
+function aliases(value: string): string {
   return value
     .replace(relativeAlpha, (whole, name: string, a: string) => {
       const c = token(name as keyof Tokens);
@@ -270,6 +340,16 @@ function resolveTokenAliases(value: string): string {
 }
 
 function resolveTintValue(role: "brand" | ToneColorKey, customAlpha?: number): string {
+  const m = cache();
+  const key = `${role}:${customAlpha ?? ""}`;
+  const cached = m.tints.get(key);
+  if (cached !== undefined) return cached;
+  const out = resolveTintValue0(role, customAlpha);
+  m.tints.set(key, out);
+  return out;
+}
+
+function resolveTintValue0(role: "brand" | ToneColorKey, customAlpha?: number): string {
   const spec = activeSpec();
   const mode: Mode = isDark() ? "dark" : "light";
   if (customAlpha === undefined) {
@@ -355,6 +435,25 @@ export function resolveColor(
   expr: ModeOrFlat<ColorExpr | "none" | null> | undefined,
 ): string | null {
   if (expr === undefined || expr === null) return null;
+  const m = cache();
+  const key = colorKey(expr);
+  if (m.colors.has(key)) return m.colors.get(key)!;
+  const out = resolveColor0(expr);
+  m.colors.set(key, out);
+  return out;
+}
+
+/** Structural memo key for a color expression; the active mode is part of the epoch. */
+function colorKey(expr: ModeOrFlat<ColorExpr | "none" | null>): string {
+  if (expr === null) return "null";
+  if (typeof expr === "string") return `s:${expr}`;
+  if ("light" in expr && "dark" in expr) return `m:${colorKey(expr.light)}|${colorKey(expr.dark)}`;
+  if ("tint" in expr) return `t:${expr.tint}:${expr.alpha ?? ""}`;
+  return `c:${expr.color}:${expr.alpha ?? ""}`;
+}
+
+function resolveColor0(expr: ModeOrFlat<ColorExpr | "none" | null> | undefined): string | null {
+  if (expr === undefined || expr === null) return null;
   const unwrapped = readMode(expr);
   if (unwrapped === null || unwrapped === "none") return null;
   if (typeof unwrapped === "string") {
@@ -375,6 +474,15 @@ export function resolveColor(
 
 /** Reactive 5-series chart colors (defaults to `[brand, info, success, warning, destructive]`). */
 function chartAt(index: 0 | 1 | 2 | 3 | 4): string {
+  const m = cache();
+  const cached = m.charts.get(index);
+  if (cached !== undefined) return cached;
+  const value = chartAt0(index);
+  m.charts.set(index, value);
+  return value;
+}
+
+function chartAt0(index: 0 | 1 | 2 | 3 | 4): string {
   const mode: Mode = isDark() ? "dark" : "light";
   const custom = activeSpec().tokens.chart?.[mode];
   if (custom) return resolveColor(custom[index]) ?? colors.primary;
@@ -542,13 +650,22 @@ export type ElevationLevel = "sm" | "md" | "lg" | "xl";
 
 /** Active appearance shadow scale. */
 export function elevationScale(): ElevationScale {
-  const scale = activeSpec().elevation;
-  return isDark() ? scale.dark : scale.light;
+  const m = cache();
+  if (m.scale === undefined) {
+    const scale = activeSpec().elevation;
+    m.scale = isDark() ? scale.dark : scale.light;
+  }
+  return m.scale;
 }
 
 /** Single shadow step (`sm | md | lg | xl`), or `"none"`. */
 export function elevation(level: ElevationLevel): string {
-  return elevationScale()[level] ?? "none";
+  const m = cache();
+  const cached = m.elevations.get(level);
+  if (cached !== undefined) return cached;
+  const value = elevationScale()[level] ?? "none";
+  m.elevations.set(level, value);
+  return value;
 }
 
 function resolveShadow(shadow: ShadowExpr | undefined): string | undefined {
@@ -589,6 +706,15 @@ function backdropFilterFor(resolved: ResolvedMaterial): string {
 }
 
 function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
+  const m = cache();
+  const cached = m.layers.get(layer);
+  if (cached !== undefined) return cached;
+  const out = compileSurfaceLayer0(layer);
+  m.layers.set(layer, out);
+  return out;
+}
+
+function compileSurfaceLayer0(layer: SurfaceLayer): ResolvedSurface {
   const style: ViewStyle = {};
   const bg = resolveColor(layer.background);
   if (bg !== null) style.backgroundColor = bg;
@@ -642,13 +768,23 @@ function compileSurfaceLayer(layer: SurfaceLayer): ResolvedSurface {
 }
 
 function mergeSurfaceSpec(spec: SurfaceSpec): SurfaceLayer {
+  const m = cache();
+  const cached = m.merged.get(spec);
+  if (cached !== undefined) return cached;
   const mode: Mode = isDark() ? "dark" : "light";
-  return { ...spec, ...spec[mode] };
+  const merged = { ...spec, ...spec[mode] };
+  m.merged.set(spec, merged);
+  return merged;
 }
 
 /** Resolve one named semantic surface (`card`, `raised`, `inset`, `overlay`, `modal`, `inverse`, `glass`, `accent`, `fill`, ...). */
 export function surface(role: SurfaceRole): ResolvedSurface {
-  return compileSurfaceLayer(mergeSurfaceSpec(activeSpec().surfaces[role]));
+  const m = cache();
+  const cached = m.surfaces.get(role);
+  if (cached !== undefined) return cached;
+  const out = compileSurfaceLayer(mergeSurfaceSpec(activeSpec().surfaces[role]));
+  m.surfaces.set(role, out);
+  return out;
 }
 
 /** Width in points for a surface border (`0` when `"transparent"` or absent, else `stroke.hairline`). */
@@ -865,19 +1001,29 @@ export const motion = {
     spring?: MotionSpringSpec,
   ): ViewStyle {
     if (reduceMotion()) return { transitionProperty: "none" };
+    const m = cache();
+    const key = spring
+      ? `${properties}|spring:${spring.stiffness}:${spring.damping}:${spring.mass ?? 1}`
+      : `${properties}|${role}`;
+    const cached = m.transitions.get(key);
+    if (cached !== undefined) return cached;
+    let out: ViewStyle;
     if (spring) {
-      return {
+      out = {
         transitionProperty: properties,
         transitionTimingFunction: motion.springCss(spring),
       };
+    } else {
+      const spec = activeSpec().motion[role];
+      const [x1, y1, x2, y2] = EASING_BEZIERS[spec.easing];
+      out = {
+        transitionProperty: properties,
+        transitionDuration: spec.duration,
+        transitionTimingFunction: `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`,
+      };
     }
-    const spec = activeSpec().motion[role];
-    const [x1, y1, x2, y2] = EASING_BEZIERS[spec.easing];
-    return {
-      transitionProperty: properties,
-      transitionDuration: spec.duration,
-      transitionTimingFunction: `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`,
-    };
+    m.transitions.set(key, out);
+    return out;
   },
 };
 
@@ -921,9 +1067,16 @@ function stateLayerColor(
 }
 
 function stateLayerStyle(kind: "hover" | "pressed", ink: AnyColorKey = "foreground"): ViewStyle {
+  const m = cache();
+  const key = `${kind}:${ink}`;
+  const cached = m.washes.get(key);
+  if (cached !== undefined) return cached;
   const wash = stateLayerColor(kind, ink);
-  if (!wash) return {};
-  return { backgroundImage: `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)` };
+  const style: ViewStyle = wash
+    ? { backgroundImage: `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)` }
+    : {};
+  m.washes.set(key, style);
+  return style;
 }
 
 /**
@@ -1130,6 +1283,16 @@ const FOCUS_BG_MAP: Record<string, string> = {
  * Strongly typed reactive reader for every control group in `controls` (`docs/theme.md`).
  */
 export function control<K extends keyof ThemeSpec["controls"]>(name: K): ResolvedControlMap[K] {
+  const m = cache();
+  const key = String(name);
+  const cached = m.controls.get(key) as ResolvedControlMap[K] | undefined;
+  if (cached !== undefined) return cached;
+  const out = control0(name);
+  m.controls.set(key, out);
+  return out;
+}
+
+function control0<K extends keyof ThemeSpec["controls"]>(name: K): ResolvedControlMap[K] {
   const c = activeSpec().controls;
   switch (name) {
     case "button": {

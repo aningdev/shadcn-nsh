@@ -71,7 +71,7 @@ flowchart TD
 | **构建时主题** | `nsh.json` 指向的 `theme.json`，以及 `init` 装上的读取层 | `init --theme <name>`（记在 `nsh-ui.json`）                         |
 | **AppTheme**   | `{ id, label, theme, spec }`                             | `theme-<name>` 条目；`add theme-<name>` 多装一套到 `themes/<name>/` |
 
-`selectTheme(theme)` 换一整套，`selectTheme(null)` 回到构建时主题。圆角经 `shape.*` 与 `rounded()`，线宽读 `stroke`，字体读 `font.sans` / `font.mono`。`surface()` 与 `control()` 在 JSX 里读；存进模块级常量后，运行时切换不会跟着变。键与角色见 [`theme.md`](theme.md)。
+`selectTheme(theme)` 换一整套，`selectTheme(null)` 回到构建时主题。圆角经 `shape.*` 与 `rounded()`，线宽读 `stroke`，字体读 `font.sans` / `font.mono`。`surface()` 与 `control()` 在 JSX 里读；存进模块级常量后，运行时切换不会跟着变。派生值（token、颜色、surface、control 配方、过渡）按主题记忆一次：`selectTheme`、明暗或减弱动态变化时整表作废，所以一次提交读上千次也只是查表。新增派生值时同样走这张表，别在 getter 里重算。键与角色见 [`theme.md`](theme.md)。
 
 ## Rules
 
