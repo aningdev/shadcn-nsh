@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.12.3 — 2026-11-28
+
 ### Fixed
 
 - **Docs previews show in Firefox after a theme switch.** A preview switched away from NSH Gallery waited for two animation frames of the app's own player frame, which is `display: none`; Firefox runs no `requestAnimationFrame` there, so the preview stayed hidden. It now waits on the frames of the page that shows the app (#428).

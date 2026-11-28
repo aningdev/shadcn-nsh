@@ -1,6 +1,6 @@
 {
   "name": "shadcn-nsh",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "nsh": ">=0.7",
   "exports": {
     "shadcn-nsh": "packages/ui/index.ts",
