@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add time-field
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { TimeField } from "shadcn-nsh/time-field";
+```
+
 ## Usage [#usage]
 
 ```tsx

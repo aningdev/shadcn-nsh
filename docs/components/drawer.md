@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add drawer
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Drawer } from "shadcn-nsh/drawer";
+```
+
 ## Usage [#usage]
 
 ```tsx

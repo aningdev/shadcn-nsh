@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add field
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Field } from "shadcn-nsh/field";
+```
+
 ## Usage [#usage]
 
 ```tsx

@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add skeleton
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Skeleton } from "shadcn-nsh/skeleton";
+```
+
 ## Usage [#usage]
 
 ```tsx

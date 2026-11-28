@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add input
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Input } from "shadcn-nsh/input";
+```
+
 ## Usage [#usage]
 
 ```tsx

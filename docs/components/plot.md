@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add plot
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Plot } from "shadcn-nsh/plot";
+```
+
 ## Usage [#usage]
 
 ```tsx

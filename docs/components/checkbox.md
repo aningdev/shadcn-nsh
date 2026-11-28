@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add checkbox
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Checkbox } from "shadcn-nsh/checkbox";
+```
+
 ## Usage [#usage]
 
 ```tsx
