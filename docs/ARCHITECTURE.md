@@ -26,6 +26,7 @@ _Avoid_: 把组件做成 npm 包、为旧 registry id 留别名
 - `apps/website/demos/`：每个组件一份 `<id>.tsx`。`kit.tsx` 是页面外框，`stage.tsx` 是演示适配层（`Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` / `Chips`）。`photos.ts` 等数据只供演示，不进 registry。窄屏截图在 `shots/narrow/`，不提交。
 - `apps/website/content/docs/`：文档页。组件页章节见 [`component-authoring.md`](component-authoring.md#文档页)。`official.ts` 登记 shadcn/ui 与 NSH 元素的来源、去向和没做的理由；`kinds.ts` 由此推出 Base / Enhanced。生成的行不手写。
 - `apps/website/public/demos/`：`docs:demos` 的打包产物，不进仓库。`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`。
+- `apps/website/public/_nsh/`：打包产物共用的运行时与表（`browser.<hash>/`、启动与预取脚本、语法与数学表、按内容去重后的 wasm；每个 demo 只留差异部分）。`share-packaged.ts` 把各 app 的 `index.html` 指向 `../_nsh/`，`check:size` 守住单通道 450 MB 的预算。
 - `apps/showcase/`：展示应用。壳与场景用 `packages/ui` 重建，`nsh test apps/showcase` 测壳，首页 “See it running” 嵌入其打包产物。
 - `apps/gallery/`：原生行为测试与冒烟，不比截图。
 - `packages/cli/`：`init`、`add`、`list`、`view`、`diff`、`build`、`serve`。
