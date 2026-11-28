@@ -19,7 +19,7 @@ concurrency:
 jobs:
   # Which of the slow checks this change can affect. A pull request runs them only when it
   # touches what they check; anything that drives every check (scripts, dependencies, CI
-  # itself) runs them all, and so does a run that is not a pull request.
+  # itself) runs them all, and so does a release pull request or a run that is not a pull request.
   changes:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -38,8 +38,11 @@ jobs:
         env:
           EVENT: ${{ github.event_name }}
           BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          if [ "$EVENT" != "pull_request" ]; then
+          # A release pull request (CONTRIBUTING.md, Releasing) touches little, but the tag gate
+          # runs every check on its commit: run them all here so a failure shows up before the tag.
+          if [ "$EVENT" != "pull_request" ] || [[ "$HEAD_REF" == chore/release-* ]]; then
             echo "install=true" >> "$GITHUB_OUTPUT"
             echo "gallery=true" >> "$GITHUB_OUTPUT"
             exit 0

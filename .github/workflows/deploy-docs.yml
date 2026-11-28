@@ -42,6 +42,10 @@ jobs:
     # `cancel-in-progress: false`: a run that hangs here holds the `pages-docs` group and every
     # later deploy waits behind it.
     timeout-minutes: 30
+    outputs:
+      channel: ${{ steps.site.outputs.channel }}
+      ref: ${{ steps.site.outputs.ref }}
+      deploy: ${{ steps.deploy.outputs.deploy }}
     permissions:
       contents: write # push the build to the `site` branch
       pages: write
@@ -92,6 +96,30 @@ jobs:
         with:
           # Empty for the dev docs: the push's own commit.
           ref: ${{ steps.site.outputs.ref }}
+          # The parent too: a release commit is told apart by the version it changes.
+          fetch-depth: 2
+
+      # Pages names a deployment after the commit (`GITHUB_SHA`) and treats a second deployment of
+      # the same commit as done without serving it. A release commit is pushed to `main` first and
+      # tagged after, so if the `main` run deployed it, the tag run's new root never went live
+      # (v0.12.1). The `main` run of a release commit therefore only updates `dev/` on the `site`
+      # branch, and the tag run, which publishes that branch, is the commit's one deployment.
+      - name: Decide whether this run deploys
+        id: deploy
+        env:
+          CHANNEL: ${{ steps.site.outputs.channel }}
+        run: |
+          set -euo pipefail
+          deploy=true
+          if [ "$CHANNEL" = "dev" ] && git rev-parse -q --verify HEAD^ >/dev/null; then
+            now="$(git show HEAD:packages/cli/package.json | jq -r .version)"
+            before="$(git show HEAD^:packages/cli/package.json | jq -r .version)"
+            if [ "$now" != "$before" ]; then
+              deploy=false
+              echo "::notice::Release commit (v$before → v$now): dev/ goes to the site branch; the v$now tag run deploys it."
+            fi
+          fi
+          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
 
       - name: Setup
         id: nsh
@@ -170,11 +198,13 @@ jobs:
         run: rm -rf "$RUNNER_TEMP/site/.git"
 
       - uses: actions/upload-pages-artifact@v5
+        if: steps.deploy.outputs.deploy == 'true'
         with:
           path: ${{ runner.temp }}/site
 
   deploy:
     needs: build
+    if: needs.build.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -187,3 +217,24 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+      # A deployment that reports success is not proof the root changed (see "Decide whether this
+      # run deploys"): the release run passes only once the live root names its tag. The version
+      # label is the header's version switch (apps/website/src/components/fd/version-switch.tsx);
+      # the query skips the CDN's cached copy.
+      - name: The live root serves this release
+        if: needs.build.outputs.channel == 'release'
+        env:
+          URL: ${{ steps.deployment.outputs.page_url }}
+          TAG: ${{ needs.build.outputs.ref }}
+        run: |
+          set -euo pipefail
+          for _ in $(seq 1 30); do
+            if curl -fsSL "${URL}?release=${GITHUB_RUN_ID}" | grep -qF ">${TAG}<"; then
+              echo "${URL} serves ${TAG}."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::${URL} still does not serve ${TAG} five minutes after the deployment."
+          exit 1

@@ -36,7 +36,8 @@
     "test:unit": "bun test ./packages/cli ./packages/theme ./scripts",
     "theme:build": "bun scripts/theme/build.ts",
     "theme:diff": "bun scripts/theme/diff.ts",
-    "theme:contrast": "bun scripts/theme/contrast.ts"
+    "theme:contrast": "bun scripts/theme/contrast.ts",
+    "release:verify": "bun scripts/release/verify.ts"
   },
   "devDependencies": {
     "@google/design.md": "^0.4.0",
