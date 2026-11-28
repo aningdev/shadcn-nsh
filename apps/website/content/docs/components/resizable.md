@@ -11,6 +11,16 @@ demo: resizable
 npx shadcn-nsh@latest add resizable
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { ResizablePanelGroup } from "shadcn-nsh/resizable";
+```
+
 ## Usage
 
 ```tsx

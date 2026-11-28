@@ -11,6 +11,16 @@ demo: separator
 npx shadcn-nsh@latest add separator
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Separator } from "shadcn-nsh/separator";
+```
+
 ## Usage
 
 ```tsx

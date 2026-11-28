@@ -12,6 +12,16 @@ demoHeight: 460
 npx shadcn-nsh@latest add navigation-menu
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { NavigationMenu } from "shadcn-nsh/navigation-menu";
+```
+
 ## Usage
 
 ```tsx

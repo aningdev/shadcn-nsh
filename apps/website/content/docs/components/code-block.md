@@ -11,6 +11,16 @@ demo: code-block
 npx shadcn-nsh@latest add code-block
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { CodeBlock } from "shadcn-nsh/code-block";
+```
+
 ## Usage
 
 ```tsx

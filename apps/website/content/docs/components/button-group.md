@@ -11,6 +11,16 @@ demo: button-group
 npx shadcn-nsh@latest add button-group
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { ButtonGroup } from "shadcn-nsh/button-group";
+```
+
 ## Usage
 
 ```tsx

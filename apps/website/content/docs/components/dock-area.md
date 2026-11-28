@@ -11,6 +11,16 @@ demo: dock-area
 npx shadcn-nsh@latest add dock-area
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { DockArea } from "shadcn-nsh/dock-area";
+```
+
 ## Usage
 
 ```tsx

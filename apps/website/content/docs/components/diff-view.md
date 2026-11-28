@@ -11,6 +11,16 @@ demo: diff-view
 npx shadcn-nsh@latest add diff-view
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { DiffView } from "shadcn-nsh/diff-view";
+```
+
 ## Usage
 
 ```tsx

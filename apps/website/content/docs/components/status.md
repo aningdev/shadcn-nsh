@@ -11,6 +11,16 @@ demo: status
 npx shadcn-nsh@latest add status
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Status } from "shadcn-nsh/status";
+```
+
 ## Usage
 
 ```tsx

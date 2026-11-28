@@ -11,6 +11,16 @@ demo: nav-stack
 npx shadcn-nsh@latest add nav-stack
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { NavStack } from "shadcn-nsh/nav-stack";
+```
+
 ## Usage
 
 ```tsx

@@ -11,6 +11,16 @@ demo: combobox
 npx shadcn-nsh@latest add combobox
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Combobox } from "shadcn-nsh/combobox";
+```
+
 ## Usage
 
 ```tsx

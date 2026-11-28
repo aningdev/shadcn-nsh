@@ -11,6 +11,16 @@ demo: table
 npx shadcn-nsh@latest add table
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Table } from "shadcn-nsh/table";
+```
+
 ## Usage
 
 ```tsx

@@ -11,6 +11,16 @@ demo: tree
 npx shadcn-nsh@latest add tree
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Tree } from "shadcn-nsh/tree";
+```
+
 ## Usage
 
 ```tsx

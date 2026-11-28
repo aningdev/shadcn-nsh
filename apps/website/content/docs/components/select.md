@@ -11,6 +11,16 @@ demo: select
 npx shadcn-nsh@latest add select
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Select } from "shadcn-nsh/select";
+```
+
 ## Usage
 
 ```tsx

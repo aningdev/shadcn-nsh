@@ -11,6 +11,16 @@ demo: data-table
 npx shadcn-nsh@latest add data-table
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { DataTable } from "shadcn-nsh/data-table";
+```
+
 ## Usage
 
 ```tsx

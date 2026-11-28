@@ -11,6 +11,16 @@ demo: number-input
 npx shadcn-nsh@latest add number-input
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { NumberInput } from "shadcn-nsh/number-input";
+```
+
 ## Usage
 
 ```tsx
