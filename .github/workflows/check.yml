@@ -12,8 +12,10 @@ permissions:
   contents: read
 
 concurrency:
-  # A new push to a pull request replaces its run; each merge to `main` keeps its own.
-  group: check-${{ github.event_name == 'push' && github.sha || github.ref }}
+  # A new push to a pull request replaces its run; each push keeps its own. The ref is in the
+  # group too: a release tag's gate (publish-cli.yml calls this workflow) has the same sha as
+  # the `main` run of that commit and must not cancel it.
+  group: check-${{ github.ref }}${{ github.event_name == 'push' && format('-{0}', github.sha) || '' }}
   cancel-in-progress: true
 
 jobs:
