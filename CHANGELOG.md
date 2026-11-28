@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.12.1 — 2026-11-28
+
 ### Changed
 
 - **A component page installs both ways, in order.** `## Installation` writes the copy-into-app command as an `npm` fence and then the TSX module — `nsh add github:aningdev/shadcn-nsh` and its `import { … } from "shadcn-nsh/<id>"` — as code blocks, instead of the `ComponentInstallBar` card the docs page drew above the body; the card is gone, and the site's tables draw their row and column rules in one colour.
