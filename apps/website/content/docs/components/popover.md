@@ -11,6 +11,16 @@ demo: popover
 npx shadcn-nsh@latest add popover
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Popover } from "shadcn-nsh/popover";
+```
+
 ## Usage
 
 ```tsx

@@ -11,6 +11,16 @@ demo: message-scroller
 npx shadcn-nsh@latest add message-scroller
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { MessageScroller } from "shadcn-nsh/message-scroller";
+```
+
 ## Usage
 
 ```tsx

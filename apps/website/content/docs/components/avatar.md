@@ -11,6 +11,16 @@ demo: avatar
 npx shadcn-nsh@latest add avatar
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Avatar } from "shadcn-nsh/avatar";
+```
+
 ## Usage
 
 ```tsx

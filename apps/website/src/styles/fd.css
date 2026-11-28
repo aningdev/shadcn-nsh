@@ -18,6 +18,14 @@ html > body[data-scroll-locked] {
   background-color: var(--color-fd-background);
 }
 
+/* A table's rules are one colour. Fumadocs draws the column rule from `--color-fd-border` and the
+   row rule from `--tw-prose-th-borders`, so a scope where one of them resolves to the other theme's
+   value shows a bright column rule over quiet rows; here every cell edge is 10% of the page's ink,
+   the same rule in light and in dark. */
+html .prose :where(th, td) {
+  border-color: color-mix(in oklab, var(--color-fd-foreground) 10%, transparent);
+}
+
 /* A theme swatch paints its own color. The ring is the site's ink, so light and dark both read. */
 .home-swatch-dot {
   width: 0.875rem;

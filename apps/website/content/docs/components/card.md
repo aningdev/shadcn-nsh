@@ -11,6 +11,16 @@ demo: card
 npx shadcn-nsh@latest add card
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Card } from "shadcn-nsh/card";
+```
+
 ## Usage
 
 ```tsx

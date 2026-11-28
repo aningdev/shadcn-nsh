@@ -11,6 +11,16 @@ demo: breadcrumb
 npx shadcn-nsh@latest add breadcrumb
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Breadcrumb } from "shadcn-nsh/breadcrumb";
+```
+
 ## Usage
 
 ```tsx

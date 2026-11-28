@@ -11,6 +11,16 @@ demo: tabs
 npx shadcn-nsh@latest add tabs
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Tabs } from "shadcn-nsh/tabs";
+```
+
 ## Usage
 
 ```tsx

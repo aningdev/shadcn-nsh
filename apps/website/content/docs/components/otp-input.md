@@ -11,6 +11,16 @@ demo: otp-input
 npx shadcn-nsh@latest add otp-input
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { OtpInput } from "shadcn-nsh/otp-input";
+```
+
 ## Usage
 
 ```tsx

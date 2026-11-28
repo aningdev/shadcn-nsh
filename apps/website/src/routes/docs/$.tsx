@@ -13,7 +13,6 @@ import {
 import { ArrowUpRight } from "lucide-react";
 import { Suspense, use, type ReactNode } from "react";
 
-import { ComponentInstallBar } from "@/components/fd/component-install";
 import { DemoPanel } from "@/components/fd/demo-panel";
 import { useMDXComponents } from "@/components/fd/mdx";
 import { getComponentBySlug } from "@/lib/components";
@@ -122,7 +121,6 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
             <DemoPanel name={demo} loadSource={DEMO_SOURCES[`../../../demos/${demo}.tsx`]} />
           </div>
         ) : null}
-        {componentDoc ? <ComponentInstallBar slug={componentDoc.slug} /> : null}
         <MDX components={useMDXComponents()} />
         {editPath ? (
           <p className="text-sm">

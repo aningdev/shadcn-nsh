@@ -95,13 +95,13 @@ bun run new:component <id> --view [--family]
 
 `apps/website/content/docs/components/<id>.md` 的 `##` 按此顺序，除可选节外都要有，不加别的：
 
-| 章节              | 内容                                                                                                                                    |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `## Installation` | 一个 `npm` 代码块：`npx shadcn-nsh@latest add <id>`                                                                                     |
-| `## Usage`        | import 和一段最简用法                                                                                                                   |
-| `## Composition`  | 可选。一行 `Use the following composition to build a …:`，再一个 `text` 代码块，用 `├──` / `└──` 画出零件。每个名字都必须是该文件导出的 |
-| `## Examples`     | 每个轴一个 `###`，只写代码                                                                                                              |
-| `## API`          | 第一张表的表头是 `\| Part \| Props \| Description \|`。只列外壳自己加的 props，其余指向 `nsh/base`                                      |
+| 章节              | 内容                                                                                                                                                                                                                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `## Installation` | 先一个 `npm` 代码块 `npx shadcn-nsh@latest add <id>`；再一行 `As a TSX module, added once per app — nothing is copied into it:`，一个 `sh` 代码块 `nsh add github:aningdev/shadcn-nsh`，一个 `tsx` 代码块 `import { <Name> } from "shadcn-nsh/<id>";` |
+| `## Usage`        | import 和一段最简用法                                                                                                                                                                                                                                 |
+| `## Composition`  | 可选。一行 `Use the following composition to build a …:`，再一个 `text` 代码块，用 `├──` / `└──` 画出零件。每个名字都必须是该文件导出的                                                                                                               |
+| `## Examples`     | 每个轴一个 `###`，只写代码                                                                                                                                                                                                                            |
+| `## API`          | 第一张表的表头是 `\| Part \| Props \| Description \|`。只列外壳自己加的 props，其余指向 `nsh/base`                                                                                                                                                    |
 
 `## Examples` 的 `###` 按这个次序：变体（`Variant`、`Tone`）、尺寸（`Size`）、状态（`Disabled`、`Invalid`、`Read-only`、`Loading`）、其余组合、受控（`Controlled`、`Uncontrolled`）。`bun run check:pages` 检查章节、Composition 的引言与树、示例档次和 API 表头。
 

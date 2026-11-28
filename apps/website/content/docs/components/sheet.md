@@ -11,6 +11,16 @@ demo: sheet
 npx shadcn-nsh@latest add sheet
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Sheet } from "shadcn-nsh/sheet";
+```
+
 ## Usage
 
 ```tsx
