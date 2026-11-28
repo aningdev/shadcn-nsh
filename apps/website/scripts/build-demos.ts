@@ -11,6 +11,10 @@
  *
  * Each packaged page then gets the panel's `?idiom=` and `?theme=` (`player-options.ts`).
  *
+ * The set's shared runtime and tables are then kept once, under `public/_nsh/`
+ * (`share-packaged.ts`) — the difference between 1.1 GB and a couple of hundred MB. `--only`
+ * leaves that alone: rebuilding `_nsh` from a few apps would break the other demos' pages.
+ *
  *   bun apps/website/scripts/build-demos.ts [--only <id>,<id>]   # one or a few, while iterating;
  *                                                                # `--only showcase` the app alone
  */
@@ -26,6 +30,7 @@ import {
   type WebPackage,
 } from "./package-web";
 import { addPlayerOptions } from "./player-options";
+import { sharePackaged } from "./share-packaged";
 
 const docsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = path.resolve(docsRoot, "../..");
@@ -90,3 +95,22 @@ if (failed) {
 }
 
 console.log(`\n${entries.length} apps packaged under apps/website/public/ in ${elapsedSec}s`);
+
+if (!only) {
+  const sharing = sharePackaged(entries, path.join(docsRoot, "public"));
+  console.log(
+    `${sharing.files} files kept once under public/_nsh/: ${mb(sharing.saved)} MB not copied per app, ` +
+      `${mb(sharing.dropped)} MB of .gz/.br dropped`,
+  );
+  if (sharing.differing.length > 0) {
+    console.error(
+      `Same name, different bytes (kept with each app): ${sharing.differing.join(", ")}`,
+    );
+    process.exitCode = 1;
+  }
+}
+
+/** A byte count in MB, to one decimal. */
+function mb(bytes: number): string {
+  return (bytes / 1024 / 1024).toFixed(1);
+}

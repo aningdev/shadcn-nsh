@@ -129,7 +129,8 @@ jobs:
           # `build:docs` packages the demos with `nsh package --target web`.
           web: true
 
-      # The packaged demos cost minutes; nothing in them depends on the docs base.
+      # The packaged demos cost minutes; nothing in them depends on the docs base. `_nsh` is the
+      # runtime they share (`share-packaged.ts`), so it is cached with them.
       - name: Cache packaged demos
         id: demos
         uses: actions/cache@v4
@@ -137,7 +138,8 @@ jobs:
           path: |
             apps/website/public/demos
             apps/website/public/showcase
-          key: demos-showcase-${{ runner.os }}-${{ steps.nsh.outputs.nsh-version }}-${{ hashFiles('apps/website/demos/**', '!apps/website/demos/shots*/**', 'packages/**', '!packages/**/node_modules/**', 'apps/showcase/**', '!apps/showcase/node_modules/**', 'apps/website/scripts/build-demos.ts', 'apps/website/scripts/package-web.ts', 'apps/website/scripts/player-options.ts', 'scripts/registry/catalog.ts', 'bun.lock') }}
+            apps/website/public/_nsh
+          key: demos-showcase-${{ runner.os }}-${{ steps.nsh.outputs.nsh-version }}-${{ hashFiles('apps/website/demos/**', '!apps/website/demos/shots*/**', 'packages/**', '!packages/**/node_modules/**', 'apps/showcase/**', '!apps/showcase/node_modules/**', 'apps/website/scripts/build-demos.ts', 'apps/website/scripts/package-web.ts', 'apps/website/scripts/player-options.ts', 'apps/website/scripts/share-packaged.ts', 'scripts/registry/catalog.ts', 'bun.lock') }}
 
       - name: Build docs
         if: steps.demos.outputs.cache-hit != 'true'

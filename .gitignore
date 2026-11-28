@@ -157,6 +157,8 @@ vite.config.ts.timestamp-*
 
 # Docs web demos (nsh package --target web)
 apps/website/public/demos/
+# The runtime the packaged demos and the showcase share (apps/website/scripts/share-packaged.ts)
+apps/website/public/_nsh/
 # The packaged showcase app (same packager, run by the site's /showcase page)
 apps/website/public/showcase/
 
