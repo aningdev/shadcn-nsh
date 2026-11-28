@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add accordion
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Accordion } from "shadcn-nsh/accordion";
+```
+
 ## Usage [#usage]
 
 ```tsx

@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add collapsible
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Collapsible } from "shadcn-nsh/collapsible";
+```
+
 ## Usage [#usage]
 
 ```tsx

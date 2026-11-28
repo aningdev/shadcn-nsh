@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add sidebar
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Sidebar } from "shadcn-nsh/sidebar";
+```
+
 ## Usage [#usage]
 
 ```tsx

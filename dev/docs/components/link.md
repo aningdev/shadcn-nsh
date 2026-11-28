@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add link
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Link } from "shadcn-nsh/link";
+```
+
 ## Usage [#usage]
 
 ```tsx

@@ -269,6 +269,16 @@ npx shadcn-nsh@latest add button --registry "http://127.0.0.1:4173/{name}.json"
 npx shadcn-nsh@latest add accordion
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Accordion } from "shadcn-nsh/accordion";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -381,6 +391,16 @@ Uses `disclosureTriggerLook`, `DisclosureChevron`, and `disclosurePanel`. Every 
 
 ```npm
 npx shadcn-nsh@latest add alert-dialog
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { AlertDialog } from "shadcn-nsh/alert-dialog";
 ```
 
 ## Usage [#usage]
@@ -593,6 +613,16 @@ rebuilds its children does — stacks nothing, and the answer belongs to the app
 npx shadcn-nsh@latest add alert
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Alert } from "shadcn-nsh/alert";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -750,6 +780,16 @@ the icon's column is as wide as the icon, the text's takes the rest, a gap of 12
 npx shadcn-nsh@latest add aspect-ratio
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { AspectRatio } from "shadcn-nsh/aspect-ratio";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -825,6 +865,16 @@ of it.
 
 ```npm
 npx shadcn-nsh@latest add attachment
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Attachment } from "shadcn-nsh/attachment";
 ```
 
 ## Usage [#usage]
@@ -1021,6 +1071,16 @@ media on its own sits in that padding. `attachmentGlyph(size, orientation)` is e
 npx shadcn-nsh@latest add avatar
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Avatar } from "shadcn-nsh/avatar";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -1120,6 +1180,16 @@ Uses `avatarIdentity` for a named fallback's colors. Every prop of [`nsh/base` A
 npx shadcn-nsh@latest add badge
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Badge } from "shadcn-nsh/badge";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -1186,6 +1256,16 @@ The view props (`style`, `class`, `testID`, `role`, the accessibility ones) are 
 
 ```npm
 npx shadcn-nsh@latest add breadcrumb
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Breadcrumb } from "shadcn-nsh/breadcrumb";
 ```
 
 ## Usage [#usage]
@@ -1330,6 +1410,16 @@ exported for a trail an app draws itself.
 
 ```npm
 npx shadcn-nsh@latest add bubble
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Bubble } from "shadcn-nsh/bubble";
 ```
 
 ## Usage [#usage]
@@ -1512,6 +1602,16 @@ below, 4 apart, ringed 3 points in the card's color.
 npx shadcn-nsh@latest add button-group
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { ButtonGroup } from "shadcn-nsh/button-group";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -1679,6 +1779,16 @@ A column clamps its outer corners to `shape.container` and drops the stack's sha
 
 ```npm
 npx shadcn-nsh@latest add button
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Button } from "shadcn-nsh/button";
 ```
 
 ## Usage [#usage]
@@ -1878,6 +1988,16 @@ Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes throug
 npx shadcn-nsh@latest add calendar
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Calendar } from "shadcn-nsh/calendar";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -1923,6 +2043,16 @@ Defaults from `calendarLook` / `CalendarItem`. Every prop of [`nsh/base` Calenda
 
 ```npm
 npx shadcn-nsh@latest add card
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Card } from "shadcn-nsh/card";
 ```
 
 ## Usage [#usage]
@@ -2067,6 +2197,16 @@ at the trailing edge of the first row, whichever order the three are written in.
 
 ```npm
 npx shadcn-nsh@latest add carousel
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Carousel } from "shadcn-nsh/carousel";
 ```
 
 ## Usage [#usage]
@@ -2271,6 +2411,16 @@ Uses `carouselArrowLook`, `carouselPaginationLook`, `carouselDotItemLook`, and `
 npx shadcn-nsh@latest add checkbox
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Checkbox } from "shadcn-nsh/checkbox";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -2340,6 +2490,16 @@ Every prop of [`nsh/base` Checkbox](https://nsh.dev/elements/checkbox) passes th
 
 ```npm
 npx shadcn-nsh@latest add code-block
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { CodeBlock } from "shadcn-nsh/code-block";
 ```
 
 ## Usage [#usage]
@@ -2535,6 +2695,16 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on ever
 npx shadcn-nsh@latest add collapsible
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Collapsible } from "shadcn-nsh/collapsible";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -2608,6 +2778,16 @@ Uses `disclosureTriggerLook`, `DisclosureChevron`, and `disclosurePanel` from ac
 
 ```npm
 npx shadcn-nsh@latest add collapsing-header
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { CollapsingHeader } from "shadcn-nsh/collapsing-header";
 ```
 
 ## Usage [#usage]
@@ -2770,6 +2950,16 @@ follow the scroll, since they are the collapse itself.
 npx shadcn-nsh@latest add color-picker
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { ColorPanel } from "shadcn-nsh/color-picker";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -2863,6 +3053,16 @@ Look helpers: `colorAreaLook`, `colorSliderLook`, `formatColor`, `inkOn`. Parts:
 
 ```npm
 npx shadcn-nsh@latest add combobox
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Combobox } from "shadcn-nsh/combobox";
 ```
 
 ## Usage [#usage]
@@ -3029,6 +3229,16 @@ The root owns the open flag and the chosen values; `ComboboxContent` mounts [`ns
 npx shadcn-nsh@latest add command
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Command } from "shadcn-nsh/command";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -3140,6 +3350,16 @@ Uses `commandClasses`, `CommandRow`, `CommandHeading`, and `CommandEmpty` by def
 
 ```npm
 npx shadcn-nsh@latest add context-menu
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { ContextMenu } from "shadcn-nsh/context-menu";
 ```
 
 ## Usage [#usage]
@@ -3259,6 +3479,16 @@ Row and popup looks come from Menu. Items, separators, labels and submenus are r
 
 ```npm
 npx shadcn-nsh@latest add data-table
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { DataTable } from "shadcn-nsh/data-table";
 ```
 
 ## Usage [#usage]
@@ -3384,6 +3614,16 @@ Uses `dataTableClasses`. Every prop of [`nsh/base` DataTable](https://nsh.dev/el
 npx shadcn-nsh@latest add date-picker
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { DatePicker } from "shadcn-nsh/date-picker";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -3474,6 +3714,16 @@ and every base prop passes through except those. The date picker's look fills th
 
 ```npm
 npx shadcn-nsh@latest add dialog
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Dialog } from "shadcn-nsh/dialog";
 ```
 
 ## Usage [#usage]
@@ -3636,6 +3886,16 @@ A string child of `DialogTrigger` or `DialogClose` is a `Button`; `variant` pick
 npx shadcn-nsh@latest add diff-view
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { DiffView } from "shadcn-nsh/diff-view";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -3734,6 +3994,16 @@ Every prop of [`nsh/base` DiffView](https://nsh.dev/elements/diff-view) passes t
 npx shadcn-nsh@latest add dock-area
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { DockArea } from "shadcn-nsh/dock-area";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -3798,6 +4068,16 @@ const tab = (value: DockTabValue) => <DockTab title={value.panel} active={value.
 
 ```npm
 npx shadcn-nsh@latest add drawer
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Drawer } from "shadcn-nsh/drawer";
 ```
 
 ## Usage [#usage]
@@ -3917,6 +4197,16 @@ go over the look's. Defaults: `side` `"bottom"`, `closeOnSwipe` `true`.
 
 ```npm
 npx shadcn-nsh@latest add editor
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Editor } from "shadcn-nsh/editor";
 ```
 
 ## Usage [#usage]
@@ -4152,6 +4442,16 @@ The session types the props name are re-exported from this file, so an app does 
 npx shadcn-nsh@latest add emoji-picker
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { EmojiPanel } from "shadcn-nsh/emoji-picker";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -4307,6 +4607,16 @@ then a `Popover` whose trigger is a plus, with the same `EmojiPanel` inside it a
 npx shadcn-nsh@latest add empty
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Empty } from "shadcn-nsh/empty";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -4444,6 +4754,16 @@ pointer, 17 on a touch screen), the description the body's size in the muted ink
 
 ```npm
 npx shadcn-nsh@latest add field
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Field } from "shadcn-nsh/field";
 ```
 
 ## Usage [#usage]
@@ -4619,6 +4939,16 @@ the same look without the parts; it is not `fieldLook()`, which is the input's w
 npx shadcn-nsh@latest add hover-card
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { HoverCard } from "shadcn-nsh/hover-card";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -4706,6 +5036,16 @@ come in on a `PopIn` with `popoverLook`.
 npx shadcn-nsh@latest add image-viewer
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { ImageViewer } from "shadcn-nsh/image-viewer";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -4766,6 +5106,16 @@ The ink is `on-media` and the ground is the theme's `media`, the pair that stays
 
 ```npm
 npx shadcn-nsh@latest add input-group
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { InputGroup } from "shadcn-nsh/input-group";
 ```
 
 ## Usage [#usage]
@@ -5112,6 +5462,16 @@ let search: InputRef | undefined;
 npx shadcn-nsh@latest add input
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Input } from "shadcn-nsh/input";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -5315,6 +5675,16 @@ Every prop of [`nsh/base` Input](https://nsh.dev/elements/input) passes through.
 
 ```npm
 npx shadcn-nsh@latest add item
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Item } from "shadcn-nsh/item";
 ```
 
 ## Usage [#usage]
@@ -5536,6 +5906,16 @@ token (`token("muted")`); `default` and `outline` draw what they always did.
 npx shadcn-nsh@latest add kbd
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Kbd } from "shadcn-nsh/kbd";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -5639,6 +6019,16 @@ no axis. A key is one cap; a group is those caps in a row.
 npx shadcn-nsh@latest add label
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Label } from "shadcn-nsh/label";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -5728,6 +6118,16 @@ half.
 npx shadcn-nsh@latest add link
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Link } from "shadcn-nsh/link";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -5788,6 +6188,16 @@ Every prop of [`nsh/base` Link](https://nsh.dev/elements/link) passes through.
 
 ```npm
 npx shadcn-nsh@latest add marker
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Marker } from "shadcn-nsh/marker";
 ```
 
 ## Usage [#usage]
@@ -5908,6 +6318,16 @@ the rules are hairlines.
 
 ```npm
 npx shadcn-nsh@latest add menu
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Menu } from "shadcn-nsh/menu";
 ```
 
 ## Usage [#usage]
@@ -6065,6 +6485,16 @@ Every part that draws a view takes `nsh`'s view props and spreads them on it aft
 npx shadcn-nsh@latest add menubar
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Menubar } from "shadcn-nsh/menubar";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -6206,6 +6636,16 @@ parts take.
 
 ```npm
 npx shadcn-nsh@latest add message-scroller
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { MessageScroller } from "shadcn-nsh/message-scroller";
 ```
 
 ## Usage [#usage]
@@ -6560,6 +7000,16 @@ content is 32 points apart; a button floats 16 points from its edge.
 
 ```npm
 npx shadcn-nsh@latest add message
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Message } from "shadcn-nsh/message";
 ```
 
 ## Usage [#usage]
@@ -6928,6 +7378,16 @@ and in the muted ink, 12 points in from the turn's edge.
 npx shadcn-nsh@latest add nav-stack
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { NavStack } from "shadcn-nsh/nav-stack";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -7211,6 +7671,16 @@ The page's look — spread it on the views it names, or read its words for conte
 npx shadcn-nsh@latest add navigation-menu
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { NavigationMenu } from "shadcn-nsh/navigation-menu";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -7363,6 +7833,16 @@ name.
 npx shadcn-nsh@latest add number-input
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { NumberInput } from "shadcn-nsh/number-input";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -7415,6 +7895,16 @@ Every prop of [`nsh/base` NumberInput](https://nsh.dev/elements/number-input) pa
 
 ```npm
 npx shadcn-nsh@latest add otp-input
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { OtpInput } from "shadcn-nsh/otp-input";
 ```
 
 ## Usage [#usage]
@@ -7470,6 +7960,16 @@ Every prop of [`nsh/base` OtpInput](https://nsh.dev/elements/otp-input) passes t
 
 ```npm
 npx shadcn-nsh@latest add pagination
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Pagination } from "shadcn-nsh/pagination";
 ```
 
 ## Usage [#usage]
@@ -7574,6 +8074,16 @@ Uses `paginationItemClass` and `paginationArrows` by default. Every prop of [`ns
 
 ```npm
 npx shadcn-nsh@latest add plot
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Plot } from "shadcn-nsh/plot";
 ```
 
 ## Usage [#usage]
@@ -7797,6 +8307,16 @@ Also export `Legend` for a colored square and label beside a chart.
 npx shadcn-nsh@latest add popover
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Popover } from "shadcn-nsh/popover";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -7910,6 +8430,16 @@ The root owns the open flag; `PopoverContent` mounts [`nsh/base` Popover](https:
 
 ```npm
 npx shadcn-nsh@latest add pressable
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Pressable } from "shadcn-nsh/pressable";
 ```
 
 ## Usage [#usage]
@@ -8030,6 +8560,16 @@ press sinks it) and `style` (geometry over the look's), and is what the referenc
 npx shadcn-nsh@latest add progress
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Progress } from "shadcn-nsh/progress";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -8130,6 +8670,16 @@ never the form.
 npx shadcn-nsh@latest add radio-group
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { RadioGroup } from "shadcn-nsh/radio-group";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -8220,6 +8770,16 @@ Every prop of [`nsh/base` Radio](https://nsh.dev/elements/radio) and [`RadioGrou
 npx shadcn-nsh@latest add refresh-indicator
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { RefreshIndicator } from "shadcn-nsh/refresh-indicator";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -8304,6 +8864,16 @@ shadcn/ui has no counterpart (the web has no pull), so there is nothing to compa
 npx shadcn-nsh@latest add resizable
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { ResizablePanelGroup } from "shadcn-nsh/resizable";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -8382,6 +8952,16 @@ Also export `resizableHandleLook` and `handleThumb` for a handle the app lays ou
 
 ```npm
 npx shadcn-nsh@latest add rich-editor
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { RichEditor } from "shadcn-nsh/rich-editor";
 ```
 
 ## Usage [#usage]
@@ -8625,6 +9205,16 @@ const classes = {
 npx shadcn-nsh@latest add scrollbar
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Scrollbar } from "shadcn-nsh/scrollbar";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -8671,6 +9261,16 @@ Uses `scrollbarTheme` by default. Call `Scrollbar.setTheme()` to install it on e
 
 ```npm
 npx shadcn-nsh@latest add segmented
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Segmented } from "shadcn-nsh/segmented";
 ```
 
 ## Usage [#usage]
@@ -8738,6 +9338,16 @@ Uses `segmentedLook`. Composition: `Segmented`, `SegmentedList`, `SegmentedItem`
 
 ```npm
 npx shadcn-nsh@latest add select
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Select } from "shadcn-nsh/select";
 ```
 
 ## Usage [#usage]
@@ -8889,6 +9499,16 @@ The root owns the open flag and the value; `SelectContent` mounts [`nsh/base` Se
 npx shadcn-nsh@latest add separator
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Separator } from "shadcn-nsh/separator";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -8952,6 +9572,16 @@ no other look: a corner is the caller's `style`, and so is its room.
 
 ```npm
 npx shadcn-nsh@latest add sheet
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Sheet } from "shadcn-nsh/sheet";
 ```
 
 ## Usage [#usage]
@@ -9128,6 +9758,16 @@ Every prop of [`nsh/base` Sheet](https://nsh.dev/elements/sheet) passes through 
 
 ```npm
 npx shadcn-nsh@latest add sidebar
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Sidebar } from "shadcn-nsh/sidebar";
 ```
 
 ## Usage [#usage]
@@ -9419,6 +10059,16 @@ itself: its `label` and its `glyph` (`size`, `tint`). The other looks stay with 
 npx shadcn-nsh@latest add skeleton
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Skeleton } from "shadcn-nsh/skeleton";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -9486,6 +10136,16 @@ the breathing. The box, including a radius of the app's own, is the caller's `st
 
 ```npm
 npx shadcn-nsh@latest add slider
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Slider } from "shadcn-nsh/slider";
 ```
 
 ## Usage [#usage]
@@ -9579,6 +10239,16 @@ const at = (db + 12) / 24;
 npx shadcn-nsh@latest add spinner
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Spinner } from "shadcn-nsh/spinner";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -9630,6 +10300,16 @@ A groove behind the arc is the theme's track form to say: under the sunk form th
 
 ```npm
 npx shadcn-nsh@latest add split-view
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { SplitView } from "shadcn-nsh/split-view";
 ```
 
 ## Usage [#usage]
@@ -9789,6 +10469,16 @@ const visibility = signal<ColumnVisibility>("all");
 npx shadcn-nsh@latest add stat
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Stat } from "shadcn-nsh/stat";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -9910,6 +10600,16 @@ Gallery atom: no `nsh/base` counterpart. shadcn/ui has no stat either.
 npx shadcn-nsh@latest add status
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Status } from "shadcn-nsh/status";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -9948,6 +10648,16 @@ Gallery atom: no `nsh/base` counterpart.
 
 ```npm
 npx shadcn-nsh@latest add switch
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Switch } from "shadcn-nsh/switch";
 ```
 
 ## Usage [#usage]
@@ -10082,6 +10792,16 @@ Off and on, the knob wears `control("switch").knobStyle(checked)` (`packages/ui/
 npx shadcn-nsh@latest add table
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Table } from "shadcn-nsh/table";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -10163,6 +10883,16 @@ Table
 npx shadcn-nsh@latest add tabs
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Tabs } from "shadcn-nsh/tabs";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -10233,6 +10963,16 @@ Every prop of [`nsh/base` Tabs / `Tab`](https://nsh.dev/elements/tabs) passes th
 
 ```npm
 npx shadcn-nsh@latest add terminal
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Terminal } from "shadcn-nsh/terminal";
 ```
 
 ## Usage [#usage]
@@ -10311,6 +11051,16 @@ The 16 ANSI colors are NSH's own palette; text a program leaves uncolored is the
 
 ```npm
 npx shadcn-nsh@latest add text-view
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { TextView } from "shadcn-nsh/text-view";
 ```
 
 ## Usage [#usage]
@@ -10489,6 +11239,16 @@ const viewing = signal<ImageViewerImage | null>(null);
 npx shadcn-nsh@latest add time-field
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { TimeField } from "shadcn-nsh/time-field";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -10526,6 +11286,16 @@ Segment chrome lands with the listbox / date-picker family.
 
 ```npm
 npx shadcn-nsh@latest add title-bar
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { TitleBar } from "shadcn-nsh/title-bar";
 ```
 
 ## Usage [#usage]
@@ -10660,6 +11430,16 @@ A bar the app lays out itself takes `desktop={{ windowDrag: true }}` and pads by
 npx shadcn-nsh@latest add toast
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Toast } from "shadcn-nsh/toast";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -10721,6 +11501,16 @@ Without `children`, `Toast` draws `title` and `description`. An action and a clo
 
 ```npm
 npx shadcn-nsh@latest add toggle
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Toggle } from "shadcn-nsh/toggle";
 ```
 
 ## Usage [#usage]
@@ -10877,6 +11667,16 @@ bar's own geometry can match a tool's (`toggleSizes.default.side`).
 
 ```npm
 npx shadcn-nsh@latest add toolbar
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Toolbar } from "shadcn-nsh/toolbar";
 ```
 
 ## Usage [#usage]
@@ -11157,6 +11957,16 @@ folds while an earlier tool remains visible.
 npx shadcn-nsh@latest add tooltip
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Tooltip } from "shadcn-nsh/tooltip";
+```
+
 ## Usage [#usage]
 
 ```tsx
@@ -11261,6 +12071,16 @@ part, which draws nothing for the hint's host to wrap.
 
 ```npm
 npx shadcn-nsh@latest add trace
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Trace } from "shadcn-nsh/trace";
 ```
 
 ## Usage [#usage]
@@ -11415,6 +12235,16 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on ever
 
 ```npm
 npx shadcn-nsh@latest add tree
+```
+
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { Tree } from "shadcn-nsh/tree";
 ```
 
 ## Usage [#usage]

@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add date-picker
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { DatePicker } from "shadcn-nsh/date-picker";
+```
+
 ## Usage [#usage]
 
 ```tsx

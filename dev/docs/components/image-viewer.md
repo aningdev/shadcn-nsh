@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add image-viewer
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { ImageViewer } from "shadcn-nsh/image-viewer";
+```
+
 ## Usage [#usage]
 
 ```tsx

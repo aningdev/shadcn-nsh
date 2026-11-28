@@ -6,6 +6,16 @@
 npx shadcn-nsh@latest add collapsing-header
 ```
 
+As a TSX module, added once per app — nothing is copied into it:
+
+```sh
+nsh add github:aningdev/shadcn-nsh
+```
+
+```tsx
+import { CollapsingHeader } from "shadcn-nsh/collapsing-header";
+```
+
 ## Usage [#usage]
 
 ```tsx
