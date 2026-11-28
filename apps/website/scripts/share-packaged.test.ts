@@ -106,7 +106,7 @@ describe("sharePackaged", () => {
     const sharing = sharePackaged(packages, root);
 
     expect(sharing.dropped).toBe(20);
-    expect(fs.readdirSync(path.join(root, "demos/button"))).toEqual([
+    expect(fs.readdirSync(path.join(root, "demos/button")).sort()).toEqual([
       "index.html",
       "nsh.f7bcf3ed35.js",
     ]);
