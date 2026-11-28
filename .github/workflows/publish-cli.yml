@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   # Seconds, and it runs before the gate: a mistyped tag fails here rather than after the whole
-  # check has passed. `node` ships with the runner, so this needs no setup of its own.
+  # check has passed. `jq` ships with the runner, so this needs no setup of its own.
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -30,7 +30,7 @@ jobs:
       - name: Tag matches the CLI version
         if: github.event_name == 'push'
         run: |
-          version="$(node -p "require('./packages/cli/package.json').version")"
+          version="$(jq -r .version packages/cli/package.json)"
           if [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
             echo "::error::tag ${GITHUB_REF_NAME} is not v${version} (packages/cli/package.json)"
             exit 1
@@ -65,7 +65,7 @@ jobs:
 
       # setup-bun caches the executable, not the packages: `bun install` has its own cache.
       - name: Cache Bun package downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -75,8 +75,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          # An LTS line: `npm publish` and provenance run here, and the package targets node20.
-          node-version: 24
+          # Only `npm publish` needs Node: `bun publish` has no `--provenance`. The current LTS line;
+          # the package itself still targets node20 (`engines.node`).
+          node-version: 26
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
