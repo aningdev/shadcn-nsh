@@ -1,4 +1,4 @@
-import{t as e}from"./jsx-runtime-DsDUoChv.js";import{t}from"./server.browser-CRtpYEZZ.js";import{a as n,i as r,n as i,r as a,t as o}from"./theme-sections-Btf4L1cY.js";var s=e(),c={title:`Apple`,description:`Apple's system colors and Liquid Glass: capsule controls, 20-point cards, hairline edges, and glass on the overlays that float.`};function l(e){return t()?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(i,{id:`apple`}),`
+import{t as e}from"./jsx-runtime-DsDUoChv.js";import{t}from"./server.browser-CRtpYEZZ.js";import{a as n,i as r,n as i,r as a,t as o}from"./theme-sections-0DzOKg3E.js";var s=e(),c={title:`Apple`,description:`Apple's system colors and Liquid Glass: capsule controls, 20-point cards, hairline edges, and glass on the overlays that float.`};function l(e){return t()?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(i,{id:`apple`}),`
 
 ## Installation [#installation]
 
